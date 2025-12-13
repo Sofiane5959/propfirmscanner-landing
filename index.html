@@ -79,14 +79,16 @@
         #mc_embed_signup{background:#fff; false;clear:left; font:14px Helvetica,Arial,sans-serif; width: 600px;}
         /* Add your own Mailchimp form style overrides in your site stylesheet or in this style block.
  We recommend moving this block and the preceding CSS link to the HEAD of your HTML file. */
-/* Mailchimp form styling */
-#mc_embed_signup input[type="email"],
-#mc_embed_signup input[type="text"] {
-    color: #1e293b !important;
-    background-color: white !important;
+/* Mailchimp form styling - FORCE visibility */
+#mc_embed_signup input {
+    color: #000000 !important;
+    background-color: #ffffff !important;
 }
-#mc_embed_signup label {
-    color: #334155 !important;
+#mc_embed_signup input::placeholder {
+    color: #64748b !important;
+}
+#mc_embed_signup .mc-field-group input {
+    color: #000000 !important;
 }
   </style>
 <div id="mc_embed_signup">
