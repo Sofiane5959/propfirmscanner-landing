@@ -1,210 +1,186 @@
 'use client'
 
-import { PropFirm } from '@/types'
-import { getPromotionForFirm } from '@/lib/data'
-import { Star, ExternalLink, Heart, Check, X, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
+import type { PropFirm } from '@/types'
 
 interface PropFirmCardProps {
   firm: PropFirm
-  viewMode?: 'grid' | 'list'
+  viewMode: 'grid' | 'list'
 }
 
-export function PropFirmCard({ firm, viewMode = 'grid' }: PropFirmCardProps) {
-  const promotion = getPromotionForFirm(firm.id)
-
-  if (viewMode === 'list') {
-    return <PropFirmListCard firm={firm} promotion={promotion} />
+export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
+  // Generate star rating display
+  const renderStars = (rating: number | null) => {
+    if (!rating) return null
+    const fullStars = Math.floor(rating)
+    const hasHalf = rating % 1 >= 0.5
+    
+    return (
+      <div className="flex items-center gap-1">
+        {[...Array(5)].map((_, i) => (
+          <svg
+            key={i}
+            className={`w-4 h-4 ${i < fullStars ? 'text-yellow-400' : i === fullStars && hasHalf ? 'text-yellow-400' : 'text-gray-600'}`}
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+          </svg>
+        ))}
+        <span className="text-sm text-gray-400 ml-1">
+          {rating.toFixed(1)} ({firm.trustpilot_reviews?.toLocaleString() || 0})
+        </span>
+      </div>
+    )
   }
 
-  return (
-    <div className="glass rounded-2xl overflow-hidden group hover:border-brand-500/30 transition-all duration-300">
-      {/* Promo Banner */}
-      {promotion && (
-        <div className="bg-gradient-to-r from-brand-500/20 to-emerald-500/20 px-4 py-2 text-center">
-          <span className="text-sm font-medium text-brand-400">
-            🔥 {promotion.discount_percent}% OFF with code{' '}
-            <code className="px-2 py-0.5 bg-brand-500/20 rounded text-brand-300">{promotion.code}</code>
-          </span>
-        </div>
-      )}
-
-      <div className="p-5">
-        {/* Header */}
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center overflow-hidden">
-              {firm.logo_url ? (
-                <img src={firm.logo_url} alt={firm.name} className="w-8 h-8 object-contain" />
-              ) : (
-                <span className="text-lg font-bold text-white">{firm.name[0]}</span>
-              )}
+  if (viewMode === 'list') {
+    return (
+      <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700 hover:border-emerald-500/50 transition-all">
+        <div className="flex flex-col md:flex-row md:items-center gap-6">
+          {/* Logo & Name */}
+          <div className="flex items-center gap-4 md:w-64">
+            <div className="w-16 h-16 bg-gray-700 rounded-xl flex items-center justify-center text-2xl font-bold text-emerald-400">
+              {firm.name.charAt(0)}
             </div>
             <div>
-              <h3 className="font-semibold text-white">{firm.name}</h3>
-              <div className="flex items-center gap-1 text-sm">
-                {firm.trustpilot_score && (
-                  <>
-                    <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
-                    <span className="text-yellow-400 font-medium">{firm.trustpilot_score}</span>
-                    <span className="text-dark-500">({firm.trustpilot_reviews?.toLocaleString()})</span>
-                  </>
-                )}
-              </div>
+              <h3 className="text-lg font-semibold text-white">{firm.name}</h3>
+              {renderStars(firm.trustpilot_rating)}
             </div>
           </div>
-          <button className="p-2 text-dark-400 hover:text-red-400 transition-colors">
-            <Heart className="w-5 h-5" />
-          </button>
-        </div>
 
-        {/* Key Stats */}
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          <div className="bg-white/5 rounded-lg p-3">
-            <div className="text-xs text-dark-400 mb-1">Starting From</div>
-            <div className="text-lg font-bold text-white">${firm.min_price}</div>
+          {/* Key Stats */}
+          <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+              <p className="text-gray-500 text-xs uppercase">From</p>
+              <p className="text-white font-semibold">${firm.min_price || 'N/A'}</p>
+            </div>
+            <div>
+              <p className="text-gray-500 text-xs uppercase">Profit Split</p>
+              <p className="text-emerald-400 font-semibold">{firm.profit_split || 'N/A'}%</p>
+            </div>
+            <div>
+              <p className="text-gray-500 text-xs uppercase">Max Drawdown</p>
+              <p className="text-white font-semibold">{firm.max_total_drawdown || 'N/A'}%</p>
+            </div>
+            <div>
+              <p className="text-gray-500 text-xs uppercase">Founded</p>
+              <p className="text-white font-semibold">{firm.founded_year || 'N/A'}</p>
+            </div>
           </div>
-          <div className="bg-white/5 rounded-lg p-3">
-            <div className="text-xs text-dark-400 mb-1">Profit Split</div>
-            <div className="text-lg font-bold text-brand-400">{firm.profit_split}%</div>
-          </div>
-        </div>
 
-        {/* Quick Info */}
-        <div className="space-y-2 mb-4">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-dark-400">Max Drawdown</span>
-            <span className="text-white font-medium">{firm.max_total_drawdown}%</span>
+          {/* CTA */}
+          <div className="flex gap-2">
+            <a
+              href={firm.website_url || '#'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-colors"
+            >
+              Visit Site
+            </a>
           </div>
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-dark-400">Challenge</span>
-            <span className="text-white font-medium">
-              {firm.challenge_types.map(t => t === '1-step' ? '1-Step' : t === '2-step' ? '2-Step' : 'Instant').join(', ')}
-            </span>
-          </div>
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-dark-400">Platforms</span>
-            <span className="text-white font-medium text-right">{firm.platforms.slice(0, 3).join(', ')}</span>
-          </div>
-        </div>
-
-        {/* Trading Rules Quick View */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          <RuleBadge allowed={firm.allows_scalping} label="Scalping" />
-          <RuleBadge allowed={firm.allows_news_trading} label="News" />
-          <RuleBadge allowed={firm.allows_weekend_holding} label="Weekend" />
-        </div>
-
-        {/* Actions */}
-        <div className="flex gap-2">
-          <Link
-            href={`/compare/${firm.slug}`}
-            className="flex-1 px-4 py-2.5 text-sm font-medium text-center text-white bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
-          >
-            View Details
-          </Link>
-          <a
-            href={firm.affiliate_link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex-1 px-4 py-2.5 text-sm font-medium text-center text-dark-900 bg-gradient-to-r from-brand-400 to-emerald-400 rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-1"
-          >
-            Visit Site
-            <ExternalLink className="w-3.5 h-3.5" />
-          </a>
         </div>
       </div>
-    </div>
-  )
-}
+    )
+  }
 
-function PropFirmListCard({ firm, promotion }: { firm: PropFirm; promotion: any }) {
+  // Grid View
   return (
-    <div className="glass rounded-xl p-4 hover:border-brand-500/30 transition-all duration-300">
-      <div className="flex flex-col md:flex-row md:items-center gap-4">
-        {/* Logo & Name */}
-        <div className="flex items-center gap-3 md:w-48">
-          <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center overflow-hidden flex-shrink-0">
-            {firm.logo_url ? (
-              <img src={firm.logo_url} alt={firm.name} className="w-8 h-8 object-contain" />
-            ) : (
-              <span className="text-lg font-bold text-white">{firm.name[0]}</span>
-            )}
+    <div className="bg-gray-800/50 rounded-xl overflow-hidden border border-gray-700 hover:border-emerald-500/50 transition-all group">
+      {/* Header */}
+      <div className="p-6 border-b border-gray-700">
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 bg-gray-700 rounded-xl flex items-center justify-center text-xl font-bold text-emerald-400">
+            {firm.name.charAt(0)}
           </div>
           <div>
-            <h3 className="font-semibold text-white">{firm.name}</h3>
-            {firm.trustpilot_score && (
-              <div className="flex items-center gap-1 text-sm">
-                <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                <span className="text-yellow-400 text-xs">{firm.trustpilot_score}</span>
-              </div>
-            )}
+            <h3 className="text-lg font-semibold text-white">{firm.name}</h3>
+            {renderStars(firm.trustpilot_rating)}
           </div>
         </div>
-
-        {/* Stats */}
-        <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div>
-            <div className="text-xs text-dark-400">Starting From</div>
-            <div className="font-semibold text-white">${firm.min_price}</div>
-          </div>
-          <div>
-            <div className="text-xs text-dark-400">Profit Split</div>
-            <div className="font-semibold text-brand-400">{firm.profit_split}%</div>
-          </div>
-          <div>
-            <div className="text-xs text-dark-400">Max Drawdown</div>
-            <div className="font-semibold text-white">{firm.max_total_drawdown}%</div>
-          </div>
-          <div>
-            <div className="text-xs text-dark-400">Platforms</div>
-            <div className="font-semibold text-white text-sm">{firm.platforms.slice(0, 2).join(', ')}</div>
-          </div>
-        </div>
-
-        {/* Promo */}
-        {promotion && (
-          <div className="md:w-32 text-center">
-            <span className="inline-block px-2 py-1 text-xs font-medium bg-brand-500/20 text-brand-400 rounded">
-              {promotion.discount_percent}% OFF
+        
+        {/* Tags */}
+        <div className="flex flex-wrap gap-2 mt-4">
+          {firm.is_featured && (
+            <span className="px-2 py-1 bg-emerald-500/20 text-emerald-400 text-xs rounded-full">
+              ⭐ Featured
             </span>
-          </div>
-        )}
-
-        {/* Actions */}
-        <div className="flex gap-2 md:w-auto">
-          <Link
-            href={`/compare/${firm.slug}`}
-            className="px-4 py-2 text-sm font-medium text-white bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
-          >
-            Details
-          </Link>
-          <a
-            href={firm.affiliate_link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-4 py-2 text-sm font-medium text-dark-900 bg-gradient-to-r from-brand-400 to-emerald-400 rounded-lg hover:opacity-90 transition-opacity flex items-center gap-1"
-          >
-            Visit
-            <ExternalLink className="w-3.5 h-3.5" />
-          </a>
+          )}
+          {firm.challenge_types?.slice(0, 2).map((type) => (
+            <span key={type} className="px-2 py-1 bg-gray-700 text-gray-300 text-xs rounded-full">
+              {type}
+            </span>
+          ))}
         </div>
       </div>
-    </div>
-  )
-}
 
-function RuleBadge({ allowed, label }: { allowed: boolean; label: string }) {
-  return (
-    <span
-      className={`inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded ${
-        allowed
-          ? 'bg-green-500/10 text-green-400'
-          : 'bg-red-500/10 text-red-400'
-      }`}
-    >
-      {allowed ? <Check className="w-3 h-3" /> : <X className="w-3 h-3" />}
-      {label}
-    </span>
+      {/* Stats */}
+      <div className="p-6 space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <p className="text-gray-500 text-xs uppercase">Starting From</p>
+            <p className="text-white font-semibold text-lg">${firm.min_price || 'N/A'}</p>
+          </div>
+          <div>
+            <p className="text-gray-500 text-xs uppercase">Profit Split</p>
+            <p className="text-emerald-400 font-semibold text-lg">{firm.profit_split || 'N/A'}%</p>
+          </div>
+          <div>
+            <p className="text-gray-500 text-xs uppercase">Daily Drawdown</p>
+            <p className="text-white font-semibold">{firm.max_daily_drawdown || 'N/A'}%</p>
+          </div>
+          <div>
+            <p className="text-gray-500 text-xs uppercase">Max Drawdown</p>
+            <p className="text-white font-semibold">{firm.max_total_drawdown || 'N/A'}%</p>
+          </div>
+        </div>
+
+        {/* Platforms */}
+        <div>
+          <p className="text-gray-500 text-xs uppercase mb-2">Platforms</p>
+          <div className="flex flex-wrap gap-1">
+            {firm.platforms?.slice(0, 3).map((platform) => (
+              <span key={platform} className="px-2 py-1 bg-gray-700/50 text-gray-400 text-xs rounded">
+                {platform}
+              </span>
+            ))}
+            {firm.platforms?.length > 3 && (
+              <span className="px-2 py-1 text-gray-500 text-xs">
+                +{firm.platforms.length - 3} more
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Trading Permissions */}
+        <div className="flex flex-wrap gap-2">
+          {firm.allows_scalping && (
+            <span className="text-xs text-green-400">✓ Scalping</span>
+          )}
+          {firm.allows_news_trading && (
+            <span className="text-xs text-green-400">✓ News</span>
+          )}
+          {firm.allows_ea && (
+            <span className="text-xs text-green-400">✓ EA/Bots</span>
+          )}
+          {firm.allows_weekend_holding && (
+            <span className="text-xs text-green-400">✓ Weekend</span>
+          )}
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="p-4 bg-gray-900/50 border-t border-gray-700">
+        <a
+          href={firm.website_url || '#'}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-center rounded-lg font-medium transition-colors"
+        >
+          Visit {firm.name} →
+        </a>
+      </div>
+    </div>
   )
 }
