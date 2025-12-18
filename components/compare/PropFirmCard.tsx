@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import type { PropFirm } from '@/types'
 
 interface PropFirmCardProps {
@@ -34,15 +35,44 @@ export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
     )
   }
 
+  // Logo component with fallback
+  const renderLogo = (size: 'sm' | 'lg' = 'lg') => {
+    const sizeClasses = size === 'lg' 
+      ? 'w-14 h-14 text-xl' 
+      : 'w-16 h-16 text-2xl'
+    
+    if (firm.logo_url) {
+      return (
+        <div className={`${sizeClasses} bg-white rounded-xl flex items-center justify-center overflow-hidden`}>
+          <img 
+            src={firm.logo_url} 
+            alt={`${firm.name} logo`}
+            className="w-10 h-10 object-contain"
+            onError={(e) => {
+              // Fallback to letter if image fails to load
+              const target = e.target as HTMLImageElement
+              target.style.display = 'none'
+              target.parentElement!.innerHTML = `<span class="font-bold text-emerald-400">${firm.name.charAt(0)}</span>`
+            }}
+          />
+        </div>
+      )
+    }
+    
+    return (
+      <div className={`${sizeClasses} bg-gray-700 rounded-xl flex items-center justify-center font-bold text-emerald-400`}>
+        {firm.name.charAt(0)}
+      </div>
+    )
+  }
+
   if (viewMode === 'list') {
     return (
       <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700 hover:border-emerald-500/50 transition-all">
         <div className="flex flex-col md:flex-row md:items-center gap-6">
           {/* Logo & Name */}
           <div className="flex items-center gap-4 md:w-64">
-            <div className="w-16 h-16 bg-gray-700 rounded-xl flex items-center justify-center text-2xl font-bold text-emerald-400">
-              {firm.name.charAt(0)}
-            </div>
+            {renderLogo('sm')}
             <div>
               <h3 className="text-lg font-semibold text-white">{firm.name}</h3>
               {renderStars(firm.trustpilot_rating)}
@@ -91,9 +121,7 @@ export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
       {/* Header */}
       <div className="p-6 border-b border-gray-700">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 bg-gray-700 rounded-xl flex items-center justify-center text-xl font-bold text-emerald-400">
-            {firm.name.charAt(0)}
-          </div>
+          {renderLogo('lg')}
           <div>
             <h3 className="text-lg font-semibold text-white">{firm.name}</h3>
             {renderStars(firm.trustpilot_rating)}
