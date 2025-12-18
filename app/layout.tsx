@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
-
+import GoogleAnalytics from '@/components/GoogleAnalytics'
 export const metadata: Metadata = {
   title: 'PropFirm Scanner - Compare 50+ Prop Trading Firms Instantly',
   description: 'Find your perfect prop trading firm in seconds. Compare pricing, profit splits, rules, and legitimacy scores for 50+ prop firms side-by-side.',
@@ -46,6 +46,7 @@ export default function RootLayout({
         <link rel="canonical" href="https://www.propfirmscanner.org" />
       </head>
       <body className="antialiased">
+        <GoogleAnalytics />
         <Navbar />
         <main className="min-h-screen">
           {children}
