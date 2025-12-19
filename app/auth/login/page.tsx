@@ -2,30 +2,83 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Target, Mail, Lock, ArrowRight } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { Target, Mail, Lock, ArrowRight, AlertCircle, CheckCircle2 } from 'lucide-react'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
+
+  const supabase = createClientComponentClient()
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    
-    // TODO: Implement Supabase auth
-    console.log('Login:', { email, password })
-    
-    setTimeout(() => {
+    setError(null)
+    setSuccess(null)
+
+    console.log('🔐 Attempting login with:', email)
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+
+      console.log('🔑 Login response:', { data, error })
+
+      if (error) {
+        console.error('❌ Login error:', error)
+        setError(error.message)
+        return
+      }
+
+      if (data?.user) {
+        console.log('✅ Login successful!')
+        setSuccess('Signed in successfully!')
+        router.push('/dashboard')
+        router.refresh()
+      }
+    } catch (err) {
+      console.error('💥 Unexpected error:', err)
+      setError('An unexpected error occurred. Please try again.')
+    } finally {
       setLoading(false)
-      // Redirect to dashboard
-      window.location.href = '/dashboard'
-    }, 1000)
+    }
   }
 
-  const handleGoogleLogin = () => {
-    // TODO: Implement Google OAuth with Supabase
-    console.log('Google login')
+  const handleGoogleLogin = async () => {
+    setLoading(true)
+    setError(null)
+
+    console.log('🔵 Attempting Google login...')
+
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      })
+
+      console.log('🔵 Google OAuth response:', { data, error })
+
+      if (error) {
+        console.error('❌ Google login error:', error)
+        setError(error.message)
+        setLoading(false)
+      }
+      // If successful, user will be redirected to Google
+    } catch (err) {
+      console.error('💥 Unexpected error:', err)
+      setError('An unexpected error occurred. Please try again.')
+      setLoading(false)
+    }
   }
 
   return (
@@ -46,10 +99,27 @@ export default function LoginPage() {
             <p className="text-dark-400">Sign in to access your dashboard</p>
           </div>
 
+          {/* Error Message */}
+          {error && (
+            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-xl flex items-start gap-2">
+              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+              <p className="text-red-400 text-sm">{error}</p>
+            </div>
+          )}
+
+          {/* Success Message */}
+          {success && (
+            <div className="mb-4 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-start gap-2">
+              <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+              <p className="text-emerald-400 text-sm">{success}</p>
+            </div>
+          )}
+
           {/* Google Login */}
           <button
             onClick={handleGoogleLogin}
-            className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white/10 hover:bg-white/20 rounded-xl text-white font-medium transition-colors mb-6"
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white/10 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-white font-medium transition-colors mb-6"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
@@ -69,7 +139,7 @@ export default function LoginPage() {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
               />
             </svg>
-            Continue with Google
+            {loading ? 'Loading...' : 'Continue with Google'}
           </button>
 
           {/* Divider */}

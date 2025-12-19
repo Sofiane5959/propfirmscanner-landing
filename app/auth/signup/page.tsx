@@ -2,31 +2,98 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Target, Mail, Lock, User, ArrowRight, CheckCircle2 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { Target, Mail, Lock, User, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react'
 
 export default function SignupPage() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
+
+  const supabase = createClientComponentClient()
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    
-    // TODO: Implement Supabase auth
-    console.log('Signup:', { name, email, password })
-    
-    setTimeout(() => {
+    setError(null)
+    setSuccess(null)
+
+    console.log('🚀 Attempting signup with:', email)
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: name,
+          },
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      })
+
+      console.log('📧 Signup response:', { data, error })
+
+      if (error) {
+        console.error('❌ Signup error:', error)
+        setError(error.message)
+        return
+      }
+
+      if (data?.user) {
+        // Check if email confirmation is required
+        if (data.user.identities?.length === 0) {
+          setError('This email is already registered. Please sign in instead.')
+        } else if (data.session) {
+          // User is signed up and logged in (email confirmation disabled)
+          setSuccess('Account created successfully!')
+          router.push('/dashboard')
+          router.refresh()
+        } else {
+          // Email confirmation required
+          setSuccess('Account created! Please check your email to confirm your account.')
+        }
+      }
+    } catch (err) {
+      console.error('💥 Unexpected error:', err)
+      setError('An unexpected error occurred. Please try again.')
+    } finally {
       setLoading(false)
-      // Redirect to dashboard
-      window.location.href = '/dashboard'
-    }, 1000)
+    }
   }
 
-  const handleGoogleSignup = () => {
-    // TODO: Implement Google OAuth with Supabase
-    console.log('Google signup')
+  const handleGoogleSignup = async () => {
+    setLoading(true)
+    setError(null)
+
+    console.log('🔵 Attempting Google signup...')
+
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      })
+
+      console.log('🔵 Google OAuth response:', { data, error })
+
+      if (error) {
+        console.error('❌ Google signup error:', error)
+        setError(error.message)
+        setLoading(false)
+      }
+      // If successful, user will be redirected to Google
+    } catch (err) {
+      console.error('💥 Unexpected error:', err)
+      setError('An unexpected error occurred. Please try again.')
+      setLoading(false)
+    }
   }
 
   return (
@@ -47,6 +114,22 @@ export default function SignupPage() {
             <p className="text-dark-400">Start comparing prop firms for free</p>
           </div>
 
+          {/* Error Message */}
+          {error && (
+            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-xl flex items-start gap-2">
+              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+              <p className="text-red-400 text-sm">{error}</p>
+            </div>
+          )}
+
+          {/* Success Message */}
+          {success && (
+            <div className="mb-4 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-start gap-2">
+              <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+              <p className="text-emerald-400 text-sm">{success}</p>
+            </div>
+          )}
+
           {/* Benefits */}
           <div className="mb-6 p-4 bg-brand-500/10 rounded-xl border border-brand-500/20">
             <p className="text-sm font-medium text-brand-400 mb-2">Free account includes:</p>
@@ -63,7 +146,8 @@ export default function SignupPage() {
           {/* Google Signup */}
           <button
             onClick={handleGoogleSignup}
-            className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white/10 hover:bg-white/20 rounded-xl text-white font-medium transition-colors mb-6"
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white/10 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-white font-medium transition-colors mb-6"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
@@ -83,7 +167,7 @@ export default function SignupPage() {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
               />
             </svg>
-            Continue with Google
+            {loading ? 'Loading...' : 'Continue with Google'}
           </button>
 
           {/* Divider */}
