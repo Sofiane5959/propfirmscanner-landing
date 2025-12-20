@@ -10,6 +10,9 @@ interface PropFirmCardProps {
 }
 
 export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
+  // Use affiliate_url if available, otherwise fallback to website_url
+  const visitUrl = firm.affiliate_url || firm.website_url || '#'
+
   // Generate star rating display
   const renderStars = (rating: number | null) => {
     if (!rating) return null
@@ -102,7 +105,7 @@ export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
           {/* CTA */}
           <div className="flex gap-2">
             <a
-              href={firm.website_url || '#'}
+              href={visitUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-colors"
@@ -201,7 +204,7 @@ export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
       {/* Footer */}
       <div className="p-4 bg-gray-900/50 border-t border-gray-700">
         <a
-          href={firm.website_url || '#'}
+          href={visitUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="block w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-center rounded-lg font-medium transition-colors"
