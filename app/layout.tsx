@@ -3,10 +3,14 @@ import './globals.css'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
+
 export const metadata: Metadata = {
   title: 'PropFirm Scanner - Compare 50+ Prop Trading Firms Instantly',
   description: 'Find your perfect prop trading firm in seconds. Compare pricing, profit splits, rules, and legitimacy scores for 50+ prop firms side-by-side.',
   keywords: 'prop firm, prop trading, funded trader, FTMO, trading challenge, forex prop firm, best prop firm 2024',
+  verification: {
+    google: 'ZWGv_tiw5ar7KmjnbW76tylrvN6oTQ2_ORLx9uTkwuM',
+  },
   openGraph: {
     title: 'PropFirm Scanner - Find Your Perfect Prop Trading Firm',
     description: 'Compare 50+ prop firms instantly. Find the best pricing, profit splits, and rules for your trading style.',
