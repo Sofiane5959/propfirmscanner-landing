@@ -1,238 +1,208 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { User } from '@supabase/supabase-js'
 import { 
-  Heart, 
-  Bell, 
-  Settings, 
-  TrendingUp, 
-  Target,
-  ArrowRight,
-  Star,
-  ExternalLink,
-  Plus
+  Target, LogOut, Search, Bell, Star, TrendingUp, 
+  ArrowRight, Zap, Shield, Copy, BarChart3 
 } from 'lucide-react'
 
-// Temporary mock data - will be replaced with Supabase
-const mockFavorites = [
-  { id: '1', name: 'FTMO', logo: 'F', profit_split: 80, price: 155 },
-  { id: '2', name: 'Funded Next', logo: 'FN', profit_split: 90, price: 32 },
-]
-
-const mockAlerts = [
-  { id: '1', firm: 'FTMO', type: 'promo', message: 'New 20% discount available', date: '2024-01-15' },
-  { id: '2', firm: 'E8 Funding', type: 'price', message: 'Price dropped by $20', date: '2024-01-14' },
-]
-
 export default function DashboardPage() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false) // Will use Supabase auth
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
+  const supabase = createClientComponentClient()
+  const router = useRouter()
 
-  if (!isLoggedIn) {
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        setUser(user)
+      } else {
+        router.push('/auth/login')
+      }
+      setLoading(false)
+    }
+    getUser()
+  }, [supabase, router])
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut()
+    router.push('/')
+    router.refresh()
+  }
+
+  if (loading) {
     return (
-      <div className="pt-16 min-h-screen flex items-center justify-center">
-        <div className="max-w-md w-full mx-4">
-          <div className="glass rounded-2xl p-8 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-500 to-emerald-500 flex items-center justify-center mx-auto mb-6">
-              <Target className="w-8 h-8 text-white" />
-            </div>
-            <h1 className="text-2xl font-bold text-white mb-2">Welcome to Your Dashboard</h1>
-            <p className="text-dark-400 mb-6">
-              Sign in to save your favorite prop firms, set up alerts, and track your journey.
-            </p>
-            <div className="space-y-3">
-              <Link
-                href="/auth/login"
-                className="block w-full px-6 py-3 text-center font-semibold text-dark-900 bg-gradient-to-r from-brand-400 to-emerald-400 rounded-xl hover:opacity-90 transition-opacity"
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/auth/signup"
-                className="block w-full px-6 py-3 text-center font-semibold text-white bg-white/10 hover:bg-white/20 rounded-xl transition-colors"
-              >
-                Create Account
-              </Link>
-            </div>
-            
-            {/* Demo button for testing */}
-            <button
-              onClick={() => setIsLoggedIn(true)}
-              className="mt-6 text-sm text-dark-500 hover:text-dark-300 transition-colors"
-            >
-              View Demo Dashboard →
-            </button>
-          </div>
-        </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-brand-400 border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
 
+  const userName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Trader'
+
   return (
-    <div className="pt-16 min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen pt-20 pb-12 px-4">
+      <div className="max-w-6xl mx-auto">
+        
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+        <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-1">Dashboard</h1>
-            <p className="text-dark-400">Welcome back! Here's your prop firm tracker.</p>
+            <h1 className="text-3xl font-bold text-white mb-2">
+              Welcome back, {userName}! 👋
+            </h1>
+            <p className="text-dark-400">
+              Track your prop firm journey and find the best deals.
+            </p>
           </div>
-          <Link
-            href="/compare"
-            className="mt-4 md:mt-0 inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-brand-400 border border-brand-400/30 rounded-lg hover:bg-brand-400/10 transition-colors"
+          <button
+            onClick={handleSignOut}
+            className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-dark-300 transition-colors"
           >
-            <Plus className="w-4 h-4" />
-            Add Prop Firm
+            <LogOut className="w-4 h-4" />
+            Sign Out
+          </button>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="grid md:grid-cols-3 gap-4 mb-8">
+          <Link 
+            href="/compare"
+            className="p-6 bg-gradient-to-br from-brand-500/20 to-emerald-500/20 border border-brand-500/30 rounded-xl hover:border-brand-400 transition-colors group"
+          >
+            <Search className="w-8 h-8 text-brand-400 mb-3" />
+            <h3 className="text-lg font-semibold text-white mb-1">Compare Firms</h3>
+            <p className="text-dark-400 text-sm">Find the perfect prop firm for your style</p>
+            <div className="flex items-center gap-1 text-brand-400 mt-3 group-hover:gap-2 transition-all">
+              <span className="text-sm">Browse 50+ firms</span>
+              <ArrowRight className="w-4 h-4" />
+            </div>
           </Link>
-        </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          {[
-            { label: 'Favorites', value: mockFavorites.length, icon: Heart, color: 'text-red-400' },
-            { label: 'Active Alerts', value: mockAlerts.length, icon: Bell, color: 'text-yellow-400' },
-            { label: 'Comparisons', value: 12, icon: TrendingUp, color: 'text-brand-400' },
-            { label: 'Saved', value: '$340', icon: Target, color: 'text-emerald-400' },
-          ].map((stat) => (
-            <div key={stat.label} className="glass rounded-xl p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-dark-400 text-sm">{stat.label}</p>
-                  <p className="text-2xl font-bold text-white mt-1">{stat.value}</p>
-                </div>
-                <stat.icon className={`w-8 h-8 ${stat.color} opacity-50`} />
-              </div>
+          <Link 
+            href="/deals"
+            className="p-6 bg-white/5 border border-white/10 rounded-xl hover:border-brand-400 transition-colors group"
+          >
+            <Zap className="w-8 h-8 text-yellow-400 mb-3" />
+            <h3 className="text-lg font-semibold text-white mb-1">Deals & Promos</h3>
+            <p className="text-dark-400 text-sm">Exclusive discounts and promo codes</p>
+            <div className="flex items-center gap-1 text-brand-400 mt-3 group-hover:gap-2 transition-all">
+              <span className="text-sm">View deals</span>
+              <ArrowRight className="w-4 h-4" />
             </div>
-          ))}
-        </div>
+          </Link>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Favorites Section */}
-          <div className="lg:col-span-2">
-            <div className="glass rounded-2xl p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-                  <Heart className="w-5 h-5 text-red-400" />
-                  My Favorites
-                </h2>
-                <Link href="/dashboard/favorites" className="text-sm text-brand-400 hover:underline">
-                  View All
-                </Link>
-              </div>
-
-              {mockFavorites.length > 0 ? (
-                <div className="space-y-4">
-                  {mockFavorites.map((firm) => (
-                    <div key={firm.id} className="flex items-center justify-between p-4 bg-white/5 rounded-xl">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
-                          <span className="font-bold text-white">{firm.logo}</span>
-                        </div>
-                        <div>
-                          <h3 className="font-medium text-white">{firm.name}</h3>
-                          <p className="text-sm text-dark-400">From ${firm.price}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <div className="text-right">
-                          <p className="text-sm text-dark-400">Profit Split</p>
-                          <p className="font-semibold text-brand-400">{firm.profit_split}%</p>
-                        </div>
-                        <a
-                          href="#"
-                          className="p-2 text-dark-400 hover:text-white transition-colors"
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                        </a>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <Heart className="w-12 h-12 text-dark-700 mx-auto mb-3" />
-                  <p className="text-dark-400 mb-4">No favorites yet</p>
-                  <Link
-                    href="/compare"
-                    className="inline-flex items-center gap-2 text-sm text-brand-400 hover:underline"
-                  >
-                    Browse Prop Firms
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Alerts Section */}
-          <div>
-            <div className="glass rounded-2xl p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-                  <Bell className="w-5 h-5 text-yellow-400" />
-                  Recent Alerts
-                </h2>
-                <Link href="/dashboard/alerts" className="text-sm text-brand-400 hover:underline">
-                  Manage
-                </Link>
-              </div>
-
-              {mockAlerts.length > 0 ? (
-                <div className="space-y-3">
-                  {mockAlerts.map((alert) => (
-                    <div key={alert.id} className="p-3 bg-white/5 rounded-lg">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <p className="text-sm font-medium text-white">{alert.firm}</p>
-                          <p className="text-xs text-dark-400 mt-1">{alert.message}</p>
-                        </div>
-                        <span className={`px-2 py-0.5 text-xs rounded ${
-                          alert.type === 'promo' ? 'bg-brand-500/20 text-brand-400' : 'bg-blue-500/20 text-blue-400'
-                        }`}>
-                          {alert.type}
-                        </span>
-                      </div>
-                      <p className="text-xs text-dark-500 mt-2">{alert.date}</p>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <Bell className="w-12 h-12 text-dark-700 mx-auto mb-3" />
-                  <p className="text-dark-400 text-sm">No alerts yet</p>
-                </div>
-              )}
-            </div>
-
-            {/* Quick Actions */}
-            <div className="glass rounded-2xl p-6 mt-6">
-              <h2 className="text-lg font-semibold text-white mb-4">Quick Actions</h2>
-              <div className="space-y-2">
-                <Link
-                  href="/compare"
-                  className="flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors"
-                >
-                  <span className="text-sm text-dark-300">Compare Firms</span>
-                  <ArrowRight className="w-4 h-4 text-dark-500" />
-                </Link>
-                <Link
-                  href="/deals"
-                  className="flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors"
-                >
-                  <span className="text-sm text-dark-300">View Deals</span>
-                  <ArrowRight className="w-4 h-4 text-dark-500" />
-                </Link>
-                <Link
-                  href="/dashboard/settings"
-                  className="flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors"
-                >
-                  <span className="text-sm text-dark-300">Settings</span>
-                  <Settings className="w-4 h-4 text-dark-500" />
-                </Link>
-              </div>
+          <div className="p-6 bg-white/5 border border-white/10 rounded-xl opacity-75">
+            <Star className="w-8 h-8 text-purple-400 mb-3" />
+            <h3 className="text-lg font-semibold text-white mb-1">Saved Firms</h3>
+            <p className="text-dark-400 text-sm">Your favorite prop firms</p>
+            <div className="flex items-center gap-1 text-dark-500 mt-3">
+              <span className="text-sm">Coming soon</span>
             </div>
           </div>
         </div>
+
+        {/* Stats Overview */}
+        <div className="grid md:grid-cols-4 gap-4 mb-12">
+          <div className="p-4 bg-white/5 border border-white/10 rounded-xl text-center">
+            <p className="text-3xl font-bold text-brand-400">50+</p>
+            <p className="text-dark-400 text-sm">Prop Firms</p>
+          </div>
+          <div className="p-4 bg-white/5 border border-white/10 rounded-xl text-center">
+            <p className="text-3xl font-bold text-emerald-400">$32</p>
+            <p className="text-dark-400 text-sm">Lowest Price</p>
+          </div>
+          <div className="p-4 bg-white/5 border border-white/10 rounded-xl text-center">
+            <p className="text-3xl font-bold text-purple-400">100%</p>
+            <p className="text-dark-400 text-sm">Max Profit Split</p>
+          </div>
+          <div className="p-4 bg-white/5 border border-white/10 rounded-xl text-center">
+            <p className="text-3xl font-bold text-yellow-400">15+</p>
+            <p className="text-dark-400 text-sm">Active Deals</p>
+          </div>
+        </div>
+
+        {/* Coming Soon - Trade Copier */}
+        <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700 rounded-2xl p-8 mb-8">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="px-3 py-1 bg-brand-500/20 text-brand-400 text-xs font-semibold rounded-full">
+              🚀 COMING Q1 2025
+            </span>
+          </div>
+          
+          <h2 className="text-2xl font-bold text-white mb-2">
+            Trade Copier & Multi-Account Manager
+          </h2>
+          <p className="text-dark-400 mb-6 max-w-2xl">
+            Centralize all your prop firm accounts. Copy trades automatically. 
+            Manage risk intelligently. <strong className="text-white">Without violating any rules.</strong>
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-4 mb-6">
+            <div className="flex items-start gap-3 p-4 bg-white/5 rounded-lg">
+              <Copy className="w-6 h-6 text-brand-400 flex-shrink-0" />
+              <div>
+                <h4 className="font-medium text-white">Trade Copier</h4>
+                <p className="text-sm text-dark-400">Copy trades across all accounts</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 p-4 bg-white/5 rounded-lg">
+              <BarChart3 className="w-6 h-6 text-blue-400 flex-shrink-0" />
+              <div>
+                <h4 className="font-medium text-white">Unified Dashboard</h4>
+                <p className="text-sm text-dark-400">All stats in one place</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 p-4 bg-white/5 rounded-lg">
+              <Shield className="w-6 h-6 text-purple-400 flex-shrink-0" />
+              <div>
+                <h4 className="font-medium text-white">Smart Hedging</h4>
+                <p className="text-sm text-dark-400">Legal hedging strategies</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <span className="text-dark-400">Get notified when it launches:</span>
+            <div className="flex gap-2">
+              <input
+                type="email"
+                placeholder="Your email"
+                defaultValue={user?.email || ''}
+                className="px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-dark-500 focus:outline-none focus:border-brand-500"
+              />
+              <button className="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white font-medium rounded-lg transition-colors">
+                Notify Me
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Account Info */}
+        <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+          <h3 className="text-lg font-semibold text-white mb-4">Account Info</h3>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <p className="text-dark-500 text-sm">Email</p>
+              <p className="text-white">{user?.email}</p>
+            </div>
+            <div>
+              <p className="text-dark-500 text-sm">Member Since</p>
+              <p className="text-white">
+                {new Date(user?.created_at || '').toLocaleDateString('en-US', {
+                  month: 'long',
+                  day: 'numeric', 
+                  year: 'numeric'
+                })}
+              </p>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   )
