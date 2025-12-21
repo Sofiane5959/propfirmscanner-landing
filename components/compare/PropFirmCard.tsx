@@ -1,8 +1,7 @@
 'use client'
 
-import Image from 'next/image'
 import type { PropFirm } from '@/types'
-import { ExternalLink, MapPin, Shield, TrendingUp } from 'lucide-react'
+import { ExternalLink, MapPin, Shield } from 'lucide-react'
 
 interface PropFirmCardProps {
   firm: PropFirm
@@ -110,13 +109,8 @@ export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
             </div>
           </div>
 
-          {/* Promo Badge + CTA */}
+          {/* CTA */}
           <div className="flex flex-col gap-2 md:w-36">
-            {firm.current_promo_discount && (
-              <span className="px-3 py-1 bg-red-500/20 text-red-400 text-xs font-semibold rounded-full text-center">
-                🔥 {firm.current_promo_discount}% OFF
-              </span>
-            )}
             <a
               href={visitUrl}
               target="_blank"
@@ -135,15 +129,6 @@ export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
   // Grid View
   return (
     <div className="bg-gray-800/50 rounded-xl overflow-hidden border border-gray-700 hover:border-emerald-500/50 transition-all group flex flex-col h-full">
-      {/* Promo Banner */}
-      {firm.current_promo_discount && (
-        <div className="bg-gradient-to-r from-red-600 to-orange-600 px-4 py-2 text-center">
-          <span className="text-white text-sm font-semibold">
-            🔥 {firm.current_promo_discount}% OFF {firm.current_promo_code && `• Code: ${firm.current_promo_code}`}
-          </span>
-        </div>
-      )}
-
       {/* Header */}
       <div className="p-5 border-b border-gray-700">
         <div className="flex items-start justify-between">
@@ -207,7 +192,7 @@ export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
         <div className="mb-4">
           <p className="text-gray-500 text-xs uppercase mb-2">Platforms</p>
           <div className="flex flex-wrap gap-1">
-            {firm.platforms?.length > 0 ? (
+            {firm.platforms && firm.platforms.length > 0 ? (
               firm.platforms.slice(0, 4).map((platform) => (
                 <span key={platform} className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs rounded">
                   {platform}
@@ -216,7 +201,7 @@ export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
             ) : (
               <span className="text-gray-500 text-xs">N/A</span>
             )}
-            {firm.platforms?.length > 4 && (
+            {firm.platforms && firm.platforms.length > 4 && (
               <span className="px-2 py-1 text-gray-500 text-xs">
                 +{firm.platforms.length - 4}
               </span>
@@ -228,7 +213,7 @@ export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
         <div className="mb-4">
           <p className="text-gray-500 text-xs uppercase mb-2">Instruments</p>
           <div className="flex flex-wrap gap-1">
-            {firm.instruments?.length > 0 ? (
+            {firm.instruments && firm.instruments.length > 0 ? (
               firm.instruments.slice(0, 4).map((instrument) => (
                 <span key={instrument} className="px-2 py-1 bg-purple-500/20 text-purple-400 text-xs rounded">
                   {instrument}
@@ -237,7 +222,7 @@ export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
             ) : (
               <span className="text-gray-500 text-xs">N/A</span>
             )}
-            {firm.instruments?.length > 4 && (
+            {firm.instruments && firm.instruments.length > 4 && (
               <span className="px-2 py-1 text-gray-500 text-xs">
                 +{firm.instruments.length - 4}
               </span>
