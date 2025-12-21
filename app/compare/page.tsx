@@ -18,7 +18,7 @@ export default function ComparePage() {
   
   // Filter states - multi-select
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([])
-  const [selectedInstruments, setSelectedInstruments] = useState<string[]>([])
+  const [selectedMarkets, setSelectedMarkets] = useState<string[]>([])
   const [selectedChallengeTypes, setSelectedChallengeTypes] = useState<string[]>([])
   const [maxPrice, setMaxPrice] = useState<number | null>(null)
   const [minProfitSplit, setMinProfitSplit] = useState<number | null>(null)
@@ -27,7 +27,7 @@ export default function ComparePage() {
   // Collapsible filter sections
   const [expandedSections, setExpandedSections] = useState({
     platforms: true,
-    instruments: true,
+    markets: true,
     challengeTypes: true,
     price: true,
     profitSplit: true,
@@ -35,8 +35,8 @@ export default function ComparePage() {
   })
 
   // Available filter options
-  const platformOptions = ['MT4', 'MT5', 'cTrader', 'DXtrade', 'TradingView', 'TradeLocker', 'NinjaTrader']
-  const instrumentOptions = ['Forex', 'Futures', 'Indices', 'Commodities', 'Crypto', 'Stocks', 'Metals', 'Options']
+  const platformOptions = ['MT4', 'MT5', 'cTrader', 'DXtrade', 'TradeLocker', 'Match-Trader', 'NinjaTrader']
+  const marketOptions = ['Forex', 'Indices', 'Metals', 'Crypto', 'Stocks', 'Futures', 'Energy']
   const challengeTypeOptions = ['1-step', '2-step', '3-step', 'instant']
   const priceOptions = [
     { label: 'Under $50', value: 50 },
@@ -89,10 +89,10 @@ export default function ComparePage() {
       )
     }
 
-    // Instrument filter (multi-select)
-    if (selectedInstruments.length > 0) {
+    // Market filter (multi-select) - uses instruments field in database
+    if (selectedMarkets.length > 0) {
       result = result.filter(firm => 
-        firm.instruments?.some(i => selectedInstruments.includes(i))
+        firm.instruments?.some(i => selectedMarkets.includes(i))
       )
     }
 
@@ -131,7 +131,7 @@ export default function ComparePage() {
     }
 
     setFilteredFirms(result)
-  }, [firms, searchQuery, selectedPlatforms, selectedInstruments, selectedChallengeTypes, maxPrice, minProfitSplit, tradingStyles])
+  }, [firms, searchQuery, selectedPlatforms, selectedMarkets, selectedChallengeTypes, maxPrice, minProfitSplit, tradingStyles])
 
   // Sort firms
   const sortedFirms = [...filteredFirms].sort((a, b) => {
@@ -164,7 +164,7 @@ export default function ComparePage() {
   const clearAllFilters = () => {
     setSearchQuery('')
     setSelectedPlatforms([])
-    setSelectedInstruments([])
+    setSelectedMarkets([])
     setSelectedChallengeTypes([])
     setMaxPrice(null)
     setMinProfitSplit(null)
@@ -174,7 +174,7 @@ export default function ComparePage() {
   // Count active filters
   const activeFilterCount = 
     selectedPlatforms.length + 
-    selectedInstruments.length + 
+    selectedMarkets.length + 
     selectedChallengeTypes.length + 
     (maxPrice ? 1 : 0) + 
     (minProfitSplit ? 1 : 0) + 
@@ -300,14 +300,14 @@ export default function ComparePage() {
                   ))}
                 </FilterSection>
 
-                {/* Instruments */}
-                <FilterSection title="📈 Instruments" sectionKey="instruments">
-                  {instrumentOptions.map(instrument => (
+                {/* Markets (formerly Instruments) */}
+                <FilterSection title="📈 Markets" sectionKey="markets">
+                  {marketOptions.map(market => (
                     <Checkbox
-                      key={instrument}
-                      checked={selectedInstruments.includes(instrument)}
-                      onChange={() => toggleArrayFilter(selectedInstruments, setSelectedInstruments, instrument)}
-                      label={instrument}
+                      key={market}
+                      checked={selectedMarkets.includes(market)}
+                      onChange={() => toggleArrayFilter(selectedMarkets, setSelectedMarkets, market)}
+                      label={market}
                     />
                   ))}
                 </FilterSection>
@@ -413,7 +413,8 @@ export default function ComparePage() {
                       <X className="w-6 h-6 text-gray-400" />
                     </button>
                   </div>
-                  {/* Same filter content as desktop */}
+                  
+                  {/* Mobile Platforms */}
                   <FilterSection title="💻 Platforms" sectionKey="platforms">
                     {platformOptions.map(platform => (
                       <Checkbox
@@ -424,7 +425,43 @@ export default function ComparePage() {
                       />
                     ))}
                   </FilterSection>
-                  {/* Add other sections similarly... */}
+
+                  {/* Mobile Markets */}
+                  <FilterSection title="📈 Markets" sectionKey="markets">
+                    {marketOptions.map(market => (
+                      <Checkbox
+                        key={market}
+                        checked={selectedMarkets.includes(market)}
+                        onChange={() => toggleArrayFilter(selectedMarkets, setSelectedMarkets, market)}
+                        label={market}
+                      />
+                    ))}
+                  </FilterSection>
+
+                  {/* Mobile Challenge Types */}
+                  <FilterSection title="🎯 Challenge Type" sectionKey="challengeTypes">
+                    {challengeTypeOptions.map(type => (
+                      <Checkbox
+                        key={type}
+                        checked={selectedChallengeTypes.includes(type)}
+                        onChange={() => toggleArrayFilter(selectedChallengeTypes, setSelectedChallengeTypes, type)}
+                        label={type === 'instant' ? 'Instant Funding' : `${type} Challenge`}
+                      />
+                    ))}
+                  </FilterSection>
+
+                  {/* Mobile Trading Style */}
+                  <FilterSection title="🔧 Trading Style" sectionKey="tradingStyle">
+                    {tradingStyleOptions.map(style => (
+                      <Checkbox
+                        key={style.id}
+                        checked={tradingStyles.includes(style.id)}
+                        onChange={() => toggleArrayFilter(tradingStyles, setTradingStyles, style.id)}
+                        label={style.label}
+                      />
+                    ))}
+                  </FilterSection>
+
                   <button
                     onClick={() => setShowMobileFilters(false)}
                     className="w-full mt-4 py-3 bg-emerald-600 text-white rounded-xl font-medium"
@@ -490,10 +527,10 @@ export default function ComparePage() {
                       </button>
                     </span>
                   ))}
-                  {selectedInstruments.map(i => (
-                    <span key={i} className="px-3 py-1 bg-blue-500/20 text-blue-400 text-sm rounded-full flex items-center gap-1">
-                      {i}
-                      <button onClick={() => toggleArrayFilter(selectedInstruments, setSelectedInstruments, i)}>
+                  {selectedMarkets.map(m => (
+                    <span key={m} className="px-3 py-1 bg-blue-500/20 text-blue-400 text-sm rounded-full flex items-center gap-1">
+                      {m}
+                      <button onClick={() => toggleArrayFilter(selectedMarkets, setSelectedMarkets, m)}>
                         <X className="w-3 h-3" />
                       </button>
                     </span>
