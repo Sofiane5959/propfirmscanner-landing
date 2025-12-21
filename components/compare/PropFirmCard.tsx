@@ -1,8 +1,8 @@
 'use client'
 
-import Link from 'next/link'
 import Image from 'next/image'
 import type { PropFirm } from '@/types'
+import { ExternalLink, MapPin, Shield, TrendingUp } from 'lucide-react'
 
 interface PropFirmCardProps {
   firm: PropFirm
@@ -32,7 +32,7 @@ export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
           </svg>
         ))}
         <span className="text-sm text-gray-400 ml-1">
-          {rating.toFixed(1)} ({firm.trustpilot_reviews?.toLocaleString() || 0})
+          {rating.toFixed(1)}
         </span>
       </div>
     )
@@ -42,20 +42,19 @@ export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
   const renderLogo = (size: 'sm' | 'lg' = 'lg') => {
     const sizeClasses = size === 'lg' 
       ? 'w-14 h-14 text-xl' 
-      : 'w-16 h-16 text-2xl'
+      : 'w-12 h-12 text-lg'
     
     if (firm.logo_url) {
       return (
-        <div className={`${sizeClasses} bg-white rounded-xl flex items-center justify-center overflow-hidden`}>
+        <div className={`${sizeClasses} bg-white rounded-xl flex items-center justify-center overflow-hidden p-2`}>
           <img 
             src={firm.logo_url} 
             alt={`${firm.name} logo`}
-            className="w-10 h-10 object-contain"
+            className="w-full h-full object-contain"
             onError={(e) => {
-              // Fallback to letter if image fails to load
               const target = e.target as HTMLImageElement
               target.style.display = 'none'
-              target.parentElement!.innerHTML = `<span class="font-bold text-emerald-400">${firm.name.charAt(0)}</span>`
+              target.parentElement!.innerHTML = `<span class="font-bold text-emerald-600">${firm.name.charAt(0)}</span>`
             }}
           />
         </div>
@@ -63,27 +62,30 @@ export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
     }
     
     return (
-      <div className={`${sizeClasses} bg-gray-700 rounded-xl flex items-center justify-center font-bold text-emerald-400`}>
+      <div className={`${sizeClasses} bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-xl flex items-center justify-center font-bold text-white`}>
         {firm.name.charAt(0)}
       </div>
     )
   }
 
+  // List View
   if (viewMode === 'list') {
     return (
-      <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700 hover:border-emerald-500/50 transition-all">
-        <div className="flex flex-col md:flex-row md:items-center gap-6">
+      <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700 hover:border-emerald-500/50 transition-all">
+        <div className="flex flex-col md:flex-row md:items-center gap-4">
           {/* Logo & Name */}
-          <div className="flex items-center gap-4 md:w-64">
+          <div className="flex items-center gap-4 md:w-56">
             {renderLogo('sm')}
             <div>
               <h3 className="text-lg font-semibold text-white">{firm.name}</h3>
-              {renderStars(firm.trustpilot_rating)}
+              <div className="flex items-center gap-2 mt-1">
+                {renderStars(firm.trustpilot_rating)}
+              </div>
             </div>
           </div>
 
           {/* Key Stats */}
-          <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="flex-1 grid grid-cols-2 md:grid-cols-5 gap-4">
             <div>
               <p className="text-gray-500 text-xs uppercase">From</p>
               <p className="text-white font-semibold">${firm.min_price || 'N/A'}</p>
@@ -93,24 +95,36 @@ export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
               <p className="text-emerald-400 font-semibold">{firm.profit_split || 'N/A'}%</p>
             </div>
             <div>
-              <p className="text-gray-500 text-xs uppercase">Max Drawdown</p>
+              <p className="text-gray-500 text-xs uppercase">Drawdown</p>
               <p className="text-white font-semibold">{firm.max_total_drawdown || 'N/A'}%</p>
             </div>
             <div>
-              <p className="text-gray-500 text-xs uppercase">Founded</p>
-              <p className="text-white font-semibold">{firm.founded_year || 'N/A'}</p>
+              <p className="text-gray-500 text-xs uppercase">Platforms</p>
+              <p className="text-white font-semibold text-sm">
+                {firm.platforms?.slice(0, 2).join(', ') || 'N/A'}
+              </p>
+            </div>
+            <div>
+              <p className="text-gray-500 text-xs uppercase">Location</p>
+              <p className="text-white font-semibold text-sm">{firm.headquarters || 'N/A'}</p>
             </div>
           </div>
 
-          {/* CTA */}
-          <div className="flex gap-2">
+          {/* Promo Badge + CTA */}
+          <div className="flex flex-col gap-2 md:w-36">
+            {firm.current_promo_discount && (
+              <span className="px-3 py-1 bg-red-500/20 text-red-400 text-xs font-semibold rounded-full text-center">
+                🔥 {firm.current_promo_discount}% OFF
+              </span>
+            )}
             <a
               href={visitUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-colors"
+              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-colors text-center text-sm flex items-center justify-center gap-1"
             >
               Visit Site
+              <ExternalLink className="w-3 h-3" />
             </a>
           </div>
         </div>
@@ -120,25 +134,47 @@ export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
 
   // Grid View
   return (
-    <div className="bg-gray-800/50 rounded-xl overflow-hidden border border-gray-700 hover:border-emerald-500/50 transition-all group">
+    <div className="bg-gray-800/50 rounded-xl overflow-hidden border border-gray-700 hover:border-emerald-500/50 transition-all group flex flex-col h-full">
+      {/* Promo Banner */}
+      {firm.current_promo_discount && (
+        <div className="bg-gradient-to-r from-red-600 to-orange-600 px-4 py-2 text-center">
+          <span className="text-white text-sm font-semibold">
+            🔥 {firm.current_promo_discount}% OFF {firm.current_promo_code && `• Code: ${firm.current_promo_code}`}
+          </span>
+        </div>
+      )}
+
       {/* Header */}
-      <div className="p-6 border-b border-gray-700">
-        <div className="flex items-center gap-4">
-          {renderLogo('lg')}
-          <div>
-            <h3 className="text-lg font-semibold text-white">{firm.name}</h3>
-            {renderStars(firm.trustpilot_rating)}
+      <div className="p-5 border-b border-gray-700">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-3">
+            {renderLogo('lg')}
+            <div>
+              <h3 className="text-lg font-semibold text-white">{firm.name}</h3>
+              {renderStars(firm.trustpilot_rating)}
+            </div>
           </div>
         </div>
         
-        {/* Tags */}
-        <div className="flex flex-wrap gap-2 mt-4">
-          {firm.is_featured && (
-            <span className="px-2 py-1 bg-emerald-500/20 text-emerald-400 text-xs rounded-full">
-              ⭐ Featured
+        {/* Location & Regulation */}
+        <div className="flex items-center gap-4 mt-3 text-xs text-gray-400">
+          {firm.headquarters && (
+            <span className="flex items-center gap-1">
+              <MapPin className="w-3 h-3" />
+              {firm.headquarters}
             </span>
           )}
-          {firm.challenge_types?.slice(0, 2).map((type) => (
+          {firm.is_regulated && (
+            <span className="flex items-center gap-1 text-emerald-400">
+              <Shield className="w-3 h-3" />
+              Regulated
+            </span>
+          )}
+        </div>
+
+        {/* Tags */}
+        <div className="flex flex-wrap gap-2 mt-3">
+          {firm.challenge_types?.slice(0, 3).map((type) => (
             <span key={type} className="px-2 py-1 bg-gray-700 text-gray-300 text-xs rounded-full">
               {type}
             </span>
@@ -147,8 +183,8 @@ export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
       </div>
 
       {/* Stats */}
-      <div className="p-6 space-y-4">
-        <div className="grid grid-cols-2 gap-4">
+      <div className="p-5 flex-1">
+        <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
             <p className="text-gray-500 text-xs uppercase">Starting From</p>
             <p className="text-white font-semibold text-lg">${firm.min_price || 'N/A'}</p>
@@ -168,24 +204,49 @@ export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
         </div>
 
         {/* Platforms */}
-        <div>
+        <div className="mb-4">
           <p className="text-gray-500 text-xs uppercase mb-2">Platforms</p>
           <div className="flex flex-wrap gap-1">
-            {firm.platforms?.slice(0, 3).map((platform) => (
-              <span key={platform} className="px-2 py-1 bg-gray-700/50 text-gray-400 text-xs rounded">
-                {platform}
-              </span>
-            ))}
-            {firm.platforms?.length > 3 && (
+            {firm.platforms?.length > 0 ? (
+              firm.platforms.slice(0, 4).map((platform) => (
+                <span key={platform} className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs rounded">
+                  {platform}
+                </span>
+              ))
+            ) : (
+              <span className="text-gray-500 text-xs">N/A</span>
+            )}
+            {firm.platforms?.length > 4 && (
               <span className="px-2 py-1 text-gray-500 text-xs">
-                +{firm.platforms.length - 3} more
+                +{firm.platforms.length - 4}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Instruments */}
+        <div className="mb-4">
+          <p className="text-gray-500 text-xs uppercase mb-2">Instruments</p>
+          <div className="flex flex-wrap gap-1">
+            {firm.instruments?.length > 0 ? (
+              firm.instruments.slice(0, 4).map((instrument) => (
+                <span key={instrument} className="px-2 py-1 bg-purple-500/20 text-purple-400 text-xs rounded">
+                  {instrument}
+                </span>
+              ))
+            ) : (
+              <span className="text-gray-500 text-xs">N/A</span>
+            )}
+            {firm.instruments?.length > 4 && (
+              <span className="px-2 py-1 text-gray-500 text-xs">
+                +{firm.instruments.length - 4}
               </span>
             )}
           </div>
         </div>
 
         {/* Trading Permissions */}
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-x-3 gap-y-1">
           {firm.allows_scalping && (
             <span className="text-xs text-green-400">✓ Scalping</span>
           )}
@@ -198,18 +259,22 @@ export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
           {firm.allows_weekend_holding && (
             <span className="text-xs text-green-400">✓ Weekend</span>
           )}
+          {firm.allows_hedging && (
+            <span className="text-xs text-green-400">✓ Hedging</span>
+          )}
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="p-4 bg-gray-900/50 border-t border-gray-700">
+      {/* Footer - Fixed at bottom */}
+      <div className="p-4 bg-gray-900/50 border-t border-gray-700 mt-auto">
         <a
           href={visitUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="block w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-center rounded-lg font-medium transition-colors"
+          className="flex items-center justify-center gap-2 w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-colors"
         >
-          Visit {firm.name} →
+          Visit {firm.name}
+          <ExternalLink className="w-4 h-4" />
         </a>
       </div>
     </div>
