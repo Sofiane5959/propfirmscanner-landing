@@ -57,21 +57,18 @@ export default function PromoPopup() {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    // Check if user dismissed recently (within 24h)
     const lastDismissed = localStorage.getItem('promo_popup_dismissed_at');
     if (lastDismissed) {
       const hoursAgo = (Date.now() - parseInt(lastDismissed)) / (1000 * 60 * 60);
       if (hoursAgo < 24) return;
     }
 
-    // Show promo after 15 seconds (for testing - change to 90000-180000 for production)
-    const delay = 15000;
-    
+    // Affiche après 15 secondes
     const timeout = setTimeout(() => {
       const randomPromo = PROMOS[Math.floor(Math.random() * PROMOS.length)];
       setPromo(randomPromo);
       setIsVisible(true);
-    }, delay);
+    }, 15000);
 
     return () => clearTimeout(timeout);
   }, []);
@@ -97,7 +94,6 @@ export default function PromoPopup() {
   return (
     <div className="fixed bottom-4 right-4 z-[9999]">
       <div className="relative w-80 bg-gray-900 border border-gray-700 rounded-2xl overflow-hidden shadow-2xl">
-        {/* Gradient header */}
         <div className={`bg-gradient-to-r ${promo.color} p-4`}>
           <button
             onClick={handleClose}
@@ -117,7 +113,6 @@ export default function PromoPopup() {
           </div>
         </div>
 
-        {/* Content */}
         <div className="p-4">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-12 h-12 rounded-lg bg-gray-800 border border-gray-700 flex items-center justify-center text-lg font-bold text-emerald-400">
@@ -129,7 +124,6 @@ export default function PromoPopup() {
             </div>
           </div>
 
-          {/* Promo code */}
           <div className="flex items-center gap-2 mb-4">
             <div className="flex-1 px-4 py-2.5 bg-gray-800 border border-dashed border-gray-600 rounded-lg">
               <code className="text-emerald-400 font-mono font-semibold tracking-wider">
@@ -148,7 +142,6 @@ export default function PromoPopup() {
             </button>
           </div>
 
-          {/* CTA */}
           <button
             onClick={handleVisit}
             className={`w-full py-3 bg-gradient-to-r ${promo.color} text-white font-semibold 

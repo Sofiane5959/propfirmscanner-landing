@@ -123,11 +123,41 @@ export default function ComparePage() {
     }
   }
 
+  // Dropdown component
+  const FilterDropdown = ({
+    id,
+    label,
+    count,
+    children
+  }: {
+    id: string
+    label: string
+    count?: number
+    children: React.ReactNode
+  }) => (
+    <div className="relative flex-shrink-0">
+      <button
+        onClick={() => setOpenDropdown(openDropdown === id ? null : id)}
+        className={`px-4 py-2.5 rounded-xl border flex items-center gap-2 whitespace-nowrap transition-all
+          ${count && count > 0 ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' : 'bg-gray-700/50 border-gray-600 text-white hover:bg-gray-700'}`}
+      >
+        {label}
+        {count !== undefined && count > 0 && <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded">{count}</span>}
+        <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === id ? 'rotate-180' : ''}`} />
+      </button>
+      {openDropdown === id && (
+        <div className="absolute top-full left-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl p-2 z-[100] max-h-64 overflow-y-auto">
+          {children}
+        </div>
+      )}
+    </div>
+  )
+
   return (
     <div className="min-h-screen bg-gray-900">
-      {/* Global overlay to close dropdowns */}
+      {/* Overlay to close dropdowns */}
       {openDropdown && (
-        <div className="fixed inset-0 z-[9998]" onClick={() => setOpenDropdown(null)} />
+        <div className="fixed inset-0 z-[99]" onClick={() => setOpenDropdown(null)} />
       )}
 
       <main className="pt-20 pb-16">
@@ -155,7 +185,7 @@ export default function ComparePage() {
           </div>
 
           {/* Filters */}
-          <div className="relative mb-6 bg-gray-800/50 border border-gray-700 rounded-2xl p-4 overflow-visible">
+          <div className="relative mb-6 bg-gray-800/50 border border-gray-700 rounded-2xl p-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <SlidersHorizontal className="w-5 h-5 text-emerald-400" />
@@ -173,7 +203,7 @@ export default function ComparePage() {
               )}
             </div>
 
-            <div className="relative overflow-visible">
+            <div className="relative">
               <button
                 onClick={() => scrollFilters('left')}
                 className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 bg-gray-800 rounded-full border border-gray-700 text-gray-400 hover:text-white"
@@ -181,167 +211,91 @@ export default function ComparePage() {
                 <ChevronLeft className="w-4 h-4" />
               </button>
 
-              <div ref={scrollRef} className="flex gap-3 overflow-x-auto px-10 py-2 overflow-visible" style={{ scrollbarWidth: 'none' }}>
+              <div ref={scrollRef} className="flex gap-3 overflow-x-auto px-10 py-2" style={{ scrollbarWidth: 'none' }}>
                 
                 {/* Challenge Type */}
-                <div className="relative flex-shrink-0">
-                  <button
-                    onClick={() => setOpenDropdown(openDropdown === 'challenge' ? null : 'challenge')}
-                    className={`px-4 py-2.5 rounded-xl border flex items-center gap-2 whitespace-nowrap transition-all
-                      ${selectedChallengeTypes.length > 0 ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' : 'bg-gray-700/50 border-gray-600 text-white hover:bg-gray-700'}`}
-                  >
-                    Challenge Type
-                    {selectedChallengeTypes.length > 0 && <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded">{selectedChallengeTypes.length}</span>}
-                    <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'challenge' ? 'rotate-180' : ''}`} />
-                  </button>
-                  {openDropdown === 'challenge' && (
-                    <div className="fixed mt-2 w-48 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl p-2 z-[9999]" style={{ top: 'auto', left: 'auto' }}>
-                      {challengeTypeOptions.map((opt) => (
-                        <button
-                          key={opt}
-                          onClick={() => toggleArrayFilter(selectedChallengeTypes, setSelectedChallengeTypes, opt)}
-                          className={`w-full px-3 py-2 rounded-lg text-left text-sm flex items-center justify-between ${selectedChallengeTypes.includes(opt) ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:bg-gray-700'}`}
-                        >
-                          {opt === 'instant' ? 'Instant Funding' : opt}
-                          {selectedChallengeTypes.includes(opt) && <span className="w-2 h-2 rounded-full bg-emerald-500" />}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <FilterDropdown id="challenge" label="Challenge Type" count={selectedChallengeTypes.length}>
+                  {challengeTypeOptions.map((opt) => (
+                    <button
+                      key={opt}
+                      onClick={() => toggleArrayFilter(selectedChallengeTypes, setSelectedChallengeTypes, opt)}
+                      className={`w-full px-3 py-2 rounded-lg text-left text-sm flex items-center justify-between ${selectedChallengeTypes.includes(opt) ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:bg-gray-700'}`}
+                    >
+                      {opt === 'instant' ? 'Instant Funding' : opt}
+                      {selectedChallengeTypes.includes(opt) && <span className="w-2 h-2 rounded-full bg-emerald-500" />}
+                    </button>
+                  ))}
+                </FilterDropdown>
 
                 {/* Platform */}
-                <div className="relative flex-shrink-0">
-                  <button
-                    onClick={() => setOpenDropdown(openDropdown === 'platform' ? null : 'platform')}
-                    className={`px-4 py-2.5 rounded-xl border flex items-center gap-2 whitespace-nowrap transition-all
-                      ${selectedPlatforms.length > 0 ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' : 'bg-gray-700/50 border-gray-600 text-white hover:bg-gray-700'}`}
-                  >
-                    Platform
-                    {selectedPlatforms.length > 0 && <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded">{selectedPlatforms.length}</span>}
-                    <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'platform' ? 'rotate-180' : ''}`} />
-                  </button>
-                  {openDropdown === 'platform' && (
-                    <div className="fixed mt-2 w-48 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl p-2 z-[9999] max-h-64 overflow-y-auto" style={{ top: 'auto', left: 'auto' }}>
-                      {platformOptions.map((opt) => (
-                        <button
-                          key={opt}
-                          onClick={() => toggleArrayFilter(selectedPlatforms, setSelectedPlatforms, opt)}
-                          className={`w-full px-3 py-2 rounded-lg text-left text-sm flex items-center justify-between ${selectedPlatforms.includes(opt) ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:bg-gray-700'}`}
-                        >
-                          {opt}
-                          {selectedPlatforms.includes(opt) && <span className="w-2 h-2 rounded-full bg-emerald-500" />}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <FilterDropdown id="platform" label="Platform" count={selectedPlatforms.length}>
+                  {platformOptions.map((opt) => (
+                    <button
+                      key={opt}
+                      onClick={() => toggleArrayFilter(selectedPlatforms, setSelectedPlatforms, opt)}
+                      className={`w-full px-3 py-2 rounded-lg text-left text-sm flex items-center justify-between ${selectedPlatforms.includes(opt) ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:bg-gray-700'}`}
+                    >
+                      {opt}
+                      {selectedPlatforms.includes(opt) && <span className="w-2 h-2 rounded-full bg-emerald-500" />}
+                    </button>
+                  ))}
+                </FilterDropdown>
 
                 {/* Markets */}
-                <div className="relative flex-shrink-0">
-                  <button
-                    onClick={() => setOpenDropdown(openDropdown === 'market' ? null : 'market')}
-                    className={`px-4 py-2.5 rounded-xl border flex items-center gap-2 whitespace-nowrap transition-all
-                      ${selectedMarkets.length > 0 ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' : 'bg-gray-700/50 border-gray-600 text-white hover:bg-gray-700'}`}
-                  >
-                    Markets
-                    {selectedMarkets.length > 0 && <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded">{selectedMarkets.length}</span>}
-                    <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'market' ? 'rotate-180' : ''}`} />
-                  </button>
-                  {openDropdown === 'market' && (
-                    <div className="fixed mt-2 w-48 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl p-2 z-[9999]" style={{ top: 'auto', left: 'auto' }}>
-                      {marketOptions.map((opt) => (
-                        <button
-                          key={opt}
-                          onClick={() => toggleArrayFilter(selectedMarkets, setSelectedMarkets, opt)}
-                          className={`w-full px-3 py-2 rounded-lg text-left text-sm flex items-center justify-between ${selectedMarkets.includes(opt) ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:bg-gray-700'}`}
-                        >
-                          {opt}
-                          {selectedMarkets.includes(opt) && <span className="w-2 h-2 rounded-full bg-emerald-500" />}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <FilterDropdown id="market" label="Markets" count={selectedMarkets.length}>
+                  {marketOptions.map((opt) => (
+                    <button
+                      key={opt}
+                      onClick={() => toggleArrayFilter(selectedMarkets, setSelectedMarkets, opt)}
+                      className={`w-full px-3 py-2 rounded-lg text-left text-sm flex items-center justify-between ${selectedMarkets.includes(opt) ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:bg-gray-700'}`}
+                    >
+                      {opt}
+                      {selectedMarkets.includes(opt) && <span className="w-2 h-2 rounded-full bg-emerald-500" />}
+                    </button>
+                  ))}
+                </FilterDropdown>
 
                 {/* Price */}
-                <div className="relative flex-shrink-0">
-                  <button
-                    onClick={() => setOpenDropdown(openDropdown === 'price' ? null : 'price')}
-                    className={`px-4 py-2.5 rounded-xl border flex items-center gap-2 whitespace-nowrap transition-all
-                      ${maxPrice ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' : 'bg-gray-700/50 border-gray-600 text-white hover:bg-gray-700'}`}
-                  >
-                    {maxPrice ? `Under $${maxPrice}` : 'Price'}
-                    <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'price' ? 'rotate-180' : ''}`} />
-                  </button>
-                  {openDropdown === 'price' && (
-                    <div className="fixed mt-2 w-40 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl p-2 z-[9999]" style={{ top: 'auto', left: 'auto' }}>
-                      {priceOptions.map((opt) => (
-                        <button
-                          key={opt.value}
-                          onClick={() => { setMaxPrice(maxPrice === opt.value ? null : opt.value); setOpenDropdown(null); }}
-                          className={`w-full px-3 py-2 rounded-lg text-left text-sm flex items-center justify-between ${maxPrice === opt.value ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:bg-gray-700'}`}
-                        >
-                          {opt.label}
-                          {maxPrice === opt.value && <span className="w-2 h-2 rounded-full bg-emerald-500" />}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <FilterDropdown id="price" label={maxPrice ? `Under $${maxPrice}` : 'Price'} count={maxPrice ? 1 : 0}>
+                  {priceOptions.map((opt) => (
+                    <button
+                      key={opt.value}
+                      onClick={() => { setMaxPrice(maxPrice === opt.value ? null : opt.value); setOpenDropdown(null); }}
+                      className={`w-full px-3 py-2 rounded-lg text-left text-sm flex items-center justify-between ${maxPrice === opt.value ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:bg-gray-700'}`}
+                    >
+                      {opt.label}
+                      {maxPrice === opt.value && <span className="w-2 h-2 rounded-full bg-emerald-500" />}
+                    </button>
+                  ))}
+                </FilterDropdown>
 
                 {/* Profit Split */}
-                <div className="relative flex-shrink-0">
-                  <button
-                    onClick={() => setOpenDropdown(openDropdown === 'profit' ? null : 'profit')}
-                    className={`px-4 py-2.5 rounded-xl border flex items-center gap-2 whitespace-nowrap transition-all
-                      ${minProfitSplit ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' : 'bg-gray-700/50 border-gray-600 text-white hover:bg-gray-700'}`}
-                  >
-                    {minProfitSplit ? `${minProfitSplit}%+` : 'Profit Split'}
-                    <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'profit' ? 'rotate-180' : ''}`} />
-                  </button>
-                  {openDropdown === 'profit' && (
-                    <div className="fixed mt-2 w-40 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl p-2 z-[9999]" style={{ top: 'auto', left: 'auto' }}>
-                      {profitSplitOptions.map((opt) => (
-                        <button
-                          key={opt.value}
-                          onClick={() => { setMinProfitSplit(minProfitSplit === opt.value ? null : opt.value); setOpenDropdown(null); }}
-                          className={`w-full px-3 py-2 rounded-lg text-left text-sm flex items-center justify-between ${minProfitSplit === opt.value ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:bg-gray-700'}`}
-                        >
-                          {opt.label}
-                          {minProfitSplit === opt.value && <span className="w-2 h-2 rounded-full bg-emerald-500" />}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <FilterDropdown id="profit" label={minProfitSplit ? `${minProfitSplit}%+` : 'Profit Split'} count={minProfitSplit ? 1 : 0}>
+                  {profitSplitOptions.map((opt) => (
+                    <button
+                      key={opt.value}
+                      onClick={() => { setMinProfitSplit(minProfitSplit === opt.value ? null : opt.value); setOpenDropdown(null); }}
+                      className={`w-full px-3 py-2 rounded-lg text-left text-sm flex items-center justify-between ${minProfitSplit === opt.value ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:bg-gray-700'}`}
+                    >
+                      {opt.label}
+                      {minProfitSplit === opt.value && <span className="w-2 h-2 rounded-full bg-emerald-500" />}
+                    </button>
+                  ))}
+                </FilterDropdown>
 
                 {/* Trading Style */}
-                <div className="relative flex-shrink-0">
-                  <button
-                    onClick={() => setOpenDropdown(openDropdown === 'style' ? null : 'style')}
-                    className={`px-4 py-2.5 rounded-xl border flex items-center gap-2 whitespace-nowrap transition-all
-                      ${tradingStyles.length > 0 ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' : 'bg-gray-700/50 border-gray-600 text-white hover:bg-gray-700'}`}
-                  >
-                    Trading Style
-                    {tradingStyles.length > 0 && <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded">{tradingStyles.length}</span>}
-                    <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'style' ? 'rotate-180' : ''}`} />
-                  </button>
-                  {openDropdown === 'style' && (
-                    <div className="fixed mt-2 w-48 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl p-2 z-[9999]" style={{ top: 'auto', left: 'auto' }}>
-                      {tradingStyleOptions.map((opt) => (
-                        <button
-                          key={opt.id}
-                          onClick={() => toggleArrayFilter(tradingStyles, setTradingStyles, opt.id)}
-                          className={`w-full px-3 py-2 rounded-lg text-left text-sm flex items-center justify-between ${tradingStyles.includes(opt.id) ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:bg-gray-700'}`}
-                        >
-                          {opt.label}
-                          {tradingStyles.includes(opt.id) && <span className="w-2 h-2 rounded-full bg-emerald-500" />}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <FilterDropdown id="style" label="Trading Style" count={tradingStyles.length}>
+                  {tradingStyleOptions.map((opt) => (
+                    <button
+                      key={opt.id}
+                      onClick={() => toggleArrayFilter(tradingStyles, setTradingStyles, opt.id)}
+                      className={`w-full px-3 py-2 rounded-lg text-left text-sm flex items-center justify-between ${tradingStyles.includes(opt.id) ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:bg-gray-700'}`}
+                    >
+                      {opt.label}
+                      {tradingStyles.includes(opt.id) && <span className="w-2 h-2 rounded-full bg-emerald-500" />}
+                    </button>
+                  ))}
+                </FilterDropdown>
 
               </div>
 

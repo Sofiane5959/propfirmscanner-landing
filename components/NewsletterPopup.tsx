@@ -10,7 +10,6 @@ export default function NewsletterPopup() {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    // Check if user already dismissed or subscribed
     const dismissed = localStorage.getItem('newsletter_popup_dismissed');
     const subscribed = localStorage.getItem('newsletter_subscribed');
     
@@ -18,7 +17,7 @@ export default function NewsletterPopup() {
       return;
     }
 
-    // Show popup after 10 seconds (for testing - change to 60000 for production)
+    // Affiche après 10 secondes
     const timeout = setTimeout(() => {
       setIsVisible(true);
     }, 10000);
@@ -75,7 +74,6 @@ export default function NewsletterPopup() {
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="relative w-full max-w-md bg-gray-900 border border-gray-700 rounded-2xl p-8 shadow-2xl">
-        {/* Close button */}
         <button
           onClick={handleClose}
           className="absolute top-4 right-4 p-2 text-gray-500 hover:text-white transition-colors"
@@ -83,7 +81,6 @@ export default function NewsletterPopup() {
           <X className="w-5 h-5" />
         </button>
 
-        {/* Icon */}
         <div className="flex justify-center mb-6">
           <div className="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center">
             <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -93,7 +90,6 @@ export default function NewsletterPopup() {
           </div>
         </div>
 
-        {/* Content */}
         <h3 className="text-2xl font-bold text-white text-center mb-2">
           Don&apos;t Miss Out! 🔥
         </h3>
@@ -101,7 +97,6 @@ export default function NewsletterPopup() {
           Get exclusive discount codes, new prop firm alerts, and weekly market insights. Join 5,000+ traders!
         </p>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="email"
