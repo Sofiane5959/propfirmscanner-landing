@@ -21,27 +21,41 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${baseUrl}/deals`,
       lastModified: new Date(),
       changeFrequency: 'daily' as const,
-      priority: 0.8,
+      priority: 0.9,
     },
     {
-      url: `${baseUrl}/dashboard`,
+      url: `${baseUrl}/guide`,
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/auth/login`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/auth/signup`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
-      priority: 0.5,
+      priority: 0.8,
     },
   ]
 
-  return staticPages
+  // Pages des prop firms (à générer dynamiquement depuis Supabase)
+  const propFirmSlugs = [
+    'ftmo',
+    'fundednext',
+    'goat-funded-trader',
+    'the5ers',
+    'fxify',
+    'e8-funding',
+    'apex-trader-funding',
+    'topstep',
+    'my-forex-funds',
+    'true-forex-funds',
+    'funded-trading-plus',
+    'alpha-capital',
+    'blue-guardian',
+    'city-traders-imperium',
+    'lux-trading-firm',
+  ]
+
+  const propFirmPages = propFirmSlugs.map((slug) => ({
+    url: `${baseUrl}/prop-firm/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.8,
+  }))
+
+  return [...staticPages, ...propFirmPages]
 }

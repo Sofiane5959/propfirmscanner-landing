@@ -4,38 +4,13 @@ import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 import PopupsWrapper from '@/components/PopupsWrapper'
+import { homeMetadata, homeJsonLd, organizationJsonLd, faqJsonLd } from '@/lib/seo'
 
 export const metadata: Metadata = {
-  title: 'PropFirm Scanner - Compare 50+ Prop Trading Firms Instantly',
-  description: 'Find your perfect prop trading firm in seconds. Compare pricing, profit splits, rules, and legitimacy scores for 50+ prop firms side-by-side.',
-  keywords: 'prop firm, prop trading, funded trader, FTMO, trading challenge, forex prop firm, best prop firm 2024',
+  ...homeMetadata,
+  metadataBase: new URL('https://www.propfirmscanner.org'),
   verification: {
     google: 'ZWGv_tiw5ar7KmjnbW76tylrvN6oTQ2_ORLx9uTkwuM',
-  },
-  openGraph: {
-    title: 'PropFirm Scanner - Find Your Perfect Prop Trading Firm',
-    description: 'Compare 50+ prop firms instantly. Find the best pricing, profit splits, and rules for your trading style.',
-    url: 'https://www.propfirmscanner.org',
-    siteName: 'PropFirm Scanner',
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-      },
-    ],
-    locale: 'en_US',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'PropFirm Scanner - Compare 50+ Prop Firms',
-    description: 'Find your perfect prop trading firm in seconds.',
-    images: ['/og-image.png'],
-  },
-  robots: {
-    index: true,
-    follow: true,
   },
 }
 
@@ -49,6 +24,20 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.ico" />
         <link rel="canonical" href="https://www.propfirmscanner.org" />
+        
+        {/* JSON-LD Schema pour SEO */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(homeJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
       </head>
       <body className="antialiased">
         <GoogleAnalytics />

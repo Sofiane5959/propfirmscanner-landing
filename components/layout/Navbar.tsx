@@ -1,61 +1,72 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-import { Menu, X, Target, BarChart3, User, Bell } from 'lucide-react'
+import { Menu, X, ChevronDown, BookOpen, BarChart3, Tag, LayoutDashboard } from 'lucide-react'
+
+const navigation = [
+  { name: 'Compare', href: '/compare', icon: BarChart3 },
+  { name: 'Deals', href: '/deals', icon: Tag },
+  { name: 'Free Guide', href: '/guide', icon: BookOpen, highlight: true },
+  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+]
 
 export function Navbar() {
-  const [isOpen, setIsOpen] = useState(false)
+  const pathname = usePathname()
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-brand-500 to-emerald-500 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <Target className="w-5 h-5 text-white" />
+          <Link href="/" className="flex items-center space-x-2">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center">
+              <span className="text-white font-bold text-sm">P</span>
             </div>
-            <span className="font-bold text-lg text-white">
-              PropFirm<span className="text-brand-400">Scanner</span>
+            <span className="text-white font-bold text-lg hidden sm:block">
+              PropFirm<span className="text-emerald-400">Scanner</span>
             </span>
           </Link>
 
-          {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-1">
-            <Link 
-              href="/compare" 
-              className="px-4 py-2 text-sm font-medium text-dark-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors flex items-center gap-2"
-            >
-              <BarChart3 className="w-4 h-4" />
-              Compare
-            </Link>
-            <Link 
-              href="/deals" 
-              className="px-4 py-2 text-sm font-medium text-dark-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
-            >
-              🔥 Deals
-            </Link>
-            <Link 
-              href="/dashboard" 
-              className="px-4 py-2 text-sm font-medium text-dark-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors flex items-center gap-2"
-            >
-              <User className="w-4 h-4" />
-              Dashboard
-            </Link>
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-1">
+            {navigation.map((item) => {
+              const isActive = pathname === item.href
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all
+                    ${isActive 
+                      ? 'bg-emerald-500/20 text-emerald-400' 
+                      : item.highlight
+                        ? 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'
+                        : 'text-gray-300 hover:text-white hover:bg-white/5'
+                    }`}
+                >
+                  <item.icon className="w-4 h-4" />
+                  {item.name}
+                  {item.highlight && (
+                    <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded">FREE</span>
+                  )}
+                </Link>
+              )
+            })}
           </div>
 
-          {/* CTA Button */}
-          <div className="hidden md:flex items-center gap-3">
+          {/* Auth Buttons */}
+          <div className="hidden md:flex items-center space-x-3">
             <Link
               href="/auth/login"
-              className="px-4 py-2 text-sm font-medium text-dark-300 hover:text-white transition-colors"
+              className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors"
             >
               Log in
             </Link>
             <Link
               href="/auth/signup"
-              className="px-4 py-2 text-sm font-semibold text-dark-900 bg-gradient-to-r from-brand-400 to-emerald-400 rounded-lg hover:opacity-90 transition-opacity"
+              className="px-4 py-2 text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors"
             >
               Get Started
             </Link>
@@ -63,54 +74,55 @@ export function Navbar() {
 
           {/* Mobile menu button */}
           <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 text-dark-300 hover:text-white"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2 text-gray-400 hover:text-white"
           >
-            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
       </div>
 
       {/* Mobile menu */}
-      {isOpen && (
-        <div className="md:hidden glass border-t border-white/10">
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-gray-900/95 backdrop-blur-lg border-t border-gray-800">
           <div className="px-4 py-4 space-y-2">
-            <Link
-              href="/compare"
-              className="block px-4 py-3 text-base font-medium text-dark-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
-              onClick={() => setIsOpen(false)}
-            >
-              Compare Prop Firms
-            </Link>
-            <Link
-              href="/deals"
-              className="block px-4 py-3 text-base font-medium text-dark-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
-              onClick={() => setIsOpen(false)}
-            >
-              🔥 Deals & Promos
-            </Link>
-            <Link
-              href="/dashboard"
-              className="block px-4 py-3 text-base font-medium text-dark-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
-              onClick={() => setIsOpen(false)}
-            >
-              Dashboard
-            </Link>
-            <hr className="border-white/10 my-3" />
-            <Link
-              href="/auth/login"
-              className="block px-4 py-3 text-base font-medium text-dark-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
-              onClick={() => setIsOpen(false)}
-            >
-              Log in
-            </Link>
-            <Link
-              href="/auth/signup"
-              className="block px-4 py-3 text-base font-semibold text-center text-dark-900 bg-gradient-to-r from-brand-400 to-emerald-400 rounded-lg"
-              onClick={() => setIsOpen(false)}
-            >
-              Get Started Free
-            </Link>
+            {navigation.map((item) => {
+              const isActive = pathname === item.href
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all
+                    ${isActive 
+                      ? 'bg-emerald-500/20 text-emerald-400' 
+                      : 'text-gray-300 hover:text-white hover:bg-white/5'
+                    }`}
+                >
+                  <item.icon className="w-5 h-5" />
+                  {item.name}
+                  {item.highlight && (
+                    <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded ml-auto">FREE</span>
+                  )}
+                </Link>
+              )
+            })}
+            <div className="pt-4 border-t border-gray-800 space-y-2">
+              <Link
+                href="/auth/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-4 py-3 text-center text-sm font-medium text-gray-300 hover:text-white rounded-lg hover:bg-white/5"
+              >
+                Log in
+              </Link>
+              <Link
+                href="/auth/signup"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-4 py-3 text-center text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg"
+              >
+                Get Started
+              </Link>
+            </div>
           </div>
         </div>
       )}
