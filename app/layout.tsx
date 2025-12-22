@@ -4,6 +4,7 @@ import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 import NewsletterPopup from '@/components/NewsletterPopup'
+import PromoPopup from '@/components/PromoPopup'
 
 export const metadata: Metadata = {
   title: 'PropFirm Scanner - Compare 50+ Prop Trading Firms Instantly',
@@ -58,6 +59,7 @@ export default function RootLayout({
         </main>
         <Footer />
         <NewsletterPopup />
+        <PromoPopup />
       </body>
     </html>
   )
