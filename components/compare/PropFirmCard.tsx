@@ -12,60 +12,31 @@ interface PropFirmCardProps {
 const PlatformLogo = ({ platform, size = 'sm' }: { platform: string; size?: 'sm' | 'md' }) => {
   const sizeClass = size === 'sm' ? 'w-7 h-7 text-[9px]' : 'w-8 h-8 text-[10px]'
   
-  const platforms: Record<string, { bg: string; text: string; label: string; icon?: JSX.Element }> = {
+  const platforms: Record<string, { bg: string; text: string; label: string }> = {
     'MT4': {
       bg: 'bg-gradient-to-br from-blue-500 to-blue-700',
       text: 'text-white',
       label: 'MT4',
-      icon: (
-        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
-          <path d="M3 3h18v18H3V3zm2 2v14h14V5H5zm2 2h3v2H7V7zm0 4h3v2H7v-2zm0 4h3v2H7v-2zm5-8h5v10h-2v-8h-3V7z"/>
-        </svg>
-      )
     },
     'MT5': {
       bg: 'bg-gradient-to-br from-blue-600 to-indigo-700',
       text: 'text-white',
       label: 'MT5',
-      icon: (
-        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
-          <path d="M3 3h18v18H3V3zm2 2v14h14V5H5zm2 2h3v2H7V7zm0 4h3v2H7v-2zm0 4h3v2H7v-2zm5-8h5v2h-3v2h2v2h-2v2h3v2h-5V7z"/>
-        </svg>
-      )
     },
     'cTrader': {
       bg: 'bg-gradient-to-br from-amber-400 to-orange-500',
       text: 'text-white',
       label: 'cT',
-      icon: (
-        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
-          <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" strokeWidth="2"/>
-          <path d="M8 12a4 4 0 014-4M16 12a4 4 0 01-4 4" stroke="currentColor" strokeWidth="2" fill="none"/>
-        </svg>
-      )
     },
     'DXtrade': {
       bg: 'bg-gradient-to-br from-purple-500 to-violet-700',
       text: 'text-white',
       label: 'DX',
-      icon: (
-        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
-          <path d="M4 4h5l7 8-7 8H4l7-8-7-8z"/>
-          <path d="M13 4h7v16h-7l4-8-4-8z" opacity="0.6"/>
-        </svg>
-      )
     },
     'TradeLocker': {
       bg: 'bg-gradient-to-br from-emerald-500 to-green-700',
       text: 'text-white',
       label: 'TL',
-      icon: (
-        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
-          <rect x="5" y="10" width="14" height="10" rx="2" fill="none" stroke="currentColor" strokeWidth="2"/>
-          <path d="M8 10V7a4 4 0 018 0v3" fill="none" stroke="currentColor" strokeWidth="2"/>
-          <circle cx="12" cy="15" r="1.5" fill="currentColor"/>
-        </svg>
-      )
     },
     'Match-Trader': {
       bg: 'bg-gradient-to-br from-orange-500 to-red-600',
@@ -76,11 +47,6 @@ const PlatformLogo = ({ platform, size = 'sm' }: { platform: string; size?: 'sm'
       bg: 'bg-gradient-to-br from-red-500 to-red-700',
       text: 'text-white',
       label: 'NT',
-      icon: (
-        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
-          <path d="M12 2l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6z"/>
-        </svg>
-      )
     },
     'Tradovate': {
       bg: 'bg-gradient-to-br from-cyan-500 to-blue-600',
@@ -112,7 +78,7 @@ const PlatformLogo = ({ platform, size = 'sm' }: { platform: string; size?: 'sm'
       className={`${sizeClass} rounded-lg ${platformData.bg} ${platformData.text} flex items-center justify-center font-bold shadow-lg`}
       title={platform}
     >
-      {platformData.icon || platformData.label}
+      {platformData.label}
     </div>
   )
 }
@@ -257,7 +223,7 @@ export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
             </div>
             <div>
               <p className="text-gray-500 text-xs uppercase">Location</p>
-              <p className="text-white font-semibold text-sm">{firm.headquarters || firm.country || 'N/A'}</p>
+              <p className="text-white font-semibold text-sm">{firm.headquarters || 'N/A'}</p>
             </div>
           </div>
 
@@ -295,10 +261,10 @@ export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
         
         {/* Location & Regulation */}
         <div className="flex items-center gap-4 mt-3 text-xs text-gray-400">
-          {(firm.headquarters || firm.country) && (
+          {firm.headquarters && (
             <span className="flex items-center gap-1">
               <MapPin className="w-3 h-3" />
-              {firm.headquarters || firm.country}
+              {firm.headquarters}
             </span>
           )}
           {firm.is_regulated && (
