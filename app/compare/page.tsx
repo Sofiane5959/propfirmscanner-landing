@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from 'react'
 import { PropFirmCard } from '@/components/compare/PropFirmCard'
 import { getPropFirms } from '@/lib/supabase-queries'
 import type { PropFirm } from '@/types'
-import { Search, SlidersHorizontal, X, ChevronDown, ChevronUp, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Search, SlidersHorizontal, X, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'
 
 export default function ComparePage() {
   const [firms, setFirms] = useState<PropFirm[]>([])
@@ -14,7 +14,6 @@ export default function ComparePage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [sortBy, setSortBy] = useState('rating')
   const [searchQuery, setSearchQuery] = useState('')
-  const [showMobileFilters, setShowMobileFilters] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
   
   // Filter states - multi-select
@@ -46,10 +45,10 @@ export default function ComparePage() {
   ]
   // REMOVED "Weekend Holding" - included in Swing Trading
   const tradingStyleOptions = [
-    { id: 'scalping', label: 'Scalping', field: 'allows_scalping' },
-    { id: 'news', label: 'News Trading', field: 'allows_news_trading' },
-    { id: 'ea', label: 'EA / Bots', field: 'allows_ea' },
-    { id: 'hedging', label: 'Hedging', field: 'allows_hedging' },
+    { id: 'scalping', label: 'Scalping' },
+    { id: 'news', label: 'News Trading' },
+    { id: 'ea', label: 'EA / Bots' },
+    { id: 'hedging', label: 'Hedging' },
   ]
 
   // Fetch prop firms on load
@@ -181,24 +180,22 @@ export default function ComparePage() {
     }
   }
 
-  // Filter dropdown component
-  const FilterDropdown = ({ 
+  // Multi-select filter dropdown component
+  const MultiSelectDropdown = ({ 
     id, 
     label, 
     options, 
     selected, 
     onToggle,
-    type = 'checkbox'
   }: { 
     id: string
     label: string
-    options: { value: string; label: string }[] | string[]
-    selected: string[] | number | null
-    onToggle: (value: string | number) => void
-    type?: 'checkbox' | 'radio'
+    options: string[]
+    selected: string[]
+    onToggle: (value: string) => void
   }) => {
     const isOpen = openDropdown === id
-    const hasSelection = Array.isArray(selected) ? selected.length > 0 : selected !== null
+    const hasSelection = selected.length > 0
     
     return (
       <div className="relative flex-shrink-0">
@@ -211,7 +208,7 @@ export default function ComparePage() {
             }`}
         >
           <span>{label}</span>
-          {Array.isArray(selected) && selected.length > 0 && (
+          {hasSelection && (
             <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded-md">
               {selected.length}
             </span>
@@ -222,23 +219,82 @@ export default function ComparePage() {
         {isOpen && (
           <div className="absolute top-full left-0 mt-2 z-30 min-w-[180px] bg-gray-800 border border-gray-700 rounded-xl shadow-xl p-2 max-h-60 overflow-y-auto">
             {options.map((option) => {
-              const value = typeof option === 'string' ? option : option.value
-              const displayLabel = typeof option === 'string' ? option : option.label
-              const isSelected = Array.isArray(selected) 
-                ? selected.includes(value as string)
-                : selected === value
+              const isSelected = selected.includes(option)
               
               return (
                 <button
-                  key={value}
-                  onClick={() => onToggle(value)}
+                  key={option}
+                  onClick={() => onToggle(option)}
                   className={`w-full px-3 py-2 rounded-lg text-left text-sm transition-colors flex items-center justify-between
                     ${isSelected
                       ? 'bg-emerald-500/20 text-emerald-400'
                       : 'text-white/70 hover:bg-white/5 hover:text-white'
                     }`}
                 >
-                  <span>{displayLabel}</span>
+                  <span>{option}</span>
+                  {isSelected && (
+                    <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                  )}
+                </button>
+              )
+            })}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  // Single-select filter dropdown component (for Price and Profit Split)
+  const SingleSelectDropdown = ({ 
+    id, 
+    label, 
+    options, 
+    selected, 
+    onSelect,
+  }: { 
+    id: string
+    label: string
+    options: { label: string; value: number }[]
+    selected: number | null
+    onSelect: (value: number | null) => void
+  }) => {
+    const isOpen = openDropdown === id
+    const hasSelection = selected !== null
+    const selectedLabel = options.find(o => o.value === selected)?.label
+    
+    return (
+      <div className="relative flex-shrink-0">
+        <button
+          onClick={() => setOpenDropdown(isOpen ? null : id)}
+          className={`px-4 py-2.5 rounded-xl border transition-all flex items-center gap-2 whitespace-nowrap
+            ${hasSelection
+              ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400'
+              : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white'
+            }`}
+        >
+          <span>{hasSelection ? selectedLabel : label}</span>
+          <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        </button>
+
+        {isOpen && (
+          <div className="absolute top-full left-0 mt-2 z-30 min-w-[150px] bg-gray-800 border border-gray-700 rounded-xl shadow-xl p-2 max-h-60 overflow-y-auto">
+            {options.map((option) => {
+              const isSelected = selected === option.value
+              
+              return (
+                <button
+                  key={option.value}
+                  onClick={() => {
+                    onSelect(isSelected ? null : option.value)
+                    setOpenDropdown(null)
+                  }}
+                  className={`w-full px-3 py-2 rounded-lg text-left text-sm transition-colors flex items-center justify-between
+                    ${isSelected
+                      ? 'bg-emerald-500/20 text-emerald-400'
+                      : 'text-white/70 hover:bg-white/5 hover:text-white'
+                    }`}
+                >
+                  <span>{option.label}</span>
                   {isSelected && (
                     <span className="w-2 h-2 rounded-full bg-emerald-500" />
                   )}
@@ -326,62 +382,62 @@ export default function ComparePage() {
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
               >
                 {/* Challenge Type Filter */}
-                <FilterDropdown
+                <MultiSelectDropdown
                   id="challenge"
                   label="Challenge Type"
-                  options={challengeTypeOptions.map(c => ({ 
-                    value: c, 
-                    label: c === 'instant' ? 'Instant Funding' : `${c.charAt(0).toUpperCase()}${c.slice(1)}` 
-                  }))}
+                  options={challengeTypeOptions}
                   selected={selectedChallengeTypes}
-                  onToggle={(v) => toggleArrayFilter(selectedChallengeTypes, setSelectedChallengeTypes, v as string)}
+                  onToggle={(v) => toggleArrayFilter(selectedChallengeTypes, setSelectedChallengeTypes, v)}
                 />
 
                 {/* Platform Filter */}
-                <FilterDropdown
+                <MultiSelectDropdown
                   id="platform"
                   label="Platform"
                   options={platformOptions}
                   selected={selectedPlatforms}
-                  onToggle={(v) => toggleArrayFilter(selectedPlatforms, setSelectedPlatforms, v as string)}
+                  onToggle={(v) => toggleArrayFilter(selectedPlatforms, setSelectedPlatforms, v)}
                 />
 
                 {/* Market Filter */}
-                <FilterDropdown
+                <MultiSelectDropdown
                   id="market"
                   label="Markets"
                   options={marketOptions}
                   selected={selectedMarkets}
-                  onToggle={(v) => toggleArrayFilter(selectedMarkets, setSelectedMarkets, v as string)}
+                  onToggle={(v) => toggleArrayFilter(selectedMarkets, setSelectedMarkets, v)}
                 />
 
                 {/* Price Filter */}
-                <FilterDropdown
+                <SingleSelectDropdown
                   id="price"
                   label="Price"
-                  options={priceOptions.map(p => ({ value: String(p.value), label: p.label }))}
-                  selected={maxPrice ? [String(maxPrice)] : []}
-                  onToggle={(v) => setMaxPrice(maxPrice === Number(v) ? null : Number(v))}
-                  type="radio"
+                  options={priceOptions}
+                  selected={maxPrice}
+                  onSelect={setMaxPrice}
                 />
 
                 {/* Profit Split Filter */}
-                <FilterDropdown
+                <SingleSelectDropdown
                   id="profit"
                   label="Profit Split"
-                  options={profitSplitOptions.map(p => ({ value: String(p.value), label: p.label }))}
-                  selected={minProfitSplit ? [String(minProfitSplit)] : []}
-                  onToggle={(v) => setMinProfitSplit(minProfitSplit === Number(v) ? null : Number(v))}
-                  type="radio"
+                  options={profitSplitOptions}
+                  selected={minProfitSplit}
+                  onSelect={setMinProfitSplit}
                 />
 
                 {/* Trading Style Filter */}
-                <FilterDropdown
+                <MultiSelectDropdown
                   id="style"
                   label="Trading Style"
-                  options={tradingStyleOptions.map(s => ({ value: s.id, label: s.label }))}
-                  selected={tradingStyles}
-                  onToggle={(v) => toggleArrayFilter(tradingStyles, setTradingStyles, v as string)}
+                  options={tradingStyleOptions.map(s => s.label)}
+                  selected={tradingStyles.map(id => tradingStyleOptions.find(s => s.id === id)?.label || '')}
+                  onToggle={(label) => {
+                    const style = tradingStyleOptions.find(s => s.label === label)
+                    if (style) {
+                      toggleArrayFilter(tradingStyles, setTradingStyles, style.id)
+                    }
+                  }}
                 />
               </div>
 
