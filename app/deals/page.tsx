@@ -1,251 +1,312 @@
 'use client'
-export const dynamic = 'force-dynamic'
-import { useState, useEffect } from 'react'
-import { Navbar } from '@/components/layout/Navbar'
-import { Footer } from '@/components/layout/Footer'
-import { getPromotions } from '@/lib/supabase-queries'
-import type { Promotion } from '@/types'
+
+import { useState } from 'react'
+import { Search, Tag, Copy, Check, ExternalLink, Clock, Gift } from 'lucide-react'
+
+// Deals data - Tu peux modifier ces valeurs ou les connecter à Supabase plus tard
+const DEALS = [
+  {
+    id: '1',
+    firmName: 'FTMO',
+    code: 'SCANNER10',
+    discount: '10% OFF',
+    description: 'Get 10% off your first FTMO challenge. Valid for all account sizes.',
+    url: 'https://ftmo.com',
+    validUntil: '2025-01-31',
+    category: 'Forex',
+    color: 'from-blue-500 to-blue-600',
+  },
+  {
+    id: '2',
+    firmName: 'Goat Funded Trader',
+    code: 'PROPFIRM15',
+    discount: '15% OFF',
+    description: 'Exclusive 15% discount on all challenge accounts. Limited time offer!',
+    url: 'https://goatfundedtrader.com',
+    validUntil: '2025-01-15',
+    category: 'Forex',
+    color: 'from-amber-500 to-orange-600',
+  },
+  {
+    id: '3',
+    firmName: 'FundedNext',
+    code: 'SCANNER20',
+    discount: '20% OFF',
+    description: 'Special 20% off for PropFirmScanner community members.',
+    url: 'https://fundednext.com',
+    validUntil: '2025-01-20',
+    category: 'Forex',
+    color: 'from-emerald-500 to-green-600',
+  },
+  {
+    id: '4',
+    firmName: 'FXIFY',
+    code: 'FXIFY10',
+    discount: '10% OFF',
+    description: '10% off all evaluation programs. Use at checkout.',
+    url: 'https://fxify.com',
+    validUntil: '2025-02-28',
+    category: 'Forex',
+    color: 'from-purple-500 to-violet-600',
+  },
+  {
+    id: '5',
+    firmName: 'E8 Funding',
+    code: 'E8DEAL',
+    discount: '8% OFF',
+    description: 'Exclusive 8% discount code for new traders.',
+    url: 'https://e8funding.com',
+    validUntil: '2025-01-31',
+    category: 'Forex',
+    color: 'from-cyan-500 to-blue-600',
+  },
+  {
+    id: '6',
+    firmName: 'Topstep',
+    code: 'FUTURES50',
+    discount: '50% OFF',
+    description: '50% off your first Trading Combine. Best futures deal!',
+    url: 'https://topstep.com',
+    validUntil: '2025-01-31',
+    category: 'Futures',
+    color: 'from-green-500 to-emerald-600',
+  },
+  {
+    id: '7',
+    firmName: 'Apex Trader Funding',
+    code: 'APEX80',
+    discount: '80% OFF',
+    description: 'Massive 80% discount on evaluation accounts!',
+    url: 'https://apextraderfunding.com',
+    validUntil: '2025-01-10',
+    category: 'Futures',
+    color: 'from-red-500 to-orange-600',
+  },
+  {
+    id: '8',
+    firmName: 'The5ers',
+    code: 'FIVE10',
+    discount: '10% OFF',
+    description: '10% off instant funding and bootcamp programs.',
+    url: 'https://the5ers.com',
+    validUntil: '2025-02-15',
+    category: 'Forex',
+    color: 'from-indigo-500 to-purple-600',
+  },
+]
+
+const CATEGORIES = ['All', 'Forex', 'Futures', 'Crypto']
 
 export default function DealsPage() {
-  const [promotions, setPromotions] = useState<Promotion[]>([])
-  const [loading, setLoading] = useState(true)
-  const [copiedCode, setCopiedCode] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState('All')
+  const [copiedId, setCopiedId] = useState<string | null>(null)
 
-  useEffect(() => {
-    async function fetchPromotions() {
-      setLoading(true)
-      const data = await getPromotions()
-      setPromotions(data)
-      setLoading(false)
-    }
-    fetchPromotions()
-  }, [])
+  // Filter deals
+  const filteredDeals = DEALS.filter(deal => {
+    const matchesSearch = deal.firmName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         deal.code.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesCategory = selectedCategory === 'All' || deal.category === selectedCategory
+    return matchesSearch && matchesCategory
+  })
 
-  const copyToClipboard = (code: string) => {
-    navigator.clipboard.writeText(code)
-    setCopiedCode(code)
-    setTimeout(() => setCopiedCode(null), 2000)
+  const handleCopy = async (id: string, code: string) => {
+    await navigator.clipboard.writeText(code)
+    setCopiedId(id)
+    setTimeout(() => setCopiedId(null), 2000)
   }
 
-  // Helper function to get the best URL (affiliate or website)
-  const getVisitUrl = (propFirm: any) => {
-    return propFirm?.affiliate_url || propFirm?.website_url || '#'
+  const getDaysRemaining = (dateStr: string) => {
+    const diff = new Date(dateStr).getTime() - Date.now()
+    const days = Math.ceil(diff / (1000 * 60 * 60 * 24))
+    return days
   }
-
-  // Get the best deal (highest discount)
-  const bestDeal = promotions[0]
 
   return (
-    <div className="min-h-screen bg-gray-950">
-      <Navbar />
-      
-      <main className="pt-20">
+    <div className="min-h-screen bg-gray-900 pt-20 pb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="bg-gradient-to-b from-gray-900 to-gray-950 py-12">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="text-4xl font-bold text-white mb-4">
-              🔥 Hot Deals & Promo Codes
-            </h1>
-            <p className="text-gray-400 text-lg">
-              Save money on prop firm challenges with our exclusive discount codes.
-            </p>
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-medium mb-4">
+            <Gift className="w-4 h-4" />
+            Updated Daily
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            Exclusive <span className="text-emerald-400">Deals & Promos</span>
+          </h1>
+          <p className="text-gray-400 max-w-2xl mx-auto">
+            Save money on prop firm challenges with our exclusive discount codes. 
+            We negotiate special deals so you don&apos;t have to pay full price.
+          </p>
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-3 gap-4 mb-8">
+          <div className="p-4 bg-gray-800/50 rounded-xl border border-gray-700 text-center">
+            <div className="text-2xl font-bold text-emerald-400">{DEALS.length}</div>
+            <div className="text-gray-400 text-sm">Active Deals</div>
+          </div>
+          <div className="p-4 bg-gray-800/50 rounded-xl border border-gray-700 text-center">
+            <div className="text-2xl font-bold text-emerald-400">Up to 80%</div>
+            <div className="text-gray-400 text-sm">Max Discount</div>
+          </div>
+          <div className="p-4 bg-gray-800/50 rounded-xl border border-gray-700 text-center">
+            <div className="text-2xl font-bold text-amber-400">$50K+</div>
+            <div className="text-gray-400 text-sm">Saved by Users</div>
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Loading State */}
-          {loading && (
-            <div className="flex justify-center items-center py-20">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
-            </div>
-          )}
+        {/* Filters */}
+        <div className="flex flex-col sm:flex-row gap-4 mb-8">
+          {/* Search */}
+          <div className="relative flex-1">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+            <input
+              type="text"
+              placeholder="Search deals..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl
+                         text-white placeholder:text-gray-500 focus:outline-none focus:border-emerald-500"
+            />
+          </div>
 
-          {/* Featured Deal */}
-          {!loading && bestDeal && (
-            <div className="mb-12 bg-gradient-to-r from-emerald-600/20 to-green-600/20 rounded-2xl p-8 border border-emerald-500/30">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div>
-                  <span className="inline-block px-3 py-1 bg-emerald-500 text-white text-sm font-medium rounded-full mb-4">
-                    🏆 BEST DEAL
-                  </span>
-                  <h2 className="text-3xl font-bold text-white mb-2">
-                    {bestDeal.discount_percent}% OFF at {bestDeal.prop_firms?.name}
-                  </h2>
-                  <p className="text-gray-300 text-lg">
-                    {bestDeal.description}
-                  </p>
-                </div>
-                <div className="flex flex-col items-center gap-4">
-                  <div className="bg-gray-900 rounded-xl px-8 py-4 border-2 border-dashed border-emerald-500">
-                    <p className="text-emerald-400 font-mono text-2xl font-bold">
-                      {bestDeal.code}
+          {/* Category filters */}
+          <div className="flex gap-2">
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-4 py-3 rounded-xl font-medium transition-all
+                  ${selectedCategory === cat
+                    ? 'bg-emerald-600 text-white'
+                    : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white border border-gray-700'
+                  }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Deals Grid */}
+        {filteredDeals.length === 0 ? (
+          <div className="text-center py-16">
+            <Tag className="w-12 h-12 text-gray-600 mx-auto mb-4" />
+            <p className="text-gray-400">No deals found matching your criteria</p>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredDeals.map((deal) => {
+              const daysLeft = getDaysRemaining(deal.validUntil)
+              const isExpiringSoon = daysLeft <= 7 && daysLeft > 0
+
+              return (
+                <div
+                  key={deal.id}
+                  className="group relative bg-gray-800/50 border border-gray-700 rounded-2xl overflow-hidden
+                             hover:border-emerald-500/50 transition-all duration-300"
+                >
+                  {/* Expiring soon badge */}
+                  {isExpiringSoon && (
+                    <div className="absolute top-4 right-4 z-10 px-2 py-1 bg-red-500/20 border border-red-500/30 
+                                    rounded-md text-red-400 text-xs font-medium flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      {daysLeft} days left
+                    </div>
+                  )}
+
+                  {/* Header with gradient */}
+                  <div className={`bg-gradient-to-r ${deal.color} p-4`}>
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-white text-xl font-bold">
+                        {deal.firmName.charAt(0)}
+                      </div>
+                      <div>
+                        <h3 className="text-white font-semibold">{deal.firmName}</h3>
+                        <div className="text-white/80 text-sm">{deal.category}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-5">
+                    {/* Discount badge */}
+                    <div className="inline-flex px-3 py-1 bg-emerald-500/20 text-emerald-400 text-lg font-bold rounded-lg mb-3">
+                      {deal.discount}
+                    </div>
+
+                    {/* Description */}
+                    <p className="text-gray-400 text-sm mb-4">{deal.description}</p>
+
+                    {/* Promo Code */}
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="flex-1 px-4 py-3 bg-gray-900 border border-dashed border-gray-600 rounded-xl">
+                        <code className="text-emerald-400 font-mono font-bold tracking-wider text-lg">
+                          {deal.code}
+                        </code>
+                      </div>
+                      <button
+                        onClick={() => handleCopy(deal.id, deal.code)}
+                        className="p-3 bg-gray-900 hover:bg-gray-700 border border-gray-700 rounded-xl 
+                                   transition-colors"
+                      >
+                        {copiedId === deal.id ? (
+                          <Check className="w-5 h-5 text-emerald-400" />
+                        ) : (
+                          <Copy className="w-5 h-5 text-gray-400" />
+                        )}
+                      </button>
+                    </div>
+
+                    {/* CTA */}
+                    <a
+                      href={deal.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`w-full py-3 bg-gradient-to-r ${deal.color}
+                                 text-white font-semibold rounded-xl hover:opacity-90 
+                                 transition-all flex items-center justify-center gap-2`}
+                    >
+                      Claim Deal
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+
+                    {/* Valid until */}
+                    <p className="text-gray-500 text-xs text-center mt-3">
+                      Valid until {new Date(deal.validUntil).toLocaleDateString('en-US', { 
+                        month: 'short', 
+                        day: 'numeric', 
+                        year: 'numeric' 
+                      })}
                     </p>
                   </div>
-                  <button
-                    onClick={() => copyToClipboard(bestDeal.code)}
-                    className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-colors"
-                  >
-                    {copiedCode === bestDeal.code ? '✓ Copied!' : 'Copy Code'}
-                  </button>
                 </div>
-              </div>
-            </div>
-          )}
+              )
+            })}
+          </div>
+        )}
 
-          {/* All Promotions */}
-          {!loading && promotions.length > 0 && (
-            <>
-              <h2 className="text-2xl font-bold text-white mb-6">
-                All Active Promotions ({promotions.length})
-              </h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {promotions.map((promo) => (
-                  <div
-                    key={promo.id}
-                    className="bg-gray-800/50 rounded-xl overflow-hidden border border-gray-700 hover:border-emerald-500/50 transition-all"
-                  >
-                    {/* Card Header */}
-                    <div className="p-6 border-b border-gray-700">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 bg-gray-700 rounded-lg flex items-center justify-center text-lg font-bold text-emerald-400">
-                            {promo.prop_firms?.name?.charAt(0) || '?'}
-                          </div>
-                          <div>
-                            <h3 className="text-lg font-semibold text-white">
-                              {promo.prop_firms?.name || 'Unknown'}
-                            </h3>
-                            {promo.prop_firms?.trustpilot_rating && (
-                              <p className="text-sm text-gray-400">
-                                ⭐ {promo.prop_firms.trustpilot_rating.toFixed(1)} rating
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <span className="text-3xl font-bold text-emerald-400">
-                            {promo.discount_percent}%
-                          </span>
-                          <p className="text-gray-400 text-sm">OFF</p>
-                        </div>
-                      </div>
-                      
-                      <p className="text-gray-300">
-                        {promo.description}
-                      </p>
-                    </div>
-
-                    {/* Card Body */}
-                    <div className="p-6">
-                      {/* Promo Code */}
-                      <div className="flex items-center gap-2 mb-4">
-                        <div className="flex-1 bg-gray-900 rounded-lg px-4 py-3 border border-gray-700">
-                          <p className="text-emerald-400 font-mono font-semibold text-center">
-                            {promo.code}
-                          </p>
-                        </div>
-                        <button
-                          onClick={() => copyToClipboard(promo.code)}
-                          className="p-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
-                        >
-                          {copiedCode === promo.code ? (
-                            <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                          ) : (
-                            <svg className="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
-                            </svg>
-                          )}
-                        </button>
-                      </div>
-
-                      {/* Price Info */}
-                      {promo.prop_firms?.min_price && (
-                        <div className="flex items-center justify-between text-sm mb-4">
-                          <span className="text-gray-400">Starting price:</span>
-                          <div className="flex items-center gap-2">
-                            <span className="text-gray-500 line-through">
-                              ${promo.prop_firms.min_price}
-                            </span>
-                            <span className="text-emerald-400 font-semibold">
-                              ${Math.round(promo.prop_firms.min_price * (1 - (promo.discount_percent || 0) / 100))}
-                            </span>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Expiry */}
-                      {promo.valid_until && (
-                        <p className="text-sm text-gray-500 text-center">
-                          Expires: {new Date(promo.valid_until).toLocaleDateString()}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Card Footer */}
-                    <div className="p-4 bg-gray-900/50 border-t border-gray-700">
-                      <a
-                        href={getVisitUrl(promo.prop_firms)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-center rounded-lg font-medium transition-colors"
-                      >
-                        Get This Deal →
-                      </a>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-
-          {/* No Promotions */}
-          {!loading && promotions.length === 0 && (
-            <div className="text-center py-20">
-              <p className="text-gray-400 text-lg">No active promotions at the moment.</p>
-              <p className="text-gray-500 mt-2">Check back soon for new deals!</p>
-            </div>
-          )}
-
-          {/* Tips Section */}
-          <div className="mt-16 bg-gray-800/30 rounded-2xl p-8 border border-gray-700">
-            <h2 className="text-2xl font-bold text-white mb-6">💡 Tips for Using Promo Codes</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="flex gap-4">
-                <div className="w-10 h-10 bg-emerald-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <span className="text-emerald-400 font-bold">1</span>
-                </div>
-                <div>
-                  <h3 className="text-white font-semibold mb-1">Copy the code</h3>
-                  <p className="text-gray-400 text-sm">Click the copy button to save the promo code to your clipboard.</p>
-                </div>
-              </div>
-              <div className="flex gap-4">
-                <div className="w-10 h-10 bg-emerald-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <span className="text-emerald-400 font-bold">2</span>
-                </div>
-                <div>
-                  <h3 className="text-white font-semibold mb-1">Visit the firm</h3>
-                  <p className="text-gray-400 text-sm">Click "Get This Deal" to go to the prop firm's website.</p>
-                </div>
-              </div>
-              <div className="flex gap-4">
-                <div className="w-10 h-10 bg-emerald-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <span className="text-emerald-400 font-bold">3</span>
-                </div>
-                <div>
-                  <h3 className="text-white font-semibold mb-1">Apply at checkout</h3>
-                  <p className="text-gray-400 text-sm">Paste the code during checkout to get your discount.</p>
-                </div>
-              </div>
-            </div>
+        {/* CTA Section */}
+        <div className="mt-16 text-center">
+          <div className="p-8 bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border border-gray-700 rounded-2xl">
+            <h3 className="text-2xl font-bold text-white mb-2">
+              Want More Exclusive Deals?
+            </h3>
+            <p className="text-gray-400 mb-6">
+              Subscribe to our newsletter and be the first to know about new discounts.
+            </p>
+            <a
+              href="/#newsletter"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold 
+                         rounded-xl transition-colors"
+            >
+              <Tag className="w-5 h-5" />
+              Subscribe for Deals
+            </a>
           </div>
         </div>
-      </main>
-
-      <Footer />
+      </div>
     </div>
   )
 }
