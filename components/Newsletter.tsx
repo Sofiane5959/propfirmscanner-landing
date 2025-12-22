@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 interface NewsletterProps {
   variant?: 'inline' | 'card' | 'footer';
@@ -111,31 +110,18 @@ export default function Newsletter({ variant = 'card', className = '' }: Newslet
             {status === 'loading' ? '...' : 'Subscribe'}
           </button>
         </form>
-        <AnimatePresence>
-          {message && (
-            <motion.p
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className={`mt-2 text-xs ${status === 'error' ? 'text-red-400' : 'text-emerald-400'}`}
-            >
-              {message}
-            </motion.p>
-          )}
-        </AnimatePresence>
+        {message && (
+          <p className={`mt-2 text-xs transition-opacity duration-300 ${status === 'error' ? 'text-red-400' : 'text-emerald-400'}`}>
+            {message}
+          </p>
+        )}
       </div>
     );
   }
 
   // Default: card variant (for homepage)
   return (
-    <motion.section
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-100px' }}
-      transition={{ duration: 0.6, ease: 'easeOut' }}
-      className={`relative overflow-hidden ${className}`}
-    >
+    <section className={`relative overflow-hidden ${className}`}>
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-transparent to-blue-500/10 rounded-2xl" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-emerald-500/5 via-transparent to-transparent" />
@@ -182,15 +168,13 @@ export default function Newsletter({ variant = 'card', className = '' }: Newslet
                 disabled={status === 'loading' || status === 'success'}
               />
             </div>
-            <motion.button
+            <button
               type="submit"
               disabled={status === 'loading' || status === 'success'}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
               className="px-8 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold
                          rounded-xl transition-all duration-200 disabled:opacity-50 
                          disabled:cursor-not-allowed shadow-lg shadow-emerald-500/20
-                         hover:shadow-xl hover:shadow-emerald-500/30"
+                         hover:shadow-xl hover:shadow-emerald-500/30 hover:scale-[1.02] active:scale-[0.98]"
             >
               {status === 'loading' ? (
                 <span className="flex items-center gap-2">
@@ -210,27 +194,20 @@ export default function Newsletter({ variant = 'card', className = '' }: Newslet
               ) : (
                 'Subscribe Free'
               )}
-            </motion.button>
+            </button>
           </form>
 
-          <AnimatePresence>
-            {message && status !== 'success' && (
-              <motion.p
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className={`mt-4 text-sm ${status === 'error' ? 'text-red-400' : 'text-emerald-400'}`}
-              >
-                {message}
-              </motion.p>
-            )}
-          </AnimatePresence>
+          {message && status !== 'success' && (
+            <p className={`mt-4 text-sm transition-opacity duration-300 ${status === 'error' ? 'text-red-400' : 'text-emerald-400'}`}>
+              {message}
+            </p>
+          )}
 
           <p className="mt-6 text-xs text-white/30">
             No spam, unsubscribe anytime. We respect your privacy.
           </p>
         </div>
       </div>
-    </motion.section>
+    </section>
   );
 }
