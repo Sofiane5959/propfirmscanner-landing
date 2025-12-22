@@ -43,7 +43,6 @@ export default function ComparePage() {
     { label: '90%+', value: 90 },
     { label: '100%', value: 100 },
   ]
-  // REMOVED "Weekend Holding" - included in Swing Trading
   const tradingStyleOptions = [
     { id: 'scalping', label: 'Scalping' },
     { id: 'news', label: 'News Trading' },
@@ -63,49 +62,55 @@ export default function ComparePage() {
     fetchFirms()
   }, [])
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      const target = event.target as HTMLElement
+      if (!target.closest('.filter-dropdown')) {
+        setOpenDropdown(null)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
   // Apply filters whenever filter state changes
   useEffect(() => {
     let result = [...firms]
 
-    // Search filter
     if (searchQuery) {
       result = result.filter(firm => 
         firm.name.toLowerCase().includes(searchQuery.toLowerCase())
       )
     }
 
-    // Platform filter (multi-select)
     if (selectedPlatforms.length > 0) {
       result = result.filter(firm => 
         firm.platforms?.some(p => selectedPlatforms.includes(p))
       )
     }
 
-    // Market filter (multi-select) - uses instruments field in database
     if (selectedMarkets.length > 0) {
       result = result.filter(firm => 
         firm.instruments?.some(i => selectedMarkets.includes(i))
       )
     }
 
-    // Challenge type filter (multi-select)
     if (selectedChallengeTypes.length > 0) {
       result = result.filter(firm => 
         firm.challenge_types?.some(c => selectedChallengeTypes.includes(c))
       )
     }
 
-    // Max price filter
     if (maxPrice) {
       result = result.filter(firm => (firm.min_price || 0) <= maxPrice)
     }
 
-    // Min profit split filter
     if (minProfitSplit) {
       result = result.filter(firm => (firm.profit_split || 0) >= minProfitSplit)
     }
 
-    // Trading style filters
     if (tradingStyles.includes('scalping')) {
       result = result.filter(firm => firm.allows_scalping)
     }
@@ -140,7 +145,6 @@ export default function ComparePage() {
     }
   })
 
-  // Toggle multi-select
   const toggleArrayFilter = (array: string[], setArray: (arr: string[]) => void, value: string) => {
     if (array.includes(value)) {
       setArray(array.filter(v => v !== value))
@@ -149,7 +153,6 @@ export default function ComparePage() {
     }
   }
 
-  // Clear all filters
   const clearAllFilters = () => {
     setSearchQuery('')
     setSelectedPlatforms([])
@@ -160,7 +163,6 @@ export default function ComparePage() {
     setTradingStyles([])
   }
 
-  // Count active filters
   const activeFilterCount = 
     selectedPlatforms.length + 
     selectedMarkets.length + 
@@ -169,7 +171,6 @@ export default function ComparePage() {
     (minProfitSplit ? 1 : 0) + 
     tradingStyles.length
 
-  // Scroll filters
   const scrollFilters = (direction: 'left' | 'right') => {
     if (scrollRef.current) {
       const scrollAmount = 200
@@ -180,131 +181,8 @@ export default function ComparePage() {
     }
   }
 
-  // Multi-select filter dropdown component
-  const MultiSelectDropdown = ({ 
-    id, 
-    label, 
-    options, 
-    selected, 
-    onToggle,
-  }: { 
-    id: string
-    label: string
-    options: string[]
-    selected: string[]
-    onToggle: (value: string) => void
-  }) => {
-    const isOpen = openDropdown === id
-    const hasSelection = selected.length > 0
-    
-    return (
-      <div className="relative flex-shrink-0">
-        <button
-          onClick={() => setOpenDropdown(isOpen ? null : id)}
-          className={`px-4 py-2.5 rounded-xl border transition-all flex items-center gap-2 whitespace-nowrap
-            ${hasSelection
-              ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400'
-              : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white'
-            }`}
-        >
-          <span>{label}</span>
-          {hasSelection && (
-            <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded-md">
-              {selected.length}
-            </span>
-          )}
-          <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-        </button>
-
-        {isOpen && (
-          <div className="absolute top-full left-0 mt-2 z-30 min-w-[180px] bg-gray-800 border border-gray-700 rounded-xl shadow-xl p-2 max-h-60 overflow-y-auto">
-            {options.map((option) => {
-              const isSelected = selected.includes(option)
-              
-              return (
-                <button
-                  key={option}
-                  onClick={() => onToggle(option)}
-                  className={`w-full px-3 py-2 rounded-lg text-left text-sm transition-colors flex items-center justify-between
-                    ${isSelected
-                      ? 'bg-emerald-500/20 text-emerald-400'
-                      : 'text-white/70 hover:bg-white/5 hover:text-white'
-                    }`}
-                >
-                  <span>{option}</span>
-                  {isSelected && (
-                    <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                  )}
-                </button>
-              )
-            })}
-          </div>
-        )}
-      </div>
-    )
-  }
-
-  // Single-select filter dropdown component (for Price and Profit Split)
-  const SingleSelectDropdown = ({ 
-    id, 
-    label, 
-    options, 
-    selected, 
-    onSelect,
-  }: { 
-    id: string
-    label: string
-    options: { label: string; value: number }[]
-    selected: number | null
-    onSelect: (value: number | null) => void
-  }) => {
-    const isOpen = openDropdown === id
-    const hasSelection = selected !== null
-    const selectedLabel = options.find(o => o.value === selected)?.label
-    
-    return (
-      <div className="relative flex-shrink-0">
-        <button
-          onClick={() => setOpenDropdown(isOpen ? null : id)}
-          className={`px-4 py-2.5 rounded-xl border transition-all flex items-center gap-2 whitespace-nowrap
-            ${hasSelection
-              ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400'
-              : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white'
-            }`}
-        >
-          <span>{hasSelection ? selectedLabel : label}</span>
-          <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-        </button>
-
-        {isOpen && (
-          <div className="absolute top-full left-0 mt-2 z-30 min-w-[150px] bg-gray-800 border border-gray-700 rounded-xl shadow-xl p-2 max-h-60 overflow-y-auto">
-            {options.map((option) => {
-              const isSelected = selected === option.value
-              
-              return (
-                <button
-                  key={option.value}
-                  onClick={() => {
-                    onSelect(isSelected ? null : option.value)
-                    setOpenDropdown(null)
-                  }}
-                  className={`w-full px-3 py-2 rounded-lg text-left text-sm transition-colors flex items-center justify-between
-                    ${isSelected
-                      ? 'bg-emerald-500/20 text-emerald-400'
-                      : 'text-white/70 hover:bg-white/5 hover:text-white'
-                    }`}
-                >
-                  <span>{option.label}</span>
-                  {isSelected && (
-                    <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                  )}
-                </button>
-              )
-            })}
-          </div>
-        )}
-      </div>
-    )
+  const handleDropdownToggle = (id: string) => {
+    setOpenDropdown(openDropdown === id ? null : id)
   }
 
   return (
@@ -382,63 +260,240 @@ export default function ComparePage() {
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
               >
                 {/* Challenge Type Filter */}
-                <MultiSelectDropdown
-                  id="challenge"
-                  label="Challenge Type"
-                  options={challengeTypeOptions}
-                  selected={selectedChallengeTypes}
-                  onToggle={(v) => toggleArrayFilter(selectedChallengeTypes, setSelectedChallengeTypes, v)}
-                />
+                <div className="relative flex-shrink-0 filter-dropdown">
+                  <button
+                    onClick={() => handleDropdownToggle('challenge')}
+                    className={`px-4 py-2.5 rounded-xl border transition-all flex items-center gap-2 whitespace-nowrap
+                      ${selectedChallengeTypes.length > 0
+                        ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400'
+                        : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white'
+                      }`}
+                  >
+                    <span>Challenge Type</span>
+                    {selectedChallengeTypes.length > 0 && (
+                      <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded-md">
+                        {selectedChallengeTypes.length}
+                      </span>
+                    )}
+                    <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'challenge' ? 'rotate-180' : ''}`} />
+                  </button>
+                  {openDropdown === 'challenge' && (
+                    <div className="absolute top-full left-0 mt-2 z-50 min-w-[180px] bg-gray-800 border border-gray-700 rounded-xl shadow-xl p-2 max-h-60 overflow-y-auto">
+                      {challengeTypeOptions.map((option) => (
+                        <button
+                          key={option}
+                          onClick={() => toggleArrayFilter(selectedChallengeTypes, setSelectedChallengeTypes, option)}
+                          className={`w-full px-3 py-2 rounded-lg text-left text-sm transition-colors flex items-center justify-between
+                            ${selectedChallengeTypes.includes(option)
+                              ? 'bg-emerald-500/20 text-emerald-400'
+                              : 'text-white/70 hover:bg-white/5 hover:text-white'
+                            }`}
+                        >
+                          <span>{option === 'instant' ? 'Instant Funding' : option}</span>
+                          {selectedChallengeTypes.includes(option) && (
+                            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
                 {/* Platform Filter */}
-                <MultiSelectDropdown
-                  id="platform"
-                  label="Platform"
-                  options={platformOptions}
-                  selected={selectedPlatforms}
-                  onToggle={(v) => toggleArrayFilter(selectedPlatforms, setSelectedPlatforms, v)}
-                />
+                <div className="relative flex-shrink-0 filter-dropdown">
+                  <button
+                    onClick={() => handleDropdownToggle('platform')}
+                    className={`px-4 py-2.5 rounded-xl border transition-all flex items-center gap-2 whitespace-nowrap
+                      ${selectedPlatforms.length > 0
+                        ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400'
+                        : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white'
+                      }`}
+                  >
+                    <span>Platform</span>
+                    {selectedPlatforms.length > 0 && (
+                      <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded-md">
+                        {selectedPlatforms.length}
+                      </span>
+                    )}
+                    <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'platform' ? 'rotate-180' : ''}`} />
+                  </button>
+                  {openDropdown === 'platform' && (
+                    <div className="absolute top-full left-0 mt-2 z-50 min-w-[180px] bg-gray-800 border border-gray-700 rounded-xl shadow-xl p-2 max-h-60 overflow-y-auto">
+                      {platformOptions.map((option) => (
+                        <button
+                          key={option}
+                          onClick={() => toggleArrayFilter(selectedPlatforms, setSelectedPlatforms, option)}
+                          className={`w-full px-3 py-2 rounded-lg text-left text-sm transition-colors flex items-center justify-between
+                            ${selectedPlatforms.includes(option)
+                              ? 'bg-emerald-500/20 text-emerald-400'
+                              : 'text-white/70 hover:bg-white/5 hover:text-white'
+                            }`}
+                        >
+                          <span>{option}</span>
+                          {selectedPlatforms.includes(option) && (
+                            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
-                {/* Market Filter */}
-                <MultiSelectDropdown
-                  id="market"
-                  label="Markets"
-                  options={marketOptions}
-                  selected={selectedMarkets}
-                  onToggle={(v) => toggleArrayFilter(selectedMarkets, setSelectedMarkets, v)}
-                />
+                {/* Markets Filter */}
+                <div className="relative flex-shrink-0 filter-dropdown">
+                  <button
+                    onClick={() => handleDropdownToggle('market')}
+                    className={`px-4 py-2.5 rounded-xl border transition-all flex items-center gap-2 whitespace-nowrap
+                      ${selectedMarkets.length > 0
+                        ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400'
+                        : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white'
+                      }`}
+                  >
+                    <span>Markets</span>
+                    {selectedMarkets.length > 0 && (
+                      <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded-md">
+                        {selectedMarkets.length}
+                      </span>
+                    )}
+                    <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'market' ? 'rotate-180' : ''}`} />
+                  </button>
+                  {openDropdown === 'market' && (
+                    <div className="absolute top-full left-0 mt-2 z-50 min-w-[180px] bg-gray-800 border border-gray-700 rounded-xl shadow-xl p-2 max-h-60 overflow-y-auto">
+                      {marketOptions.map((option) => (
+                        <button
+                          key={option}
+                          onClick={() => toggleArrayFilter(selectedMarkets, setSelectedMarkets, option)}
+                          className={`w-full px-3 py-2 rounded-lg text-left text-sm transition-colors flex items-center justify-between
+                            ${selectedMarkets.includes(option)
+                              ? 'bg-emerald-500/20 text-emerald-400'
+                              : 'text-white/70 hover:bg-white/5 hover:text-white'
+                            }`}
+                        >
+                          <span>{option}</span>
+                          {selectedMarkets.includes(option) && (
+                            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
                 {/* Price Filter */}
-                <SingleSelectDropdown
-                  id="price"
-                  label="Price"
-                  options={priceOptions}
-                  selected={maxPrice}
-                  onSelect={setMaxPrice}
-                />
+                <div className="relative flex-shrink-0 filter-dropdown">
+                  <button
+                    onClick={() => handleDropdownToggle('price')}
+                    className={`px-4 py-2.5 rounded-xl border transition-all flex items-center gap-2 whitespace-nowrap
+                      ${maxPrice
+                        ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400'
+                        : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white'
+                      }`}
+                  >
+                    <span>{maxPrice ? `Under $${maxPrice}` : 'Price'}</span>
+                    <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'price' ? 'rotate-180' : ''}`} />
+                  </button>
+                  {openDropdown === 'price' && (
+                    <div className="absolute top-full left-0 mt-2 z-50 min-w-[150px] bg-gray-800 border border-gray-700 rounded-xl shadow-xl p-2 max-h-60 overflow-y-auto">
+                      {priceOptions.map((option) => (
+                        <button
+                          key={option.value}
+                          onClick={() => {
+                            setMaxPrice(maxPrice === option.value ? null : option.value)
+                            setOpenDropdown(null)
+                          }}
+                          className={`w-full px-3 py-2 rounded-lg text-left text-sm transition-colors flex items-center justify-between
+                            ${maxPrice === option.value
+                              ? 'bg-emerald-500/20 text-emerald-400'
+                              : 'text-white/70 hover:bg-white/5 hover:text-white'
+                            }`}
+                        >
+                          <span>{option.label}</span>
+                          {maxPrice === option.value && (
+                            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
                 {/* Profit Split Filter */}
-                <SingleSelectDropdown
-                  id="profit"
-                  label="Profit Split"
-                  options={profitSplitOptions}
-                  selected={minProfitSplit}
-                  onSelect={setMinProfitSplit}
-                />
+                <div className="relative flex-shrink-0 filter-dropdown">
+                  <button
+                    onClick={() => handleDropdownToggle('profit')}
+                    className={`px-4 py-2.5 rounded-xl border transition-all flex items-center gap-2 whitespace-nowrap
+                      ${minProfitSplit
+                        ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400'
+                        : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white'
+                      }`}
+                  >
+                    <span>{minProfitSplit ? `${minProfitSplit}%+` : 'Profit Split'}</span>
+                    <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'profit' ? 'rotate-180' : ''}`} />
+                  </button>
+                  {openDropdown === 'profit' && (
+                    <div className="absolute top-full left-0 mt-2 z-50 min-w-[150px] bg-gray-800 border border-gray-700 rounded-xl shadow-xl p-2 max-h-60 overflow-y-auto">
+                      {profitSplitOptions.map((option) => (
+                        <button
+                          key={option.value}
+                          onClick={() => {
+                            setMinProfitSplit(minProfitSplit === option.value ? null : option.value)
+                            setOpenDropdown(null)
+                          }}
+                          className={`w-full px-3 py-2 rounded-lg text-left text-sm transition-colors flex items-center justify-between
+                            ${minProfitSplit === option.value
+                              ? 'bg-emerald-500/20 text-emerald-400'
+                              : 'text-white/70 hover:bg-white/5 hover:text-white'
+                            }`}
+                        >
+                          <span>{option.label}</span>
+                          {minProfitSplit === option.value && (
+                            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
                 {/* Trading Style Filter */}
-                <MultiSelectDropdown
-                  id="style"
-                  label="Trading Style"
-                  options={tradingStyleOptions.map(s => s.label)}
-                  selected={tradingStyles.map(id => tradingStyleOptions.find(s => s.id === id)?.label || '')}
-                  onToggle={(label) => {
-                    const style = tradingStyleOptions.find(s => s.label === label)
-                    if (style) {
-                      toggleArrayFilter(tradingStyles, setTradingStyles, style.id)
-                    }
-                  }}
-                />
+                <div className="relative flex-shrink-0 filter-dropdown">
+                  <button
+                    onClick={() => handleDropdownToggle('style')}
+                    className={`px-4 py-2.5 rounded-xl border transition-all flex items-center gap-2 whitespace-nowrap
+                      ${tradingStyles.length > 0
+                        ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400'
+                        : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white'
+                      }`}
+                  >
+                    <span>Trading Style</span>
+                    {tradingStyles.length > 0 && (
+                      <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded-md">
+                        {tradingStyles.length}
+                      </span>
+                    )}
+                    <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'style' ? 'rotate-180' : ''}`} />
+                  </button>
+                  {openDropdown === 'style' && (
+                    <div className="absolute top-full left-0 mt-2 z-50 min-w-[180px] bg-gray-800 border border-gray-700 rounded-xl shadow-xl p-2 max-h-60 overflow-y-auto">
+                      {tradingStyleOptions.map((option) => (
+                        <button
+                          key={option.id}
+                          onClick={() => toggleArrayFilter(tradingStyles, setTradingStyles, option.id)}
+                          className={`w-full px-3 py-2 rounded-lg text-left text-sm transition-colors flex items-center justify-between
+                            ${tradingStyles.includes(option.id)
+                              ? 'bg-emerald-500/20 text-emerald-400'
+                              : 'text-white/70 hover:bg-white/5 hover:text-white'
+                            }`}
+                        >
+                          <span>{option.label}</span>
+                          {tradingStyles.includes(option.id) && (
+                            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Right scroll button */}
@@ -505,14 +560,6 @@ export default function ComparePage() {
             )}
           </div>
 
-          {/* Click outside to close dropdown */}
-          {openDropdown && (
-            <div
-              className="fixed inset-0 z-20"
-              onClick={() => setOpenDropdown(null)}
-            />
-          )}
-
           {/* Sort & View Controls */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <p className="text-gray-400">
@@ -520,7 +567,6 @@ export default function ComparePage() {
             </p>
             
             <div className="flex items-center gap-4">
-              {/* Sort Dropdown */}
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
@@ -533,7 +579,6 @@ export default function ComparePage() {
                 <option value="name">Name A-Z</option>
               </select>
 
-              {/* View Toggle */}
               <div className="flex bg-gray-800 rounded-lg p-1 border border-gray-700">
                 <button
                   onClick={() => setViewMode('grid')}
@@ -596,4 +641,3 @@ export default function ComparePage() {
     </div>
   )
 }
-
