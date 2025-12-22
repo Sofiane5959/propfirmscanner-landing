@@ -40,7 +40,7 @@ const GUIDE_CHAPTERS = [
   },
   {
     number: 6,
-    title: 'Our Top Picks for 2025',
+    title: 'Our Top Picks for 2026',
     description: 'Best prop firms by category',
     icon: Star,
   },
@@ -50,7 +50,7 @@ const BENEFITS = [
   { icon: DollarSign, text: 'Save $500+ by avoiding bad choices' },
   { icon: Clock, text: '30+ hours of research condensed' },
   { icon: Users, text: 'Used by 5,000+ traders' },
-  { icon: Award, text: 'Updated for 2025' },
+  { icon: Award, text: 'Updated for 2026' },
 ]
 
 export default function GuidePageClient() {
@@ -107,7 +107,7 @@ export default function GuidePageClient() {
               </div>
               
               <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
-                How to Choose the <span className="text-emerald-400">Perfect Prop Firm</span> in 2025
+                How to Choose the <span className="text-emerald-400">Perfect Prop Firm</span> in 2026
               </h1>
               
               <p className="text-xl text-gray-400 mb-8">

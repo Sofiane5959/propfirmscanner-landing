@@ -13,7 +13,7 @@ const DEALS = [
     url: 'https://ftmo.com',
     color: 'from-blue-500 to-blue-600',
     category: 'forex',
-    expiresAt: '2025-03-31',
+    expiresAt: '2026-03-31',
   },
   {
     id: 2,
@@ -24,7 +24,7 @@ const DEALS = [
     url: 'https://goatfundedtrader.com',
     color: 'from-amber-500 to-orange-600',
     category: 'forex',
-    expiresAt: '2025-02-28',
+    expiresAt: '2026-02-28',
   },
   {
     id: 3,
@@ -35,7 +35,7 @@ const DEALS = [
     url: 'https://fundednext.com',
     color: 'from-emerald-500 to-green-600',
     category: 'forex',
-    expiresAt: '2025-04-15',
+    expiresAt: '2026-04-15',
   },
   {
     id: 4,
@@ -46,7 +46,7 @@ const DEALS = [
     url: 'https://fxify.com',
     color: 'from-purple-500 to-violet-600',
     category: 'forex',
-    expiresAt: '2025-03-15',
+    expiresAt: '2026-03-15',
   },
   {
     id: 5,
@@ -57,7 +57,7 @@ const DEALS = [
     url: 'https://e8funding.com',
     color: 'from-cyan-500 to-blue-600',
     category: 'forex',
-    expiresAt: '2025-02-15',
+    expiresAt: '2026-02-15',
   },
   {
     id: 6,
@@ -68,7 +68,7 @@ const DEALS = [
     url: 'https://topstep.com',
     color: 'from-green-500 to-emerald-600',
     category: 'futures',
-    expiresAt: '2025-03-01',
+    expiresAt: '2026-03-01',
   },
   {
     id: 7,
@@ -79,7 +79,7 @@ const DEALS = [
     url: 'https://apextraderfunding.com',
     color: 'from-red-500 to-rose-600',
     category: 'futures',
-    expiresAt: '2025-02-20',
+    expiresAt: '2026-02-20',
   },
   {
     id: 8,
@@ -90,7 +90,7 @@ const DEALS = [
     url: 'https://the5ers.com',
     color: 'from-indigo-500 to-purple-600',
     category: 'forex',
-    expiresAt: '2025-04-01',
+    expiresAt: '2026-04-01',
   },
 ]
 
