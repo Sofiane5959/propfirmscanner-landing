@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { X, Gift, Copy, Check, ExternalLink } from 'lucide-react';
 
-// Liste des promos - Tu peux modifier ces valeurs
 const PROMOS = [
   {
     id: 1,
@@ -65,11 +64,10 @@ export default function PromoPopup() {
       if (hoursAgo < 24) return;
     }
 
-    // Show promo after random delay between 90-180 seconds
-    const delay = Math.random() * 90000 + 90000;
+    // Show promo after 15 seconds (for testing - change to 90000-180000 for production)
+    const delay = 15000;
     
     const timeout = setTimeout(() => {
-      // Pick random promo
       const randomPromo = PROMOS[Math.floor(Math.random() * PROMOS.length)];
       setPromo(randomPromo);
       setIsVisible(true);
@@ -97,7 +95,7 @@ export default function PromoPopup() {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 z-50">
+    <div className="fixed bottom-4 right-4 z-[9999]">
       <div className="relative w-80 bg-gray-900 border border-gray-700 rounded-2xl overflow-hidden shadow-2xl">
         {/* Gradient header */}
         <div className={`bg-gradient-to-r ${promo.color} p-4`}>
@@ -122,7 +120,6 @@ export default function PromoPopup() {
         {/* Content */}
         <div className="p-4">
           <div className="flex items-center gap-3 mb-3">
-            {/* Logo placeholder */}
             <div className="w-12 h-12 rounded-lg bg-gray-800 border border-gray-700 flex items-center justify-center text-lg font-bold text-emerald-400">
               {promo.firm.charAt(0)}
             </div>

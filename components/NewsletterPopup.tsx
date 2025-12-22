@@ -18,10 +18,10 @@ export default function NewsletterPopup() {
       return;
     }
 
-    // Show popup after 60 seconds
+    // Show popup after 10 seconds (for testing - change to 60000 for production)
     const timeout = setTimeout(() => {
       setIsVisible(true);
-    }, 60000);
+    }, 10000);
 
     return () => clearTimeout(timeout);
   }, []);
@@ -73,7 +73,7 @@ export default function NewsletterPopup() {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="relative w-full max-w-md bg-gray-900 border border-gray-700 rounded-2xl p-8 shadow-2xl">
         {/* Close button */}
         <button
