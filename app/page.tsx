@@ -1,3 +1,4 @@
+import Newsletter from '@/components/Newsletter';
 import Link from 'next/link'
 import { 
   Target, 
@@ -269,34 +270,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Newsletter Section */}
+      {/* Newsletter Section - Composant Mailchimp */}
       <section className="py-16 md:py-20 border-t border-white/10">
-        <div className="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
-            Get Exclusive Deals & Updates
-          </h2>
-          <p className="text-dark-400 mb-6">
-            Be the first to know about new prop firm discounts, platform updates, and trading tips.
-          </p>
-          
-          <form className="flex flex-col sm:flex-row gap-3">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-dark-500 focus:outline-none focus:border-brand-500 transition-colors"
-            />
-            <button
-              type="submit"
-              className="px-6 py-3 font-semibold text-dark-900 bg-gradient-to-r from-brand-400 to-emerald-400 rounded-xl hover:opacity-90 transition-opacity"
-            >
-              Subscribe
-            </button>
-          </form>
-          
-          <p className="text-dark-500 text-xs mt-4">
-            No spam, ever. Unsubscribe anytime.
-          </p>
-        </div>
+        <Newsletter className="max-w-4xl mx-auto px-4" />
       </section>
     </div>
   )
