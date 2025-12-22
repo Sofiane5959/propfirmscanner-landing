@@ -108,7 +108,7 @@ export default function PropFirmPageClient({ firm }: Props) {
             {/* CTA */}
             <div className="w-full md:w-auto">
               <a
-                href={firm.affiliate_link || firm.website_url || '#'}
+                href={firm.affiliate_url || firm.website_url || '#'}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full md:w-auto px-8 py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
@@ -255,7 +255,7 @@ export default function PropFirmPageClient({ firm }: Props) {
               </div>
 
               <a
-                href={firm.affiliate_link || firm.website_url || '#'}
+                href={firm.affiliate_url || firm.website_url || '#'}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
