@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Search, SlidersHorizontal, ChevronDown, X, Star, ExternalLink, Grid, List } from 'lucide-react'
+import { Search, SlidersHorizontal, ChevronDown, X, Star, ExternalLink, Grid, List, MapPin, Shield } from 'lucide-react'
 import { getPropFirms } from '@/lib/supabase-queries'
 import type { PropFirm } from '@/types'
 import Link from 'next/link'
@@ -19,6 +19,32 @@ const PRICE_RANGES = [
 ]
 const PROFIT_SPLITS = ['70%+', '80%+', '90%+']
 const TRADING_STYLES = ['Scalping', 'News Trading', 'Weekend Holding', 'Hedging', 'EA/Bots']
+
+// Platform colors
+const platformColors: Record<string, string> = {
+  'MT4': 'bg-gradient-to-br from-blue-500 to-blue-700',
+  'MT5': 'bg-gradient-to-br from-blue-600 to-indigo-700',
+  'cTrader': 'bg-gradient-to-br from-amber-400 to-orange-500',
+  'DXtrade': 'bg-gradient-to-br from-purple-500 to-violet-700',
+  'TradeLocker': 'bg-gradient-to-br from-emerald-500 to-green-700',
+  'Match-Trader': 'bg-gradient-to-br from-orange-500 to-red-600',
+  'MatchTrader': 'bg-gradient-to-br from-orange-500 to-red-600',
+  'NinjaTrader': 'bg-gradient-to-br from-red-500 to-red-700',
+  'Tradovate': 'bg-gradient-to-br from-cyan-500 to-blue-600',
+  'Rithmic': 'bg-gradient-to-br from-gray-600 to-gray-800',
+}
+
+// Market colors
+const marketColors: Record<string, string> = {
+  'Forex': 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
+  'Indices': 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+  'Metals': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+  'Crypto': 'bg-orange-500/20 text-orange-400 border-orange-500/30',
+  'Stocks': 'bg-purple-500/20 text-purple-400 border-purple-500/30',
+  'Futures': 'bg-red-500/20 text-red-400 border-red-500/30',
+  'Commodities': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+  'Energy': 'bg-pink-500/20 text-pink-400 border-pink-500/30',
+}
 
 export default function ComparePage() {
   const [firms, setFirms] = useState<PropFirm[]>([])
@@ -79,28 +105,21 @@ export default function ComparePage() {
 
   // Filtrer les firms
   const filteredFirms = firms.filter(firm => {
-    // Search
     if (searchQuery && !firm.name.toLowerCase().includes(searchQuery.toLowerCase())) {
       return false
     }
-    
-    // Platform filter
     if (selectedPlatforms.length > 0) {
       const firmPlatforms = firm.platforms || []
       if (!selectedPlatforms.some(p => firmPlatforms.includes(p))) {
         return false
       }
     }
-    
-    // Markets filter
     if (selectedMarkets.length > 0) {
       const firmMarkets = firm.instruments || []
       if (!selectedMarkets.some(m => firmMarkets.includes(m))) {
         return false
       }
     }
-    
-    // Price filter
     if (selectedPriceRanges.length > 0) {
       const price = firm.min_price || 0
       const matchesPrice = selectedPriceRanges.some(range => {
@@ -109,8 +128,6 @@ export default function ComparePage() {
       })
       if (!matchesPrice) return false
     }
-    
-    // Profit split filter
     if (selectedProfitSplits.length > 0) {
       const split = firm.profit_split || 0
       const matchesSplit = selectedProfitSplits.some(s => {
@@ -121,8 +138,6 @@ export default function ComparePage() {
       })
       if (!matchesSplit) return false
     }
-    
-    // Trading style filter
     if (selectedTradingStyles.length > 0) {
       const matchesStyle = selectedTradingStyles.some(style => {
         if (style === 'Scalping') return firm.allows_scalping
@@ -134,7 +149,6 @@ export default function ComparePage() {
       })
       if (!matchesStyle) return false
     }
-    
     return true
   })
 
@@ -148,7 +162,6 @@ export default function ComparePage() {
     return 0
   })
 
-  // Compter les filtres actifs
   const activeFiltersCount = 
     selectedChallengeTypes.length + 
     selectedPlatforms.length + 
@@ -157,7 +170,6 @@ export default function ComparePage() {
     selectedProfitSplits.length + 
     selectedTradingStyles.length
 
-  // Clear tous les filtres
   const clearAllFilters = () => {
     setSelectedChallengeTypes([])
     setSelectedPlatforms([])
@@ -228,6 +240,69 @@ export default function ComparePage() {
     )
   }
 
+  // Render stars
+  const renderStars = (rating: number | null) => {
+    if (!rating) return null
+    const fullStars = Math.floor(rating)
+    return (
+      <div className="flex items-center gap-1">
+        {[...Array(5)].map((_, i) => (
+          <Star
+            key={i}
+            className={`w-4 h-4 ${i < fullStars ? 'text-yellow-400 fill-yellow-400' : 'text-gray-600'}`}
+          />
+        ))}
+        <span className="text-sm text-gray-400 ml-1">{rating.toFixed(1)}</span>
+      </div>
+    )
+  }
+
+  // Render platforms
+  const renderPlatforms = (platforms: string[] | null) => {
+    if (!platforms || platforms.length === 0) return <span className="text-gray-500 text-xs">N/A</span>
+    return (
+      <div className="flex flex-wrap gap-1.5">
+        {platforms.slice(0, 4).map((platform) => {
+          const bgColor = platformColors[platform] || 'bg-gray-600'
+          return (
+            <div
+              key={platform}
+              className={`w-7 h-7 rounded-lg ${bgColor} flex items-center justify-center text-white text-[9px] font-bold`}
+              title={platform}
+            >
+              {platform.substring(0, 2).toUpperCase()}
+            </div>
+          )
+        })}
+        {platforms.length > 4 && (
+          <div className="w-7 h-7 rounded-lg bg-gray-700 flex items-center justify-center text-[10px] text-gray-400 font-medium">
+            +{platforms.length - 4}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  // Render markets
+  const renderMarkets = (instruments: string[] | null) => {
+    if (!instruments || instruments.length === 0) return <span className="text-gray-500 text-xs">N/A</span>
+    return (
+      <div className="flex flex-wrap gap-1.5">
+        {instruments.slice(0, 5).map((market) => {
+          const colorClass = marketColors[market] || 'bg-gray-500/20 text-gray-400 border-gray-500/30'
+          return (
+            <span key={market} className={`px-2 py-0.5 ${colorClass} text-xs rounded-md border`}>
+              {market}
+            </span>
+          )
+        })}
+        {instruments.length > 5 && (
+          <span className="px-2 py-0.5 text-gray-500 text-xs">+{instruments.length - 5}</span>
+        )}
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gray-900 pt-20 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -269,48 +344,12 @@ export default function ComparePage() {
           </div>
           
           <div className="flex flex-wrap gap-3">
-            <FilterDropdown
-              name="challenge"
-              label="Challenge Type"
-              options={CHALLENGE_TYPES}
-              selected={selectedChallengeTypes}
-              setSelected={setSelectedChallengeTypes}
-            />
-            <FilterDropdown
-              name="platform"
-              label="Platform"
-              options={PLATFORMS}
-              selected={selectedPlatforms}
-              setSelected={setSelectedPlatforms}
-            />
-            <FilterDropdown
-              name="markets"
-              label="Markets"
-              options={MARKETS}
-              selected={selectedMarkets}
-              setSelected={setSelectedMarkets}
-            />
-            <FilterDropdown
-              name="price"
-              label="Price"
-              options={PRICE_RANGES.map(r => r.label)}
-              selected={selectedPriceRanges}
-              setSelected={setSelectedPriceRanges}
-            />
-            <FilterDropdown
-              name="profit"
-              label="Profit Split"
-              options={PROFIT_SPLITS}
-              selected={selectedProfitSplits}
-              setSelected={setSelectedProfitSplits}
-            />
-            <FilterDropdown
-              name="style"
-              label="Trading Style"
-              options={TRADING_STYLES}
-              selected={selectedTradingStyles}
-              setSelected={setSelectedTradingStyles}
-            />
+            <FilterDropdown name="challenge" label="Challenge Type" options={CHALLENGE_TYPES} selected={selectedChallengeTypes} setSelected={setSelectedChallengeTypes} />
+            <FilterDropdown name="platform" label="Platform" options={PLATFORMS} selected={selectedPlatforms} setSelected={setSelectedPlatforms} />
+            <FilterDropdown name="markets" label="Markets" options={MARKETS} selected={selectedMarkets} setSelected={setSelectedMarkets} />
+            <FilterDropdown name="price" label="Price" options={PRICE_RANGES.map(r => r.label)} selected={selectedPriceRanges} setSelected={setSelectedPriceRanges} />
+            <FilterDropdown name="profit" label="Profit Split" options={PROFIT_SPLITS} selected={selectedProfitSplits} setSelected={setSelectedProfitSplits} />
+            <FilterDropdown name="style" label="Trading Style" options={TRADING_STYLES} selected={selectedTradingStyles} setSelected={setSelectedTradingStyles} />
           </div>
         </div>
 
@@ -358,67 +397,197 @@ export default function ComparePage() {
           </div>
         )}
 
-        {/* Grid */}
-        {!loading && (
-          <div className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
+        {/* Grid View - Detailed Cards */}
+        {!loading && viewMode === 'grid' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {sortedFirms.map((firm) => (
-              <Link
+              <div
                 key={firm.id}
-                href={`/prop-firm/${firm.slug || firm.name.toLowerCase().replace(/\s+/g, '-')}`}
-                className="bg-gray-800/50 border border-gray-700 rounded-2xl p-6 hover:border-emerald-500/50 transition-all group"
+                className="bg-gray-800/50 rounded-xl overflow-hidden border border-gray-700 hover:border-emerald-500/50 transition-all flex flex-col h-full"
               >
-                <div className="flex items-start gap-4 mb-4">
-                  <div className="w-14 h-14 rounded-xl bg-white flex items-center justify-center overflow-hidden flex-shrink-0">
-                    {firm.logo_url ? (
-                      <img src={firm.logo_url} alt={firm.name} className="w-12 h-12 object-contain" />
-                    ) : (
-                      <span className="text-2xl font-bold text-emerald-500">{firm.name.charAt(0)}</span>
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-lg font-semibold text-white group-hover:text-emerald-400 transition-colors truncate">
-                      {firm.name}
-                    </h3>
-                    <div className="flex items-center gap-2">
-                      {firm.trustpilot_rating && (
-                        <div className="flex items-center gap-1">
-                          <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                          <span className="text-white">{firm.trustpilot_rating}</span>
-                        </div>
-                      )}
-                      {firm.headquarters && (
-                        <span className="text-gray-500 text-sm">• {firm.headquarters}</span>
-                      )}
+                {/* Header */}
+                <div className="p-5 border-b border-gray-700">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center overflow-hidden p-2">
+                        {firm.logo_url ? (
+                          <img src={firm.logo_url} alt={firm.name} className="w-full h-full object-contain" />
+                        ) : (
+                          <span className="text-xl font-bold text-emerald-600">{firm.name.charAt(0)}</span>
+                        )}
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-white">{firm.name}</h3>
+                        {renderStars(firm.trustpilot_rating)}
+                      </div>
                     </div>
                   </div>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <div className="text-gray-500 text-xs mb-1">From</div>
-                    <div className="text-white font-semibold">${firm.min_price}</div>
-                  </div>
-                  <div>
-                    <div className="text-gray-500 text-xs mb-1">Profit Split</div>
-                    <div className="text-emerald-400 font-semibold">{firm.profit_split}%</div>
-                  </div>
-                </div>
-                
-                {firm.platforms && firm.platforms.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5">
-                    {firm.platforms.slice(0, 3).map(platform => (
-                      <span key={platform} className="px-2 py-1 bg-gray-700/50 text-gray-300 text-xs rounded">
-                        {platform}
+                  
+                  {/* Location & Regulation */}
+                  <div className="flex items-center gap-4 mt-3 text-xs text-gray-400">
+                    {firm.headquarters && (
+                      <span className="flex items-center gap-1">
+                        <MapPin className="w-3 h-3" />
+                        {firm.headquarters}
                       </span>
-                    ))}
-                    {firm.platforms.length > 3 && (
-                      <span className="px-2 py-1 bg-gray-700/50 text-gray-400 text-xs rounded">
-                        +{firm.platforms.length - 3}
+                    )}
+                    {firm.is_regulated && (
+                      <span className="flex items-center gap-1 text-emerald-400">
+                        <Shield className="w-3 h-3" />
+                        Regulated
                       </span>
                     )}
                   </div>
-                )}
-              </Link>
+
+                  {/* Challenge Types */}
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    {firm.challenge_types?.slice(0, 3).map((type) => (
+                      <span key={type} className="px-2 py-1 bg-gray-700 text-gray-300 text-xs rounded-full">
+                        {type}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Stats */}
+                <div className="p-5 flex-1">
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <p className="text-gray-500 text-xs uppercase">Starting From</p>
+                      <p className="text-white font-semibold text-lg">${firm.min_price || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-500 text-xs uppercase">Profit Split</p>
+                      <p className="text-emerald-400 font-semibold text-lg">{firm.profit_split || 'N/A'}%</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-500 text-xs uppercase">Daily Drawdown</p>
+                      <p className="text-white font-semibold">{firm.max_daily_drawdown || 'N/A'}%</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-500 text-xs uppercase">Max Drawdown</p>
+                      <p className="text-white font-semibold">{firm.max_total_drawdown || 'N/A'}%</p>
+                    </div>
+                  </div>
+
+                  {/* Platforms */}
+                  <div className="mb-4">
+                    <p className="text-gray-500 text-xs uppercase mb-2">Trading Platforms</p>
+                    {renderPlatforms(firm.platforms)}
+                  </div>
+
+                  {/* Markets */}
+                  <div className="mb-4">
+                    <p className="text-gray-500 text-xs uppercase mb-2">Markets</p>
+                    {renderMarkets(firm.instruments)}
+                  </div>
+
+                  {/* Trading Permissions */}
+                  <div className="flex flex-wrap gap-x-3 gap-y-1">
+                    {firm.allows_scalping && (
+                      <span className="text-xs text-green-400 flex items-center gap-1">✓ Scalping</span>
+                    )}
+                    {firm.allows_news_trading && (
+                      <span className="text-xs text-green-400 flex items-center gap-1">✓ News</span>
+                    )}
+                    {firm.allows_ea && (
+                      <span className="text-xs text-green-400 flex items-center gap-1">✓ EA/Bots</span>
+                    )}
+                    {firm.allows_hedging && (
+                      <span className="text-xs text-green-400 flex items-center gap-1">✓ Hedging</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <div className="p-4 bg-gray-900/50 border-t border-gray-700 mt-auto">
+                  <div className="flex gap-2">
+                    <Link
+                      href={`/prop-firm/${firm.slug || firm.name.toLowerCase().replace(/\s+/g, '-')}`}
+                      className="flex-1 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors text-center"
+                    >
+                      Details
+                    </Link>
+                    <a
+                      href={firm.affiliate_url || firm.website_url || '#'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+                    >
+                      Visit
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* List View */}
+        {!loading && viewMode === 'list' && (
+          <div className="space-y-4">
+            {sortedFirms.map((firm) => (
+              <div
+                key={firm.id}
+                className="bg-gray-800/50 rounded-xl p-5 border border-gray-700 hover:border-emerald-500/50 transition-all"
+              >
+                <div className="flex flex-col md:flex-row md:items-center gap-4">
+                  {/* Logo & Name */}
+                  <div className="flex items-center gap-4 md:w-56">
+                    <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center overflow-hidden p-2">
+                      {firm.logo_url ? (
+                        <img src={firm.logo_url} alt={firm.name} className="w-full h-full object-contain" />
+                      ) : (
+                        <span className="text-lg font-bold text-emerald-600">{firm.name.charAt(0)}</span>
+                      )}
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-white">{firm.name}</h3>
+                      {renderStars(firm.trustpilot_rating)}
+                    </div>
+                  </div>
+
+                  {/* Key Stats */}
+                  <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                      <p className="text-gray-500 text-xs uppercase">From</p>
+                      <p className="text-white font-semibold">${firm.min_price || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-500 text-xs uppercase">Profit Split</p>
+                      <p className="text-emerald-400 font-semibold">{firm.profit_split || 'N/A'}%</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-500 text-xs uppercase">Platforms</p>
+                      {renderPlatforms(firm.platforms)}
+                    </div>
+                    <div>
+                      <p className="text-gray-500 text-xs uppercase">Location</p>
+                      <p className="text-white font-semibold text-sm">{firm.headquarters || 'N/A'}</p>
+                    </div>
+                  </div>
+
+                  {/* CTA */}
+                  <div className="flex gap-2 md:w-48">
+                    <Link
+                      href={`/prop-firm/${firm.slug || firm.name.toLowerCase().replace(/\s+/g, '-')}`}
+                      className="flex-1 py-2.5 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors text-center text-sm"
+                    >
+                      Details
+                    </Link>
+                    <a
+                      href={firm.affiliate_url || firm.website_url || '#'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-1 text-sm"
+                    >
+                      Visit
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         )}
