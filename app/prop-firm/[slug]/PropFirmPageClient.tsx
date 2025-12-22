@@ -4,8 +4,8 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { 
   Star, ExternalLink, Copy, Check, Shield, TrendingUp,
-  Clock, DollarSign, Percent, Users, Award, AlertTriangle,
-  CheckCircle, XCircle, ChevronRight, Globe, Calendar
+  DollarSign, Percent, Award, AlertTriangle,
+  CheckCircle, XCircle, ChevronRight, Globe
 } from 'lucide-react'
 import type { PropFirm } from '@/types'
 
@@ -17,7 +17,7 @@ export default function PropFirmPageClient({ firm }: Props) {
   const [copiedCode, setCopiedCode] = useState(false)
   
   // Promo code fictif (à remplacer par les vrais)
-  const promoCode = `${firm.name.toUpperCase().replace(/\s/g, '')}10`
+  const promoCode = `${firm.name.toUpperCase().replace(/\s/g, '').slice(0, 8)}10`
 
   const handleCopyCode = async () => {
     await navigator.clipboard.writeText(promoCode)
@@ -100,12 +100,6 @@ export default function PropFirmPageClient({ firm }: Props) {
                   <div className="flex items-center gap-2 text-gray-400">
                     <Globe className="w-4 h-4 text-emerald-400" />
                     <span>{firm.headquarters}</span>
-                  </div>
-                )}
-                {firm.year_founded && (
-                  <div className="flex items-center gap-2 text-gray-400">
-                    <Calendar className="w-4 h-4 text-emerald-400" />
-                    <span>Since {firm.year_founded}</span>
                   </div>
                 )}
               </div>
