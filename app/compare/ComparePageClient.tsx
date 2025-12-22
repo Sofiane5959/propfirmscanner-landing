@@ -1,10 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Search, SlidersHorizontal, ChevronDown, X, Star, ExternalLink, Grid, List, MapPin, Shield } from 'lucide-react'
+import { Search, SlidersHorizontal, ChevronDown, X, Star, ExternalLink, Grid, List, MapPin, Shield, DollarSign } from 'lucide-react'
 import { getPropFirms } from '@/lib/supabase-queries'
 import type { PropFirm } from '@/types'
-import Link from 'next/link'
 
 // Options pour les filtres
 const CHALLENGE_TYPES = ['1-step', '2-step', '3-step', 'Instant', 'Direct']
@@ -20,18 +19,137 @@ const PRICE_RANGES = [
 const PROFIT_SPLITS = ['70%+', '80%+', '90%+']
 const TRADING_STYLES = ['Scalping', 'News Trading', 'Weekend Holding', 'Hedging', 'EA/Bots']
 
-// Platform colors
-const platformColors: Record<string, string> = {
-  'MT4': 'bg-gradient-to-br from-blue-500 to-blue-700',
-  'MT5': 'bg-gradient-to-br from-blue-600 to-indigo-700',
-  'cTrader': 'bg-gradient-to-br from-amber-400 to-orange-500',
-  'DXtrade': 'bg-gradient-to-br from-purple-500 to-violet-700',
-  'TradeLocker': 'bg-gradient-to-br from-emerald-500 to-green-700',
-  'Match-Trader': 'bg-gradient-to-br from-orange-500 to-red-600',
-  'MatchTrader': 'bg-gradient-to-br from-orange-500 to-red-600',
-  'NinjaTrader': 'bg-gradient-to-br from-red-500 to-red-700',
-  'Tradovate': 'bg-gradient-to-br from-cyan-500 to-blue-600',
-  'Rithmic': 'bg-gradient-to-br from-gray-600 to-gray-800',
+// Country flags mapping
+const countryFlags: Record<string, string> = {
+  'USA': '🇺🇸',
+  'United States': '🇺🇸',
+  'UK': '🇬🇧',
+  'United Kingdom': '🇬🇧',
+  'England': '🇬🇧',
+  'Czech Republic': '🇨🇿',
+  'Czechia': '🇨🇿',
+  'UAE': '🇦🇪',
+  'United Arab Emirates': '🇦🇪',
+  'Dubai': '🇦🇪',
+  'Australia': '🇦🇺',
+  'Canada': '🇨🇦',
+  'Germany': '🇩🇪',
+  'France': '🇫🇷',
+  'Spain': '🇪🇸',
+  'Italy': '🇮🇹',
+  'Netherlands': '🇳🇱',
+  'Switzerland': '🇨🇭',
+  'Singapore': '🇸🇬',
+  'Hong Kong': '🇭🇰',
+  'Japan': '🇯🇵',
+  'South Africa': '🇿🇦',
+  'Nigeria': '🇳🇬',
+  'India': '🇮🇳',
+  'Pakistan': '🇵🇰',
+  'Malaysia': '🇲🇾',
+  'Indonesia': '🇮🇩',
+  'Thailand': '🇹🇭',
+  'Vietnam': '🇻🇳',
+  'Philippines': '🇵🇭',
+  'Poland': '🇵🇱',
+  'Hungary': '🇭🇺',
+  'Romania': '🇷🇴',
+  'Bulgaria': '🇧🇬',
+  'Cyprus': '🇨🇾',
+  'Malta': '🇲🇹',
+  'Estonia': '🇪🇪',
+  'Latvia': '🇱🇻',
+  'Lithuania': '🇱🇹',
+  'Israel': '🇮🇱',
+  'Turkey': '🇹🇷',
+  'Mexico': '🇲🇽',
+  'Brazil': '🇧🇷',
+  'Argentina': '🇦🇷',
+  'Colombia': '🇨🇴',
+  'Chile': '🇨🇱',
+  'Peru': '🇵🇪',
+  'St. Vincent': '🇻🇨',
+  'Saint Vincent': '🇻🇨',
+  'Seychelles': '🇸🇨',
+  'Bahamas': '🇧🇸',
+  'Belize': '🇧🇿',
+  'Panama': '🇵🇦',
+  'Costa Rica': '🇨🇷',
+}
+
+// Platform logos - using SVG inline for best quality
+const PlatformLogo = ({ platform }: { platform: string }) => {
+  const logos: Record<string, JSX.Element> = {
+    'MT4': (
+      <div className="w-8 h-8 rounded-lg bg-[#0066cc] flex items-center justify-center" title="MetaTrader 4">
+        <svg viewBox="0 0 24 24" className="w-5 h-5 text-white" fill="currentColor">
+          <path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18l6.9 3.45L12 11.09 5.1 7.63 12 4.18zM4 8.82l7 3.5v7.36l-7-3.5V8.82zm9 10.86v-7.36l7-3.5v7.36l-7 3.5z"/>
+        </svg>
+      </div>
+    ),
+    'MT5': (
+      <div className="w-8 h-8 rounded-lg bg-[#6A1B9A] flex items-center justify-center" title="MetaTrader 5">
+        <svg viewBox="0 0 24 24" className="w-5 h-5 text-white" fill="currentColor">
+          <path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18l6.9 3.45L12 11.09 5.1 7.63 12 4.18zM4 8.82l7 3.5v7.36l-7-3.5V8.82zm9 10.86v-7.36l7-3.5v7.36l-7 3.5z"/>
+        </svg>
+      </div>
+    ),
+    'cTrader': (
+      <div className="w-8 h-8 rounded-lg bg-[#FF6B00] flex items-center justify-center" title="cTrader">
+        <svg viewBox="0 0 24 24" className="w-5 h-5 text-white" fill="currentColor">
+          <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" strokeWidth="2"/>
+          <path d="M12 6v6l4 2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+        </svg>
+      </div>
+    ),
+    'DXtrade': (
+      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#7C3AED] to-[#4F46E5] flex items-center justify-center" title="DXtrade">
+        <span className="text-white font-bold text-xs">DX</span>
+      </div>
+    ),
+    'TradeLocker': (
+      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#10B981] to-[#059669] flex items-center justify-center" title="TradeLocker">
+        <svg viewBox="0 0 24 24" className="w-5 h-5 text-white" fill="currentColor">
+          <rect x="5" y="11" width="14" height="10" rx="2" fill="none" stroke="currentColor" strokeWidth="2"/>
+          <path d="M8 11V7a4 4 0 018 0v4" fill="none" stroke="currentColor" strokeWidth="2"/>
+          <circle cx="12" cy="16" r="1.5"/>
+        </svg>
+      </div>
+    ),
+    'Match-Trader': (
+      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#F97316] to-[#EA580C] flex items-center justify-center" title="Match-Trader">
+        <span className="text-white font-bold text-xs">MT</span>
+      </div>
+    ),
+    'MatchTrader': (
+      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#F97316] to-[#EA580C] flex items-center justify-center" title="MatchTrader">
+        <span className="text-white font-bold text-xs">MT</span>
+      </div>
+    ),
+    'NinjaTrader': (
+      <div className="w-8 h-8 rounded-lg bg-[#FF9800] flex items-center justify-center" title="NinjaTrader">
+        <svg viewBox="0 0 24 24" className="w-5 h-5 text-white" fill="currentColor">
+          <path d="M12 2l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6z"/>
+        </svg>
+      </div>
+    ),
+    'Tradovate': (
+      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#0EA5E9] to-[#0284C7] flex items-center justify-center" title="Tradovate">
+        <span className="text-white font-bold text-xs">TV</span>
+      </div>
+    ),
+    'Rithmic': (
+      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#475569] to-[#334155] flex items-center justify-center" title="Rithmic">
+        <span className="text-white font-bold text-xs">R</span>
+      </div>
+    ),
+  }
+
+  return logos[platform] || (
+    <div className="w-8 h-8 rounded-lg bg-gray-600 flex items-center justify-center" title={platform}>
+      <span className="text-white font-bold text-[10px]">{platform.substring(0, 2).toUpperCase()}</span>
+    </div>
+  )
 }
 
 // Market colors
@@ -44,6 +162,29 @@ const marketColors: Record<string, string> = {
   'Futures': 'bg-red-500/20 text-red-400 border-red-500/30',
   'Commodities': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
   'Energy': 'bg-pink-500/20 text-pink-400 border-pink-500/30',
+}
+
+// Get flag for country
+const getFlag = (country: string | null | undefined): string => {
+  if (!country) return ''
+  // Try exact match first
+  if (countryFlags[country]) return countryFlags[country]
+  // Try partial match
+  for (const [key, flag] of Object.entries(countryFlags)) {
+    if (country.toLowerCase().includes(key.toLowerCase()) || key.toLowerCase().includes(country.toLowerCase())) {
+      return flag
+    }
+  }
+  return '🌍'
+}
+
+// Format max account size
+const formatMaxAccount = (sizes: number[] | null | undefined): string => {
+  if (!sizes || sizes.length === 0) return 'N/A'
+  const max = Math.max(...sizes)
+  if (max >= 1000000) return `$${(max / 1000000).toFixed(1)}M`
+  if (max >= 1000) return `$${(max / 1000).toFixed(0)}K`
+  return `$${max}`
 }
 
 export default function ComparePage() {
@@ -85,12 +226,10 @@ export default function ComparePage() {
     return () => document.removeEventListener('click', handleClickOutside)
   }, [])
 
-  // Toggle dropdown
   const toggleDropdown = (name: string) => {
     setOpenDropdown(openDropdown === name ? null : name)
   }
 
-  // Toggle filter selection
   const toggleFilter = (
     value: string,
     selected: string[],
@@ -105,20 +244,14 @@ export default function ComparePage() {
 
   // Filtrer les firms
   const filteredFirms = firms.filter(firm => {
-    if (searchQuery && !firm.name.toLowerCase().includes(searchQuery.toLowerCase())) {
-      return false
-    }
+    if (searchQuery && !firm.name.toLowerCase().includes(searchQuery.toLowerCase())) return false
     if (selectedPlatforms.length > 0) {
       const firmPlatforms = firm.platforms || []
-      if (!selectedPlatforms.some(p => firmPlatforms.includes(p))) {
-        return false
-      }
+      if (!selectedPlatforms.some(p => firmPlatforms.includes(p))) return false
     }
     if (selectedMarkets.length > 0) {
       const firmMarkets = firm.instruments || []
-      if (!selectedMarkets.some(m => firmMarkets.includes(m))) {
-        return false
-      }
+      if (!selectedMarkets.some(m => firmMarkets.includes(m))) return false
     }
     if (selectedPriceRanges.length > 0) {
       const price = firm.min_price || 0
@@ -163,12 +296,8 @@ export default function ComparePage() {
   })
 
   const activeFiltersCount = 
-    selectedChallengeTypes.length + 
-    selectedPlatforms.length + 
-    selectedMarkets.length + 
-    selectedPriceRanges.length + 
-    selectedProfitSplits.length + 
-    selectedTradingStyles.length
+    selectedChallengeTypes.length + selectedPlatforms.length + selectedMarkets.length + 
+    selectedPriceRanges.length + selectedProfitSplits.length + selectedTradingStyles.length
 
   const clearAllFilters = () => {
     setSelectedChallengeTypes([])
@@ -181,33 +310,19 @@ export default function ComparePage() {
   }
 
   // Composant FilterDropdown
-  const FilterDropdown = ({ 
-    name, 
-    label, 
-    options, 
-    selected, 
-    setSelected 
-  }: { 
-    name: string
-    label: string
-    options: string[]
-    selected: string[]
+  const FilterDropdown = ({ name, label, options, selected, setSelected }: { 
+    name: string; label: string; options: string[]; selected: string[]
     setSelected: React.Dispatch<React.SetStateAction<string[]>>
   }) => {
     const isOpen = openDropdown === name
-    
     return (
       <div className="relative filter-dropdown-container">
         <button
-          onClick={(e) => {
-            e.stopPropagation()
-            toggleDropdown(name)
-          }}
+          onClick={(e) => { e.stopPropagation(); toggleDropdown(name) }}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all whitespace-nowrap
             ${selected.length > 0 
               ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' 
-              : 'bg-gray-800 border-gray-700 text-gray-300 hover:border-gray-600'
-            }`}
+              : 'bg-gray-800 border-gray-700 text-gray-300 hover:border-gray-600'}`}
         >
           <span>{label}</span>
           {selected.length > 0 && (
@@ -217,19 +332,15 @@ export default function ComparePage() {
           )}
           <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
         </button>
-        
         {isOpen && (
           <div className="absolute top-full left-0 mt-2 w-56 bg-gray-800 border border-gray-700 rounded-xl shadow-xl z-50 py-2 max-h-64 overflow-y-auto">
             {options.map(option => (
-              <label
-                key={option}
-                className="flex items-center gap-3 px-4 py-2 hover:bg-gray-700/50 cursor-pointer"
-              >
+              <label key={option} className="flex items-center gap-3 px-4 py-2 hover:bg-gray-700/50 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={selected.includes(option)}
                   onChange={() => toggleFilter(option, selected, setSelected)}
-                  className="w-4 h-4 rounded border-gray-600 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-gray-800"
+                  className="w-4 h-4 rounded border-gray-600 text-emerald-500 focus:ring-emerald-500"
                 />
                 <span className="text-gray-300">{option}</span>
               </label>
@@ -243,14 +354,10 @@ export default function ComparePage() {
   // Render stars
   const renderStars = (rating: number | null) => {
     if (!rating) return null
-    const fullStars = Math.floor(rating)
     return (
       <div className="flex items-center gap-1">
         {[...Array(5)].map((_, i) => (
-          <Star
-            key={i}
-            className={`w-4 h-4 ${i < fullStars ? 'text-yellow-400 fill-yellow-400' : 'text-gray-600'}`}
-          />
+          <Star key={i} className={`w-4 h-4 ${i < Math.floor(rating) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-600'}`} />
         ))}
         <span className="text-sm text-gray-400 ml-1">{rating.toFixed(1)}</span>
       </div>
@@ -262,20 +369,11 @@ export default function ComparePage() {
     if (!platforms || platforms.length === 0) return <span className="text-gray-500 text-xs">N/A</span>
     return (
       <div className="flex flex-wrap gap-1.5">
-        {platforms.slice(0, 4).map((platform) => {
-          const bgColor = platformColors[platform] || 'bg-gray-600'
-          return (
-            <div
-              key={platform}
-              className={`w-7 h-7 rounded-lg ${bgColor} flex items-center justify-center text-white text-[9px] font-bold`}
-              title={platform}
-            >
-              {platform.substring(0, 2).toUpperCase()}
-            </div>
-          )
-        })}
+        {platforms.slice(0, 4).map((platform) => (
+          <PlatformLogo key={platform} platform={platform} />
+        ))}
         {platforms.length > 4 && (
-          <div className="w-7 h-7 rounded-lg bg-gray-700 flex items-center justify-center text-[10px] text-gray-400 font-medium">
+          <div className="w-8 h-8 rounded-lg bg-gray-700 flex items-center justify-center text-[10px] text-gray-400 font-medium">
             +{platforms.length - 4}
           </div>
         )}
@@ -291,9 +389,7 @@ export default function ComparePage() {
         {instruments.slice(0, 5).map((market) => {
           const colorClass = marketColors[market] || 'bg-gray-500/20 text-gray-400 border-gray-500/30'
           return (
-            <span key={market} className={`px-2 py-0.5 ${colorClass} text-xs rounded-md border`}>
-              {market}
-            </span>
+            <span key={market} className={`px-2 py-0.5 ${colorClass} text-xs rounded-md border`}>{market}</span>
           )
         })}
         {instruments.length > 5 && (
@@ -333,16 +429,11 @@ export default function ComparePage() {
             <SlidersHorizontal className="w-5 h-5 text-emerald-400" />
             <span className="text-white font-medium">Filters</span>
             {activeFiltersCount > 0 && (
-              <button
-                onClick={clearAllFilters}
-                className="ml-auto text-sm text-gray-400 hover:text-white flex items-center gap-1"
-              >
-                <X className="w-4 h-4" />
-                Clear all
+              <button onClick={clearAllFilters} className="ml-auto text-sm text-gray-400 hover:text-white flex items-center gap-1">
+                <X className="w-4 h-4" /> Clear all
               </button>
             )}
           </div>
-          
           <div className="flex flex-wrap gap-3">
             <FilterDropdown name="challenge" label="Challenge Type" options={CHALLENGE_TYPES} selected={selectedChallengeTypes} setSelected={setSelectedChallengeTypes} />
             <FilterDropdown name="platform" label="Platform" options={PLATFORMS} selected={selectedPlatforms} setSelected={setSelectedPlatforms} />
@@ -358,7 +449,6 @@ export default function ComparePage() {
           <p className="text-gray-400">
             <span className="text-white font-semibold">{sortedFirms.length}</span> prop firms found
           </p>
-          
           <div className="flex items-center gap-4">
             <select
               value={sortBy}
@@ -371,18 +461,11 @@ export default function ComparePage() {
               <option value="profit-split">Best Profit Split</option>
               <option value="name">Name A-Z</option>
             </select>
-            
             <div className="flex border border-gray-700 rounded-lg overflow-hidden">
-              <button
-                onClick={() => setViewMode('grid')}
-                className={`p-2 ${viewMode === 'grid' ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400'}`}
-              >
+              <button onClick={() => setViewMode('grid')} className={`p-2 ${viewMode === 'grid' ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400'}`}>
                 <Grid className="w-5 h-5" />
               </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={`p-2 ${viewMode === 'list' ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400'}`}
-              >
+              <button onClick={() => setViewMode('list')} className={`p-2 ${viewMode === 'list' ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400'}`}>
                 <List className="w-5 h-5" />
               </button>
             </div>
@@ -397,14 +480,11 @@ export default function ComparePage() {
           </div>
         )}
 
-        {/* Grid View - Detailed Cards */}
+        {/* Grid View */}
         {!loading && viewMode === 'grid' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {sortedFirms.map((firm) => (
-              <div
-                key={firm.id}
-                className="bg-gray-800/50 rounded-xl overflow-hidden border border-gray-700 hover:border-emerald-500/50 transition-all flex flex-col h-full"
-              >
+              <div key={firm.id} className="bg-gray-800/50 rounded-xl overflow-hidden border border-gray-700 hover:border-emerald-500/50 transition-all flex flex-col h-full">
                 {/* Header */}
                 <div className="p-5 border-b border-gray-700">
                   <div className="flex items-start justify-between">
@@ -423,18 +503,17 @@ export default function ComparePage() {
                     </div>
                   </div>
                   
-                  {/* Location & Regulation */}
+                  {/* Location with flag */}
                   <div className="flex items-center gap-4 mt-3 text-xs text-gray-400">
                     {firm.headquarters && (
-                      <span className="flex items-center gap-1">
-                        <MapPin className="w-3 h-3" />
+                      <span className="flex items-center gap-1.5">
+                        <span className="text-base">{getFlag(firm.headquarters)}</span>
                         {firm.headquarters}
                       </span>
                     )}
                     {firm.is_regulated && (
                       <span className="flex items-center gap-1 text-emerald-400">
-                        <Shield className="w-3 h-3" />
-                        Regulated
+                        <Shield className="w-3 h-3" /> Regulated
                       </span>
                     )}
                   </div>
@@ -442,9 +521,7 @@ export default function ComparePage() {
                   {/* Challenge Types */}
                   <div className="flex flex-wrap gap-2 mt-3">
                     {firm.challenge_types?.slice(0, 3).map((type) => (
-                      <span key={type} className="px-2 py-1 bg-gray-700 text-gray-300 text-xs rounded-full">
-                        {type}
-                      </span>
+                      <span key={type} className="px-2 py-1 bg-gray-700 text-gray-300 text-xs rounded-full">{type}</span>
                     ))}
                   </div>
                 </div>
@@ -461,16 +538,16 @@ export default function ComparePage() {
                       <p className="text-emerald-400 font-semibold text-lg">{firm.profit_split || 'N/A'}%</p>
                     </div>
                     <div>
-                      <p className="text-gray-500 text-xs uppercase">Daily Drawdown</p>
-                      <p className="text-white font-semibold">{firm.max_daily_drawdown || 'N/A'}%</p>
-                    </div>
-                    <div>
                       <p className="text-gray-500 text-xs uppercase">Max Drawdown</p>
                       <p className="text-white font-semibold">{firm.max_total_drawdown || 'N/A'}%</p>
                     </div>
+                    <div>
+                      <p className="text-gray-500 text-xs uppercase">Max Allocation</p>
+                      <p className="text-yellow-400 font-semibold">{formatMaxAccount(firm.account_sizes)}</p>
+                    </div>
                   </div>
 
-                  {/* Platforms */}
+                  {/* Platforms with logos */}
                   <div className="mb-4">
                     <p className="text-gray-500 text-xs uppercase mb-2">Trading Platforms</p>
                     {renderPlatforms(firm.platforms)}
@@ -484,40 +561,25 @@ export default function ComparePage() {
 
                   {/* Trading Permissions */}
                   <div className="flex flex-wrap gap-x-3 gap-y-1">
-                    {firm.allows_scalping && (
-                      <span className="text-xs text-green-400 flex items-center gap-1">✓ Scalping</span>
-                    )}
-                    {firm.allows_news_trading && (
-                      <span className="text-xs text-green-400 flex items-center gap-1">✓ News</span>
-                    )}
-                    {firm.allows_ea && (
-                      <span className="text-xs text-green-400 flex items-center gap-1">✓ EA/Bots</span>
-                    )}
-                    {firm.allows_hedging && (
-                      <span className="text-xs text-green-400 flex items-center gap-1">✓ Hedging</span>
-                    )}
+                    {firm.allows_scalping && <span className="text-xs text-green-400">✓ Scalping</span>}
+                    {firm.allows_news_trading && <span className="text-xs text-green-400">✓ News</span>}
+                    {firm.allows_ea && <span className="text-xs text-green-400">✓ EA/Bots</span>}
+                    {firm.allows_hedging && <span className="text-xs text-green-400">✓ Hedging</span>}
                   </div>
                 </div>
 
-                {/* Footer */}
+                {/* Footer - Buy Challenge Button */}
                 <div className="p-4 bg-gray-900/50 border-t border-gray-700 mt-auto">
-                  <div className="flex gap-2">
-                    <Link
-                      href={`/prop-firm/${firm.slug || firm.name.toLowerCase().replace(/\s+/g, '-')}`}
-                      className="flex-1 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors text-center"
-                    >
-                      Details
-                    </Link>
-                    <a
-                      href={firm.affiliate_url || firm.website_url || '#'}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
-                    >
-                      Visit
-                      <ExternalLink className="w-4 h-4" />
-                    </a>
-                  </div>
+                  <a
+                    href={firm.affiliate_url || firm.website_url || '#'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 w-full py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-xl font-semibold transition-all shadow-lg shadow-emerald-500/20"
+                  >
+                    <DollarSign className="w-5 h-5" />
+                    Buy Challenge
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
                 </div>
               </div>
             ))}
@@ -528,13 +590,10 @@ export default function ComparePage() {
         {!loading && viewMode === 'list' && (
           <div className="space-y-4">
             {sortedFirms.map((firm) => (
-              <div
-                key={firm.id}
-                className="bg-gray-800/50 rounded-xl p-5 border border-gray-700 hover:border-emerald-500/50 transition-all"
-              >
+              <div key={firm.id} className="bg-gray-800/50 rounded-xl p-5 border border-gray-700 hover:border-emerald-500/50 transition-all">
                 <div className="flex flex-col md:flex-row md:items-center gap-4">
                   {/* Logo & Name */}
-                  <div className="flex items-center gap-4 md:w-56">
+                  <div className="flex items-center gap-4 md:w-64">
                     <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center overflow-hidden p-2">
                       {firm.logo_url ? (
                         <img src={firm.logo_url} alt={firm.name} className="w-full h-full object-contain" />
@@ -549,7 +608,7 @@ export default function ComparePage() {
                   </div>
 
                   {/* Key Stats */}
-                  <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="flex-1 grid grid-cols-2 md:grid-cols-5 gap-4">
                     <div>
                       <p className="text-gray-500 text-xs uppercase">From</p>
                       <p className="text-white font-semibold">${firm.min_price || 'N/A'}</p>
@@ -559,31 +618,32 @@ export default function ComparePage() {
                       <p className="text-emerald-400 font-semibold">{firm.profit_split || 'N/A'}%</p>
                     </div>
                     <div>
-                      <p className="text-gray-500 text-xs uppercase">Platforms</p>
-                      {renderPlatforms(firm.platforms)}
+                      <p className="text-gray-500 text-xs uppercase">Max Allocation</p>
+                      <p className="text-yellow-400 font-semibold">{formatMaxAccount(firm.account_sizes)}</p>
                     </div>
                     <div>
                       <p className="text-gray-500 text-xs uppercase">Location</p>
-                      <p className="text-white font-semibold text-sm">{firm.headquarters || 'N/A'}</p>
+                      <p className="text-white font-semibold text-sm flex items-center gap-1">
+                        <span>{getFlag(firm.headquarters)}</span>
+                        {firm.headquarters || 'N/A'}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-gray-500 text-xs uppercase">Platforms</p>
+                      {renderPlatforms(firm.platforms)}
                     </div>
                   </div>
 
                   {/* CTA */}
-                  <div className="flex gap-2 md:w-48">
-                    <Link
-                      href={`/prop-firm/${firm.slug || firm.name.toLowerCase().replace(/\s+/g, '-')}`}
-                      className="flex-1 py-2.5 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors text-center text-sm"
-                    >
-                      Details
-                    </Link>
+                  <div className="md:w-40">
                     <a
                       href={firm.affiliate_url || firm.website_url || '#'}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-1 text-sm"
+                      className="flex items-center justify-center gap-2 w-full py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-xl font-semibold transition-all text-sm"
                     >
-                      Visit
-                      <ExternalLink className="w-3.5 h-3.5" />
+                      <DollarSign className="w-4 h-4" />
+                      Buy Challenge
                     </a>
                   </div>
                 </div>
@@ -596,10 +656,7 @@ export default function ComparePage() {
         {!loading && sortedFirms.length === 0 && (
           <div className="text-center py-12">
             <p className="text-gray-400 mb-4">No prop firms found matching your criteria.</p>
-            <button
-              onClick={clearAllFilters}
-              className="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors"
-            >
+            <button onClick={clearAllFilters} className="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors">
               Clear Filters
             </button>
           </div>
