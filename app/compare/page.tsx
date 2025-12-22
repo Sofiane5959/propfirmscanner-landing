@@ -16,7 +16,7 @@ export default function ComparePage() {
   const [searchQuery, setSearchQuery] = useState('')
   const scrollRef = useRef<HTMLDivElement>(null)
   
-  // Filter states - multi-select
+  // Filter states
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([])
   const [selectedMarkets, setSelectedMarkets] = useState<string[]>([])
   const [selectedChallengeTypes, setSelectedChallengeTypes] = useState<string[]>([])
@@ -24,10 +24,10 @@ export default function ComparePage() {
   const [minProfitSplit, setMinProfitSplit] = useState<number | null>(null)
   const [tradingStyles, setTradingStyles] = useState<string[]>([])
   
-  // Dropdown states for horizontal filters
+  // Dropdown state
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
 
-  // Available filter options
+  // Filter options
   const platformOptions = ['MT4', 'MT5', 'cTrader', 'DXtrade', 'TradeLocker', 'Match-Trader', 'NinjaTrader', 'Tradovate']
   const marketOptions = ['Forex', 'Indices', 'Metals', 'Crypto', 'Stocks', 'Futures', 'Energy']
   const challengeTypeOptions = ['1-step', '2-step', '3-step', 'instant']
@@ -50,7 +50,6 @@ export default function ComparePage() {
     { id: 'hedging', label: 'Hedging' },
   ]
 
-  // Fetch prop firms on load
   useEffect(() => {
     async function fetchFirms() {
       setLoading(true)
@@ -62,20 +61,6 @@ export default function ComparePage() {
     fetchFirms()
   }, [])
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      const target = event.target as HTMLElement
-      if (!target.closest('.filter-dropdown')) {
-        setOpenDropdown(null)
-      }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
-
-  // Apply filters whenever filter state changes
   useEffect(() => {
     let result = [...firms]
 
@@ -127,7 +112,6 @@ export default function ComparePage() {
     setFilteredFirms(result)
   }, [firms, searchQuery, selectedPlatforms, selectedMarkets, selectedChallengeTypes, maxPrice, minProfitSplit, tradingStyles])
 
-  // Sort firms
   const sortedFirms = [...filteredFirms].sort((a, b) => {
     switch (sortBy) {
       case 'rating':
@@ -173,20 +157,54 @@ export default function ComparePage() {
 
   const scrollFilters = (direction: 'left' | 'right') => {
     if (scrollRef.current) {
-      const scrollAmount = 200
       scrollRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        left: direction === 'left' ? -200 : 200,
         behavior: 'smooth',
       })
     }
   }
 
-  const handleDropdownToggle = (id: string) => {
-    setOpenDropdown(openDropdown === id ? null : id)
-  }
+  // Filter Button Component
+  const FilterButton = ({ 
+    id, 
+    label, 
+    count 
+  }: { 
+    id: string
+    label: string
+    count?: number 
+  }) => (
+    <button
+      onClick={(e) => {
+        e.stopPropagation()
+        setOpenDropdown(openDropdown === id ? null : id)
+      }}
+      className={`px-4 py-2.5 rounded-xl border transition-all flex items-center gap-2 whitespace-nowrap
+        ${count && count > 0
+          ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400'
+          : 'bg-gray-700/50 border-gray-600 text-white hover:bg-gray-700 hover:border-gray-500'
+        }`}
+    >
+      <span>{label}</span>
+      {count !== undefined && count > 0 && (
+        <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded-md">
+          {count}
+        </span>
+      )}
+      <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === id ? 'rotate-180' : ''}`} />
+    </button>
+  )
 
   return (
     <div className="min-h-screen bg-gray-900">
+      {/* Overlay to close dropdowns */}
+      {openDropdown && (
+        <div 
+          className="fixed inset-0 z-40" 
+          onClick={() => setOpenDropdown(null)}
+        />
+      )}
+
       <main className="pt-20 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
@@ -207,7 +225,7 @@ export default function ComparePage() {
               placeholder="Search prop firms..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 transition-colors"
+              className="w-full pl-12 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500"
             />
             {searchQuery && (
               <button 
@@ -219,9 +237,8 @@ export default function ComparePage() {
             )}
           </div>
 
-          {/* Horizontal Scrollable Filters */}
+          {/* Filters Section */}
           <div className="relative mb-6 bg-gray-800/50 border border-gray-700 rounded-2xl p-4">
-            {/* Filter Header */}
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <SlidersHorizontal className="w-5 h-5 text-emerald-400" />
@@ -235,7 +252,7 @@ export default function ComparePage() {
               {activeFilterCount > 0 && (
                 <button
                   onClick={clearAllFilters}
-                  className="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-1"
+                  className="text-sm text-gray-400 hover:text-white flex items-center gap-1"
                 >
                   <X className="w-4 h-4" />
                   Clear all
@@ -245,48 +262,34 @@ export default function ComparePage() {
 
             {/* Scrollable Filters */}
             <div className="relative">
-              {/* Left scroll button */}
               <button
                 onClick={() => scrollFilters('left')}
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 bg-gray-900/90 rounded-full border border-gray-700 text-gray-400 hover:text-white transition-all hover:bg-gray-800 shadow-lg"
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 bg-gray-800 rounded-full border border-gray-700 text-gray-400 hover:text-white shadow-lg"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
 
-              {/* Filters container */}
               <div
                 ref={scrollRef}
-                className="flex gap-3 overflow-x-auto px-10 py-2 scrollbar-hide"
+                className="flex gap-3 overflow-x-auto px-10 py-2"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
               >
-                {/* Challenge Type Filter */}
-                <div className="relative flex-shrink-0 filter-dropdown">
-                  <button
-                    onClick={() => handleDropdownToggle('challenge')}
-                    className={`px-4 py-2.5 rounded-xl border transition-all flex items-center gap-2 whitespace-nowrap
-                      ${selectedChallengeTypes.length > 0
-                        ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400'
-                        : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white'
-                      }`}
-                  >
-                    <span>Challenge Type</span>
-                    {selectedChallengeTypes.length > 0 && (
-                      <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded-md">
-                        {selectedChallengeTypes.length}
-                      </span>
-                    )}
-                    <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'challenge' ? 'rotate-180' : ''}`} />
-                  </button>
+                {/* Challenge Type */}
+                <div className="relative flex-shrink-0">
+                  <FilterButton id="challenge" label="Challenge Type" count={selectedChallengeTypes.length} />
                   {openDropdown === 'challenge' && (
-                    <div className="absolute top-full left-0 mt-2 z-50 min-w-[180px] bg-gray-800 border border-gray-700 rounded-xl shadow-xl p-2 max-h-60 overflow-y-auto">
+                    <div className="absolute top-full left-0 mt-2 z-50 w-48 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl p-2">
                       {challengeTypeOptions.map((option) => (
                         <button
                           key={option}
-                          onClick={() => toggleArrayFilter(selectedChallengeTypes, setSelectedChallengeTypes, option)}
-                          className={`w-full px-3 py-2 rounded-lg text-left text-sm transition-colors flex items-center justify-between
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            toggleArrayFilter(selectedChallengeTypes, setSelectedChallengeTypes, option)
+                          }}
+                          className={`w-full px-3 py-2 rounded-lg text-left text-sm flex items-center justify-between
                             ${selectedChallengeTypes.includes(option)
                               ? 'bg-emerald-500/20 text-emerald-400'
-                              : 'text-white/70 hover:bg-white/5 hover:text-white'
+                              : 'text-gray-300 hover:bg-gray-700'
                             }`}
                         >
                           <span>{option === 'instant' ? 'Instant Funding' : option}</span>
@@ -299,34 +302,22 @@ export default function ComparePage() {
                   )}
                 </div>
 
-                {/* Platform Filter */}
-                <div className="relative flex-shrink-0 filter-dropdown">
-                  <button
-                    onClick={() => handleDropdownToggle('platform')}
-                    className={`px-4 py-2.5 rounded-xl border transition-all flex items-center gap-2 whitespace-nowrap
-                      ${selectedPlatforms.length > 0
-                        ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400'
-                        : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white'
-                      }`}
-                  >
-                    <span>Platform</span>
-                    {selectedPlatforms.length > 0 && (
-                      <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded-md">
-                        {selectedPlatforms.length}
-                      </span>
-                    )}
-                    <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'platform' ? 'rotate-180' : ''}`} />
-                  </button>
+                {/* Platform */}
+                <div className="relative flex-shrink-0">
+                  <FilterButton id="platform" label="Platform" count={selectedPlatforms.length} />
                   {openDropdown === 'platform' && (
-                    <div className="absolute top-full left-0 mt-2 z-50 min-w-[180px] bg-gray-800 border border-gray-700 rounded-xl shadow-xl p-2 max-h-60 overflow-y-auto">
+                    <div className="absolute top-full left-0 mt-2 z-50 w-48 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl p-2 max-h-64 overflow-y-auto">
                       {platformOptions.map((option) => (
                         <button
                           key={option}
-                          onClick={() => toggleArrayFilter(selectedPlatforms, setSelectedPlatforms, option)}
-                          className={`w-full px-3 py-2 rounded-lg text-left text-sm transition-colors flex items-center justify-between
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            toggleArrayFilter(selectedPlatforms, setSelectedPlatforms, option)
+                          }}
+                          className={`w-full px-3 py-2 rounded-lg text-left text-sm flex items-center justify-between
                             ${selectedPlatforms.includes(option)
                               ? 'bg-emerald-500/20 text-emerald-400'
-                              : 'text-white/70 hover:bg-white/5 hover:text-white'
+                              : 'text-gray-300 hover:bg-gray-700'
                             }`}
                         >
                           <span>{option}</span>
@@ -339,34 +330,22 @@ export default function ComparePage() {
                   )}
                 </div>
 
-                {/* Markets Filter */}
-                <div className="relative flex-shrink-0 filter-dropdown">
-                  <button
-                    onClick={() => handleDropdownToggle('market')}
-                    className={`px-4 py-2.5 rounded-xl border transition-all flex items-center gap-2 whitespace-nowrap
-                      ${selectedMarkets.length > 0
-                        ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400'
-                        : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white'
-                      }`}
-                  >
-                    <span>Markets</span>
-                    {selectedMarkets.length > 0 && (
-                      <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded-md">
-                        {selectedMarkets.length}
-                      </span>
-                    )}
-                    <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'market' ? 'rotate-180' : ''}`} />
-                  </button>
+                {/* Markets */}
+                <div className="relative flex-shrink-0">
+                  <FilterButton id="market" label="Markets" count={selectedMarkets.length} />
                   {openDropdown === 'market' && (
-                    <div className="absolute top-full left-0 mt-2 z-50 min-w-[180px] bg-gray-800 border border-gray-700 rounded-xl shadow-xl p-2 max-h-60 overflow-y-auto">
+                    <div className="absolute top-full left-0 mt-2 z-50 w-48 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl p-2">
                       {marketOptions.map((option) => (
                         <button
                           key={option}
-                          onClick={() => toggleArrayFilter(selectedMarkets, setSelectedMarkets, option)}
-                          className={`w-full px-3 py-2 rounded-lg text-left text-sm transition-colors flex items-center justify-between
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            toggleArrayFilter(selectedMarkets, setSelectedMarkets, option)
+                          }}
+                          className={`w-full px-3 py-2 rounded-lg text-left text-sm flex items-center justify-between
                             ${selectedMarkets.includes(option)
                               ? 'bg-emerald-500/20 text-emerald-400'
-                              : 'text-white/70 hover:bg-white/5 hover:text-white'
+                              : 'text-gray-300 hover:bg-gray-700'
                             }`}
                         >
                           <span>{option}</span>
@@ -379,32 +358,23 @@ export default function ComparePage() {
                   )}
                 </div>
 
-                {/* Price Filter */}
-                <div className="relative flex-shrink-0 filter-dropdown">
-                  <button
-                    onClick={() => handleDropdownToggle('price')}
-                    className={`px-4 py-2.5 rounded-xl border transition-all flex items-center gap-2 whitespace-nowrap
-                      ${maxPrice
-                        ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400'
-                        : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white'
-                      }`}
-                  >
-                    <span>{maxPrice ? `Under $${maxPrice}` : 'Price'}</span>
-                    <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'price' ? 'rotate-180' : ''}`} />
-                  </button>
+                {/* Price */}
+                <div className="relative flex-shrink-0">
+                  <FilterButton id="price" label={maxPrice ? `Under $${maxPrice}` : 'Price'} count={maxPrice ? 1 : 0} />
                   {openDropdown === 'price' && (
-                    <div className="absolute top-full left-0 mt-2 z-50 min-w-[150px] bg-gray-800 border border-gray-700 rounded-xl shadow-xl p-2 max-h-60 overflow-y-auto">
+                    <div className="absolute top-full left-0 mt-2 z-50 w-40 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl p-2">
                       {priceOptions.map((option) => (
                         <button
                           key={option.value}
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation()
                             setMaxPrice(maxPrice === option.value ? null : option.value)
                             setOpenDropdown(null)
                           }}
-                          className={`w-full px-3 py-2 rounded-lg text-left text-sm transition-colors flex items-center justify-between
+                          className={`w-full px-3 py-2 rounded-lg text-left text-sm flex items-center justify-between
                             ${maxPrice === option.value
                               ? 'bg-emerald-500/20 text-emerald-400'
-                              : 'text-white/70 hover:bg-white/5 hover:text-white'
+                              : 'text-gray-300 hover:bg-gray-700'
                             }`}
                         >
                           <span>{option.label}</span>
@@ -417,32 +387,23 @@ export default function ComparePage() {
                   )}
                 </div>
 
-                {/* Profit Split Filter */}
-                <div className="relative flex-shrink-0 filter-dropdown">
-                  <button
-                    onClick={() => handleDropdownToggle('profit')}
-                    className={`px-4 py-2.5 rounded-xl border transition-all flex items-center gap-2 whitespace-nowrap
-                      ${minProfitSplit
-                        ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400'
-                        : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white'
-                      }`}
-                  >
-                    <span>{minProfitSplit ? `${minProfitSplit}%+` : 'Profit Split'}</span>
-                    <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'profit' ? 'rotate-180' : ''}`} />
-                  </button>
+                {/* Profit Split */}
+                <div className="relative flex-shrink-0">
+                  <FilterButton id="profit" label={minProfitSplit ? `${minProfitSplit}%+` : 'Profit Split'} count={minProfitSplit ? 1 : 0} />
                   {openDropdown === 'profit' && (
-                    <div className="absolute top-full left-0 mt-2 z-50 min-w-[150px] bg-gray-800 border border-gray-700 rounded-xl shadow-xl p-2 max-h-60 overflow-y-auto">
+                    <div className="absolute top-full left-0 mt-2 z-50 w-40 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl p-2">
                       {profitSplitOptions.map((option) => (
                         <button
                           key={option.value}
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation()
                             setMinProfitSplit(minProfitSplit === option.value ? null : option.value)
                             setOpenDropdown(null)
                           }}
-                          className={`w-full px-3 py-2 rounded-lg text-left text-sm transition-colors flex items-center justify-between
+                          className={`w-full px-3 py-2 rounded-lg text-left text-sm flex items-center justify-between
                             ${minProfitSplit === option.value
                               ? 'bg-emerald-500/20 text-emerald-400'
-                              : 'text-white/70 hover:bg-white/5 hover:text-white'
+                              : 'text-gray-300 hover:bg-gray-700'
                             }`}
                         >
                           <span>{option.label}</span>
@@ -455,34 +416,22 @@ export default function ComparePage() {
                   )}
                 </div>
 
-                {/* Trading Style Filter */}
-                <div className="relative flex-shrink-0 filter-dropdown">
-                  <button
-                    onClick={() => handleDropdownToggle('style')}
-                    className={`px-4 py-2.5 rounded-xl border transition-all flex items-center gap-2 whitespace-nowrap
-                      ${tradingStyles.length > 0
-                        ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400'
-                        : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white'
-                      }`}
-                  >
-                    <span>Trading Style</span>
-                    {tradingStyles.length > 0 && (
-                      <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded-md">
-                        {tradingStyles.length}
-                      </span>
-                    )}
-                    <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'style' ? 'rotate-180' : ''}`} />
-                  </button>
+                {/* Trading Style */}
+                <div className="relative flex-shrink-0">
+                  <FilterButton id="style" label="Trading Style" count={tradingStyles.length} />
                   {openDropdown === 'style' && (
-                    <div className="absolute top-full left-0 mt-2 z-50 min-w-[180px] bg-gray-800 border border-gray-700 rounded-xl shadow-xl p-2 max-h-60 overflow-y-auto">
+                    <div className="absolute top-full left-0 mt-2 z-50 w-48 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl p-2">
                       {tradingStyleOptions.map((option) => (
                         <button
                           key={option.id}
-                          onClick={() => toggleArrayFilter(tradingStyles, setTradingStyles, option.id)}
-                          className={`w-full px-3 py-2 rounded-lg text-left text-sm transition-colors flex items-center justify-between
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            toggleArrayFilter(tradingStyles, setTradingStyles, option.id)
+                          }}
+                          className={`w-full px-3 py-2 rounded-lg text-left text-sm flex items-center justify-between
                             ${tradingStyles.includes(option.id)
                               ? 'bg-emerald-500/20 text-emerald-400'
-                              : 'text-white/70 hover:bg-white/5 hover:text-white'
+                              : 'text-gray-300 hover:bg-gray-700'
                             }`}
                         >
                           <span>{option.label}</span>
@@ -496,10 +445,9 @@ export default function ComparePage() {
                 </div>
               </div>
 
-              {/* Right scroll button */}
               <button
                 onClick={() => scrollFilters('right')}
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 bg-gray-900/90 rounded-full border border-gray-700 text-gray-400 hover:text-white transition-all hover:bg-gray-800 shadow-lg"
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 bg-gray-800 rounded-full border border-gray-700 text-gray-400 hover:text-white shadow-lg"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -560,7 +508,7 @@ export default function ComparePage() {
             )}
           </div>
 
-          {/* Sort & View Controls */}
+          {/* Sort & View */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <p className="text-gray-400">
               {loading ? 'Loading...' : `${sortedFirms.length} prop firms found`}
@@ -600,7 +548,7 @@ export default function ComparePage() {
             </div>
           </div>
 
-          {/* Loading State */}
+          {/* Loading */}
           {loading && (
             <div className="flex justify-center items-center py-20">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
@@ -613,14 +561,14 @@ export default function ComparePage() {
               <p className="text-gray-400 text-lg mb-4">No prop firms match your filters.</p>
               <button
                 onClick={clearAllFilters}
-                className="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors"
+                className="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg"
               >
                 Clear all filters
               </button>
             </div>
           )}
 
-          {/* Prop Firms Grid/List */}
+          {/* Grid/List */}
           {!loading && sortedFirms.length > 0 && (
             <div className={
               viewMode === 'grid' 
