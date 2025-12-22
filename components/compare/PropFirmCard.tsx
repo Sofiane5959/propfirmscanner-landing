@@ -8,28 +8,124 @@ interface PropFirmCardProps {
   viewMode: 'grid' | 'list'
 }
 
-// Platform logos/icons
-const platformIcons: Record<string, { icon: string; color: string }> = {
-  'MT4': { icon: '4', color: 'bg-blue-600' },
-  'MT5': { icon: '5', color: 'bg-blue-700' },
-  'cTrader': { icon: 'cT', color: 'bg-yellow-600' },
-  'DXtrade': { icon: 'DX', color: 'bg-purple-600' },
-  'TradeLocker': { icon: 'TL', color: 'bg-green-600' },
-  'Match-Trader': { icon: 'MT', color: 'bg-orange-600' },
-  'NinjaTrader': { icon: 'NT', color: 'bg-red-600' },
-  'TopstepX': { icon: 'TX', color: 'bg-teal-600' },
-  'Volumetrica': { icon: 'Vo', color: 'bg-pink-600' },
+// Platform logos as SVG components with better visuals
+const PlatformLogo = ({ platform, size = 'sm' }: { platform: string; size?: 'sm' | 'md' }) => {
+  const sizeClass = size === 'sm' ? 'w-7 h-7 text-[9px]' : 'w-8 h-8 text-[10px]'
+  
+  const platforms: Record<string, { bg: string; text: string; label: string; icon?: JSX.Element }> = {
+    'MT4': {
+      bg: 'bg-gradient-to-br from-blue-500 to-blue-700',
+      text: 'text-white',
+      label: 'MT4',
+      icon: (
+        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
+          <path d="M3 3h18v18H3V3zm2 2v14h14V5H5zm2 2h3v2H7V7zm0 4h3v2H7v-2zm0 4h3v2H7v-2zm5-8h5v10h-2v-8h-3V7z"/>
+        </svg>
+      )
+    },
+    'MT5': {
+      bg: 'bg-gradient-to-br from-blue-600 to-indigo-700',
+      text: 'text-white',
+      label: 'MT5',
+      icon: (
+        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
+          <path d="M3 3h18v18H3V3zm2 2v14h14V5H5zm2 2h3v2H7V7zm0 4h3v2H7v-2zm0 4h3v2H7v-2zm5-8h5v2h-3v2h2v2h-2v2h3v2h-5V7z"/>
+        </svg>
+      )
+    },
+    'cTrader': {
+      bg: 'bg-gradient-to-br from-amber-400 to-orange-500',
+      text: 'text-white',
+      label: 'cT',
+      icon: (
+        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
+          <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" strokeWidth="2"/>
+          <path d="M8 12a4 4 0 014-4M16 12a4 4 0 01-4 4" stroke="currentColor" strokeWidth="2" fill="none"/>
+        </svg>
+      )
+    },
+    'DXtrade': {
+      bg: 'bg-gradient-to-br from-purple-500 to-violet-700',
+      text: 'text-white',
+      label: 'DX',
+      icon: (
+        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
+          <path d="M4 4h5l7 8-7 8H4l7-8-7-8z"/>
+          <path d="M13 4h7v16h-7l4-8-4-8z" opacity="0.6"/>
+        </svg>
+      )
+    },
+    'TradeLocker': {
+      bg: 'bg-gradient-to-br from-emerald-500 to-green-700',
+      text: 'text-white',
+      label: 'TL',
+      icon: (
+        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
+          <rect x="5" y="10" width="14" height="10" rx="2" fill="none" stroke="currentColor" strokeWidth="2"/>
+          <path d="M8 10V7a4 4 0 018 0v3" fill="none" stroke="currentColor" strokeWidth="2"/>
+          <circle cx="12" cy="15" r="1.5" fill="currentColor"/>
+        </svg>
+      )
+    },
+    'Match-Trader': {
+      bg: 'bg-gradient-to-br from-orange-500 to-red-600',
+      text: 'text-white',
+      label: 'MT',
+    },
+    'NinjaTrader': {
+      bg: 'bg-gradient-to-br from-red-500 to-red-700',
+      text: 'text-white',
+      label: 'NT',
+      icon: (
+        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
+          <path d="M12 2l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6z"/>
+        </svg>
+      )
+    },
+    'Tradovate': {
+      bg: 'bg-gradient-to-br from-cyan-500 to-blue-600',
+      text: 'text-white',
+      label: 'TV',
+    },
+    'Rithmic': {
+      bg: 'bg-gradient-to-br from-gray-600 to-gray-800',
+      text: 'text-white',
+      label: 'R',
+    },
+  }
+
+  const platformData = platforms[platform]
+  
+  if (!platformData) {
+    return (
+      <div 
+        className={`${sizeClass} rounded-lg bg-gray-600 flex items-center justify-center font-bold text-white`}
+        title={platform}
+      >
+        {platform.substring(0, 2)}
+      </div>
+    )
+  }
+
+  return (
+    <div 
+      className={`${sizeClass} rounded-lg ${platformData.bg} ${platformData.text} flex items-center justify-center font-bold shadow-lg`}
+      title={platform}
+    >
+      {platformData.icon || platformData.label}
+    </div>
+  )
 }
 
 // Market/Asset colors
 const marketColors: Record<string, string> = {
-  'Forex': 'bg-emerald-500/20 text-emerald-400',
-  'Indices': 'bg-blue-500/20 text-blue-400',
-  'Metals': 'bg-yellow-500/20 text-yellow-400',
-  'Crypto': 'bg-orange-500/20 text-orange-400',
-  'Stocks': 'bg-purple-500/20 text-purple-400',
-  'Futures': 'bg-red-500/20 text-red-400',
-  'Energy': 'bg-pink-500/20 text-pink-400',
+  'Forex': 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
+  'Indices': 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+  'Metals': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+  'Crypto': 'bg-orange-500/20 text-orange-400 border-orange-500/30',
+  'Stocks': 'bg-purple-500/20 text-purple-400 border-purple-500/30',
+  'Futures': 'bg-red-500/20 text-red-400 border-red-500/30',
+  'Energy': 'bg-pink-500/20 text-pink-400 border-pink-500/30',
 }
 
 export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
@@ -93,28 +189,13 @@ export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
 
     return (
       <div className="flex flex-wrap gap-1.5">
-        {firm.platforms.slice(0, 5).map((platform) => {
-          const platformInfo = platformIcons[platform]
-          if (platformInfo) {
-            return (
-              <div
-                key={platform}
-                className={`${platformInfo.color} px-2 py-1 rounded text-white text-xs font-bold flex items-center gap-1`}
-                title={platform}
-              >
-                <span className="text-[10px]">{platformInfo.icon}</span>
-                <span className="hidden sm:inline text-[10px]">{platform.length > 6 ? '' : ''}</span>
-              </div>
-            )
-          }
-          return (
-            <span key={platform} className="px-2 py-1 bg-gray-600 text-white text-xs rounded">
-              {platform}
-            </span>
-          )
-        })}
-        {firm.platforms.length > 5 && (
-          <span className="px-2 py-1 text-gray-500 text-xs">+{firm.platforms.length - 5}</span>
+        {firm.platforms.slice(0, 4).map((platform) => (
+          <PlatformLogo key={platform} platform={platform} size="sm" />
+        ))}
+        {firm.platforms.length > 4 && (
+          <div className="w-7 h-7 rounded-lg bg-gray-700 flex items-center justify-center text-[10px] text-gray-400 font-medium">
+            +{firm.platforms.length - 4}
+          </div>
         )}
       </div>
     )
@@ -127,11 +208,14 @@ export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
     }
 
     return (
-      <div className="flex flex-wrap gap-1">
+      <div className="flex flex-wrap gap-1.5">
         {firm.instruments.slice(0, 5).map((market) => {
-          const colorClass = marketColors[market] || 'bg-gray-500/20 text-gray-400'
+          const colorClass = marketColors[market] || 'bg-gray-500/20 text-gray-400 border-gray-500/30'
           return (
-            <span key={market} className={`px-2 py-0.5 ${colorClass} text-xs rounded`}>
+            <span 
+              key={market} 
+              className={`px-2 py-0.5 ${colorClass} text-xs rounded-md border`}
+            >
               {market}
             </span>
           )
@@ -173,7 +257,7 @@ export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
             </div>
             <div>
               <p className="text-gray-500 text-xs uppercase">Location</p>
-              <p className="text-white font-semibold text-sm">{firm.headquarters || 'N/A'}</p>
+              <p className="text-white font-semibold text-sm">{firm.headquarters || firm.country || 'N/A'}</p>
             </div>
           </div>
 
@@ -211,10 +295,10 @@ export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
         
         {/* Location & Regulation */}
         <div className="flex items-center gap-4 mt-3 text-xs text-gray-400">
-          {firm.headquarters && (
+          {(firm.headquarters || firm.country) && (
             <span className="flex items-center gap-1">
               <MapPin className="w-3 h-3" />
-              {firm.headquarters}
+              {firm.headquarters || firm.country}
             </span>
           )}
           {firm.is_regulated && (
@@ -268,13 +352,40 @@ export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
           {renderMarkets()}
         </div>
 
-        {/* Trading Permissions */}
+        {/* Trading Permissions - REMOVED WEEKEND */}
         <div className="flex flex-wrap gap-x-3 gap-y-1">
-          {firm.allows_scalping && <span className="text-xs text-green-400">✓ Scalping</span>}
-          {firm.allows_news_trading && <span className="text-xs text-green-400">✓ News</span>}
-          {firm.allows_ea && <span className="text-xs text-green-400">✓ EA/Bots</span>}
-          {firm.allows_weekend_holding && <span className="text-xs text-green-400">✓ Weekend</span>}
-          {firm.allows_hedging && <span className="text-xs text-green-400">✓ Hedging</span>}
+          {firm.allows_scalping && (
+            <span className="text-xs text-green-400 flex items-center gap-1">
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              </svg>
+              Scalping
+            </span>
+          )}
+          {firm.allows_news_trading && (
+            <span className="text-xs text-green-400 flex items-center gap-1">
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              </svg>
+              News
+            </span>
+          )}
+          {firm.allows_ea && (
+            <span className="text-xs text-green-400 flex items-center gap-1">
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              </svg>
+              EA/Bots
+            </span>
+          )}
+          {firm.allows_hedging && (
+            <span className="text-xs text-green-400 flex items-center gap-1">
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              </svg>
+              Hedging
+            </span>
+          )}
         </div>
       </div>
 
