@@ -6,11 +6,18 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/', '/auth/', '/dashboard/'],
+        disallow: [
+          '/api/',
+          '/auth/callback',
+          '/dashboard',
+          '/_next/',
+          '/admin/',
+        ],
       },
       {
         userAgent: 'Googlebot',
         allow: '/',
+        disallow: ['/api/', '/auth/callback', '/dashboard'],
       },
     ],
     sitemap: 'https://www.propfirmscanner.org/sitemap.xml',
