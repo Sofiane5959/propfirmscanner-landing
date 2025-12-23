@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Logo PropFirm Scanner</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 40px;
+      background: #1f2937;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 60px;
+    }
+    
+    h2 {
+      color: white;
+      font-family: 'Inter', sans-serif;
+      margin-bottom: 20px;
+    }
+    
+    .logo-section {
+      text-align: center;
+    }
+    
+    /* Logo Version 1 - Icône seule (pour favicon, app icon) */
+    .logo-icon {
+      width: 512px;
+      height: 512px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      border-radius: 96px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 280px;
+      font-weight: 800;
+      color: white;
+      box-shadow: 0 25px 50px -12px rgba(16, 185, 129, 0.4);
+    }
+    
+    /* Logo Version 2 - Avec texte (pour navbar) */
+    .logo-full {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      background: #111827;
+      padding: 30px 50px;
+      border-radius: 20px;
+    }
+    
+    .logo-full .icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 42px;
+      font-weight: 800;
+      color: white;
+    }
+    
+    .logo-full .text {
+      font-family: 'Inter', sans-serif;
+      font-size: 36px;
+      font-weight: 700;
+      color: white;
+    }
+    
+    .logo-full .text span {
+      color: #10b981;
+    }
+    
+    /* Logo Version 3 - Compact */
+    .logo-compact {
+      width: 200px;
+      height: 200px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      border-radius: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 100px;
+      font-weight: 800;
+      color: white;
+      box-shadow: 0 15px 30px -8px rgba(16, 185, 129, 0.4);
+    }
+
+    /* Logo Version 4 - Scanner style */
+    .logo-scanner {
+      width: 512px;
+      height: 512px;
+      background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+      border-radius: 96px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      border: 4px solid #10b981;
+    }
+    
+    .logo-scanner .inner {
+      width: 380px;
+      height: 380px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      border-radius: 70px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .logo-scanner .letter {
+      font-family: 'Inter', sans-serif;
+      font-size: 200px;
+      font-weight: 800;
+      color: white;
+      line-height: 1;
+    }
+    
+    .logo-scanner .scan-line {
+      position: absolute;
+      width: 300px;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, #34d399, transparent);
+      animation: scan 2s ease-in-out infinite;
+    }
+    
+    @keyframes scan {
+      0%, 100% { top: 150px; opacity: 0.5; }
+      50% { top: 350px; opacity: 1; }
+    }
+
+    .instructions {
+      color: #9ca3af;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  
+  <!-- Version 1: Icône 512x512 (pour favicon, app store) -->
+  <div class="logo-section">
+    <h2>Version 1: Icône (512x512) - Pour favicon</h2>
+    <div class="logo-icon">P</div>
+    <p class="instructions">Capture cette image pour: favicon.ico, apple-touch-icon.png</p>
+  </div>
+  
+  <!-- Version 2: Logo complet avec texte -->
+  <div class="logo-section">
+    <h2>Version 2: Logo complet - Pour navbar</h2>
+    <div class="logo-full">
+      <div class="icon">P</div>
+      <div class="text">PropFirm<span>Scanner</span></div>
+    </div>
+    <p class="instructions">Capture cette image pour: navbar, header</p>
+  </div>
+  
+  <!-- Version 3: Compact 200x200 -->
+  <div class="logo-section">
+    <h2>Version 3: Compact (200x200)</h2>
+    <div class="logo-compact">P</div>
+    <p class="instructions">Capture cette image pour: réseaux sociaux, profil</p>
+  </div>
+
+  <!-- Version 4: Scanner style -->
+  <div class="logo-section">
+    <h2>Version 4: Scanner Style (512x512)</h2>
+    <div class="logo-scanner">
+      <div class="inner">
+        <div class="letter">P</div>
+      </div>
+      <div class="scan-line"></div>
+    </div>
+    <p class="instructions">Version alternative avec effet scanner</p>
+  </div>
+
+</body>
+</html>

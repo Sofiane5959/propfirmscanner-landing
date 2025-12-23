@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>OG Image Template</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    .og-image {
+      width: 1200px;
+      height: 630px;
+      background: linear-gradient(135deg, #111827 0%, #1f2937 50%, #111827 100%);
+      font-family: 'Inter', sans-serif;
+      padding: 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    /* Background decoration */
+    .og-image::before {
+      content: '';
+      position: absolute;
+      top: -200px;
+      right: -200px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    
+    .og-image::after {
+      content: '';
+      position: absolute;
+      bottom: -200px;
+      left: -200px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .logo {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 800;
+      color: white;
+    }
+    
+    .brand {
+      font-size: 28px;
+      font-weight: 700;
+      color: white;
+    }
+    
+    .brand span {
+      color: #10b981;
+    }
+    
+    .content {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .title {
+      font-size: 72px;
+      font-weight: 800;
+      color: white;
+      line-height: 1.1;
+      margin-bottom: 24px;
+    }
+    
+    .title .highlight {
+      background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .subtitle {
+      font-size: 28px;
+      color: #9ca3af;
+      max-width: 800px;
+    }
+    
+    .features {
+      display: flex;
+      gap: 40px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: white;
+      font-size: 20px;
+      font-weight: 600;
+    }
+    
+    .feature .icon {
+      width: 32px;
+      height: 32px;
+      background: rgba(16, 185, 129, 0.2);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #10b981;
+      font-size: 18px;
+    }
+    
+    .stats {
+      display: flex;
+      gap: 60px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .stat {
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 48px;
+      font-weight: 800;
+      color: #10b981;
+    }
+    
+    .stat-label {
+      font-size: 18px;
+      color: #9ca3af;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="og-image">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">P</div>
+      <div class="brand">PropFirm<span>Scanner</span></div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="content">
+      <h1 class="title">
+        Compare <span class="highlight">55+</span><br>
+        Prop Trading Firms
+      </h1>
+      <p class="subtitle">
+        Find your perfect prop firm. Compare pricing, profit splits, and get exclusive discount codes.
+      </p>
+    </div>
+    
+    <!-- Features -->
+    <div class="features">
+      <div class="feature">
+        <div class="icon">✓</div>
+        <span>Up to 90% Profit Split</span>
+      </div>
+      <div class="feature">
+        <div class="icon">✓</div>
+        <span>Save up to 80%</span>
+      </div>
+      <div class="feature">
+        <div class="icon">✓</div>
+        <span>Verified Reviews</span>
+      </div>
+      <div class="feature">
+        <div class="icon">✓</div>
+        <span>Updated Daily</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
