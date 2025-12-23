@@ -65,9 +65,6 @@ export const metadata: Metadata = {
     images: ['/og-image.png'],
     creator: '@propfirmscanner',
   },
-  verification: {
-    google: 'YOUR_GOOGLE_VERIFICATION_CODE', // Remplace par ton vrai code
-  },
   alternates: {
     canonical: 'https://www.propfirmscanner.org',
   },
