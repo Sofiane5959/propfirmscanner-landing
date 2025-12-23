@@ -17,39 +17,6 @@ export const trackAffiliateClick = (firmName: string, url: string, source: strin
   console.log(`[Affiliate Click] ${firmName} from ${source}`)
 }
 
-// Composant bouton avec tracking intégré
-interface AffiliateButtonProps {
-  firmName: string
-  url: string
-  source?: string
-  children: React.ReactNode
-  className?: string
-}
-
-export function AffiliateButton({ 
-  firmName, 
-  url, 
-  source = 'compare',
-  children, 
-  className = '' 
-}: AffiliateButtonProps) {
-  const handleClick = () => {
-    trackAffiliateClick(firmName, url, source)
-  }
-
-  return (
-    <a
-      href={url}
-      target="_blank"
-      rel="noopener noreferrer"
-      onClick={handleClick}
-      className={className}
-    >
-      {children}
-    </a>
-  )
-}
-
 // Hook pour tracker les clics
 export function useAffiliateTracking() {
   const track = (firmName: string, url: string, source?: string) => {
