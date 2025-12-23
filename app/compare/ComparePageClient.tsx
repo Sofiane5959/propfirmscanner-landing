@@ -91,36 +91,15 @@ const countryToCode: Record<string, string> = {
   'Taiwan': 'tw',
 }
 
-// Platform logos URLs (using CDN/public URLs)
-const platformLogos: Record<string, { url: string; bg: string }> = {
-  'MT4': {
-    url: 'https://www.metatrader4.com/i/logo-metatrader-4.png',
-    bg: 'bg-[#2B5BA8]'
-  },
-  'MT5': {
-    url: 'https://www.metatrader5.com/i/logo-metatrader-5.png',
-    bg: 'bg-[#7B2D8E]'
-  },
-  'cTrader': {
-    url: 'https://ctrader.com/images/ctrader-logo.svg',
-    bg: 'bg-[#FF6B00]'
-  },
-  'DXtrade': {
-    url: '',
-    bg: 'bg-gradient-to-br from-[#7C3AED] to-[#4F46E5]'
-  },
-  'TradeLocker': {
-    url: '',
-    bg: 'bg-gradient-to-br from-[#10B981] to-[#059669]'
-  },
-  'Match-Trader': {
-    url: '',
-    bg: 'bg-gradient-to-br from-[#F97316] to-[#EA580C]'
-  },
-  'MatchTrader': {
-    url: '',
-    bg: 'bg-gradient-to-br from-[#F97316] to-[#EA580C]'
-  },
+// Platform logos - using local files in public/platforms/
+const platformLogos: Record<string, string> = {
+  'MT4': '/platforms/mt4.png',
+  'MT5': '/platforms/mt5.png',
+  'cTrader': '/platforms/ctrader.png',
+  'DXtrade': '/platforms/dxtrade.png',
+  'TradeLocker': '/platforms/tradelocker.png',
+  'Match-Trader': '/platforms/matchtrader.png',
+  'MatchTrader': '/platforms/matchtrader.png',
 }
 
 // Get country code for flag
@@ -153,87 +132,26 @@ const CountryFlag = ({ country }: { country: string | null | undefined }) => {
   )
 }
 
-// Platform Logo Component
+// Platform Logo Component - uses local images from public/platforms/
 const PlatformLogo = ({ platform }: { platform: string }) => {
-  const config = platformLogos[platform]
+  const logoPath = platformLogos[platform]
   
-  // MT4 - Blue with M4 text
-  if (platform === 'MT4') {
+  if (logoPath) {
     return (
-      <div className="w-9 h-9 rounded-lg bg-[#2B5BA8] flex items-center justify-center shadow-md" title="MetaTrader 4">
-        <span className="text-white font-bold text-sm">M4</span>
-      </div>
-    )
-  }
-  
-  // MT5 - Purple with M5 text  
-  if (platform === 'MT5') {
-    return (
-      <div className="w-9 h-9 rounded-lg bg-[#7B2D8E] flex items-center justify-center shadow-md" title="MetaTrader 5">
-        <span className="text-white font-bold text-sm">M5</span>
-      </div>
-    )
-  }
-  
-  // cTrader - Orange with cT
-  if (platform === 'cTrader') {
-    return (
-      <div className="w-9 h-9 rounded-lg bg-[#FF6B00] flex items-center justify-center shadow-md" title="cTrader">
-        <span className="text-white font-bold text-sm">cT</span>
-      </div>
-    )
-  }
-  
-  // DXtrade - Purple gradient
-  if (platform === 'DXtrade') {
-    return (
-      <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#7C3AED] to-[#4F46E5] flex items-center justify-center shadow-md" title="DXtrade">
-        <span className="text-white font-bold text-xs">DX</span>
-      </div>
-    )
-  }
-  
-  // TradeLocker - Green with lock icon
-  if (platform === 'TradeLocker') {
-    return (
-      <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#10B981] to-[#059669] flex items-center justify-center shadow-md" title="TradeLocker">
-        <span className="text-white font-bold text-xs">TL</span>
-      </div>
-    )
-  }
-  
-  // Match-Trader / MatchTrader - Orange
-  if (platform === 'Match-Trader' || platform === 'MatchTrader') {
-    return (
-      <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#F97316] to-[#EA580C] flex items-center justify-center shadow-md" title="Match-Trader">
-        <span className="text-white font-bold text-xs">MT</span>
-      </div>
-    )
-  }
-  
-  // NinjaTrader - Yellow/Gold
-  if (platform === 'NinjaTrader') {
-    return (
-      <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#F59E0B] to-[#D97706] flex items-center justify-center shadow-md" title="NinjaTrader">
-        <span className="text-white font-bold text-xs">NT</span>
-      </div>
-    )
-  }
-  
-  // Tradovate - Cyan/Blue
-  if (platform === 'Tradovate') {
-    return (
-      <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#0EA5E9] to-[#0284C7] flex items-center justify-center shadow-md" title="Tradovate">
-        <span className="text-white font-bold text-xs">TV</span>
-      </div>
-    )
-  }
-  
-  // Rithmic - Dark gray
-  if (platform === 'Rithmic') {
-    return (
-      <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#475569] to-[#334155] flex items-center justify-center shadow-md" title="Rithmic">
-        <span className="text-white font-bold text-xs">R</span>
+      <div className="w-9 h-9 rounded-lg bg-white flex items-center justify-center overflow-hidden p-1 shadow-md" title={platform}>
+        <img 
+          src={logoPath} 
+          alt={platform}
+          className="w-full h-full object-contain"
+          onError={(e) => {
+            // Fallback to text if image fails
+            const target = e.target as HTMLImageElement
+            target.style.display = 'none'
+            if (target.parentElement) {
+              target.parentElement.innerHTML = `<span class="text-gray-800 font-bold text-[10px]">${platform.substring(0, 2).toUpperCase()}</span>`
+            }
+          }}
+        />
       </div>
     )
   }
