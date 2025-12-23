@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
+import { GoogleAnalytics } from '@/components/GoogleAnalytics'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -65,7 +66,7 @@ export const metadata: Metadata = {
     creator: '@propfirmscanner',
   },
   verification: {
-    google: 'YOUR_GOOGLE_VERIFICATION_CODE',
+    google: 'YOUR_GOOGLE_VERIFICATION_CODE', // Remplace par ton vrai code
   },
   alternates: {
     canonical: 'https://www.propfirmscanner.org',
@@ -88,6 +89,7 @@ const organizationSchema = {
   contactPoint: {
     '@type': 'ContactPoint',
     contactType: 'customer service',
+    email: 'contact@propfirmscanner.org',
     availableLanguage: ['English'],
   },
 }
@@ -133,6 +135,9 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
+        {/* Google Analytics */}
+        <GoogleAnalytics />
+        
         <Navbar />
         <main>{children}</main>
         <Footer />
