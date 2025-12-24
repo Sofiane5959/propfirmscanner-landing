@@ -1,193 +1,135 @@
-# 🚀 Pack SEO Complet - Instructions
+# 🚀 Phase 1 - Blog + Risk Calculator
 
-## 📦 Fichiers inclus
+## 📦 Contenu du pack
 
 ```
-seo-complete/
+phase1/
 ├── app/
-│   ├── layout.tsx              → Remplace ton layout actuel
-│   └── prop-firm/[slug]/
-│       └── page.tsx            → Remplace ta page prop-firm
+│   ├── blog/
+│   │   ├── page.tsx                    → Page liste blog (mise à jour)
+│   │   └── [slug]/
+│   │       └── page.tsx                → Articles (6 articles inclus)
+│   └── tools/
+│       └── risk-calculator/
+│           ├── page.tsx                → Page SEO
+│           └── RiskCalculatorClient.tsx → Calculateur interactif
 ├── components/
-│   └── GoogleAnalytics.tsx     → NOUVEAU fichier à ajouter
-└── lib/
-    └── affiliate-tracking.ts   → NOUVEAU fichier à ajouter
+│   └── layout/
+│       └── Navbar.tsx                  → Navbar mise à jour (Blog + Tools)
+└── INSTRUCTIONS.md
 ```
 
 ---
 
-## 📋 Installation étape par étape
+## 📝 Nouveaux Articles de Blog (6 total)
 
-### Étape 1 : Ajouter Google Analytics
-
-**1.1** Copie `components/GoogleAnalytics.tsx` dans ton dossier `components/`
-
-**1.2** Crée un fichier `.env.local` (ou modifie-le) et ajoute :
-```env
-NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
-```
-Remplace `G-XXXXXXXXXX` par ton ID Google Analytics 4.
-
-**1.3** Remplace `app/layout.tsx` par le nouveau fichier
+| Article | Catégorie | SEO Keywords |
+|---------|-----------|--------------|
+| Trailing Drawdown Explained | Rules Decoded | trailing drawdown, prop firm |
+| Daily vs Max Drawdown | Rules Decoded | daily drawdown, max drawdown |
+| Top 7 Reasons Traders Fail | Failure Analysis | prop firm fail, mistakes |
+| How to Pass Prop Firm Challenge | Guides | pass challenge, tips |
+| Why 90% Profit Split is a Trap | Rules Decoded | profit split, hidden fees |
+| Best Prop Firms 2025 | Reviews | best prop firm, ranking |
 
 ---
 
-### Étape 2 : Ajouter le tracking affiliés
+## 🧮 Risk Calculator - Fonctionnalités
 
-**2.1** Copie `lib/affiliate-tracking.ts` dans ton dossier `lib/`
-
-**2.2** Dans ton `ComparePageClient.tsx`, modifie le bouton "Buy Challenge" :
-
-```tsx
-// Ajoute cet import en haut du fichier
-import { trackAffiliateClick } from '@/lib/affiliate-tracking'
-
-// Puis modifie le bouton comme ceci :
-<a
-  href={firm.affiliate_url || firm.website_url || '#'}
-  target="_blank"
-  rel="noopener noreferrer"
-  onClick={() => trackAffiliateClick(firm.name, firm.affiliate_url || firm.website_url || '', 'compare')}
-  className="flex items-center justify-center gap-2 w-full py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-xl font-semibold transition-all"
->
-  <DollarSign className="w-5 h-5" />
-  Buy Challenge
-  <ExternalLink className="w-4 h-4" />
-</a>
-```
+- Presets pour les prop firms populaires (FTMO, The5ers, Topstep...)
+- Sélection du compte ($10K à $400K)
+- Sliders pour Daily DD, Max DD, Risk per trade
+- Calculs automatiques :
+  - Max risk per trade ($)
+  - Daily loss limit ($)
+  - Max total loss ($)
+  - Losing trades allowed (daily & total)
+  - Risk/Reward minimum recommandé
+- Design responsive
+- SEO optimisé (Schema WebApplication)
 
 ---
 
-### Étape 3 : Page Prop Firm avec SEO dynamique
+## 📋 Installation
 
-**3.1** Remplace `app/prop-firm/[slug]/page.tsx` par le nouveau fichier
+### Étape 1 : Copier les fichiers
 
-**3.2** Tu dois créer un composant client `PropFirmPageClient.tsx` si tu n'en as pas déjà un.
-
-Si ta page prop-firm actuelle est un composant client ('use client'), renomme-la en `PropFirmPageClient.tsx` et retire le 'use client' du nouveau `page.tsx`.
-
----
-
-## 🖼️ Créer l'image Open Graph (OG)
-
-L'image OG s'affiche quand quelqu'un partage ton site sur Facebook, Twitter, LinkedIn, etc.
-
-### Spécifications :
-- **Dimensions** : 1200 x 630 pixels
-- **Format** : PNG ou JPG
-- **Nom** : `og-image.png`
-- **Emplacement** : `public/og-image.png`
-
-### Design recommandé :
 ```
-┌─────────────────────────────────────────┐
-│                                         │
-│     [Logo PropFirm Scanner]             │
-│                                         │
-│     Compare 55+ Prop Trading Firms      │
-│                                         │
-│     ✓ Best Profit Splits                │
-│     ✓ Exclusive Discount Codes          │
-│     ✓ Trusted Reviews                   │
-│                                         │
-│     propfirmscanner.org                 │
-│                                         │
-└─────────────────────────────────────────┘
+# Blog mis à jour
+app/blog/page.tsx           → REMPLACER
+app/blog/[slug]/page.tsx    → REMPLACER
+
+# Risk Calculator (NOUVEAU)
+app/tools/risk-calculator/page.tsx              → CRÉER
+app/tools/risk-calculator/RiskCalculatorClient.tsx → CRÉER
+
+# Navbar mis à jour
+components/layout/Navbar.tsx → REMPLACER
 ```
 
-### Outils gratuits pour créer l'image :
-- **Canva** : https://www.canva.com (template 1200x630)
-- **Figma** : https://www.figma.com
-- **Photopea** : https://www.photopea.com (Photoshop gratuit en ligne)
+### Étape 2 : Structure des dossiers
 
-### Couleurs suggérées :
-- Background : #111827 (gray-900)
-- Accent : #10B981 (emerald-500)
-- Text : #FFFFFF (white)
-
----
-
-## 🔧 Configuration Google Analytics 4
-
-### Créer un compte GA4 :
-
-1. Va sur https://analytics.google.com/
-2. Clique "Commencer la mesure"
-3. Crée un compte et une propriété
-4. Choisis "Web" comme plateforme
-5. Entre ton URL : `https://www.propfirmscanner.org`
-6. Copie l'ID de mesure (commence par `G-`)
-
-### Ajouter l'ID dans ton projet :
-
-Crée/modifie `.env.local` :
-```env
-NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+Crée ces dossiers s'ils n'existent pas :
+```bash
+mkdir -p app/tools/risk-calculator
 ```
 
----
-
-## ✅ Checklist finale
-
-- [ ] `components/GoogleAnalytics.tsx` ajouté
-- [ ] `lib/affiliate-tracking.ts` ajouté
-- [ ] `app/layout.tsx` mis à jour
-- [ ] `app/prop-firm/[slug]/page.tsx` mis à jour
-- [ ] `.env.local` avec `NEXT_PUBLIC_GA_MEASUREMENT_ID`
-- [ ] `public/og-image.png` créée (1200x630)
-- [ ] Tracking ajouté aux boutons "Buy Challenge"
-
----
-
-## 🚀 Déploiement
+### Étape 3 : Déployer
 
 ```bash
 git add .
-git commit -m "Add complete SEO, GA4 and affiliate tracking"
+git commit -m "Add Risk Calculator + 4 new blog articles"
 git push
 ```
 
 ---
 
-## 📊 Vérifier que tout fonctionne
+## 🔗 Nouvelles URLs
 
-### 1. Tester les meta tags
-- Va sur https://www.opengraph.xyz/
-- Entre ton URL
-- Vérifie que l'image et les infos s'affichent
+### Blog Articles :
+- `/blog/trailing-drawdown-explained`
+- `/blog/daily-vs-max-drawdown`
+- `/blog/top-7-reasons-traders-fail`
+- `/blog/prop-firm-profit-split-trap`
+- `/blog/how-to-pass-prop-firm-challenge`
+- `/blog/best-prop-firms-2025`
 
-### 2. Tester le Schema JSON-LD
-- Va sur https://validator.schema.org/
-- Entre ton URL
-- Vérifie qu'il n'y a pas d'erreurs
-
-### 3. Tester Google Analytics
-- Va sur Google Analytics → Temps réel
-- Ouvre ton site dans un autre onglet
-- Tu devrais voir 1 utilisateur actif
-
-### 4. Tester le tracking affiliés
-- Ouvre la console (F12)
-- Clique sur "Buy Challenge"
-- Tu devrais voir : `[Affiliate Click] NomFirm from compare`
+### Tools :
+- `/tools/risk-calculator`
 
 ---
 
-## 📈 Résultats attendus
+## 📊 Impact SEO Attendu
 
-Avec ces optimisations :
-- **+50% trafic organique** en 2-3 mois
-- **Rich snippets** dans Google (étoiles, FAQ, prix)
-- **Meilleur CTR** sur les réseaux sociaux
-- **Tracking précis** des clics affiliés
+Ces pages ciblent des mots-clés très recherchés :
+- "trailing drawdown explained" (~500 recherches/mois)
+- "prop firm risk calculator" (~300 recherches/mois)
+- "why traders fail prop firm" (~400 recherches/mois)
+- "daily vs max drawdown" (~200 recherches/mois)
+
+Résultats attendus en 4-6 semaines :
+- +30% trafic organique
+- Meilleur temps sur site (outil interactif)
+- Plus de pages indexées
 
 ---
 
-## 🆘 Besoin d'aide ?
+## ✅ Checklist
 
-Si tu as des erreurs de build, vérifie :
-1. Que tous les imports sont corrects
-2. Que les fichiers sont au bon endroit
-3. Que `.env.local` est bien configuré
+- [ ] app/blog/page.tsx remplacé
+- [ ] app/blog/[slug]/page.tsx remplacé
+- [ ] app/tools/risk-calculator/ créé
+- [ ] components/layout/Navbar.tsx remplacé
+- [ ] Build réussi
+- [ ] Sitemap resoumis sur Google Search Console
 
-Bonne chance ! 🎉
+---
+
+## 🎯 Prochaines étapes (Phase 2)
+
+- Trade Journal (simple)
+- Rule Tracker
+- Prop Firm Alerts (nouvelles règles)
+- Plus d'articles de blog
+
+Bonne chance ! 🚀

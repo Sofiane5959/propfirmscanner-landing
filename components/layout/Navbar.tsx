@@ -3,14 +3,14 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-import { Menu, X, BookOpen, BarChart3, Tag, LayoutDashboard, FileText } from 'lucide-react'
+import { Menu, X, BookOpen, BarChart3, Tag, LayoutDashboard, FileText, Calculator } from 'lucide-react'
 
 const navigation = [
   { name: 'Compare', href: '/compare', icon: BarChart3 },
   { name: 'Deals', href: '/deals', icon: Tag },
   { name: 'Blog', href: '/blog', icon: FileText },
+  { name: 'Tools', href: '/tools/risk-calculator', icon: Calculator },
   { name: 'Free Guide', href: '/guide', icon: BookOpen, highlight: true },
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
 ]
 
 export function Navbar() {
@@ -34,7 +34,7 @@ export function Navbar() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
             {navigation.map((item) => {
-              const isActive = pathname === item.href
+              const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
               return (
                 <Link
                   key={item.name}
@@ -88,7 +88,7 @@ export function Navbar() {
         <div className="md:hidden bg-gray-900/95 backdrop-blur-lg border-t border-gray-800">
           <div className="px-4 py-4 space-y-2">
             {navigation.map((item) => {
-              const isActive = pathname === item.href
+              const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
               return (
                 <Link
                   key={item.name}
