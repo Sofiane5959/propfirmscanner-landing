@@ -205,29 +205,31 @@ export default function PropFirmPageClient({ firm }: Props) {
           </div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="md:col-span-2 space-y-8">
+        {/* Main Content Grid */}
+        <div className="grid lg:grid-cols-3 gap-8">
+          
+          {/* Left Column - Main Content */}
+          <div className="lg:col-span-2 space-y-6">
             
             {/* Key Stats */}
             <div className="bg-gray-800/50 border border-gray-700 rounded-2xl p-6">
-              <h2 className="text-xl font-bold text-white mb-4">Key Information</h2>
+              <h2 className="text-xl font-bold text-white mb-4">Key Stats</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-gray-700/30 rounded-xl p-4 text-center">
+                <div className="bg-gray-700/50 rounded-xl p-4 text-center">
                   <p className="text-gray-400 text-sm mb-1">Starting From</p>
                   <p className="text-2xl font-bold text-white">{firm.min_price ? formatPrice(firm.min_price) : 'N/A'}</p>
                 </div>
-                <div className="bg-gray-700/30 rounded-xl p-4 text-center">
+                <div className="bg-gray-700/50 rounded-xl p-4 text-center">
                   <p className="text-gray-400 text-sm mb-1">Profit Split</p>
                   <p className="text-2xl font-bold text-emerald-400">{firm.profit_split || 'N/A'}%</p>
                 </div>
-                <div className="bg-gray-700/30 rounded-xl p-4 text-center">
+                <div className="bg-gray-700/50 rounded-xl p-4 text-center">
+                  <p className="text-gray-400 text-sm mb-1">Daily Drawdown</p>
+                  <p className="text-2xl font-bold text-red-400">{firm.max_daily_drawdown || 'N/A'}%</p>
+                </div>
+                <div className="bg-gray-700/50 rounded-xl p-4 text-center">
                   <p className="text-gray-400 text-sm mb-1">Max Drawdown</p>
                   <p className="text-2xl font-bold text-red-400">{firm.max_total_drawdown || 'N/A'}%</p>
-                </div>
-                <div className="bg-gray-700/30 rounded-xl p-4 text-center">
-                  <p className="text-gray-400 text-sm mb-1">Daily Drawdown</p>
-                  <p className="text-2xl font-bold text-orange-400">{firm.max_daily_drawdown || 'N/A'}%</p>
                 </div>
               </div>
             </div>
@@ -237,8 +239,11 @@ export default function PropFirmPageClient({ firm }: Props) {
               <div className="bg-gray-800/50 border border-gray-700 rounded-2xl p-6">
                 <h2 className="text-xl font-bold text-white mb-4">Account Sizes</h2>
                 <div className="flex flex-wrap gap-3">
-                  {firm.account_sizes.map((size) => (
-                    <div key={size} className="px-4 py-2 bg-gray-700/50 rounded-lg text-white font-medium">
+                  {firm.account_sizes.sort((a, b) => a - b).map((size) => (
+                    <div 
+                      key={size} 
+                      className="px-4 py-2 bg-gray-700/50 text-white rounded-lg font-medium"
+                    >
                       {formatAccountSize(size)}
                     </div>
                   ))}
@@ -291,7 +296,7 @@ export default function PropFirmPageClient({ firm }: Props) {
             )}
           </div>
 
-          {/* Sidebar */}
+          {/* Right Column - Sidebar */}
           <div className="space-y-6">
             
             {/* Quick Buy Card */}
@@ -380,6 +385,18 @@ export default function PropFirmPageClient({ firm }: Props) {
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Free Trial</span>
                     <span className="text-emerald-400">Available</span>
+                  </div>
+                )}
+                {firm.profit_target_phase1 && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">Phase 1 Target</span>
+                    <span className="text-white">{firm.profit_target_phase1}%</span>
+                  </div>
+                )}
+                {firm.profit_target_phase2 && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">Phase 2 Target</span>
+                    <span className="text-white">{firm.profit_target_phase2}%</span>
                   </div>
                 )}
               </div>
