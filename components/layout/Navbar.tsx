@@ -3,11 +3,12 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-import { Menu, X, ChevronDown, BookOpen, BarChart3, Tag, LayoutDashboard } from 'lucide-react'
+import { Menu, X, BookOpen, BarChart3, Tag, LayoutDashboard, FileText } from 'lucide-react'
 
 const navigation = [
   { name: 'Compare', href: '/compare', icon: BarChart3 },
   { name: 'Deals', href: '/deals', icon: Tag },
+  { name: 'Blog', href: '/blog', icon: FileText },
   { name: 'Free Guide', href: '/guide', icon: BookOpen, highlight: true },
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
 ]
