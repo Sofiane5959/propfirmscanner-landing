@@ -1,84 +1,74 @@
-# 🚀 Phase 1 - Blog + Risk Calculator
+# 🚀 Phase 1 Complete - Blog + Risk Calculator + Rule Tracker
 
 ## 📦 Contenu du pack
 
 ```
-phase1/
+phase1-tracker/
 ├── app/
-│   ├── blog/
-│   │   ├── page.tsx                    → Page liste blog (mise à jour)
-│   │   └── [slug]/
-│   │       └── page.tsx                → Articles (6 articles inclus)
 │   └── tools/
-│       └── risk-calculator/
-│           ├── page.tsx                → Page SEO
-│           └── RiskCalculatorClient.tsx → Calculateur interactif
-├── components/
-│   └── layout/
-│       └── Navbar.tsx                  → Navbar mise à jour (Blog + Tools)
-└── INSTRUCTIONS.md
+│       └── rule-tracker/
+│           ├── page.tsx                  → Page SEO
+│           └── RuleTrackerClient.tsx     → Dashboard complet
+└── components/
+    └── layout/
+        └── Navbar.tsx                    → Navbar avec dropdown Tools
 ```
 
 ---
 
-## 📝 Nouveaux Articles de Blog (6 total)
+## 🛡️ Rule Tracker - Fonctionnalités
 
-| Article | Catégorie | SEO Keywords |
-|---------|-----------|--------------|
-| Trailing Drawdown Explained | Rules Decoded | trailing drawdown, prop firm |
-| Daily vs Max Drawdown | Rules Decoded | daily drawdown, max drawdown |
-| Top 7 Reasons Traders Fail | Failure Analysis | prop firm fail, mistakes |
-| How to Pass Prop Firm Challenge | Guides | pass challenge, tips |
-| Why 90% Profit Split is a Trap | Rules Decoded | profit split, hidden fees |
-| Best Prop Firms 2025 | Reviews | best prop firm, ranking |
+### Gestion des comptes
+- ✅ Ajouter plusieurs comptes prop firm
+- ✅ Presets pour FTMO, The5ers, Topstep, etc.
+- ✅ Custom rules si nécessaire
+- ✅ Status: Evaluation (Phase 1/2/3) ou Funded
+- ✅ Modifier / Supprimer des comptes
 
----
+### Calculs automatiques
+- ✅ Daily Drawdown utilisé / restant
+- ✅ Max Drawdown utilisé / restant
+- ✅ Distance au profit target
+- ✅ Barres de progression visuelles
 
-## 🧮 Risk Calculator - Fonctionnalités
+### Alertes visuelles
+- 🟢 **SAFE** (< 50% DD utilisé)
+- 🟡 **WARNING** (50-80% DD utilisé)
+- 🔴 **DANGER** (> 80% DD utilisé) → "STOP TRADING"
 
-- Presets pour les prop firms populaires (FTMO, The5ers, Topstep...)
-- Sélection du compte ($10K à $400K)
-- Sliders pour Daily DD, Max DD, Risk per trade
-- Calculs automatiques :
-  - Max risk per trade ($)
-  - Daily loss limit ($)
-  - Max total loss ($)
-  - Losing trades allowed (daily & total)
-  - Risk/Reward minimum recommandé
-- Design responsive
-- SEO optimisé (Schema WebApplication)
+### Persistance
+- ✅ Sauvegarde dans localStorage
+- ✅ Données conservées entre les sessions
+- ✅ Pas de compte nécessaire
+
+### Mise à jour rapide
+- ✅ Formulaire inline pour update balance + daily P&L
+- ✅ Reset daily P&L d'un clic
 
 ---
 
 ## 📋 Installation
 
-### Étape 1 : Copier les fichiers
+### Structure des dossiers
 
-```
-# Blog mis à jour
-app/blog/page.tsx           → REMPLACER
-app/blog/[slug]/page.tsx    → REMPLACER
-
-# Risk Calculator (NOUVEAU)
-app/tools/risk-calculator/page.tsx              → CRÉER
-app/tools/risk-calculator/RiskCalculatorClient.tsx → CRÉER
-
-# Navbar mis à jour
-components/layout/Navbar.tsx → REMPLACER
-```
-
-### Étape 2 : Structure des dossiers
-
-Crée ces dossiers s'ils n'existent pas :
 ```bash
-mkdir -p app/tools/risk-calculator
+# Crée le dossier si nécessaire
+mkdir -p app/tools/rule-tracker
 ```
 
-### Étape 3 : Déployer
+### Fichiers à copier
+
+```
+app/tools/rule-tracker/page.tsx              → NOUVEAU
+app/tools/rule-tracker/RuleTrackerClient.tsx → NOUVEAU
+components/layout/Navbar.tsx                 → REMPLACER
+```
+
+### Déployer
 
 ```bash
 git add .
-git commit -m "Add Risk Calculator + 4 new blog articles"
+git commit -m "Add Rule Tracker dashboard"
 git push
 ```
 
@@ -86,50 +76,87 @@ git push
 
 ## 🔗 Nouvelles URLs
 
-### Blog Articles :
-- `/blog/trailing-drawdown-explained`
-- `/blog/daily-vs-max-drawdown`
-- `/blog/top-7-reasons-traders-fail`
-- `/blog/prop-firm-profit-split-trap`
-- `/blog/how-to-pass-prop-firm-challenge`
-- `/blog/best-prop-firms-2025`
-
-### Tools :
-- `/tools/risk-calculator`
+- `/tools/rule-tracker` - Dashboard de suivi des comptes
 
 ---
 
-## 📊 Impact SEO Attendu
+## 🎨 Navbar mise à jour
 
-Ces pages ciblent des mots-clés très recherchés :
-- "trailing drawdown explained" (~500 recherches/mois)
-- "prop firm risk calculator" (~300 recherches/mois)
-- "why traders fail prop firm" (~400 recherches/mois)
-- "daily vs max drawdown" (~200 recherches/mois)
-
-Résultats attendus en 4-6 semaines :
-- +30% trafic organique
-- Meilleur temps sur site (outil interactif)
-- Plus de pages indexées
-
----
-
-## ✅ Checklist
-
-- [ ] app/blog/page.tsx remplacé
-- [ ] app/blog/[slug]/page.tsx remplacé
-- [ ] app/tools/risk-calculator/ créé
-- [ ] components/layout/Navbar.tsx remplacé
-- [ ] Build réussi
-- [ ] Sitemap resoumis sur Google Search Console
-
----
-
-## 🎯 Prochaines étapes (Phase 2)
-
-- Trade Journal (simple)
+La navbar inclut maintenant un dropdown "Tools" avec :
+- Risk Calculator
 - Rule Tracker
-- Prop Firm Alerts (nouvelles règles)
-- Plus d'articles de blog
 
-Bonne chance ! 🚀
+---
+
+## 🎯 Comment utiliser le Rule Tracker
+
+### 1. Ajouter un compte
+
+1. Clique sur "Add Account"
+2. Entre un nom (ex: "FTMO Challenge #1")
+3. Sélectionne la prop firm (les règles se remplissent automatiquement)
+4. Choisis la taille du compte
+5. Sélectionne le status (Evaluation / Funded)
+6. Clique "Add Account"
+
+### 2. Mettre à jour quotidiennement
+
+1. Entre ton "Current Balance" actuel
+2. Entre ton "Today's P&L" (positif ou négatif)
+3. Clique "Update"
+
+### 3. Surveiller les statuts
+
+- 🟢 Safe → Continue de trader normalement
+- 🟡 Warning → Réduis ton risque
+- 🔴 Danger → STOP TRADING pour la journée
+
+### 4. Reset daily P&L
+
+Chaque nouveau jour de trading, clique "Reset" pour remettre le P&L journalier à 0.
+
+---
+
+## 📊 Exemple d'utilisation
+
+**Compte FTMO $100K :**
+
+```
+Balance départ: $100,000
+Daily DD: 5% ($5,000)
+Max DD: 10% ($10,000)
+Target: 10% ($10,000)
+
+Après trades du jour:
+- Balance actuelle: $101,500
+- P&L du jour: +$1,500
+
+Status: 🟢 SAFE
+- Daily DD utilisé: 0%
+- Max DD utilisé: 0%
+- Profit target: 15% atteint
+```
+
+---
+
+## ✅ Checklist Phase 1 Complete
+
+- [x] Blog (6 articles)
+- [x] Risk Calculator
+- [x] Rule Tracker
+- [x] Navbar avec Tools dropdown
+- [x] SEO optimisé
+- [x] Mobile responsive
+
+---
+
+## 🚀 Phase 2 (Prochaine étape)
+
+- Trade Journal simple
+- Alertes de règles (news trading, etc.)
+- Corrélation warnings
+- Scenario simulations
+
+---
+
+C'est tout pour Phase 1 ! 🎉
