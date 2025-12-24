@@ -1,8 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Search, SlidersHorizontal, ChevronDown, X, Star, ExternalLink, Grid, List, Shield, DollarSign } from 'lucide-react'
+import Link from 'next/link'
+import { Search, SlidersHorizontal, ChevronDown, X, Star, ExternalLink, Grid, List, Shield, DollarSign, Trophy, Zap, TrendingUp, Users, Award } from 'lucide-react'
 import { getPropFirms } from '@/lib/supabase-queries'
+import { trackAffiliateClick } from '@/lib/affiliate-tracking'
 import type { PropFirm } from '@/types'
 
 // Options pour les filtres
@@ -21,77 +23,26 @@ const TRADING_STYLES = ['Scalping', 'News Trading', 'Weekend Holding', 'Hedging'
 
 // Country to ISO code mapping for flags
 const countryToCode: Record<string, string> = {
-  'USA': 'us',
-  'United States': 'us',
-  'UK': 'gb',
-  'United Kingdom': 'gb',
-  'England': 'gb',
-  'Czech Republic': 'cz',
-  'Czechia': 'cz',
-  'UAE': 'ae',
-  'United Arab Emirates': 'ae',
-  'Dubai': 'ae',
-  'Australia': 'au',
-  'Canada': 'ca',
-  'Germany': 'de',
-  'France': 'fr',
-  'Spain': 'es',
-  'Italy': 'it',
-  'Netherlands': 'nl',
-  'Switzerland': 'ch',
-  'Singapore': 'sg',
-  'Hong Kong': 'hk',
-  'Japan': 'jp',
-  'South Africa': 'za',
-  'Nigeria': 'ng',
-  'India': 'in',
-  'Pakistan': 'pk',
-  'Malaysia': 'my',
-  'Indonesia': 'id',
-  'Thailand': 'th',
-  'Vietnam': 'vn',
-  'Philippines': 'ph',
-  'Poland': 'pl',
-  'Hungary': 'hu',
-  'Romania': 'ro',
-  'Bulgaria': 'bg',
-  'Cyprus': 'cy',
-  'Malta': 'mt',
-  'Estonia': 'ee',
-  'Latvia': 'lv',
-  'Lithuania': 'lt',
-  'Israel': 'il',
-  'Turkey': 'tr',
-  'Mexico': 'mx',
-  'Brazil': 'br',
-  'Argentina': 'ar',
-  'Colombia': 'co',
-  'Chile': 'cl',
-  'Peru': 'pe',
-  'St. Vincent': 'vc',
-  'Saint Vincent': 'vc',
-  'Seychelles': 'sc',
-  'Bahamas': 'bs',
-  'Belize': 'bz',
-  'Panama': 'pa',
-  'Costa Rica': 'cr',
-  'New Zealand': 'nz',
-  'Ireland': 'ie',
-  'Belgium': 'be',
-  'Austria': 'at',
-  'Sweden': 'se',
-  'Norway': 'no',
-  'Denmark': 'dk',
-  'Finland': 'fi',
-  'Portugal': 'pt',
-  'Greece': 'gr',
-  'China': 'cn',
-  'Korea': 'kr',
-  'South Korea': 'kr',
-  'Taiwan': 'tw',
+  'USA': 'us', 'United States': 'us', 'UK': 'gb', 'United Kingdom': 'gb',
+  'England': 'gb', 'Czech Republic': 'cz', 'Czechia': 'cz', 'UAE': 'ae',
+  'United Arab Emirates': 'ae', 'Dubai': 'ae', 'Australia': 'au', 'Canada': 'ca',
+  'Germany': 'de', 'France': 'fr', 'Spain': 'es', 'Italy': 'it', 'Netherlands': 'nl',
+  'Switzerland': 'ch', 'Singapore': 'sg', 'Hong Kong': 'hk', 'Japan': 'jp',
+  'South Africa': 'za', 'Nigeria': 'ng', 'India': 'in', 'Pakistan': 'pk',
+  'Malaysia': 'my', 'Indonesia': 'id', 'Thailand': 'th', 'Vietnam': 'vn',
+  'Philippines': 'ph', 'Poland': 'pl', 'Hungary': 'hu', 'Romania': 'ro',
+  'Bulgaria': 'bg', 'Cyprus': 'cy', 'Malta': 'mt', 'Estonia': 'ee',
+  'Latvia': 'lv', 'Lithuania': 'lt', 'Israel': 'il', 'Turkey': 'tr',
+  'Mexico': 'mx', 'Brazil': 'br', 'Argentina': 'ar', 'Colombia': 'co',
+  'Chile': 'cl', 'Peru': 'pe', 'St. Vincent': 'vc', 'Saint Vincent': 'vc',
+  'Seychelles': 'sc', 'Bahamas': 'bs', 'Belize': 'bz', 'Panama': 'pa',
+  'Costa Rica': 'cr', 'New Zealand': 'nz', 'Ireland': 'ie', 'Belgium': 'be',
+  'Austria': 'at', 'Sweden': 'se', 'Norway': 'no', 'Denmark': 'dk',
+  'Finland': 'fi', 'Portugal': 'pt', 'Greece': 'gr', 'China': 'cn',
+  'Korea': 'kr', 'South Korea': 'kr', 'Taiwan': 'tw',
 }
 
-// Platform logos - using local files in public/platforms/
+// Platform logos
 const platformLogos: Record<string, string> = {
   'MT4': '/platforms/mt4.png',
   'MT5': '/platforms/mt5.png',
@@ -114,37 +65,27 @@ const getCountryCode = (country: string | null | undefined): string | null => {
   return null
 }
 
-// Country Flag Component using flagcdn
+// Country Flag Component
 const CountryFlag = ({ country }: { country: string | null | undefined }) => {
   const code = getCountryCode(country)
   if (!code) return null
-  
   return (
     <img 
       src={`https://flagcdn.com/24x18/${code}.png`}
       srcSet={`https://flagcdn.com/48x36/${code}.png 2x`}
-      width="24"
-      height="18"
-      alt={country || ''}
-      className="rounded-sm"
-      style={{ minWidth: '24px' }}
+      width="24" height="18" alt={country || ''} className="rounded-sm" style={{ minWidth: '24px' }}
     />
   )
 }
 
-// Platform Logo Component - uses local images from public/platforms/
+// Platform Logo Component
 const PlatformLogo = ({ platform }: { platform: string }) => {
   const logoPath = platformLogos[platform]
-  
   if (logoPath) {
     return (
       <div className="w-9 h-9 rounded-lg bg-white flex items-center justify-center overflow-hidden p-1 shadow-md" title={platform}>
-        <img 
-          src={logoPath} 
-          alt={platform}
-          className="w-full h-full object-contain"
+        <img src={logoPath} alt={platform} className="w-full h-full object-contain"
           onError={(e) => {
-            // Fallback to text if image fails
             const target = e.target as HTMLImageElement
             target.style.display = 'none'
             if (target.parentElement) {
@@ -155,8 +96,6 @@ const PlatformLogo = ({ platform }: { platform: string }) => {
       </div>
     )
   }
-  
-  // Default fallback
   return (
     <div className="w-9 h-9 rounded-lg bg-gray-600 flex items-center justify-center shadow-md" title={platform}>
       <span className="text-white font-bold text-[10px]">{platform.substring(0, 2).toUpperCase()}</span>
@@ -183,6 +122,148 @@ const formatMaxAccount = (sizes: number[] | null | undefined): string => {
   if (max >= 1000000) return `$${(max / 1000000).toFixed(1)}M`
   if (max >= 1000) return `$${(max / 1000).toFixed(0)}K`
   return `$${max}`
+}
+
+// Get badges for a firm
+const getBadges = (firm: PropFirm): { label: string; color: string; icon: any }[] => {
+  const badges: { label: string; color: string; icon: any }[] = []
+  
+  if (firm.trustpilot_rating && firm.trustpilot_rating >= 4.5) {
+    badges.push({ label: 'Top Rated', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30', icon: Trophy })
+  }
+  if (firm.profit_split && firm.profit_split >= 90) {
+    badges.push({ label: '90%+ Split', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30', icon: TrendingUp })
+  }
+  if (firm.min_price && firm.min_price <= 50) {
+    badges.push({ label: 'Budget Friendly', color: 'bg-blue-500/20 text-blue-400 border-blue-500/30', icon: DollarSign })
+  }
+  if (firm.challenge_types?.some(t => t.toLowerCase().includes('instant'))) {
+    badges.push({ label: 'Instant Funding', color: 'bg-purple-500/20 text-purple-400 border-purple-500/30', icon: Zap })
+  }
+  if (firm.allows_scalping && firm.allows_news_trading && firm.allows_ea) {
+    badges.push({ label: 'Flexible Rules', color: 'bg-green-500/20 text-green-400 border-green-500/30', icon: Award })
+  }
+  
+  return badges.slice(0, 2) // Max 2 badges per card
+}
+
+// Skeleton Loader Component
+const SkeletonCard = () => (
+  <div className="bg-gray-800/50 rounded-xl overflow-hidden border border-gray-700 animate-pulse">
+    <div className="p-5 border-b border-gray-700">
+      <div className="flex items-start gap-3">
+        <div className="w-14 h-14 bg-gray-700 rounded-xl"></div>
+        <div className="flex-1">
+          <div className="h-5 bg-gray-700 rounded w-32 mb-2"></div>
+          <div className="h-4 bg-gray-700 rounded w-24"></div>
+        </div>
+      </div>
+      <div className="flex gap-2 mt-3">
+        <div className="h-6 bg-gray-700 rounded-full w-16"></div>
+        <div className="h-6 bg-gray-700 rounded-full w-20"></div>
+      </div>
+    </div>
+    <div className="p-5">
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        <div><div className="h-3 bg-gray-700 rounded w-16 mb-2"></div><div className="h-6 bg-gray-700 rounded w-20"></div></div>
+        <div><div className="h-3 bg-gray-700 rounded w-16 mb-2"></div><div className="h-6 bg-gray-700 rounded w-16"></div></div>
+        <div><div className="h-3 bg-gray-700 rounded w-20 mb-2"></div><div className="h-6 bg-gray-700 rounded w-12"></div></div>
+        <div><div className="h-3 bg-gray-700 rounded w-20 mb-2"></div><div className="h-6 bg-gray-700 rounded w-16"></div></div>
+      </div>
+      <div className="h-9 bg-gray-700 rounded mb-3"></div>
+      <div className="flex gap-2">
+        <div className="h-6 bg-gray-700 rounded w-16"></div>
+        <div className="h-6 bg-gray-700 rounded w-16"></div>
+        <div className="h-6 bg-gray-700 rounded w-16"></div>
+      </div>
+    </div>
+    <div className="p-4 bg-gray-900/50 border-t border-gray-700">
+      <div className="h-12 bg-gray-700 rounded-xl"></div>
+    </div>
+  </div>
+)
+
+// Top Pick Card Component
+const TopPickCard = ({ firm, rank }: { firm: PropFirm; rank: number }) => {
+  const handleClick = () => {
+    trackAffiliateClick(firm.name, firm.affiliate_url || firm.website_url || '', 'compare-top-pick')
+  }
+  
+  const rankColors = ['from-yellow-500 to-amber-600', 'from-gray-400 to-gray-500', 'from-amber-600 to-amber-700']
+  const rankLabels = ['#1 Editor\'s Choice', '#2 Runner Up', '#3 Best Value']
+  
+  return (
+    <div className="relative bg-gradient-to-br from-gray-800/80 to-gray-900/80 rounded-2xl border border-emerald-500/30 overflow-hidden hover:border-emerald-500/50 transition-all">
+      {/* Rank Badge */}
+      <div className={`absolute top-4 right-4 w-10 h-10 rounded-full bg-gradient-to-br ${rankColors[rank]} flex items-center justify-center text-white font-bold text-lg shadow-lg`}>
+        {rank + 1}
+      </div>
+      
+      <div className="p-6">
+        <div className="flex items-center gap-4 mb-4">
+          <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center overflow-hidden p-2 shadow-lg">
+            {firm.logo_url ? (
+              <img src={firm.logo_url} alt={firm.name} className="w-full h-full object-contain" />
+            ) : (
+              <span className="text-2xl font-bold text-emerald-600">{firm.name.charAt(0)}</span>
+            )}
+          </div>
+          <div>
+            <p className="text-emerald-400 text-sm font-medium">{rankLabels[rank]}</p>
+            <h3 className="text-xl font-bold text-white">{firm.name}</h3>
+            {firm.trustpilot_rating && (
+              <div className="flex items-center gap-1 mt-1">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className={`w-4 h-4 ${i < Math.floor(firm.trustpilot_rating!) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-600'}`} />
+                ))}
+                <span className="text-sm text-gray-400 ml-1">{firm.trustpilot_rating}</span>
+              </div>
+            )}
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-3 gap-4 mb-4">
+          <div className="text-center p-3 bg-gray-700/30 rounded-xl">
+            <p className="text-gray-500 text-xs uppercase mb-1">From</p>
+            <p className="text-white font-bold">${firm.min_price || 'N/A'}</p>
+          </div>
+          <div className="text-center p-3 bg-gray-700/30 rounded-xl">
+            <p className="text-gray-500 text-xs uppercase mb-1">Split</p>
+            <p className="text-emerald-400 font-bold">{firm.profit_split || 'N/A'}%</p>
+          </div>
+          <div className="text-center p-3 bg-gray-700/30 rounded-xl">
+            <p className="text-gray-500 text-xs uppercase mb-1">Max</p>
+            <p className="text-yellow-400 font-bold">{formatMaxAccount(firm.account_sizes)}</p>
+          </div>
+        </div>
+        
+        <div className="flex flex-wrap gap-2 mb-4">
+          {firm.allows_scalping && <span className="text-xs text-green-400 bg-green-500/10 px-2 py-1 rounded">✓ Scalping</span>}
+          {firm.allows_news_trading && <span className="text-xs text-green-400 bg-green-500/10 px-2 py-1 rounded">✓ News</span>}
+          {firm.allows_ea && <span className="text-xs text-green-400 bg-green-500/10 px-2 py-1 rounded">✓ EA</span>}
+        </div>
+        
+        <div className="flex gap-3">
+          <a
+            href={firm.affiliate_url || firm.website_url || '#'}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={handleClick}
+            className="flex-1 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-xl font-semibold transition-all flex items-center justify-center gap-2"
+          >
+            <DollarSign className="w-5 h-5" />
+            Buy Challenge
+          </a>
+          <Link
+            href={`/prop-firm/${firm.slug}`}
+            className="px-4 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-xl font-medium transition-all"
+          >
+            Details
+          </Link>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default function ComparePage() {
@@ -283,6 +364,12 @@ export default function ComparePage() {
     return 0
   })
 
+  // Get top 3 picks (highest rated with profit split >= 80%)
+  const topPicks = [...firms]
+    .filter(f => f.trustpilot_rating && f.trustpilot_rating >= 4.0 && f.profit_split && f.profit_split >= 80)
+    .sort((a, b) => (b.trustpilot_rating || 0) - (a.trustpilot_rating || 0))
+    .slice(0, 3)
+
   const activeFiltersCount = selectedChallengeTypes.length + selectedPlatforms.length + selectedMarkets.length + 
     selectedPriceRanges.length + selectedProfitSplits.length + selectedTradingStyles.length
 
@@ -378,17 +465,45 @@ export default function ComparePage() {
     )
   }
 
+  const handleAffiliateClick = (firm: PropFirm) => {
+    trackAffiliateClick(firm.name, firm.affiliate_url || firm.website_url || '', 'compare-page')
+  }
+
   return (
     <div className="min-h-screen bg-gray-900 pt-20 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
+        {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
             Compare <span className="text-emerald-400">Prop Firms</span>
           </h1>
-          <p className="text-gray-400">Find the perfect prop firm for your trading style</p>
+          <p className="text-gray-400">
+            {loading ? 'Loading 55+ prop firms...' : `${firms.length} prop firms • Updated daily`}
+          </p>
         </div>
 
+        {/* Top Picks Section */}
+        {!loading && topPicks.length >= 3 && activeFiltersCount === 0 && !searchQuery && (
+          <div className="mb-10">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-yellow-500/20 rounded-xl">
+                <Trophy className="w-6 h-6 text-yellow-400" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-white">Editor's Top Picks</h2>
+                <p className="text-gray-400 text-sm">Our recommendations based on rating, rules & value</p>
+              </div>
+            </div>
+            <div className="grid md:grid-cols-3 gap-6">
+              {topPicks.map((firm, index) => (
+                <TopPickCard key={firm.id} firm={firm} rank={index} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Search */}
         <div className="relative mb-6">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
           <input
@@ -400,6 +515,7 @@ export default function ComparePage() {
           />
         </div>
 
+        {/* Filters */}
         <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-4 mb-6">
           <div className="flex items-center gap-2 mb-4">
             <SlidersHorizontal className="w-5 h-5 text-emerald-400" />
@@ -420,9 +536,10 @@ export default function ComparePage() {
           </div>
         </div>
 
+        {/* Results Header */}
         <div className="flex items-center justify-between mb-6">
           <p className="text-gray-400">
-            <span className="text-white font-semibold">{sortedFirms.length}</span> prop firms found
+            <span className="text-white font-semibold">{loading ? '...' : sortedFirms.length}</span> prop firms found
           </p>
           <div className="flex items-center gap-4">
             <select
@@ -447,109 +564,136 @@ export default function ComparePage() {
           </div>
         </div>
 
+        {/* Loading State - Skeleton */}
         {loading && (
-          <div className="text-center py-12">
-            <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-400">Loading prop firms...</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, i) => (
+              <SkeletonCard key={i} />
+            ))}
           </div>
         )}
 
         {/* Grid View */}
         {!loading && viewMode === 'grid' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sortedFirms.map((firm) => (
-              <div key={firm.id} className="bg-gray-800/50 rounded-xl overflow-hidden border border-gray-700 hover:border-emerald-500/50 transition-all flex flex-col h-full">
-                <div className="p-5 border-b border-gray-700">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center overflow-hidden p-2">
-                        {firm.logo_url ? (
-                          <img src={firm.logo_url} alt={firm.name} className="w-full h-full object-contain" />
-                        ) : (
-                          <span className="text-xl font-bold text-emerald-600">{firm.name.charAt(0)}</span>
-                        )}
+            {sortedFirms.map((firm) => {
+              const badges = getBadges(firm)
+              return (
+                <div key={firm.id} className="bg-gray-800/50 rounded-xl overflow-hidden border border-gray-700 hover:border-emerald-500/50 transition-all flex flex-col h-full">
+                  <div className="p-5 border-b border-gray-700">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-3">
+                        <Link href={`/prop-firm/${firm.slug}`} className="w-14 h-14 bg-white rounded-xl flex items-center justify-center overflow-hidden p-2 hover:ring-2 hover:ring-emerald-500 transition-all">
+                          {firm.logo_url ? (
+                            <img src={firm.logo_url} alt={firm.name} className="w-full h-full object-contain" />
+                          ) : (
+                            <span className="text-xl font-bold text-emerald-600">{firm.name.charAt(0)}</span>
+                          )}
+                        </Link>
+                        <div>
+                          <Link href={`/prop-firm/${firm.slug}`} className="text-lg font-semibold text-white hover:text-emerald-400 transition-colors">
+                            {firm.name}
+                          </Link>
+                          {renderStars(firm.trustpilot_rating)}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Badges */}
+                    {badges.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mt-3">
+                        {badges.map((badge, i) => (
+                          <span key={i} className={`px-2 py-1 text-xs rounded-full border flex items-center gap-1 ${badge.color}`}>
+                            <badge.icon className="w-3 h-3" />
+                            {badge.label}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    
+                    {/* Location with flag */}
+                    <div className="flex items-center gap-4 mt-3 text-xs text-gray-400">
+                      {firm.headquarters && (
+                        <span className="flex items-center gap-2">
+                          <CountryFlag country={firm.headquarters} />
+                          <span>{firm.headquarters}</span>
+                        </span>
+                      )}
+                      {firm.is_regulated && (
+                        <span className="flex items-center gap-1 text-emerald-400">
+                          <Shield className="w-3 h-3" /> Regulated
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      {firm.challenge_types?.slice(0, 3).map((type) => (
+                        <span key={type} className="px-2 py-1 bg-gray-700 text-gray-300 text-xs rounded-full">{type}</span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="p-5 flex-1">
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <p className="text-gray-500 text-xs uppercase">Starting From</p>
+                        <p className="text-white font-semibold text-lg">${firm.min_price || 'N/A'}</p>
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-white">{firm.name}</h3>
-                        {renderStars(firm.trustpilot_rating)}
+                        <p className="text-gray-500 text-xs uppercase">Profit Split</p>
+                        <p className="text-emerald-400 font-semibold text-lg">{firm.profit_split || 'N/A'}%</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-500 text-xs uppercase">Max Drawdown</p>
+                        <p className="text-white font-semibold">{firm.max_total_drawdown || 'N/A'}%</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-500 text-xs uppercase">Max Allocation</p>
+                        <p className="text-yellow-400 font-semibold">{formatMaxAccount(firm.account_sizes)}</p>
                       </div>
                     </div>
-                  </div>
-                  
-                  {/* Location with flag image */}
-                  <div className="flex items-center gap-4 mt-3 text-xs text-gray-400">
-                    {firm.headquarters && (
-                      <span className="flex items-center gap-2">
-                        <CountryFlag country={firm.headquarters} />
-                        <span>{firm.headquarters}</span>
-                      </span>
-                    )}
-                    {firm.is_regulated && (
-                      <span className="flex items-center gap-1 text-emerald-400">
-                        <Shield className="w-3 h-3" /> Regulated
-                      </span>
-                    )}
+
+                    <div className="mb-4">
+                      <p className="text-gray-500 text-xs uppercase mb-2">Trading Platforms</p>
+                      {renderPlatforms(firm.platforms)}
+                    </div>
+
+                    <div className="mb-4">
+                      <p className="text-gray-500 text-xs uppercase mb-2">Markets</p>
+                      {renderMarkets(firm.instruments)}
+                    </div>
+
+                    <div className="flex flex-wrap gap-x-3 gap-y-1">
+                      {firm.allows_scalping && <span className="text-xs text-green-400">✓ Scalping</span>}
+                      {firm.allows_news_trading && <span className="text-xs text-green-400">✓ News</span>}
+                      {firm.allows_ea && <span className="text-xs text-green-400">✓ EA/Bots</span>}
+                      {firm.allows_hedging && <span className="text-xs text-green-400">✓ Hedging</span>}
+                    </div>
                   </div>
 
-                  <div className="flex flex-wrap gap-2 mt-3">
-                    {firm.challenge_types?.slice(0, 3).map((type) => (
-                      <span key={type} className="px-2 py-1 bg-gray-700 text-gray-300 text-xs rounded-full">{type}</span>
-                    ))}
+                  <div className="p-4 bg-gray-900/50 border-t border-gray-700 mt-auto">
+                    <div className="flex gap-2">
+                      <a
+                        href={firm.affiliate_url || firm.website_url || '#'}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => handleAffiliateClick(firm)}
+                        className="flex-1 flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-xl font-semibold transition-all shadow-lg shadow-emerald-500/20"
+                      >
+                        <DollarSign className="w-5 h-5" />
+                        Buy Challenge
+                      </a>
+                      <Link
+                        href={`/prop-firm/${firm.slug}`}
+                        className="px-4 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-xl font-medium transition-all flex items-center justify-center"
+                      >
+                        <ExternalLink className="w-5 h-5" />
+                      </Link>
+                    </div>
                   </div>
                 </div>
-
-                <div className="p-5 flex-1">
-                  <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div>
-                      <p className="text-gray-500 text-xs uppercase">Starting From</p>
-                      <p className="text-white font-semibold text-lg">${firm.min_price || 'N/A'}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500 text-xs uppercase">Profit Split</p>
-                      <p className="text-emerald-400 font-semibold text-lg">{firm.profit_split || 'N/A'}%</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500 text-xs uppercase">Max Drawdown</p>
-                      <p className="text-white font-semibold">{firm.max_total_drawdown || 'N/A'}%</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500 text-xs uppercase">Max Allocation</p>
-                      <p className="text-yellow-400 font-semibold">{formatMaxAccount(firm.account_sizes)}</p>
-                    </div>
-                  </div>
-
-                  <div className="mb-4">
-                    <p className="text-gray-500 text-xs uppercase mb-2">Trading Platforms</p>
-                    {renderPlatforms(firm.platforms)}
-                  </div>
-
-                  <div className="mb-4">
-                    <p className="text-gray-500 text-xs uppercase mb-2">Markets</p>
-                    {renderMarkets(firm.instruments)}
-                  </div>
-
-                  <div className="flex flex-wrap gap-x-3 gap-y-1">
-                    {firm.allows_scalping && <span className="text-xs text-green-400">✓ Scalping</span>}
-                    {firm.allows_news_trading && <span className="text-xs text-green-400">✓ News</span>}
-                    {firm.allows_ea && <span className="text-xs text-green-400">✓ EA/Bots</span>}
-                    {firm.allows_hedging && <span className="text-xs text-green-400">✓ Hedging</span>}
-                  </div>
-                </div>
-
-                <div className="p-4 bg-gray-900/50 border-t border-gray-700 mt-auto">
-                  <a
-                    href={firm.affiliate_url || firm.website_url || '#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 w-full py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-xl font-semibold transition-all shadow-lg shadow-emerald-500/20"
-                  >
-                    <DollarSign className="w-5 h-5" />
-                    Buy Challenge
-                    <ExternalLink className="w-4 h-4" />
-                  </a>
-                </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
 
@@ -560,15 +704,17 @@ export default function ComparePage() {
               <div key={firm.id} className="bg-gray-800/50 rounded-xl p-5 border border-gray-700 hover:border-emerald-500/50 transition-all">
                 <div className="flex flex-col md:flex-row md:items-center gap-4">
                   <div className="flex items-center gap-4 md:w-64">
-                    <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center overflow-hidden p-2">
+                    <Link href={`/prop-firm/${firm.slug}`} className="w-12 h-12 bg-white rounded-xl flex items-center justify-center overflow-hidden p-2">
                       {firm.logo_url ? (
                         <img src={firm.logo_url} alt={firm.name} className="w-full h-full object-contain" />
                       ) : (
                         <span className="text-lg font-bold text-emerald-600">{firm.name.charAt(0)}</span>
                       )}
-                    </div>
+                    </Link>
                     <div>
-                      <h3 className="text-lg font-semibold text-white">{firm.name}</h3>
+                      <Link href={`/prop-firm/${firm.slug}`} className="text-lg font-semibold text-white hover:text-emerald-400">
+                        {firm.name}
+                      </Link>
                       {renderStars(firm.trustpilot_rating)}
                     </div>
                   </div>
@@ -599,16 +745,23 @@ export default function ComparePage() {
                     </div>
                   </div>
 
-                  <div className="md:w-40">
+                  <div className="md:w-40 flex gap-2">
                     <a
                       href={firm.affiliate_url || firm.website_url || '#'}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-2 w-full py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-xl font-semibold transition-all text-sm"
+                      onClick={() => handleAffiliateClick(firm)}
+                      className="flex-1 flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-xl font-semibold transition-all text-sm"
                     >
                       <DollarSign className="w-4 h-4" />
-                      Buy Challenge
+                      Buy
                     </a>
+                    <Link
+                      href={`/prop-firm/${firm.slug}`}
+                      className="px-3 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-xl transition-all"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </Link>
                   </div>
                 </div>
               </div>
