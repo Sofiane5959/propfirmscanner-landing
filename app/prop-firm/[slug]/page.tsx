@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { createClient } from '@supabase/supabase-js'
 import { notFound } from 'next/navigation'
 import PropFirmPageClient from './PropFirmPageClient'
+import { findAlternatives } from '@/lib/generate-firm-content'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -25,20 +26,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
   }
 
-  const title = `${firm.name} Review 2025 - Pricing, Profit Split & Discount Codes`
-  const description = `${firm.name} review: ${firm.profit_split}% profit split, starting from $${firm.min_price}. Read our honest review, compare with alternatives, and get exclusive discount codes. Trusted by thousands of traders.`
+  const title = `${firm.name} Review 2025 - Pricing, Rules, Pros & Cons`
+  const description = `${firm.name} review: ${firm.profit_split}% profit split, starting from $${firm.min_price}. Read our honest verdict, pros/cons analysis, and see if it's right for your trading style.`
 
   return {
     title,
     description,
     keywords: [
       `${firm.name} review`,
+      `${firm.name} review 2025`,
       `${firm.name} discount code`,
       `${firm.name} promo code`,
       `${firm.name} coupon`,
       `is ${firm.name} legit`,
       `${firm.name} profit split`,
       `${firm.name} rules`,
+      `${firm.name} pros cons`,
       `${firm.name} vs FTMO`,
       'prop firm review',
       'best prop firm',
@@ -164,6 +167,16 @@ function generateSchemas(firm: any) {
           text: `Yes! Check our deals page for the latest ${firm.name} discount codes and save up to 80% on your challenge.`,
         },
       },
+      {
+        '@type': 'Question',
+        name: `Is ${firm.name} good for beginners?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: firm.min_price <= 100 
+            ? `Yes, ${firm.name} can be good for beginners due to its affordable starting price of $${firm.min_price}. However, all prop trading involves risk.`
+            : `${firm.name} is more suited for experienced traders due to its pricing. Beginners might want to consider starting with a smaller account.`,
+        },
+      },
     ],
   }
 
@@ -197,6 +210,7 @@ function generateSchemas(firm: any) {
 }
 
 export default async function PropFirmPage({ params }: Props) {
+  // Fetch the main firm
   const { data: firm } = await supabase
     .from('prop_firms')
     .select('*')
@@ -206,6 +220,17 @@ export default async function PropFirmPage({ params }: Props) {
   if (!firm) {
     notFound()
   }
+
+  // Fetch all firms for alternatives
+  const { data: allFirms } = await supabase
+    .from('prop_firms')
+    .select('*')
+    .neq('id', firm.id)
+    .order('trustpilot_rating', { ascending: false })
+    .limit(20)
+
+  // Find alternatives
+  const alternatives = allFirms ? findAlternatives(firm, allFirms) : []
 
   const schemas = generateSchemas(firm)
 
@@ -229,7 +254,7 @@ export default async function PropFirmPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemas.breadcrumbSchema) }}
       />
       
-      <PropFirmPageClient firm={firm} />
+      <PropFirmPageClient firm={firm} alternatives={alternatives} />
     </>
   )
 }
