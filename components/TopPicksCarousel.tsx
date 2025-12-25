@@ -9,13 +9,13 @@ interface PropFirm {
   id: string
   name: string
   slug: string
-  logo_url: string
-  trustpilot_rating: number
-  trustpilot_reviews: number
-  min_price: number
-  profit_split: number
-  max_daily_drawdown: number
-  max_total_drawdown: number
+  logo_url: string | null
+  trustpilot_rating: number | null
+  trustpilot_reviews: number | null
+  min_price: number | null
+  profit_split: number | null
+  max_daily_drawdown: number | null
+  max_total_drawdown: number | null
 }
 
 interface TopPicksCarouselProps {
@@ -27,9 +27,10 @@ export default function TopPicksCarousel({ firms }: TopPicksCarouselProps) {
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(true)
 
-  // Get top 10 firms by Trustpilot rating
+  // Get top 10 firms by Trustpilot rating (filter out nulls)
   const topFirms = [...firms]
-    .sort((a, b) => b.trustpilot_rating - a.trustpilot_rating)
+    .filter(f => f.trustpilot_rating != null)
+    .sort((a, b) => (b.trustpilot_rating || 0) - (a.trustpilot_rating || 0))
     .slice(0, 10)
 
   const checkScrollButtons = () => {
@@ -51,7 +52,7 @@ export default function TopPicksCarousel({ firms }: TopPicksCarouselProps) {
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollContainerRef.current) {
-      const scrollAmount = 320 // Card width + gap
+      const scrollAmount = 320
       scrollContainerRef.current.scrollBy({
         left: direction === 'left' ? -scrollAmount : scrollAmount,
         behavior: 'smooth'
@@ -65,6 +66,8 @@ export default function TopPicksCarousel({ firms }: TopPicksCarouselProps) {
     if (index === 2) return { icon: Trophy, color: 'text-amber-600', bg: 'bg-amber-600/10' }
     return { icon: TrendingUp, color: 'text-blue-500', bg: 'bg-blue-500/10' }
   }
+
+  if (topFirms.length === 0) return null
 
   return (
     <section className="mb-12">
@@ -156,10 +159,12 @@ export default function TopPicksCarousel({ firms }: TopPicksCarouselProps) {
                   <div className="flex items-center gap-2 mb-4">
                     <div className="flex items-center gap-1">
                       <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                      <span className="text-white font-semibold">{firm.trustpilot_rating.toFixed(1)}</span>
+                      <span className="text-white font-semibold">
+                        {(firm.trustpilot_rating ?? 0).toFixed(1)}
+                      </span>
                     </div>
                     <span className="text-gray-500 text-sm">
-                      ({firm.trustpilot_reviews.toLocaleString()} reviews)
+                      ({(firm.trustpilot_reviews ?? 0).toLocaleString()} reviews)
                     </span>
                   </div>
 
@@ -167,19 +172,19 @@ export default function TopPicksCarousel({ firms }: TopPicksCarouselProps) {
                   <div className="grid grid-cols-2 gap-3">
                     <div className="bg-gray-800/50 rounded-lg p-3">
                       <p className="text-xs text-gray-500 mb-1">From</p>
-                      <p className="text-white font-bold">${firm.min_price}</p>
+                      <p className="text-white font-bold">${firm.min_price ?? 0}</p>
                     </div>
                     <div className="bg-gray-800/50 rounded-lg p-3">
                       <p className="text-xs text-gray-500 mb-1">Profit Split</p>
-                      <p className="text-green-400 font-bold">{firm.profit_split}%</p>
+                      <p className="text-green-400 font-bold">{firm.profit_split ?? 0}%</p>
                     </div>
                     <div className="bg-gray-800/50 rounded-lg p-3">
                       <p className="text-xs text-gray-500 mb-1">Daily DD</p>
-                      <p className="text-orange-400 font-bold">{firm.max_daily_drawdown}%</p>
+                      <p className="text-orange-400 font-bold">{firm.max_daily_drawdown ?? 0}%</p>
                     </div>
                     <div className="bg-gray-800/50 rounded-lg p-3">
                       <p className="text-xs text-gray-500 mb-1">Max DD</p>
-                      <p className="text-red-400 font-bold">{firm.max_total_drawdown}%</p>
+                      <p className="text-red-400 font-bold">{firm.max_total_drawdown ?? 0}%</p>
                     </div>
                   </div>
 
@@ -209,7 +214,7 @@ export default function TopPicksCarousel({ firms }: TopPicksCarouselProps) {
           href="/compare"
           className="text-gray-400 hover:text-white text-sm transition-colors"
         >
-          View all 100 prop firms →
+          View all {firms.length} prop firms →
         </Link>
       </div>
     </section>

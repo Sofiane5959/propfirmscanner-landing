@@ -10,23 +10,23 @@ interface PropFirm {
   id: string
   name: string
   slug: string
-  logo_url: string
-  website_url: string
-  affiliate_url: string
-  trustpilot_rating: number
-  trustpilot_reviews: number
-  min_price: number
-  profit_split: number
-  max_daily_drawdown: number
-  max_total_drawdown: number
-  profit_target_phase1: number
-  profit_target_phase2: number
-  allows_scalping: boolean
-  allows_news_trading: boolean
-  allows_ea: boolean
-  allows_weekend_holding: boolean
-  account_sizes: number[]
-  platforms: string[]
+  logo_url: string | null
+  website_url: string | null
+  affiliate_url: string | null
+  trustpilot_rating: number | null
+  trustpilot_reviews: number | null
+  min_price: number | null
+  profit_split: number | null
+  max_daily_drawdown: number | null
+  max_total_drawdown: number | null
+  profit_target_phase1: number | null
+  profit_target_phase2: number | null
+  allows_scalping: boolean | null
+  allows_news_trading: boolean | null
+  allows_ea: boolean | null
+  allows_weekend_holding: boolean | null
+  account_sizes: number[] | null
+  platforms: string[] | null
 }
 
 interface ComparePageClientProps {
@@ -60,46 +60,46 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
       const query = searchQuery.toLowerCase()
       result = result.filter(firm =>
         firm.name.toLowerCase().includes(query) ||
-        firm.platforms?.some(p => p.toLowerCase().includes(query))
+        (firm.platforms && firm.platforms.some(p => p.toLowerCase().includes(query)))
       )
     }
 
     // Price filter
     result = result.filter(firm =>
-      firm.min_price >= filters.minPrice &&
-      firm.min_price <= filters.maxPrice
+      (firm.min_price ?? 0) >= filters.minPrice &&
+      (firm.min_price ?? 0) <= filters.maxPrice
     )
 
     // Profit split filter
-    result = result.filter(firm => firm.profit_split >= filters.minProfitSplit)
+    result = result.filter(firm => (firm.profit_split ?? 0) >= filters.minProfitSplit)
 
     // Trading style filters
     if (filters.allowsScalping) {
-      result = result.filter(firm => firm.allows_scalping)
+      result = result.filter(firm => firm.allows_scalping === true)
     }
     if (filters.allowsNewsTrading) {
-      result = result.filter(firm => firm.allows_news_trading)
+      result = result.filter(firm => firm.allows_news_trading === true)
     }
     if (filters.allowsEA) {
-      result = result.filter(firm => firm.allows_ea)
+      result = result.filter(firm => firm.allows_ea === true)
     }
     if (filters.allowsWeekendHolding) {
-      result = result.filter(firm => firm.allows_weekend_holding)
+      result = result.filter(firm => firm.allows_weekend_holding === true)
     }
 
     // Sort
     switch (sortBy) {
       case 'rating':
-        result.sort((a, b) => (b.trustpilot_rating || 0) - (a.trustpilot_rating || 0))
+        result.sort((a, b) => (b.trustpilot_rating ?? 0) - (a.trustpilot_rating ?? 0))
         break
       case 'price-low':
-        result.sort((a, b) => (a.min_price || 0) - (b.min_price || 0))
+        result.sort((a, b) => (a.min_price ?? 0) - (b.min_price ?? 0))
         break
       case 'price-high':
-        result.sort((a, b) => (b.min_price || 0) - (a.min_price || 0))
+        result.sort((a, b) => (b.min_price ?? 0) - (a.min_price ?? 0))
         break
       case 'profit-split':
-        result.sort((a, b) => (b.profit_split || 0) - (a.profit_split || 0))
+        result.sort((a, b) => (b.profit_split ?? 0) - (a.profit_split ?? 0))
         break
       case 'name':
         result.sort((a, b) => a.name.localeCompare(b.name))
@@ -300,7 +300,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
                   <div className="flex items-center gap-1 bg-gray-700 px-3 py-1.5 rounded-full">
                     <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
                     <span className="text-white font-semibold text-sm">
-                      {(firm.trustpilot_rating || 0).toFixed(1)}
+                      {(firm.trustpilot_rating ?? 0).toFixed(1)}
                     </span>
                   </div>
                 </div>
@@ -310,18 +310,18 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
                   {firm.name}
                 </h3>
                 <p className="text-gray-500 text-sm mb-4">
-                  {(firm.trustpilot_reviews || 0).toLocaleString()} reviews
+                  {(firm.trustpilot_reviews ?? 0).toLocaleString()} reviews
                 </p>
 
                 {/* Quick Stats */}
                 <div className="grid grid-cols-2 gap-3 mb-4">
                   <div className="bg-gray-700/50 rounded-lg p-3">
                     <p className="text-xs text-gray-500 mb-1">Starting from</p>
-                    <p className="text-white font-bold">${firm.min_price || 0}</p>
+                    <p className="text-white font-bold">${firm.min_price ?? 0}</p>
                   </div>
                   <div className="bg-gray-700/50 rounded-lg p-3">
                     <p className="text-xs text-gray-500 mb-1">Profit Split</p>
-                    <p className="text-green-400 font-bold">{firm.profit_split || 0}%</p>
+                    <p className="text-green-400 font-bold">{firm.profit_split ?? 0}%</p>
                   </div>
                 </div>
 
