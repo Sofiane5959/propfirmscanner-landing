@@ -1,0 +1,49 @@
+<svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="400" fill="#111827"/>
+  <circle cx="700" cy="100" r="100" fill="#10b981" opacity="0.08"/>
+  <circle cx="100" cy="350" r="80" fill="#3b82f6" opacity="0.08"/>
+  <!-- Main card -->
+  <rect x="120" y="60" width="560" height="260" rx="16" fill="#1f2937"/>
+  <!-- Calendar header -->
+  <rect x="120" y="60" width="560" height="50" rx="16" fill="#374151"/>
+  <text x="400" y="92" fill="white" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui">Trading Week - Consistency Check</text>
+  <!-- Days row -->
+  <g font-family="system-ui" font-size="12" fill="#9ca3af" text-anchor="middle">
+    <text x="180" y="140">MON</text>
+    <text x="270" y="140">TUE</text>
+    <text x="360" y="140">WED</text>
+    <text x="450" y="140">THU</text>
+    <text x="540" y="140">FRI</text>
+    <text x="620" y="140">MAX</text>
+  </g>
+  <!-- Day boxes -->
+  <rect x="150" y="155" width="60" height="60" rx="8" fill="#374151"/>
+  <rect x="240" y="155" width="60" height="60" rx="8" fill="#374151"/>
+  <rect x="330" y="155" width="60" height="60" rx="8" fill="#374151"/>
+  <rect x="420" y="155" width="60" height="60" rx="8" fill="#374151"/>
+  <rect x="510" y="155" width="60" height="60" rx="8" fill="#374151"/>
+  <!-- Max limit box -->
+  <rect x="590" y="155" width="60" height="60" rx="8" fill="#ef4444" opacity="0.2" stroke="#ef4444" stroke-width="2"/>
+  <!-- Daily profits -->
+  <text x="180" y="195" fill="#10b981" font-size="16" font-weight="bold" text-anchor="middle" font-family="system-ui">+2.1%</text>
+  <text x="270" y="195" fill="#10b981" font-size="16" font-weight="bold" text-anchor="middle" font-family="system-ui">+1.8%</text>
+  <text x="360" y="195" fill="#10b981" font-size="16" font-weight="bold" text-anchor="middle" font-family="system-ui">+2.5%</text>
+  <text x="450" y="195" fill="#ef4444" font-size="16" font-weight="bold" text-anchor="middle" font-family="system-ui">-0.5%</text>
+  <text x="540" y="195" fill="#10b981" font-size="16" font-weight="bold" text-anchor="middle" font-family="system-ui">+2.2%</text>
+  <text x="620" y="195" fill="#ef4444" font-size="16" font-weight="bold" text-anchor="middle" font-family="system-ui">30%</text>
+  <!-- Check marks -->
+  <circle cx="180" cy="195" r="25" fill="#10b981" opacity="0.2"/>
+  <circle cx="270" cy="195" r="25" fill="#10b981" opacity="0.2"/>
+  <circle cx="360" cy="195" r="25" fill="#10b981" opacity="0.2"/>
+  <circle cx="540" cy="195" r="25" fill="#10b981" opacity="0.2"/>
+  <!-- Progress section -->
+  <text x="150" y="255" fill="#9ca3af" font-size="12" font-family="system-ui">Total Progress:</text>
+  <rect x="150" y="265" width="400" height="16" rx="8" fill="#374151"/>
+  <rect x="150" y="265" width="320" height="16" rx="8" fill="#10b981"/>
+  <text x="560" y="278" fill="#10b981" font-size="14" font-weight="bold" font-family="system-ui">8.1% / 10%</text>
+  <!-- Warning message -->
+  <rect x="150" y="295" width="380" height="20" rx="4" fill="#fbbf24" opacity="0.2"/>
+  <text x="160" y="309" fill="#fbbf24" font-size="11" font-family="system-ui">⚠️ No single day can exceed 30% of total profit (3%)</text>
+  <!-- Title -->
+  <text x="400" y="365" fill="white" font-size="28" font-weight="bold" text-anchor="middle" font-family="system-ui">Consistency Rules Explained</text>
+</svg>

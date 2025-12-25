@@ -2,23 +2,32 @@ import { Metadata } from 'next'
 import { createClient } from '@supabase/supabase-js'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { Star, CheckCircle, XCircle, Trophy, ArrowRight, DollarSign, ExternalLink, Shield, ChevronLeft } from 'lucide-react'
-import { trackAffiliateClick } from '@/lib/affiliate-tracking'
+import { Star, CheckCircle, XCircle, Trophy, ArrowRight, DollarSign, ExternalLink, ChevronLeft } from 'lucide-react'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 const supabase = createClient(supabaseUrl, supabaseKey)
 
-// Popular VS comparisons for static generation
+// 15 Popular VS comparisons for static generation
 const popularComparisons = [
-  { firm1: 'ftmo', firm2: 'funded-next' },
+  // FTMO comparisons (most searched)
+  { firm1: 'ftmo', firm2: 'fundednext' },
   { firm1: 'ftmo', firm2: 'the5ers' },
   { firm1: 'ftmo', firm2: 'myfundedfx' },
-  { firm1: 'funded-next', firm2: 'the5ers' },
   { firm1: 'ftmo', firm2: 'e8-funding' },
-  { firm1: 'ftmo', firm2: 'alpha-capital' },
-  { firm1: 'funded-next', firm2: 'myfundedfx' },
+  { firm1: 'ftmo', firm2: 'alpha-capital-group' },
+  { firm1: 'ftmo', firm2: 'funded-trading-plus' },
+  { firm1: 'ftmo', firm2: 'fxify' },
+  { firm1: 'ftmo', firm2: 'topstep' },
+  { firm1: 'ftmo', firm2: 'goat-funded-trader' },
+  // Funded Next comparisons
+  { firm1: 'fundednext', firm2: 'the5ers' },
+  { firm1: 'fundednext', firm2: 'myfundedfx' },
+  { firm1: 'fundednext', firm2: 'e8-funding' },
+  { firm1: 'fundednext', firm2: 'funded-trading-plus' },
+  // The5ers comparisons
   { firm1: 'the5ers', firm2: 'myfundedfx' },
+  { firm1: 'the5ers', firm2: 'e8-funding' },
 ]
 
 interface Props {
@@ -57,12 +66,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       `${firm1?.name} comparison`,
       `${firm2?.name} comparison`,
       'prop firm comparison',
-      'best prop firm',
+      'best prop firm 2025',
     ],
     openGraph: {
       title,
       description,
       url: `https://www.propfirmscanner.org/compare/${params.slug}`,
+      type: 'article',
     },
     alternates: {
       canonical: `https://www.propfirmscanner.org/compare/${params.slug}`,
@@ -137,7 +147,7 @@ export default async function VSPage({ params }: Props) {
   ]
 
   const rules = [
-    { label: 'Scalping', firm1: firm1.allows_scalping, firm2: firm2.allows_scalping },
+    { label: 'Scalping Allowed', firm1: firm1.allows_scalping, firm2: firm2.allows_scalping },
     { label: 'News Trading', firm1: firm1.allows_news_trading, firm2: firm2.allows_news_trading },
     { label: 'Weekend Holding', firm1: firm1.allows_weekend_holding, firm2: firm2.allows_weekend_holding },
     { label: 'EA / Bots', firm1: firm1.allows_ea, firm2: firm2.allows_ea },
@@ -157,10 +167,10 @@ export default async function VSPage({ params }: Props) {
     }
     const loser = overallWinner.id === firm1.id ? firm2 : firm1
     
-    if (overallWinner.trustpilot_rating > loser.trustpilot_rating && overallWinner.profit_split >= loser.profit_split) {
-      return `${overallWinner.name} is the clear winner with better ratings and profit split. However, ${loser.name} might still be better if you prioritize ${loser.min_price < overallWinner.min_price ? 'lower entry cost' : 'specific features'}.`
+    if ((overallWinner.trustpilot_rating || 0) > (loser.trustpilot_rating || 0) && (overallWinner.profit_split || 0) >= (loser.profit_split || 0)) {
+      return `${overallWinner.name} is the clear winner with better ratings and profit split. However, ${loser.name} might still be better if you prioritize ${(loser.min_price || 999) < (overallWinner.min_price || 999) ? 'lower entry cost' : 'specific features'}.`
     }
-    return `${overallWinner.name} edges out ${loser.name} in most categories. Consider ${loser.name} if ${loser.profit_split > overallWinner.profit_split ? 'profit split' : loser.min_price < overallWinner.min_price ? 'budget' : 'specific rules'} is your priority.`
+    return `${overallWinner.name} edges out ${loser.name} in most categories. Consider ${loser.name} if ${(loser.profit_split || 0) > (overallWinner.profit_split || 0) ? 'profit split' : (loser.min_price || 999) < (overallWinner.min_price || 999) ? 'budget' : 'specific rules'} is your priority.`
   }
 
   // Schema JSON-LD
@@ -171,6 +181,8 @@ export default async function VSPage({ params }: Props) {
     description: `Detailed comparison of ${firm1.name} and ${firm2.name} prop trading firms.`,
     author: { '@type': 'Organization', name: 'PropFirm Scanner' },
     publisher: { '@type': 'Organization', name: 'PropFirm Scanner' },
+    datePublished: new Date().toISOString(),
+    dateModified: new Date().toISOString(),
   }
 
   return (
@@ -214,17 +226,14 @@ export default async function VSPage({ params }: Props) {
 
           {/* Head to Head Cards */}
           <div className="grid md:grid-cols-2 gap-6 mb-12">
-            {/* Firm 1 */}
             <FirmCard firm={firm1} isWinner={overallWinner?.id === firm1.id} />
-            
-            {/* Firm 2 */}
             <FirmCard firm={firm2} isWinner={overallWinner?.id === firm2.id} />
           </div>
 
           {/* Comparison Table */}
           <div className="bg-gray-800/50 border border-gray-700 rounded-2xl overflow-hidden mb-12">
             <div className="p-6 border-b border-gray-700">
-              <h2 className="text-2xl font-bold text-white">Side-by-Side Comparison</h2>
+              <h2 className="text-2xl font-bold text-white">📊 Side-by-Side Comparison</h2>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -257,7 +266,7 @@ export default async function VSPage({ params }: Props) {
           {/* Trading Rules Comparison */}
           <div className="bg-gray-800/50 border border-gray-700 rounded-2xl overflow-hidden mb-12">
             <div className="p-6 border-b border-gray-700">
-              <h2 className="text-2xl font-bold text-white">Trading Rules</h2>
+              <h2 className="text-2xl font-bold text-white">📋 Trading Rules</h2>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -304,37 +313,39 @@ export default async function VSPage({ params }: Props) {
               <div className="bg-gray-900/50 rounded-xl p-4">
                 <h3 className="font-semibold text-white mb-2">Choose {firm1.name} if:</h3>
                 <ul className="text-gray-400 text-sm space-y-1">
-                  {firm1.profit_split >= firm2.profit_split && <li>• You want higher profit split</li>}
-                  {firm1.min_price <= firm2.min_price && <li>• You're on a budget</li>}
-                  {firm1.trustpilot_rating >= firm2.trustpilot_rating && <li>• Reputation matters most</li>}
+                  {(firm1.profit_split || 0) >= (firm2.profit_split || 0) && <li>• You want higher profit split</li>}
+                  {(firm1.min_price || 999) <= (firm2.min_price || 999) && <li>• You're on a budget</li>}
+                  {(firm1.trustpilot_rating || 0) >= (firm2.trustpilot_rating || 0) && <li>• Reputation matters most</li>}
                   {firm1.allows_scalping && !firm2.allows_scalping && <li>• You're a scalper</li>}
                   {firm1.allows_news_trading && !firm2.allows_news_trading && <li>• You trade news events</li>}
+                  {firm1.allows_ea && !firm2.allows_ea && <li>• You use EAs/bots</li>}
                 </ul>
               </div>
               <div className="bg-gray-900/50 rounded-xl p-4">
                 <h3 className="font-semibold text-white mb-2">Choose {firm2.name} if:</h3>
                 <ul className="text-gray-400 text-sm space-y-1">
-                  {firm2.profit_split >= firm1.profit_split && <li>• You want higher profit split</li>}
-                  {firm2.min_price <= firm1.min_price && <li>• You're on a budget</li>}
-                  {firm2.trustpilot_rating >= firm1.trustpilot_rating && <li>• Reputation matters most</li>}
+                  {(firm2.profit_split || 0) >= (firm1.profit_split || 0) && <li>• You want higher profit split</li>}
+                  {(firm2.min_price || 999) <= (firm1.min_price || 999) && <li>• You're on a budget</li>}
+                  {(firm2.trustpilot_rating || 0) >= (firm1.trustpilot_rating || 0) && <li>• Reputation matters most</li>}
                   {firm2.allows_scalping && !firm1.allows_scalping && <li>• You're a scalper</li>}
                   {firm2.allows_news_trading && !firm1.allows_news_trading && <li>• You trade news events</li>}
+                  {firm2.allows_ea && !firm1.allows_ea && <li>• You use EAs/bots</li>}
                 </ul>
               </div>
             </div>
           </div>
 
-          {/* CTA */}
+          {/* CTA Buttons */}
           <div className="grid md:grid-cols-2 gap-6 mb-12">
             <a
               href={firm1.affiliate_url || firm1.website_url || '#'}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-2xl p-6 text-center transition-all"
+              className="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-2xl p-6 text-center transition-all group"
             >
               <p className="text-gray-400 mb-2">Get Started with</p>
-              <p className="text-2xl font-bold text-white mb-4">{firm1.name}</p>
-              <span className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl">
+              <p className="text-2xl font-bold text-white mb-4 group-hover:text-emerald-400 transition-colors">{firm1.name}</p>
+              <span className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors">
                 <DollarSign className="w-5 h-5" />
                 Buy Challenge
                 <ExternalLink className="w-4 h-4" />
@@ -344,11 +355,11 @@ export default async function VSPage({ params }: Props) {
               href={firm2.affiliate_url || firm2.website_url || '#'}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-2xl p-6 text-center transition-all"
+              className="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-2xl p-6 text-center transition-all group"
             >
               <p className="text-gray-400 mb-2">Get Started with</p>
-              <p className="text-2xl font-bold text-white mb-4">{firm2.name}</p>
-              <span className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl">
+              <p className="text-2xl font-bold text-white mb-4 group-hover:text-emerald-400 transition-colors">{firm2.name}</p>
+              <span className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors">
                 <DollarSign className="w-5 h-5" />
                 Buy Challenge
                 <ExternalLink className="w-4 h-4" />
@@ -358,16 +369,16 @@ export default async function VSPage({ params }: Props) {
 
           {/* Other Comparisons */}
           <div className="bg-gray-800/50 border border-gray-700 rounded-2xl p-6">
-            <h2 className="text-xl font-bold text-white mb-4">Other Popular Comparisons</h2>
+            <h2 className="text-xl font-bold text-white mb-4">🔗 Other Popular Comparisons</h2>
             <div className="flex flex-wrap gap-3">
               {popularComparisons
-                .filter(c => c.firm1 !== parsed.firm1Slug || c.firm2 !== parsed.firm2Slug)
-                .slice(0, 5)
+                .filter(c => !(c.firm1 === parsed.firm1Slug && c.firm2 === parsed.firm2Slug))
+                .slice(0, 8)
                 .map(({ firm1, firm2 }) => (
                   <Link
                     key={`${firm1}-${firm2}`}
                     href={`/compare/${firm1}-vs-${firm2}`}
-                    className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-lg text-sm transition-colors"
+                    className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white rounded-lg text-sm transition-colors"
                   >
                     {firm1.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} vs {firm2.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
                   </Link>
@@ -396,7 +407,7 @@ function FirmCard({ firm, isWinner }: { firm: any; isWinner: boolean }) {
           {firm.logo_url ? (
             <img src={firm.logo_url} alt={firm.name} className="w-full h-full object-contain" />
           ) : (
-            <span className="text-2xl font-bold text-emerald-600">{firm.name.charAt(0)}</span>
+            <span className="text-2xl font-bold text-emerald-600">{firm.name?.charAt(0)}</span>
           )}
         </div>
         <div>
@@ -414,18 +425,19 @@ function FirmCard({ firm, isWinner }: { firm: any; isWinner: boolean }) {
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div className="bg-gray-900/50 rounded-xl p-3 text-center">
           <p className="text-gray-400 text-xs mb-1">From</p>
-          <p className="text-xl font-bold text-white">${firm.min_price}</p>
+          <p className="text-xl font-bold text-white">${firm.min_price || '99'}</p>
         </div>
         <div className="bg-gray-900/50 rounded-xl p-3 text-center">
           <p className="text-gray-400 text-xs mb-1">Profit Split</p>
-          <p className="text-xl font-bold text-emerald-400">{firm.profit_split}%</p>
+          <p className="text-xl font-bold text-emerald-400">{firm.profit_split || '80'}%</p>
         </div>
       </div>
 
       <div className="flex flex-wrap gap-2 mb-6">
         {firm.allows_scalping && <span className="px-2 py-1 bg-emerald-500/20 text-emerald-400 text-xs rounded-full">Scalping</span>}
-        {firm.allows_news_trading && <span className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs rounded-full">News Trading</span>}
-        {firm.allows_ea && <span className="px-2 py-1 bg-purple-500/20 text-purple-400 text-xs rounded-full">EA Allowed</span>}
+        {firm.allows_news_trading && <span className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs rounded-full">News</span>}
+        {firm.allows_ea && <span className="px-2 py-1 bg-purple-500/20 text-purple-400 text-xs rounded-full">EA</span>}
+        {firm.allows_weekend_holding && <span className="px-2 py-1 bg-orange-500/20 text-orange-400 text-xs rounded-full">Weekend</span>}
       </div>
 
       <div className="flex gap-2">
