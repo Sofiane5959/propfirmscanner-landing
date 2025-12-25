@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Search, Filter, Star, Check, X, ChevronDown, SlidersHorizontal } from 'lucide-react'
+import { Search, Star, Check, ChevronDown, SlidersHorizontal } from 'lucide-react'
 import TopPicksCarousel from '@/components/TopPicksCarousel'
 
 interface PropFirm {
@@ -30,12 +30,12 @@ interface PropFirm {
 }
 
 interface ComparePageClientProps {
-  initialFirms: PropFirm[]
+  firms: PropFirm[]
 }
 
 type SortOption = 'rating' | 'price-low' | 'price-high' | 'profit-split' | 'name'
 
-export default function ComparePageClient({ initialFirms }: ComparePageClientProps) {
+export default function ComparePageClient({ firms }: ComparePageClientProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [sortBy, setSortBy] = useState<SortOption>('rating')
   const [showFilters, setShowFilters] = useState(false)
@@ -53,14 +53,14 @@ export default function ComparePageClient({ initialFirms }: ComparePageClientPro
 
   // Filter and sort firms
   const filteredFirms = useMemo(() => {
-    let result = [...initialFirms]
+    let result = [...firms]
 
     // Search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase()
       result = result.filter(firm =>
         firm.name.toLowerCase().includes(query) ||
-        firm.platforms.some(p => p.toLowerCase().includes(query))
+        firm.platforms?.some(p => p.toLowerCase().includes(query))
       )
     }
 
@@ -90,16 +90,16 @@ export default function ComparePageClient({ initialFirms }: ComparePageClientPro
     // Sort
     switch (sortBy) {
       case 'rating':
-        result.sort((a, b) => b.trustpilot_rating - a.trustpilot_rating)
+        result.sort((a, b) => (b.trustpilot_rating || 0) - (a.trustpilot_rating || 0))
         break
       case 'price-low':
-        result.sort((a, b) => a.min_price - b.min_price)
+        result.sort((a, b) => (a.min_price || 0) - (b.min_price || 0))
         break
       case 'price-high':
-        result.sort((a, b) => b.min_price - a.min_price)
+        result.sort((a, b) => (b.min_price || 0) - (a.min_price || 0))
         break
       case 'profit-split':
-        result.sort((a, b) => b.profit_split - a.profit_split)
+        result.sort((a, b) => (b.profit_split || 0) - (a.profit_split || 0))
         break
       case 'name':
         result.sort((a, b) => a.name.localeCompare(b.name))
@@ -107,7 +107,7 @@ export default function ComparePageClient({ initialFirms }: ComparePageClientPro
     }
 
     return result
-  }, [initialFirms, searchQuery, sortBy, filters])
+  }, [firms, searchQuery, sortBy, filters])
 
   const resetFilters = () => {
     setFilters({
@@ -129,7 +129,7 @@ export default function ComparePageClient({ initialFirms }: ComparePageClientPro
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Compare <span className="text-blue-500">100+</span> Prop Firms
+            Compare <span className="text-blue-500">{firms.length}+</span> Prop Firms
           </h1>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
             Find the perfect prop firm for your trading style. Compare prices, profit splits, 
@@ -138,7 +138,7 @@ export default function ComparePageClient({ initialFirms }: ComparePageClientPro
         </div>
 
         {/* Top 10 Carousel */}
-        <TopPicksCarousel firms={initialFirms} />
+        <TopPicksCarousel firms={firms} />
 
         {/* Search and Filters Bar */}
         <div className="bg-gray-800 rounded-2xl p-4 mb-8 border border-gray-700">
@@ -299,7 +299,9 @@ export default function ComparePageClient({ initialFirms }: ComparePageClientPro
                   </div>
                   <div className="flex items-center gap-1 bg-gray-700 px-3 py-1.5 rounded-full">
                     <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                    <span className="text-white font-semibold text-sm">{firm.trustpilot_rating.toFixed(1)}</span>
+                    <span className="text-white font-semibold text-sm">
+                      {(firm.trustpilot_rating || 0).toFixed(1)}
+                    </span>
                   </div>
                 </div>
 
@@ -308,18 +310,18 @@ export default function ComparePageClient({ initialFirms }: ComparePageClientPro
                   {firm.name}
                 </h3>
                 <p className="text-gray-500 text-sm mb-4">
-                  {firm.trustpilot_reviews.toLocaleString()} reviews
+                  {(firm.trustpilot_reviews || 0).toLocaleString()} reviews
                 </p>
 
                 {/* Quick Stats */}
                 <div className="grid grid-cols-2 gap-3 mb-4">
                   <div className="bg-gray-700/50 rounded-lg p-3">
                     <p className="text-xs text-gray-500 mb-1">Starting from</p>
-                    <p className="text-white font-bold">${firm.min_price}</p>
+                    <p className="text-white font-bold">${firm.min_price || 0}</p>
                   </div>
                   <div className="bg-gray-700/50 rounded-lg p-3">
                     <p className="text-xs text-gray-500 mb-1">Profit Split</p>
-                    <p className="text-green-400 font-bold">{firm.profit_split}%</p>
+                    <p className="text-green-400 font-bold">{firm.profit_split || 0}%</p>
                   </div>
                 </div>
 
