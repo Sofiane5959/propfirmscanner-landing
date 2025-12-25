@@ -2,21 +2,33 @@ import { Metadata } from 'next'
 import { createClient } from '@supabase/supabase-js'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { Star, Check, X, ArrowRight, DollarSign, ExternalLink } from 'lucide-react'
+import { Star, CheckCircle, XCircle, Trophy, ArrowRight, DollarSign, ExternalLink, Shield, ChevronLeft } from 'lucide-react'
+import { trackAffiliateClick } from '@/lib/affiliate-tracking'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 const supabase = createClient(supabaseUrl, supabaseKey)
 
+// Popular VS comparisons for static generation
+const popularComparisons = [
+  { firm1: 'ftmo', firm2: 'funded-next' },
+  { firm1: 'ftmo', firm2: 'the5ers' },
+  { firm1: 'ftmo', firm2: 'myfundedfx' },
+  { firm1: 'funded-next', firm2: 'the5ers' },
+  { firm1: 'ftmo', firm2: 'e8-funding' },
+  { firm1: 'ftmo', firm2: 'alpha-capital' },
+  { firm1: 'funded-next', firm2: 'myfundedfx' },
+  { firm1: 'the5ers', firm2: 'myfundedfx' },
+]
+
 interface Props {
   params: { slug: string }
 }
 
-// Parse slug like "ftmo-vs-the5ers" to get both firm names
-function parseSlug(slug: string): { firm1: string; firm2: string } | null {
+function parseSlug(slug: string): { firm1Slug: string; firm2Slug: string } | null {
   const match = slug.match(/^(.+)-vs-(.+)$/)
   if (!match) return null
-  return { firm1: match[1], firm2: match[2] }
+  return { firm1Slug: match[1], firm2Slug: match[2] }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -26,26 +38,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { data: firms } = await supabase
     .from('prop_firms')
     .select('name, slug')
-    .in('slug', [parsed.firm1, parsed.firm2])
+    .in('slug', [parsed.firm1Slug, parsed.firm2Slug])
 
-  if (!firms || firms.length !== 2) {
-    return { title: 'Comparison Not Found' }
-  }
+  if (!firms || firms.length !== 2) return { title: 'Comparison Not Found' }
 
-  const firm1Name = firms.find(f => f.slug === parsed.firm1)?.name || parsed.firm1
-  const firm2Name = firms.find(f => f.slug === parsed.firm2)?.name || parsed.firm2
+  const firm1 = firms.find(f => f.slug === parsed.firm1Slug)
+  const firm2 = firms.find(f => f.slug === parsed.firm2Slug)
 
-  const title = `${firm1Name} vs ${firm2Name} - Which Prop Firm is Better in 2025?`
-  const description = `Compare ${firm1Name} vs ${firm2Name}: pricing, profit splits, trading rules, platforms, and more. Find out which prop firm is right for you.`
+  const title = `${firm1?.name} vs ${firm2?.name} (2025) - Which is Better?`
+  const description = `Compare ${firm1?.name} vs ${firm2?.name}: pricing, profit split, rules, and more. Find out which prop firm is best for your trading style.`
 
   return {
     title,
     description,
     keywords: [
-      `${firm1Name} vs ${firm2Name}`,
-      `${firm2Name} vs ${firm1Name}`,
-      `${firm1Name} comparison`,
-      `${firm2Name} comparison`,
+      `${firm1?.name} vs ${firm2?.name}`,
+      `${firm1?.name} or ${firm2?.name}`,
+      `${firm1?.name} comparison`,
+      `${firm2?.name} comparison`,
       'prop firm comparison',
       'best prop firm',
     ],
@@ -60,200 +70,380 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default async function ComparisonPage({ params }: Props) {
+export async function generateStaticParams() {
+  return popularComparisons.map(({ firm1, firm2 }) => ({
+    slug: `${firm1}-vs-${firm2}`,
+  }))
+}
+
+export default async function VSPage({ params }: Props) {
   const parsed = parseSlug(params.slug)
   if (!parsed) notFound()
 
   const { data: firms } = await supabase
     .from('prop_firms')
     .select('*')
-    .in('slug', [parsed.firm1, parsed.firm2])
+    .in('slug', [parsed.firm1Slug, parsed.firm2Slug])
 
   if (!firms || firms.length !== 2) notFound()
 
-  const firm1 = firms.find(f => f.slug === parsed.firm1)!
-  const firm2 = firms.find(f => f.slug === parsed.firm2)!
+  const firm1 = firms.find(f => f.slug === parsed.firm1Slug)!
+  const firm2 = firms.find(f => f.slug === parsed.firm2Slug)!
 
-  const comparisonSchema = {
+  // Calculate winner for each category
+  const comparisons = [
+    {
+      label: 'Trustpilot Rating',
+      firm1Value: firm1.trustpilot_rating ? `${firm1.trustpilot_rating}/5` : 'N/A',
+      firm2Value: firm2.trustpilot_rating ? `${firm2.trustpilot_rating}/5` : 'N/A',
+      winner: (firm1.trustpilot_rating || 0) > (firm2.trustpilot_rating || 0) ? 1 : (firm1.trustpilot_rating || 0) < (firm2.trustpilot_rating || 0) ? 2 : 0,
+    },
+    {
+      label: 'Starting Price',
+      firm1Value: firm1.min_price ? `$${firm1.min_price}` : 'N/A',
+      firm2Value: firm2.min_price ? `$${firm2.min_price}` : 'N/A',
+      winner: (firm1.min_price || 999) < (firm2.min_price || 999) ? 1 : (firm1.min_price || 999) > (firm2.min_price || 999) ? 2 : 0,
+    },
+    {
+      label: 'Profit Split',
+      firm1Value: firm1.profit_split ? `${firm1.profit_split}%` : 'N/A',
+      firm2Value: firm2.profit_split ? `${firm2.profit_split}%` : 'N/A',
+      winner: (firm1.profit_split || 0) > (firm2.profit_split || 0) ? 1 : (firm1.profit_split || 0) < (firm2.profit_split || 0) ? 2 : 0,
+    },
+    {
+      label: 'Max Account Size',
+      firm1Value: firm1.account_sizes?.length ? `$${Math.max(...firm1.account_sizes).toLocaleString()}` : 'N/A',
+      firm2Value: firm2.account_sizes?.length ? `$${Math.max(...firm2.account_sizes).toLocaleString()}` : 'N/A',
+      winner: (Math.max(...(firm1.account_sizes || [0]))) > (Math.max(...(firm2.account_sizes || [0]))) ? 1 : (Math.max(...(firm1.account_sizes || [0]))) < (Math.max(...(firm2.account_sizes || [0]))) ? 2 : 0,
+    },
+    {
+      label: 'Daily Drawdown',
+      firm1Value: firm1.max_daily_drawdown ? `${firm1.max_daily_drawdown}%` : 'N/A',
+      firm2Value: firm2.max_daily_drawdown ? `${firm2.max_daily_drawdown}%` : 'N/A',
+      winner: (firm1.max_daily_drawdown || 0) > (firm2.max_daily_drawdown || 0) ? 1 : (firm1.max_daily_drawdown || 0) < (firm2.max_daily_drawdown || 0) ? 2 : 0,
+    },
+    {
+      label: 'Max Drawdown',
+      firm1Value: firm1.max_total_drawdown ? `${firm1.max_total_drawdown}%` : 'N/A',
+      firm2Value: firm2.max_total_drawdown ? `${firm2.max_total_drawdown}%` : 'N/A',
+      winner: (firm1.max_total_drawdown || 0) > (firm2.max_total_drawdown || 0) ? 1 : (firm1.max_total_drawdown || 0) < (firm2.max_total_drawdown || 0) ? 2 : 0,
+    },
+    {
+      label: 'Profit Target (Phase 1)',
+      firm1Value: firm1.profit_target_phase1 ? `${firm1.profit_target_phase1}%` : 'N/A',
+      firm2Value: firm2.profit_target_phase1 ? `${firm2.profit_target_phase1}%` : 'N/A',
+      winner: (firm1.profit_target_phase1 || 99) < (firm2.profit_target_phase1 || 99) ? 1 : (firm1.profit_target_phase1 || 99) > (firm2.profit_target_phase1 || 99) ? 2 : 0,
+    },
+  ]
+
+  const rules = [
+    { label: 'Scalping', firm1: firm1.allows_scalping, firm2: firm2.allows_scalping },
+    { label: 'News Trading', firm1: firm1.allows_news_trading, firm2: firm2.allows_news_trading },
+    { label: 'Weekend Holding', firm1: firm1.allows_weekend_holding, firm2: firm2.allows_weekend_holding },
+    { label: 'EA / Bots', firm1: firm1.allows_ea, firm2: firm2.allows_ea },
+    { label: 'Hedging', firm1: firm1.allows_hedging, firm2: firm2.allows_hedging },
+    { label: 'Free Retry', firm1: firm1.has_free_repeat, firm2: firm2.has_free_repeat },
+  ]
+
+  // Calculate overall winner
+  const firm1Wins = comparisons.filter(c => c.winner === 1).length
+  const firm2Wins = comparisons.filter(c => c.winner === 2).length
+  const overallWinner = firm1Wins > firm2Wins ? firm1 : firm2Wins > firm1Wins ? firm2 : null
+
+  // Generate verdict
+  const getVerdict = () => {
+    if (!overallWinner) {
+      return `Both ${firm1.name} and ${firm2.name} are excellent choices. Your decision should be based on your specific trading style and priorities.`
+    }
+    const loser = overallWinner.id === firm1.id ? firm2 : firm1
+    
+    if (overallWinner.trustpilot_rating > loser.trustpilot_rating && overallWinner.profit_split >= loser.profit_split) {
+      return `${overallWinner.name} is the clear winner with better ratings and profit split. However, ${loser.name} might still be better if you prioritize ${loser.min_price < overallWinner.min_price ? 'lower entry cost' : 'specific features'}.`
+    }
+    return `${overallWinner.name} edges out ${loser.name} in most categories. Consider ${loser.name} if ${loser.profit_split > overallWinner.profit_split ? 'profit split' : loser.min_price < overallWinner.min_price ? 'budget' : 'specific rules'} is your priority.`
+  }
+
+  // Schema JSON-LD
+  const schema = {
     '@context': 'https://schema.org',
     '@type': 'Article',
-    headline: `${firm1.name} vs ${firm2.name} Comparison`,
-    description: `Detailed comparison between ${firm1.name} and ${firm2.name} prop trading firms.`,
+    headline: `${firm1.name} vs ${firm2.name}: Which Prop Firm is Better in 2025?`,
+    description: `Detailed comparison of ${firm1.name} and ${firm2.name} prop trading firms.`,
     author: { '@type': 'Organization', name: 'PropFirm Scanner' },
     publisher: { '@type': 'Organization', name: 'PropFirm Scanner' },
   }
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(comparisonSchema) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
       
       <div className="min-h-screen bg-gray-900 pt-20 pb-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-sm text-gray-400 mb-6">
-            <Link href="/compare" className="hover:text-white">Compare</Link>
+            <Link href="/compare" className="hover:text-white flex items-center gap-1">
+              <ChevronLeft className="w-4 h-4" />
+              Back to Compare
+            </Link>
             <span>/</span>
             <span className="text-white">{firm1.name} vs {firm2.name}</span>
           </div>
 
           {/* Header */}
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
               {firm1.name} <span className="text-emerald-400">vs</span> {firm2.name}
             </h1>
-            <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-              Complete comparison to help you choose the right prop firm for your trading style.
+            <p className="text-xl text-gray-400">
+              Which prop firm is better for you in 2025?
             </p>
           </div>
 
-          {/* Quick Stats Comparison */}
-          <div className="grid md:grid-cols-2 gap-6 mb-12">
-            {[firm1, firm2].map((firm) => (
-              <div key={firm.id} className="bg-gray-800/50 border border-gray-700 rounded-2xl p-6">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center overflow-hidden p-2">
-                    {firm.logo_url ? (
-                      <img src={firm.logo_url} alt={firm.name} className="w-full h-full object-contain" />
-                    ) : (
-                      <span className="text-2xl font-bold text-emerald-500">{firm.name.charAt(0)}</span>
-                    )}
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-white">{firm.name}</h2>
-                    {firm.trustpilot_rating && (
-                      <div className="flex items-center gap-1 mt-1">
-                        <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                        <span className="text-white">{firm.trustpilot_rating}</span>
-                        <span className="text-gray-400 text-sm">Trustpilot</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-                
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Starting Price</span>
-                    <span className="text-white font-semibold">${firm.min_price}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Profit Split</span>
-                    <span className="text-emerald-400 font-semibold">{firm.profit_split}%</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Max Drawdown</span>
-                    <span className="text-red-400 font-semibold">{firm.max_total_drawdown}%</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Platforms</span>
-                    <span className="text-white">{firm.platforms?.join(', ') || 'N/A'}</span>
-                  </div>
-                </div>
-
-                <a
-                  href={firm.affiliate_url || firm.website_url || '#'}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-6 w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2"
-                >
-                  <DollarSign className="w-5 h-5" />
-                  Visit {firm.name}
-                  <ExternalLink className="w-4 h-4" />
-                </a>
+          {/* Quick Winner Banner */}
+          {overallWinner && (
+            <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-2xl p-6 mb-8 text-center">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Trophy className="w-6 h-6 text-yellow-400" />
+                <span className="text-yellow-400 font-semibold">Overall Winner</span>
               </div>
-            ))}
+              <p className="text-2xl font-bold text-white">{overallWinner.name}</p>
+              <p className="text-gray-400 text-sm mt-1">Wins {Math.max(firm1Wins, firm2Wins)} out of {comparisons.length} categories</p>
+            </div>
+          )}
+
+          {/* Head to Head Cards */}
+          <div className="grid md:grid-cols-2 gap-6 mb-12">
+            {/* Firm 1 */}
+            <FirmCard firm={firm1} isWinner={overallWinner?.id === firm1.id} />
+            
+            {/* Firm 2 */}
+            <FirmCard firm={firm2} isWinner={overallWinner?.id === firm2.id} />
           </div>
 
-          {/* Detailed Comparison Table */}
+          {/* Comparison Table */}
           <div className="bg-gray-800/50 border border-gray-700 rounded-2xl overflow-hidden mb-12">
             <div className="p-6 border-b border-gray-700">
-              <h2 className="text-2xl font-bold text-white">Detailed Comparison</h2>
+              <h2 className="text-2xl font-bold text-white">Side-by-Side Comparison</h2>
             </div>
-            
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-gray-700">
+                  <tr className="bg-gray-900/50">
                     <th className="px-6 py-4 text-left text-gray-400 font-medium">Feature</th>
-                    <th className="px-6 py-4 text-center text-white font-semibold">{firm1.name}</th>
-                    <th className="px-6 py-4 text-center text-white font-semibold">{firm2.name}</th>
+                    <th className="px-6 py-4 text-center text-white font-medium">{firm1.name}</th>
+                    <th className="px-6 py-4 text-center text-white font-medium">{firm2.name}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-700">
-                  <ComparisonRow label="Starting Price" value1={`$${firm1.min_price}`} value2={`$${firm2.min_price}`} />
-                  <ComparisonRow label="Profit Split" value1={`${firm1.profit_split}%`} value2={`${firm2.profit_split}%`} highlight />
-                  <ComparisonRow label="Max Drawdown" value1={`${firm1.max_total_drawdown}%`} value2={`${firm2.max_total_drawdown}%`} />
-                  <ComparisonRow label="Daily Drawdown" value1={`${firm1.max_daily_drawdown}%`} value2={`${firm2.max_daily_drawdown}%`} />
-                  <ComparisonRow label="Trustpilot Rating" value1={firm1.trustpilot_rating?.toString() || 'N/A'} value2={firm2.trustpilot_rating?.toString() || 'N/A'} />
-                  <ComparisonRow label="Scalping Allowed" value1={firm1.allows_scalping} value2={firm2.allows_scalping} boolean />
-                  <ComparisonRow label="News Trading" value1={firm1.allows_news_trading} value2={firm2.allows_news_trading} boolean />
-                  <ComparisonRow label="EAs Allowed" value1={firm1.allows_ea} value2={firm2.allows_ea} boolean />
-                  <ComparisonRow label="Weekend Holding" value1={firm1.allows_weekend_holding} value2={firm2.allows_weekend_holding} boolean />
-                  <ComparisonRow label="Headquarters" value1={firm1.headquarters || 'N/A'} value2={firm2.headquarters || 'N/A'} />
+                <tbody>
+                  {comparisons.map((row, i) => (
+                    <tr key={row.label} className={i % 2 === 0 ? 'bg-gray-800/30' : ''}>
+                      <td className="px-6 py-4 text-gray-300">{row.label}</td>
+                      <td className={`px-6 py-4 text-center font-semibold ${row.winner === 1 ? 'text-emerald-400' : 'text-white'}`}>
+                        {row.winner === 1 && <span className="mr-1">✓</span>}
+                        {row.firm1Value}
+                      </td>
+                      <td className={`px-6 py-4 text-center font-semibold ${row.winner === 2 ? 'text-emerald-400' : 'text-white'}`}>
+                        {row.winner === 2 && <span className="mr-1">✓</span>}
+                        {row.firm2Value}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Trading Rules Comparison */}
+          <div className="bg-gray-800/50 border border-gray-700 rounded-2xl overflow-hidden mb-12">
+            <div className="p-6 border-b border-gray-700">
+              <h2 className="text-2xl font-bold text-white">Trading Rules</h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-gray-900/50">
+                    <th className="px-6 py-4 text-left text-gray-400 font-medium">Rule</th>
+                    <th className="px-6 py-4 text-center text-white font-medium">{firm1.name}</th>
+                    <th className="px-6 py-4 text-center text-white font-medium">{firm2.name}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rules.map((rule, i) => (
+                    <tr key={rule.label} className={i % 2 === 0 ? 'bg-gray-800/30' : ''}>
+                      <td className="px-6 py-4 text-gray-300">{rule.label}</td>
+                      <td className="px-6 py-4 text-center">
+                        {rule.firm1 ? (
+                          <CheckCircle className="w-5 h-5 text-emerald-400 mx-auto" />
+                        ) : (
+                          <XCircle className="w-5 h-5 text-red-400 mx-auto" />
+                        )}
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        {rule.firm2 ? (
+                          <CheckCircle className="w-5 h-5 text-emerald-400 mx-auto" />
+                        ) : (
+                          <XCircle className="w-5 h-5 text-red-400 mx-auto" />
+                        )}
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
           </div>
 
           {/* Verdict */}
-          <div className="bg-gradient-to-r from-emerald-500/20 to-blue-500/20 border border-emerald-500/30 rounded-2xl p-8 text-center">
-            <h2 className="text-2xl font-bold text-white mb-4">Our Verdict</h2>
-            <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
-              Both {firm1.name} and {firm2.name} are excellent prop firms. 
-              {firm1.profit_split > firm2.profit_split 
-                ? ` ${firm1.name} offers a higher profit split (${firm1.profit_split}% vs ${firm2.profit_split}%).`
-                : firm2.profit_split > firm1.profit_split
-                  ? ` ${firm2.name} offers a higher profit split (${firm2.profit_split}% vs ${firm1.profit_split}%).`
-                  : ' They offer the same profit split.'
-              }
-              {' '}Choose based on your trading style and preferences.
+          <div className="bg-gradient-to-br from-emerald-500/10 to-blue-500/10 border border-emerald-500/30 rounded-2xl p-8 mb-12">
+            <h2 className="text-2xl font-bold text-white mb-4">🎯 Our Verdict</h2>
+            <p className="text-lg text-gray-300 leading-relaxed mb-6">
+              {getVerdict()}
             </p>
-            <Link
-              href="/compare"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-all"
-            >
-              Compare All 55+ Firms
-              <ArrowRight className="w-5 h-5" />
-            </Link>
+            
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="bg-gray-900/50 rounded-xl p-4">
+                <h3 className="font-semibold text-white mb-2">Choose {firm1.name} if:</h3>
+                <ul className="text-gray-400 text-sm space-y-1">
+                  {firm1.profit_split >= firm2.profit_split && <li>• You want higher profit split</li>}
+                  {firm1.min_price <= firm2.min_price && <li>• You're on a budget</li>}
+                  {firm1.trustpilot_rating >= firm2.trustpilot_rating && <li>• Reputation matters most</li>}
+                  {firm1.allows_scalping && !firm2.allows_scalping && <li>• You're a scalper</li>}
+                  {firm1.allows_news_trading && !firm2.allows_news_trading && <li>• You trade news events</li>}
+                </ul>
+              </div>
+              <div className="bg-gray-900/50 rounded-xl p-4">
+                <h3 className="font-semibold text-white mb-2">Choose {firm2.name} if:</h3>
+                <ul className="text-gray-400 text-sm space-y-1">
+                  {firm2.profit_split >= firm1.profit_split && <li>• You want higher profit split</li>}
+                  {firm2.min_price <= firm1.min_price && <li>• You're on a budget</li>}
+                  {firm2.trustpilot_rating >= firm1.trustpilot_rating && <li>• Reputation matters most</li>}
+                  {firm2.allows_scalping && !firm1.allows_scalping && <li>• You're a scalper</li>}
+                  {firm2.allows_news_trading && !firm1.allows_news_trading && <li>• You trade news events</li>}
+                </ul>
+              </div>
+            </div>
           </div>
+
+          {/* CTA */}
+          <div className="grid md:grid-cols-2 gap-6 mb-12">
+            <a
+              href={firm1.affiliate_url || firm1.website_url || '#'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-2xl p-6 text-center transition-all"
+            >
+              <p className="text-gray-400 mb-2">Get Started with</p>
+              <p className="text-2xl font-bold text-white mb-4">{firm1.name}</p>
+              <span className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl">
+                <DollarSign className="w-5 h-5" />
+                Buy Challenge
+                <ExternalLink className="w-4 h-4" />
+              </span>
+            </a>
+            <a
+              href={firm2.affiliate_url || firm2.website_url || '#'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-2xl p-6 text-center transition-all"
+            >
+              <p className="text-gray-400 mb-2">Get Started with</p>
+              <p className="text-2xl font-bold text-white mb-4">{firm2.name}</p>
+              <span className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl">
+                <DollarSign className="w-5 h-5" />
+                Buy Challenge
+                <ExternalLink className="w-4 h-4" />
+              </span>
+            </a>
+          </div>
+
+          {/* Other Comparisons */}
+          <div className="bg-gray-800/50 border border-gray-700 rounded-2xl p-6">
+            <h2 className="text-xl font-bold text-white mb-4">Other Popular Comparisons</h2>
+            <div className="flex flex-wrap gap-3">
+              {popularComparisons
+                .filter(c => c.firm1 !== parsed.firm1Slug || c.firm2 !== parsed.firm2Slug)
+                .slice(0, 5)
+                .map(({ firm1, firm2 }) => (
+                  <Link
+                    key={`${firm1}-${firm2}`}
+                    href={`/compare/${firm1}-vs-${firm2}`}
+                    className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-lg text-sm transition-colors"
+                  >
+                    {firm1.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} vs {firm2.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                  </Link>
+                ))}
+            </div>
+          </div>
+
         </div>
       </div>
     </>
   )
 }
 
-function ComparisonRow({ 
-  label, 
-  value1, 
-  value2, 
-  boolean = false,
-  highlight = false 
-}: { 
-  label: string
-  value1: any
-  value2: any
-  boolean?: boolean
-  highlight?: boolean
-}) {
-  const renderValue = (value: any) => {
-    if (boolean) {
-      return value ? (
-        <Check className="w-5 h-5 text-emerald-400 mx-auto" />
-      ) : (
-        <X className="w-5 h-5 text-red-400 mx-auto" />
-      )
-    }
-    return <span className={highlight ? 'text-emerald-400 font-semibold' : 'text-white'}>{value}</span>
-  }
-
+// Firm Card Component
+function FirmCard({ firm, isWinner }: { firm: any; isWinner: boolean }) {
   return (
-    <tr>
-      <td className="px-6 py-4 text-gray-400">{label}</td>
-      <td className="px-6 py-4 text-center">{renderValue(value1)}</td>
-      <td className="px-6 py-4 text-center">{renderValue(value2)}</td>
-    </tr>
+    <div className={`relative bg-gray-800/50 border rounded-2xl p-6 ${isWinner ? 'border-yellow-500/50' : 'border-gray-700'}`}>
+      {isWinner && (
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-yellow-500 text-black text-xs font-bold rounded-full flex items-center gap-1">
+          <Trophy className="w-3 h-3" /> WINNER
+        </div>
+      )}
+      
+      <div className="flex items-center gap-4 mb-6">
+        <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center overflow-hidden p-2">
+          {firm.logo_url ? (
+            <img src={firm.logo_url} alt={firm.name} className="w-full h-full object-contain" />
+          ) : (
+            <span className="text-2xl font-bold text-emerald-600">{firm.name.charAt(0)}</span>
+          )}
+        </div>
+        <div>
+          <h2 className="text-2xl font-bold text-white">{firm.name}</h2>
+          {firm.trustpilot_rating && (
+            <div className="flex items-center gap-1 mt-1">
+              <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+              <span className="text-white font-semibold">{firm.trustpilot_rating}</span>
+              <span className="text-gray-400 text-sm">/ 5</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className="bg-gray-900/50 rounded-xl p-3 text-center">
+          <p className="text-gray-400 text-xs mb-1">From</p>
+          <p className="text-xl font-bold text-white">${firm.min_price}</p>
+        </div>
+        <div className="bg-gray-900/50 rounded-xl p-3 text-center">
+          <p className="text-gray-400 text-xs mb-1">Profit Split</p>
+          <p className="text-xl font-bold text-emerald-400">{firm.profit_split}%</p>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2 mb-6">
+        {firm.allows_scalping && <span className="px-2 py-1 bg-emerald-500/20 text-emerald-400 text-xs rounded-full">Scalping</span>}
+        {firm.allows_news_trading && <span className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs rounded-full">News Trading</span>}
+        {firm.allows_ea && <span className="px-2 py-1 bg-purple-500/20 text-purple-400 text-xs rounded-full">EA Allowed</span>}
+      </div>
+
+      <div className="flex gap-2">
+        <a
+          href={firm.affiliate_url || firm.website_url || '#'}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex-1 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-center font-semibold rounded-xl transition-colors text-sm"
+        >
+          Buy Challenge
+        </a>
+        <Link
+          href={`/prop-firm/${firm.slug}`}
+          className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-xl transition-colors text-sm"
+        >
+          Details
+        </Link>
+      </div>
+    </div>
   )
 }
