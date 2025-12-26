@@ -225,3 +225,4 @@ MIT © PropFirm Scanner
 ---
 
 Built with ❤️ by PropFirm Scanner Team
+
