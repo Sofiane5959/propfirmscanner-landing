@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import { Home, Search, ArrowLeft, HelpCircle } from 'lucide-react'
 
@@ -72,7 +74,7 @@ export default function NotFound() {
 
         {/* Back Button */}
         <button
-          onClick={() => typeof window !== 'undefined' && window.history.back()}
+          onClick={() => window.history.back()}
           className="mt-6 text-gray-400 hover:text-white flex items-center justify-center gap-2 mx-auto"
         >
           <ArrowLeft className="w-4 h-4" />
