@@ -22,16 +22,32 @@ interface TopPicksCarouselProps {
   firms: PropFirm[]
 }
 
+// =====================================================
+// TOP 10 ORDER - MODIFIABLE ICI
+// =====================================================
+const TOP_10_SLUGS = [
+  'ftmo',
+  'the5ers',
+  'fundednext',
+  'funding-pips',
+  'e8-funding',
+  'topstep',
+  'dna-funded',
+  'blueberry-funded',
+  'alpha-capital-group',
+  'maven',
+]
+// =====================================================
+
 export default function TopPicksCarousel({ firms }: TopPicksCarouselProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(true)
 
-  // Get top 10 firms by Trustpilot rating (filter out nulls)
-  const topFirms = [...firms]
-    .filter(f => f.trustpilot_rating != null)
-    .sort((a, b) => (b.trustpilot_rating || 0) - (a.trustpilot_rating || 0))
-    .slice(0, 10)
+  // Get top 10 firms in the specified order
+  const topFirms = TOP_10_SLUGS
+    .map(slug => firms.find(f => f.slug === slug))
+    .filter((f): f is PropFirm => f !== undefined)
 
   const checkScrollButtons = () => {
     if (scrollContainerRef.current) {
@@ -79,7 +95,7 @@ export default function TopPicksCarousel({ firms }: TopPicksCarouselProps) {
           </div>
           <div>
             <h2 className="text-2xl font-bold text-white">Top 10 Prop Firms</h2>
-            <p className="text-sm text-gray-400">Highest rated by traders worldwide</p>
+            <p className="text-sm text-gray-400">Our recommended picks for 2025</p>
           </div>
         </div>
         
@@ -164,7 +180,10 @@ export default function TopPicksCarousel({ firms }: TopPicksCarouselProps) {
                       </span>
                     </div>
                     <span className="text-gray-500 text-sm">
-                      ({(firm.trustpilot_reviews ?? 0).toLocaleString()} reviews)
+                      {firm.trustpilot_reviews 
+                        ? `(${firm.trustpilot_reviews.toLocaleString()} reviews)`
+                        : '(Not tracked)'
+                      }
                     </span>
                   </div>
 
@@ -172,19 +191,19 @@ export default function TopPicksCarousel({ firms }: TopPicksCarouselProps) {
                   <div className="grid grid-cols-2 gap-3">
                     <div className="bg-gray-800/50 rounded-lg p-3">
                       <p className="text-xs text-gray-500 mb-1">From</p>
-                      <p className="text-white font-bold">${firm.min_price ?? 0}</p>
+                      <p className="text-white font-bold">${firm.min_price ?? 'N/A'}</p>
                     </div>
                     <div className="bg-gray-800/50 rounded-lg p-3">
                       <p className="text-xs text-gray-500 mb-1">Profit Split</p>
-                      <p className="text-green-400 font-bold">{firm.profit_split ?? 0}%</p>
+                      <p className="text-green-400 font-bold">{firm.profit_split ?? 'N/A'}%</p>
                     </div>
                     <div className="bg-gray-800/50 rounded-lg p-3">
                       <p className="text-xs text-gray-500 mb-1">Daily DD</p>
-                      <p className="text-orange-400 font-bold">{firm.max_daily_drawdown ?? 0}%</p>
+                      <p className="text-orange-400 font-bold">{firm.max_daily_drawdown ?? 'N/A'}%</p>
                     </div>
                     <div className="bg-gray-800/50 rounded-lg p-3">
                       <p className="text-xs text-gray-500 mb-1">Max DD</p>
-                      <p className="text-red-400 font-bold">{firm.max_total_drawdown ?? 0}%</p>
+                      <p className="text-red-400 font-bold">{firm.max_total_drawdown ?? 'N/A'}%</p>
                     </div>
                   </div>
 
