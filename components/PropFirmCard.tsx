@@ -2,30 +2,98 @@
 
 import Link from 'next/link'
 import { 
-  Star, ExternalLink, CheckCircle, AlertTriangle,
-  TrendingDown, Clock, Percent, Globe, Bot, Newspaper, Calendar
+  Star, ExternalLink, CheckCircle, 
+  TrendingDown, Bot, Newspaper, Calendar,
+  Clock, AlertTriangle, XCircle
 } from 'lucide-react'
 
-// Types
+// =====================================================
+// TRUST BADGE COMPONENT (intégré)
+// =====================================================
+type TrustStatus = 'verified' | 'new' | 'under_review' | 'banned'
+
+const trustConfig = {
+  verified: {
+    label: 'Verified',
+    icon: CheckCircle,
+    bgColor: 'bg-green-500/10',
+    textColor: 'text-green-500',
+    borderColor: 'border-green-500/30',
+  },
+  new: {
+    label: 'New',
+    icon: Clock,
+    bgColor: 'bg-blue-500/10',
+    textColor: 'text-blue-500',
+    borderColor: 'border-blue-500/30',
+  },
+  under_review: {
+    label: 'Under Review',
+    icon: AlertTriangle,
+    bgColor: 'bg-yellow-500/10',
+    textColor: 'text-yellow-500',
+    borderColor: 'border-yellow-500/30',
+  },
+  banned: {
+    label: 'Banned',
+    icon: XCircle,
+    bgColor: 'bg-red-500/10',
+    textColor: 'text-red-500',
+    borderColor: 'border-red-500/30',
+  }
+}
+
+function TrustBadge({ status }: { status: TrustStatus }) {
+  const config = trustConfig[status]
+  const Icon = config.icon
+
+  return (
+    <span className={`
+      inline-flex items-center gap-1 px-2 py-0.5 
+      rounded-full text-xs font-medium border
+      ${config.bgColor} ${config.textColor} ${config.borderColor}
+    `}>
+      <Icon className="w-3 h-3" />
+      {config.label}
+    </span>
+  )
+}
+
+// =====================================================
+// TYPES
+// =====================================================
 interface PropFirm {
   slug: string
   name: string
-  logo?: string
-  rating?: number
-  reviews?: number
-  priceFrom?: number
-  profitSplit?: number
-  maxDrawdown?: number
-  drawdownType?: 'static' | 'trailing' | 'eod'
-  minTradingDays?: number
-  platforms?: string[]
-  markets?: string[]
-  newsTrading?: boolean
-  weekendHolding?: boolean
-  eaAllowed?: boolean
-  status?: 'active' | 'under-review' | 'closed' | 'new'
-  lastVerified?: string
+  logo?: string | null
+  logo_url?: string | null
+  rating?: number | null
+  trustpilot_rating?: number | null
+  reviews?: number | null
+  trustpilot_reviews?: number | null
+  priceFrom?: number | null
+  min_price?: number | null
+  profitSplit?: number | null
+  profit_split?: number | null
+  maxDrawdown?: number | null
+  max_total_drawdown?: number | null
+  drawdownType?: 'static' | 'trailing' | 'eod' | null
+  drawdown_type?: string | null
+  minTradingDays?: number | null
+  platforms?: string[] | null
+  markets?: string[] | null
+  newsTrading?: boolean | null
+  allows_news_trading?: boolean | null
+  weekendHolding?: boolean | null
+  allows_weekend_holding?: boolean | null
+  eaAllowed?: boolean | null
+  allows_ea?: boolean | null
+  // New trust status field
+  trust_status?: TrustStatus
+  lastVerified?: string | null
   featured?: boolean
+  closed_at?: string | null
+  closure_reason?: string | null
 }
 
 interface PropFirmCardProps {
@@ -33,16 +101,57 @@ interface PropFirmCardProps {
   compact?: boolean
 }
 
+// =====================================================
+// MAIN COMPONENT
+// =====================================================
 export function PropFirmCard({ firm, compact = false }: PropFirmCardProps) {
-  const statusConfig = {
-    'active': { label: 'Active', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },
-    'under-review': { label: 'Under Review', color: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20' },
-    'closed': { label: 'Closed', color: 'bg-red-500/10 text-red-400 border-red-500/20' },
-    'new': { label: 'New', color: 'bg-purple-500/10 text-purple-400 border-purple-500/20' },
+  // Normalize data (support both naming conventions)
+  const logo = firm.logo || firm.logo_url
+  const rating = firm.rating || firm.trustpilot_rating
+  const reviews = firm.reviews || firm.trustpilot_reviews
+  const priceFrom = firm.priceFrom || firm.min_price
+  const profitSplit = firm.profitSplit || firm.profit_split
+  const maxDrawdown = firm.maxDrawdown || firm.max_total_drawdown
+  const newsTrading = firm.newsTrading ?? firm.allows_news_trading
+  const weekendHolding = firm.weekendHolding ?? firm.allows_weekend_holding
+  const eaAllowed = firm.eaAllowed ?? firm.allows_ea
+  const trustStatus = firm.trust_status || 'verified'
+
+  // If banned, show warning card
+  if (trustStatus === 'banned') {
+    return (
+      <div className="bg-red-950/30 border border-red-500/30 rounded-xl p-6 opacity-75">
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex items-center gap-3">
+            {logo ? (
+              <img src={logo} alt={firm.name} className="w-14 h-14 rounded-xl object-contain bg-white/10 p-1 grayscale" />
+            ) : (
+              <div className="w-14 h-14 rounded-xl bg-gray-700 flex items-center justify-center text-white font-bold text-lg">
+                {firm.name.charAt(0)}
+              </div>
+            )}
+            <div>
+              <h3 className="text-xl font-semibold text-white line-through opacity-75">{firm.name}</h3>
+              <TrustBadge status="banned" />
+            </div>
+          </div>
+        </div>
+        <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
+          <p className="text-red-400 text-sm font-medium mb-1">⚠️ This firm has been banned</p>
+          {firm.closure_reason && (
+            <p className="text-red-300/70 text-xs">{firm.closure_reason}</p>
+          )}
+          {firm.closed_at && (
+            <p className="text-red-300/50 text-xs mt-1">
+              Closed: {new Date(firm.closed_at).toLocaleDateString()}
+            </p>
+          )}
+        </div>
+      </div>
+    )
   }
 
-  const status = firm.status ? statusConfig[firm.status] : null
-
+  // Compact version
   if (compact) {
     return (
       <Link
@@ -51,20 +160,23 @@ export function PropFirmCard({ firm, compact = false }: PropFirmCardProps) {
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            {firm.logo && (
-              <img src={firm.logo} alt={firm.name} className="w-10 h-10 rounded-lg object-contain bg-white" />
+            {logo && (
+              <img src={logo} alt={firm.name} className="w-10 h-10 rounded-lg object-contain bg-white" />
             )}
             <div>
-              <div className="text-white font-semibold">{firm.name}</div>
+              <div className="flex items-center gap-2">
+                <span className="text-white font-semibold">{firm.name}</span>
+                <TrustBadge status={trustStatus} />
+              </div>
               <div className="flex items-center gap-2 text-sm">
-                {firm.rating && (
+                {rating && (
                   <span className="flex items-center gap-1 text-yellow-400">
                     <Star className="w-3 h-3 fill-current" />
-                    {firm.rating}
+                    {rating.toFixed(1)}
                   </span>
                 )}
-                {firm.priceFrom && (
-                  <span className="text-gray-400">From ${firm.priceFrom}</span>
+                {priceFrom && (
+                  <span className="text-gray-400">From ${priceFrom}</span>
                 )}
               </div>
             </div>
@@ -75,6 +187,7 @@ export function PropFirmCard({ firm, compact = false }: PropFirmCardProps) {
     )
   }
 
+  // Full card version
   return (
     <div className={`bg-gray-800/50 border rounded-xl overflow-hidden ${
       firm.featured ? 'border-emerald-500/30 ring-1 ring-emerald-500/10' : 'border-gray-700'
@@ -90,8 +203,8 @@ export function PropFirmCard({ firm, compact = false }: PropFirmCardProps) {
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
-            {firm.logo ? (
-              <img src={firm.logo} alt={firm.name} className="w-14 h-14 rounded-xl object-contain bg-white p-1" />
+            {logo ? (
+              <img src={logo} alt={firm.name} className="w-14 h-14 rounded-xl object-contain bg-white p-1" />
             ) : (
               <div className="w-14 h-14 rounded-xl bg-gray-700 flex items-center justify-center text-white font-bold text-lg">
                 {firm.name.charAt(0)}
@@ -99,46 +212,60 @@ export function PropFirmCard({ firm, compact = false }: PropFirmCardProps) {
             )}
             <div>
               <h3 className="text-xl font-semibold text-white">{firm.name}</h3>
-              {status && (
-                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border ${status.color}`}>
-                  {status.label}
-                </span>
-              )}
+              <TrustBadge status={trustStatus} />
             </div>
           </div>
 
           {/* Rating */}
-          {firm.rating && firm.rating > 0 && (
+          {rating && rating > 0 && (
             <div className="text-right">
               <div className="flex items-center gap-1">
                 <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                <span className="text-white font-bold text-lg">{firm.rating}</span>
+                <span className="text-white font-bold text-lg">{rating.toFixed(1)}</span>
               </div>
               <div className="text-gray-500 text-xs">
-                {firm.reviews ? `${firm.reviews.toLocaleString()} reviews` : 'Not tracked'}
+                {reviews ? `${reviews.toLocaleString()} reviews` : 'Not tracked'}
               </div>
             </div>
           )}
         </div>
+
+        {/* Warning for under_review */}
+        {trustStatus === 'under_review' && (
+          <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 mb-4">
+            <p className="text-yellow-400 text-xs">
+              ⚠️ This firm is under review. Exercise caution.
+            </p>
+          </div>
+        )}
+
+        {/* New firm notice */}
+        {trustStatus === 'new' && (
+          <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3 mb-4">
+            <p className="text-blue-400 text-xs">
+              🆕 New firm - Limited track record available
+            </p>
+          </div>
+        )}
 
         {/* Quick Stats */}
         <div className="grid grid-cols-3 gap-3 mb-4">
           <div className="bg-gray-900/50 rounded-lg p-3 text-center">
             <div className="text-gray-400 text-xs mb-1">From</div>
             <div className="text-white font-semibold">
-              {firm.priceFrom ? `$${firm.priceFrom}` : 'N/A'}
+              {priceFrom ? `$${priceFrom}` : 'N/A'}
             </div>
           </div>
           <div className="bg-gray-900/50 rounded-lg p-3 text-center">
             <div className="text-gray-400 text-xs mb-1">Split</div>
             <div className="text-emerald-400 font-semibold">
-              {firm.profitSplit ? `${firm.profitSplit}%` : 'N/A'}
+              {profitSplit ? `${profitSplit}%` : 'N/A'}
             </div>
           </div>
           <div className="bg-gray-900/50 rounded-lg p-3 text-center">
             <div className="text-gray-400 text-xs mb-1">Max DD</div>
             <div className="text-white font-semibold">
-              {firm.maxDrawdown ? `${firm.maxDrawdown}%` : 'N/A'}
+              {maxDrawdown ? `${maxDrawdown}%` : 'N/A'}
             </div>
           </div>
         </div>
@@ -148,26 +275,26 @@ export function PropFirmCard({ firm, compact = false }: PropFirmCardProps) {
           <RuleBadge 
             icon={Newspaper} 
             label="News" 
-            allowed={firm.newsTrading} 
+            allowed={newsTrading} 
           />
           <RuleBadge 
             icon={Calendar} 
             label="Weekend" 
-            allowed={firm.weekendHolding} 
+            allowed={weekendHolding} 
           />
           <RuleBadge 
             icon={Bot} 
             label="EA" 
-            allowed={firm.eaAllowed} 
+            allowed={eaAllowed} 
           />
-          {firm.drawdownType && (
+          {(firm.drawdownType || firm.drawdown_type) && (
             <span className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium ${
-              firm.drawdownType === 'static' 
+              (firm.drawdownType || firm.drawdown_type) === 'static' 
                 ? 'bg-emerald-500/10 text-emerald-400' 
                 : 'bg-yellow-500/10 text-yellow-400'
             }`}>
               <TrendingDown className="w-3 h-3" />
-              {firm.drawdownType === 'static' ? 'Static DD' : 'Trailing DD'}
+              {(firm.drawdownType || firm.drawdown_type) === 'static' ? 'Static DD' : 'Trailing DD'}
             </span>
           )}
         </div>
@@ -208,7 +335,9 @@ export function PropFirmCard({ firm, compact = false }: PropFirmCardProps) {
   )
 }
 
-// Rule Badge Component
+// =====================================================
+// RULE BADGE COMPONENT
+// =====================================================
 function RuleBadge({ icon: Icon, label, allowed }: { icon: typeof Newspaper; label: string; allowed?: boolean | null }) {
   if (allowed === null || allowed === undefined) {
     return (
@@ -231,7 +360,9 @@ function RuleBadge({ icon: Icon, label, allowed }: { icon: typeof Newspaper; lab
   )
 }
 
-// Prop Firm List Component
+// =====================================================
+// PROP FIRM LIST COMPONENT
+// =====================================================
 interface PropFirmListProps {
   firms: PropFirm[]
   layout?: 'grid' | 'list'
@@ -256,3 +387,5 @@ export function PropFirmList({ firms, layout = 'grid' }: PropFirmListProps) {
     </div>
   )
 }
+
+export type { PropFirm, TrustStatus }
