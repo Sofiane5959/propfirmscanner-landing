@@ -293,9 +293,11 @@ export const guideEmail = ({ downloadUrl }: GuideEmailProps) => baseTemplate(`
 // =====================================================
 
 export const stripHtml = (html: string): string => {
-  return html
-    .replace(/<style[^>]*>.*?<\/style>/gs, '')
-    .replace(/<[^>]+>/g, '')
-    .replace(/\s+/g, ' ')
-    .trim()
+  // Remove style tags and their content
+  let result = html.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+  // Remove all HTML tags
+  result = result.replace(/<[^>]+>/g, '')
+  // Normalize whitespace
+  result = result.replace(/\s+/g, ' ')
+  return result.trim()
 }
