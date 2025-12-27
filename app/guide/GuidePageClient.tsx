@@ -53,6 +53,9 @@ const BENEFITS = [
   { icon: Award, text: 'Updated for 2026' },
 ]
 
+// Lien direct vers le PDF
+const GUIDE_PDF_URL = '/guides/PropFirm-Guide-2026.pdf'
+
 export default function GuidePageClient() {
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
@@ -85,7 +88,7 @@ export default function GuidePageClient() {
       }
 
       setStatus('success')
-      setMessage('Check your email for the guide!')
+      setMessage('Your guide is ready!')
       localStorage.setItem('newsletter_subscribed', 'true')
     } catch {
       setStatus('error')
@@ -149,12 +152,35 @@ export default function GuidePageClient() {
               </div>
 
               {status === 'success' ? (
-                <div className="text-center py-8">
+                <div className="text-center py-6">
                   <div className="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
                     <CheckCircle className="w-8 h-8 text-emerald-400" />
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-2">Check Your Email! 📧</h3>
-                  <p className="text-gray-400">Your guide is on its way. Check spam if you don&apos;t see it.</p>
+                  <h3 className="text-xl font-bold text-white mb-2">Your Guide is Ready! 🎉</h3>
+                  <p className="text-gray-400 mb-6">Click below to download your free guide</p>
+                  
+                  {/* Bouton de téléchargement direct */}
+                  <a
+                    href={GUIDE_PDF_URL}
+                    download="PropFirm-Guide-2026.pdf"
+                    className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 
+                              text-white font-semibold rounded-xl hover:opacity-90 transition-all"
+                  >
+                    <Download className="w-5 h-5" />
+                    Download PDF Now
+                  </a>
+                  
+                  <p className="text-sm text-gray-500 mt-4">
+                    Problems downloading?{' '}
+                    <a 
+                      href={GUIDE_PDF_URL} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-emerald-400 hover:underline"
+                    >
+                      Open in new tab
+                    </a>
+                  </p>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -180,7 +206,7 @@ export default function GuidePageClient() {
                               transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     {status === 'loading' ? (
-                      'Sending...'
+                      'Processing...'
                     ) : (
                       <>
                         Download Free Guide
