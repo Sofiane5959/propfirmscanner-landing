@@ -29,13 +29,13 @@ const TOP_10_SLUGS = [
   'ftmo',
   'the5ers',
   'fundednext',
-  'funding-pips',
-  'e8-funding',
+  'fundingpips',
+  'e8-markets',
   'topstep',
   'dna-funded',
   'blueberry-funded',
   'alpha-capital-group',
-  'maven',
+  'maven-trading',
 ]
 // =====================================================
 
