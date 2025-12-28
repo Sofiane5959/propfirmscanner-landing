@@ -54,7 +54,7 @@ interface PropFirm {
 }
 
 interface ComparePageClientProps {
-  initialFirms: PropFirm[]
+  firms: PropFirm[]
 }
 
 // Quick Stats Component
@@ -575,7 +575,7 @@ const QuickComparisonTable = ({ firms }: { firms: PropFirm[] }) => {
 }
 
 // Main Component
-export default function ComparePageClient({ initialFirms }: ComparePageClientProps) {
+export default function ComparePageClient({ firms }: ComparePageClientProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [filters, setFilters] = useState<any>({})
   const [sortBy, setSortBy] = useState<'rating' | 'price' | 'split'>('rating')
@@ -584,7 +584,7 @@ export default function ComparePageClient({ initialFirms }: ComparePageClientPro
   
   // Filter and sort firms
   const filteredFirms = useMemo(() => {
-    let result = [...initialFirms]
+    let result = [...firms]
     
     // Trust status filter
     if (showOnlyVerified) {
@@ -645,7 +645,7 @@ export default function ComparePageClient({ initialFirms }: ComparePageClientPro
     })
     
     return result
-  }, [initialFirms, searchQuery, filters, sortBy, showOnlyVerified])
+  }, [firms, searchQuery, filters, sortBy, showOnlyVerified])
   
   // Stats
   const stats = useMemo(() => ({
@@ -709,7 +709,7 @@ export default function ComparePageClient({ initialFirms }: ComparePageClientPro
           <div className="grid lg:grid-cols-4 gap-8">
             {/* Sidebar - Filters */}
             <div className="lg:col-span-1 space-y-6">
-              <FilterSection filters={filters} setFilters={setFilters} firms={initialFirms} />
+              <FilterSection filters={filters} setFilters={setFilters} firms={firms} />
               
               {/* View Options */}
               <div className="bg-gray-800/50 border border-gray-700/50 rounded-2xl p-4">
