@@ -1,228 +1,260 @@
-# 🎯 PropFirm Scanner
-
-> The #1 platform to compare prop trading firms. Find the perfect match for your trading style.
-
-![PropFirm Scanner](https://via.placeholder.com/1200x630/0f172a/22c55e?text=PropFirm+Scanner)
-
-## ✨ Features
-
-- 🔍 **Compare 50+ Prop Firms** - Side-by-side comparison with filters
-- 💰 **Track Prices & Deals** - Get notified when prices drop
-- ❤️ **Save Favorites** - Keep track of firms you're interested in
-- 🔔 **Custom Alerts** - Never miss a promotion
-- 📊 **Detailed Analytics** - Profit splits, drawdown rules, platforms, and more
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-- Node.js 18+ 
-- npm or yarn
-- Supabase account (free)
-
-### 1. Clone & Install
-
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/propfirmscanner.git
-cd propfirmscanner
-
-# Install dependencies
-npm install
-```
-
-### 2. Setup Supabase
-
-1. Go to [supabase.com](https://supabase.com) and create a new project
-2. Go to **Settings > API** and copy:
-   - Project URL
-   - `anon` public key
-
-3. Create `.env.local` file:
-```bash
-cp .env.example .env.local
-```
-
-4. Add your Supabase credentials to `.env.local`:
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-```
-
-### 3. Setup Database
-
-Go to your Supabase dashboard > SQL Editor, and run:
-
-```sql
--- Enable UUID extension
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
--- Create prop_firms table
-CREATE TABLE prop_firms (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  name TEXT NOT NULL,
-  slug TEXT UNIQUE NOT NULL,
-  logo_url TEXT,
-  website_url TEXT,
-  min_price DECIMAL,
-  max_price DECIMAL,
-  challenge_types TEXT[],
-  account_sizes INTEGER[],
-  profit_split INTEGER,
-  profit_target_phase1 DECIMAL,
-  profit_target_phase2 DECIMAL,
-  max_daily_drawdown DECIMAL,
-  max_total_drawdown DECIMAL,
-  allows_scalping BOOLEAN DEFAULT true,
-  allows_news_trading BOOLEAN DEFAULT true,
-  allows_weekend_holding BOOLEAN DEFAULT true,
-  allows_hedging BOOLEAN DEFAULT true,
-  min_trading_days INTEGER DEFAULT 0,
-  platforms TEXT[],
-  trustpilot_score DECIMAL,
-  trustpilot_reviews INTEGER,
-  year_founded INTEGER,
-  is_regulated BOOLEAN DEFAULT false,
-  regulation_info TEXT,
-  payout_methods TEXT[],
-  min_payout DECIMAL,
-  payout_frequency TEXT,
-  affiliate_link TEXT,
-  affiliate_commission DECIMAL,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Create promotions table
-CREATE TABLE promotions (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  prop_firm_id UUID REFERENCES prop_firms(id) ON DELETE CASCADE,
-  code TEXT,
-  discount_percent INTEGER,
-  discount_amount DECIMAL,
-  description TEXT,
-  valid_from TIMESTAMP WITH TIME ZONE,
-  valid_until TIMESTAMP WITH TIME ZONE,
-  is_active BOOLEAN DEFAULT true,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Create user_favorites table
-CREATE TABLE user_favorites (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-  prop_firm_id UUID REFERENCES prop_firms(id) ON DELETE CASCADE,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  UNIQUE(user_id, prop_firm_id)
-);
-
--- Create user_alerts table
-CREATE TABLE user_alerts (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-  prop_firm_id UUID REFERENCES prop_firms(id) ON DELETE CASCADE,
-  alert_type TEXT CHECK (alert_type IN ('promo', 'price_drop', 'new_program')),
-  is_active BOOLEAN DEFAULT true,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Enable Row Level Security
-ALTER TABLE prop_firms ENABLE ROW LEVEL SECURITY;
-ALTER TABLE promotions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE user_favorites ENABLE ROW LEVEL SECURITY;
-ALTER TABLE user_alerts ENABLE ROW LEVEL SECURITY;
-
--- Public read access for prop_firms and promotions
-CREATE POLICY "Public read access" ON prop_firms FOR SELECT USING (true);
-CREATE POLICY "Public read access" ON promotions FOR SELECT USING (true);
-
--- User-specific access for favorites and alerts
-CREATE POLICY "Users can view own favorites" ON user_favorites FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can insert own favorites" ON user_favorites FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Users can delete own favorites" ON user_favorites FOR DELETE USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can view own alerts" ON user_alerts FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can insert own alerts" ON user_alerts FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Users can update own alerts" ON user_alerts FOR UPDATE USING (auth.uid() = user_id);
-CREATE POLICY "Users can delete own alerts" ON user_alerts FOR DELETE USING (auth.uid() = user_id);
-```
-
-### 4. Run Development Server
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) 🎉
-
-## 📁 Project Structure
-
-```
-propfirmscanner/
-├── app/                    # Next.js App Router
-│   ├── page.tsx           # Landing page
-│   ├── compare/           # Comparison tool
-│   ├── dashboard/         # User dashboard
-│   └── auth/              # Login/Signup pages
-├── components/
-│   ├── layout/            # Navbar, Footer
-│   ├── compare/           # PropFirmCard, Filters
-│   └── ui/                # Reusable UI components
-├── lib/
-│   ├── supabase-client.ts # Client-side Supabase
-│   ├── supabase-server.ts # Server-side Supabase
-│   └── data.ts            # Sample data
-└── types/                 # TypeScript types
-```
-
-## 🔧 Configuration
-
-### Authentication
-
-1. In Supabase Dashboard > Authentication > Providers
-2. Enable **Email** provider
-3. (Optional) Enable **Google** OAuth:
-   - Create OAuth credentials in Google Cloud Console
-   - Add credentials to Supabase
-
-### Adding Prop Firms
-
-Insert data via Supabase dashboard or SQL:
-
-```sql
-INSERT INTO prop_firms (name, slug, min_price, profit_split, ...) 
-VALUES ('FTMO', 'ftmo', 155, 80, ...);
-```
-
-## 🚢 Deployment
-
-### Deploy to Vercel
-
-1. Push code to GitHub
-2. Import project in [Vercel](https://vercel.com)
-3. Add environment variables:
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-4. Deploy!
-
-## 📈 Next Steps
-
-- [ ] Add more prop firms to database
-- [ ] Implement real authentication
-- [ ] Connect favorites to Supabase
-- [ ] Set up email notifications (Resend)
-- [ ] Add affiliate tracking
-- [ ] Implement trade copier integration
-
-## 🤝 Contributing
-
-Pull requests welcome! For major changes, open an issue first.
-
-## 📄 License
-
-MIT © PropFirm Scanner
+# 🚀 PropFirmScanner.org - Major Update Package
+## December 2025 - Complete Data & UX Upgrade
 
 ---
 
-Built with ❤️ by PropFirm Scanner Team
+## 📦 Ce que contient ce package
 
+### 1. **UPDATE_PROPFIRMS_2025.sql** - Mise à jour complète de la base de données
+- ✅ Correction de toutes les données erronées
+- ✅ Ajout de 20+ nouvelles colonnes (year_founded, headquarters, payout_methods, etc.)
+- ✅ Mise à jour de 30+ prop firms avec données 2025 vérifiées
+- ✅ Nouveaux champs: `propfirmmatch_rating`, `is_futures`, `discount_code`, `discount_percent`
+- ✅ Index optimisés pour de meilleures performances
+
+### 2. **ComparePageClient.tsx** - Page Compare redessinée
+- ✅ 3 modes d'affichage : Grid, List, Table
+- ✅ Filtres avancés (prix, split, style de trading, plateforme)
+- ✅ Cartes expandables avec plus de détails
+- ✅ Quick stats en haut de page
+- ✅ Toggle "Verified Only"
+- ✅ Design plus ergonomique et mobile-friendly
+
+### 3. **PropFirmPageClient.tsx** - Pages individuelles améliorées
+- ✅ Score de verdict automatique (0-100)
+- ✅ Pros/Cons générés dynamiquement
+- ✅ Navigation par onglets (Overview, Rules, Pricing)
+- ✅ Section sidebar sticky avec CTA
+- ✅ Copie du code promo en un clic
+- ✅ Firms similaires en bas de page
+
+### 4. **QuickCompareWidget.tsx** - Widgets pour la homepage
+- ✅ Widget Quick Compare avec catégories
+- ✅ HeroStats bar component
+- ✅ FeatureComparisonTable component
+- ✅ TradingStyleCards component
+
+---
+
+## 🔧 Instructions d'installation
+
+### Étape 1: Mettre à jour la base de données Supabase
+
+1. Va sur https://supabase.com/dashboard
+2. Sélectionne ton projet PropFirmScanner
+3. Va dans **SQL Editor**
+4. Copie-colle le contenu de `UPDATE_PROPFIRMS_2025.sql`
+5. Clique sur **Run**
+
+⚠️ **Important**: Fais un backup avant d'exécuter le SQL !
+
+```sql
+-- Vérifier les données après update
+SELECT name, slug, trustpilot_rating, profit_split, max_profit_split, trust_status 
+FROM prop_firms 
+WHERE trust_status = 'verified' 
+ORDER BY trustpilot_rating DESC NULLS LAST
+LIMIT 20;
+```
+
+### Étape 2: Copier les composants React
+
+```bash
+# Dans ton répertoire propfirmscanner-landing
+
+# 1. Remplacer ComparePageClient.tsx
+cp ComparePageClient.tsx app/compare/ComparePageClient.tsx
+
+# 2. Remplacer PropFirmPageClient.tsx  
+cp PropFirmPageClient.tsx app/prop-firm/[slug]/PropFirmPageClient.tsx
+
+# 3. Ajouter le nouveau widget
+cp QuickCompareWidget.tsx components/QuickCompareWidget.tsx
+```
+
+### Étape 3: Mettre à jour les types TypeScript
+
+Ajoute ces nouveaux champs dans ton type PropFirm (lib/types.ts ou similaire):
+
+```typescript
+interface PropFirm {
+  // Existing fields...
+  
+  // New fields
+  year_founded?: number
+  headquarters?: string
+  max_profit_split?: number
+  payout_frequency?: string
+  payout_methods?: string[]
+  min_trading_days?: number
+  time_limit?: string
+  drawdown_type?: string
+  leverage_forex?: string
+  consistency_rule?: string
+  scaling_max?: string
+  fee_refund?: boolean
+  special_features?: string[]
+  discount_code?: string
+  discount_percent?: number
+  assets?: string[]
+  challenge_types?: string[]
+  broker_partner?: string
+  propfirmmatch_rating?: number
+  is_futures?: boolean
+}
+```
+
+### Étape 4: Utiliser le QuickCompareWidget sur la homepage
+
+```tsx
+// app/page.tsx
+import QuickCompareWidget, { 
+  HeroStats, 
+  TradingStyleCards,
+  FeatureComparisonTable 
+} from '@/components/QuickCompareWidget'
+
+export default async function HomePage() {
+  const { data: firms } = await supabase
+    .from('prop_firms')
+    .select('*')
+    .eq('trust_status', 'verified')
+    .order('trustpilot_rating', { ascending: false })
+  
+  return (
+    <main>
+      {/* Hero Section */}
+      <section className="pt-24 pb-12 px-4">
+        <div className="max-w-6xl mx-auto text-center">
+          <h1 className="text-5xl font-bold text-white mb-6">
+            Find Your Perfect <span className="text-emerald-400">Prop Firm</span>
+          </h1>
+          <p className="text-xl text-gray-400 mb-8">
+            Compare {firms.length}+ verified prop firms. Updated December 2025.
+          </p>
+          <HeroStats totalFirms={firms.length} avgRating={4.3} />
+        </div>
+      </section>
+      
+      {/* Quick Compare Widget */}
+      <QuickCompareWidget firms={firms} />
+      
+      {/* Trading Style Cards */}
+      <TradingStyleCards />
+      
+      {/* Feature Comparison Table */}
+      <FeatureComparisonTable firms={firms} />
+    </main>
+  )
+}
+```
+
+### Étape 5: Déployer
+
+```bash
+git add .
+git commit -m "Major update: 2025 data + improved UX"
+git push origin main
+```
+
+---
+
+## 📊 Données corrigées pour les principales prop firms
+
+| Prop Firm | Ancienne donnée | Nouvelle donnée |
+|-----------|-----------------|-----------------|
+| FTMO | Split 80% | Split 80-90%, Fee refund ✓ |
+| FundedNext | Payout bi-weekly | 24h Guarantee, $4M scaling |
+| The5ers | - | 100% split possible, No min days |
+| E8 Markets | - | Customizable drawdown, Add-ons |
+| My Funded Futures | - | 100% first $10K, Daily payouts |
+| Topstep | - | 100% first $10K, Free monthly reset |
+| Apex | - | 100% first $25K, 90% OFF promos |
+| Blueberry | - | ASIC broker-backed, Trade2Earn |
+| BrightFunded | - | Unlimited scaling, 100% split |
+| AquaFunded | - | AQUA MAN drops, $4M max |
+
+---
+
+## 🎨 Améliorations UX/UI
+
+### Avant vs Après
+
+| Aspect | Avant | Après |
+|--------|-------|-------|
+| Modes d'affichage | 1 (Grid) | 3 (Grid, List, Table) |
+| Filtres | Basiques | Avancés + Prix slider |
+| Cartes prop firms | Fixes | Expandables |
+| Page détail | Basique | Onglets + Verdict score |
+| Mobile | Passable | Optimisé |
+| Codes promo | Texte | Copy-to-clipboard |
+| Comparaison | - | Table side-by-side |
+
+### Nouvelles fonctionnalités
+- ✅ Score de verdict automatique (0-100)
+- ✅ Pros/Cons générés dynamiquement  
+- ✅ Catégories quick-filter (Best Rated, Cheapest, High Split, etc.)
+- ✅ Badge de discount visible
+- ✅ Trust status badges (Verified, New, Under Review, Avoid)
+- ✅ Toggle pour afficher uniquement les firms vérifiées
+- ✅ Statistiques en temps réel (total firms, avg rating, etc.)
+
+---
+
+## 🔍 Requêtes Supabase utiles
+
+```sql
+-- Top 10 rated firms
+SELECT name, trustpilot_rating, profit_split, max_profit_split 
+FROM prop_firms 
+WHERE trust_status = 'verified' 
+ORDER BY trustpilot_rating DESC 
+LIMIT 10;
+
+-- Futures only
+SELECT name, trustpilot_rating, min_price 
+FROM prop_firms 
+WHERE is_futures = true AND trust_status = 'verified';
+
+-- Firms with discounts
+SELECT name, discount_code, discount_percent 
+FROM prop_firms 
+WHERE discount_percent IS NOT NULL 
+ORDER BY discount_percent DESC;
+
+-- Cheapest entry
+SELECT name, min_price, profit_split 
+FROM prop_firms 
+WHERE trust_status = 'verified' 
+ORDER BY min_price ASC 
+LIMIT 10;
+
+-- 100% profit split potential
+SELECT name, profit_split, max_profit_split, scaling_max 
+FROM prop_firms 
+WHERE max_profit_split = 100 AND trust_status = 'verified';
+```
+
+---
+
+## 📱 Prochaines étapes suggérées
+
+1. **Indexation Google** - Soumettre le sitemap mis à jour
+2. **Pages VS supplémentaires** - Créer plus de comparaisons directes
+3. **Blog articles** - "Best Futures Prop Firms 2025", "Prop Firms with 100% Profit Split"
+4. **Affiliate tracking** - Configurer pour les nouvelles firms
+5. **Email automation** - Activer Mailchimp quand 50+ abonnés
+
+---
+
+## ❓ Support
+
+Si tu as des questions ou problèmes:
+1. Vérifie que le SQL s'est exécuté sans erreur
+2. Vérifie les types TypeScript
+3. Regarde les logs Vercel pour les erreurs de build
+
+---
+
+**Dernière mise à jour**: 28 décembre 2025
+**Version**: 2.0.0
