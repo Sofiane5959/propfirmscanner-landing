@@ -34,3 +34,4 @@ export default async function ComparePage() {
 
   return <ComparePageClient firms={firms || []} />
 }
+
