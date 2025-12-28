@@ -1,110 +1,127 @@
 # 🎯 PropFirmScanner Dashboard
 
-## The Control Center for Prop Firm Traders
-
-> Track all your prop firm accounts in one place. Know your limits before you trade. Avoid failing challenges because of rules.
+## "One dashboard to manage all your prop firm accounts."
 
 ---
 
-## 🚀 Features
+## ⚡ PLAN D'EXÉCUTION ACCÉLÉRÉ (3-7 jours)
 
-### 1. **My Accounts** (Centralisation)
-- Add and track multiple prop firm accounts
-- See all balances, stages, and rules at a glance
-- Real-time health indicators (safe/warning/danger)
+### 🟢 Jour 1 — Base & Logique ✅ FAIT
 
-### 2. **Trade Simulator** (Sécurité)
-- Check if a trade is safe BEFORE entering
-- Calculates daily DD and max DD impact
-- Warns about news restrictions and weekend holding
-- Shows exactly what happens if you lose
+| Tâche | Status |
+|-------|--------|
+| Tables: programs, user_accounts, subscriptions, usage_limits | ✅ |
+| Calcul daily/max buffer (USD + Today PnL) | ✅ |
+| Dashboard avec cards affichant les limites | ✅ |
+| Add Account form avec presets | ✅ |
 
-### 3. **Smart Alerts** (Anticipation)
-- "You've used 50% of daily drawdown"
-- "Close positions before weekend - no holding allowed"
-- "News event in 30 minutes - trading restricted"
+**Fichiers créés:**
+- `app/dashboard/page.tsx` — Dashboard principal
+- `app/dashboard/accounts/new/page.tsx` — Formulaire ajout compte
+- `database/schema.sql` — Schema Supabase
 
-### 4. **Hidden Rules & Traps** (Clarté mentale)
-- Common mistakes per prop firm
-- Unwritten rules that cause breaches
-- Pro tips from experienced traders
+### 🟢 Jour 2 — Simulation ✅ FAIT
+
+| Tâche | Status |
+|-------|--------|
+| Page simulation | ✅ |
+| Input risk_usd | ✅ |
+| Logique ✅⚠️❌ | ✅ |
+| Messages humains clairs | ✅ |
+
+**Fichiers créés:**
+- `app/dashboard/simulate/page.tsx` — Trade Simulator
+
+### 🟢 Jour 3 — Paywall ⏳ À FAIRE
+
+```typescript
+// Implémenter dans lib/check-limits.ts
+
+export async function checkUserLimits(userId: string) {
+  const { data } = await supabase.rpc('check_user_limits', { uid: userId })
+  return data
+}
+
+// Free: 1 account, 5 simulations/day
+// Pro: Unlimited
+```
+
+**À connecter:**
+- Stripe Checkout pour upgrade Pro
+- Vérification des limites avant add/simulate
+
+### 🟡 Jour 4 — UX + Wording ⏳ À FAIRE
+
+| Tâche | Status |
+|-------|--------|
+| Cards design polish | ⏳ |
+| Badges lisibles | ⏳ |
+| Textes clairs | ⏳ |
+| Page produit/pricing | ✅ |
+
+**Fichiers créés:**
+- `app/product/page.tsx` — Landing page avec pricing
+
+### 🟡 Jour 5-7 — Extras ⏳ OPTIONNEL
+
+- [ ] Alertes email (Resend/SendGrid)
+- [ ] Hidden rules enrichies
+- [ ] Feedback users
+- [ ] Analytics
 
 ---
 
-## 📁 Files Structure
+## 📁 Structure Finale
 
 ```
-propfirmscanner-dashboard/
+propfirmscanner-v2/
 ├── app/
+│   ├── product/
+│   │   └── page.tsx           # Landing + Pricing
 │   └── dashboard/
-│       ├── page.tsx                    # Main dashboard
-│       ├── simulate/
-│       │   └── page.tsx               # Trade simulator
+│       ├── page.tsx           # Dashboard "My Accounts"
 │       ├── accounts/
 │       │   └── new/
-│       │       └── page.tsx           # Add account form
+│       │       └── page.tsx   # Add Account form
+│       ├── simulate/
+│       │   └── page.tsx       # Trade Simulator
 │       └── rules/
-│           └── page.tsx               # Hidden rules database
+│           └── page.tsx       # Rules & Hidden Risks
 └── database/
-    └── schema.sql                     # Supabase schema
+    └── schema.sql             # Supabase schema
 ```
 
 ---
 
-## 🔧 Installation
+## 🔧 Installation Rapide
 
-### Step 1: Copy Dashboard Files
+### 1. Copier les fichiers
 
 ```bash
-# Create dashboard directory
-mkdir -p app/dashboard/simulate
-mkdir -p app/dashboard/accounts/new
-mkdir -p app/dashboard/rules
+# Extraire le zip
+unzip propfirmscanner-v2.zip
 
-# Copy files
-cp dashboard/app/dashboard/page.tsx app/dashboard/
-cp dashboard/app/dashboard/simulate/page.tsx app/dashboard/simulate/
-cp dashboard/app/dashboard/accounts/new/page.tsx app/dashboard/accounts/new/
-cp dashboard/app/dashboard/rules/page.tsx app/dashboard/rules/
+# Copier dans ton projet
+cp -r propfirmscanner-v2/app/dashboard app/
+cp -r propfirmscanner-v2/app/product app/
 ```
 
-### Step 2: Setup Supabase Database
+### 2. Setup Database
 
-1. Go to **Supabase** → **SQL Editor**
-2. Copy the contents of `database/schema.sql`
-3. Click **Run**
+1. Va dans **Supabase → SQL Editor**
+2. Copie `database/schema.sql`
+3. Clique **Run**
 
-This creates:
-- `user_prop_accounts` - User's tracked accounts
-- `pnl_history` - Daily P&L tracking
-- `user_alerts` - Alert history
-- `user_preferences` - User settings
-- `simulation_logs` - Trade simulation history
+### 3. Protéger les routes
 
-### Step 3: Add Navigation Link
-
-In your navbar or layout:
-
-```tsx
-<Link href="/dashboard">
-  Dashboard
-</Link>
-```
-
-### Step 4: Protect Dashboard Routes
-
-Create `app/dashboard/layout.tsx`:
+Ajoute dans `app/dashboard/layout.tsx`:
 
 ```tsx
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
-export default async function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = createServerComponentClient({ cookies })
   const { data: { session } } = await supabase.auth.getSession()
   
@@ -118,192 +135,79 @@ export default async function DashboardLayout({
 
 ---
 
-## 💰 Monetization (Freemium Model)
+## 💰 Pricing Recommandé
 
-### Free Tier
-- ✅ 3 accounts max
-- ✅ 5 simulations/day
-- ✅ Basic alerts
-- ✅ Hidden rules access
-
-### Pro Tier ($9-15/month)
-- ✅ Unlimited accounts
-- ✅ Unlimited simulations
-- ✅ Email alerts
-- ✅ Advanced analytics
-- ✅ P&L history tracking
-- ✅ Priority support
-
-### Implementation
-
-Create a `subscriptions` table:
-
-```sql
-CREATE TABLE subscriptions (
-  user_id UUID PRIMARY KEY REFERENCES auth.users(id),
-  plan TEXT DEFAULT 'free' CHECK (plan IN ('free', 'pro')),
-  stripe_customer_id TEXT,
-  stripe_subscription_id TEXT,
-  current_period_end TIMESTAMP WITH TIME ZONE,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-```
-
-Check limits in components:
-
-```tsx
-const { data: subscription } = await supabase
-  .from('subscriptions')
-  .select('plan')
-  .eq('user_id', user.id)
-  .single()
-
-const isPro = subscription?.plan === 'pro'
-const accountLimit = isPro ? Infinity : 3
-const simulationLimit = isPro ? Infinity : 5
-```
+| Plan | Prix | Limites |
+|------|------|---------|
+| **Free** | $0 | 1 compte, 5 simulations/jour |
+| **Pro** | $9-15/mois | Illimité |
 
 ---
 
-## 🔌 Future Integrations (V2)
+## 📝 Textes Marketing Prêts
 
-### Optional API Connections
-- **Rithmic** (futures) - Auto-sync P&L
-- **cTrader** - Auto-sync positions
-- **MetaAPI** (MT4/MT5) - Auto-sync trades
+### Headline
+> One dashboard to manage all your prop firm accounts.
+> Know your limits before you trade.
 
-These are NOT required for V1. Manual entry works perfectly.
+### Subheadline
+> Track balances, drawdown limits, and rules across all your prop firms — and simulate trades before you enter them.
 
-### Webhook Alerts
-- Telegram notifications
-- Discord alerts
-- SMS for critical warnings
+### Value Props
+1. **Centralize** all your prop firm accounts in one place
+2. **See your limits** at a glance (daily DD, max DD)
+3. **Simulate trades** before entering
+4. **Get warned** before you violate a rule
+5. **Understand hidden rules** for each firm
 
----
-
-## 📊 Database Queries
-
-### Get user's accounts with health status
-
-```sql
-SELECT 
-  a.*,
-  calculate_account_health(a.id) as health
-FROM user_prop_accounts a
-WHERE a.user_id = auth.uid()
-ORDER BY a.created_at DESC;
-```
-
-### Get accounts at risk
-
-```sql
-SELECT * FROM user_prop_accounts
-WHERE user_id = auth.uid()
-AND (
-  ABS(LEAST(0, daily_pnl)) / (account_size * daily_dd_limit / 100) > 0.5
-  OR
-  (starting_balance - current_balance) / (account_size * max_dd_limit / 100) > 0.5
-);
-```
-
-### Get daily P&L history
-
-```sql
-SELECT * FROM pnl_history
-WHERE account_id = 'xxx'
-ORDER BY date DESC
-LIMIT 30;
-```
+### CTA
+> Start protecting your prop firm accounts
 
 ---
 
-## 🎨 Customization
+## 🎯 Les 4 Écrans Exacts
 
-### Add New Prop Firm Presets
+### Écran 1: Dashboard "My Accounts"
+- Liste des comptes en cards
+- Daily DD remaining ($ + %)
+- Max DD remaining ($ + %)
+- Today PnL (editable)
+- Badges: Trailing, News, Weekend
+- Actions: Update, Simulate, Rules
 
-In `app/dashboard/accounts/new/page.tsx`, add to `propFirmPresets`:
+### Écran 2: Add Account
+- Select prop firm
+- Select program
+- Stage (Eval/Funded)
+- Balances
+- Today PnL
+- Start date
 
-```tsx
-{
-  slug: 'new-firm',
-  name: 'New Firm',
-  programs: [
-    { 
-      name: 'Program Name $100K', 
-      account_size: 100000, 
-      daily_dd: 5, 
-      max_dd: 10, 
-      profit_target: 10, 
-      min_days: 5 
-    },
-  ],
-  max_dd_type: 'static',
-  allows_news_trading: true,
-  allows_weekend_holding: true,
-  allows_ea: true,
-  allows_scaling: false,
-}
-```
+### Écran 3: Trade Simulation
+- Select account
+- Risk in USD
+- Output: ✅ SAFE / ⚠️ RISKY / ❌ VIOLATION
+- Message humain: "This trade would use 82% of your daily drawdown on FundingPips."
 
-### Add New Hidden Rules
-
-In `app/dashboard/rules/page.tsx`, add to `propFirmRules`:
-
-```tsx
-{
-  slug: 'firm-slug',
-  name: 'Firm Name',
-  criticalRules: [
-    {
-      title: 'Rule Title',
-      description: 'Rule description',
-      severity: 'high', // high, medium, low
-      category: 'news', // news, risk, trading, profit
-    },
-  ],
-  commonMistakes: ['Mistake 1', 'Mistake 2'],
-  tips: ['Tip 1', 'Tip 2'],
-}
-```
+### Écran 4: Rules & Hidden Risks
+- Key rules (visible)
+- Hidden rules / gotchas
+- Common mistakes
+- Best for / Avoid if
 
 ---
 
-## 📈 Marketing Copy
+## ✅ Checklist Lancement
 
-### Taglines
-- "The control center for prop firm traders"
-- "Know your limits before you trade"
-- "Stop losing challenges to rules you didn't know"
-- "Track. Simulate. Protect."
-
-### Value Propositions
-1. **Centralisation** - All accounts in one dashboard
-2. **Sécurité** - Know your limits in real-time  
-3. **Anticipation** - Simulate before you trade
-4. **Clarté mentale** - No more mental calculations
+- [ ] Copier les fichiers
+- [ ] Run le schema SQL
+- [ ] Tester le dashboard
+- [ ] Tester le simulator
+- [ ] Ajouter Stripe
+- [ ] Protéger les routes
+- [ ] Déployer
+- [ ] Annoncer aux users existants
 
 ---
 
-## 🚀 Launch Checklist
-
-- [ ] Deploy dashboard pages
-- [ ] Run database schema
-- [ ] Add navigation links
-- [ ] Setup authentication protection
-- [ ] Test with mock data
-- [ ] Connect to real Supabase
-- [ ] Add Stripe for Pro tier
-- [ ] Announce to existing users
-
----
-
-## 📞 Support
-
-Questions? Issues? 
-- Check the hidden rules database
-- Use the trade simulator
-- Contact support
-
----
-
-**Built with ❤️ for prop firm traders**
+**Tu ne vends pas des features. Tu vends la tranquillité mentale face aux règles des prop firms.**

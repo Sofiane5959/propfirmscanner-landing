@@ -1,263 +1,236 @@
 -- ============================================================
--- PROPFIRMSCANNER DASHBOARD - DATABASE SCHEMA
+-- PROPFIRMSCANNER DASHBOARD - SIMPLIFIED SCHEMA
+-- Day 1: Base & Logic
 -- Run this in Supabase SQL Editor
 -- ============================================================
 
--- Enable UUID extension
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
 -- ============================================================
--- USER ACCOUNTS TABLE (prop firm accounts they're tracking)
+-- TABLE 1: PROP FIRMS (reference data)
+-- Already exists in your database, but here's the structure
 -- ============================================================
 
-CREATE TABLE IF NOT EXISTS user_prop_accounts (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+-- You already have prop_firms table from comparison site
+-- We'll reference it for rules data
+
+-- ============================================================
+-- TABLE 2: PROGRAMS (rules per program)
+-- Pre-populated with common programs
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS programs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  prop_firm_slug TEXT NOT NULL,
+  name TEXT NOT NULL,
+  account_size INTEGER NOT NULL,
+  daily_dd_percent DECIMAL(5,2) DEFAULT 5,
+  max_dd_percent DECIMAL(5,2) DEFAULT 10,
+  max_dd_type TEXT DEFAULT 'static' CHECK (max_dd_type IN ('static', 'trailing', 'eod_trailing')),
+  profit_target_percent DECIMAL(5,2) DEFAULT 10,
+  min_trading_days INTEGER DEFAULT 0,
+  allows_news BOOLEAN DEFAULT true,
+  allows_weekend BOOLEAN DEFAULT true,
+  allows_ea BOOLEAN DEFAULT true,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Index for lookups
+CREATE INDEX IF NOT EXISTS idx_programs_firm ON programs(prop_firm_slug);
+
+-- ============================================================
+-- TABLE 3: USER_ACCOUNTS (core tracking)
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS user_accounts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   
-  -- Prop firm info
+  -- What they're tracking
   prop_firm TEXT NOT NULL,
   prop_firm_slug TEXT NOT NULL,
   program TEXT NOT NULL,
   
-  -- Account details
-  account_size DECIMAL(12,2) NOT NULL,
-  starting_balance DECIMAL(12,2) NOT NULL,
+  -- Balances
+  account_size INTEGER NOT NULL,
+  start_balance DECIMAL(12,2) NOT NULL,
   current_balance DECIMAL(12,2) NOT NULL,
-  stage TEXT NOT NULL CHECK (stage IN ('evaluation_1', 'evaluation_2', 'verification', 'funded')),
   
-  -- Daily tracking
-  daily_pnl DECIMAL(12,2) DEFAULT 0,
-  last_pnl_update DATE DEFAULT CURRENT_DATE,
+  -- Stage
+  stage TEXT NOT NULL DEFAULT 'eval_1' CHECK (stage IN ('eval_1', 'eval_2', 'verification', 'funded')),
   
-  -- Rules
-  daily_dd_limit DECIMAL(5,2) DEFAULT 5, -- percentage
-  max_dd_limit DECIMAL(5,2) DEFAULT 10, -- percentage
-  max_dd_type TEXT DEFAULT 'static' CHECK (max_dd_type IN ('static', 'trailing', 'eod_trailing')),
-  profit_target DECIMAL(5,2) DEFAULT 10, -- percentage
-  min_trading_days INTEGER DEFAULT 0,
-  current_trading_days INTEGER DEFAULT 0,
+  -- Today's tracking (reset daily)
+  today_pnl DECIMAL(12,2) DEFAULT 0,
+  pnl_last_updated DATE DEFAULT CURRENT_DATE,
   
-  -- Allowed actions
-  allows_news_trading BOOLEAN DEFAULT true,
-  allows_weekend_holding BOOLEAN DEFAULT true,
-  allows_ea BOOLEAN DEFAULT true,
-  allows_scaling BOOLEAN DEFAULT false,
+  -- Rules (copied from program on creation)
+  daily_dd_percent DECIMAL(5,2) DEFAULT 5,
+  max_dd_percent DECIMAL(5,2) DEFAULT 10,
+  max_dd_type TEXT DEFAULT 'static',
+  allows_news BOOLEAN DEFAULT true,
+  allows_weekend BOOLEAN DEFAULT true,
   
   -- Tracking
+  start_date DATE DEFAULT CURRENT_DATE,
   highest_balance DECIMAL(12,2), -- for trailing DD
-  notes TEXT,
   
-  -- Timestamps
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Create index for fast user lookups
-CREATE INDEX IF NOT EXISTS idx_user_prop_accounts_user ON user_prop_accounts(user_id);
+-- Index for user lookups
+CREATE INDEX IF NOT EXISTS idx_user_accounts_user ON user_accounts(user_id);
 
 -- ============================================================
--- DAILY PNL HISTORY (for tracking over time)
+-- TABLE 4: SUBSCRIPTIONS (Day 3: Paywall)
 -- ============================================================
 
-CREATE TABLE IF NOT EXISTS pnl_history (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  account_id UUID NOT NULL REFERENCES user_prop_accounts(id) ON DELETE CASCADE,
-  
-  date DATE NOT NULL,
-  opening_balance DECIMAL(12,2) NOT NULL,
-  closing_balance DECIMAL(12,2) NOT NULL,
-  pnl DECIMAL(12,2) NOT NULL,
-  trades_count INTEGER DEFAULT 0,
-  notes TEXT,
-  
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  
-  UNIQUE(account_id, date)
-);
-
-CREATE INDEX IF NOT EXISTS idx_pnl_history_account ON pnl_history(account_id);
-
--- ============================================================
--- ALERTS TABLE
--- ============================================================
-
-CREATE TABLE IF NOT EXISTS user_alerts (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  account_id UUID REFERENCES user_prop_accounts(id) ON DELETE CASCADE,
-  
-  type TEXT NOT NULL CHECK (type IN ('daily_dd', 'max_dd', 'news', 'weekend', 'profit_target', 'trading_days', 'custom')),
-  severity TEXT NOT NULL CHECK (severity IN ('info', 'warning', 'danger')),
-  title TEXT NOT NULL,
-  message TEXT NOT NULL,
-  
-  is_read BOOLEAN DEFAULT false,
-  is_dismissed BOOLEAN DEFAULT false,
-  
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
-CREATE INDEX IF NOT EXISTS idx_user_alerts_user ON user_alerts(user_id);
-
--- ============================================================
--- USER PREFERENCES
--- ============================================================
-
-CREATE TABLE IF NOT EXISTS user_preferences (
+CREATE TABLE IF NOT EXISTS subscriptions (
   user_id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  
-  -- Alert settings
-  email_alerts BOOLEAN DEFAULT true,
-  daily_dd_threshold INTEGER DEFAULT 50, -- alert at X% of daily DD used
-  max_dd_threshold INTEGER DEFAULT 50, -- alert at X% of max DD used
-  
-  -- Display preferences
-  default_view TEXT DEFAULT 'grid',
-  theme TEXT DEFAULT 'dark',
-  
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- ============================================================
--- TRADE SIMULATIONS LOG (optional - for analytics)
--- ============================================================
-
-CREATE TABLE IF NOT EXISTS simulation_logs (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  account_id UUID NOT NULL REFERENCES user_prop_accounts(id) ON DELETE CASCADE,
-  
-  risk_amount DECIMAL(12,2) NOT NULL,
-  result TEXT NOT NULL CHECK (result IN ('safe', 'warning', 'violation')),
-  messages JSONB,
-  
+  plan TEXT DEFAULT 'free' CHECK (plan IN ('free', 'pro')),
+  stripe_customer_id TEXT,
+  stripe_subscription_id TEXT,
+  current_period_end TIMESTAMP WITH TIME ZONE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- ============================================================
--- ROW LEVEL SECURITY (RLS) POLICIES
+-- TABLE 5: USAGE_LIMITS (track free tier usage)
 -- ============================================================
 
--- Enable RLS on all tables
-ALTER TABLE user_prop_accounts ENABLE ROW LEVEL SECURITY;
-ALTER TABLE pnl_history ENABLE ROW LEVEL SECURITY;
-ALTER TABLE user_alerts ENABLE ROW LEVEL SECURITY;
-ALTER TABLE user_preferences ENABLE ROW LEVEL SECURITY;
-ALTER TABLE simulation_logs ENABLE ROW LEVEL SECURITY;
-
--- User can only see their own accounts
-CREATE POLICY "Users can view own accounts" ON user_prop_accounts
-  FOR SELECT USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can insert own accounts" ON user_prop_accounts
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
-
-CREATE POLICY "Users can update own accounts" ON user_prop_accounts
-  FOR UPDATE USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can delete own accounts" ON user_prop_accounts
-  FOR DELETE USING (auth.uid() = user_id);
-
--- PNL History policies
-CREATE POLICY "Users can view own pnl_history" ON pnl_history
-  FOR SELECT USING (
-    account_id IN (SELECT id FROM user_prop_accounts WHERE user_id = auth.uid())
-  );
-
-CREATE POLICY "Users can insert own pnl_history" ON pnl_history
-  FOR INSERT WITH CHECK (
-    account_id IN (SELECT id FROM user_prop_accounts WHERE user_id = auth.uid())
-  );
-
--- Alerts policies
-CREATE POLICY "Users can view own alerts" ON user_alerts
-  FOR SELECT USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can update own alerts" ON user_alerts
-  FOR UPDATE USING (auth.uid() = user_id);
-
--- Preferences policies
-CREATE POLICY "Users can view own preferences" ON user_preferences
-  FOR SELECT USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can insert own preferences" ON user_preferences
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
-
-CREATE POLICY "Users can update own preferences" ON user_preferences
-  FOR UPDATE USING (auth.uid() = user_id);
-
--- Simulation logs policies
-CREATE POLICY "Users can view own simulations" ON simulation_logs
-  FOR SELECT USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can insert own simulations" ON simulation_logs
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE TABLE IF NOT EXISTS usage_limits (
+  user_id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  simulations_today INTEGER DEFAULT 0,
+  last_simulation_date DATE DEFAULT CURRENT_DATE,
+  accounts_count INTEGER DEFAULT 0
+);
 
 -- ============================================================
--- HELPER FUNCTIONS
+-- ROW LEVEL SECURITY (RLS)
 -- ============================================================
 
--- Function to reset daily PnL at midnight
+ALTER TABLE user_accounts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE usage_limits ENABLE ROW LEVEL SECURITY;
+
+-- User can only see their own data
+CREATE POLICY "Users own accounts" ON user_accounts
+  FOR ALL USING (auth.uid() = user_id);
+
+CREATE POLICY "Users own subscription" ON subscriptions
+  FOR ALL USING (auth.uid() = user_id);
+
+CREATE POLICY "Users own usage" ON usage_limits
+  FOR ALL USING (auth.uid() = user_id);
+
+-- ============================================================
+-- HELPER FUNCTION: Reset daily PnL
+-- ============================================================
+
 CREATE OR REPLACE FUNCTION reset_daily_pnl()
 RETURNS void AS $$
 BEGIN
-  UPDATE user_prop_accounts
+  UPDATE user_accounts
   SET 
-    daily_pnl = 0,
-    last_pnl_update = CURRENT_DATE
-  WHERE last_pnl_update < CURRENT_DATE;
+    today_pnl = 0,
+    pnl_last_updated = CURRENT_DATE
+  WHERE pnl_last_updated < CURRENT_DATE;
+  
+  UPDATE usage_limits
+  SET 
+    simulations_today = 0,
+    last_simulation_date = CURRENT_DATE
+  WHERE last_simulation_date < CURRENT_DATE;
 END;
 $$ LANGUAGE plpgsql;
 
--- Function to calculate account health
-CREATE OR REPLACE FUNCTION calculate_account_health(account_id UUID)
+-- ============================================================
+-- HELPER FUNCTION: Check limits (for paywall)
+-- ============================================================
+
+CREATE OR REPLACE FUNCTION check_user_limits(uid UUID)
 RETURNS TABLE (
-  daily_dd_used DECIMAL,
-  max_dd_used DECIMAL,
-  risk_level TEXT
+  can_add_account BOOLEAN,
+  can_simulate BOOLEAN,
+  is_pro BOOLEAN,
+  accounts_used INTEGER,
+  simulations_used INTEGER
 ) AS $$
 DECLARE
-  account user_prop_accounts%ROWTYPE;
-  daily_dd_pct DECIMAL;
-  max_dd_pct DECIMAL;
+  user_plan TEXT;
+  acc_count INTEGER;
+  sim_count INTEGER;
 BEGIN
-  SELECT * INTO account FROM user_prop_accounts WHERE id = account_id;
+  -- Get plan
+  SELECT COALESCE(plan, 'free') INTO user_plan FROM subscriptions WHERE user_id = uid;
+  IF user_plan IS NULL THEN user_plan := 'free'; END IF;
   
-  -- Calculate daily DD used
-  IF account.daily_dd_limit > 0 THEN
-    daily_dd_pct := ABS(LEAST(0, account.daily_pnl)) / (account.account_size * account.daily_dd_limit / 100) * 100;
-  ELSE
-    daily_dd_pct := 0;
-  END IF;
+  -- Get usage
+  SELECT COALESCE(accounts_count, 0), COALESCE(simulations_today, 0) 
+  INTO acc_count, sim_count
+  FROM usage_limits WHERE user_id = uid;
   
-  -- Calculate max DD used
-  IF account.max_dd_type = 'static' THEN
-    max_dd_pct := (account.starting_balance - account.current_balance) / (account.account_size * account.max_dd_limit / 100) * 100;
-  ELSE
-    max_dd_pct := (COALESCE(account.highest_balance, account.starting_balance) - account.current_balance) / (account.account_size * account.max_dd_limit / 100) * 100;
-  END IF;
+  IF acc_count IS NULL THEN acc_count := 0; END IF;
+  IF sim_count IS NULL THEN sim_count := 0; END IF;
   
-  max_dd_pct := GREATEST(0, max_dd_pct);
-  
-  -- Determine risk level
-  IF daily_dd_pct > 80 OR max_dd_pct > 80 THEN
-    risk_level := 'danger';
-  ELSIF daily_dd_pct > 50 OR max_dd_pct > 50 THEN
-    risk_level := 'warning';
-  ELSE
-    risk_level := 'safe';
-  END IF;
-  
-  RETURN QUERY SELECT daily_dd_pct, max_dd_pct, risk_level;
+  -- Return limits
+  RETURN QUERY SELECT
+    CASE WHEN user_plan = 'pro' THEN true ELSE acc_count < 1 END,
+    CASE WHEN user_plan = 'pro' THEN true ELSE sim_count < 5 END,
+    user_plan = 'pro',
+    acc_count,
+    sim_count;
 END;
 $$ LANGUAGE plpgsql;
 
 -- ============================================================
--- VERIFICATION QUERY
+-- SEED DATA: Common Programs
 -- ============================================================
 
--- Run this to verify tables were created
+INSERT INTO programs (prop_firm_slug, name, account_size, daily_dd_percent, max_dd_percent, max_dd_type, profit_target_percent, min_trading_days, allows_news, allows_weekend) VALUES
+-- FTMO
+('ftmo', 'Standard $10K', 10000, 5, 10, 'static', 10, 4, false, true),
+('ftmo', 'Standard $25K', 25000, 5, 10, 'static', 10, 4, false, true),
+('ftmo', 'Standard $50K', 50000, 5, 10, 'static', 10, 4, false, true),
+('ftmo', 'Standard $100K', 100000, 5, 10, 'static', 10, 4, false, true),
+('ftmo', 'Standard $200K', 200000, 5, 10, 'static', 10, 4, false, true),
+-- FundedNext
+('fundednext', 'Stellar 2-Step $6K', 6000, 5, 10, 'static', 8, 5, true, true),
+('fundednext', 'Stellar 2-Step $15K', 15000, 5, 10, 'static', 8, 5, true, true),
+('fundednext', 'Stellar 2-Step $25K', 25000, 5, 10, 'static', 8, 5, true, true),
+('fundednext', 'Stellar 2-Step $50K', 50000, 5, 10, 'static', 8, 5, true, true),
+('fundednext', 'Stellar 2-Step $100K', 100000, 5, 10, 'static', 8, 5, true, true),
+('fundednext', 'Stellar 1-Step $25K', 25000, 3, 6, 'static', 10, 2, true, true),
+('fundednext', 'Stellar 1-Step $50K', 50000, 3, 6, 'static', 10, 2, true, true),
+('fundednext', 'Stellar 1-Step $100K', 100000, 3, 6, 'static', 10, 2, true, true),
+-- The5ers
+('the5ers', 'High Stakes $6K', 6000, 3, 6, 'static', 8, 0, true, true),
+('the5ers', 'High Stakes $20K', 20000, 3, 6, 'static', 8, 0, true, true),
+('the5ers', 'High Stakes $60K', 60000, 3, 6, 'static', 8, 0, true, true),
+('the5ers', 'High Stakes $100K', 100000, 3, 6, 'static', 8, 0, true, true),
+-- My Funded Futures
+('my-funded-futures', 'Starter $50K', 50000, 0, 4, 'eod_trailing', 6, 2, true, false),
+('my-funded-futures', 'Starter $100K', 100000, 0, 4.5, 'eod_trailing', 6, 2, true, false),
+('my-funded-futures', 'Starter $150K', 150000, 0, 4.5, 'eod_trailing', 9, 2, true, false),
+-- Topstep
+('topstep', 'Trading Combine $50K', 50000, 0, 3, 'eod_trailing', 6, 5, true, false),
+('topstep', 'Trading Combine $100K', 100000, 0, 4, 'eod_trailing', 6, 5, true, false),
+('topstep', 'Trading Combine $150K', 150000, 0, 4.5, 'eod_trailing', 9, 5, true, false),
+-- Apex Trader Funding
+('apex-trader-funding', 'Evaluation $50K', 50000, 0, 5, 'trailing', 6, 7, true, false),
+('apex-trader-funding', 'Evaluation $100K', 100000, 0, 6, 'trailing', 6, 7, true, false),
+('apex-trader-funding', 'Evaluation $150K', 150000, 0, 9, 'trailing', 9, 7, true, false),
+('apex-trader-funding', 'Evaluation $250K', 250000, 0, 12.5, 'trailing', 15, 7, true, false),
+-- E8 Markets
+('e8-markets', 'E8 Track $25K', 25000, 4, 8, 'static', 8, 0, false, true),
+('e8-markets', 'E8 Track $50K', 50000, 4, 8, 'static', 8, 0, false, true),
+('e8-markets', 'E8 Track $100K', 100000, 4, 8, 'static', 8, 0, false, true),
+('e8-markets', 'E8 Track $250K', 250000, 4, 8, 'static', 8, 0, false, true)
+ON CONFLICT DO NOTHING;
+
+-- ============================================================
+-- VERIFY
+-- ============================================================
+
+SELECT 'Tables created:' as status;
 SELECT table_name FROM information_schema.tables 
 WHERE table_schema = 'public' 
-AND table_name IN ('user_prop_accounts', 'pnl_history', 'user_alerts', 'user_preferences', 'simulation_logs');
+AND table_name IN ('programs', 'user_accounts', 'subscriptions', 'usage_limits');
