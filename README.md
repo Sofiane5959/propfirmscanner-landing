@@ -1,260 +1,309 @@
-# 🚀 PropFirmScanner.org - Major Update Package
-## December 2025 - Complete Data & UX Upgrade
+# 🎯 PropFirmScanner Dashboard
+
+## The Control Center for Prop Firm Traders
+
+> Track all your prop firm accounts in one place. Know your limits before you trade. Avoid failing challenges because of rules.
 
 ---
 
-## 📦 Ce que contient ce package
+## 🚀 Features
 
-### 1. **UPDATE_PROPFIRMS_2025.sql** - Mise à jour complète de la base de données
-- ✅ Correction de toutes les données erronées
-- ✅ Ajout de 20+ nouvelles colonnes (year_founded, headquarters, payout_methods, etc.)
-- ✅ Mise à jour de 30+ prop firms avec données 2025 vérifiées
-- ✅ Nouveaux champs: `propfirmmatch_rating`, `is_futures`, `discount_code`, `discount_percent`
-- ✅ Index optimisés pour de meilleures performances
+### 1. **My Accounts** (Centralisation)
+- Add and track multiple prop firm accounts
+- See all balances, stages, and rules at a glance
+- Real-time health indicators (safe/warning/danger)
 
-### 2. **ComparePageClient.tsx** - Page Compare redessinée
-- ✅ 3 modes d'affichage : Grid, List, Table
-- ✅ Filtres avancés (prix, split, style de trading, plateforme)
-- ✅ Cartes expandables avec plus de détails
-- ✅ Quick stats en haut de page
-- ✅ Toggle "Verified Only"
-- ✅ Design plus ergonomique et mobile-friendly
+### 2. **Trade Simulator** (Sécurité)
+- Check if a trade is safe BEFORE entering
+- Calculates daily DD and max DD impact
+- Warns about news restrictions and weekend holding
+- Shows exactly what happens if you lose
 
-### 3. **PropFirmPageClient.tsx** - Pages individuelles améliorées
-- ✅ Score de verdict automatique (0-100)
-- ✅ Pros/Cons générés dynamiquement
-- ✅ Navigation par onglets (Overview, Rules, Pricing)
-- ✅ Section sidebar sticky avec CTA
-- ✅ Copie du code promo en un clic
-- ✅ Firms similaires en bas de page
+### 3. **Smart Alerts** (Anticipation)
+- "You've used 50% of daily drawdown"
+- "Close positions before weekend - no holding allowed"
+- "News event in 30 minutes - trading restricted"
 
-### 4. **QuickCompareWidget.tsx** - Widgets pour la homepage
-- ✅ Widget Quick Compare avec catégories
-- ✅ HeroStats bar component
-- ✅ FeatureComparisonTable component
-- ✅ TradingStyleCards component
+### 4. **Hidden Rules & Traps** (Clarté mentale)
+- Common mistakes per prop firm
+- Unwritten rules that cause breaches
+- Pro tips from experienced traders
 
 ---
 
-## 🔧 Instructions d'installation
+## 📁 Files Structure
 
-### Étape 1: Mettre à jour la base de données Supabase
-
-1. Va sur https://supabase.com/dashboard
-2. Sélectionne ton projet PropFirmScanner
-3. Va dans **SQL Editor**
-4. Copie-colle le contenu de `UPDATE_PROPFIRMS_2025.sql`
-5. Clique sur **Run**
-
-⚠️ **Important**: Fais un backup avant d'exécuter le SQL !
-
-```sql
--- Vérifier les données après update
-SELECT name, slug, trustpilot_rating, profit_split, max_profit_split, trust_status 
-FROM prop_firms 
-WHERE trust_status = 'verified' 
-ORDER BY trustpilot_rating DESC NULLS LAST
-LIMIT 20;
+```
+propfirmscanner-dashboard/
+├── app/
+│   └── dashboard/
+│       ├── page.tsx                    # Main dashboard
+│       ├── simulate/
+│       │   └── page.tsx               # Trade simulator
+│       ├── accounts/
+│       │   └── new/
+│       │       └── page.tsx           # Add account form
+│       └── rules/
+│           └── page.tsx               # Hidden rules database
+└── database/
+    └── schema.sql                     # Supabase schema
 ```
 
-### Étape 2: Copier les composants React
+---
+
+## 🔧 Installation
+
+### Step 1: Copy Dashboard Files
 
 ```bash
-# Dans ton répertoire propfirmscanner-landing
+# Create dashboard directory
+mkdir -p app/dashboard/simulate
+mkdir -p app/dashboard/accounts/new
+mkdir -p app/dashboard/rules
 
-# 1. Remplacer ComparePageClient.tsx
-cp ComparePageClient.tsx app/compare/ComparePageClient.tsx
-
-# 2. Remplacer PropFirmPageClient.tsx  
-cp PropFirmPageClient.tsx app/prop-firm/[slug]/PropFirmPageClient.tsx
-
-# 3. Ajouter le nouveau widget
-cp QuickCompareWidget.tsx components/QuickCompareWidget.tsx
+# Copy files
+cp dashboard/app/dashboard/page.tsx app/dashboard/
+cp dashboard/app/dashboard/simulate/page.tsx app/dashboard/simulate/
+cp dashboard/app/dashboard/accounts/new/page.tsx app/dashboard/accounts/new/
+cp dashboard/app/dashboard/rules/page.tsx app/dashboard/rules/
 ```
 
-### Étape 3: Mettre à jour les types TypeScript
+### Step 2: Setup Supabase Database
 
-Ajoute ces nouveaux champs dans ton type PropFirm (lib/types.ts ou similaire):
+1. Go to **Supabase** → **SQL Editor**
+2. Copy the contents of `database/schema.sql`
+3. Click **Run**
 
-```typescript
-interface PropFirm {
-  // Existing fields...
-  
-  // New fields
-  year_founded?: number
-  headquarters?: string
-  max_profit_split?: number
-  payout_frequency?: string
-  payout_methods?: string[]
-  min_trading_days?: number
-  time_limit?: string
-  drawdown_type?: string
-  leverage_forex?: string
-  consistency_rule?: string
-  scaling_max?: string
-  fee_refund?: boolean
-  special_features?: string[]
-  discount_code?: string
-  discount_percent?: number
-  assets?: string[]
-  challenge_types?: string[]
-  broker_partner?: string
-  propfirmmatch_rating?: number
-  is_futures?: boolean
-}
-```
+This creates:
+- `user_prop_accounts` - User's tracked accounts
+- `pnl_history` - Daily P&L tracking
+- `user_alerts` - Alert history
+- `user_preferences` - User settings
+- `simulation_logs` - Trade simulation history
 
-### Étape 4: Utiliser le QuickCompareWidget sur la homepage
+### Step 3: Add Navigation Link
+
+In your navbar or layout:
 
 ```tsx
-// app/page.tsx
-import QuickCompareWidget, { 
-  HeroStats, 
-  TradingStyleCards,
-  FeatureComparisonTable 
-} from '@/components/QuickCompareWidget'
+<Link href="/dashboard">
+  Dashboard
+</Link>
+```
 
-export default async function HomePage() {
-  const { data: firms } = await supabase
-    .from('prop_firms')
-    .select('*')
-    .eq('trust_status', 'verified')
-    .order('trustpilot_rating', { ascending: false })
+### Step 4: Protect Dashboard Routes
+
+Create `app/dashboard/layout.tsx`:
+
+```tsx
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
+
+export default async function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  const supabase = createServerComponentClient({ cookies })
+  const { data: { session } } = await supabase.auth.getSession()
   
-  return (
-    <main>
-      {/* Hero Section */}
-      <section className="pt-24 pb-12 px-4">
-        <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-5xl font-bold text-white mb-6">
-            Find Your Perfect <span className="text-emerald-400">Prop Firm</span>
-          </h1>
-          <p className="text-xl text-gray-400 mb-8">
-            Compare {firms.length}+ verified prop firms. Updated December 2025.
-          </p>
-          <HeroStats totalFirms={firms.length} avgRating={4.3} />
-        </div>
-      </section>
-      
-      {/* Quick Compare Widget */}
-      <QuickCompareWidget firms={firms} />
-      
-      {/* Trading Style Cards */}
-      <TradingStyleCards />
-      
-      {/* Feature Comparison Table */}
-      <FeatureComparisonTable firms={firms} />
-    </main>
-  )
+  if (!session) {
+    redirect('/auth/login?redirect=/dashboard')
+  }
+  
+  return <>{children}</>
 }
 ```
 
-### Étape 5: Déployer
-
-```bash
-git add .
-git commit -m "Major update: 2025 data + improved UX"
-git push origin main
-```
-
 ---
 
-## 📊 Données corrigées pour les principales prop firms
+## 💰 Monetization (Freemium Model)
 
-| Prop Firm | Ancienne donnée | Nouvelle donnée |
-|-----------|-----------------|-----------------|
-| FTMO | Split 80% | Split 80-90%, Fee refund ✓ |
-| FundedNext | Payout bi-weekly | 24h Guarantee, $4M scaling |
-| The5ers | - | 100% split possible, No min days |
-| E8 Markets | - | Customizable drawdown, Add-ons |
-| My Funded Futures | - | 100% first $10K, Daily payouts |
-| Topstep | - | 100% first $10K, Free monthly reset |
-| Apex | - | 100% first $25K, 90% OFF promos |
-| Blueberry | - | ASIC broker-backed, Trade2Earn |
-| BrightFunded | - | Unlimited scaling, 100% split |
-| AquaFunded | - | AQUA MAN drops, $4M max |
+### Free Tier
+- ✅ 3 accounts max
+- ✅ 5 simulations/day
+- ✅ Basic alerts
+- ✅ Hidden rules access
 
----
+### Pro Tier ($9-15/month)
+- ✅ Unlimited accounts
+- ✅ Unlimited simulations
+- ✅ Email alerts
+- ✅ Advanced analytics
+- ✅ P&L history tracking
+- ✅ Priority support
 
-## 🎨 Améliorations UX/UI
+### Implementation
 
-### Avant vs Après
-
-| Aspect | Avant | Après |
-|--------|-------|-------|
-| Modes d'affichage | 1 (Grid) | 3 (Grid, List, Table) |
-| Filtres | Basiques | Avancés + Prix slider |
-| Cartes prop firms | Fixes | Expandables |
-| Page détail | Basique | Onglets + Verdict score |
-| Mobile | Passable | Optimisé |
-| Codes promo | Texte | Copy-to-clipboard |
-| Comparaison | - | Table side-by-side |
-
-### Nouvelles fonctionnalités
-- ✅ Score de verdict automatique (0-100)
-- ✅ Pros/Cons générés dynamiquement  
-- ✅ Catégories quick-filter (Best Rated, Cheapest, High Split, etc.)
-- ✅ Badge de discount visible
-- ✅ Trust status badges (Verified, New, Under Review, Avoid)
-- ✅ Toggle pour afficher uniquement les firms vérifiées
-- ✅ Statistiques en temps réel (total firms, avg rating, etc.)
-
----
-
-## 🔍 Requêtes Supabase utiles
+Create a `subscriptions` table:
 
 ```sql
--- Top 10 rated firms
-SELECT name, trustpilot_rating, profit_split, max_profit_split 
-FROM prop_firms 
-WHERE trust_status = 'verified' 
-ORDER BY trustpilot_rating DESC 
-LIMIT 10;
+CREATE TABLE subscriptions (
+  user_id UUID PRIMARY KEY REFERENCES auth.users(id),
+  plan TEXT DEFAULT 'free' CHECK (plan IN ('free', 'pro')),
+  stripe_customer_id TEXT,
+  stripe_subscription_id TEXT,
+  current_period_end TIMESTAMP WITH TIME ZONE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
 
--- Futures only
-SELECT name, trustpilot_rating, min_price 
-FROM prop_firms 
-WHERE is_futures = true AND trust_status = 'verified';
+Check limits in components:
 
--- Firms with discounts
-SELECT name, discount_code, discount_percent 
-FROM prop_firms 
-WHERE discount_percent IS NOT NULL 
-ORDER BY discount_percent DESC;
+```tsx
+const { data: subscription } = await supabase
+  .from('subscriptions')
+  .select('plan')
+  .eq('user_id', user.id)
+  .single()
 
--- Cheapest entry
-SELECT name, min_price, profit_split 
-FROM prop_firms 
-WHERE trust_status = 'verified' 
-ORDER BY min_price ASC 
-LIMIT 10;
-
--- 100% profit split potential
-SELECT name, profit_split, max_profit_split, scaling_max 
-FROM prop_firms 
-WHERE max_profit_split = 100 AND trust_status = 'verified';
+const isPro = subscription?.plan === 'pro'
+const accountLimit = isPro ? Infinity : 3
+const simulationLimit = isPro ? Infinity : 5
 ```
 
 ---
 
-## 📱 Prochaines étapes suggérées
+## 🔌 Future Integrations (V2)
 
-1. **Indexation Google** - Soumettre le sitemap mis à jour
-2. **Pages VS supplémentaires** - Créer plus de comparaisons directes
-3. **Blog articles** - "Best Futures Prop Firms 2025", "Prop Firms with 100% Profit Split"
-4. **Affiliate tracking** - Configurer pour les nouvelles firms
-5. **Email automation** - Activer Mailchimp quand 50+ abonnés
+### Optional API Connections
+- **Rithmic** (futures) - Auto-sync P&L
+- **cTrader** - Auto-sync positions
+- **MetaAPI** (MT4/MT5) - Auto-sync trades
 
----
+These are NOT required for V1. Manual entry works perfectly.
 
-## ❓ Support
-
-Si tu as des questions ou problèmes:
-1. Vérifie que le SQL s'est exécuté sans erreur
-2. Vérifie les types TypeScript
-3. Regarde les logs Vercel pour les erreurs de build
+### Webhook Alerts
+- Telegram notifications
+- Discord alerts
+- SMS for critical warnings
 
 ---
 
-**Dernière mise à jour**: 28 décembre 2025
-**Version**: 2.0.0
+## 📊 Database Queries
+
+### Get user's accounts with health status
+
+```sql
+SELECT 
+  a.*,
+  calculate_account_health(a.id) as health
+FROM user_prop_accounts a
+WHERE a.user_id = auth.uid()
+ORDER BY a.created_at DESC;
+```
+
+### Get accounts at risk
+
+```sql
+SELECT * FROM user_prop_accounts
+WHERE user_id = auth.uid()
+AND (
+  ABS(LEAST(0, daily_pnl)) / (account_size * daily_dd_limit / 100) > 0.5
+  OR
+  (starting_balance - current_balance) / (account_size * max_dd_limit / 100) > 0.5
+);
+```
+
+### Get daily P&L history
+
+```sql
+SELECT * FROM pnl_history
+WHERE account_id = 'xxx'
+ORDER BY date DESC
+LIMIT 30;
+```
+
+---
+
+## 🎨 Customization
+
+### Add New Prop Firm Presets
+
+In `app/dashboard/accounts/new/page.tsx`, add to `propFirmPresets`:
+
+```tsx
+{
+  slug: 'new-firm',
+  name: 'New Firm',
+  programs: [
+    { 
+      name: 'Program Name $100K', 
+      account_size: 100000, 
+      daily_dd: 5, 
+      max_dd: 10, 
+      profit_target: 10, 
+      min_days: 5 
+    },
+  ],
+  max_dd_type: 'static',
+  allows_news_trading: true,
+  allows_weekend_holding: true,
+  allows_ea: true,
+  allows_scaling: false,
+}
+```
+
+### Add New Hidden Rules
+
+In `app/dashboard/rules/page.tsx`, add to `propFirmRules`:
+
+```tsx
+{
+  slug: 'firm-slug',
+  name: 'Firm Name',
+  criticalRules: [
+    {
+      title: 'Rule Title',
+      description: 'Rule description',
+      severity: 'high', // high, medium, low
+      category: 'news', // news, risk, trading, profit
+    },
+  ],
+  commonMistakes: ['Mistake 1', 'Mistake 2'],
+  tips: ['Tip 1', 'Tip 2'],
+}
+```
+
+---
+
+## 📈 Marketing Copy
+
+### Taglines
+- "The control center for prop firm traders"
+- "Know your limits before you trade"
+- "Stop losing challenges to rules you didn't know"
+- "Track. Simulate. Protect."
+
+### Value Propositions
+1. **Centralisation** - All accounts in one dashboard
+2. **Sécurité** - Know your limits in real-time  
+3. **Anticipation** - Simulate before you trade
+4. **Clarté mentale** - No more mental calculations
+
+---
+
+## 🚀 Launch Checklist
+
+- [ ] Deploy dashboard pages
+- [ ] Run database schema
+- [ ] Add navigation links
+- [ ] Setup authentication protection
+- [ ] Test with mock data
+- [ ] Connect to real Supabase
+- [ ] Add Stripe for Pro tier
+- [ ] Announce to existing users
+
+---
+
+## 📞 Support
+
+Questions? Issues? 
+- Check the hidden rules database
+- Use the trade simulator
+- Contact support
+
+---
+
+**Built with ❤️ for prop firm traders**
