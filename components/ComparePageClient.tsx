@@ -369,7 +369,7 @@ const FilterSection = ({
   // Calculate available options from data
   const platforms = useMemo(() => {
     const all = firms.flatMap(f => f.platforms || [])
-    return [...new Set(all)].sort()
+    return Array.from(new Set(all)).sort()
   }, [firms])
   
   return (
