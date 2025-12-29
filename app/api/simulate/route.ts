@@ -195,25 +195,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<SimulateR
     const maxRiskBeforeViolation = calculateMaxRiskBeforeViolation(accountState, ruleSet);
 
     // -------------------------------------------------------------------------
-    // 6. Optionally log simulation (for analytics)
-    // -------------------------------------------------------------------------
-    
-    // Fire and forget - don't await
-    supabase
-      .from('simulation_logs')
-      .insert({
-        user_id: user.id,
-        account_id: account_id,
-        risk_usd: risk_usd,
-        classification: simulation.classification,
-        daily_buffer_usd: simulation.metrics.daily_buffer_usd,
-        max_buffer_usd: simulation.metrics.max_buffer_usd,
-      })
-      .then(() => {})
-      .catch(() => {}); // Ignore errors
-
-    // -------------------------------------------------------------------------
-    // 7. Return response
+    // 6. Return response
     // -------------------------------------------------------------------------
     
     return NextResponse.json({
@@ -241,65 +223,3 @@ export async function POST(request: NextRequest): Promise<NextResponse<SimulateR
     );
   }
 }
-
-// =============================================================================
-// ALTERNATIVE: SERVER ACTION VERSION
-// =============================================================================
-
-/**
- * Server Action for trade simulation
- * Use this if you prefer Server Actions over API routes
- * 
- * Usage in component:
- * const result = await simulateTradeAction(accountId, riskUsd);
- */
-/*
-'use server'
-
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
-
-export async function simulateTradeAction(
-  accountId: string,
-  riskUsd: number
-): Promise<SimulateResponse> {
-  const supabase = createServerComponentClient({ cookies });
-  
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    return { success: false, error: 'Unauthorized' };
-  }
-
-  const { data: dbAccount } = await supabase
-    .from('user_accounts')
-    .select('*')
-    .eq('id', accountId)
-    .eq('user_id', user.id)
-    .single();
-
-  if (!dbAccount) {
-    return { success: false, error: 'Account not found' };
-  }
-
-  const accountState = dbToAccountState(dbAccount);
-  const ruleSet = dbToRuleSet(dbAccount);
-  const simulation = simulateTrade(accountState, ruleSet, riskUsd);
-
-  return {
-    success: true,
-    data: {
-      simulation,
-      account: {
-        id: dbAccount.id,
-        prop_firm: dbAccount.prop_firm,
-        program: dbAccount.program,
-        current_balance_usd: dbAccount.current_balance,
-      },
-      recommendations: {
-        max_safe_risk: calculateMaxSafeRisk(accountState, ruleSet),
-        max_risk_before_violation: calculateMaxRiskBeforeViolation(accountState, ruleSet),
-      },
-    },
-  };
-}
-*/
