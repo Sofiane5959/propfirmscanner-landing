@@ -18,10 +18,8 @@ interface UserAccount {
   max_dd_type: 'static' | 'trailing' | 'eod_trailing'
 }
 
-type SimStatus = 'safe' | 'risky' | 'violation'
-
 interface SimResult {
-  status: SimStatus
+  status: 'safe' | 'risky' | 'violation'
   message: string
   details: string[]
 }
@@ -66,6 +64,77 @@ const mockAccounts: UserAccount[] = [
   },
 ]
 
+function simulateTrade(account: UserAccount, risk: number): SimResult {
+  const details: string[] = []
+  let isViolation = false
+  let isRisky = false
+  let message = ''
+  
+  // Calculate daily DD impact
+  if (account.daily_dd_percent > 0) {
+    const dailyDDTotal = account.account_size * (account.daily_dd_percent / 100)
+    const dailyDDUsed = Math.abs(Math.min(0, account.today_pnl))
+    const dailyDDAfter = dailyDDUsed + risk
+    const dailyDDPercentAfter = (dailyDDAfter / dailyDDTotal) * 100
+    
+    if (dailyDDAfter >= dailyDDTotal) {
+      isViolation = true
+      message = `This trade would BREACH your daily drawdown limit on ${account.prop_firm}.`
+      details.push(`Daily DD: ${dailyDDPercentAfter.toFixed(0)}% used (limit is 100%)`)
+    } else if (dailyDDPercentAfter > 80) {
+      isRisky = true
+      if (!message) message = `This trade would use ${dailyDDPercentAfter.toFixed(0)}% of your daily drawdown on ${account.prop_firm}.`
+      details.push(`Only $${(dailyDDTotal - dailyDDAfter).toFixed(0)} daily buffer remaining`)
+    } else if (dailyDDPercentAfter > 50) {
+      isRisky = true
+      details.push(`Daily DD: ${dailyDDPercentAfter.toFixed(0)}% would be used`)
+    } else {
+      details.push(`Daily DD: ${dailyDDPercentAfter.toFixed(0)}% - OK`)
+    }
+  }
+  
+  // Calculate max DD impact
+  const maxDDTotal = account.account_size * (account.max_dd_percent / 100)
+  let floor: number
+  
+  if (account.max_dd_type === 'static') {
+    floor = account.start_balance - maxDDTotal
+  } else {
+    const highestBalance = Math.max(account.start_balance, account.current_balance)
+    floor = highestBalance - maxDDTotal
+  }
+  
+  const balanceAfterLoss = account.current_balance - risk
+  const maxDDUsedAfter = ((account.start_balance - balanceAfterLoss) / maxDDTotal) * 100
+  
+  if (balanceAfterLoss <= floor) {
+    isViolation = true
+    message = `This trade would BREACH your max drawdown on ${account.prop_firm}.`
+    details.push(`Balance after loss: $${balanceAfterLoss.toFixed(0)} (floor: $${floor.toFixed(0)})`)
+  } else if (maxDDUsedAfter > 80) {
+    if (!isViolation) isRisky = true
+    if (!message) message = `This trade would bring you to ${maxDDUsedAfter.toFixed(0)}% of max drawdown on ${account.prop_firm}.`
+    details.push(`Only $${(balanceAfterLoss - floor).toFixed(0)} max DD buffer remaining`)
+  } else {
+    details.push(`Max DD: ${Math.max(0, maxDDUsedAfter).toFixed(0)}% would be used`)
+  }
+  
+  // Determine final status
+  let status: 'safe' | 'risky' | 'violation' = 'safe'
+  if (isViolation) {
+    status = 'violation'
+  } else if (isRisky) {
+    status = 'risky'
+  }
+  
+  // Default safe message
+  if (status === 'safe' && !message) {
+    message = `This trade is within your limits on ${account.prop_firm}.`
+  }
+  
+  return { status, message, details }
+}
+
 export default function SimulatePage() {
   const [selectedAccountId, setSelectedAccountId] = useState('')
   const [riskUsd, setRiskUsd] = useState('')
@@ -73,71 +142,14 @@ export default function SimulatePage() {
   
   const account = mockAccounts.find(a => a.id === selectedAccountId)
   
-  const simulate = () => {
+  const handleSimulate = () => {
     if (!account || !riskUsd) return
     
     const risk = parseFloat(riskUsd)
     if (isNaN(risk) || risk <= 0) return
     
-    const details: string[] = []
-    let status: SimStatus = 'safe'
-    let message = ''
-    
-    // Calculate daily DD impact
-    if (account.daily_dd_percent > 0) {
-      const dailyDDTotal = account.account_size * (account.daily_dd_percent / 100)
-      const dailyDDUsed = Math.abs(Math.min(0, account.today_pnl))
-      const dailyDDAfter = dailyDDUsed + risk
-      const dailyDDPercentAfter = (dailyDDAfter / dailyDDTotal) * 100
-      
-      if (dailyDDAfter >= dailyDDTotal) {
-        status = 'violation'
-        message = `This trade would BREACH your daily drawdown limit on ${account.prop_firm}.`
-        details.push(`Daily DD: ${dailyDDPercentAfter.toFixed(0)}% used (limit is 100%)`)
-      } else if (dailyDDPercentAfter > 80) {
-        if (status !== 'violation') status = 'risky'
-        if (!message) message = `This trade would use ${dailyDDPercentAfter.toFixed(0)}% of your daily drawdown on ${account.prop_firm}.`
-        details.push(`Only $${(dailyDDTotal - dailyDDAfter).toFixed(0)} daily buffer remaining`)
-      } else if (dailyDDPercentAfter > 50) {
-        if (status === 'safe') status = 'risky'
-        details.push(`Daily DD: ${dailyDDPercentAfter.toFixed(0)}% would be used`)
-      } else {
-        details.push(`Daily DD: ${dailyDDPercentAfter.toFixed(0)}% - OK`)
-      }
-    }
-    
-    // Calculate max DD impact
-    const maxDDTotal = account.account_size * (account.max_dd_percent / 100)
-    let floor: number
-    
-    if (account.max_dd_type === 'static') {
-      floor = account.start_balance - maxDDTotal
-    } else {
-      const highestBalance = Math.max(account.start_balance, account.current_balance)
-      floor = highestBalance - maxDDTotal
-    }
-    
-    const balanceAfterLoss = account.current_balance - risk
-    const maxDDUsedAfter = ((account.start_balance - balanceAfterLoss) / maxDDTotal) * 100
-    
-    if (balanceAfterLoss <= floor) {
-      status = 'violation'
-      message = `This trade would BREACH your max drawdown on ${account.prop_firm}.`
-      details.push(`Balance after loss: $${balanceAfterLoss.toFixed(0)} (floor: $${floor.toFixed(0)})`)
-    } else if (maxDDUsedAfter > 80) {
-      if (status !== 'violation') status = 'risky'
-      if (!message) message = `This trade would bring you to ${maxDDUsedAfter.toFixed(0)}% of max drawdown on ${account.prop_firm}.`
-      details.push(`Only $${(balanceAfterLoss - floor).toFixed(0)} max DD buffer remaining`)
-    } else {
-      details.push(`Max DD: ${Math.max(0, maxDDUsedAfter).toFixed(0)}% would be used`)
-    }
-    
-    // Default safe message
-    if (status === 'safe' && !message) {
-      message = `This trade is within your limits on ${account.prop_firm}.`
-    }
-    
-    setResult({ status, message, details })
+    const simResult = simulateTrade(account, risk)
+    setResult(simResult)
   }
   
   return (
@@ -233,7 +245,7 @@ export default function SimulatePage() {
           
           {/* Simulate Button */}
           <button
-            onClick={simulate}
+            onClick={handleSimulate}
             disabled={!selectedAccountId || !riskUsd}
             className="w-full py-4 bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
           >
@@ -295,4 +307,3 @@ export default function SimulatePage() {
     </div>
   )
 }
-
