@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
-import { Menu, X, BookOpen, BarChart3, Tag, FileText, Calculator, Shield, ChevronDown, Wrench } from 'lucide-react'
+import { Menu, X, BookOpen, BarChart3, Tag, FileText, Calculator, Shield, ChevronDown, Wrench, LayoutDashboard } from 'lucide-react'
 
 const navigation = [
   { name: 'Compare', href: '/compare', icon: BarChart3 },
@@ -34,6 +34,7 @@ export function Navbar() {
   }, [])
 
   const isToolsActive = pathname.startsWith('/tools')
+  const isDashboardActive = pathname.startsWith('/dashboard')
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-white/10">
@@ -115,6 +116,20 @@ export function Navbar() {
               Free Guide
               <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded">FREE</span>
             </Link>
+
+            {/* Dashboard Link - NEW */}
+            <Link
+              href="/dashboard"
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all
+                ${isDashboardActive 
+                  ? 'bg-purple-500/20 text-purple-400' 
+                  : 'text-gray-300 hover:text-white hover:bg-white/5'
+                }`}
+            >
+              <LayoutDashboard className="w-4 h-4" />
+              Dashboard
+              <span className="px-1.5 py-0.5 bg-purple-500 text-white text-[10px] font-bold rounded">NEW</span>
+            </Link>
           </div>
 
           {/* Auth Buttons */}
@@ -191,6 +206,21 @@ export function Navbar() {
               <BookOpen className="w-5 h-5" />
               Free Guide
               <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded ml-auto">FREE</span>
+            </Link>
+
+            {/* Dashboard Link - Mobile - NEW */}
+            <Link
+              href="/dashboard"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all
+                ${isDashboardActive 
+                  ? 'bg-purple-500/20 text-purple-400' 
+                  : 'bg-purple-500/10 text-purple-400'
+                }`}
+            >
+              <LayoutDashboard className="w-5 h-5" />
+              Dashboard
+              <span className="px-1.5 py-0.5 bg-purple-500 text-white text-xs rounded ml-auto">NEW</span>
             </Link>
 
             <div className="pt-4 border-t border-gray-800 space-y-2">
