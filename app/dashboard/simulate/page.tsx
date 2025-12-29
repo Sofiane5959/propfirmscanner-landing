@@ -18,6 +18,14 @@ interface UserAccount {
   max_dd_type: 'static' | 'trailing' | 'eod_trailing'
 }
 
+type SimStatus = 'safe' | 'risky' | 'violation'
+
+interface SimResult {
+  status: SimStatus
+  message: string
+  details: string[]
+}
+
 // Mock accounts
 const mockAccounts: UserAccount[] = [
   {
@@ -58,12 +66,6 @@ const mockAccounts: UserAccount[] = [
   },
 ]
 
-type SimResult = {
-  status: 'safe' | 'risky' | 'violation'
-  message: string
-  details: string[]
-}
-
 export default function SimulatePage() {
   const [selectedAccountId, setSelectedAccountId] = useState('')
   const [riskUsd, setRiskUsd] = useState('')
@@ -78,7 +80,7 @@ export default function SimulatePage() {
     if (isNaN(risk) || risk <= 0) return
     
     const details: string[] = []
-    let status: 'safe' | 'risky' | 'violation' = 'safe'
+    let status: SimStatus = 'safe'
     let message = ''
     
     // Calculate daily DD impact
@@ -191,7 +193,7 @@ export default function SimulatePage() {
                   <p className="text-white font-medium">${account.current_balance.toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-gray-500">Today's P&L</p>
+                  <p className="text-gray-500">Today&apos;s P&amp;L</p>
                   <p className={account.today_pnl >= 0 ? 'text-emerald-400 font-medium' : 'text-red-400 font-medium'}>
                     {account.today_pnl >= 0 ? '+' : ''}${account.today_pnl.toLocaleString()}
                   </p>
@@ -293,3 +295,4 @@ export default function SimulatePage() {
     </div>
   )
 }
+
