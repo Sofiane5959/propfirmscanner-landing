@@ -162,6 +162,24 @@ export async function POST(request: NextRequest): Promise<NextResponse<SimulateR
     }
 
     // -------------------------------------------------------------------------
+    // 2.5 Check simulation limits (PAYWALL)
+    // -------------------------------------------------------------------------
+    
+    const { data: canSim } = await supabase
+      .rpc('can_simulate', { p_user_id: user.id });
+    
+    if (!canSim) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'Daily simulation limit reached. Upgrade to Pro for unlimited simulations.',
+          paywall: true 
+        },
+        { status: 403 }
+      );
+    }
+
+    // -------------------------------------------------------------------------
     // 3. Fetch account from database
     // -------------------------------------------------------------------------
     
@@ -193,6 +211,12 @@ export async function POST(request: NextRequest): Promise<NextResponse<SimulateR
     const simulation = simulateTrade(accountState, ruleSet, risk_usd);
     const maxSafeRisk = calculateMaxSafeRisk(accountState, ruleSet);
     const maxRiskBeforeViolation = calculateMaxRiskBeforeViolation(accountState, ruleSet);
+
+    // -------------------------------------------------------------------------
+    // 5.5 Increment simulation count (PAYWALL)
+    // -------------------------------------------------------------------------
+    
+    await supabase.rpc('increment_simulations', { p_user_id: user.id });
 
     // -------------------------------------------------------------------------
     // 6. Return response
