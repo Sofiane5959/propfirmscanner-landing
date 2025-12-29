@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Plus, ChevronDown, Check } from 'lucide-react'
+import { ArrowLeft, Plus, ChevronDown } from 'lucide-react'
 
 // Prop firm data with programs
 const propFirms = [
@@ -11,74 +11,74 @@ const propFirms = [
     slug: 'ftmo',
     name: 'FTMO',
     programs: [
-      { name: 'Standard $10K', size: 10000, daily_dd: 5, max_dd: 10, type: 'static', news: false, weekend: true },
-      { name: 'Standard $25K', size: 25000, daily_dd: 5, max_dd: 10, type: 'static', news: false, weekend: true },
-      { name: 'Standard $50K', size: 50000, daily_dd: 5, max_dd: 10, type: 'static', news: false, weekend: true },
-      { name: 'Standard $100K', size: 100000, daily_dd: 5, max_dd: 10, type: 'static', news: false, weekend: true },
-      { name: 'Standard $200K', size: 200000, daily_dd: 5, max_dd: 10, type: 'static', news: false, weekend: true },
+      { name: 'Standard $10K', size: 10000, daily_dd: 5, max_dd: 10, max_dd_type: 'static', news: false, weekend: true },
+      { name: 'Standard $25K', size: 25000, daily_dd: 5, max_dd: 10, max_dd_type: 'static', news: false, weekend: true },
+      { name: 'Standard $50K', size: 50000, daily_dd: 5, max_dd: 10, max_dd_type: 'static', news: false, weekend: true },
+      { name: 'Standard $100K', size: 100000, daily_dd: 5, max_dd: 10, max_dd_type: 'static', news: false, weekend: true },
+      { name: 'Standard $200K', size: 200000, daily_dd: 5, max_dd: 10, max_dd_type: 'static', news: false, weekend: true },
     ],
   },
   {
     slug: 'fundednext',
     name: 'FundedNext',
     programs: [
-      { name: 'Stellar 2-Step $6K', size: 6000, daily_dd: 5, max_dd: 10, type: 'static', news: true, weekend: true },
-      { name: 'Stellar 2-Step $15K', size: 15000, daily_dd: 5, max_dd: 10, type: 'static', news: true, weekend: true },
-      { name: 'Stellar 2-Step $25K', size: 25000, daily_dd: 5, max_dd: 10, type: 'static', news: true, weekend: true },
-      { name: 'Stellar 2-Step $50K', size: 50000, daily_dd: 5, max_dd: 10, type: 'static', news: true, weekend: true },
-      { name: 'Stellar 2-Step $100K', size: 100000, daily_dd: 5, max_dd: 10, type: 'static', news: true, weekend: true },
-      { name: 'Stellar 1-Step $25K', size: 25000, daily_dd: 3, max_dd: 6, type: 'static', news: true, weekend: true },
-      { name: 'Stellar 1-Step $50K', size: 50000, daily_dd: 3, max_dd: 6, type: 'static', news: true, weekend: true },
-      { name: 'Stellar 1-Step $100K', size: 100000, daily_dd: 3, max_dd: 6, type: 'static', news: true, weekend: true },
+      { name: 'Stellar 2-Step $6K', size: 6000, daily_dd: 5, max_dd: 10, max_dd_type: 'static', news: true, weekend: true },
+      { name: 'Stellar 2-Step $15K', size: 15000, daily_dd: 5, max_dd: 10, max_dd_type: 'static', news: true, weekend: true },
+      { name: 'Stellar 2-Step $25K', size: 25000, daily_dd: 5, max_dd: 10, max_dd_type: 'static', news: true, weekend: true },
+      { name: 'Stellar 2-Step $50K', size: 50000, daily_dd: 5, max_dd: 10, max_dd_type: 'static', news: true, weekend: true },
+      { name: 'Stellar 2-Step $100K', size: 100000, daily_dd: 5, max_dd: 10, max_dd_type: 'static', news: true, weekend: true },
+      { name: 'Stellar 1-Step $25K', size: 25000, daily_dd: 3, max_dd: 6, max_dd_type: 'static', news: true, weekend: true },
+      { name: 'Stellar 1-Step $50K', size: 50000, daily_dd: 3, max_dd: 6, max_dd_type: 'static', news: true, weekend: true },
+      { name: 'Stellar 1-Step $100K', size: 100000, daily_dd: 3, max_dd: 6, max_dd_type: 'static', news: true, weekend: true },
     ],
   },
   {
     slug: 'the5ers',
     name: 'The5ers',
     programs: [
-      { name: 'High Stakes $6K', size: 6000, daily_dd: 3, max_dd: 6, type: 'static', news: true, weekend: true },
-      { name: 'High Stakes $20K', size: 20000, daily_dd: 3, max_dd: 6, type: 'static', news: true, weekend: true },
-      { name: 'High Stakes $60K', size: 60000, daily_dd: 3, max_dd: 6, type: 'static', news: true, weekend: true },
-      { name: 'High Stakes $100K', size: 100000, daily_dd: 3, max_dd: 6, type: 'static', news: true, weekend: true },
+      { name: 'High Stakes $6K', size: 6000, daily_dd: 3, max_dd: 6, max_dd_type: 'static', news: true, weekend: true },
+      { name: 'High Stakes $20K', size: 20000, daily_dd: 3, max_dd: 6, max_dd_type: 'static', news: true, weekend: true },
+      { name: 'High Stakes $60K', size: 60000, daily_dd: 3, max_dd: 6, max_dd_type: 'static', news: true, weekend: true },
+      { name: 'High Stakes $100K', size: 100000, daily_dd: 3, max_dd: 6, max_dd_type: 'static', news: true, weekend: true },
     ],
   },
   {
     slug: 'my-funded-futures',
     name: 'My Funded Futures',
     programs: [
-      { name: 'Starter $50K', size: 50000, daily_dd: 0, max_dd: 4, type: 'eod_trailing', news: true, weekend: false },
-      { name: 'Starter $100K', size: 100000, daily_dd: 0, max_dd: 4.5, type: 'eod_trailing', news: true, weekend: false },
-      { name: 'Starter $150K', size: 150000, daily_dd: 0, max_dd: 4.5, type: 'eod_trailing', news: true, weekend: false },
+      { name: 'Starter $50K', size: 50000, daily_dd: 0, max_dd: 4, max_dd_type: 'eod_trailing', news: true, weekend: false },
+      { name: 'Starter $100K', size: 100000, daily_dd: 0, max_dd: 4.5, max_dd_type: 'eod_trailing', news: true, weekend: false },
+      { name: 'Starter $150K', size: 150000, daily_dd: 0, max_dd: 4.5, max_dd_type: 'eod_trailing', news: true, weekend: false },
     ],
   },
   {
     slug: 'topstep',
     name: 'Topstep',
     programs: [
-      { name: 'Trading Combine $50K', size: 50000, daily_dd: 0, max_dd: 3, type: 'eod_trailing', news: true, weekend: false },
-      { name: 'Trading Combine $100K', size: 100000, daily_dd: 0, max_dd: 4, type: 'eod_trailing', news: true, weekend: false },
-      { name: 'Trading Combine $150K', size: 150000, daily_dd: 0, max_dd: 4.5, type: 'eod_trailing', news: true, weekend: false },
+      { name: 'Trading Combine $50K', size: 50000, daily_dd: 0, max_dd: 3, max_dd_type: 'eod_trailing', news: true, weekend: false },
+      { name: 'Trading Combine $100K', size: 100000, daily_dd: 0, max_dd: 4, max_dd_type: 'eod_trailing', news: true, weekend: false },
+      { name: 'Trading Combine $150K', size: 150000, daily_dd: 0, max_dd: 4.5, max_dd_type: 'eod_trailing', news: true, weekend: false },
     ],
   },
   {
     slug: 'apex-trader-funding',
     name: 'Apex Trader Funding',
     programs: [
-      { name: 'Evaluation $25K', size: 25000, daily_dd: 0, max_dd: 3, type: 'trailing', news: true, weekend: false },
-      { name: 'Evaluation $50K', size: 50000, daily_dd: 0, max_dd: 5, type: 'trailing', news: true, weekend: false },
-      { name: 'Evaluation $100K', size: 100000, daily_dd: 0, max_dd: 6, type: 'trailing', news: true, weekend: false },
-      { name: 'Evaluation $150K', size: 150000, daily_dd: 0, max_dd: 9, type: 'trailing', news: true, weekend: false },
-      { name: 'Evaluation $250K', size: 250000, daily_dd: 0, max_dd: 12.5, type: 'trailing', news: true, weekend: false },
+      { name: 'Evaluation $25K', size: 25000, daily_dd: 0, max_dd: 3, max_dd_type: 'trailing', news: true, weekend: false },
+      { name: 'Evaluation $50K', size: 50000, daily_dd: 0, max_dd: 5, max_dd_type: 'trailing', news: true, weekend: false },
+      { name: 'Evaluation $100K', size: 100000, daily_dd: 0, max_dd: 6, max_dd_type: 'trailing', news: true, weekend: false },
+      { name: 'Evaluation $150K', size: 150000, daily_dd: 0, max_dd: 9, max_dd_type: 'trailing', news: true, weekend: false },
+      { name: 'Evaluation $250K', size: 250000, daily_dd: 0, max_dd: 12.5, max_dd_type: 'trailing', news: true, weekend: false },
     ],
   },
   {
     slug: 'e8-markets',
     name: 'E8 Markets',
     programs: [
-      { name: 'E8 Track $25K', size: 25000, daily_dd: 4, max_dd: 8, type: 'static', news: false, weekend: true },
-      { name: 'E8 Track $50K', size: 50000, daily_dd: 4, max_dd: 8, type: 'static', news: false, weekend: true },
-      { name: 'E8 Track $100K', size: 100000, daily_dd: 4, max_dd: 8, type: 'static', news: false, weekend: true },
-      { name: 'E8 Track $250K', size: 250000, daily_dd: 4, max_dd: 8, type: 'static', news: false, weekend: true },
+      { name: 'E8 Track $25K', size: 25000, daily_dd: 4, max_dd: 8, max_dd_type: 'static', news: false, weekend: true },
+      { name: 'E8 Track $50K', size: 50000, daily_dd: 4, max_dd: 8, max_dd_type: 'static', news: false, weekend: true },
+      { name: 'E8 Track $100K', size: 100000, daily_dd: 4, max_dd: 8, max_dd_type: 'static', news: false, weekend: true },
+      { name: 'E8 Track $250K', size: 250000, daily_dd: 4, max_dd: 8, max_dd_type: 'static', news: false, weekend: true },
     ],
   },
 ]
@@ -123,7 +123,7 @@ export default function AddAccountPage() {
       today_pnl: parseFloat(todayPnl) || 0,
       daily_dd_percent: program.daily_dd,
       max_dd_percent: program.max_dd,
-      max_dd_type: program.type,
+      max_dd_type: program.max_dd_type,
       allows_news: program.news,
       allows_weekend: program.weekend,
       start_date: startDate,
@@ -209,7 +209,7 @@ export default function AddAccountPage() {
                 </div>
                 <div>
                   <span className="text-gray-500">Max DD</span>
-                  <p className="text-white font-medium">{program.max_dd}% ({program.type})</p>
+                  <p className="text-white font-medium">{program.max_dd}% ({program.max_dd_type})</p>
                 </div>
                 <div>
                   <span className="text-gray-500">Rules</span>
@@ -286,7 +286,7 @@ export default function AddAccountPage() {
           {/* Today PnL */}
           <div>
             <label className="block text-sm font-medium text-gray-400 mb-2">
-              Today's P&L
+              Today&apos;s P&amp;L
             </label>
             <div className="relative">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">$</span>
