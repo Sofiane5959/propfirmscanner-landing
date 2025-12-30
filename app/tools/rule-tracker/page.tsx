@@ -20,7 +20,7 @@ import { RuleCheckerClient } from './RuleCheckerClient';
 // PROP FIRM RULES DATA (Static - SSR safe)
 // =============================================================================
 
-export const propFirmRulesData = {
+const propFirmRulesData = {
   FTMO: {
     newsTrading: { allowed: false, buffer: 2, note: 'No trades 2 min before/after high-impact news' },
     weekendHolding: { allowed: true, note: 'Weekend holding allowed' },
