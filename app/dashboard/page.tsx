@@ -149,12 +149,14 @@ export default async function DashboardPage() {
 
   // Get warnings for Today's Assistant
   const warnings = sortedAccounts
-    .filter(a => a.health.status !== 'safe')
+    .filter((a): a is AccountWithHealth & { health: { status: 'warning' | 'danger' } } => 
+      a.health.status !== 'safe'
+    )
     .flatMap(a => a.health.messages.map(msg => ({
       accountId: a.id,
       propFirm: a.prop_firm,
       message: msg,
-      status: a.health.status,
+      status: a.health.status as 'warning' | 'danger',
     })))
     .slice(0, 5);
 
