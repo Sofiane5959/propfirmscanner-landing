@@ -188,7 +188,9 @@ export default function RiskCalculatorPage() {
             <div className="mb-4">
               <label className="block text-sm text-gray-400 mb-2 flex items-center gap-2">
                 Pip Value (USD per lot)
-                <Info className="w-4 h-4 text-gray-500" title="Standard lot pip value varies by pair" />
+                <span title="Standard lot pip value varies by pair">
+                  <Info className="w-4 h-4 text-gray-500" />
+                </span>
               </label>
               <input
                 type="number"

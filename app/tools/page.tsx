@@ -99,9 +99,10 @@ export default function RuleTrackerPage() {
     
     // News trading check
     if (tradePlan.isNewsTime && !rules.newsTrading.allowed) {
+      const buffer = 'buffer' in rules.newsTrading ? rules.newsTrading.buffer : 2;
       issues.push({
         type: 'error',
-        message: `${selectedFirm} prohibits trading ${rules.newsTrading.buffer} minutes around high-impact news`,
+        message: `${selectedFirm} prohibits trading ${buffer} minutes around high-impact news`,
       });
     }
 
@@ -115,9 +116,10 @@ export default function RuleTrackerPage() {
 
     // Consistency check
     if (tradePlan.bigProfitDay && rules.consistency.required) {
+      const maxPct = 'maxDayPct' in rules.consistency ? rules.consistency.maxDayPct : 40;
       issues.push({
         type: 'warning',
-        message: `${selectedFirm} has a consistency rule: max ${rules.consistency.maxDayPct}% profit from a single day`,
+        message: `${selectedFirm} has a consistency rule: max ${maxPct}% profit from a single day`,
       });
     }
 
@@ -319,7 +321,7 @@ export default function RuleTrackerPage() {
                     News Trading
                   </span>
                   <span className={rules.newsTrading.allowed ? 'text-emerald-400' : 'text-red-400'}>
-                    {rules.newsTrading.allowed ? 'Allowed' : `${rules.newsTrading.buffer}min buffer`}
+                    {rules.newsTrading.allowed ? 'Allowed' : `${'buffer' in rules.newsTrading ? rules.newsTrading.buffer : 2}min buffer`}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
@@ -337,7 +339,7 @@ export default function RuleTrackerPage() {
                     Consistency Rule
                   </span>
                   <span className={!rules.consistency.required ? 'text-emerald-400' : 'text-yellow-400'}>
-                    {rules.consistency.required ? `Max ${rules.consistency.maxDayPct}%/day` : 'None'}
+                    {rules.consistency.required ? `Max ${'maxDayPct' in rules.consistency ? rules.consistency.maxDayPct : 40}%/day` : 'None'}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
