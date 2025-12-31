@@ -90,31 +90,33 @@ export function TradeSimulator({ account, onClose }: TradeSimulatorProps) {
     setIsSimulating(false);
   };
 
-  const getResultStyle = () => {
-    if (!result) return {};
-    return {
+  const getResultConfig = (classification: 'SAFE' | 'RISKY' | 'VIOLATION') => {
+    const configs = {
       SAFE: {
         bg: 'bg-emerald-500/10',
         border: 'border-emerald-500/30',
         text: 'text-emerald-400',
-        icon: CheckCircle,
       },
       RISKY: {
         bg: 'bg-yellow-500/10',
         border: 'border-yellow-500/30',
         text: 'text-yellow-400',
-        icon: AlertTriangle,
       },
       VIOLATION: {
         bg: 'bg-red-500/10',
         border: 'border-red-500/30',
         text: 'text-red-400',
-        icon: XCircle,
       },
-    }[result.classification];
+    };
+    return configs[classification];
   };
 
-  const resultStyle = getResultStyle();
+  const ResultIcon = ({ classification }: { classification: 'SAFE' | 'RISKY' | 'VIOLATION' }) => {
+    const className = `w-6 h-6 flex-shrink-0 ${getResultConfig(classification).text}`;
+    if (classification === 'SAFE') return <CheckCircle className={className} />;
+    if (classification === 'RISKY') return <AlertTriangle className={className} />;
+    return <XCircle className={className} />;
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -195,12 +197,12 @@ export function TradeSimulator({ account, onClose }: TradeSimulatorProps) {
         </button>
 
         {/* Result — ONLY ONE OF THREE OUTPUTS */}
-        {result && resultStyle && (
-          <div className={`p-4 rounded-lg border ${resultStyle.bg} ${resultStyle.border}`}>
+        {result && (
+          <div className={`p-4 rounded-lg border ${getResultConfig(result.classification).bg} ${getResultConfig(result.classification).border}`}>
             <div className="flex items-start gap-3">
-              <resultStyle.icon className={`w-6 h-6 flex-shrink-0 ${resultStyle.text}`} />
+              <ResultIcon classification={result.classification} />
               <div>
-                <p className={`font-semibold mb-1 ${resultStyle.text}`}>
+                <p className={`font-semibold mb-1 ${getResultConfig(result.classification).text}`}>
                   {result.classification}
                 </p>
                 <p className="text-sm text-gray-300">{result.message}</p>
