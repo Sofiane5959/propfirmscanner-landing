@@ -3,8 +3,9 @@ import { cookies } from 'next/headers';
 import Link from 'next/link';
 import { Zap, Shield } from 'lucide-react';
 
-import { OverviewBar } from '@/components/my-propfirms/OverviewBar';
+import { TodayOverview } from '@/components/my-propfirms/TodayOverview';
 import { AccountCard } from '@/components/my-propfirms/AccountCard';
+import { TradingAssistant } from '@/components/my-propfirms/TradingAssistant';
 import { EmptyState } from '@/components/my-propfirms/EmptyState';
 import { calcAccountHealth } from '@/lib/risk';
 import type { AccountState, RuleSet } from '@/lib/risk';
@@ -101,27 +102,55 @@ function sortByRisk(accounts: AccountWithHealth[]): AccountWithHealth[] {
   return [...accounts].sort((a, b) => priority[a.health.status] - priority[b.health.status]);
 }
 
-function getMainWarning(accounts: AccountWithHealth[]): string | null {
+function getCentralMessage(accounts: AccountWithHealth[]): string {
   const danger = accounts.filter(a => a.health.status === 'danger');
   const warning = accounts.filter(a => a.health.status === 'warning');
+  const safe = accounts.filter(a => a.health.status === 'safe');
   
   if (danger.length > 0) {
-    return danger.length === 1
-      ? `${danger[0].prop_firm} is close to violation. Trade carefully.`
-      : `${danger.length} accounts are close to violation.`;
+    return `Avoid trading ${danger[0].prop_firm} today — daily drawdown almost reached.`;
   }
   
   if (warning.length > 0) {
-    return warning.length === 1
-      ? `${warning[0].prop_firm} buffer is low today.`
-      : `${warning.length} accounts have low buffers.`;
+    return `${warning[0].prop_firm} is risky today — reduce trade size.`;
   }
   
-  return null;
+  if (safe.length > 0) {
+    return `${safe[0].prop_firm} is safe to trade with controlled risk.`;
+  }
+  
+  return 'Add an account to start tracking.';
+}
+
+function getTradingAssistantMessages(accounts: AccountWithHealth[]): string[] {
+  const messages: string[] = [];
+  
+  const hasTrailing = accounts.some(a => a.max_dd_type !== 'static');
+  const hasDanger = accounts.some(a => a.health.status === 'danger');
+  const hasUnmetDays = accounts.some(a => a.current_trading_days < a.min_trading_days);
+  const hasSafe = accounts.some(a => a.health.status === 'safe');
+  
+  if (hasTrailing) {
+    messages.push('Avoid trading trailing drawdown accounts after profits.');
+  }
+  
+  if (hasDanger && hasSafe) {
+    messages.push('Focus on green accounts to reduce failure risk.');
+  }
+  
+  if (hasUnmetDays) {
+    messages.push("Profits today won't count on accounts with unmet minimum days.");
+  }
+  
+  if (messages.length === 0) {
+    messages.push('All accounts are within safe limits. Trade with discipline.');
+  }
+  
+  return messages.slice(0, 3);
 }
 
 // =============================================================================
-// MARKETING (logged out)
+// MARKETING VIEW (logged out)
 // =============================================================================
 
 function MarketingView() {
@@ -137,8 +166,8 @@ function MarketingView() {
         </h1>
         
         <p className="text-gray-400 mb-8 leading-relaxed">
-          Track all your accounts in one place.<br />
-          Know what&apos;s safe before you trade.
+          See all your prop firm accounts.<br />
+          Know your limits before you trade.
         </p>
 
         <div className="space-y-3">
@@ -159,25 +188,10 @@ function MarketingView() {
         </div>
 
         <div className="mt-16 pt-8 border-t border-gray-800">
-          <p className="text-xs text-gray-600 mb-4">WHAT YOU GET</p>
-          <div className="grid grid-cols-2 gap-4 text-left">
-            <div className="p-3 bg-gray-900 rounded-lg">
-              <p className="text-sm text-white font-medium">Daily risk check</p>
-              <p className="text-xs text-gray-500 mt-1">See safe loss remaining</p>
-            </div>
-            <div className="p-3 bg-gray-900 rounded-lg">
-              <p className="text-sm text-white font-medium">Trade simulator</p>
-              <p className="text-xs text-gray-500 mt-1">Test before you risk</p>
-            </div>
-            <div className="p-3 bg-gray-900 rounded-lg">
-              <p className="text-sm text-white font-medium">Hidden pitfalls</p>
-              <p className="text-xs text-gray-500 mt-1">Rules you might miss</p>
-            </div>
-            <div className="p-3 bg-gray-900 rounded-lg">
-              <p className="text-sm text-white font-medium">100+ firms</p>
-              <p className="text-xs text-gray-500 mt-1">All rules pre-loaded</p>
-            </div>
-          </div>
+          <p className="text-xs text-gray-600 mb-4">ANSWER IN 5 SECONDS</p>
+          <p className="text-lg text-white font-medium">
+            &ldquo;Can I trade today, on which account, and with what risk?&rdquo;
+          </p>
         </div>
       </div>
     </div>
@@ -185,7 +199,7 @@ function MarketingView() {
 }
 
 // =============================================================================
-// DASHBOARD
+// MAIN DASHBOARD
 // =============================================================================
 
 async function Dashboard({ userId }: { userId: string }) {
@@ -203,38 +217,66 @@ async function Dashboard({ userId }: { userId: string }) {
   }));
 
   const sortedAccounts = sortByRisk(accountsWithHealth);
+  
+  // Counts
   const totalAccounts = sortedAccounts.length;
-  const accountsAtRisk = sortedAccounts.filter(a => a.health.status !== 'safe').length;
-  const mainWarning = getMainWarning(sortedAccounts);
+  const safeCount = sortedAccounts.filter(a => a.health.status === 'safe').length;
+  const riskCount = sortedAccounts.filter(a => a.health.status === 'warning').length;
+  const dangerCount = sortedAccounts.filter(a => a.health.status === 'danger').length;
+  
+  // Central message
+  const centralMessage = getCentralMessage(sortedAccounts);
+  
+  // Trading assistant messages
+  const assistantMessages = getTradingAssistantMessages(sortedAccounts);
 
   if (totalAccounts === 0) {
     return <EmptyState />;
   }
 
   return (
-    <div className="min-h-screen bg-gray-950">
-      <OverviewBar
-        totalAccounts={totalAccounts}
-        accountsAtRisk={accountsAtRisk}
-        mainWarning={mainWarning}
-      />
-
-      <div className="max-w-2xl mx-auto px-4 py-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-base font-medium text-gray-400">My Accounts</h2>
-          <Link
-            href="/dashboard/accounts/new"
-            className="text-sm text-emerald-400 hover:text-emerald-300"
-          >
-            + Add
-          </Link>
+    <div className="min-h-screen bg-gray-950 pb-12">
+      {/* SECTION 0 — HEADER */}
+      <header className="bg-gray-900 border-b border-gray-800">
+        <div className="max-w-2xl mx-auto px-4 py-6">
+          <h1 className="text-2xl font-bold text-white mb-1">My Prop Firms</h1>
+          <p className="text-gray-400 text-sm">
+            See all your prop firm accounts. Know your limits before you trade.
+          </p>
         </div>
+      </header>
 
-        <div className="space-y-3">
-          {sortedAccounts.map((account) => (
-            <AccountCard key={account.id} account={account} />
-          ))}
-        </div>
+      <div className="max-w-2xl mx-auto px-4">
+        {/* SECTION 1 — TODAY OVERVIEW */}
+        <TodayOverview
+          totalAccounts={totalAccounts}
+          safeCount={safeCount}
+          riskCount={riskCount}
+          dangerCount={dangerCount}
+          centralMessage={centralMessage}
+        />
+
+        {/* SECTION 2 — MY ACCOUNTS */}
+        <section className="mt-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide">My Accounts</h2>
+            <Link
+              href="/dashboard/accounts/new"
+              className="text-sm text-emerald-400 hover:text-emerald-300"
+            >
+              + Add account
+            </Link>
+          </div>
+
+          <div className="space-y-4">
+            {sortedAccounts.map((account) => (
+              <AccountCard key={account.id} account={account} />
+            ))}
+          </div>
+        </section>
+
+        {/* SECTION 4 — TRADING ASSISTANT */}
+        <TradingAssistant messages={assistantMessages} />
       </div>
     </div>
   );

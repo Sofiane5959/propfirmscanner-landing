@@ -1,4 +1,7 @@
-export { OverviewBar } from './OverviewBar';
+export { TodayOverview } from './TodayOverview';
 export { AccountCard } from './AccountCard';
-export { AccountDrawer } from './AccountDrawer';
+export { TradeSimulator } from './TradeSimulator';
+export { UpdatePnlModal } from './UpdatePnlModal';
+export { RulesPitfalls } from './RulesPitfalls';
+export { TradingAssistant } from './TradingAssistant';
 export { EmptyState } from './EmptyState';
