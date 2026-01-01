@@ -211,4 +211,3 @@ export default async function DashboardLayout({ children }: { children: React.Re
 ---
 
 **Tu ne vends pas des features. Tu vends la tranquillité mentale face aux règles des prop firms.**
-
