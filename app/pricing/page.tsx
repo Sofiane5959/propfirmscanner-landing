@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/providers/AuthProvider';
 import { AuthGuardModal } from '@/components/AuthGuardModal';
-import { PRICING, formatPrice, type PlanType } from '@/lib/subscription';
+import { PRICING, formatPrice } from '@/lib/subscription';
 import {
   Check,
   X,
@@ -14,17 +14,13 @@ import {
   Zap,
   ArrowRight,
   Loader2,
-  HelpCircle,
   ChevronDown,
   BarChart3,
-  AlertTriangle,
-  Bell,
-  Infinity,
   Calculator,
 } from 'lucide-react';
 
 // =============================================================================
-// PLAN DATA
+// TYPES
 // =============================================================================
 
 interface PlanFeature {
@@ -43,42 +39,45 @@ interface PlanConfig {
   ctaVariant: 'primary' | 'secondary';
 }
 
-const PLAN_FEATURES: Record<'free' | 'pro', PlanConfig> = {
-  free: {
-    name: 'Free',
-    price: 0,
-    description: 'Get started with prop firm tracking',
-    features: [
-      { text: 'Demo dashboard access', included: true },
-      { text: '1 real prop firm account', included: true },
-      { text: 'Basic trade simulation', included: true },
-      { text: 'Manual P&L updates', included: true },
-      { text: 'Unlimited accounts', included: false },
-      { text: 'Advanced guidance', included: false },
-      { text: 'Violation warnings', included: false },
-      { text: 'Evaluation tracking', included: false },
-    ],
-    cta: 'Start Free',
-    ctaVariant: 'secondary',
-  },
-  pro: {
-    name: 'Pro',
-    price: PRICING.pro.monthly,
-    description: 'For serious prop firm traders',
-    badge: 'Most Popular',
-    features: [
-      { text: 'Everything in Free', included: true },
-      { text: 'Unlimited prop firm accounts', included: true, highlight: true },
-      { text: 'Advanced guidance messages', included: true, highlight: true },
-      { text: 'Violation warnings', included: true, highlight: true },
-      { text: 'Full evaluation tracking', included: true, highlight: true },
-      { text: 'Priority access to new features', included: true },
-      { text: 'Email alerts (coming soon)', included: true },
-      { text: 'Push notifications (coming soon)', included: true },
-    ],
-    cta: 'Upgrade to Pro',
-    ctaVariant: 'primary',
-  },
+// =============================================================================
+// PLAN DATA
+// =============================================================================
+
+const FREE_PLAN: PlanConfig = {
+  name: 'Free',
+  price: 0,
+  description: 'Get started with prop firm tracking',
+  features: [
+    { text: 'Demo dashboard access', included: true },
+    { text: '1 real prop firm account', included: true },
+    { text: 'Basic trade simulation', included: true },
+    { text: 'Manual P&L updates', included: true },
+    { text: 'Unlimited accounts', included: false },
+    { text: 'Advanced guidance', included: false },
+    { text: 'Violation warnings', included: false },
+    { text: 'Evaluation tracking', included: false },
+  ],
+  cta: 'Start Free',
+  ctaVariant: 'secondary',
+};
+
+const PRO_PLAN: PlanConfig = {
+  name: 'Pro',
+  price: PRICING.pro.monthly,
+  description: 'For serious prop firm traders',
+  badge: 'Most Popular',
+  features: [
+    { text: 'Everything in Free', included: true },
+    { text: 'Unlimited prop firm accounts', included: true, highlight: true },
+    { text: 'Advanced guidance messages', included: true, highlight: true },
+    { text: 'Violation warnings', included: true, highlight: true },
+    { text: 'Full evaluation tracking', included: true, highlight: true },
+    { text: 'Priority access to new features', included: true },
+    { text: 'Email alerts (coming soon)', included: true },
+    { text: 'Push notifications (coming soon)', included: true },
+  ],
+  cta: 'Upgrade to Pro',
+  ctaVariant: 'primary',
 };
 
 // =============================================================================
@@ -230,11 +229,11 @@ function PlanCard({
 }
 
 // =============================================================================
-// MAIN PRICING PAGE
+// PRICING CONTENT (uses useSearchParams)
 // =============================================================================
 
-export default function PricingPage() {
-  const { user, isLoading: authLoading } = useAuth();
+function PricingContent() {
+  const { user } = useAuth();
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -242,13 +241,13 @@ export default function PricingPage() {
   const showUpgradeHighlight = searchParams.get('upgrade') === 'true';
   
   // TODO: Get actual user plan from profile
-  const currentPlan: PlanType = 'free';
+  // Using separate boolean to avoid TypeScript literal type inference
+  const isProUser = false;
 
   const handleSelectFree = () => {
     if (!user) {
       setAuthModalOpen(true);
     } else {
-      // User is already on free, go to dashboard
       window.location.href = '/dashboard';
     }
   };
@@ -261,14 +260,8 @@ export default function PricingPage() {
 
     setIsLoading(true);
     
-    // TODO: Implement Stripe checkout
-    // For now, redirect to a placeholder
     try {
-      // const response = await fetch('/api/checkout', { method: 'POST' });
-      // const { url } = await response.json();
-      // window.location.href = url;
-      
-      // Placeholder - show alert
+      // TODO: Implement Stripe checkout
       alert('Stripe checkout will be implemented here. For now, this is a placeholder.');
     } catch (error) {
       console.error('Checkout error:', error);
@@ -278,111 +271,109 @@ export default function PricingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 pt-20 pb-16">
-      <div className="max-w-5xl mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-            Trade with clarity.
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">
-              Avoid breaking prop firm rules.
-            </span>
-          </h1>
-          <p className="text-gray-400 text-lg max-w-xl mx-auto">
-            One avoided rule violation pays for months of Pro.
-          </p>
-        </div>
+    <>
+      {/* Header */}
+      <div className="text-center mb-12">
+        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+          Trade with clarity.
+          <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">
+            Avoid breaking prop firm rules.
+          </span>
+        </h1>
+        <p className="text-gray-400 text-lg max-w-xl mx-auto">
+          One avoided rule violation pays for months of Pro.
+        </p>
+      </div>
 
-        {/* Upgrade highlight banner */}
-        {showUpgradeHighlight && (
-          <div className="mb-8 p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl">
-            <div className="flex items-center gap-3">
-              <Zap className="w-5 h-5 text-amber-400" />
-              <p className="text-amber-200">
-                You've reached your account limit. Upgrade to Pro to track unlimited accounts.
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Plans */}
-        <div className="grid md:grid-cols-2 gap-8 mb-16">
-          <PlanCard
-            plan={PLAN_FEATURES.free}
-            isCurrentPlan={currentPlan === 'free' && !!user}
-            onSelect={handleSelectFree}
-            isLoading={false}
-          />
-          <PlanCard
-            plan={PLAN_FEATURES.pro}
-            isCurrentPlan={currentPlan === 'pro'}
-            onSelect={handleSelectPro}
-            isLoading={isLoading}
-          />
-        </div>
-
-        {/* Value Props */}
-        <div className="mb-16">
-          <h2 className="text-xl font-bold text-white text-center mb-8">
-            Why traders trust PropFirmScanner
-          </h2>
-          <div className="grid sm:grid-cols-3 gap-6">
-            <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center">
-              <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <Shield className="w-6 h-6 text-emerald-400" />
-              </div>
-              <h3 className="font-semibold text-white mb-2">Avoid Costly Violations</h3>
-              <p className="text-sm text-gray-500">
-                Know exactly how much you can risk before breaking any rule
-              </p>
-            </div>
-            <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center">
-              <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <Calculator className="w-6 h-6 text-emerald-400" />
-              </div>
-              <h3 className="font-semibold text-white mb-2">Simulate Before Trading</h3>
-              <p className="text-sm text-gray-500">
-                Test your trade size before risking real capital
-              </p>
-            </div>
-            <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center">
-              <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <BarChart3 className="w-6 h-6 text-emerald-400" />
-              </div>
-              <h3 className="font-semibold text-white mb-2">Track All Accounts</h3>
-              <p className="text-sm text-gray-500">
-                FTMO, FundedNext, The5ers — all in one dashboard
-              </p>
-            </div>
+      {/* Upgrade highlight banner */}
+      {showUpgradeHighlight && (
+        <div className="mb-8 p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl">
+          <div className="flex items-center gap-3">
+            <Zap className="w-5 h-5 text-amber-400" />
+            <p className="text-amber-200">
+              You've reached your account limit. Upgrade to Pro to track unlimited accounts.
+            </p>
           </div>
         </div>
+      )}
 
-        {/* FAQ */}
-        <div className="max-w-2xl mx-auto">
-          <h2 className="text-xl font-bold text-white text-center mb-8">
-            Frequently Asked Questions
-          </h2>
-          <div className="bg-gray-900 border border-gray-800 rounded-xl px-6">
-            {FAQ_ITEMS.map((item, i) => (
-              <FAQItem key={i} question={item.question} answer={item.answer} />
-            ))}
+      {/* Plans */}
+      <div className="grid md:grid-cols-2 gap-8 mb-16">
+        <PlanCard
+          plan={FREE_PLAN}
+          isCurrentPlan={!isProUser && !!user}
+          onSelect={handleSelectFree}
+          isLoading={false}
+        />
+        <PlanCard
+          plan={PRO_PLAN}
+          isCurrentPlan={isProUser}
+          onSelect={handleSelectPro}
+          isLoading={isLoading}
+        />
+      </div>
+
+      {/* Value Props */}
+      <div className="mb-16">
+        <h2 className="text-xl font-bold text-white text-center mb-8">
+          Why traders trust PropFirmScanner
+        </h2>
+        <div className="grid sm:grid-cols-3 gap-6">
+          <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center">
+            <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+              <Shield className="w-6 h-6 text-emerald-400" />
+            </div>
+            <h3 className="font-semibold text-white mb-2">Avoid Costly Violations</h3>
+            <p className="text-sm text-gray-500">
+              Know exactly how much you can risk before breaking any rule
+            </p>
+          </div>
+          <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center">
+            <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+              <Calculator className="w-6 h-6 text-emerald-400" />
+            </div>
+            <h3 className="font-semibold text-white mb-2">Simulate Before Trading</h3>
+            <p className="text-sm text-gray-500">
+              Test your trade size before risking real capital
+            </p>
+          </div>
+          <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center">
+            <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+              <BarChart3 className="w-6 h-6 text-emerald-400" />
+            </div>
+            <h3 className="font-semibold text-white mb-2">Track All Accounts</h3>
+            <p className="text-sm text-gray-500">
+              FTMO, FundedNext, The5ers — all in one dashboard
+            </p>
           </div>
         </div>
+      </div>
 
-        {/* Bottom CTA */}
-        <div className="mt-16 text-center">
-          <p className="text-gray-500 mb-4">
-            Ready to trade with confidence?
-          </p>
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors"
-          >
-            Go to Dashboard
-            <ArrowRight className="w-4 h-4" />
-          </Link>
+      {/* FAQ */}
+      <div className="max-w-2xl mx-auto">
+        <h2 className="text-xl font-bold text-white text-center mb-8">
+          Frequently Asked Questions
+        </h2>
+        <div className="bg-gray-900 border border-gray-800 rounded-xl px-6">
+          {FAQ_ITEMS.map((item, i) => (
+            <FAQItem key={i} question={item.question} answer={item.answer} />
+          ))}
         </div>
+      </div>
+
+      {/* Bottom CTA */}
+      <div className="mt-16 text-center">
+        <p className="text-gray-500 mb-4">
+          Ready to trade with confidence?
+        </p>
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors"
+        >
+          Go to Dashboard
+          <ArrowRight className="w-4 h-4" />
+        </Link>
       </div>
 
       {/* Auth Modal */}
@@ -391,6 +382,22 @@ export default function PricingPage() {
         onClose={() => setAuthModalOpen(false)}
         action="accéder à cette fonctionnalité"
       />
+    </>
+  );
+}
+
+// =============================================================================
+// MAIN PRICING PAGE
+// =============================================================================
+
+export default function PricingPage() {
+  return (
+    <div className="min-h-screen bg-gray-950 pt-20 pb-16">
+      <div className="max-w-5xl mx-auto px-4">
+        <Suspense fallback={<div className="text-center py-20"><Loader2 className="w-8 h-8 text-emerald-400 animate-spin mx-auto" /></div>}>
+          <PricingContent />
+        </Suspense>
+      </div>
     </div>
   );
 }
