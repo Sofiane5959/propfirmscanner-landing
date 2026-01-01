@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useRouter } from 'next/navigation';
 import type { User, Session } from '@supabase/supabase-js';
@@ -33,7 +33,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // =============================================================================
-// PROVIDER
+// PROVIDER - Optimized for fast initial load
 // =============================================================================
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -45,35 +45,56 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const supabase = createClientComponentClient();
 
-  // Fetch user profile from database
-  const fetchProfile = async (userId: string) => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single();
+  // Fetch user profile (non-blocking)
+  const fetchProfile = useCallback(async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
 
-    if (data && !error) {
-      setProfile(data);
+      if (data && !error) {
+        setProfile(data);
+      }
+    } catch (e) {
+      // Profile fetch failed, not critical
+      console.warn('Profile fetch failed:', e);
     }
-  };
+  }, [supabase]);
 
-  // Initialize auth state
+  // Initialize auth state - optimized
   useEffect(() => {
+    let mounted = true;
+
     const initAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        // Get session - this is the critical path
+        const { data: { session }, error } = await supabase.auth.getSession();
         
+        if (!mounted) return;
+        
+        if (error) {
+          console.error('Session error:', error);
+          setIsLoading(false);
+          return;
+        }
+
         setSession(session);
         setUser(session?.user ?? null);
         
+        // Mark as loaded BEFORE fetching profile (non-blocking)
+        setIsLoading(false);
+        
+        // Fetch profile in background (doesn't block UI)
         if (session?.user) {
-          await fetchProfile(session.user.id);
+          fetchProfile(session.user.id);
         }
       } catch (error) {
         console.error('Auth init error:', error);
-      } finally {
-        setIsLoading(false);
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
     };
 
@@ -82,44 +103,49 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        if (!mounted) return;
+
         setSession(session);
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          await fetchProfile(session.user.id);
+          // Fetch profile in background
+          fetchProfile(session.user.id);
         } else {
           setProfile(null);
         }
 
-        // Refresh page data on auth change
-        router.refresh();
+        // Only refresh on sign in/out events, not token refresh
+        if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+          router.refresh();
+        }
       }
     );
 
     return () => {
+      mounted = false;
       subscription.unsubscribe();
     };
-  }, [supabase, router]);
+  }, [supabase, router, fetchProfile]);
 
   // Sign in with Google
-  const signInWithGoogle = async () => {
+  const signInWithGoogle = useCallback(async () => {
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
       },
     });
-  };
+  }, [supabase]);
 
   // Sign out
-  const signOut = async () => {
-    await supabase.auth.signOut();
+  const signOut = useCallback(async () => {
     setUser(null);
     setProfile(null);
     setSession(null);
+    await supabase.auth.signOut();
     router.push('/');
-    router.refresh();
-  };
+  }, [supabase, router]);
 
   return (
     <AuthContext.Provider
