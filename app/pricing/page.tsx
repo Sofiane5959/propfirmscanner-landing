@@ -27,7 +27,23 @@ import {
 // PLAN DATA
 // =============================================================================
 
-const PLAN_FEATURES = {
+interface PlanFeature {
+  text: string;
+  included: boolean;
+  highlight?: boolean;
+}
+
+interface PlanConfig {
+  name: string;
+  price: number;
+  description: string;
+  badge?: string;
+  features: PlanFeature[];
+  cta: string;
+  ctaVariant: 'primary' | 'secondary';
+}
+
+const PLAN_FEATURES: Record<'free' | 'pro', PlanConfig> = {
   free: {
     name: 'Free',
     price: 0,
@@ -43,7 +59,7 @@ const PLAN_FEATURES = {
       { text: 'Evaluation tracking', included: false },
     ],
     cta: 'Start Free',
-    ctaVariant: 'secondary' as const,
+    ctaVariant: 'secondary',
   },
   pro: {
     name: 'Pro',
@@ -61,7 +77,7 @@ const PLAN_FEATURES = {
       { text: 'Push notifications (coming soon)', included: true },
     ],
     cta: 'Upgrade to Pro',
-    ctaVariant: 'primary' as const,
+    ctaVariant: 'primary',
   },
 };
 
@@ -129,7 +145,7 @@ function PlanCard({
   onSelect,
   isLoading,
 }: {
-  plan: typeof PLAN_FEATURES.free | typeof PLAN_FEATURES.pro;
+  plan: PlanConfig;
   isCurrentPlan: boolean;
   onSelect: () => void;
   isLoading: boolean;
