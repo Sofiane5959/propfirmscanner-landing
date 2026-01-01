@@ -3,10 +3,7 @@ import { cookies } from 'next/headers';
 import Link from 'next/link';
 import { Zap, Shield } from 'lucide-react';
 
-import { TodayOverview } from '@/components/my-propfirms/TodayOverview';
-import { AccountCard } from '@/components/my-propfirms/AccountCard';
-import { TradingAssistant } from '@/components/my-propfirms/TradingAssistant';
-import { EmptyState } from '@/components/my-propfirms/EmptyState';
+import { WorkspaceTabs } from '@/components/workspace/WorkspaceTabs';
 import { calcAccountHealth } from '@/lib/risk';
 import type { AccountState, RuleSet } from '@/lib/risk';
 
@@ -35,6 +32,8 @@ interface DbAccount {
   has_consistency: boolean;
   min_trading_days: number;
   current_trading_days: number;
+  profit_target_percent: number;
+  current_profit_percent: number;
   created_at: string;
   updated_at: string;
 }
@@ -102,7 +101,7 @@ function sortByRisk(accounts: AccountWithHealth[]): AccountWithHealth[] {
   return [...accounts].sort((a, b) => priority[a.health.status] - priority[b.health.status]);
 }
 
-function getCentralMessage(accounts: AccountWithHealth[]): string {
+function getDailyGuidance(accounts: AccountWithHealth[]): string {
   const danger = accounts.filter(a => a.health.status === 'danger');
   const warning = accounts.filter(a => a.health.status === 'warning');
   const safe = accounts.filter(a => a.health.status === 'safe');
@@ -112,48 +111,21 @@ function getCentralMessage(accounts: AccountWithHealth[]): string {
   }
   
   if (warning.length > 0) {
-    return `${warning[0].prop_firm} is risky today — reduce trade size.`;
+    return `${warning[0].prop_firm} is risky today — reduce position size.`;
   }
   
   if (safe.length > 0) {
-    return `${safe[0].prop_firm} is safe to trade with controlled risk.`;
+    return `All accounts are safe. Trade with discipline on ${safe[0].prop_firm}.`;
   }
   
-  return 'Add an account to start tracking.';
-}
-
-function getTradingAssistantMessages(accounts: AccountWithHealth[]): string[] {
-  const messages: string[] = [];
-  
-  const hasTrailing = accounts.some(a => a.max_dd_type !== 'static');
-  const hasDanger = accounts.some(a => a.health.status === 'danger');
-  const hasUnmetDays = accounts.some(a => a.current_trading_days < a.min_trading_days);
-  const hasSafe = accounts.some(a => a.health.status === 'safe');
-  
-  if (hasTrailing) {
-    messages.push('Avoid trading trailing drawdown accounts after profits.');
-  }
-  
-  if (hasDanger && hasSafe) {
-    messages.push('Focus on green accounts to reduce failure risk.');
-  }
-  
-  if (hasUnmetDays) {
-    messages.push("Profits today won't count on accounts with unmet minimum days.");
-  }
-  
-  if (messages.length === 0) {
-    messages.push('All accounts are within safe limits. Trade with discipline.');
-  }
-  
-  return messages.slice(0, 3);
+  return 'Add your first account to start tracking.';
 }
 
 // =============================================================================
-// MARKETING VIEW (logged out)
+// LOGGED OUT VIEW
 // =============================================================================
 
-function MarketingView() {
+function LoggedOutView() {
   return (
     <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4">
       <div className="max-w-md w-full text-center">
@@ -165,33 +137,50 @@ function MarketingView() {
           My Prop Firms
         </h1>
         
-        <p className="text-gray-400 mb-8 leading-relaxed">
-          See all your prop firm accounts.<br />
-          Know your limits before you trade.
+        <p className="text-gray-400 mb-2 leading-relaxed">
+          Your personal control center for all prop firm accounts.
+        </p>
+        <p className="text-gray-500 text-sm mb-8">
+          Track drawdowns, simulate trades, and avoid breaking rules — all in one place.
         </p>
 
         <div className="space-y-3">
           <Link
-            href="/auth/signup"
+            href="/auth/login"
             className="flex items-center justify-center gap-2 w-full py-3.5 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors"
           >
-            <Zap className="w-5 h-5" />
-            Start Tracking — Free
+            Log in to your workspace
           </Link>
           
           <Link
-            href="/auth/login"
-            className="block w-full py-3 text-gray-400 hover:text-white transition-colors text-sm"
+            href="/auth/signup"
+            className="flex items-center justify-center gap-2 w-full py-3 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-xl transition-colors"
           >
-            Already tracking? Log in
+            <Zap className="w-4 h-4" />
+            Create free account
           </Link>
         </div>
 
-        <div className="mt-16 pt-8 border-t border-gray-800">
-          <p className="text-xs text-gray-600 mb-4">ANSWER IN 5 SECONDS</p>
-          <p className="text-lg text-white font-medium">
-            &ldquo;Can I trade today, on which account, and with what risk?&rdquo;
-          </p>
+        <div className="mt-12 pt-8 border-t border-gray-800">
+          <p className="text-xs text-gray-600 mb-4">WHAT YOU GET</p>
+          <div className="grid grid-cols-2 gap-3 text-left">
+            <div className="p-3 bg-gray-900 rounded-lg">
+              <p className="text-sm text-white font-medium">Multi-account tracking</p>
+              <p className="text-xs text-gray-500 mt-1">All firms in one view</p>
+            </div>
+            <div className="p-3 bg-gray-900 rounded-lg">
+              <p className="text-sm text-white font-medium">Trade simulation</p>
+              <p className="text-xs text-gray-500 mt-1">Test before you risk</p>
+            </div>
+            <div className="p-3 bg-gray-900 rounded-lg">
+              <p className="text-sm text-white font-medium">Rule monitoring</p>
+              <p className="text-xs text-gray-500 mt-1">Never break a rule</p>
+            </div>
+            <div className="p-3 bg-gray-900 rounded-lg">
+              <p className="text-sm text-white font-medium">Daily guidance</p>
+              <p className="text-xs text-gray-500 mt-1">Know what to avoid</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -199,10 +188,10 @@ function MarketingView() {
 }
 
 // =============================================================================
-// MAIN DASHBOARD
+// MAIN WORKSPACE
 // =============================================================================
 
-async function Dashboard({ userId }: { userId: string }) {
+async function Workspace({ userId }: { userId: string }) {
   const supabase = createServerComponentClient({ cookies });
 
   const { data: accounts } = await supabase
@@ -218,66 +207,42 @@ async function Dashboard({ userId }: { userId: string }) {
 
   const sortedAccounts = sortByRisk(accountsWithHealth);
   
-  // Counts
+  // Stats
   const totalAccounts = sortedAccounts.length;
   const safeCount = sortedAccounts.filter(a => a.health.status === 'safe').length;
   const riskCount = sortedAccounts.filter(a => a.health.status === 'warning').length;
   const dangerCount = sortedAccounts.filter(a => a.health.status === 'danger').length;
-  
-  // Central message
-  const centralMessage = getCentralMessage(sortedAccounts);
-  
-  // Trading assistant messages
-  const assistantMessages = getTradingAssistantMessages(sortedAccounts);
-
-  if (totalAccounts === 0) {
-    return <EmptyState />;
-  }
+  const dailyGuidance = getDailyGuidance(sortedAccounts);
 
   return (
-    <div className="min-h-screen bg-gray-950 pb-12">
-      {/* SECTION 0 — HEADER */}
+    <div className="min-h-screen bg-gray-950">
+      {/* Header */}
       <header className="bg-gray-900 border-b border-gray-800">
-        <div className="max-w-2xl mx-auto px-4 py-6">
-          <h1 className="text-2xl font-bold text-white mb-1">My Prop Firms</h1>
-          <p className="text-gray-400 text-sm">
-            See all your prop firm accounts. Know your limits before you trade.
-          </p>
+        <div className="max-w-5xl mx-auto px-4 py-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-xl font-bold text-white">My Prop Firms</h1>
+              <p className="text-sm text-gray-500">Your trading control center</p>
+            </div>
+            <Link
+              href="/dashboard/accounts/new"
+              className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors"
+            >
+              + Add Account
+            </Link>
+          </div>
         </div>
       </header>
 
-      <div className="max-w-2xl mx-auto px-4">
-        {/* SECTION 1 — TODAY OVERVIEW */}
-        <TodayOverview
-          totalAccounts={totalAccounts}
-          safeCount={safeCount}
-          riskCount={riskCount}
-          dangerCount={dangerCount}
-          centralMessage={centralMessage}
-        />
-
-        {/* SECTION 2 — MY ACCOUNTS */}
-        <section className="mt-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide">My Accounts</h2>
-            <Link
-              href="/dashboard/accounts/new"
-              className="text-sm text-emerald-400 hover:text-emerald-300"
-            >
-              + Add account
-            </Link>
-          </div>
-
-          <div className="space-y-4">
-            {sortedAccounts.map((account) => (
-              <AccountCard key={account.id} account={account} />
-            ))}
-          </div>
-        </section>
-
-        {/* SECTION 4 — TRADING ASSISTANT */}
-        <TradingAssistant messages={assistantMessages} />
-      </div>
+      {/* Workspace Content */}
+      <WorkspaceTabs
+        accounts={sortedAccounts}
+        totalAccounts={totalAccounts}
+        safeCount={safeCount}
+        riskCount={riskCount}
+        dangerCount={dangerCount}
+        dailyGuidance={dailyGuidance}
+      />
     </div>
   );
 }
@@ -286,13 +251,13 @@ async function Dashboard({ userId }: { userId: string }) {
 // PAGE
 // =============================================================================
 
-export default async function MyPropFirmsPage() {
+export default async function DashboardPage() {
   const supabase = createServerComponentClient({ cookies });
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
-    return <MarketingView />;
+    return <LoggedOutView />;
   }
 
-  return <Dashboard userId={user.id} />;
+  return <Workspace userId={user.id} />;
 }

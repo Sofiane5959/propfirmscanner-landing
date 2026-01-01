@@ -1,224 +1,300 @@
+'use client';
+
+import { useState } from 'react';
 import Link from 'next/link';
-import { 
-  Shield, 
-  ArrowLeft, 
-  Zap,
-  Crown,
-  Lock,
-  CheckCircle,
-  XCircle,
-  AlertTriangle,
-  Clock,
-  Newspaper,
-  Calendar,
-  BarChart3,
-  TrendingUp
-} from 'lucide-react';
-import { RuleCheckerClient } from './RuleCheckerClient';
+import { ArrowLeft, Shield, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
+import { DemoBanner } from '@/components/DemoBanner';
 
-// =============================================================================
-// PROP FIRM RULES DATA (Static - SSR safe)
-// =============================================================================
-
-const propFirmRulesData = {
-  FTMO: {
-    newsTrading: { allowed: false, buffer: 2, note: 'No trades 2 min before/after high-impact news' },
-    weekendHolding: { allowed: true, note: 'Weekend holding allowed' },
-    consistency: { required: false, note: 'No consistency rule' },
-    maxDDType: 'static' as const,
-    minTradingDays: 4,
-    hedging: true,
-    ea: true,
-  },
-  FundedNext: {
-    newsTrading: { allowed: false, buffer: 5, note: 'No trades 5 min before/after high-impact news' },
-    weekendHolding: { allowed: true, note: 'Weekend holding allowed' },
-    consistency: { required: true, maxDayPct: 40, note: 'Max 40% profit from single day' },
-    maxDDType: 'trailing' as const,
-    minTradingDays: 5,
-    hedging: true,
-    ea: true,
-  },
-  The5ers: {
-    newsTrading: { allowed: true, note: 'News trading allowed' },
-    weekendHolding: { allowed: false, note: 'Must close before weekend' },
-    consistency: { required: false, note: 'No consistency rule' },
-    maxDDType: 'static' as const,
-    minTradingDays: 3,
-    hedging: false,
-    ea: true,
-  },
-  MyFundedFX: {
-    newsTrading: { allowed: false, buffer: 2, note: 'No trades 2 min before/after high-impact news' },
-    weekendHolding: { allowed: true, note: 'Weekend holding allowed' },
-    consistency: { required: true, maxDayPct: 45, note: 'Max 45% profit from single day' },
-    maxDDType: 'trailing' as const,
-    minTradingDays: 5,
-    hedging: true,
-    ea: true,
-  },
-  'E8 Funding': {
-    newsTrading: { allowed: false, buffer: 2, note: 'No trades during high-impact news' },
-    weekendHolding: { allowed: true, note: 'Weekend holding allowed' },
-    consistency: { required: false, note: 'No consistency rule' },
-    maxDDType: 'static' as const,
-    minTradingDays: 5,
-    hedging: true,
-    ea: true,
-  },
+const propFirmRules: Record<string, {
+  newsTrading: boolean;
+  newsBuffer: number;
+  weekendHolding: boolean;
+  consistency: number | null;
+  maxDDType: 'static' | 'trailing';
+  minTradingDays: number;
+}> = {
+  'FTMO': { newsTrading: false, newsBuffer: 2, weekendHolding: true, consistency: null, maxDDType: 'static', minTradingDays: 4 },
+  'FundedNext': { newsTrading: false, newsBuffer: 5, weekendHolding: true, consistency: 40, maxDDType: 'trailing', minTradingDays: 5 },
+  'The5ers': { newsTrading: true, newsBuffer: 0, weekendHolding: false, consistency: null, maxDDType: 'static', minTradingDays: 3 },
+  'MyFundedFX': { newsTrading: false, newsBuffer: 2, weekendHolding: true, consistency: 45, maxDDType: 'trailing', minTradingDays: 5 },
+  'E8 Funding': { newsTrading: false, newsBuffer: 5, weekendHolding: true, consistency: null, maxDDType: 'static', minTradingDays: 5 },
 };
 
-// =============================================================================
-// STATIC RULES SUMMARY (SSR)
-// =============================================================================
-
-function RulesSummarySSR() {
-  const firms = Object.entries(propFirmRulesData);
-  
-  return (
-    <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
-      <div className="px-4 py-3 border-b border-gray-700">
-        <h3 className="font-semibold text-white">Quick Rules Comparison</h3>
-      </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-gray-700">
-              <th className="px-4 py-3 text-left text-gray-400 font-medium">Firm</th>
-              <th className="px-4 py-3 text-center text-gray-400 font-medium">News</th>
-              <th className="px-4 py-3 text-center text-gray-400 font-medium">Weekend</th>
-              <th className="px-4 py-3 text-center text-gray-400 font-medium">Consistency</th>
-              <th className="px-4 py-3 text-center text-gray-400 font-medium">DD Type</th>
-            </tr>
-          </thead>
-          <tbody>
-            {firms.map(([name, rules]) => (
-              <tr key={name} className="border-b border-gray-700/50 hover:bg-gray-700/30">
-                <td className="px-4 py-3 font-medium text-white">{name}</td>
-                <td className="px-4 py-3 text-center">
-                  {rules.newsTrading.allowed ? (
-                    <span className="text-emerald-400">✓</span>
-                  ) : (
-                    <span className="text-red-400">✗</span>
-                  )}
-                </td>
-                <td className="px-4 py-3 text-center">
-                  {rules.weekendHolding.allowed ? (
-                    <span className="text-emerald-400">✓</span>
-                  ) : (
-                    <span className="text-red-400">✗</span>
-                  )}
-                </td>
-                <td className="px-4 py-3 text-center">
-                  {rules.consistency.required ? (
-                    <span className="text-yellow-400">
-                      {'maxDayPct' in rules.consistency ? `${rules.consistency.maxDayPct}%` : 'Yes'}
-                    </span>
-                  ) : (
-                    <span className="text-emerald-400">None</span>
-                  )}
-                </td>
-                <td className="px-4 py-3 text-center">
-                  <span className={rules.maxDDType === 'static' ? 'text-emerald-400' : 'text-yellow-400'}>
-                    {rules.maxDDType === 'static' ? 'Static' : 'Trailing'}
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
-
-// =============================================================================
-// MAIN PAGE COMPONENT (Server Component - SSR Safe)
-// =============================================================================
+const firms = Object.keys(propFirmRules);
 
 export default function RuleTrackerPage() {
+  const [selectedFirm, setSelectedFirm] = useState('FTMO');
+  const [tradingNews, setTradingNews] = useState(false);
+  const [holdingWeekend, setHoldingWeekend] = useState(false);
+  const [largeProfitDay, setLargeProfitDay] = useState(false);
+  const [usingHedging, setUsingHedging] = useState(false);
+
+  const rules = propFirmRules[selectedFirm];
+
+  // Check compliance
+  const violations: string[] = [];
+  const warnings: string[] = [];
+
+  if (tradingNews && !rules.newsTrading) {
+    violations.push(`${selectedFirm} does not allow trading ${rules.newsBuffer} minutes around high-impact news`);
+  }
+
+  if (holdingWeekend && !rules.weekendHolding) {
+    violations.push(`${selectedFirm} does not allow holding positions over the weekend`);
+  }
+
+  if (largeProfitDay && rules.consistency) {
+    warnings.push(`${selectedFirm} has a ${rules.consistency}% consistency rule — large profit days may count against you`);
+  }
+
+  if (usingHedging) {
+    warnings.push('Hedging rules vary — check your specific prop firm terms');
+  }
+
+  const isCompliant = violations.length === 0;
+
   return (
-    <div className="min-h-screen bg-gray-900 pt-20 pb-12">
-      <div className="max-w-5xl mx-auto px-4">
+    <div className="min-h-screen bg-gray-950 py-8">
+      <div className="max-w-2xl mx-auto px-4">
         {/* Back Link */}
-        <Link
-          href="/tools"
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors"
-        >
+        <Link href="/tools" className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6">
           <ArrowLeft className="w-4 h-4" />
           All Tools
         </Link>
 
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="p-3 bg-purple-500/20 rounded-xl">
-              <Shield className="w-6 h-6 text-purple-400" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-white">Rule Checker</h1>
-              <p className="text-gray-400">Check if your trade plan complies with prop firm rules</p>
-            </div>
+        {/* Demo Banner */}
+        <DemoBanner toolName="rule checker" />
+
+        {/* Title */}
+        <h1 className="text-3xl font-bold text-white mb-2">Rule Checker</h1>
+        <p className="text-gray-400 mb-8">Check if your trade plan complies with prop firm rules</p>
+
+        {/* Quick Comparison Table */}
+        <div className="bg-gray-900 rounded-xl border border-gray-800 p-6 mb-6 overflow-x-auto">
+          <h2 className="text-lg font-semibold text-white mb-4">Quick Rules Comparison</h2>
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left text-gray-500 border-b border-gray-800">
+                <th className="pb-2 pr-4">Firm</th>
+                <th className="pb-2 px-2 text-center">News</th>
+                <th className="pb-2 px-2 text-center">Weekend</th>
+                <th className="pb-2 px-2 text-center">Consistency</th>
+                <th className="pb-2 pl-2 text-center">DD Type</th>
+              </tr>
+            </thead>
+            <tbody>
+              {firms.map((firm) => {
+                const r = propFirmRules[firm];
+                return (
+                  <tr key={firm} className="border-b border-gray-800/50">
+                    <td className="py-2 pr-4 text-white font-medium">{firm}</td>
+                    <td className="py-2 px-2 text-center">
+                      {r.newsTrading ? (
+                        <CheckCircle className="w-4 h-4 text-emerald-400 mx-auto" />
+                      ) : (
+                        <XCircle className="w-4 h-4 text-red-400 mx-auto" />
+                      )}
+                    </td>
+                    <td className="py-2 px-2 text-center">
+                      {r.weekendHolding ? (
+                        <CheckCircle className="w-4 h-4 text-emerald-400 mx-auto" />
+                      ) : (
+                        <XCircle className="w-4 h-4 text-red-400 mx-auto" />
+                      )}
+                    </td>
+                    <td className="py-2 px-2 text-center text-gray-400">
+                      {r.consistency ? `${r.consistency}%` : 'None'}
+                    </td>
+                    <td className="py-2 pl-2 text-center">
+                      <span className={r.maxDDType === 'static' ? 'text-emerald-400' : 'text-purple-400'}>
+                        {r.maxDDType === 'static' ? 'Static' : 'Trailing'}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Firm Selector */}
+        <div className="bg-gray-900 rounded-xl border border-gray-800 p-6 mb-6">
+          <h2 className="text-lg font-semibold text-white mb-4">Select Prop Firm</h2>
+          <div className="flex flex-wrap gap-2">
+            {firms.map((firm) => (
+              <button
+                key={firm}
+                onClick={() => setSelectedFirm(firm)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  selectedFirm === firm
+                    ? 'bg-emerald-500 text-white'
+                    : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                }`}
+              >
+                {firm}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* Static Rules Summary (Always visible, SSR) */}
-        <div className="mb-8">
-          <RulesSummarySSR />
+        {/* Trade Plan Checkboxes */}
+        <div className="bg-gray-900 rounded-xl border border-gray-800 p-6 mb-6">
+          <h2 className="text-lg font-semibold text-white mb-4">Your Trade Plan</h2>
+          <p className="text-sm text-gray-500 mb-4">Check what applies to your planned trade:</p>
+
+          <div className="space-y-3">
+            <label className="flex items-start gap-3 p-3 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700/50">
+              <input
+                type="checkbox"
+                checked={tradingNews}
+                onChange={(e) => setTradingNews(e.target.checked)}
+                className="mt-1 w-4 h-4 rounded border-gray-600 bg-gray-700 text-emerald-500 focus:ring-emerald-500"
+              />
+              <div>
+                <p className="text-white font-medium">Trading around news time</p>
+                <p className="text-xs text-gray-500">High-impact economic events</p>
+              </div>
+            </label>
+
+            <label className="flex items-start gap-3 p-3 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700/50">
+              <input
+                type="checkbox"
+                checked={holdingWeekend}
+                onChange={(e) => setHoldingWeekend(e.target.checked)}
+                className="mt-1 w-4 h-4 rounded border-gray-600 bg-gray-700 text-emerald-500 focus:ring-emerald-500"
+              />
+              <div>
+                <p className="text-white font-medium">Holding over weekend</p>
+                <p className="text-xs text-gray-500">Positions open Friday → Monday</p>
+              </div>
+            </label>
+
+            <label className="flex items-start gap-3 p-3 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700/50">
+              <input
+                type="checkbox"
+                checked={largeProfitDay}
+                onChange={(e) => setLargeProfitDay(e.target.checked)}
+                className="mt-1 w-4 h-4 rounded border-gray-600 bg-gray-700 text-emerald-500 focus:ring-emerald-500"
+              />
+              <div>
+                <p className="text-white font-medium">Large profit day planned</p>
+                <p className="text-xs text-gray-500">Expecting &gt;30% of target in one day</p>
+              </div>
+            </label>
+
+            <label className="flex items-start gap-3 p-3 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700/50">
+              <input
+                type="checkbox"
+                checked={usingHedging}
+                onChange={(e) => setUsingHedging(e.target.checked)}
+                className="mt-1 w-4 h-4 rounded border-gray-600 bg-gray-700 text-emerald-500 focus:ring-emerald-500"
+              />
+              <div>
+                <p className="text-white font-medium">Using hedging</p>
+                <p className="text-xs text-gray-500">Opposite positions on same pair</p>
+              </div>
+            </label>
+          </div>
         </div>
 
-        {/* Interactive Checker (Client Component) */}
-        <RuleCheckerClient />
+        {/* Results */}
+        <div className="bg-gray-900 rounded-xl border border-gray-800 p-6 mb-6">
+          <div className={`p-4 rounded-lg border ${
+            isCompliant && warnings.length === 0
+              ? 'bg-emerald-500/10 border-emerald-500/30'
+              : violations.length > 0
+                ? 'bg-red-500/10 border-red-500/30'
+                : 'bg-yellow-500/10 border-yellow-500/30'
+          }`}>
+            <div className="flex items-center gap-3 mb-3">
+              {isCompliant && warnings.length === 0 ? (
+                <>
+                  <CheckCircle className="w-6 h-6 text-emerald-400" />
+                  <p className="font-semibold text-emerald-400">All Clear</p>
+                </>
+              ) : violations.length > 0 ? (
+                <>
+                  <XCircle className="w-6 h-6 text-red-400" />
+                  <p className="font-semibold text-red-400">Rule Violations</p>
+                </>
+              ) : (
+                <>
+                  <AlertTriangle className="w-6 h-6 text-yellow-400" />
+                  <p className="font-semibold text-yellow-400">Warnings</p>
+                </>
+              )}
+            </div>
 
-        {/* Pro CTA */}
-        <div className="mt-8 bg-gradient-to-br from-purple-900/50 to-purple-800/30 rounded-xl p-6 border border-purple-500/30">
-          <div className="flex flex-col md:flex-row items-center gap-6">
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2">
-                <Crown className="w-5 h-5 text-yellow-400" />
-                <span className="text-yellow-400 font-semibold">Pro Tracker</span>
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">
-                Auto-Check Every Trade
-              </h3>
-              <p className="text-gray-300">
-                Pro Tracker automatically verifies your trades against all rules in real-time and alerts you before violations.
+            {violations.length > 0 && (
+              <ul className="space-y-1 mb-3">
+                {violations.map((v, i) => (
+                  <li key={i} className="text-sm text-red-300">• {v}</li>
+                ))}
+              </ul>
+            )}
+
+            {warnings.length > 0 && (
+              <ul className="space-y-1">
+                {warnings.map((w, i) => (
+                  <li key={i} className="text-sm text-yellow-300">• {w}</li>
+                ))}
+              </ul>
+            )}
+
+            {isCompliant && warnings.length === 0 && (
+              <p className="text-sm text-emerald-300">Your plan complies with all {selectedFirm} rules</p>
+            )}
+          </div>
+        </div>
+
+        {/* Selected Firm Rules */}
+        <div className="bg-gray-900 rounded-xl border border-gray-800 p-6 mb-6">
+          <h3 className="text-lg font-semibold text-white mb-4">{selectedFirm} Rules</h3>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-gray-800 rounded-lg p-3">
+              <p className="text-xs text-gray-500">News Trading</p>
+              <p className={`font-medium ${rules.newsTrading ? 'text-emerald-400' : 'text-red-400'}`}>
+                {rules.newsTrading ? 'Allowed' : `${rules.newsBuffer}min buffer`}
               </p>
             </div>
-            <Link
-              href="/dashboard"
-              className="flex items-center gap-2 px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white font-semibold rounded-xl transition-colors whitespace-nowrap"
-            >
-              <Zap className="w-5 h-5" />
-              Try Pro Tracker Free
-            </Link>
+            <div className="bg-gray-800 rounded-lg p-3">
+              <p className="text-xs text-gray-500">Weekend Holding</p>
+              <p className={`font-medium ${rules.weekendHolding ? 'text-emerald-400' : 'text-red-400'}`}>
+                {rules.weekendHolding ? 'Allowed' : 'Not Allowed'}
+              </p>
+            </div>
+            <div className="bg-gray-800 rounded-lg p-3">
+              <p className="text-xs text-gray-500">Consistency Rule</p>
+              <p className="font-medium text-gray-300">
+                {rules.consistency ? `${rules.consistency}%` : 'None'}
+              </p>
+            </div>
+            <div className="bg-gray-800 rounded-lg p-3">
+              <p className="text-xs text-gray-500">Max DD Type</p>
+              <p className={`font-medium ${rules.maxDDType === 'static' ? 'text-emerald-400' : 'text-purple-400'}`}>
+                {rules.maxDDType === 'static' ? 'Static' : 'Trailing'}
+              </p>
+            </div>
+            <div className="bg-gray-800 rounded-lg p-3 col-span-2">
+              <p className="text-xs text-gray-500">Min Trading Days</p>
+              <p className="font-medium text-gray-300">{rules.minTradingDays} days</p>
+            </div>
           </div>
         </div>
 
-        {/* Pro Features */}
-        <div className="mt-6 bg-gray-800 rounded-xl p-5 border border-gray-700 opacity-75">
-          <div className="flex items-center gap-2 mb-3">
-            <Lock className="w-4 h-4 text-gray-500" />
-            <span className="text-sm text-gray-400">Pro Features</span>
-          </div>
-          <ul className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm text-gray-500">
-            <li className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4" />
-              News calendar
-            </li>
-            <li className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4" />
-              Consistency tracking
-            </li>
-            <li className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4" />
-              Violation alerts
-            </li>
-            <li className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4" />
-              Multi-account
-            </li>
-          </ul>
+        {/* CTA */}
+        <div className="bg-gradient-to-r from-emerald-500/20 to-gray-900 rounded-xl border border-emerald-500/30 p-6">
+          <h3 className="text-lg font-semibold text-white mb-2">Auto-Check Every Trade</h3>
+          <p className="text-gray-400 mb-4">
+            My Prop Firms automatically verifies your trades against all rules in real-time using your actual account data.
+          </p>
+          <Link
+            href="/dashboard"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-lg transition-colors"
+          >
+            <Shield className="w-5 h-5" />
+            Try My Prop Firms Free
+          </Link>
         </div>
       </div>
     </div>
