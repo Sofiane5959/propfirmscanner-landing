@@ -9,8 +9,6 @@ import {
   BarChart3,
   Tag,
   BookOpen,
-  Wrench,
-  LayoutDashboard,
   Menu,
   X,
   LogOut,
@@ -23,14 +21,13 @@ import {
 } from 'lucide-react';
 
 // =============================================================================
-// NAVIGATION LINKS
+// NAVIGATION LINKS (NO TOOLS!)
 // =============================================================================
 
 const navigation = [
   { name: 'Compare', href: '/compare', icon: BarChart3 },
   { name: 'Deals', href: '/deals', icon: Tag },
   { name: 'Blog', href: '/blog', icon: FileText },
-  { name: 'Tools', href: '/tools', icon: Wrench },
 ];
 
 // =============================================================================
@@ -49,7 +46,7 @@ function GoogleIcon({ className }: { className?: string }) {
 }
 
 // =============================================================================
-// USER DROPDOWN
+// USER DROPDOWN (when logged in)
 // =============================================================================
 
 function UserDropdown() {
@@ -91,8 +88,8 @@ function UserDropdown() {
             {/* Menu Items */}
             <div className="py-2">
               <Link href="/dashboard" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
-                <LayoutDashboard className="w-4 h-4" />
-                Dashboard
+                <Shield className="w-4 h-4" />
+                My Prop Firms
               </Link>
               <Link href="/dashboard/favorites" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
                 <Star className="w-4 h-4" />
@@ -125,12 +122,12 @@ function UserDropdown() {
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
-  const { user, isLoading, signInWithGoogle, signOut } = useAuth();
+  const { user, isLoading, signInWithGoogle } = useAuth();
 
   const isMyPropFirmsActive = pathname.startsWith('/dashboard');
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-white/10">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-gray-950/80 backdrop-blur-xl border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -167,17 +164,15 @@ export function Navbar() {
               <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded">FREE</span>
             </Link>
 
-            {/* My Prop Firms - Only show if logged in */}
-            {user && (
-              <Link
-                href="/dashboard"
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all
-                  ${isMyPropFirmsActive ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:text-white hover:bg-white/5'}`}
-              >
-                <Shield className="w-4 h-4" />
-                My Prop Firms
-              </Link>
-            )}
+            {/* My Prop Firms - Always visible */}
+            <Link
+              href="/dashboard"
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all
+                ${isMyPropFirmsActive ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:text-white hover:bg-white/5'}`}
+            >
+              <Shield className="w-4 h-4" />
+              My Prop Firms
+            </Link>
           </div>
 
           {/* Auth Section */}
@@ -231,6 +226,17 @@ export function Navbar() {
               <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded ml-auto">FREE</span>
             </Link>
 
+            {/* My Prop Firms */}
+            <Link
+              href="/dashboard"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all
+                ${isMyPropFirmsActive ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:text-white hover:bg-white/5'}`}
+            >
+              <Shield className="w-5 h-5" />
+              My Prop Firms
+            </Link>
+
             {/* User section for mobile */}
             <div className="pt-4 border-t border-gray-800 space-y-2">
               {isLoading ? (
@@ -254,14 +260,14 @@ export function Navbar() {
                     </div>
                   </div>
 
-                  <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-emerald-400 hover:bg-emerald-500/10">
-                    <LayoutDashboard className="w-5 h-5" />
-                    Dashboard
-                  </Link>
-
                   <Link href="/dashboard/favorites" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:bg-white/5">
                     <Star className="w-5 h-5" />
                     Mes Favoris
+                  </Link>
+
+                  <Link href="/dashboard/settings" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:bg-white/5">
+                    <Settings className="w-5 h-5" />
+                    Paramètres
                   </Link>
 
                   <button
