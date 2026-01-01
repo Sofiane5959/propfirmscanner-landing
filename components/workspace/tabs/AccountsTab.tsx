@@ -10,7 +10,8 @@ import {
   BarChart3,
   Edit3,
   Play,
-  BookOpen
+  BookOpen,
+  Sparkles
 } from 'lucide-react';
 import { UpdatePnlModal } from './UpdatePnlModal';
 import { QuickSimulateModal } from './QuickSimulateModal';
@@ -57,6 +58,7 @@ interface Account {
 
 interface AccountsTabProps {
   accounts: Account[];
+  isDemo?: boolean;
 }
 
 // =============================================================================
@@ -84,7 +86,7 @@ function getStatusConfig(status: 'safe' | 'warning' | 'danger') {
 // COMPONENT
 // =============================================================================
 
-export function AccountsTab({ accounts }: AccountsTabProps) {
+export function AccountsTab({ accounts, isDemo = false }: AccountsTabProps) {
   const [selectedAccount, setSelectedAccount] = useState<Account | null>(null);
   const [modalType, setModalType] = useState<'pnl' | 'simulate' | 'rules' | null>(null);
 
@@ -98,29 +100,23 @@ export function AccountsTab({ accounts }: AccountsTabProps) {
     setModalType(null);
   };
 
-  if (accounts.length === 0) {
-    return (
-      <div className="text-center py-16">
-        <p className="text-gray-400 mb-4">No accounts yet</p>
-        <Link
-          href="/dashboard/accounts/new"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-xl"
-        >
-          <Plus className="w-5 h-5" />
-          Add Your First Account
-        </Link>
-      </div>
-    );
-  }
-
   return (
     <>
       <div className="space-y-4">
-        {/* Add Account Button */}
-        <div className="flex justify-end">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-white">Your Accounts</h2>
+            {isDemo && (
+              <span className="flex items-center gap-1 px-2 py-0.5 bg-yellow-500/20 text-yellow-400 text-xs font-medium rounded-lg">
+                <Sparkles className="w-3 h-3" />
+                Demo
+              </span>
+            )}
+          </div>
           <Link
             href="/dashboard/accounts/new"
-            className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors"
           >
             <Plus className="w-4 h-4" />
             Add Account
@@ -135,11 +131,20 @@ export function AccountsTab({ accounts }: AccountsTabProps) {
           return (
             <div
               key={account.id}
-              className={`bg-gray-900 rounded-xl border ${statusConfig.border} overflow-hidden`}
+              className={`bg-gray-900 rounded-xl border ${statusConfig.border} overflow-hidden relative`}
             >
+              {/* Demo indicator */}
+              {isDemo && (
+                <div className="absolute top-3 right-3 z-10">
+                  <span className="text-xs text-gray-500 bg-gray-800 px-2 py-0.5 rounded">
+                    Demo
+                  </span>
+                </div>
+              )}
+
               {/* Header */}
               <div className="p-4 border-b border-gray-800">
-                <div className="flex items-start justify-between">
+                <div className="flex items-start justify-between pr-16">
                   <div>
                     <h3 className="font-semibold text-white text-lg">{account.prop_firm}</h3>
                     <p className="text-sm text-gray-500">
@@ -228,7 +233,13 @@ export function AccountsTab({ accounts }: AccountsTabProps) {
                 </button>
                 <button
                   onClick={() => openModal(account, 'pnl')}
-                  className="flex items-center justify-center gap-2 py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm font-medium rounded-lg transition-colors"
+                  disabled={isDemo}
+                  className={`flex items-center justify-center gap-2 py-2.5 text-sm font-medium rounded-lg transition-colors ${
+                    isDemo 
+                      ? 'bg-gray-800 text-gray-500 cursor-not-allowed' 
+                      : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
+                  }`}
+                  title={isDemo ? 'Add your own account to update PnL' : 'Update PnL'}
                 >
                   <Edit3 className="w-4 h-4" />
                   Update PnL
@@ -244,14 +255,37 @@ export function AccountsTab({ accounts }: AccountsTabProps) {
             </div>
           );
         })}
+
+        {/* CTA for Demo Mode */}
+        {isDemo && (
+          <div className="bg-gradient-to-r from-emerald-500/10 to-transparent border border-emerald-500/20 rounded-xl p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h3 className="font-semibold text-white mb-1">
+                  Add your own account to replace demo data
+                </h3>
+                <p className="text-sm text-gray-400">
+                  Your real accounts will show personalized risk tracking.
+                </p>
+              </div>
+              <Link
+                href="/dashboard/accounts/new"
+                className="flex items-center justify-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors whitespace-nowrap"
+              >
+                <Plus className="w-4 h-4" />
+                Add Account
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Modals */}
-      {selectedAccount && modalType === 'pnl' && (
+      {selectedAccount && modalType === 'pnl' && !isDemo && (
         <UpdatePnlModal account={selectedAccount} onClose={closeModal} />
       )}
       {selectedAccount && modalType === 'simulate' && (
-        <QuickSimulateModal account={selectedAccount} onClose={closeModal} />
+        <QuickSimulateModal account={selectedAccount} onClose={closeModal} isDemo={isDemo} />
       )}
       {selectedAccount && modalType === 'rules' && (
         <AccountRulesModal account={selectedAccount} onClose={closeModal} />

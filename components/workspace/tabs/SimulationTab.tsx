@@ -1,45 +1,45 @@
 'use client';
 
 import { useState } from 'react';
-import { Play, Loader2, CheckCircle, AlertTriangle, XCircle, ChevronDown } from 'lucide-react';
+import Link from 'next/link';
+import { Play, Loader2, CheckCircle, AlertTriangle, XCircle, ChevronDown, Sparkles, Plus } from 'lucide-react';
 
 // =============================================================================
 // TYPES
 // =============================================================================
 
-interface AccountHealth {
-  status: 'safe' | 'warning' | 'danger';
-  daily: {
-    daily_buffer_usd: number;
-  };
-  max: {
-    max_buffer_usd: number;
-  };
-}
-
 interface Account {
   id: string;
   prop_firm: string;
   program: string;
-  stage: string;
-  health: AccountHealth;
+  health: {
+    status: 'safe' | 'warning' | 'danger';
+    daily: {
+      daily_buffer_usd: number;
+      daily_limit_usd: number;
+    };
+    max: {
+      max_buffer_usd: number;
+    };
+  };
 }
 
 interface SimulationTabProps {
   accounts: Account[];
+  isDemo?: boolean;
 }
 
 type SimResult = {
   classification: 'SAFE' | 'RISKY' | 'VIOLATION';
   message: string;
-  dailyUsagePct: number;
+  details: string;
 };
 
 // =============================================================================
 // COMPONENT
 // =============================================================================
 
-export function SimulationTab({ accounts }: SimulationTabProps) {
+export function SimulationTab({ accounts, isDemo = false }: SimulationTabProps) {
   const [selectedAccountId, setSelectedAccountId] = useState<string>(accounts[0]?.id || '');
   const [riskAmount, setRiskAmount] = useState('');
   const [isSimulating, setIsSimulating] = useState(false);
@@ -57,52 +57,58 @@ export function SimulationTab({ accounts }: SimulationTabProps) {
 
     // Calculate
     const dailyBuffer = selectedAccount.health.daily.daily_buffer_usd;
+    const maxBuffer = selectedAccount.health.max.max_buffer_usd;
     const dailyUsagePct = (risk / dailyBuffer) * 100;
+
+    await new Promise(resolve => setTimeout(resolve, 400));
 
     let classification: 'SAFE' | 'RISKY' | 'VIOLATION';
     let message: string;
+    let details: string;
 
     if (risk >= dailyBuffer) {
       classification = 'VIOLATION';
-      message = 'This trade could violate your daily drawdown limit. Do not take this trade on this account.';
+      message = 'This trade could violate your daily drawdown limit.';
+      details = `Your daily buffer is $${Math.round(dailyBuffer)}. This trade risks $${Math.round(risk)}, which would breach your limit. Do not take this trade.`;
+    } else if (risk >= maxBuffer) {
+      classification = 'VIOLATION';
+      message = 'This trade could breach your maximum drawdown.';
+      details = `Your total DD remaining is $${Math.round(maxBuffer)}. This trade risks $${Math.round(risk)}, which could end your account.`;
     } else if (dailyUsagePct > 70) {
       classification = 'RISKY';
-      message = `Warning: this trade would use ${Math.round(dailyUsagePct)}% of your daily drawdown. Consider reducing position size.`;
+      message = `Warning: this trade uses ${Math.round(dailyUsagePct)}% of your daily drawdown.`;
+      details = `You have $${Math.round(dailyBuffer)} left today. After this trade, you'd only have $${Math.round(dailyBuffer - risk)} buffer remaining. Consider reducing position size.`;
+    } else if (dailyUsagePct > 50) {
+      classification = 'RISKY';
+      message = `This trade uses ${Math.round(dailyUsagePct)}% of your daily limit.`;
+      details = `Acceptable but aggressive. You'd have $${Math.round(dailyBuffer - risk)} remaining after this trade.`;
     } else {
       classification = 'SAFE';
-      message = `This trade would use ${Math.round(dailyUsagePct)}% of your daily limit. You are within safe limits.`;
+      message = `This trade uses ${Math.round(dailyUsagePct)}% of your daily limit.`;
+      details = `You are within safe limits. After this trade, you'd still have $${Math.round(dailyBuffer - risk)} daily buffer and $${Math.round(maxBuffer - risk)} total DD remaining.`;
     }
 
-    await new Promise(resolve => setTimeout(resolve, 300));
-    setResult({ classification, message, dailyUsagePct });
+    setResult({ classification, message, details });
     setIsSimulating(false);
   };
 
-  const getResultConfig = (classification: 'SAFE' | 'RISKY' | 'VIOLATION') => ({
-    SAFE: { bg: 'bg-emerald-500/10', border: 'border-emerald-500/30', text: 'text-emerald-400', Icon: CheckCircle },
-    RISKY: { bg: 'bg-yellow-500/10', border: 'border-yellow-500/30', text: 'text-yellow-400', Icon: AlertTriangle },
-    VIOLATION: { bg: 'bg-red-500/10', border: 'border-red-500/30', text: 'text-red-400', Icon: XCircle },
-  }[classification]);
-
-  if (accounts.length === 0) {
-    return (
-      <div className="text-center py-16">
-        <p className="text-gray-400 mb-4">Add an account to start simulating trades</p>
-        <a
-          href="/dashboard/accounts/new"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-xl"
-        >
-          + Add Account
-        </a>
-      </div>
-    );
-  }
-
   return (
     <div className="max-w-xl mx-auto">
+      {/* Demo indicator */}
+      {isDemo && (
+        <div className="flex items-center gap-2 mb-4 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+          <Sparkles className="w-4 h-4 text-yellow-400" />
+          <p className="text-sm text-yellow-400">
+            Simulating on demo account. Add your own for real data.
+          </p>
+        </div>
+      )}
+
       <div className="bg-gray-900 rounded-xl border border-gray-800 p-6">
         <h2 className="text-lg font-semibold text-white mb-1">Trade Simulation</h2>
-        <p className="text-sm text-gray-500 mb-6">Test if a trade is safe before you take it</p>
+        <p className="text-sm text-gray-500 mb-6">
+          Test if a trade is safe before you risk real money.
+        </p>
 
         {/* Account Selector */}
         <div className="mb-4">
@@ -118,7 +124,7 @@ export function SimulationTab({ accounts }: SimulationTabProps) {
             >
               {accounts.map((account) => (
                 <option key={account.id} value={account.id}>
-                  {account.prop_firm} — {account.program} ({account.stage})
+                  {account.prop_firm} — {account.program} {isDemo ? '(Demo)' : ''}
                 </option>
               ))}
             </select>
@@ -126,19 +132,19 @@ export function SimulationTab({ accounts }: SimulationTabProps) {
           </div>
         </div>
 
-        {/* Account Context */}
+        {/* Account Status Preview */}
         {selectedAccount && (
           <div className="mb-4 p-3 bg-gray-800 rounded-lg">
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-400">Daily buffer remaining:</span>
+            <div className="flex justify-between text-sm mb-2">
+              <span className="text-gray-400">Daily buffer remaining</span>
               <span className="text-white font-medium">
-                ${Math.round(selectedAccount.health.daily.daily_buffer_usd).toLocaleString()}
+                ${Math.round(selectedAccount.health.daily.daily_buffer_usd)}
               </span>
             </div>
-            <div className="flex justify-between text-sm mt-1">
-              <span className="text-gray-400">Total DD remaining:</span>
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-400">Total DD remaining</span>
               <span className="text-white font-medium">
-                ${Math.round(selectedAccount.health.max.max_buffer_usd).toLocaleString()}
+                ${Math.round(selectedAccount.health.max.max_buffer_usd)}
               </span>
             </div>
           </div>
@@ -146,9 +152,7 @@ export function SimulationTab({ accounts }: SimulationTabProps) {
 
         {/* Risk Input */}
         <div className="mb-4">
-          <label className="block text-sm text-gray-400 mb-2">
-            Risk if stopped out (USD)
-          </label>
+          <label className="block text-sm text-gray-400 mb-2">Risk if stopped out (USD)</label>
           <input
             type="number"
             value={riskAmount}
@@ -156,7 +160,7 @@ export function SimulationTab({ accounts }: SimulationTabProps) {
               setRiskAmount(e.target.value);
               setResult(null);
             }}
-            placeholder="Enter risk amount"
+            placeholder="e.g. 500"
             className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white text-lg placeholder-gray-600 focus:outline-none focus:border-emerald-500"
           />
         </div>
@@ -190,34 +194,59 @@ export function SimulationTab({ accounts }: SimulationTabProps) {
           {isSimulating ? (
             <>
               <Loader2 className="w-5 h-5 animate-spin" />
-              Checking...
+              Simulating...
             </>
           ) : (
             <>
               <Play className="w-5 h-5" />
-              Check This Trade
+              Simulate This Trade
             </>
           )}
         </button>
 
         {/* Result */}
         {result && (
-          <div className={`mt-6 p-4 rounded-lg border ${getResultConfig(result.classification).bg} ${getResultConfig(result.classification).border}`}>
+          <div className={`mt-6 p-4 rounded-lg border ${
+            result.classification === 'SAFE'
+              ? 'bg-emerald-500/10 border-emerald-500/30'
+              : result.classification === 'RISKY'
+                ? 'bg-yellow-500/10 border-yellow-500/30'
+                : 'bg-red-500/10 border-red-500/30'
+          }`}>
             <div className="flex items-start gap-3">
-              {(() => {
-                const config = getResultConfig(result.classification);
-                return <config.Icon className={`w-6 h-6 flex-shrink-0 ${config.text}`} />;
-              })()}
+              {result.classification === 'SAFE' && <CheckCircle className="w-6 h-6 text-emerald-400 flex-shrink-0" />}
+              {result.classification === 'RISKY' && <AlertTriangle className="w-6 h-6 text-yellow-400 flex-shrink-0" />}
+              {result.classification === 'VIOLATION' && <XCircle className="w-6 h-6 text-red-400 flex-shrink-0" />}
               <div>
-                <p className={`font-semibold mb-1 ${getResultConfig(result.classification).text}`}>
+                <p className={`font-semibold mb-1 ${
+                  result.classification === 'SAFE' ? 'text-emerald-400' :
+                  result.classification === 'RISKY' ? 'text-yellow-400' : 'text-red-400'
+                }`}>
                   {result.classification}
                 </p>
-                <p className="text-sm text-gray-300">{result.message}</p>
+                <p className="text-white text-sm mb-2">{result.message}</p>
+                <p className="text-gray-400 text-sm">{result.details}</p>
               </div>
             </div>
           </div>
         )}
       </div>
+
+      {/* CTA for Demo Mode */}
+      {isDemo && (
+        <div className="mt-6 bg-gradient-to-r from-emerald-500/10 to-transparent border border-emerald-500/20 rounded-xl p-5 text-center">
+          <p className="text-gray-400 text-sm mb-3">
+            Add your real account to simulate trades with your actual data.
+          </p>
+          <Link
+            href="/dashboard/accounts/new"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            Add Your Account
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

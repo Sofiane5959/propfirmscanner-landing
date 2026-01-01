@@ -5,6 +5,7 @@ import { Zap, Shield } from 'lucide-react';
 
 import { WorkspaceTabs } from '@/components/workspace/WorkspaceTabs';
 import { calcAccountHealth } from '@/lib/risk';
+import { DEMO_ACCOUNTS, DEMO_GUIDANCE_MESSAGE, DEMO_GUIDANCE_TIPS } from '@/lib/demo-data';
 import type { AccountState, RuleSet } from '@/lib/risk';
 
 // =============================================================================
@@ -194,15 +195,23 @@ function LoggedOutView() {
 async function Workspace({ userId }: { userId: string }) {
   const supabase = createServerComponentClient({ cookies });
 
+  // Fetch real accounts
   const { data: accounts } = await supabase
     .from('user_accounts')
     .select('*')
     .eq('user_id', userId)
     .order('created_at', { ascending: false });
 
-  const accountsWithHealth: AccountWithHealth[] = (accounts || []).map((account) => ({
+  const realAccounts = accounts || [];
+  const isDemo = realAccounts.length === 0;
+
+  // Use demo data if no real accounts exist
+  const sourceAccounts = isDemo ? DEMO_ACCOUNTS : realAccounts;
+
+  // Calculate health for each account
+  const accountsWithHealth: AccountWithHealth[] = sourceAccounts.map((account) => ({
     ...account,
-    health: calculateHealth(account),
+    health: calculateHealth(account as DbAccount),
   }));
 
   const sortedAccounts = sortByRisk(accountsWithHealth);
@@ -212,7 +221,11 @@ async function Workspace({ userId }: { userId: string }) {
   const safeCount = sortedAccounts.filter(a => a.health.status === 'safe').length;
   const riskCount = sortedAccounts.filter(a => a.health.status === 'warning').length;
   const dangerCount = sortedAccounts.filter(a => a.health.status === 'danger').length;
-  const dailyGuidance = getDailyGuidance(sortedAccounts);
+  
+  // Daily guidance
+  const dailyGuidance = isDemo 
+    ? DEMO_GUIDANCE_MESSAGE 
+    : getDailyGuidance(sortedAccounts);
 
   return (
     <div className="min-h-screen bg-gray-950">
@@ -220,9 +233,16 @@ async function Workspace({ userId }: { userId: string }) {
       <header className="bg-gray-900 border-b border-gray-800">
         <div className="max-w-5xl mx-auto px-4 py-5">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-xl font-bold text-white">My Prop Firms</h1>
-              <p className="text-sm text-gray-500">Your trading control center</p>
+            <div className="flex items-center gap-3">
+              <div>
+                <h1 className="text-xl font-bold text-white">My Prop Firms</h1>
+                <p className="text-sm text-gray-500">Your trading control center</p>
+              </div>
+              {isDemo && (
+                <span className="px-2 py-1 bg-yellow-500/20 text-yellow-400 text-xs font-medium rounded-lg">
+                  Demo Mode
+                </span>
+              )}
             </div>
             <Link
               href="/dashboard/accounts/new"
@@ -242,6 +262,8 @@ async function Workspace({ userId }: { userId: string }) {
         riskCount={riskCount}
         dangerCount={dangerCount}
         dailyGuidance={dailyGuidance}
+        isDemo={isDemo}
+        demoGuidanceTips={isDemo ? DEMO_GUIDANCE_TIPS : undefined}
       />
     </div>
   );

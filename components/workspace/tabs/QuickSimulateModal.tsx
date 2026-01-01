@@ -15,9 +15,10 @@ interface Account {
 interface QuickSimulateModalProps {
   account: Account;
   onClose: () => void;
+  isDemo?: boolean;
 }
 
-export function QuickSimulateModal({ account, onClose }: QuickSimulateModalProps) {
+export function QuickSimulateModal({ account, onClose, isDemo = false }: QuickSimulateModalProps) {
   const [riskAmount, setRiskAmount] = useState('');
   const [isSimulating, setIsSimulating] = useState(false);
   const [result, setResult] = useState<{ classification: 'SAFE' | 'RISKY' | 'VIOLATION'; message: string } | null>(null);
@@ -52,7 +53,6 @@ export function QuickSimulateModal({ account, onClose }: QuickSimulateModalProps
   };
 
   const ResultIcon = result?.classification === 'SAFE' ? CheckCircle : result?.classification === 'RISKY' ? AlertTriangle : XCircle;
-  const resultColor = result?.classification === 'SAFE' ? 'emerald' : result?.classification === 'RISKY' ? 'yellow' : 'red';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -112,12 +112,27 @@ export function QuickSimulateModal({ account, onClose }: QuickSimulateModalProps
         </button>
 
         {result && (
-          <div className={`p-4 rounded-lg border bg-${resultColor}-500/10 border-${resultColor}-500/30`}>
+          <div className={`p-4 rounded-lg border ${
+            result.classification === 'SAFE' 
+              ? 'bg-emerald-500/10 border-emerald-500/30' 
+              : result.classification === 'RISKY'
+                ? 'bg-yellow-500/10 border-yellow-500/30'
+                : 'bg-red-500/10 border-red-500/30'
+          }`}>
             <div className="flex items-start gap-3">
-              <ResultIcon className={`w-6 h-6 flex-shrink-0 text-${resultColor}-400`} />
+              <ResultIcon className={`w-6 h-6 flex-shrink-0 ${
+                result.classification === 'SAFE' ? 'text-emerald-400' :
+                result.classification === 'RISKY' ? 'text-yellow-400' : 'text-red-400'
+              }`} />
               <div>
-                <p className={`font-semibold mb-1 text-${resultColor}-400`}>{result.classification}</p>
+                <p className={`font-semibold mb-1 ${
+                  result.classification === 'SAFE' ? 'text-emerald-400' :
+                  result.classification === 'RISKY' ? 'text-yellow-400' : 'text-red-400'
+                }`}>{result.classification}</p>
                 <p className="text-sm text-gray-300">{result.message}</p>
+                {isDemo && (
+                  <p className="text-xs text-gray-500 mt-2">Demo simulation — add your account for real data</p>
+                )}
               </div>
             </div>
           </div>

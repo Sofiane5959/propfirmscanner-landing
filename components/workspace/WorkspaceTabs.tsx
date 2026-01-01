@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { 
   LayoutGrid, 
   Wallet, 
@@ -10,7 +11,9 @@ import {
   CheckCircle,
   AlertTriangle,
   XCircle,
-  Activity
+  Activity,
+  Plus,
+  Sparkles
 } from 'lucide-react';
 
 import { AccountsTab } from './tabs/AccountsTab';
@@ -71,6 +74,8 @@ interface WorkspaceTabsProps {
   riskCount: number;
   dangerCount: number;
   dailyGuidance: string;
+  isDemo?: boolean;
+  demoGuidanceTips?: string[];
 }
 
 // =============================================================================
@@ -86,6 +91,39 @@ const tabs = [
 ];
 
 // =============================================================================
+// DEMO BANNER COMPONENT
+// =============================================================================
+
+function DemoBanner() {
+  return (
+    <div className="bg-gradient-to-r from-yellow-500/10 via-yellow-500/5 to-transparent border border-yellow-500/20 rounded-xl p-4 mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-start gap-3">
+          <div className="p-2 bg-yellow-500/20 rounded-lg">
+            <Sparkles className="w-5 h-5 text-yellow-400" />
+          </div>
+          <div>
+            <p className="font-medium text-white">
+              You&apos;re viewing demo data
+            </p>
+            <p className="text-sm text-gray-400">
+              Add your own account to see your real risk metrics and guidance.
+            </p>
+          </div>
+        </div>
+        <Link
+          href="/dashboard/accounts/new"
+          className="flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors whitespace-nowrap"
+        >
+          <Plus className="w-4 h-4" />
+          Add Your Account
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+// =============================================================================
 // COMPONENT
 // =============================================================================
 
@@ -96,11 +134,16 @@ export function WorkspaceTabs({
   riskCount,
   dangerCount,
   dailyGuidance,
+  isDemo = false,
+  demoGuidanceTips,
 }: WorkspaceTabsProps) {
   const [activeTab, setActiveTab] = useState('overview');
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-6">
+      {/* Demo Banner - Only show when in demo mode */}
+      {isDemo && <DemoBanner />}
+
       {/* Tab Navigation */}
       <div className="flex gap-1 p-1 bg-gray-900 rounded-xl mb-6 overflow-x-auto">
         {tabs.map((tab) => (
@@ -129,30 +172,35 @@ export function WorkspaceTabs({
           dailyGuidance={dailyGuidance}
           accounts={accounts}
           onNavigate={setActiveTab}
+          isDemo={isDemo}
         />
       )}
 
       {activeTab === 'accounts' && (
-        <AccountsTab accounts={accounts} />
+        <AccountsTab accounts={accounts} isDemo={isDemo} />
       )}
 
       {activeTab === 'simulation' && (
-        <SimulationTab accounts={accounts} />
+        <SimulationTab accounts={accounts} isDemo={isDemo} />
       )}
 
       {activeTab === 'progress' && (
-        <ProgressRulesTab accounts={accounts} />
+        <ProgressRulesTab accounts={accounts} isDemo={isDemo} />
       )}
 
       {activeTab === 'guidance' && (
-        <GuidanceTab accounts={accounts} />
+        <GuidanceTab 
+          accounts={accounts} 
+          isDemo={isDemo}
+          demoTips={demoGuidanceTips}
+        />
       )}
     </div>
   );
 }
 
 // =============================================================================
-// OVERVIEW TAB (inline since it's simple)
+// OVERVIEW TAB
 // =============================================================================
 
 interface OverviewTabProps {
@@ -163,6 +211,7 @@ interface OverviewTabProps {
   dailyGuidance: string;
   accounts: Account[];
   onNavigate: (tab: string) => void;
+  isDemo?: boolean;
 }
 
 function OverviewTab({
@@ -173,33 +222,16 @@ function OverviewTab({
   dailyGuidance,
   accounts,
   onNavigate,
+  isDemo = false,
 }: OverviewTabProps) {
   const hasDanger = dangerCount > 0;
   const hasRisk = riskCount > 0;
-
-  if (totalAccounts === 0) {
-    return (
-      <div className="text-center py-16">
-        <div className="w-16 h-16 bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
-          <Wallet className="w-8 h-8 text-gray-600" />
-        </div>
-        <h2 className="text-xl font-semibold text-white mb-2">No accounts yet</h2>
-        <p className="text-gray-400 mb-6">Add your first prop firm account to start tracking.</p>
-        <a
-          href="/dashboard/accounts/new"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-xl transition-colors"
-        >
-          + Add Account
-        </a>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
       {/* Daily Guidance - Most Important */}
       <div
-        className={`p-5 rounded-xl border ${
+        className={`p-5 rounded-xl border relative ${
           hasDanger
             ? 'bg-red-500/10 border-red-500/30'
             : hasRisk
@@ -207,7 +239,12 @@ function OverviewTab({
               : 'bg-emerald-500/10 border-emerald-500/30'
         }`}
       >
-        <p className={`text-lg font-medium ${
+        {isDemo && (
+          <span className="absolute top-3 right-3 text-xs text-gray-500 bg-gray-800 px-2 py-0.5 rounded">
+            Demo data
+          </span>
+        )}
+        <p className={`text-lg font-medium pr-20 ${
           hasDanger ? 'text-red-400' : hasRisk ? 'text-yellow-400' : 'text-emerald-400'
         }`}>
           {dailyGuidance}
@@ -216,7 +253,10 @@ function OverviewTab({
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-gray-900 rounded-xl p-4 border border-gray-800">
+        <div className="bg-gray-900 rounded-xl p-4 border border-gray-800 relative">
+          {isDemo && (
+            <span className="absolute top-2 right-2 w-2 h-2 bg-yellow-500 rounded-full" title="Demo data" />
+          )}
           <div className="flex items-center gap-2 mb-2">
             <Activity className="w-4 h-4 text-gray-500" />
             <span className="text-xs text-gray-500">Total Accounts</span>
@@ -257,7 +297,9 @@ function OverviewTab({
         >
           <Wallet className="w-5 h-5 text-emerald-400 mb-2" />
           <p className="font-medium text-white">View Accounts</p>
-          <p className="text-sm text-gray-500">See all your prop firm accounts</p>
+          <p className="text-sm text-gray-500">
+            {isDemo ? 'See demo accounts' : 'See all your prop firm accounts'}
+          </p>
         </button>
 
         <button
@@ -282,7 +324,12 @@ function OverviewTab({
       {/* Accounts at Risk Preview */}
       {(hasDanger || hasRisk) && (
         <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
-          <h3 className="text-sm font-medium text-gray-400 mb-3">Accounts Needing Attention</h3>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-medium text-gray-400">Accounts Needing Attention</h3>
+            {isDemo && (
+              <span className="text-xs text-gray-500">Demo data</span>
+            )}
+          </div>
           <div className="space-y-2">
             {accounts
               .filter(a => a.health.status !== 'safe')
@@ -308,6 +355,25 @@ function OverviewTab({
                 </div>
               ))}
           </div>
+        </div>
+      )}
+
+      {/* CTA for Demo Mode */}
+      {isDemo && (
+        <div className="bg-gradient-to-r from-emerald-500/20 via-emerald-500/10 to-transparent border border-emerald-500/30 rounded-xl p-6 text-center">
+          <h3 className="text-lg font-semibold text-white mb-2">
+            Ready to track your real accounts?
+          </h3>
+          <p className="text-gray-400 text-sm mb-4">
+            Add your prop firm accounts to see personalized risk tracking and guidance.
+          </p>
+          <Link
+            href="/dashboard/accounts/new"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-lg transition-colors"
+          >
+            <Plus className="w-5 h-5" />
+            Add Your First Account
+          </Link>
         </div>
       )}
     </div>
