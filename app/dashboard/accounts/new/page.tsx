@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/providers/AuthProvider';
 import { createGuestAccount, hasGuestAccount } from '@/lib/guest-storage';
-import { AuthGuardModal } from '@/components/AuthGuardModal';
+import { PaywallModal } from '@/components/PaywallModal';
+import { getUserPlan, canAddAccount } from '@/lib/subscription';
 import {
   ArrowLeft,
   Shield,
@@ -12,6 +13,7 @@ import {
   Loader2,
   Info,
   CheckCircle,
+  Crown,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -91,11 +93,25 @@ export default function AddAccountPage() {
   const [selectedFirm, setSelectedFirm] = useState<string>('');
   const [selectedProgram, setSelectedProgram] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [paywallOpen, setPaywallOpen] = useState(false);
   const [error, setError] = useState<string>('');
 
   const isGuest = !user;
   const guestHasAccount = isGuest && hasGuestAccount();
+  
+  // TODO: Get actual account count from Supabase for logged-in users
+  const currentAccountCount = isGuest ? (guestHasAccount ? 1 : 0) : 0;
+  
+  // TODO: Get actual plan from user profile
+  const userPlan = getUserPlan(isGuest ? 'free' : 'free');
+  const canAdd = canAddAccount(currentAccountCount, userPlan);
+
+  // Check account limit on mount
+  useEffect(() => {
+    if (!authLoading && !canAdd) {
+      setPaywallOpen(true);
+    }
+  }, [authLoading, canAdd]);
 
   // Get selected firm data
   const firmData = PROP_FIRMS.find(f => f.slug === selectedFirm);
@@ -110,9 +126,15 @@ export default function AddAccountPage() {
       return;
     }
 
+    // Check if user has reached account limit
+    if (!canAdd) {
+      setPaywallOpen(true);
+      return;
+    }
+
     // Check if guest already has an account
     if (isGuest && guestHasAccount) {
-      setAuthModalOpen(true);
+      setPaywallOpen(true);
       return;
     }
 
@@ -186,6 +208,21 @@ export default function AddAccountPage() {
                 <p className="font-medium text-white text-sm">Essai gratuit</p>
                 <p className="text-xs text-gray-400 mt-0.5">
                   Votre premier compte est gratuit et sans inscription. Vos données seront stockées sur cet appareil.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Pro upgrade hint */}
+        {guestHasAccount && (
+          <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 mb-6">
+            <div className="flex items-start gap-3">
+              <Crown className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium text-white text-sm">Vous avez déjà 1 compte</p>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  Passez à Pro pour tracker plusieurs comptes prop firm et accéder aux fonctionnalités avancées.
                 </p>
               </div>
             </div>
@@ -300,11 +337,18 @@ export default function AddAccountPage() {
         </div>
       </div>
 
-      {/* Auth Modal for guests trying to add 2nd account */}
-      <AuthGuardModal
-        isOpen={authModalOpen}
-        onClose={() => setAuthModalOpen(false)}
-        action="ajouter plus de comptes"
+      {/* Paywall Modal for account limit */}
+      <PaywallModal
+        isOpen={paywallOpen}
+        onClose={() => {
+          setPaywallOpen(false);
+          // If they can't add, redirect back to dashboard
+          if (!canAdd) {
+            router.push('/dashboard');
+          }
+        }}
+        currentAccountCount={currentAccountCount}
+        trigger="account_limit"
       />
     </div>
   );
