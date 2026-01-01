@@ -1,330 +1,311 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { ArrowLeft, Plus, ChevronDown } from 'lucide-react'
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/providers/AuthProvider';
+import { createGuestAccount, hasGuestAccount } from '@/lib/guest-storage';
+import { AuthGuardModal } from '@/components/AuthGuardModal';
+import {
+  ArrowLeft,
+  Shield,
+  ChevronDown,
+  Loader2,
+  Info,
+  CheckCircle,
+} from 'lucide-react';
+import Link from 'next/link';
 
-// Prop firm data with programs
-const propFirms = [
-  {
-    slug: 'ftmo',
+// =============================================================================
+// PROP FIRMS DATA
+// =============================================================================
+
+const PROP_FIRMS = [
+  { 
+    slug: 'ftmo', 
     name: 'FTMO',
     programs: [
-      { name: 'Standard $10K', size: 10000, daily_dd: 5, max_dd: 10, max_dd_type: 'static', news: false, weekend: true },
-      { name: 'Standard $25K', size: 25000, daily_dd: 5, max_dd: 10, max_dd_type: 'static', news: false, weekend: true },
-      { name: 'Standard $50K', size: 50000, daily_dd: 5, max_dd: 10, max_dd_type: 'static', news: false, weekend: true },
-      { name: 'Standard $100K', size: 100000, daily_dd: 5, max_dd: 10, max_dd_type: 'static', news: false, weekend: true },
-      { name: 'Standard $200K', size: 200000, daily_dd: 5, max_dd: 10, max_dd_type: 'static', news: false, weekend: true },
+      { name: 'Challenge $10K', size: 10000, daily_dd: 5, max_dd: 10, min_days: 4 },
+      { name: 'Challenge $25K', size: 25000, daily_dd: 5, max_dd: 10, min_days: 4 },
+      { name: 'Challenge $50K', size: 50000, daily_dd: 5, max_dd: 10, min_days: 4 },
+      { name: 'Challenge $100K', size: 100000, daily_dd: 5, max_dd: 10, min_days: 4 },
+      { name: 'Challenge $200K', size: 200000, daily_dd: 5, max_dd: 10, min_days: 4 },
     ],
+    dd_type: 'static' as const,
   },
-  {
-    slug: 'fundednext',
+  { 
+    slug: 'fundednext', 
     name: 'FundedNext',
     programs: [
-      { name: 'Stellar 2-Step $6K', size: 6000, daily_dd: 5, max_dd: 10, max_dd_type: 'static', news: true, weekend: true },
-      { name: 'Stellar 2-Step $15K', size: 15000, daily_dd: 5, max_dd: 10, max_dd_type: 'static', news: true, weekend: true },
-      { name: 'Stellar 2-Step $25K', size: 25000, daily_dd: 5, max_dd: 10, max_dd_type: 'static', news: true, weekend: true },
-      { name: 'Stellar 2-Step $50K', size: 50000, daily_dd: 5, max_dd: 10, max_dd_type: 'static', news: true, weekend: true },
-      { name: 'Stellar 2-Step $100K', size: 100000, daily_dd: 5, max_dd: 10, max_dd_type: 'static', news: true, weekend: true },
-      { name: 'Stellar 1-Step $25K', size: 25000, daily_dd: 3, max_dd: 6, max_dd_type: 'static', news: true, weekend: true },
-      { name: 'Stellar 1-Step $50K', size: 50000, daily_dd: 3, max_dd: 6, max_dd_type: 'static', news: true, weekend: true },
-      { name: 'Stellar 1-Step $100K', size: 100000, daily_dd: 3, max_dd: 6, max_dd_type: 'static', news: true, weekend: true },
+      { name: 'Stellar $6K', size: 6000, daily_dd: 5, max_dd: 10, min_days: 5 },
+      { name: 'Stellar $15K', size: 15000, daily_dd: 5, max_dd: 10, min_days: 5 },
+      { name: 'Stellar $25K', size: 25000, daily_dd: 5, max_dd: 10, min_days: 5 },
+      { name: 'Stellar $50K', size: 50000, daily_dd: 5, max_dd: 10, min_days: 5 },
+      { name: 'Stellar $100K', size: 100000, daily_dd: 5, max_dd: 10, min_days: 5 },
     ],
+    dd_type: 'trailing' as const,
   },
-  {
-    slug: 'the5ers',
+  { 
+    slug: 'the5ers', 
     name: 'The5ers',
     programs: [
-      { name: 'High Stakes $6K', size: 6000, daily_dd: 3, max_dd: 6, max_dd_type: 'static', news: true, weekend: true },
-      { name: 'High Stakes $20K', size: 20000, daily_dd: 3, max_dd: 6, max_dd_type: 'static', news: true, weekend: true },
-      { name: 'High Stakes $60K', size: 60000, daily_dd: 3, max_dd: 6, max_dd_type: 'static', news: true, weekend: true },
-      { name: 'High Stakes $100K', size: 100000, daily_dd: 3, max_dd: 6, max_dd_type: 'static', news: true, weekend: true },
+      { name: 'Bootcamp $5K', size: 5000, daily_dd: 3, max_dd: 6, min_days: 3 },
+      { name: 'Bootcamp $20K', size: 20000, daily_dd: 3, max_dd: 6, min_days: 3 },
+      { name: 'Bootcamp $60K', size: 60000, daily_dd: 3, max_dd: 6, min_days: 3 },
+      { name: 'Bootcamp $100K', size: 100000, daily_dd: 3, max_dd: 6, min_days: 3 },
     ],
+    dd_type: 'static' as const,
   },
-  {
-    slug: 'my-funded-futures',
-    name: 'My Funded Futures',
+  { 
+    slug: 'myfundedfx', 
+    name: 'MyFundedFX',
     programs: [
-      { name: 'Starter $50K', size: 50000, daily_dd: 0, max_dd: 4, max_dd_type: 'eod_trailing', news: true, weekend: false },
-      { name: 'Starter $100K', size: 100000, daily_dd: 0, max_dd: 4.5, max_dd_type: 'eod_trailing', news: true, weekend: false },
-      { name: 'Starter $150K', size: 150000, daily_dd: 0, max_dd: 4.5, max_dd_type: 'eod_trailing', news: true, weekend: false },
+      { name: 'Challenge $5K', size: 5000, daily_dd: 5, max_dd: 8, min_days: 5 },
+      { name: 'Challenge $10K', size: 10000, daily_dd: 5, max_dd: 8, min_days: 5 },
+      { name: 'Challenge $25K', size: 25000, daily_dd: 5, max_dd: 8, min_days: 5 },
+      { name: 'Challenge $50K', size: 50000, daily_dd: 5, max_dd: 8, min_days: 5 },
+      { name: 'Challenge $100K', size: 100000, daily_dd: 5, max_dd: 8, min_days: 5 },
     ],
+    dd_type: 'trailing' as const,
   },
-  {
-    slug: 'topstep',
-    name: 'Topstep',
+  { 
+    slug: 'e8-funding', 
+    name: 'E8 Funding',
     programs: [
-      { name: 'Trading Combine $50K', size: 50000, daily_dd: 0, max_dd: 3, max_dd_type: 'eod_trailing', news: true, weekend: false },
-      { name: 'Trading Combine $100K', size: 100000, daily_dd: 0, max_dd: 4, max_dd_type: 'eod_trailing', news: true, weekend: false },
-      { name: 'Trading Combine $150K', size: 150000, daily_dd: 0, max_dd: 4.5, max_dd_type: 'eod_trailing', news: true, weekend: false },
+      { name: 'E8 Track $25K', size: 25000, daily_dd: 5, max_dd: 8, min_days: 5 },
+      { name: 'E8 Track $50K', size: 50000, daily_dd: 5, max_dd: 8, min_days: 5 },
+      { name: 'E8 Track $100K', size: 100000, daily_dd: 5, max_dd: 8, min_days: 5 },
+      { name: 'E8 Track $250K', size: 250000, daily_dd: 5, max_dd: 8, min_days: 5 },
     ],
+    dd_type: 'static' as const,
   },
-  {
-    slug: 'apex-trader-funding',
-    name: 'Apex Trader Funding',
-    programs: [
-      { name: 'Evaluation $25K', size: 25000, daily_dd: 0, max_dd: 3, max_dd_type: 'trailing', news: true, weekend: false },
-      { name: 'Evaluation $50K', size: 50000, daily_dd: 0, max_dd: 5, max_dd_type: 'trailing', news: true, weekend: false },
-      { name: 'Evaluation $100K', size: 100000, daily_dd: 0, max_dd: 6, max_dd_type: 'trailing', news: true, weekend: false },
-      { name: 'Evaluation $150K', size: 150000, daily_dd: 0, max_dd: 9, max_dd_type: 'trailing', news: true, weekend: false },
-      { name: 'Evaluation $250K', size: 250000, daily_dd: 0, max_dd: 12.5, max_dd_type: 'trailing', news: true, weekend: false },
-    ],
-  },
-  {
-    slug: 'e8-markets',
-    name: 'E8 Markets',
-    programs: [
-      { name: 'E8 Track $25K', size: 25000, daily_dd: 4, max_dd: 8, max_dd_type: 'static', news: false, weekend: true },
-      { name: 'E8 Track $50K', size: 50000, daily_dd: 4, max_dd: 8, max_dd_type: 'static', news: false, weekend: true },
-      { name: 'E8 Track $100K', size: 100000, daily_dd: 4, max_dd: 8, max_dd_type: 'static', news: false, weekend: true },
-      { name: 'E8 Track $250K', size: 250000, daily_dd: 4, max_dd: 8, max_dd_type: 'static', news: false, weekend: true },
-    ],
-  },
-]
+];
+
+// =============================================================================
+// ADD ACCOUNT PAGE
+// =============================================================================
 
 export default function AddAccountPage() {
-  const router = useRouter()
+  const router = useRouter();
+  const { user, isLoading: authLoading } = useAuth();
   
-  // Form state
-  const [firmSlug, setFirmSlug] = useState('')
-  const [programName, setProgramName] = useState('')
-  const [stage, setStage] = useState('eval_1')
-  const [startBalance, setStartBalance] = useState('')
-  const [currentBalance, setCurrentBalance] = useState('')
-  const [todayPnl, setTodayPnl] = useState('0')
-  const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0])
-  
-  const firm = propFirms.find(f => f.slug === firmSlug)
-  const program = firm?.programs.find(p => p.name === programName)
-  
-  // Auto-fill start balance when program selected
-  useEffect(() => {
-    if (program) {
-      setStartBalance(program.size.toString())
-      setCurrentBalance(program.size.toString())
-    }
-  }, [program])
-  
+  const [selectedFirm, setSelectedFirm] = useState<string>('');
+  const [selectedProgram, setSelectedProgram] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [error, setError] = useState<string>('');
+
+  const isGuest = !user;
+  const guestHasAccount = isGuest && hasGuestAccount();
+
+  // Get selected firm data
+  const firmData = PROP_FIRMS.find(f => f.slug === selectedFirm);
+  const programData = firmData?.programs.find(p => p.name === selectedProgram);
+
+  // Handle form submit
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     
-    if (!firm || !program) return
-    
-    // In production, save to Supabase
-    const account = {
-      prop_firm: firm.name,
-      prop_firm_slug: firm.slug,
-      program: program.name,
-      account_size: program.size,
-      start_balance: parseFloat(startBalance),
-      current_balance: parseFloat(currentBalance),
-      stage,
-      today_pnl: parseFloat(todayPnl) || 0,
-      daily_dd_percent: program.daily_dd,
-      max_dd_percent: program.max_dd,
-      max_dd_type: program.max_dd_type,
-      allows_news: program.news,
-      allows_weekend: program.weekend,
-      start_date: startDate,
+    if (!firmData || !programData) {
+      setError('Veuillez sélectionner une prop firm et un programme');
+      return;
     }
-    
-    console.log('Saving account:', account)
-    
-    // Redirect to dashboard
-    router.push('/dashboard')
+
+    // Check if guest already has an account
+    if (isGuest && guestHasAccount) {
+      setAuthModalOpen(true);
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError('');
+
+    try {
+      if (isGuest) {
+        // Save to localStorage for guests
+        createGuestAccount({
+          prop_firm: firmData.name,
+          prop_firm_slug: firmData.slug,
+          program: programData.name,
+          account_size: programData.size,
+          daily_dd_percent: programData.daily_dd,
+          max_dd_percent: programData.max_dd,
+          max_dd_type: firmData.dd_type,
+          min_trading_days: programData.min_days,
+        });
+        
+        router.push('/dashboard');
+      } else {
+        // TODO: Save to Supabase for logged-in users
+        // const { error } = await supabase.from('user_accounts').insert({...})
+        router.push('/dashboard');
+      }
+    } catch (err) {
+      setError('Une erreur est survenue. Veuillez réessayer.');
+      console.error(err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-emerald-400 animate-spin" />
+      </div>
+    );
   }
-  
+
   return (
-    <div className="min-h-screen bg-gray-900">
-      {/* Header */}
-      <header className="border-b border-gray-800 bg-gray-900/95 backdrop-blur sticky top-0 z-50">
-        <div className="max-w-lg mx-auto px-4 py-4">
-          <div className="flex items-center gap-4">
-            <Link href="/dashboard" className="p-2 hover:bg-gray-800 rounded-lg transition-colors">
-              <ArrowLeft className="w-5 h-5 text-gray-400" />
-            </Link>
-            <h1 className="text-lg font-bold text-white">Add Account</h1>
-          </div>
+    <div className="min-h-screen bg-gray-950 pt-20 pb-12">
+      <div className="max-w-xl mx-auto px-4">
+        {/* Header */}
+        <div className="mb-8">
+          <Link 
+            href="/dashboard" 
+            className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-4"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Retour
+          </Link>
+          
+          <h1 className="text-2xl font-bold text-white flex items-center gap-3">
+            <Shield className="w-7 h-7 text-emerald-400" />
+            Ajouter un compte
+          </h1>
+          <p className="text-gray-500 mt-1">
+            Sélectionnez votre prop firm et votre programme
+          </p>
         </div>
-      </header>
-      
-      <main className="max-w-lg mx-auto px-4 py-6">
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Prop Firm */}
+
+        {/* Guest info */}
+        {isGuest && !guestHasAccount && (
+          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 mb-6">
+            <div className="flex items-start gap-3">
+              <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium text-white text-sm">Essai gratuit</p>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  Votre premier compte est gratuit et sans inscription. Vos données seront stockées sur cet appareil.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Prop Firm Select */}
           <div>
-            <label className="block text-sm font-medium text-gray-400 mb-2">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
               Prop Firm
             </label>
             <div className="relative">
               <select
-                value={firmSlug}
-                onChange={(e) => { setFirmSlug(e.target.value); setProgramName('') }}
-                required
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white appearance-none focus:outline-none focus:border-emerald-500"
+                value={selectedFirm}
+                onChange={(e) => {
+                  setSelectedFirm(e.target.value);
+                  setSelectedProgram('');
+                }}
+                className="w-full appearance-none bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors"
               >
-                <option value="">Select prop firm...</option>
-                {propFirms.map(f => (
-                  <option key={f.slug} value={f.slug}>{f.name}</option>
+                <option value="">Sélectionnez une prop firm</option>
+                {PROP_FIRMS.map((firm) => (
+                  <option key={firm.slug} value={firm.slug}>
+                    {firm.name}
+                  </option>
                 ))}
               </select>
               <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none" />
             </div>
           </div>
-          
-          {/* Program */}
-          {firm && (
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">
-                Program
-              </label>
-              <div className="relative">
-                <select
-                  value={programName}
-                  onChange={(e) => setProgramName(e.target.value)}
-                  required
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white appearance-none focus:outline-none focus:border-emerald-500"
-                >
-                  <option value="">Select program...</option>
-                  {firm.programs.map(p => (
-                    <option key={p.name} value={p.name}>{p.name}</option>
-                  ))}
-                </select>
-                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none" />
+
+          {/* Program Select */}
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Programme
+            </label>
+            <div className="relative">
+              <select
+                value={selectedProgram}
+                onChange={(e) => setSelectedProgram(e.target.value)}
+                disabled={!selectedFirm}
+                className="w-full appearance-none bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <option value="">Sélectionnez un programme</option>
+                {firmData?.programs.map((program) => (
+                  <option key={program.name} value={program.name}>
+                    {program.name}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none" />
+            </div>
+          </div>
+
+          {/* Program Info */}
+          {programData && (
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
+              <p className="text-sm font-medium text-gray-400 mb-3">Règles du programme</p>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-xs text-gray-500">Daily Drawdown</p>
+                  <p className="text-white font-semibold">{programData.daily_dd}%</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Max Drawdown</p>
+                  <p className="text-white font-semibold">{programData.max_dd}%</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Jours minimum</p>
+                  <p className="text-white font-semibold">{programData.min_days} jours</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Type de DD</p>
+                  <p className="text-white font-semibold capitalize">{firmData?.dd_type}</p>
+                </div>
               </div>
             </div>
           )}
-          
-          {/* Program Rules Preview */}
-          {program && (
-            <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4 text-sm">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <span className="text-gray-500">Account Size</span>
-                  <p className="text-white font-medium">${program.size.toLocaleString()}</p>
-                </div>
-                <div>
-                  <span className="text-gray-500">Daily DD</span>
-                  <p className="text-white font-medium">{program.daily_dd > 0 ? `${program.daily_dd}%` : 'None'}</p>
-                </div>
-                <div>
-                  <span className="text-gray-500">Max DD</span>
-                  <p className="text-white font-medium">{program.max_dd}% ({program.max_dd_type})</p>
-                </div>
-                <div>
-                  <span className="text-gray-500">Rules</span>
-                  <p className="text-white font-medium">
-                    {program.news ? '✓' : '✗'} News • {program.weekend ? '✓' : '✗'} Weekend
-                  </p>
-                </div>
-              </div>
+
+          {/* Error */}
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4">
+              <p className="text-red-400 text-sm">{error}</p>
             </div>
           )}
-          
-          {/* Stage */}
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-2">
-              Stage
-            </label>
-            <div className="grid grid-cols-4 gap-2">
-              {[
-                { value: 'eval_1', label: 'Phase 1' },
-                { value: 'eval_2', label: 'Phase 2' },
-                { value: 'verification', label: 'Verify' },
-                { value: 'funded', label: 'Funded' },
-              ].map(opt => (
-                <button
-                  key={opt.value}
-                  type="button"
-                  onClick={() => setStage(opt.value)}
-                  className={`py-2 px-3 rounded-lg text-sm font-medium transition-colors ${
-                    stage === opt.value
-                      ? 'bg-emerald-500 text-white'
-                      : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-          </div>
-          
-          {/* Start Balance */}
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-2">
-              Start Balance
-            </label>
-            <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">$</span>
-              <input
-                type="number"
-                value={startBalance}
-                onChange={(e) => setStartBalance(e.target.value)}
-                required
-                className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none focus:border-emerald-500"
-              />
-            </div>
-          </div>
-          
-          {/* Current Balance */}
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-2">
-              Current Balance
-            </label>
-            <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">$</span>
-              <input
-                type="number"
-                value={currentBalance}
-                onChange={(e) => setCurrentBalance(e.target.value)}
-                required
-                className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none focus:border-emerald-500"
-              />
-            </div>
-          </div>
-          
-          {/* Today PnL */}
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-2">
-              Today&apos;s P&amp;L
-            </label>
-            <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">$</span>
-              <input
-                type="number"
-                value={todayPnl}
-                onChange={(e) => setTodayPnl(e.target.value)}
-                placeholder="0"
-                className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder:text-gray-600 focus:outline-none focus:border-emerald-500"
-              />
-            </div>
-            <p className="text-xs text-gray-600 mt-1">Enter negative for losses (e.g., -500)</p>
-          </div>
-          
-          {/* Start Date */}
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-2">
-              Start Date
-            </label>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none focus:border-emerald-500"
-            />
-          </div>
-          
+
           {/* Submit */}
           <button
             type="submit"
-            disabled={!firm || !program}
-            className="w-full py-4 bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
+            disabled={!selectedFirm || !selectedProgram || isSubmitting}
+            className="w-full py-3.5 bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
           >
-            <Plus className="w-5 h-5" />
-            Add Account
+            {isSubmitting ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Ajout en cours...
+              </>
+            ) : (
+              'Ajouter ce compte'
+            )}
           </button>
         </form>
-      </main>
+
+        {/* Note */}
+        <div className="mt-6 flex items-start gap-2 text-xs text-gray-600">
+          <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
+          <p>
+            Vous pourrez modifier les détails et le solde actuel depuis le dashboard.
+          </p>
+        </div>
+      </div>
+
+      {/* Auth Modal for guests trying to add 2nd account */}
+      <AuthGuardModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        action="ajouter plus de comptes"
+      />
     </div>
-  )
+  );
 }

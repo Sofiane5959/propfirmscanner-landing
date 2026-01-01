@@ -1,23 +1,153 @@
 'use client';
 
 import { useState } from 'react';
-import { useAuth } from '@/providers/AuthProvider';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, User, Mail, Shield, LogOut, Trash2, Loader2 } from 'lucide-react';
+import { useAuth } from '@/providers/AuthProvider';
+import { createGuestAccount, hasGuestAccount } from '@/lib/guest-storage';
+import { AuthGuardModal } from '@/components/AuthGuardModal';
+import {
+  ArrowLeft,
+  Shield,
+  ChevronDown,
+  Loader2,
+  Info,
+  CheckCircle,
+} from 'lucide-react';
+import Link from 'next/link';
 
-export default function SettingsPage() {
-  const { user, profile, signOut, isLoading } = useAuth();
+// =============================================================================
+// PROP FIRMS DATA
+// =============================================================================
+
+const PROP_FIRMS = [
+  { 
+    slug: 'ftmo', 
+    name: 'FTMO',
+    programs: [
+      { name: 'Challenge $10K', size: 10000, daily_dd: 5, max_dd: 10, min_days: 4 },
+      { name: 'Challenge $25K', size: 25000, daily_dd: 5, max_dd: 10, min_days: 4 },
+      { name: 'Challenge $50K', size: 50000, daily_dd: 5, max_dd: 10, min_days: 4 },
+      { name: 'Challenge $100K', size: 100000, daily_dd: 5, max_dd: 10, min_days: 4 },
+      { name: 'Challenge $200K', size: 200000, daily_dd: 5, max_dd: 10, min_days: 4 },
+    ],
+    dd_type: 'static' as const,
+  },
+  { 
+    slug: 'fundednext', 
+    name: 'FundedNext',
+    programs: [
+      { name: 'Stellar $6K', size: 6000, daily_dd: 5, max_dd: 10, min_days: 5 },
+      { name: 'Stellar $15K', size: 15000, daily_dd: 5, max_dd: 10, min_days: 5 },
+      { name: 'Stellar $25K', size: 25000, daily_dd: 5, max_dd: 10, min_days: 5 },
+      { name: 'Stellar $50K', size: 50000, daily_dd: 5, max_dd: 10, min_days: 5 },
+      { name: 'Stellar $100K', size: 100000, daily_dd: 5, max_dd: 10, min_days: 5 },
+    ],
+    dd_type: 'trailing' as const,
+  },
+  { 
+    slug: 'the5ers', 
+    name: 'The5ers',
+    programs: [
+      { name: 'Bootcamp $5K', size: 5000, daily_dd: 3, max_dd: 6, min_days: 3 },
+      { name: 'Bootcamp $20K', size: 20000, daily_dd: 3, max_dd: 6, min_days: 3 },
+      { name: 'Bootcamp $60K', size: 60000, daily_dd: 3, max_dd: 6, min_days: 3 },
+      { name: 'Bootcamp $100K', size: 100000, daily_dd: 3, max_dd: 6, min_days: 3 },
+    ],
+    dd_type: 'static' as const,
+  },
+  { 
+    slug: 'myfundedfx', 
+    name: 'MyFundedFX',
+    programs: [
+      { name: 'Challenge $5K', size: 5000, daily_dd: 5, max_dd: 8, min_days: 5 },
+      { name: 'Challenge $10K', size: 10000, daily_dd: 5, max_dd: 8, min_days: 5 },
+      { name: 'Challenge $25K', size: 25000, daily_dd: 5, max_dd: 8, min_days: 5 },
+      { name: 'Challenge $50K', size: 50000, daily_dd: 5, max_dd: 8, min_days: 5 },
+      { name: 'Challenge $100K', size: 100000, daily_dd: 5, max_dd: 8, min_days: 5 },
+    ],
+    dd_type: 'trailing' as const,
+  },
+  { 
+    slug: 'e8-funding', 
+    name: 'E8 Funding',
+    programs: [
+      { name: 'E8 Track $25K', size: 25000, daily_dd: 5, max_dd: 8, min_days: 5 },
+      { name: 'E8 Track $50K', size: 50000, daily_dd: 5, max_dd: 8, min_days: 5 },
+      { name: 'E8 Track $100K', size: 100000, daily_dd: 5, max_dd: 8, min_days: 5 },
+      { name: 'E8 Track $250K', size: 250000, daily_dd: 5, max_dd: 8, min_days: 5 },
+    ],
+    dd_type: 'static' as const,
+  },
+];
+
+// =============================================================================
+// ADD ACCOUNT PAGE
+// =============================================================================
+
+export default function AddAccountPage() {
   const router = useRouter();
-  const [isSigningOut, setIsSigningOut] = useState(false);
+  const { user, isLoading: authLoading } = useAuth();
+  
+  const [selectedFirm, setSelectedFirm] = useState<string>('');
+  const [selectedProgram, setSelectedProgram] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [error, setError] = useState<string>('');
 
-  // Redirect if not logged in
-  if (!isLoading && !user) {
-    router.push('/auth/login');
-    return null;
-  }
+  const isGuest = !user;
+  const guestHasAccount = isGuest && hasGuestAccount();
 
-  if (isLoading) {
+  // Get selected firm data
+  const firmData = PROP_FIRMS.find(f => f.slug === selectedFirm);
+  const programData = firmData?.programs.find(p => p.name === selectedProgram);
+
+  // Handle form submit
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!firmData || !programData) {
+      setError('Veuillez sélectionner une prop firm et un programme');
+      return;
+    }
+
+    // Check if guest already has an account
+    if (isGuest && guestHasAccount) {
+      setAuthModalOpen(true);
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError('');
+
+    try {
+      if (isGuest) {
+        // Save to localStorage for guests
+        createGuestAccount({
+          prop_firm: firmData.name,
+          prop_firm_slug: firmData.slug,
+          program: programData.name,
+          account_size: programData.size,
+          daily_dd_percent: programData.daily_dd,
+          max_dd_percent: programData.max_dd,
+          max_dd_type: firmData.dd_type,
+          min_trading_days: programData.min_days,
+        });
+        
+        router.push('/dashboard');
+      } else {
+        // TODO: Save to Supabase for logged-in users
+        // const { error } = await supabase.from('user_accounts').insert({...})
+        router.push('/dashboard');
+      }
+    } catch (err) {
+      setError('Une erreur est survenue. Veuillez réessayer.');
+      console.error(err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (authLoading) {
     return (
       <div className="min-h-screen bg-gray-950 flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-emerald-400 animate-spin" />
@@ -25,134 +155,157 @@ export default function SettingsPage() {
     );
   }
 
-  const displayName = profile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
-  const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url;
-  const email = user?.email;
-  const createdAt = user?.created_at ? new Date(user.created_at).toLocaleDateString('fr-FR', { 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
-  }) : '';
-
-  const handleSignOut = async () => {
-    setIsSigningOut(true);
-    await signOut();
-  };
-
   return (
-    <div className="min-h-screen bg-gray-950">
-      {/* Header */}
-      <header className="bg-gray-900 border-b border-gray-800">
-        <div className="max-w-2xl mx-auto px-4 py-5">
-          <div className="flex items-center gap-4">
-            <Link 
-              href="/dashboard"
-              className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5 text-gray-400" />
-            </Link>
-            <div>
-              <h1 className="text-xl font-bold text-white">Paramètres</h1>
-              <p className="text-sm text-gray-500">Gérez votre compte</p>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Content */}
-      <main className="max-w-2xl mx-auto px-4 py-8 space-y-6">
-        {/* Profile Section */}
-        <section className="bg-gray-900 rounded-2xl border border-gray-800 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-800">
-            <h2 className="text-lg font-semibold text-white">Profil</h2>
-          </div>
+    <div className="min-h-screen bg-gray-950 pt-20 pb-12">
+      <div className="max-w-xl mx-auto px-4">
+        {/* Header */}
+        <div className="mb-8">
+          <Link 
+            href="/dashboard" 
+            className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-4"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Retour
+          </Link>
           
-          <div className="p-6">
-            <div className="flex items-center gap-5 mb-6">
-              {avatarUrl ? (
-                <img 
-                  src={avatarUrl} 
-                  alt={displayName}
-                  className="w-20 h-20 rounded-full border-2 border-emerald-500/30"
-                  referrerPolicy="no-referrer"
-                />
-              ) : (
-                <div className="w-20 h-20 bg-emerald-500/20 rounded-full flex items-center justify-center border-2 border-emerald-500/30">
-                  <User className="w-8 h-8 text-emerald-400" />
-                </div>
-              )}
-              
-              <div>
-                <h3 className="text-xl font-semibold text-white">{displayName}</h3>
-                <p className="text-gray-500">Membre depuis {createdAt}</p>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-center gap-4 p-4 bg-gray-800/50 rounded-xl">
-                <Mail className="w-5 h-5 text-gray-400" />
-                <div>
-                  <p className="text-sm text-gray-500">Email</p>
-                  <p className="text-white">{email}</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4 p-4 bg-gray-800/50 rounded-xl">
-                <Shield className="w-5 h-5 text-gray-400" />
-                <div>
-                  <p className="text-sm text-gray-500">Méthode de connexion</p>
-                  <p className="text-white">Google</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Account Actions */}
-        <section className="bg-gray-900 rounded-2xl border border-gray-800 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-800">
-            <h2 className="text-lg font-semibold text-white">Actions du compte</h2>
-          </div>
-          
-          <div className="p-6 space-y-3">
-            <button
-              onClick={handleSignOut}
-              disabled={isSigningOut}
-              className="flex items-center gap-3 w-full p-4 bg-gray-800/50 hover:bg-gray-800 rounded-xl transition-colors text-left"
-            >
-              {isSigningOut ? (
-                <Loader2 className="w-5 h-5 text-gray-400 animate-spin" />
-              ) : (
-                <LogOut className="w-5 h-5 text-gray-400" />
-              )}
-              <div>
-                <p className="font-medium text-white">Se déconnecter</p>
-                <p className="text-sm text-gray-500">Vous serez redirigé vers la page d&apos;accueil</p>
-              </div>
-            </button>
-
-            <button
-              className="flex items-center gap-3 w-full p-4 bg-red-500/5 hover:bg-red-500/10 rounded-xl transition-colors text-left border border-red-500/20"
-            >
-              <Trash2 className="w-5 h-5 text-red-400" />
-              <div>
-                <p className="font-medium text-red-400">Supprimer le compte</p>
-                <p className="text-sm text-gray-500">Cette action est irréversible</p>
-              </div>
-            </button>
-          </div>
-        </section>
-
-        {/* Support */}
-        <section className="bg-gray-900 rounded-2xl border border-gray-800 p-6 text-center">
-          <p className="text-gray-500 text-sm">
-            Besoin d&apos;aide ?{' '}
-            <a href="mailto:support@propfirmscanner.org" className="text-emerald-400 hover:underline">
-              Contactez-nous
-            </a>
+          <h1 className="text-2xl font-bold text-white flex items-center gap-3">
+            <Shield className="w-7 h-7 text-emerald-400" />
+            Ajouter un compte
+          </h1>
+          <p className="text-gray-500 mt-1">
+            Sélectionnez votre prop firm et votre programme
           </p>
-        </section>
-      </main>
+        </div>
+
+        {/* Guest info */}
+        {isGuest && !guestHasAccount && (
+          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 mb-6">
+            <div className="flex items-start gap-3">
+              <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium text-white text-sm">Essai gratuit</p>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  Votre premier compte est gratuit et sans inscription. Vos données seront stockées sur cet appareil.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Prop Firm Select */}
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Prop Firm
+            </label>
+            <div className="relative">
+              <select
+                value={selectedFirm}
+                onChange={(e) => {
+                  setSelectedFirm(e.target.value);
+                  setSelectedProgram('');
+                }}
+                className="w-full appearance-none bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors"
+              >
+                <option value="">Sélectionnez une prop firm</option>
+                {PROP_FIRMS.map((firm) => (
+                  <option key={firm.slug} value={firm.slug}>
+                    {firm.name}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none" />
+            </div>
+          </div>
+
+          {/* Program Select */}
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Programme
+            </label>
+            <div className="relative">
+              <select
+                value={selectedProgram}
+                onChange={(e) => setSelectedProgram(e.target.value)}
+                disabled={!selectedFirm}
+                className="w-full appearance-none bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <option value="">Sélectionnez un programme</option>
+                {firmData?.programs.map((program) => (
+                  <option key={program.name} value={program.name}>
+                    {program.name}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none" />
+            </div>
+          </div>
+
+          {/* Program Info */}
+          {programData && (
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
+              <p className="text-sm font-medium text-gray-400 mb-3">Règles du programme</p>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-xs text-gray-500">Daily Drawdown</p>
+                  <p className="text-white font-semibold">{programData.daily_dd}%</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Max Drawdown</p>
+                  <p className="text-white font-semibold">{programData.max_dd}%</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Jours minimum</p>
+                  <p className="text-white font-semibold">{programData.min_days} jours</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Type de DD</p>
+                  <p className="text-white font-semibold capitalize">{firmData?.dd_type}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Error */}
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4">
+              <p className="text-red-400 text-sm">{error}</p>
+            </div>
+          )}
+
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={!selectedFirm || !selectedProgram || isSubmitting}
+            className="w-full py-3.5 bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Ajout en cours...
+              </>
+            ) : (
+              'Ajouter ce compte'
+            )}
+          </button>
+        </form>
+
+        {/* Note */}
+        <div className="mt-6 flex items-start gap-2 text-xs text-gray-600">
+          <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
+          <p>
+            Vous pourrez modifier les détails et le solde actuel depuis le dashboard.
+          </p>
+        </div>
+      </div>
+
+      {/* Auth Modal for guests trying to add 2nd account */}
+      <AuthGuardModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        action="ajouter plus de comptes"
+      />
     </div>
   );
 }
