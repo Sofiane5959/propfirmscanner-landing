@@ -148,38 +148,36 @@ function LoggedOutView() {
         <div className="space-y-3">
           <Link
             href="/auth/login"
-            className="flex items-center justify-center gap-2 w-full py-3.5 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors"
+            className="flex items-center justify-center gap-3 w-full py-3.5 bg-white hover:bg-gray-100 text-gray-900 font-semibold rounded-xl transition-colors"
           >
-            Log in to your workspace
-          </Link>
-          
-          <Link
-            href="/auth/signup"
-            className="flex items-center justify-center gap-2 w-full py-3 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-xl transition-colors"
-          >
-            <Zap className="w-4 h-4" />
-            Create free account
+            <svg className="w-5 h-5" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+            </svg>
+            Se connecter avec Google
           </Link>
         </div>
 
         <div className="mt-12 pt-8 border-t border-gray-800">
-          <p className="text-xs text-gray-600 mb-4">WHAT YOU GET</p>
+          <p className="text-xs text-gray-600 mb-4">CE QUE VOUS OBTENEZ</p>
           <div className="grid grid-cols-2 gap-3 text-left">
             <div className="p-3 bg-gray-900 rounded-lg">
-              <p className="text-sm text-white font-medium">Multi-account tracking</p>
-              <p className="text-xs text-gray-500 mt-1">All firms in one view</p>
+              <p className="text-sm text-white font-medium">Multi-comptes</p>
+              <p className="text-xs text-gray-500 mt-1">Toutes vos firms</p>
             </div>
             <div className="p-3 bg-gray-900 rounded-lg">
-              <p className="text-sm text-white font-medium">Trade simulation</p>
-              <p className="text-xs text-gray-500 mt-1">Test before you risk</p>
+              <p className="text-sm text-white font-medium">Simulation</p>
+              <p className="text-xs text-gray-500 mt-1">Testez avant de risquer</p>
             </div>
             <div className="p-3 bg-gray-900 rounded-lg">
-              <p className="text-sm text-white font-medium">Rule monitoring</p>
-              <p className="text-xs text-gray-500 mt-1">Never break a rule</p>
+              <p className="text-sm text-white font-medium">Règles</p>
+              <p className="text-xs text-gray-500 mt-1">Ne cassez plus de règle</p>
             </div>
             <div className="p-3 bg-gray-900 rounded-lg">
-              <p className="text-sm text-white font-medium">Daily guidance</p>
-              <p className="text-xs text-gray-500 mt-1">Know what to avoid</p>
+              <p className="text-sm text-white font-medium">Guidance</p>
+              <p className="text-xs text-gray-500 mt-1">Sachez quoi éviter</p>
             </div>
           </div>
         </div>
@@ -192,14 +190,21 @@ function LoggedOutView() {
 // MAIN WORKSPACE
 // =============================================================================
 
-async function Workspace({ userId }: { userId: string }) {
+interface UserInfo {
+  id: string;
+  email: string;
+  name: string;
+  avatar: string | null;
+}
+
+async function Workspace({ user }: { user: UserInfo }) {
   const supabase = createServerComponentClient({ cookies });
 
   // Fetch real accounts
   const { data: accounts } = await supabase
     .from('user_accounts')
     .select('*')
-    .eq('user_id', userId)
+    .eq('user_id', user.id)
     .order('created_at', { ascending: false });
 
   const realAccounts = accounts || [];
@@ -227,28 +232,53 @@ async function Workspace({ userId }: { userId: string }) {
     ? DEMO_GUIDANCE_MESSAGE 
     : getDailyGuidance(sortedAccounts);
 
+  // Get first name for greeting
+  const firstName = user.name.split(' ')[0];
+
   return (
     <div className="min-h-screen bg-gray-950">
       {/* Header */}
       <header className="bg-gray-900 border-b border-gray-800">
         <div className="max-w-5xl mx-auto px-4 py-5">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
+              {/* User Avatar */}
+              {user.avatar ? (
+                <img 
+                  src={user.avatar} 
+                  alt={user.name} 
+                  className="w-12 h-12 rounded-full border-2 border-emerald-500/30"
+                  referrerPolicy="no-referrer"
+                />
+              ) : (
+                <div className="w-12 h-12 bg-emerald-500/20 rounded-full flex items-center justify-center border-2 border-emerald-500/30">
+                  <span className="text-lg font-bold text-emerald-400">
+                    {firstName.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+              )}
+              
               <div>
-                <h1 className="text-xl font-bold text-white">My Prop Firms</h1>
-                <p className="text-sm text-gray-500">Your trading control center</p>
+                <h1 className="text-xl font-bold text-white">
+                  Bienvenue, {firstName} 👋
+                </h1>
+                <p className="text-sm text-gray-500">
+                  {isDemo ? 'Ajoutez votre premier compte pour commencer' : `${totalAccounts} compte${totalAccounts > 1 ? 's' : ''} actif${totalAccounts > 1 ? 's' : ''}`}
+                </p>
               </div>
+              
               {isDemo && (
                 <span className="px-2 py-1 bg-yellow-500/20 text-yellow-400 text-xs font-medium rounded-lg">
-                  Demo Mode
+                  Demo
                 </span>
               )}
             </div>
+            
             <Link
               href="/dashboard/accounts/new"
               className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors"
             >
-              + Add Account
+              + Ajouter un compte
             </Link>
           </div>
         </div>
@@ -281,5 +311,13 @@ export default async function DashboardPage() {
     return <LoggedOutView />;
   }
 
-  return <Workspace userId={user.id} />;
+  // Extract user info
+  const userInfo: UserInfo = {
+    id: user.id,
+    email: user.email || '',
+    name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Trader',
+    avatar: user.user_metadata?.avatar_url || null,
+  };
+
+  return <Workspace user={userInfo} />;
 }
