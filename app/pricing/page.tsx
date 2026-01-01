@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/providers/AuthProvider';
 import { AuthGuardModal } from '@/components/AuthGuardModal';
-import { PRICING, formatPrice } from '@/lib/subscription';
+import { PRICING, formatPrice, type PlanType } from '@/lib/subscription';
 import {
   Check,
   X,
@@ -242,7 +242,7 @@ export default function PricingPage() {
   const showUpgradeHighlight = searchParams.get('upgrade') === 'true';
   
   // TODO: Get actual user plan from profile
-  const currentPlan = 'free';
+  const currentPlan: PlanType = 'free';
 
   const handleSelectFree = () => {
     if (!user) {
