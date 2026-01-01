@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/providers/AuthProvider';
 import { createGuestAccount, hasGuestAccount } from '@/lib/guest-storage';
+import { SignupPromptModal } from '@/components/PublicUserBanner';
 import { PaywallModal } from '@/components/PaywallModal';
 import { getUserPlan, canAddAccount } from '@/lib/subscription';
 import {
@@ -14,6 +15,7 @@ import {
   Info,
   CheckCircle,
   Crown,
+  AlertCircle,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -93,25 +95,32 @@ export default function AddAccountPage() {
   const [selectedFirm, setSelectedFirm] = useState<string>('');
   const [selectedProgram, setSelectedProgram] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [signupModalOpen, setSignupModalOpen] = useState(false);
   const [paywallOpen, setPaywallOpen] = useState(false);
   const [error, setError] = useState<string>('');
 
-  const isGuest = !user;
-  const guestHasAccount = isGuest && hasGuestAccount();
+  const isPublic = !user;
+  const guestHasAccount = hasGuestAccount();
   
-  // TODO: Get actual account count from Supabase for logged-in users
-  const currentAccountCount = isGuest ? (guestHasAccount ? 1 : 0) : 0;
-  
-  // TODO: Get actual plan from user profile
-  const userPlan = getUserPlan(isGuest ? 'free' : 'free');
+  // Account limit check
+  const currentAccountCount = guestHasAccount ? 1 : 0;
+  const userPlan = getUserPlan(isPublic ? 'free' : 'free'); // TODO: Get from profile
   const canAdd = canAddAccount(currentAccountCount, userPlan);
 
-  // Check account limit on mount
+  // Check if user is blocked from adding
   useEffect(() => {
-    if (!authLoading && !canAdd) {
-      setPaywallOpen(true);
+    if (authLoading) return;
+    
+    if (!canAdd) {
+      if (isPublic) {
+        // Public user with 1 account → show signup prompt
+        setSignupModalOpen(true);
+      } else {
+        // Logged-in user → show paywall
+        setPaywallOpen(true);
+      }
     }
-  }, [authLoading, canAdd]);
+  }, [authLoading, canAdd, isPublic]);
 
   // Get selected firm data
   const firmData = PROP_FIRMS.find(f => f.slug === selectedFirm);
@@ -122,19 +131,17 @@ export default function AddAccountPage() {
     e.preventDefault();
     
     if (!firmData || !programData) {
-      setError('Veuillez sélectionner une prop firm et un programme');
+      setError('Please select a prop firm and program');
       return;
     }
 
-    // Check if user has reached account limit
+    // Re-check limit
     if (!canAdd) {
-      setPaywallOpen(true);
-      return;
-    }
-
-    // Check if guest already has an account
-    if (isGuest && guestHasAccount) {
-      setPaywallOpen(true);
+      if (isPublic) {
+        setSignupModalOpen(true);
+      } else {
+        setPaywallOpen(true);
+      }
       return;
     }
 
@@ -142,8 +149,8 @@ export default function AddAccountPage() {
     setError('');
 
     try {
-      if (isGuest) {
-        // Save to localStorage for guests
+      if (isPublic || !user) {
+        // Save to localStorage for public users
         createGuestAccount({
           prop_firm: firmData.name,
           prop_firm_slug: firmData.slug,
@@ -158,15 +165,20 @@ export default function AddAccountPage() {
         router.push('/dashboard');
       } else {
         // TODO: Save to Supabase for logged-in users
-        // const { error } = await supabase.from('user_accounts').insert({...})
         router.push('/dashboard');
       }
     } catch (err) {
-      setError('Une erreur est survenue. Veuillez réessayer.');
+      setError('An error occurred. Please try again.');
       console.error(err);
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // Handle signup redirect
+  const handleSignup = () => {
+    setSignupModalOpen(false);
+    router.push('/auth/login?signup=true');
   };
 
   if (authLoading) {
@@ -187,42 +199,42 @@ export default function AddAccountPage() {
             className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-4"
           >
             <ArrowLeft className="w-4 h-4" />
-            Retour
+            Back to Dashboard
           </Link>
           
           <h1 className="text-2xl font-bold text-white flex items-center gap-3">
             <Shield className="w-7 h-7 text-emerald-400" />
-            Ajouter un compte
+            Add Prop Firm Account
           </h1>
           <p className="text-gray-500 mt-1">
-            Sélectionnez votre prop firm et votre programme
+            Select your prop firm and program
           </p>
         </div>
 
-        {/* Guest info */}
-        {isGuest && !guestHasAccount && (
+        {/* Public user info */}
+        {isPublic && !guestHasAccount && (
           <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 mb-6">
             <div className="flex items-start gap-3">
               <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="font-medium text-white text-sm">Essai gratuit</p>
+                <p className="font-medium text-white text-sm">No signup required</p>
                 <p className="text-xs text-gray-400 mt-0.5">
-                  Votre premier compte est gratuit et sans inscription. Vos données seront stockées sur cet appareil.
+                  Start tracking your prop firm instantly. Your data will be stored locally on this device.
                 </p>
               </div>
             </div>
           </div>
         )}
 
-        {/* Pro upgrade hint */}
-        {guestHasAccount && (
-          <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 mb-6">
+        {/* Warning if already has account */}
+        {guestHasAccount && isPublic && (
+          <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4 mb-6">
             <div className="flex items-start gap-3">
-              <Crown className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+              <AlertCircle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="font-medium text-white text-sm">Vous avez déjà 1 compte</p>
+                <p className="font-medium text-white text-sm">You already have 1 account</p>
                 <p className="text-xs text-gray-400 mt-0.5">
-                  Passez à Pro pour tracker plusieurs comptes prop firm et accéder aux fonctionnalités avancées.
+                  Create a free account to track multiple prop firms.
                 </p>
               </div>
             </div>
@@ -245,7 +257,7 @@ export default function AddAccountPage() {
                 }}
                 className="w-full appearance-none bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors"
               >
-                <option value="">Sélectionnez une prop firm</option>
+                <option value="">Select a prop firm</option>
                 {PROP_FIRMS.map((firm) => (
                   <option key={firm.slug} value={firm.slug}>
                     {firm.name}
@@ -259,7 +271,7 @@ export default function AddAccountPage() {
           {/* Program Select */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
-              Programme
+              Program
             </label>
             <div className="relative">
               <select
@@ -268,7 +280,7 @@ export default function AddAccountPage() {
                 disabled={!selectedFirm}
                 className="w-full appearance-none bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <option value="">Sélectionnez un programme</option>
+                <option value="">Select a program</option>
                 {firmData?.programs.map((program) => (
                   <option key={program.name} value={program.name}>
                     {program.name}
@@ -282,7 +294,7 @@ export default function AddAccountPage() {
           {/* Program Info */}
           {programData && (
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
-              <p className="text-sm font-medium text-gray-400 mb-3">Règles du programme</p>
+              <p className="text-sm font-medium text-gray-400 mb-3">Program Rules</p>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-xs text-gray-500">Daily Drawdown</p>
@@ -293,11 +305,11 @@ export default function AddAccountPage() {
                   <p className="text-white font-semibold">{programData.max_dd}%</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500">Jours minimum</p>
-                  <p className="text-white font-semibold">{programData.min_days} jours</p>
+                  <p className="text-xs text-gray-500">Min Trading Days</p>
+                  <p className="text-white font-semibold">{programData.min_days} days</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500">Type de DD</p>
+                  <p className="text-xs text-gray-500">DD Type</p>
                   <p className="text-white font-semibold capitalize">{firmData?.dd_type}</p>
                 </div>
               </div>
@@ -314,38 +326,64 @@ export default function AddAccountPage() {
           {/* Submit */}
           <button
             type="submit"
-            disabled={!selectedFirm || !selectedProgram || isSubmitting}
+            disabled={!selectedFirm || !selectedProgram || isSubmitting || (guestHasAccount && isPublic)}
             className="w-full py-3.5 bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
           >
             {isSubmitting ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin" />
-                Ajout en cours...
+                Adding...
+              </>
+            ) : guestHasAccount && isPublic ? (
+              <>
+                <Crown className="w-5 h-5" />
+                Create Account to Add More
               </>
             ) : (
-              'Ajouter ce compte'
+              'Start Tracking This Account'
             )}
           </button>
+
+          {/* Alternative action for users at limit */}
+          {guestHasAccount && isPublic && (
+            <button
+              type="button"
+              onClick={() => setSignupModalOpen(true)}
+              className="w-full py-3 text-emerald-400 hover:text-emerald-300 text-sm font-medium transition-colors"
+            >
+              Create free account to track more
+            </button>
+          )}
         </form>
 
         {/* Note */}
         <div className="mt-6 flex items-start gap-2 text-xs text-gray-600">
           <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
           <p>
-            Vous pourrez modifier les détails et le solde actuel depuis le dashboard.
+            You can update the balance and P&L from the dashboard after adding the account.
           </p>
         </div>
       </div>
 
-      {/* Paywall Modal for account limit */}
+      {/* Signup Modal for public users */}
+      <SignupPromptModal
+        isOpen={signupModalOpen}
+        onClose={() => {
+          setSignupModalOpen(false);
+          if (!canAdd) {
+            router.push('/dashboard');
+          }
+        }}
+        onSignup={handleSignup}
+        reason="second_account"
+      />
+
+      {/* Paywall for logged-in users */}
       <PaywallModal
         isOpen={paywallOpen}
         onClose={() => {
           setPaywallOpen(false);
-          // If they can't add, redirect back to dashboard
-          if (!canAdd) {
-            router.push('/dashboard');
-          }
+          router.push('/dashboard');
         }}
         currentAccountCount={currentAccountCount}
         trigger="account_limit"

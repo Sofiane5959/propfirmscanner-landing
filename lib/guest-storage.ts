@@ -1,8 +1,9 @@
 // =============================================================================
-// LOCAL STORAGE SERVICE - For guest users (1 free account)
+// GUEST STORAGE SERVICE - For public/anonymous users
 // =============================================================================
 
 const STORAGE_KEY = 'propfirmscanner_guest_account';
+const SESSION_KEY = 'propfirmscanner_session_id';
 
 export interface GuestAccount {
   id: string;
@@ -20,6 +21,18 @@ export interface GuestAccount {
   current_trading_days: number;
   created_at: string;
   updated_at: string;
+}
+
+// Generate a unique session ID for anonymous users
+export function getOrCreateSessionId(): string {
+  if (typeof window === 'undefined') return '';
+  
+  let sessionId = localStorage.getItem(SESSION_KEY);
+  if (!sessionId) {
+    sessionId = `anon_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    localStorage.setItem(SESSION_KEY, sessionId);
+  }
+  return sessionId;
 }
 
 // Get guest account from localStorage
@@ -104,4 +117,27 @@ export function createGuestAccount(data: {
   
   saveGuestAccount(account);
   return account;
+}
+
+// Get guest data for migration to Supabase after signup
+export function getGuestDataForMigration(): {
+  account: GuestAccount | null;
+  sessionId: string;
+} {
+  return {
+    account: getGuestAccount(),
+    sessionId: getOrCreateSessionId(),
+  };
+}
+
+// Clear all guest data after successful migration
+export function clearGuestDataAfterMigration(): void {
+  if (typeof window === 'undefined') return;
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(SESSION_KEY);
+}
+
+// Check if there's guest data to migrate
+export function hasGuestDataToMigrate(): boolean {
+  return hasGuestAccount();
 }
