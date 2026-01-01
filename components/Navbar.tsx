@@ -122,7 +122,7 @@ function UserDropdown() {
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
-  const { user, isLoading, signInWithGoogle } = useAuth();
+  const { user, isLoading, signInWithGoogle, signOut } = useAuth();
 
   const isMyPropFirmsActive = pathname.startsWith('/dashboard');
 
