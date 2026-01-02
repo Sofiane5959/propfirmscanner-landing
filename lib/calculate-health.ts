@@ -83,24 +83,32 @@ export function calculateAccountHealth(guest: GuestAccount): AccountWithHealth {
   // ===================
   // DETERMINE STATUS
   // ===================
-  let status: 'safe' | 'warning' | 'danger' = 'safe';
   const messages: string[] = [];
+  
+  // Calculate status based on buffer percentages
+  const isDailyDanger = dailyBufferPct < 15;
+  const isDailyWarning = dailyBufferPct >= 15 && dailyBufferPct < 30;
+  const isMaxDanger = maxBufferPct < 15;
+  const isMaxWarning = maxBufferPct >= 15 && maxBufferPct < 30;
 
-  // Check daily DD
-  if (dailyBufferPct < 15) {
+  // Determine overall status
+  let status: 'safe' | 'warning' | 'danger' = 'safe';
+  if (isDailyDanger || isMaxDanger) {
     status = 'danger';
+  } else if (isDailyWarning || isMaxWarning) {
+    status = 'warning';
+  }
+
+  // Add messages
+  if (isDailyDanger) {
     messages.push(`⛔ Daily drawdown critical! Only $${dailyBuffer.toFixed(0)} buffer remaining. Stop trading today.`);
-  } else if (dailyBufferPct < 30) {
-    if (status !== 'danger') status = 'warning';
+  } else if (isDailyWarning) {
     messages.push(`⚠️ Daily drawdown warning: $${dailyBuffer.toFixed(0)} buffer remaining (${dailyBufferPct.toFixed(0)}%).`);
   }
 
-  // Check max DD
-  if (maxBufferPct < 15) {
-    status = 'danger';
+  if (isMaxDanger) {
     messages.push(`⛔ Max drawdown critical! Only $${maxBuffer.toFixed(0)} until account breach.`);
-  } else if (maxBufferPct < 30) {
-    if (status !== 'danger') status = 'warning';
+  } else if (isMaxWarning) {
     messages.push(`⚠️ Max drawdown warning: $${maxBuffer.toFixed(0)} buffer remaining.`);
   }
 
