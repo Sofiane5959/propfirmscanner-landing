@@ -7,7 +7,8 @@ import {
   Search, Filter, ChevronDown, ChevronUp, Star, Check, X, 
   Clock, DollarSign, TrendingUp, Shield, Zap, Award,
   ArrowUpDown, Grid3X3, List, ExternalLink, Sparkles,
-  AlertTriangle, Calendar, Percent, Users, BarChart3
+  AlertTriangle, Calendar, Percent, Users, BarChart3,
+  Tag, Trophy, BadgeCheck, Copy, CheckCircle2
 } from 'lucide-react'
 
 // Types
@@ -57,197 +58,314 @@ interface ComparePageClientProps {
   firms: PropFirm[]
 }
 
-// Quick Stats Component
-const QuickStat = ({ icon: Icon, label, value, color }: { 
-  icon: any, label: string, value: string | number, color: string 
-}) => (
-  <div className="flex items-center gap-2">
-    <div className={`w-8 h-8 rounded-lg ${color} flex items-center justify-center`}>
-      <Icon className="w-4 h-4 text-white" />
-    </div>
-    <div>
-      <p className="text-xs text-gray-500">{label}</p>
-      <p className="text-sm font-semibold text-white">{value}</p>
-    </div>
-  </div>
-)
+// Format reviews count (34000 -> "34K")
+const formatReviewCount = (count: number | null | undefined): string => {
+  if (!count) return ''
+  if (count >= 1000) {
+    return `${(count / 1000).toFixed(count >= 10000 ? 0 : 1)}K`
+  }
+  return count.toString()
+}
+
+// Safe display value (handles null/undefined)
+const safeDisplay = (value: any, suffix: string = '', fallback: string = 'N/A'): string => {
+  if (value === null || value === undefined || value === '') return fallback
+  return `${value}${suffix}`
+}
 
 // Trust Badge Component
 const TrustBadge = ({ status }: { status: string }) => {
   const config = {
-    verified: { bg: 'bg-emerald-500/20', text: 'text-emerald-400', label: 'Verified', icon: Check },
-    banned: { bg: 'bg-red-500/20', text: 'text-red-400', label: 'Avoid', icon: X },
-    under_review: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', label: 'Under Review', icon: AlertTriangle },
-    new: { bg: 'bg-blue-500/20', text: 'text-blue-400', label: 'New', icon: Sparkles },
+    verified: { bg: 'bg-emerald-500/20', text: 'text-emerald-400', border: 'border-emerald-500/30', label: 'Verified', icon: BadgeCheck },
+    banned: { bg: 'bg-red-500/20', text: 'text-red-400', border: 'border-red-500/30', label: 'Avoid', icon: X },
+    under_review: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', border: 'border-yellow-500/30', label: 'Under Review', icon: AlertTriangle },
+    new: { bg: 'bg-blue-500/20', text: 'text-blue-400', border: 'border-blue-500/30', label: 'New', icon: Sparkles },
   }
-  const { bg, text, label, icon: Icon } = config[status as keyof typeof config] || config.new
+  const { bg, text, border, label, icon: Icon } = config[status as keyof typeof config] || config.verified
   
   return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${bg} ${text}`}>
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${bg} ${text} border ${border}`}>
       <Icon className="w-3 h-3" />
       {label}
     </span>
   )
 }
 
-// Improved Prop Firm Card Component
-const PropFirmCard = ({ firm, isCompact }: { firm: PropFirm, isCompact: boolean }) => {
-  const [isExpanded, setIsExpanded] = useState(false)
+// Promo Badge Component (matching homepage)
+const PromoBadge = ({ percent, code }: { percent: number, code?: string }) => {
+  const [copied, setCopied] = useState(false)
   
-  if (isCompact) {
-    return (
-      <Link href={`/prop-firm/${firm.slug}`}>
-        <div className="group bg-gray-800/50 hover:bg-gray-800 border border-gray-700/50 hover:border-emerald-500/30 rounded-xl p-4 transition-all duration-300">
-          <div className="flex items-center gap-4">
-            {/* Logo */}
-            <div className="w-12 h-12 rounded-lg bg-gray-900 flex items-center justify-center overflow-hidden flex-shrink-0">
-              {firm.logo_url ? (
-                <Image src={firm.logo_url} alt={firm.name} width={48} height={48} className="object-contain" />
-              ) : (
-                <span className="text-lg font-bold text-emerald-400">{firm.name.charAt(0)}</span>
-              )}
-            </div>
-            
-            {/* Info */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <h3 className="font-semibold text-white truncate">{firm.name}</h3>
-                <TrustBadge status={firm.trust_status} />
-              </div>
-              <div className="flex items-center gap-4 mt-1 text-sm text-gray-400">
-                <span className="flex items-center gap-1">
-                  <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
-                  {firm.trustpilot_rating?.toFixed(1) || 'N/A'}
-                </span>
-                <span>From ${firm.min_price}</span>
-                <span className="text-emerald-400">{firm.profit_split}-{firm.max_profit_split}% split</span>
-              </div>
-            </div>
-            
-            {/* Quick Actions */}
-            <div className="flex items-center gap-2">
-              {firm.discount_percent && (
-                <span className="px-2 py-1 bg-red-500/20 text-red-400 text-xs font-bold rounded">
-                  -{firm.discount_percent}%
-                </span>
-              )}
-              <ExternalLink className="w-5 h-5 text-gray-500 group-hover:text-emerald-400 transition-colors" />
-            </div>
-          </div>
-        </div>
-      </Link>
-    )
+  const handleCopy = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (code) {
+      navigator.clipboard.writeText(code)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }
   }
   
   return (
-    <div className="bg-gray-800/50 border border-gray-700/50 hover:border-emerald-500/30 rounded-2xl overflow-hidden transition-all duration-300 group">
-      {/* Header */}
-      <div className="p-5 pb-4">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-4">
-            {/* Logo */}
-            <div className="w-16 h-16 rounded-xl bg-gray-900 flex items-center justify-center overflow-hidden border border-gray-700">
+    <div className="absolute top-3 right-3 z-10">
+      <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-3 py-1.5 rounded-lg text-sm font-bold shadow-lg">
+        {percent}% OFF
+        {code && (
+          <button 
+            onClick={handleCopy}
+            className="flex items-center gap-1 text-xs font-normal opacity-90 hover:opacity-100 mt-0.5"
+          >
+            {copied ? (
+              <>
+                <CheckCircle2 className="w-3 h-3" />
+                Copied!
+              </>
+            ) : (
+              <>
+                <Copy className="w-3 h-3" />
+                {code}
+              </>
+            )}
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// Ranking Badge Component (for top 3)
+const RankingBadge = ({ rank }: { rank: number }) => {
+  if (rank > 3) return null
+  
+  const colors = {
+    1: 'from-amber-400 to-amber-600',
+    2: 'from-gray-300 to-gray-500',
+    3: 'from-amber-600 to-amber-800',
+  }
+  
+  return (
+    <div className={`absolute top-3 left-3 z-10 w-8 h-8 rounded-lg bg-gradient-to-br ${colors[rank as keyof typeof colors]} flex items-center justify-center shadow-lg`}>
+      <Trophy className="w-4 h-4 text-white" />
+    </div>
+  )
+}
+
+// Platform Badge Component
+const PlatformBadge = ({ platform }: { platform: string }) => {
+  const colors: Record<string, string> = {
+    'MT4': 'bg-blue-500/20 text-blue-400',
+    'MT5': 'bg-indigo-500/20 text-indigo-400',
+    'cTrader': 'bg-orange-500/20 text-orange-400',
+    'DXtrade': 'bg-purple-500/20 text-purple-400',
+    'TradeLocker': 'bg-emerald-500/20 text-emerald-400',
+    'Match-Trader': 'bg-red-500/20 text-red-400',
+    'NinjaTrader': 'bg-red-500/20 text-red-400',
+    'Tradovate': 'bg-cyan-500/20 text-cyan-400',
+  }
+  
+  return (
+    <span className={`px-2 py-0.5 rounded text-xs font-medium ${colors[platform] || 'bg-gray-500/20 text-gray-400'}`}>
+      {platform}
+    </span>
+  )
+}
+
+// Improved Prop Firm Card Component
+const PropFirmCard = ({ firm, isCompact, rank }: { firm: PropFirm, isCompact: boolean, rank: number }) => {
+  const [isExpanded, setIsExpanded] = useState(false)
+  
+  const hasDiscount = firm.discount_percent && firm.discount_percent > 0
+  const isTopRated = rank <= 3
+  
+  // Compact List View
+  if (isCompact) {
+    return (
+      <div className="group bg-gray-800/50 hover:bg-gray-800 border border-gray-700/50 hover:border-emerald-500/30 rounded-xl p-4 transition-all duration-300 relative">
+        {hasDiscount && (
+          <span className="absolute top-2 right-2 px-2 py-0.5 bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs font-bold rounded">
+            {firm.discount_percent}% OFF
+          </span>
+        )}
+        
+        <div className="flex items-center gap-4">
+          {/* Rank + Logo */}
+          <div className="flex items-center gap-3">
+            {isTopRated && (
+              <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                rank === 1 ? 'bg-amber-500 text-white' :
+                rank === 2 ? 'bg-gray-400 text-white' :
+                'bg-amber-700 text-white'
+              }`}>
+                {rank}
+              </span>
+            )}
+            <div className="w-12 h-12 rounded-lg bg-white flex items-center justify-center overflow-hidden flex-shrink-0 p-1">
               {firm.logo_url ? (
-                <Image src={firm.logo_url} alt={firm.name} width={64} height={64} className="object-contain" />
+                <Image src={firm.logo_url} alt={firm.name} width={48} height={48} className="object-contain" />
               ) : (
-                <span className="text-2xl font-bold text-emerald-400">{firm.name.charAt(0)}</span>
+                <span className="text-lg font-bold text-emerald-600">{firm.name.charAt(0)}</span>
               )}
-            </div>
-            
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <h3 className="text-xl font-bold text-white">{firm.name}</h3>
-                <TrustBadge status={firm.trust_status} />
-              </div>
-              
-              {/* Rating & Reviews */}
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1">
-                  <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                  <span className="font-semibold text-white">{firm.trustpilot_rating?.toFixed(1) || 'N/A'}</span>
-                  <span className="text-gray-500 text-sm">({firm.trustpilot_reviews || 0})</span>
-                </div>
-                {firm.year_founded && (
-                  <span className="text-gray-500 text-sm flex items-center gap-1">
-                    <Calendar className="w-3.5 h-3.5" />
-                    Since {firm.year_founded}
-                  </span>
-                )}
-              </div>
             </div>
           </div>
           
-          {/* Discount Badge */}
-          {firm.discount_percent && (
-            <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-3 py-1.5 rounded-lg text-sm font-bold">
-              {firm.discount_percent}% OFF
-              {firm.discount_code && (
-                <span className="block text-xs font-normal opacity-80">Code: {firm.discount_code}</span>
+          {/* Info */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h3 className="font-semibold text-white truncate">{firm.name}</h3>
+              <TrustBadge status={firm.trust_status || 'verified'} />
+            </div>
+            <div className="flex items-center gap-4 mt-1 text-sm text-gray-400">
+              <span className="flex items-center gap-1">
+                <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
+                {firm.trustpilot_rating?.toFixed(1) || 'N/A'}
+                {firm.trustpilot_reviews && (
+                  <span className="text-gray-500">({formatReviewCount(firm.trustpilot_reviews)})</span>
+                )}
+              </span>
+              <span>From ${firm.min_price || 'N/A'}</span>
+              <span className="text-emerald-400">{safeDisplay(firm.max_profit_split, '%', 'N/A')} split</span>
+            </div>
+          </div>
+          
+          {/* Actions */}
+          <div className="flex items-center gap-2">
+            <Link 
+              href={`/prop-firm/${firm.slug}`}
+              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm font-medium rounded-lg transition-colors"
+            >
+              Details
+            </Link>
+            <a 
+              href={firm.affiliate_url || firm.website_url || '#'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-1"
+            >
+              Visit <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+          </div>
+        </div>
+      </div>
+    )
+  }
+  
+  // Grid View - Full Card
+  return (
+    <div className="bg-gray-800/50 border border-gray-700/50 hover:border-emerald-500/30 rounded-2xl overflow-hidden transition-all duration-300 group relative flex flex-col h-full">
+      {/* Ranking Badge */}
+      {isTopRated && <RankingBadge rank={rank} />}
+      
+      {/* Promo Badge */}
+      {hasDiscount && <PromoBadge percent={firm.discount_percent} code={firm.discount_code} />}
+      
+      {/* Header */}
+      <div className={`p-5 pb-4 ${isTopRated && hasDiscount ? 'pt-14' : isTopRated || hasDiscount ? 'pt-12' : ''}`}>
+        <div className="flex items-start gap-4">
+          {/* Logo */}
+          <div className="w-16 h-16 rounded-xl bg-white flex items-center justify-center overflow-hidden border border-gray-200 p-2 flex-shrink-0">
+            {firm.logo_url ? (
+              <Image src={firm.logo_url} alt={firm.name} width={64} height={64} className="object-contain" />
+            ) : (
+              <span className="text-2xl font-bold text-emerald-600">{firm.name.charAt(0)}</span>
+            )}
+          </div>
+          
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap mb-1">
+              <h3 className="text-lg font-bold text-white truncate">{firm.name}</h3>
+              <TrustBadge status={firm.trust_status || 'verified'} />
+            </div>
+            
+            {/* Rating & Reviews */}
+            <div className="flex items-center gap-3 flex-wrap">
+              <div className="flex items-center gap-1">
+                <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                <span className="font-semibold text-white">{firm.trustpilot_rating?.toFixed(1) || 'N/A'}</span>
+                {firm.trustpilot_reviews && (
+                  <span className="text-gray-500 text-sm">({formatReviewCount(firm.trustpilot_reviews)} reviews)</span>
+                )}
+              </div>
+              {firm.year_founded && (
+                <span className="text-gray-500 text-sm flex items-center gap-1">
+                  <Calendar className="w-3.5 h-3.5" />
+                  Since {firm.year_founded}
+                </span>
               )}
             </div>
-          )}
+          </div>
         </div>
       </div>
       
       {/* Key Stats Grid */}
       <div className="px-5 py-4 bg-gray-900/50 border-y border-gray-700/50">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <QuickStat 
-            icon={DollarSign} 
-            label="Starting Price" 
-            value={`$${firm.min_price}`} 
-            color="bg-blue-500" 
-          />
-          <QuickStat 
-            icon={Percent} 
-            label="Profit Split" 
-            value={`${firm.profit_split}-${firm.max_profit_split}%`} 
-            color="bg-emerald-500" 
-          />
-          <QuickStat 
-            icon={Shield} 
-            label="Max Drawdown" 
-            value={`${firm.max_total_drawdown}%`} 
-            color="bg-purple-500" 
-          />
-          <QuickStat 
-            icon={TrendingUp} 
-            label="Profit Target" 
-            value={`${firm.profit_target_phase1}%`} 
-            color="bg-orange-500" 
-          />
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <p className="text-xs text-gray-500 uppercase tracking-wide">Starting Price</p>
+            <p className="text-lg font-bold text-white">${firm.min_price || 'N/A'}</p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 uppercase tracking-wide">Profit Split</p>
+            <p className="text-lg font-bold text-emerald-400">
+              {firm.profit_split && firm.max_profit_split 
+                ? `${firm.profit_split}-${firm.max_profit_split}%`
+                : safeDisplay(firm.max_profit_split, '%', 'N/A')
+              }
+            </p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 uppercase tracking-wide">Daily Drawdown</p>
+            <p className="text-white font-semibold">{safeDisplay(firm.max_daily_drawdown, '%', 'N/A')}</p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 uppercase tracking-wide">Max Drawdown</p>
+            <p className="text-white font-semibold">{safeDisplay(firm.max_total_drawdown, '%', 'N/A')}</p>
+          </div>
         </div>
       </div>
       
-      {/* Trading Rules Quick View */}
-      <div className="p-5">
+      {/* Trading Rules */}
+      <div className="p-5 flex-1">
         <div className="flex flex-wrap gap-2 mb-4">
           {firm.allows_scalping && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs rounded-lg">
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs rounded-lg border border-emerald-500/20">
               <Check className="w-3 h-3" /> Scalping
             </span>
           )}
           {firm.allows_news_trading && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs rounded-lg">
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs rounded-lg border border-emerald-500/20">
               <Check className="w-3 h-3" /> News Trading
             </span>
           )}
           {firm.allows_ea && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs rounded-lg">
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs rounded-lg border border-emerald-500/20">
               <Check className="w-3 h-3" /> EAs Allowed
             </span>
           )}
           {firm.has_instant_funding && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-yellow-500/10 text-yellow-400 text-xs rounded-lg">
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-yellow-500/10 text-yellow-400 text-xs rounded-lg border border-yellow-500/20">
               <Zap className="w-3 h-3" /> Instant Funding
             </span>
           )}
-          {!firm.allows_news_trading && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-red-500/10 text-red-400 text-xs rounded-lg">
+          {!firm.allows_news_trading && firm.allows_news_trading !== undefined && (
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-red-500/10 text-red-400 text-xs rounded-lg border border-red-500/20">
               <X className="w-3 h-3" /> No News Trading
             </span>
           )}
         </div>
+        
+        {/* Platforms */}
+        {firm.platforms && firm.platforms.length > 0 && (
+          <div className="mb-4">
+            <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">Platforms</p>
+            <div className="flex flex-wrap gap-1.5">
+              {firm.platforms.slice(0, 4).map((platform, i) => (
+                <PlatformBadge key={i} platform={platform} />
+              ))}
+              {firm.platforms.length > 4 && (
+                <span className="px-2 py-0.5 rounded text-xs text-gray-500">+{firm.platforms.length - 4}</span>
+              )}
+            </div>
+          </div>
+        )}
         
         {/* Expandable Details */}
         <button 
@@ -260,32 +378,12 @@ const PropFirmCard = ({ firm, isCompact }: { firm: PropFirm, isCompact: boolean 
         
         {isExpanded && (
           <div className="mt-4 pt-4 border-t border-gray-700/50 space-y-4 animate-in slide-in-from-top-2 duration-200">
-            {/* Challenge Types */}
-            <div>
-              <h4 className="text-sm font-medium text-gray-400 mb-2">Challenge Types</h4>
-              <div className="flex flex-wrap gap-1.5">
-                {firm.challenge_types?.map((type, i) => (
-                  <span key={i} className="px-2 py-0.5 bg-gray-700 text-gray-300 text-xs rounded">
-                    {type}
-                  </span>
-                ))}
-              </div>
-            </div>
-            
-            {/* Platforms */}
-            <div>
-              <h4 className="text-sm font-medium text-gray-400 mb-2">Platforms</h4>
-              <div className="flex flex-wrap gap-1.5">
-                {firm.platforms?.map((platform, i) => (
-                  <span key={i} className="px-2 py-0.5 bg-blue-500/10 text-blue-400 text-xs rounded">
-                    {platform}
-                  </span>
-                ))}
-              </div>
-            </div>
-            
             {/* Key Details */}
             <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-500">Profit Target:</span>
+                <span className="text-white">{safeDisplay(firm.profit_target_phase1, '%', 'N/A')}</span>
+              </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Min Days:</span>
                 <span className="text-white">{firm.min_trading_days || 'None'}</span>
@@ -295,16 +393,12 @@ const PropFirmCard = ({ firm, isCompact }: { firm: PropFirm, isCompact: boolean 
                 <span className="text-white">{firm.time_limit || 'Unlimited'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Drawdown Type:</span>
-                <span className="text-white">{firm.drawdown_type || 'Static'}</span>
-              </div>
-              <div className="flex justify-between">
                 <span className="text-gray-500">Payout:</span>
                 <span className="text-white">{firm.payout_frequency || 'Bi-weekly'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Max Scaling:</span>
-                <span className="text-emerald-400">{firm.scaling_max || 'N/A'}</span>
+                <span className="text-gray-500">Drawdown Type:</span>
+                <span className="text-white">{firm.drawdown_type || 'Static'}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Fee Refund:</span>
@@ -314,18 +408,17 @@ const PropFirmCard = ({ firm, isCompact }: { firm: PropFirm, isCompact: boolean 
               </div>
             </div>
             
-            {/* Special Features */}
-            {firm.special_features && firm.special_features.length > 0 && (
+            {/* Challenge Types */}
+            {firm.challenge_types && firm.challenge_types.length > 0 && (
               <div>
-                <h4 className="text-sm font-medium text-gray-400 mb-2">Special Features</h4>
-                <ul className="space-y-1">
-                  {firm.special_features.map((feature, i) => (
-                    <li key={i} className="flex items-center gap-2 text-sm text-gray-300">
-                      <Sparkles className="w-3 h-3 text-yellow-400" />
-                      {feature}
-                    </li>
+                <h4 className="text-sm font-medium text-gray-400 mb-2">Challenge Types</h4>
+                <div className="flex flex-wrap gap-1.5">
+                  {firm.challenge_types.map((type, i) => (
+                    <span key={i} className="px-2 py-0.5 bg-gray-700 text-gray-300 text-xs rounded">
+                      {type}
+                    </span>
                   ))}
-                </ul>
+                </div>
               </div>
             )}
           </div>
@@ -333,7 +426,7 @@ const PropFirmCard = ({ firm, isCompact }: { firm: PropFirm, isCompact: boolean 
       </div>
       
       {/* Action Buttons */}
-      <div className="p-5 pt-0 flex gap-3">
+      <div className="p-5 pt-0 flex gap-3 mt-auto">
         <Link 
           href={`/prop-firm/${firm.slug}`}
           className="flex-1 py-3 bg-gray-700 hover:bg-gray-600 text-white text-center font-medium rounded-xl transition-colors"
@@ -341,7 +434,7 @@ const PropFirmCard = ({ firm, isCompact }: { firm: PropFirm, isCompact: boolean 
           View Details
         </Link>
         <a 
-          href={firm.affiliate_url || firm.website_url}
+          href={firm.affiliate_url || firm.website_url || '#'}
           target="_blank"
           rel="noopener noreferrer"
           className="flex-1 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white text-center font-medium rounded-xl transition-all flex items-center justify-center gap-2"
@@ -358,13 +451,15 @@ const PropFirmCard = ({ firm, isCompact }: { firm: PropFirm, isCompact: boolean 
 const FilterSection = ({ 
   filters, 
   setFilters,
-  firms 
+  firms,
+  isOpenDefault = true
 }: { 
   filters: any, 
   setFilters: (f: any) => void,
-  firms: PropFirm[]
+  firms: PropFirm[],
+  isOpenDefault?: boolean
 }) => {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(isOpenDefault)
   
   // Calculate available options from data
   const platforms = useMemo(() => {
@@ -372,12 +467,16 @@ const FilterSection = ({
     return Array.from(new Set(all)).sort()
   }, [firms])
   
+  const discountCount = useMemo(() => 
+    firms.filter(f => f.discount_percent && f.discount_percent > 0).length
+  , [firms])
+  
   return (
     <div className="bg-gray-800/50 border border-gray-700/50 rounded-2xl overflow-hidden">
       {/* Filter Header */}
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full p-4 flex items-center justify-between hover:bg-gray-800/50 transition-colors"
+        className="w-full p-4 flex items-center justify-between hover:bg-gray-800/50 transition-colors lg:cursor-default"
       >
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
@@ -388,12 +487,32 @@ const FilterSection = ({
             <p className="text-sm text-gray-500">Refine your search</p>
           </div>
         </div>
-        <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform lg:hidden ${isOpen ? 'rotate-180' : ''}`} />
       </button>
       
-      {/* Filter Content */}
-      {isOpen && (
-        <div className="p-4 pt-0 border-t border-gray-700/50 space-y-6 animate-in slide-in-from-top-2 duration-200">
+      {/* Filter Content - Always open on desktop */}
+      <div className={`${isOpen ? 'block' : 'hidden'} lg:block`}>
+        <div className="p-4 pt-0 border-t border-gray-700/50 space-y-6">
+          {/* 🔥 NEW: Has Discount Filter */}
+          <div>
+            <button
+              onClick={() => setFilters({ ...filters, hasDiscount: !filters.hasDiscount })}
+              className={`w-full px-4 py-3 rounded-xl text-sm font-medium transition-all flex items-center justify-between ${
+                filters.hasDiscount
+                  ? 'bg-gradient-to-r from-red-500/20 to-orange-500/20 text-orange-400 border border-orange-500/30'
+                  : 'bg-gray-700 text-gray-300 border border-transparent hover:bg-gray-600'
+              }`}
+            >
+              <span className="flex items-center gap-2">
+                <Tag className="w-4 h-4" />
+                With Discount Only
+              </span>
+              <span className={`px-2 py-0.5 rounded-full text-xs ${filters.hasDiscount ? 'bg-orange-500/30' : 'bg-gray-600'}`}>
+                {discountCount}
+              </span>
+            </button>
+          </div>
+          
           {/* Asset Type */}
           <div>
             <label className="block text-sm font-medium text-gray-400 mb-3">Asset Type</label>
@@ -460,7 +579,7 @@ const FilterSection = ({
             <label className="block text-sm font-medium text-gray-400 mb-3">Trading Style</label>
             <div className="grid grid-cols-2 gap-2">
               {[
-                { key: 'allowsScalping', label: 'Scalping Allowed' },
+                { key: 'allowsScalping', label: 'Scalping' },
                 { key: 'allowsNewsTrading', label: 'News Trading' },
                 { key: 'allowsEA', label: 'EAs Allowed' },
                 { key: 'hasInstantFunding', label: 'Instant Funding' },
@@ -504,54 +623,64 @@ const FilterSection = ({
             Reset All Filters
           </button>
         </div>
-      )}
+      </div>
     </div>
   )
 }
 
 // Quick Comparison Table
 const QuickComparisonTable = ({ firms }: { firms: PropFirm[] }) => {
-  const topFirms = firms.slice(0, 10)
+  const displayFirms = firms.slice(0, 20)
   
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-gray-700">
+            <th className="text-left py-3 px-4 text-gray-400 font-medium">#</th>
             <th className="text-left py-3 px-4 text-gray-400 font-medium">Prop Firm</th>
             <th className="text-center py-3 px-2 text-gray-400 font-medium">Rating</th>
             <th className="text-center py-3 px-2 text-gray-400 font-medium">Price</th>
             <th className="text-center py-3 px-2 text-gray-400 font-medium">Split</th>
-            <th className="text-center py-3 px-2 text-gray-400 font-medium">Drawdown</th>
+            <th className="text-center py-3 px-2 text-gray-400 font-medium">Daily DD</th>
+            <th className="text-center py-3 px-2 text-gray-400 font-medium">Max DD</th>
             <th className="text-center py-3 px-2 text-gray-400 font-medium">Target</th>
-            <th className="text-center py-3 px-2 text-gray-400 font-medium hidden md:table-cell">Min Days</th>
-            <th className="text-center py-3 px-2 text-gray-400 font-medium hidden lg:table-cell">Payout</th>
+            <th className="text-center py-3 px-2 text-gray-400 font-medium hidden md:table-cell">Promo</th>
           </tr>
         </thead>
         <tbody>
-          {topFirms.map((firm, i) => (
+          {displayFirms.map((firm, i) => (
             <tr 
               key={firm.id} 
               className="border-b border-gray-800 hover:bg-gray-800/50 transition-colors"
             >
               <td className="py-3 px-4">
+                <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                  i === 0 ? 'bg-amber-500 text-white' :
+                  i === 1 ? 'bg-gray-400 text-white' :
+                  i === 2 ? 'bg-amber-700 text-white' :
+                  'bg-gray-700 text-gray-400'
+                }`}>
+                  {i + 1}
+                </span>
+              </td>
+              <td className="py-3 px-4">
                 <Link href={`/prop-firm/${firm.slug}`} className="flex items-center gap-3 group">
-                  <span className="text-gray-500 text-xs w-5">{i + 1}</span>
-                  <div className="w-8 h-8 rounded-lg bg-gray-900 flex items-center justify-center overflow-hidden">
+                  <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center overflow-hidden p-1">
                     {firm.logo_url ? (
                       <Image src={firm.logo_url} alt="" width={32} height={32} className="object-contain" />
                     ) : (
-                      <span className="text-emerald-400 font-bold">{firm.name.charAt(0)}</span>
+                      <span className="text-emerald-600 font-bold">{firm.name.charAt(0)}</span>
                     )}
                   </div>
-                  <span className="font-medium text-white group-hover:text-emerald-400 transition-colors">
-                    {firm.name}
-                  </span>
-                  {firm.discount_percent && (
-                    <span className="px-1.5 py-0.5 bg-red-500/20 text-red-400 text-xs rounded">
-                      -{firm.discount_percent}%
+                  <div>
+                    <span className="font-medium text-white group-hover:text-emerald-400 transition-colors block">
+                      {firm.name}
                     </span>
-                  )}
+                    {firm.trustpilot_reviews && (
+                      <span className="text-xs text-gray-500">{formatReviewCount(firm.trustpilot_reviews)} reviews</span>
+                    )}
+                  </div>
                 </Link>
               </td>
               <td className="text-center py-3 px-2">
@@ -560,12 +689,20 @@ const QuickComparisonTable = ({ firms }: { firms: PropFirm[] }) => {
                   {firm.trustpilot_rating?.toFixed(1) || '-'}
                 </span>
               </td>
-              <td className="text-center py-3 px-2 text-white font-medium">${firm.min_price}</td>
-              <td className="text-center py-3 px-2 text-emerald-400 font-medium">{firm.max_profit_split}%</td>
-              <td className="text-center py-3 px-2 text-gray-300">{firm.max_total_drawdown}%</td>
-              <td className="text-center py-3 px-2 text-gray-300">{firm.profit_target_phase1}%</td>
-              <td className="text-center py-3 px-2 text-gray-300 hidden md:table-cell">{firm.min_trading_days || '-'}</td>
-              <td className="text-center py-3 px-2 text-gray-300 hidden lg:table-cell">{firm.payout_frequency || 'Bi-weekly'}</td>
+              <td className="text-center py-3 px-2 text-white font-medium">${firm.min_price || 'N/A'}</td>
+              <td className="text-center py-3 px-2 text-emerald-400 font-medium">{safeDisplay(firm.max_profit_split, '%', '-')}</td>
+              <td className="text-center py-3 px-2 text-gray-300">{safeDisplay(firm.max_daily_drawdown, '%', '-')}</td>
+              <td className="text-center py-3 px-2 text-gray-300">{safeDisplay(firm.max_total_drawdown, '%', '-')}</td>
+              <td className="text-center py-3 px-2 text-gray-300">{safeDisplay(firm.profit_target_phase1, '%', '-')}</td>
+              <td className="text-center py-3 px-2 hidden md:table-cell">
+                {firm.discount_percent ? (
+                  <span className="px-2 py-0.5 bg-gradient-to-r from-red-500/20 to-orange-500/20 text-orange-400 text-xs font-bold rounded">
+                    {firm.discount_percent}% OFF
+                  </span>
+                ) : (
+                  <span className="text-gray-600">-</span>
+                )}
+              </td>
             </tr>
           ))}
         </tbody>
@@ -578,7 +715,7 @@ const QuickComparisonTable = ({ firms }: { firms: PropFirm[] }) => {
 export default function ComparePageClient({ firms }: ComparePageClientProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [filters, setFilters] = useState<any>({})
-  const [sortBy, setSortBy] = useState<'rating' | 'price' | 'split'>('rating')
+  const [sortBy, setSortBy] = useState<'rating' | 'price' | 'split' | 'discount'>('rating')
   const [viewMode, setViewMode] = useState<'grid' | 'list' | 'table'>('grid')
   const [showOnlyVerified, setShowOnlyVerified] = useState(true)
   
@@ -588,7 +725,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
     
     // Trust status filter
     if (showOnlyVerified) {
-      result = result.filter(f => f.trust_status === 'verified')
+      result = result.filter(f => f.trust_status === 'verified' || !f.trust_status)
     } else {
       result = result.filter(f => f.trust_status !== 'banned')
     }
@@ -597,9 +734,14 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
     if (searchQuery) {
       const q = searchQuery.toLowerCase()
       result = result.filter(f => 
-        f.name.toLowerCase().includes(q) ||
-        f.slug.toLowerCase().includes(q)
+        f.name?.toLowerCase().includes(q) ||
+        f.slug?.toLowerCase().includes(q)
       )
+    }
+    
+    // 🔥 NEW: Has Discount filter
+    if (filters.hasDiscount) {
+      result = result.filter(f => f.discount_percent && f.discount_percent > 0)
     }
     
     // Asset type filter
@@ -639,6 +781,8 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
           return (a.min_price || 0) - (b.min_price || 0)
         case 'split':
           return (b.max_profit_split || 0) - (a.max_profit_split || 0)
+        case 'discount':
+          return (b.discount_percent || 0) - (a.discount_percent || 0)
         default:
           return 0
       }
@@ -647,13 +791,20 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
     return result
   }, [firms, searchQuery, filters, sortBy, showOnlyVerified])
   
-  // Stats
-  const stats = useMemo(() => ({
-    total: filteredFirms.length,
-    avgRating: (filteredFirms.reduce((sum, f) => sum + (f.trustpilot_rating || 0), 0) / filteredFirms.length).toFixed(1),
-    avgSplit: Math.round(filteredFirms.reduce((sum, f) => sum + (f.max_profit_split || 0), 0) / filteredFirms.length),
-    withDiscounts: filteredFirms.filter(f => f.discount_percent).length
-  }), [filteredFirms])
+  // Stats - FIXED to calculate real discount count
+  const stats = useMemo(() => {
+    const verifiedFirms = firms.filter(f => f.trust_status === 'verified' || !f.trust_status)
+    const withDiscounts = verifiedFirms.filter(f => f.discount_percent && f.discount_percent > 0)
+    const avgRating = verifiedFirms.reduce((sum, f) => sum + (f.trustpilot_rating || 0), 0) / verifiedFirms.length
+    const avgSplit = verifiedFirms.reduce((sum, f) => sum + (f.max_profit_split || 0), 0) / verifiedFirms.length
+    
+    return {
+      total: verifiedFirms.length,
+      avgRating: isNaN(avgRating) ? '0.0' : avgRating.toFixed(1),
+      avgSplit: isNaN(avgSplit) ? 0 : Math.round(avgSplit),
+      withDiscounts: withDiscounts.length
+    }
+  }, [firms])
 
   return (
     <div className="min-h-screen bg-gray-900">
@@ -662,10 +813,10 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-8">
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Compare <span className="text-emerald-400">{filteredFirms.length}+</span> Prop Firms
+              Compare <span className="text-emerald-400">{stats.total}+</span> Prop Firms
             </h1>
             <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-              Find the perfect prop firm for your trading style. Updated December 2025.
+              Find the perfect prop firm for your trading style. Updated January 2026.
             </p>
           </div>
           
@@ -683,9 +834,12 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
               <p className="text-3xl font-bold text-emerald-400">{stats.avgSplit}%</p>
               <p className="text-sm text-gray-500">Avg. Max Split</p>
             </div>
-            <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4 text-center">
-              <p className="text-3xl font-bold text-red-400">{stats.withDiscounts}</p>
-              <p className="text-sm text-gray-500">With Discounts</p>
+            <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4 text-center group hover:border-orange-500/30 transition-colors cursor-pointer"
+                 onClick={() => setFilters({ ...filters, hasDiscount: true })}>
+              <p className="text-3xl font-bold text-orange-400">{stats.withDiscounts}</p>
+              <p className="text-sm text-gray-500 group-hover:text-orange-400 transition-colors">
+                With Discounts 🔥
+              </p>
             </div>
           </div>
           
@@ -709,7 +863,12 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
           <div className="grid lg:grid-cols-4 gap-8">
             {/* Sidebar - Filters */}
             <div className="lg:col-span-1 space-y-6">
-              <FilterSection filters={filters} setFilters={setFilters} firms={firms} />
+              <FilterSection 
+                filters={filters} 
+                setFilters={setFilters} 
+                firms={firms}
+                isOpenDefault={true}
+              />
               
               {/* View Options */}
               <div className="bg-gray-800/50 border border-gray-700/50 rounded-2xl p-4">
@@ -718,10 +877,10 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
                 {/* View Mode */}
                 <div className="flex gap-2 mb-4">
                   {[
-                    { mode: 'grid', icon: Grid3X3 },
-                    { mode: 'list', icon: List },
-                    { mode: 'table', icon: BarChart3 },
-                  ].map(({ mode, icon: Icon }) => (
+                    { mode: 'grid', icon: Grid3X3, label: 'Grid' },
+                    { mode: 'list', icon: List, label: 'List' },
+                    { mode: 'table', icon: BarChart3, label: 'Table' },
+                  ].map(({ mode, icon: Icon, label }) => (
                     <button
                       key={mode}
                       onClick={() => setViewMode(mode as any)}
@@ -730,6 +889,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
                           ? 'bg-emerald-500 text-white'
                           : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
                       }`}
+                      title={label}
                     >
                       <Icon className="w-4 h-4" />
                     </button>
@@ -747,6 +907,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
                     <option value="rating">Highest Rating</option>
                     <option value="price">Lowest Price</option>
                     <option value="split">Highest Split</option>
+                    <option value="discount">Best Discount</option>
                   </select>
                 </div>
                 
@@ -773,7 +934,20 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
               <div className="flex items-center justify-between mb-6">
                 <p className="text-gray-400">
                   Showing <span className="text-white font-medium">{filteredFirms.length}</span> prop firms
+                  {filters.hasDiscount && (
+                    <span className="ml-2 px-2 py-0.5 bg-orange-500/20 text-orange-400 text-xs rounded-full">
+                      With Discounts
+                    </span>
+                  )}
                 </p>
+                {Object.keys(filters).some(k => filters[k]) && (
+                  <button 
+                    onClick={() => setFilters({})}
+                    className="text-sm text-emerald-400 hover:text-emerald-300"
+                  >
+                    Clear Filters
+                  </button>
+                )}
               </div>
               
               {/* Table View */}
@@ -790,11 +964,12 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
                     ? 'grid md:grid-cols-2 gap-6'
                     : 'space-y-4'
                 }>
-                  {filteredFirms.map(firm => (
+                  {filteredFirms.map((firm, index) => (
                     <PropFirmCard 
                       key={firm.id} 
                       firm={firm} 
-                      isCompact={viewMode === 'list'} 
+                      isCompact={viewMode === 'list'}
+                      rank={index + 1}
                     />
                   ))}
                 </div>
