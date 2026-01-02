@@ -1,284 +1,515 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Metadata } from 'next'
-import { createClient } from '@supabase/supabase-js'
 import { 
-  Search, TrendingUp, Shield, DollarSign, Star, ArrowRight, 
-  CheckCircle, Users, Award, Zap, Target, BarChart3,
-  ChevronRight, ExternalLink, Gift, BookOpen, Calculator
+  ArrowRight, 
+  Shield, 
+  TrendingUp, 
+  Users, 
+  Star,
+  Gift,
+  Zap,
+  Target,
+  BarChart3,
+  CheckCircle,
+  ExternalLink,
+  Play,
+  Clock,
+  Award,
+  Sparkles,
 } from 'lucide-react'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-const supabase = createClient(supabaseUrl, supabaseKey)
-
 export const metadata: Metadata = {
-  title: 'PropFirm Scanner - Compare 55+ Prop Trading Firms | Find Your Perfect Match',
-  description: 'Compare prop trading firms side-by-side. Find the best profit split, lowest fees, and rules that match your trading style. Trusted by 10,000+ traders.',
-  keywords: ['prop firm', 'prop trading', 'funded trader', 'FTMO', 'trading challenge', 'best prop firm'],
-  openGraph: {
-    title: 'PropFirm Scanner - Compare 55+ Prop Trading Firms',
-    description: 'Find your perfect prop firm match. Compare fees, profit splits, and rules.',
-    url: 'https://www.propfirmscanner.org',
-    type: 'website',
-  },
+  title: 'PropFirmScanner | Compare 102+ Prop Firms & Track Your Challenge',
+  description: 'Compare prop trading firms side-by-side. Track your challenge with our free dashboard. Never blow your account again. Updated daily.',
   alternates: {
     canonical: 'https://www.propfirmscanner.org',
   },
 }
 
-export const revalidate = 3600
+// =============================================================================
+// TOP RATED PROP FIRMS - Classement officiel avec codes promo
+// =============================================================================
 
-export default async function HomePage() {
-  // Fetch top firms for showcase
-  const { data: topFirms } = await supabase
-    .from('prop_firms')
-    .select('*')
-    .order('trustpilot_rating', { ascending: false })
-    .limit(6)
+const TOP_FIRMS = [
+  {
+    rank: 1,
+    name: 'Top One Futures',
+    slug: 'top-one-futures',
+    rating: 4.8,
+    reviews: '2.7K+',
+    logo: 'T',
+    color: 'from-amber-500 to-orange-600',
+    startingPrice: '$34',
+    profitSplit: '90%',
+    promo: { code: 'pfs', discount: '55% OFF' },
+    tags: ['Futures', 'Fast Payouts'],
+    affiliate: 'https://toponefutures.com/?ref=propfirmscanner',
+  },
+  {
+    rank: 2,
+    name: 'Earn2Trade',
+    slug: 'earn2trade',
+    rating: 4.7,
+    reviews: '4.3K+',
+    logo: 'E',
+    color: 'from-blue-500 to-cyan-500',
+    startingPrice: '$150',
+    profitSplit: '80%',
+    promo: { code: 'scanner-40', discount: '50% OFF' },
+    tags: ['Futures', 'Education'],
+    affiliate: 'https://earn2trade.com/?ref=propfirmscanner',
+  },
+  {
+    rank: 3,
+    name: 'The5ers',
+    slug: 'the5ers',
+    rating: 4.8,
+    reviews: '19K+',
+    logo: '5',
+    color: 'from-emerald-500 to-teal-500',
+    startingPrice: '$95',
+    profitSplit: '100%',
+    promo: { code: null, discount: '5% OFF' },
+    tags: ['Forex', 'Scaling'],
+    affiliate: 'https://the5ers.com/?ref=propfirmscanner',
+  },
+  {
+    rank: 4,
+    name: 'ForFX',
+    slug: 'forfx',
+    rating: 4.2,
+    reviews: '114',
+    logo: 'F',
+    color: 'from-violet-500 to-purple-600',
+    startingPrice: '$99',
+    profitSplit: '80%',
+    promo: { code: 'scanner', discount: '10% OFF' },
+    tags: ['Forex', 'New'],
+    affiliate: 'https://forfx.com/?ref=propfirmscanner',
+  },
+  {
+    rank: 5,
+    name: 'FTMO',
+    slug: 'ftmo',
+    rating: 4.8,
+    reviews: '34K+',
+    logo: 'F',
+    color: 'from-indigo-500 to-blue-600',
+    startingPrice: '$155',
+    profitSplit: '90%',
+    promo: null,
+    tags: ['Forex', 'Industry Leader'],
+    affiliate: null,
+  },
+  {
+    rank: 6,
+    name: 'FundedNext',
+    slug: 'fundednext',
+    rating: 4.5,
+    reviews: '53K+',
+    logo: 'FN',
+    color: 'from-sky-500 to-blue-500',
+    startingPrice: '$32',
+    profitSplit: '95%',
+    promo: null,
+    tags: ['Forex', 'Cheapest'],
+    affiliate: null,
+  },
+]
 
-  // Fetch total count
-  const { count: totalFirms } = await supabase
-    .from('prop_firms')
-    .select('*', { count: 'exact', head: true })
+// =============================================================================
+// TRADING STYLES
+// =============================================================================
 
-  const stats = [
-    { label: 'Prop Firms', value: `${totalFirms || 55}+`, icon: Building },
-    { label: 'Traders Trust Us', value: '10K+', icon: Users },
-    { label: 'Comparison Points', value: '25+', icon: BarChart3 },
-    { label: 'Updated Daily', value: '24/7', icon: Zap },
-  ]
+const TRADING_STYLES = [
+  { name: 'Scalping', icon: '⚡', href: '/best-for/scalping' },
+  { name: 'Beginners', icon: '🎯', href: '/best-for/beginners' },
+  { name: 'Cheapest', icon: '💰', href: '/best-for/cheapest' },
+  { name: 'High Split', icon: '📈', href: '/best-for/highest-profit-split' },
+  { name: 'Instant', icon: '🚀', href: '/best-for/instant-funding' },
+  { name: 'EA/Bots', icon: '🤖', href: '/best-for/ea-friendly' },
+]
 
-  const features = [
-    {
-      icon: Search,
-      title: 'Smart Filters',
-      description: 'Filter by trading style, budget, profit split, and 20+ criteria',
-    },
-    {
-      icon: Shield,
-      title: 'Verified Data',
-      description: 'All data verified directly from prop firm websites',
-    },
-    {
-      icon: TrendingUp,
-      title: 'Real Reviews',
-      description: 'Trustpilot ratings and real trader experiences',
-    },
-    {
-      icon: DollarSign,
-      title: 'Exclusive Deals',
-      description: 'Save up to 25% with our exclusive discount codes',
-    },
-  ]
+// =============================================================================
+// POPULAR COMPARISONS
+// =============================================================================
 
-  const popularCategories = [
-    { name: 'Best for Scalping', href: '/best-for/scalping', icon: '⚡' },
-    { name: 'Best for Beginners', href: '/best-for/beginners', icon: '🎯' },
-    { name: 'Cheapest Options', href: '/best-for/cheapest', icon: '💰' },
-    { name: 'Highest Profit Split', href: '/best-for/high-profit-split', icon: '📈' },
-    { name: 'Instant Funding', href: '/best-for/instant-funding', icon: '🚀' },
-    { name: 'EA/Bot Friendly', href: '/best-for/ea-trading', icon: '🤖' },
-  ]
+const COMPARISONS = [
+  { firms: 'FTMO vs FundedNext', slug: 'ftmo-vs-fundednext' },
+  { firms: 'FTMO vs The5ers', slug: 'ftmo-vs-the5ers' },
+  { firms: 'FTMO vs MyFundedFX', slug: 'ftmo-vs-myfundedfx' },
+  { firms: 'FundedNext vs The5ers', slug: 'fundednext-vs-the5ers' },
+]
 
-  const popularVS = [
-    { name: 'FTMO vs Funded Next', href: '/compare/ftmo-vs-fundednext' },
-    { name: 'FTMO vs The5ers', href: '/compare/ftmo-vs-the5ers' },
-    { name: 'FTMO vs MyFundedFX', href: '/compare/ftmo-vs-myfundedfx' },
-    { name: 'Funded Next vs The5ers', href: '/compare/fundednext-vs-the5ers' },
-  ]
+// =============================================================================
+// BLOG POSTS
+// =============================================================================
 
+const BLOG_POSTS = [
+  {
+    title: 'How to Choose the Right Prop Firm',
+    category: 'Guide',
+    slug: 'how-to-choose-right-prop-firm',
+  },
+  {
+    title: 'News Trading Rules Explained',
+    category: 'Rules',
+    slug: 'news-trading-rules-explained',
+  },
+  {
+    title: 'How to Pass Your Prop Firm Challenge',
+    category: 'Guide',
+    slug: 'how-to-pass-your-prop-firm-challenge',
+  },
+]
+
+// =============================================================================
+// HOMEPAGE COMPONENT
+// =============================================================================
+
+export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-gray-950">
       
-      {/* Hero Section */}
-      <section className="relative pt-20 pb-16 overflow-hidden">
+      {/* ========== HERO SECTION ========== */}
+      <section className="relative pt-24 pb-16 overflow-hidden">
         {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-gray-900 to-blue-500/10" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-emerald-500/20 rounded-full blur-3xl opacity-20" />
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-900 via-gray-950 to-gray-950" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-emerald-500/5 rounded-full blur-3xl" />
         
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/30 rounded-full mb-6">
-              <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-              <span className="text-emerald-400 text-sm font-medium">Updated December 2025</span>
-            </div>
-            
-            {/* Headline */}
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
-              Find Your Perfect
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-400"> Prop Firm </span>
-              in Seconds
-            </h1>
-            
-            <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
-              Compare {totalFirms || 55}+ prop trading firms side-by-side. Filter by rules, fees, and profit split to find the one that matches YOUR trading style.
-            </p>
-            
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Link
-                href="/compare"
-                className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl transition-all text-lg shadow-lg shadow-emerald-500/25"
-              >
-                Compare All Firms
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link
-                href="/deals"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-xl transition-all text-lg border border-gray-700"
-              >
-                <Gift className="w-5 h-5 text-yellow-400" />
-                View Deals & Discounts
-              </Link>
-            </div>
-
-            {/* Trust indicators */}
-            <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-gray-500">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-emerald-400" />
-                <span>100% Free</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-emerald-400" />
-                <span>No Registration Required</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-emerald-400" />
-                <span>Updated Daily</span>
-              </div>
-            </div>
+        <div className="relative max-w-6xl mx-auto px-4">
+          {/* Badge */}
+          <div className="flex justify-center mb-6">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-400 text-sm">
+              <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
+              Updated January 2025
+            </span>
+          </div>
+          
+          {/* Main headline */}
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-center text-white leading-tight mb-6">
+            Compare Prop Firms.
+            <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">
+              Track Your Challenge.
+            </span>
+          </h1>
+          
+          <p className="text-lg md:text-xl text-gray-400 text-center max-w-2xl mx-auto mb-8">
+            Compare 102+ prop trading firms side-by-side. Filter by rules, fees, and profit split. 
+            Track your drawdown with our <span className="text-white font-medium">free dashboard</span>.
+          </p>
+          
+          {/* CTAs */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+            <Link
+              href="/compare"
+              className="group flex items-center gap-2 px-6 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold rounded-xl transition-all"
+            >
+              Compare All Firms
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link
+              href="/dashboard"
+              className="group flex items-center gap-2 px-6 py-3.5 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-xl border border-gray-700 transition-all"
+            >
+              <Play className="w-4 h-4" />
+              Track My Challenge FREE
+            </Link>
+          </div>
+          
+          {/* Trust badges */}
+          <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-gray-500">
+            <span className="flex items-center gap-1.5">
+              <CheckCircle className="w-4 h-4 text-emerald-500" />
+              100% Free
+            </span>
+            <span className="flex items-center gap-1.5">
+              <CheckCircle className="w-4 h-4 text-emerald-500" />
+              No Registration Required
+            </span>
+            <span className="flex items-center gap-1.5">
+              <CheckCircle className="w-4 h-4 text-emerald-500" />
+              Updated Daily
+            </span>
           </div>
         </div>
       </section>
 
-      {/* Stats Bar */}
-      <section className="py-8 bg-gray-800/50 border-y border-gray-700">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* ========== STATS BAR ========== */}
+      <section className="border-y border-gray-800 bg-gray-900/50">
+        <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat) => (
-              <div key={stat.label} className="text-center">
-                <p className="text-3xl md:text-4xl font-bold text-white mb-1">{stat.value}</p>
-                <p className="text-gray-400 text-sm">{stat.label}</p>
+            {[
+              { value: '102+', label: 'Prop Firms' },
+              { value: '10K+', label: 'Traders Trust Us' },
+              { value: '25+', label: 'Comparison Points' },
+              { value: '24/7', label: 'Updated Daily' },
+            ].map((stat, i) => (
+              <div key={i} className="text-center">
+                <div className="text-2xl md:text-3xl font-bold text-white mb-1">{stat.value}</div>
+                <div className="text-sm text-gray-500">{stat.label}</div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Top Rated Firms */}
-      <section className="py-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* ========== TOP RATED PROP FIRMS ========== */}
+      <section className="py-16 px-4">
+        <div className="max-w-6xl mx-auto">
+          {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
-                🏆 Top Rated Prop Firms
+              <h2 className="text-2xl md:text-3xl font-bold text-white flex items-center gap-3">
+                <span className="text-2xl">🏆</span>
+                Top Rated Prop Firms
               </h2>
-              <p className="text-gray-400">Based on Trustpilot ratings and trader reviews</p>
+              <p className="text-gray-500 mt-1">Based on Trustpilot ratings and trader reviews</p>
             </div>
-            <Link
-              href="/compare"
-              className="hidden md:flex items-center gap-2 text-emerald-400 hover:text-emerald-300 font-medium"
+            <Link 
+              href="/compare" 
+              className="hidden md:flex items-center gap-1 text-emerald-400 hover:text-emerald-300 text-sm font-medium"
             >
-              View All <ChevronRight className="w-4 h-4" />
+              View All <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {topFirms?.slice(0, 6).map((firm, index) => (
-              <Link
-                key={firm.id}
-                href={`/prop-firm/${firm.slug}`}
-                className="group bg-gray-800/50 border border-gray-700 hover:border-emerald-500/50 rounded-2xl p-6 transition-all"
+          {/* Firms Grid */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {TOP_FIRMS.map((firm) => (
+              <div
+                key={firm.slug}
+                className="group relative bg-gray-900 border border-gray-800 hover:border-gray-700 rounded-2xl p-5 transition-all hover:shadow-lg hover:shadow-black/20"
               >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    {index < 3 && (
-                      <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                        index === 0 ? 'bg-yellow-500 text-black' :
-                        index === 1 ? 'bg-gray-400 text-black' :
-                        'bg-amber-600 text-white'
-                      }`}>
-                        {index + 1}
-                      </span>
-                    )}
-                    <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center overflow-hidden p-1">
-                      {firm.logo_url ? (
-                        <img src={firm.logo_url} alt={firm.name} className="w-full h-full object-contain" />
-                      ) : (
-                        <span className="text-xl font-bold text-emerald-600">{firm.name?.charAt(0)}</span>
-                      )}
+                {/* Promo Badge */}
+                {firm.promo && (
+                  <div className="absolute -top-2 -right-2 z-10">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold rounded-full shadow-lg">
+                      <Gift className="w-3 h-3" />
+                      {firm.promo.discount}
+                    </span>
+                  </div>
+                )}
+
+                {/* Header */}
+                <div className="flex items-start gap-4 mb-4">
+                  {/* Rank + Logo */}
+                  <div className="relative">
+                    <span className="absolute -top-1 -left-1 w-5 h-5 bg-emerald-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                      {firm.rank}
+                    </span>
+                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${firm.color} flex items-center justify-center text-white font-bold text-lg`}>
+                      {firm.logo}
                     </div>
                   </div>
-                  {firm.trustpilot_rating && (
-                    <div className="flex items-center gap-1 px-2 py-1 bg-emerald-500/20 rounded-lg">
-                      <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                      <span className="text-white font-semibold">{firm.trustpilot_rating}</span>
+                  
+                  {/* Name & Rating */}
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-white group-hover:text-emerald-400 transition-colors">
+                      {firm.name}
+                    </h3>
+                    <div className="flex items-center gap-2 mt-1">
+                      <div className="flex items-center gap-1">
+                        <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+                        <span className="text-white font-medium text-sm">{firm.rating}</span>
+                      </div>
+                      <span className="text-gray-600">•</span>
+                      <span className="text-gray-500 text-sm">{firm.reviews} reviews</span>
                     </div>
-                  )}
+                  </div>
                 </div>
 
-                <h3 className="text-xl font-bold text-white mb-3 group-hover:text-emerald-400 transition-colors">
-                  {firm.name}
-                </h3>
-
+                {/* Stats */}
                 <div className="grid grid-cols-2 gap-3 mb-4">
-                  <div className="bg-gray-900/50 rounded-lg p-2 text-center">
-                    <p className="text-xs text-gray-500 mb-1">From</p>
-                    <p className="text-lg font-bold text-white">${firm.min_price || '99'}</p>
+                  <div className="bg-gray-800/50 rounded-lg px-3 py-2">
+                    <div className="text-xs text-gray-500">From</div>
+                    <div className="text-white font-semibold">{firm.startingPrice}</div>
                   </div>
-                  <div className="bg-gray-900/50 rounded-lg p-2 text-center">
-                    <p className="text-xs text-gray-500 mb-1">Profit Split</p>
-                    <p className="text-lg font-bold text-emerald-400">{firm.profit_split || '80'}%</p>
+                  <div className="bg-gray-800/50 rounded-lg px-3 py-2">
+                    <div className="text-xs text-gray-500">Profit Split</div>
+                    <div className="text-emerald-400 font-semibold">{firm.profitSplit}</div>
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-2">
-                  {firm.allows_scalping && (
-                    <span className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs rounded-full">Scalping</span>
-                  )}
-                  {firm.allows_news_trading && (
-                    <span className="px-2 py-1 bg-purple-500/20 text-purple-400 text-xs rounded-full">News</span>
-                  )}
-                  {firm.allows_ea && (
-                    <span className="px-2 py-1 bg-orange-500/20 text-orange-400 text-xs rounded-full">EA</span>
-                  )}
+                {/* Tags */}
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {firm.tags.map((tag) => (
+                    <span key={tag} className="px-2 py-0.5 bg-gray-800 text-gray-400 text-xs rounded">
+                      {tag}
+                    </span>
+                  ))}
                 </div>
-              </Link>
+
+                {/* Promo Code */}
+                {firm.promo && firm.promo.code && (
+                  <div className="flex items-center gap-2 p-2 bg-amber-500/10 border border-amber-500/20 rounded-lg mb-4">
+                    <Gift className="w-4 h-4 text-amber-400" />
+                    <span className="text-amber-400 text-sm">
+                      Code: <code className="font-mono font-bold">{firm.promo.code}</code>
+                    </span>
+                  </div>
+                )}
+
+                {/* CTA */}
+                <Link
+                  href={`/prop-firm/${firm.slug}`}
+                  className="flex items-center justify-center gap-2 w-full py-2.5 bg-gray-800 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors"
+                >
+                  View Details
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </Link>
+              </div>
             ))}
           </div>
 
-          <div className="text-center mt-8 md:hidden">
-            <Link
-              href="/compare"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-xl transition-colors"
+          {/* Mobile View All */}
+          <div className="mt-6 md:hidden">
+            <Link 
+              href="/compare" 
+              className="flex items-center justify-center gap-2 w-full py-3 bg-gray-800 text-white font-medium rounded-xl"
             >
-              View All {totalFirms}+ Firms <ArrowRight className="w-4 h-4" />
+              View All 102+ Firms <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Popular Categories */}
-      <section className="py-16 bg-gray-800/30">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
+      {/* ========== TRACK YOUR CHALLENGE (Dashboard CTA) ========== */}
+      <section className="py-16 px-4 bg-gradient-to-b from-gray-900/50 to-gray-950">
+        <div className="max-w-6xl mx-auto">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700">
+            {/* Background decoration */}
+            <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl" />
+            
+            <div className="relative grid lg:grid-cols-2 gap-8 p-8 md:p-12">
+              {/* Left: Content */}
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-400 text-sm mb-6">
+                  <Sparkles className="w-4 h-4" />
+                  Free Dashboard
+                </div>
+                
+                <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                  Never Blow Your Account Again
+                </h2>
+                
+                <p className="text-gray-400 text-lg mb-6">
+                  Track your daily and max drawdown in real-time. Get warnings BEFORE you breach your prop firm rules. Simulate trades to check risk.
+                </p>
+                
+                <ul className="space-y-3 mb-8">
+                  {[
+                    'Real-time Daily & Max Drawdown tracking',
+                    'Smart warnings before you breach rules',
+                    'Trade simulator to check risk',
+                    'Works with ANY prop firm',
+                  ].map((feature, i) => (
+                    <li key={i} className="flex items-center gap-3 text-gray-300">
+                      <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+                
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Link
+                    href="/dashboard"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold rounded-xl transition-colors"
+                  >
+                    <Target className="w-5 h-5" />
+                    Start Tracking FREE
+                  </Link>
+                  <span className="text-gray-500 text-sm self-center">
+                    No signup required
+                  </span>
+                </div>
+              </div>
+              
+              {/* Right: Dashboard Preview */}
+              <div className="relative">
+                <div className="bg-gray-900 rounded-2xl border border-gray-700 p-4 shadow-2xl">
+                  {/* Mock Dashboard Header */}
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-3 h-3 rounded-full bg-red-500" />
+                    <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                    <div className="w-3 h-3 rounded-full bg-green-500" />
+                    <span className="text-gray-500 text-xs ml-2">My Prop Firms Dashboard</span>
+                  </div>
+                  
+                  {/* Mock Stats */}
+                  <div className="grid grid-cols-3 gap-3 mb-4">
+                    <div className="bg-gray-800 rounded-lg p-3">
+                      <div className="text-xs text-gray-500">Balance</div>
+                      <div className="text-white font-bold">$100,000</div>
+                    </div>
+                    <div className="bg-gray-800 rounded-lg p-3">
+                      <div className="text-xs text-gray-500">Today&apos;s P&L</div>
+                      <div className="text-emerald-400 font-bold">+$1,250</div>
+                    </div>
+                    <div className="bg-gray-800 rounded-lg p-3">
+                      <div className="text-xs text-gray-500">Risk Status</div>
+                      <div className="text-emerald-400 font-bold">Safe</div>
+                    </div>
+                  </div>
+                  
+                  {/* Mock Drawdown Bars */}
+                  <div className="space-y-3">
+                    <div>
+                      <div className="flex justify-between text-xs mb-1">
+                        <span className="text-gray-400">Daily Drawdown</span>
+                        <span className="text-emerald-400">$3,750 remaining</span>
+                      </div>
+                      <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
+                        <div className="h-full w-1/4 bg-emerald-500 rounded-full" />
+                      </div>
+                    </div>
+                    <div>
+                      <div className="flex justify-between text-xs mb-1">
+                        <span className="text-gray-400">Max Drawdown</span>
+                        <span className="text-emerald-400">$8,750 remaining</span>
+                      </div>
+                      <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
+                        <div className="h-full w-1/3 bg-cyan-500 rounded-full" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Mock Alert */}
+                  <div className="mt-4 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-emerald-400" />
+                      <span className="text-emerald-400 text-sm font-medium">All Clear! Trade confidently.</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========== FIND BY TRADING STYLE ========== */}
+      <section className="py-16 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
               Find Firms by Trading Style
             </h2>
-            <p className="text-gray-400">Quick access to firms that match your specific needs</p>
+            <p className="text-gray-500">Quick access to firms that match your specific needs</p>
           </div>
-
+          
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {popularCategories.map((cat) => (
+            {TRADING_STYLES.map((style) => (
               <Link
-                key={cat.href}
-                href={cat.href}
-                className="group bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-emerald-500/50 rounded-xl p-4 text-center transition-all"
+                key={style.name}
+                href={style.href}
+                className="group flex flex-col items-center gap-3 p-5 bg-gray-900 hover:bg-gray-800 border border-gray-800 hover:border-gray-700 rounded-xl transition-all"
               >
-                <span className="text-3xl mb-2 block">{cat.icon}</span>
+                <span className="text-3xl">{style.icon}</span>
                 <span className="text-white font-medium text-sm group-hover:text-emerald-400 transition-colors">
-                  {cat.name}
+                  {style.name}
                 </span>
               </Link>
             ))}
@@ -286,189 +517,142 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Popular Comparisons */}
-      <section className="py-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
-              🆚 Popular Comparisons
+      {/* ========== POPULAR COMPARISONS ========== */}
+      <section className="py-16 px-4 bg-gray-900/30">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl md:text-3xl font-bold text-white flex items-center justify-center gap-3 mb-2">
+              <span className="text-2xl">⚔️</span>
+              Popular Comparisons
             </h2>
-            <p className="text-gray-400">See how top firms stack up against each other</p>
+            <p className="text-gray-500">See how top firms stack up against each other</p>
           </div>
-
+          
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {popularVS.map((vs) => (
+            {COMPARISONS.map((comparison) => (
               <Link
-                key={vs.href}
-                href={vs.href}
-                className="group bg-gradient-to-br from-gray-800 to-gray-800/50 border border-gray-700 hover:border-emerald-500/50 rounded-xl p-5 text-center transition-all"
+                key={comparison.slug}
+                href={`/compare/${comparison.slug}`}
+                className="group flex items-center justify-between p-4 bg-gray-900 hover:bg-gray-800 border border-gray-800 hover:border-emerald-500/30 rounded-xl transition-all"
               >
-                <p className="text-white font-semibold group-hover:text-emerald-400 transition-colors">
-                  {vs.name}
-                </p>
-                <p className="text-gray-500 text-sm mt-2 flex items-center justify-center gap-1">
-                  Compare now <ArrowRight className="w-3 h-3" />
-                </p>
+                <span className="text-white font-medium group-hover:text-emerald-400 transition-colors">
+                  {comparison.firms}
+                </span>
+                <ArrowRight className="w-4 h-4 text-gray-600 group-hover:text-emerald-400 transition-colors" />
               </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Features */}
-      <section className="py-16 bg-gray-800/30">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
+      {/* ========== WHY TRADERS CHOOSE US ========== */}
+      <section className="py-16 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
               Why Traders Choose Us
             </h2>
-            <p className="text-gray-400">Everything you need to make the right decision</p>
+            <p className="text-gray-500">Everything you need to make the right decision</p>
           </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature) => (
-              <div
-                key={feature.title}
-                className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 text-center"
-              >
-                <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <feature.icon className="w-6 h-6 text-emerald-400" />
+          
+          <div className="grid md:grid-cols-4 gap-6">
+            {[
+              {
+                icon: BarChart3,
+                title: 'Smart Filters',
+                description: 'Filter by trading style, budget, profit split, and 20+ criteria',
+              },
+              {
+                icon: Shield,
+                title: 'Verified Data',
+                description: 'All data verified directly from prop firm websites',
+              },
+              {
+                icon: Star,
+                title: 'Real Reviews',
+                description: 'Trustpilot ratings and real trader experiences',
+              },
+              {
+                icon: Gift,
+                title: 'Exclusive Deals',
+                description: 'Save up to 55% with our exclusive discount codes',
+              },
+            ].map((feature, i) => (
+              <div key={i} className="text-center">
+                <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-gray-800 flex items-center justify-center">
+                  <feature.icon className="w-7 h-7 text-emerald-400" />
                 </div>
-                <h3 className="text-lg font-semibold text-white mb-2">{feature.title}</h3>
-                <p className="text-gray-400 text-sm">{feature.description}</p>
+                <h3 className="text-white font-semibold mb-2">{feature.title}</h3>
+                <p className="text-gray-500 text-sm">{feature.description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Free Tools */}
-      <section className="py-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
-              🛠️ Free Trading Tools
-            </h2>
-            <p className="text-gray-400">Help yourself pass your challenge</p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            <Link
-              href="/tools/risk-calculator"
-              className="group bg-gradient-to-br from-emerald-500/10 to-blue-500/10 border border-emerald-500/30 hover:border-emerald-500/50 rounded-2xl p-8 transition-all"
-            >
-              <div className="flex items-start gap-4">
-                <div className="w-14 h-14 bg-emerald-500/20 rounded-xl flex items-center justify-center shrink-0">
-                  <Calculator className="w-7 h-7 text-emerald-400" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors">
-                    Risk Calculator
-                  </h3>
-                  <p className="text-gray-400">
-                    Calculate your position size based on account balance, risk percentage, and stop loss distance.
-                  </p>
-                </div>
-              </div>
-            </Link>
-
-            <Link
-              href="/tools/rule-tracker"
-              className="group bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-blue-500/30 hover:border-blue-500/50 rounded-2xl p-8 transition-all"
-            >
-              <div className="flex items-start gap-4">
-                <div className="w-14 h-14 bg-blue-500/20 rounded-xl flex items-center justify-center shrink-0">
-                  <Target className="w-7 h-7 text-blue-400" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">
-                    Rule Tracker
-                  </h3>
-                  <p className="text-gray-400">
-                    Track your daily drawdown, max drawdown, and profit target in real-time.
-                  </p>
-                </div>
-              </div>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Blog Preview */}
-      <section className="py-16 bg-gray-800/30">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* ========== LATEST FROM BLOG ========== */}
+      <section className="py-16 px-4 bg-gray-900/30">
+        <div className="max-w-6xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
-                📚 Latest from the Blog
+              <h2 className="text-2xl md:text-3xl font-bold text-white flex items-center gap-3">
+                <span className="text-2xl">📚</span>
+                Latest from the Blog
               </h2>
-              <p className="text-gray-400">Tips and strategies to help you get funded</p>
+              <p className="text-gray-500 mt-1">Tips and strategies to help you get funded</p>
             </div>
-            <Link
-              href="/blog"
-              className="hidden md:flex items-center gap-2 text-emerald-400 hover:text-emerald-300 font-medium"
+            <Link 
+              href="/blog" 
+              className="hidden md:flex items-center gap-1 text-emerald-400 hover:text-emerald-300 text-sm font-medium"
             >
-              View All <ChevronRight className="w-4 h-4" />
+              View All <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-
+          
           <div className="grid md:grid-cols-3 gap-6">
-            {[
-              {
-                title: 'How to Choose the Right Prop Firm',
-                slug: 'how-to-choose-right-prop-firm',
-                category: 'Guide',
-              },
-              {
-                title: 'News Trading Rules Explained',
-                slug: 'news-trading-rules-explained',
-                category: 'Rules',
-              },
-              {
-                title: 'How to Pass Your Prop Firm Challenge',
-                slug: 'how-to-pass-prop-firm-challenge',
-                category: 'Guide',
-              },
-            ].map((post) => (
+            {BLOG_POSTS.map((post) => (
               <Link
                 key={post.slug}
                 href={`/blog/${post.slug}`}
-                className="group bg-gray-800/50 border border-gray-700 hover:border-emerald-500/30 rounded-xl p-6 transition-all"
+                className="group bg-gray-900 border border-gray-800 hover:border-gray-700 rounded-xl p-6 transition-all"
               >
-                <span className="text-xs text-emerald-400 font-medium">{post.category}</span>
-                <h3 className="text-lg font-semibold text-white mt-2 group-hover:text-emerald-400 transition-colors">
+                <span className="inline-block px-2 py-1 bg-emerald-500/10 text-emerald-400 text-xs font-medium rounded mb-3">
+                  {post.category}
+                </span>
+                <h3 className="text-white font-semibold group-hover:text-emerald-400 transition-colors mb-2">
                   {post.title}
                 </h3>
-                <p className="text-gray-500 text-sm mt-3 flex items-center gap-1">
+                <span className="text-gray-500 text-sm flex items-center gap-1">
                   Read more <ArrowRight className="w-3 h-3" />
-                </p>
+                </span>
               </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Final CTA */}
-      <section className="py-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      {/* ========== FINAL CTA ========== */}
+      <section className="py-20 px-4">
+        <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Ready to Get Funded?
           </h2>
-          <p className="text-xl text-gray-400 mb-8">
+          <p className="text-gray-400 text-lg mb-8">
             Stop guessing. Compare all prop firms in one place and find your perfect match.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/compare"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl transition-all text-lg"
+              className="group flex items-center gap-2 px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold rounded-xl transition-all"
             >
-              Start Comparing <ArrowRight className="w-5 h-5" />
+              Start Comparing
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
               href="/guide"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-xl transition-all text-lg border border-gray-700"
+              className="flex items-center gap-2 px-8 py-4 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-xl border border-gray-700 transition-all"
             >
-              <BookOpen className="w-5 h-5" />
+              <Award className="w-5 h-5" />
               Download Free Guide
             </Link>
           </div>
@@ -476,24 +660,5 @@ export default async function HomePage() {
       </section>
 
     </div>
-  )
-}
-
-// Building icon component
-function Building(props: any) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-      <rect width="16" height="20" x="4" y="2" rx="2" ry="2"/>
-      <path d="M9 22v-4h6v4"/>
-      <path d="M8 6h.01"/>
-      <path d="M16 6h.01"/>
-      <path d="M12 6h.01"/>
-      <path d="M12 10h.01"/>
-      <path d="M12 14h.01"/>
-      <path d="M16 10h.01"/>
-      <path d="M16 14h.01"/>
-      <path d="M8 10h.01"/>
-      <path d="M8 14h.01"/>
-    </svg>
   )
 }
