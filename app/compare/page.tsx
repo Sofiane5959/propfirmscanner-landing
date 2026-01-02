@@ -39,17 +39,6 @@ export const metadata: Metadata = {
   },
 }
 
-// Schema JSON-LD for the compare page
-export const comparePageSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'ItemList',
-  name: 'Best Prop Trading Firms Comparison 2026',
-  description: 'Compare 100+ verified prop trading firms with detailed information on pricing, profit splits, discounts, and trading rules.',
-  url: 'https://www.propfirmscanner.org/compare',
-  numberOfItems: 100,
-  itemListOrder: 'https://schema.org/ItemListOrderDescending',
-}
-
 export const revalidate = 3600 // Revalidate every hour
 
 export default async function ComparePage() {
@@ -60,6 +49,17 @@ export default async function ComparePage() {
 
   if (error) {
     console.error('Error fetching firms:', error)
+  }
+
+  // Schema JSON-LD for the compare page (defined inside component)
+  const comparePageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Best Prop Trading Firms Comparison 2026',
+    description: 'Compare 100+ verified prop trading firms with detailed information on pricing, profit splits, discounts, and trading rules.',
+    url: 'https://www.propfirmscanner.org/compare',
+    numberOfItems: firms?.length || 100,
+    itemListOrder: 'https://schema.org/ItemListOrderDescending',
   }
 
   return (
