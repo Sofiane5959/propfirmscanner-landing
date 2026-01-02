@@ -2,11 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/providers/AuthProvider';
-import { createGuestAccount, hasGuestAccount } from '@/lib/guest-storage';
-import { SignupPromptModal } from '@/components/PublicUserBanner';
-import { PaywallModal } from '@/components/PaywallModal';
-import { getUserPlan, canAddAccount } from '@/lib/subscription';
+import { createGuestAccount, hasGuestAccount, getGuestAccount } from '@/lib/guest-storage';
 import {
   ArrowLeft,
   Shield,
@@ -14,8 +10,8 @@ import {
   Loader2,
   Info,
   CheckCircle,
-  Crown,
   AlertCircle,
+  Sparkles,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -45,6 +41,7 @@ const PROP_FIRMS = [
       { name: 'Stellar $25K', size: 25000, daily_dd: 5, max_dd: 10, min_days: 5 },
       { name: 'Stellar $50K', size: 50000, daily_dd: 5, max_dd: 10, min_days: 5 },
       { name: 'Stellar $100K', size: 100000, daily_dd: 5, max_dd: 10, min_days: 5 },
+      { name: 'Stellar $200K', size: 200000, daily_dd: 5, max_dd: 10, min_days: 5 },
     ],
     dd_type: 'trailing' as const,
   },
@@ -68,6 +65,7 @@ const PROP_FIRMS = [
       { name: 'Challenge $25K', size: 25000, daily_dd: 5, max_dd: 8, min_days: 5 },
       { name: 'Challenge $50K', size: 50000, daily_dd: 5, max_dd: 8, min_days: 5 },
       { name: 'Challenge $100K', size: 100000, daily_dd: 5, max_dd: 8, min_days: 5 },
+      { name: 'Challenge $200K', size: 200000, daily_dd: 5, max_dd: 8, min_days: 5 },
     ],
     dd_type: 'trailing' as const,
   },
@@ -82,6 +80,27 @@ const PROP_FIRMS = [
     ],
     dd_type: 'static' as const,
   },
+  { 
+    slug: 'topstep', 
+    name: 'Topstep',
+    programs: [
+      { name: 'Trading Combine $50K', size: 50000, daily_dd: 2, max_dd: 3, min_days: 5 },
+      { name: 'Trading Combine $100K', size: 100000, daily_dd: 2, max_dd: 3, min_days: 5 },
+      { name: 'Trading Combine $150K', size: 150000, daily_dd: 2, max_dd: 3, min_days: 5 },
+    ],
+    dd_type: 'eod_trailing' as const,
+  },
+  { 
+    slug: 'apex-trader', 
+    name: 'Apex Trader Funding',
+    programs: [
+      { name: 'Rithmic $25K', size: 25000, daily_dd: 2.5, max_dd: 6, min_days: 7 },
+      { name: 'Rithmic $50K', size: 50000, daily_dd: 2.5, max_dd: 6, min_days: 7 },
+      { name: 'Rithmic $100K', size: 100000, daily_dd: 2.5, max_dd: 6, min_days: 7 },
+      { name: 'Rithmic $250K', size: 250000, daily_dd: 2.5, max_dd: 6, min_days: 7 },
+    ],
+    dd_type: 'eod_trailing' as const,
+  },
 ];
 
 // =============================================================================
@@ -90,37 +109,30 @@ const PROP_FIRMS = [
 
 export default function AddAccountPage() {
   const router = useRouter();
-  const { user, isLoading: authLoading } = useAuth();
   
-  const [selectedFirm, setSelectedFirm] = useState<string>('');
-  const [selectedProgram, setSelectedProgram] = useState<string>('');
+  // State
+  const [selectedFirm, setSelectedFirm] = useState<string>('ftmo'); // Default to FTMO
+  const [selectedProgram, setSelectedProgram] = useState<string>('Challenge $50K'); // Default program
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [signupModalOpen, setSignupModalOpen] = useState(false);
-  const [paywallOpen, setPaywallOpen] = useState(false);
   const [error, setError] = useState<string>('');
+  const [existingAccount, setExistingAccount] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const isPublic = !user;
-  const guestHasAccount = hasGuestAccount();
-  
-  // Account limit check
-  const currentAccountCount = guestHasAccount ? 1 : 0;
-  const userPlan = getUserPlan(isPublic ? 'free' : 'free'); // TODO: Get from profile
-  const canAdd = canAddAccount(currentAccountCount, userPlan);
-
-  // Check if user is blocked from adding
+  // Check for existing account on mount
   useEffect(() => {
-    if (authLoading) return;
-    
-    if (!canAdd) {
-      if (isPublic) {
-        // Public user with 1 account → show signup prompt
-        setSignupModalOpen(true);
-      } else {
-        // Logged-in user → show paywall
-        setPaywallOpen(true);
+    const checkExisting = () => {
+      try {
+        const hasAccount = hasGuestAccount();
+        setExistingAccount(hasAccount);
+      } catch (e) {
+        console.error('Error checking guest account:', e);
       }
-    }
-  }, [authLoading, canAdd, isPublic]);
+      setIsLoading(false);
+    };
+    
+    // Small delay to ensure localStorage is available
+    setTimeout(checkExisting, 100);
+  }, []);
 
   // Get selected firm data
   const firmData = PROP_FIRMS.find(f => f.slug === selectedFirm);
@@ -135,53 +147,36 @@ export default function AddAccountPage() {
       return;
     }
 
-    // Re-check limit
-    if (!canAdd) {
-      if (isPublic) {
-        setSignupModalOpen(true);
-      } else {
-        setPaywallOpen(true);
-      }
-      return;
-    }
-
     setIsSubmitting(true);
     setError('');
 
     try {
-      if (isPublic || !user) {
-        // Save to localStorage for public users
-        createGuestAccount({
-          prop_firm: firmData.name,
-          prop_firm_slug: firmData.slug,
-          program: programData.name,
-          account_size: programData.size,
-          daily_dd_percent: programData.daily_dd,
-          max_dd_percent: programData.max_dd,
-          max_dd_type: firmData.dd_type,
-          min_trading_days: programData.min_days,
-        });
-        
-        router.push('/dashboard');
-      } else {
-        // TODO: Save to Supabase for logged-in users
-        router.push('/dashboard');
-      }
+      // Create guest account in localStorage
+      const newAccount = createGuestAccount({
+        prop_firm: firmData.name,
+        prop_firm_slug: firmData.slug,
+        program: programData.name,
+        account_size: programData.size,
+        daily_dd_percent: programData.daily_dd,
+        max_dd_percent: programData.max_dd,
+        max_dd_type: firmData.dd_type,
+        min_trading_days: programData.min_days,
+      });
+      
+      console.log('Account created:', newAccount);
+      
+      // Redirect to dashboard
+      router.push('/dashboard');
+      
     } catch (err) {
+      console.error('Error creating account:', err);
       setError('An error occurred. Please try again.');
-      console.error(err);
-    } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Handle signup redirect
-  const handleSignup = () => {
-    setSignupModalOpen(false);
-    router.push('/auth/login?signup=true');
-  };
-
-  if (authLoading) {
+  // Loading state
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-950 flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-emerald-400 animate-spin" />
@@ -204,37 +199,38 @@ export default function AddAccountPage() {
           
           <h1 className="text-2xl font-bold text-white flex items-center gap-3">
             <Shield className="w-7 h-7 text-emerald-400" />
-            Add Prop Firm Account
+            {existingAccount ? 'Update Your Account' : 'Add Prop Firm Account'}
           </h1>
           <p className="text-gray-500 mt-1">
-            Select your prop firm and program
+            {existingAccount 
+              ? 'Change your tracked prop firm and program'
+              : 'Select your prop firm and program to start tracking'
+            }
           </p>
         </div>
 
-        {/* Public user info */}
-        {isPublic && !guestHasAccount && (
-          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 mb-6">
-            <div className="flex items-start gap-3">
-              <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="font-medium text-white text-sm">No signup required</p>
-                <p className="text-xs text-gray-400 mt-0.5">
-                  Start tracking your prop firm instantly. Your data will be stored locally on this device.
-                </p>
-              </div>
+        {/* Info Banner */}
+        <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 mb-6">
+          <div className="flex items-start gap-3">
+            <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="font-medium text-white text-sm">No signup required</p>
+              <p className="text-xs text-gray-400 mt-0.5">
+                Start tracking your prop firm instantly. Your data will be stored locally on this device.
+              </p>
             </div>
           </div>
-        )}
+        </div>
 
-        {/* Warning if already has account */}
-        {guestHasAccount && isPublic && (
+        {/* Existing Account Warning */}
+        {existingAccount && (
           <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4 mb-6">
             <div className="flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="font-medium text-white text-sm">You already have 1 account</p>
+                <p className="font-medium text-white text-sm">You already have an account</p>
                 <p className="text-xs text-gray-400 mt-0.5">
-                  Create a free account to track multiple prop firms.
+                  Adding a new account will replace your current one. Create a free account to track multiple prop firms.
                 </p>
               </div>
             </div>
@@ -253,11 +249,16 @@ export default function AddAccountPage() {
                 value={selectedFirm}
                 onChange={(e) => {
                   setSelectedFirm(e.target.value);
-                  setSelectedProgram('');
+                  // Auto-select first program of new firm
+                  const newFirm = PROP_FIRMS.find(f => f.slug === e.target.value);
+                  if (newFirm && newFirm.programs.length > 0) {
+                    setSelectedProgram(newFirm.programs[0].name);
+                  } else {
+                    setSelectedProgram('');
+                  }
                 }}
-                className="w-full appearance-none bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors"
+                className="w-full appearance-none bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors cursor-pointer"
               >
-                <option value="">Select a prop firm</option>
                 {PROP_FIRMS.map((firm) => (
                   <option key={firm.slug} value={firm.slug}>
                     {firm.name}
@@ -277,10 +278,8 @@ export default function AddAccountPage() {
               <select
                 value={selectedProgram}
                 onChange={(e) => setSelectedProgram(e.target.value)}
-                disabled={!selectedFirm}
-                className="w-full appearance-none bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full appearance-none bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors cursor-pointer"
               >
-                <option value="">Select a program</option>
                 {firmData?.programs.map((program) => (
                   <option key={program.name} value={program.name}>
                     {program.name}
@@ -310,7 +309,9 @@ export default function AddAccountPage() {
                 </div>
                 <div>
                   <p className="text-xs text-gray-500">DD Type</p>
-                  <p className="text-white font-semibold capitalize">{firmData?.dd_type}</p>
+                  <p className="text-white font-semibold capitalize">
+                    {firmData?.dd_type === 'eod_trailing' ? 'EOD Trailing' : firmData?.dd_type}
+                  </p>
                 </div>
               </div>
             </div>
@@ -323,71 +324,55 @@ export default function AddAccountPage() {
             </div>
           )}
 
-          {/* Submit */}
+          {/* Submit Button */}
           <button
             type="submit"
-            disabled={!selectedFirm || !selectedProgram || isSubmitting || (guestHasAccount && isPublic)}
-            className="w-full py-3.5 bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
+            disabled={isSubmitting}
+            className="w-full py-3.5 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
           >
             {isSubmitting ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin" />
-                Adding...
-              </>
-            ) : guestHasAccount && isPublic ? (
-              <>
-                <Crown className="w-5 h-5" />
-                Create Account to Add More
+                Creating account...
               </>
             ) : (
-              'Start Tracking This Account'
+              <>
+                <Sparkles className="w-5 h-5" />
+                {existingAccount ? 'Update My Account' : 'Start Tracking This Account'}
+              </>
             )}
           </button>
-
-          {/* Alternative action for users at limit */}
-          {guestHasAccount && isPublic && (
-            <button
-              type="button"
-              onClick={() => setSignupModalOpen(true)}
-              className="w-full py-3 text-emerald-400 hover:text-emerald-300 text-sm font-medium transition-colors"
-            >
-              Create free account to track more
-            </button>
-          )}
         </form>
 
         {/* Note */}
         <div className="mt-6 flex items-start gap-2 text-xs text-gray-600">
           <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
           <p>
-            You can update the balance and P&L from the dashboard after adding the account.
+            After adding your account, you can update your balance and daily P&L from the dashboard to get personalized risk analysis.
           </p>
         </div>
+
+        {/* Upgrade CTA */}
+        <div className="mt-8 bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10 border border-violet-500/20 rounded-xl p-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-violet-500/20 rounded-lg flex-shrink-0">
+              <Sparkles className="w-5 h-5 text-violet-400" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-white">Want to track multiple accounts?</p>
+              <p className="text-xs text-gray-400 mt-0.5">
+                Create a free account to track up to 3 prop firms and sync across devices.
+              </p>
+            </div>
+            <Link
+              href="/auth/signup"
+              className="px-4 py-2 bg-violet-500 hover:bg-violet-600 text-white text-sm font-medium rounded-lg transition-colors whitespace-nowrap"
+            >
+              Sign Up Free
+            </Link>
+          </div>
+        </div>
       </div>
-
-      {/* Signup Modal for public users */}
-      <SignupPromptModal
-        isOpen={signupModalOpen}
-        onClose={() => {
-          setSignupModalOpen(false);
-          if (!canAdd) {
-            router.push('/dashboard');
-          }
-        }}
-        onSignup={handleSignup}
-        reason="second_account"
-      />
-
-      {/* Paywall for logged-in users */}
-      <PaywallModal
-        isOpen={paywallOpen}
-        onClose={() => {
-          setPaywallOpen(false);
-          router.push('/dashboard');
-        }}
-        currentAccountCount={currentAccountCount}
-        trigger="account_limit"
-      />
     </div>
   );
 }
