@@ -3,9 +3,26 @@
 // Shown to users before they add their first account
 // =============================================================================
 
-import { AccountHealth } from './types';
+// Self-contained types for demo data
+export interface DemoAccountHealth {
+  status: 'safe' | 'warning' | 'danger';
+  daily: {
+    daily_limit_usd: number;
+    daily_used_usd: number;
+    daily_buffer_usd: number;
+    daily_buffer_pct: number;
+  };
+  max: {
+    max_limit_usd: number;
+    max_floor_usd: number;
+    max_buffer_usd: number;
+    max_buffer_pct: number;
+    basisUsed: 'balance' | 'equity';
+    isApproxTrailing: boolean;
+  };
+  messages: string[];
+}
 
-// Interface matching your existing Account type
 export interface DemoAccount {
   id: string;
   prop_firm: string;
@@ -22,7 +39,7 @@ export interface DemoAccount {
   allows_news: boolean;
   allows_weekend: boolean;
   has_consistency: boolean;
-  health: AccountHealth;
+  health: DemoAccountHealth;
 }
 
 // =============================================================================
@@ -134,7 +151,7 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
       },
       max: {
         max_limit_usd: 5000,
-        max_floor_usd: 46800, // Trailing: locked at highest balance - 10%
+        max_floor_usd: 46800,
         max_buffer_usd: 5000,
         max_buffer_pct: 100,
         basisUsed: 'equity',
@@ -171,9 +188,9 @@ export const DEMO_WARNINGS = [
 // =============================================================================
 
 export const DEMO_STATS = {
-  totalBalance: 217450, // Sum of all demo account balances
-  todayPnl: -3030, // Sum of all today's P&L
-  accountsAtRisk: 2, // DANGER + WARNING
+  totalBalance: 217450,
+  todayPnl: -3030,
+  accountsAtRisk: 2,
   totalAccounts: 3,
 };
 

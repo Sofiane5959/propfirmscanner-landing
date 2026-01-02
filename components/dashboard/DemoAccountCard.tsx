@@ -1,18 +1,15 @@
 'use client';
 
-import { useState } from 'react';
 import { 
   AlertTriangle, 
   Shield, 
   AlertCircle, 
-  TrendingUp, 
-  TrendingDown,
+  TrendingUp,
   Play,
   ChevronRight,
   Newspaper,
   Calendar,
-  BarChart3,
-  Lock
+  BarChart3
 } from 'lucide-react';
 import { DemoBadge } from './DemoBadge';
 import { DemoAccount } from '@/lib/demo-data';

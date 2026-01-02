@@ -12,8 +12,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { DemoBadge } from './DemoBadge';
-import { DEMO_ACCOUNTS } from '@/lib/demo-data';
-import type { DemoAccount } from '@/lib/demo-data';
+import { DEMO_ACCOUNTS, DemoAccount } from '@/lib/demo-data';
 
 interface DemoSimulateModalProps {
   isOpen: boolean;
@@ -120,10 +119,16 @@ export function DemoSimulateModal({ isOpen, onClose, onAddRealAccount }: DemoSim
 
   const presetAmounts = [100, 250, 500, 1000, 2000];
 
-  const resultConfig = result ? {
-    safe: { bg: 'bg-emerald-500/10', border: 'border-emerald-500/30', icon: CheckCircle, iconColor: 'text-emerald-400' },
-    warning: { bg: 'bg-yellow-500/10', border: 'border-yellow-500/30', icon: AlertTriangle, iconColor: 'text-yellow-400' },
-    danger: { bg: 'bg-red-500/10', border: 'border-red-500/30', icon: XCircle, iconColor: 'text-red-400' },
+  const ResultIcon = result ? {
+    safe: CheckCircle,
+    warning: AlertTriangle,
+    danger: XCircle,
+  }[result.status] : null;
+
+  const resultStyles = result ? {
+    safe: { bg: 'bg-emerald-500/10', border: 'border-emerald-500/30', iconColor: 'text-emerald-400' },
+    warning: { bg: 'bg-yellow-500/10', border: 'border-yellow-500/30', iconColor: 'text-yellow-400' },
+    danger: { bg: 'bg-red-500/10', border: 'border-red-500/30', iconColor: 'text-red-400' },
   }[result.status] : null;
 
   if (!isOpen) return null;
@@ -224,10 +229,10 @@ export function DemoSimulateModal({ isOpen, onClose, onAddRealAccount }: DemoSim
           </div>
 
           {/* Result */}
-          {result && resultConfig && (
-            <div className={`p-4 rounded-xl border ${resultConfig.bg} ${resultConfig.border}`}>
+          {result && resultStyles && ResultIcon && (
+            <div className={`p-4 rounded-xl border ${resultStyles.bg} ${resultStyles.border}`}>
               <div className="flex items-start gap-3">
-                <resultConfig.icon className={`w-5 h-5 ${resultConfig.iconColor} flex-shrink-0 mt-0.5`} />
+                <ResultIcon className={`w-5 h-5 ${resultStyles.iconColor} flex-shrink-0 mt-0.5`} />
                 <div className="flex-1">
                   <p className="text-sm text-gray-200 leading-relaxed">
                     {result.message}
