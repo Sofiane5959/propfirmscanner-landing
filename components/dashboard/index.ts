@@ -1,4 +1,4 @@
-// Dashboard Components
+// Dashboard Components - Main exports
 export { OverviewTiles } from './OverviewTiles';
 export { AccountCard } from './AccountCard';
 export { SimulateModal } from './SimulateModal';

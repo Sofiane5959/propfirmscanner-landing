@@ -12,7 +12,8 @@ import {
   Sparkles
 } from 'lucide-react';
 import { DemoBadge } from './DemoBadge';
-import { DEMO_ACCOUNTS, DemoAccount } from '@/lib/demo-data';
+import { DEMO_ACCOUNTS } from '@/lib/demo-data';
+import type { DemoAccount } from '@/lib/demo-data';
 
 interface DemoSimulateModalProps {
   isOpen: boolean;

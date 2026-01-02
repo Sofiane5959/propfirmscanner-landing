@@ -12,7 +12,7 @@ import {
   BarChart3
 } from 'lucide-react';
 import { DemoBadge } from './DemoBadge';
-import { DemoAccount } from '@/lib/demo-data';
+import type { DemoAccount } from '@/lib/demo-data';
 
 // =============================================================================
 // HELPER FUNCTIONS
@@ -120,7 +120,7 @@ export function DemoAccountCard({ account, onTrySimulate }: DemoAccountCardProps
           </div>
           
           <div>
-            <p className="text-xs text-gray-500 mb-1">Today's P&L</p>
+            <p className="text-xs text-gray-500 mb-1">Today&apos;s P&L</p>
             <p className={`text-xl font-bold ${
               account.today_pnl >= 0 ? 'text-emerald-400' : 'text-red-400'
             }`}>

@@ -33,7 +33,11 @@ export function DemoBadge({ className = '', size = 'sm' }: DemoBadgeProps) {
   );
 }
 
-export function DemoBanner({ onAddAccount }: { onAddAccount: () => void }) {
+interface DemoBannerProps {
+  onAddAccount: () => void;
+}
+
+export function DemoBanner({ onAddAccount }: DemoBannerProps) {
   return (
     <div className="bg-gradient-to-r from-violet-500/10 via-fuchsia-500/10 to-violet-500/10 border border-violet-500/20 rounded-xl p-4 mb-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -43,7 +47,7 @@ export function DemoBanner({ onAddAccount }: { onAddAccount: () => void }) {
           </div>
           <div>
             <p className="font-medium text-white text-sm flex items-center gap-2">
-              You're viewing demo data
+              You&apos;re viewing demo data
               <DemoBadge />
             </p>
             <p className="text-xs text-gray-400 mt-0.5">
