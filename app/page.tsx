@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import FirmLogo from './components/FirmLogo'
 import { 
   ArrowRight, 
   Shield, 
@@ -37,7 +38,8 @@ const TOP_FIRMS = [
     slug: 'top-one-futures',
     rating: 4.8,
     reviews: '2.7K+',
-    logo: 'T',
+    logoUrl: '/logos/top-one-futures.svg',
+    logoFallback: 'T1F',
     color: 'from-amber-500 to-orange-600',
     startingPrice: '$34',
     profitSplit: '90%',
@@ -51,7 +53,8 @@ const TOP_FIRMS = [
     slug: 'earn2trade',
     rating: 4.7,
     reviews: '4.3K+',
-    logo: 'E',
+    logoUrl: null,
+    logoFallback: 'E2T',
     color: 'from-blue-500 to-cyan-500',
     startingPrice: '$150',
     profitSplit: '80%',
@@ -65,7 +68,8 @@ const TOP_FIRMS = [
     slug: 'the5ers',
     rating: 4.8,
     reviews: '19K+',
-    logo: '5',
+    logoUrl: null,
+    logoFallback: '5ers',
     color: 'from-emerald-500 to-teal-500',
     startingPrice: '$95',
     profitSplit: '100%',
@@ -79,7 +83,8 @@ const TOP_FIRMS = [
     slug: 'forfx',
     rating: 4.2,
     reviews: '114',
-    logo: 'F',
+    logoUrl: '/logos/forfx.svg',
+    logoFallback: 'FFX',
     color: 'from-violet-500 to-purple-600',
     startingPrice: '$99',
     profitSplit: '80%',
@@ -93,7 +98,8 @@ const TOP_FIRMS = [
     slug: 'ftmo',
     rating: 4.8,
     reviews: '34K+',
-    logo: 'F',
+    logoUrl: null,
+    logoFallback: 'FTMO',
     color: 'from-indigo-500 to-blue-600',
     startingPrice: '$155',
     profitSplit: '90%',
@@ -107,7 +113,8 @@ const TOP_FIRMS = [
     slug: 'fundednext',
     rating: 4.5,
     reviews: '53K+',
-    logo: 'FN',
+    logoUrl: null,
+    logoFallback: 'FN',
     color: 'from-sky-500 to-blue-500',
     startingPrice: '$32',
     profitSplit: '95%',
@@ -197,7 +204,7 @@ export default function HomePage() {
           
           <p className="text-lg md:text-xl text-gray-400 text-center max-w-2xl mx-auto mb-8">
             Compare verified prop trading firms side-by-side. Filter by rules, fees, and profit split. 
-            Track your drawdown with our <span className="text-white font-medium">free dashboard</span>.
+            Track your drawdown with our <span className="text-white font-medium">smart dashboard</span>.
           </p>
           
           {/* CTAs */}
@@ -214,7 +221,7 @@ export default function HomePage() {
               className="group flex items-center gap-2 px-6 py-3.5 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-xl border border-gray-700 transition-all"
             >
               <Play className="w-4 h-4" />
-              Track My Challenge FREE
+              Track My Challenge
             </Link>
           </div>
           
@@ -315,9 +322,12 @@ export default function HomePage() {
                 {/* Header */}
                 <div className="flex items-start gap-4 mb-4 mt-2">
                   {/* Logo */}
-                  <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${firm.color} flex items-center justify-center text-white font-bold text-lg shadow-lg`}>
-                    {firm.logo}
-                  </div>
+                  <FirmLogo
+                    src={firm.logoUrl}
+                    fallback={firm.logoFallback}
+                    alt={`${firm.name} logo`}
+                    colorClass={firm.color}
+                  />
                   
                   {/* Name & Rating */}
                   <div className="flex-1">
@@ -411,7 +421,7 @@ export default function HomePage() {
               <div>
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-400 text-sm mb-6">
                   <Sparkles className="w-4 h-4" />
-                  Free Dashboard
+                  Smart Dashboard
                 </div>
                 
                 <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
@@ -442,11 +452,8 @@ export default function HomePage() {
                     className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold rounded-xl transition-colors"
                   >
                     <Target className="w-5 h-5" />
-                    Start Tracking FREE
+                    Start Tracking Now
                   </Link>
-                  <span className="text-gray-500 text-sm self-center">
-                    No signup required
-                  </span>
                 </div>
               </div>
               
