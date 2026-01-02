@@ -19,8 +19,8 @@ import {
 } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'PropFirmScanner | Compare 102+ Prop Firms & Track Your Challenge',
-  description: 'Compare prop trading firms side-by-side. Track your challenge with our free dashboard. Never blow your account again. Updated daily.',
+  title: 'PropFirmScanner | Compare Verified Prop Firms & Track Your Challenge',
+  description: 'Compare verified prop trading firms side-by-side. Track your challenge with our free dashboard. Never blow your account again. Updated daily.',
   alternates: {
     canonical: 'https://www.propfirmscanner.org',
   },
@@ -182,7 +182,7 @@ export default function HomePage() {
           <div className="flex justify-center mb-6">
             <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-400 text-sm">
               <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
-              Updated January 2025
+              Updated January 2026
             </span>
           </div>
           
@@ -196,7 +196,7 @@ export default function HomePage() {
           </h1>
           
           <p className="text-lg md:text-xl text-gray-400 text-center max-w-2xl mx-auto mb-8">
-            Compare 102+ prop trading firms side-by-side. Filter by rules, fees, and profit split. 
+            Compare verified prop trading firms side-by-side. Filter by rules, fees, and profit split. 
             Track your drawdown with our <span className="text-white font-medium">free dashboard</span>.
           </p>
           
@@ -241,10 +241,10 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
-              { value: '102+', label: 'Prop Firms' },
+              { value: '100%', label: 'Verified Firms' },
               { value: '10K+', label: 'Traders Trust Us' },
-              { value: '25+', label: 'Comparison Points' },
-              { value: '24/7', label: 'Updated Daily' },
+              { value: '4.5+', label: 'Avg. Trustpilot' },
+              { value: 'Daily', label: 'Data Updates' },
             ].map((stat, i) => (
               <div key={i} className="text-center">
                 <div className="text-2xl md:text-3xl font-bold text-white mb-1">{stat.value}</div>
@@ -259,13 +259,13 @@ export default function HomePage() {
       <section className="py-16 px-4">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-2xl md:text-3xl font-bold text-white flex items-center gap-3">
                 <span className="text-2xl">🏆</span>
                 Top Rated Prop Firms
               </h2>
-              <p className="text-gray-500 mt-1">Based on Trustpilot ratings and trader reviews</p>
+              <p className="text-gray-500 mt-1">Verified firms based on Trustpilot ratings</p>
             </div>
             <Link 
               href="/compare" 
@@ -275,14 +275,22 @@ export default function HomePage() {
             </Link>
           </div>
 
+          {/* Trust Banner */}
+          <div className="flex items-center gap-4 mb-8 p-3 bg-emerald-500/5 border border-emerald-500/10 rounded-xl">
+            <Shield className="w-5 h-5 text-emerald-400" />
+            <p className="text-sm text-gray-400">
+              <span className="text-emerald-400 font-medium">All firms verified</span> — We only list legitimate prop firms with proven payout history and positive trader reviews.
+            </p>
+          </div>
+
           {/* Firms Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {TOP_FIRMS.map((firm) => (
               <div
                 key={firm.slug}
-                className="group relative bg-gray-900 border border-gray-800 hover:border-gray-700 rounded-2xl p-5 transition-all hover:shadow-lg hover:shadow-black/20"
+                className="group relative bg-gray-900 border border-gray-800 hover:border-gray-700 rounded-2xl p-5 transition-all hover:shadow-lg hover:shadow-black/20 flex flex-col"
               >
-                {/* Promo Badge */}
+                {/* Promo Badge - Top Right */}
                 {firm.promo && (
                   <div className="absolute -top-2 -right-2 z-10">
                     <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold rounded-full shadow-lg">
@@ -292,32 +300,44 @@ export default function HomePage() {
                   </div>
                 )}
 
+                {/* Rank Badge - Top Left */}
+                <div className="absolute -top-2 -left-2 z-10">
+                  <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold shadow-lg ${
+                    firm.rank === 1 ? 'bg-amber-500 text-white' :
+                    firm.rank === 2 ? 'bg-gray-400 text-white' :
+                    firm.rank === 3 ? 'bg-amber-700 text-white' :
+                    'bg-gray-700 text-gray-300'
+                  }`}>
+                    #{firm.rank}
+                  </span>
+                </div>
+
                 {/* Header */}
-                <div className="flex items-start gap-4 mb-4">
-                  {/* Rank + Logo */}
-                  <div className="relative">
-                    <span className="absolute -top-1 -left-1 w-5 h-5 bg-emerald-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
-                      {firm.rank}
-                    </span>
-                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${firm.color} flex items-center justify-center text-white font-bold text-lg`}>
-                      {firm.logo}
-                    </div>
+                <div className="flex items-start gap-4 mb-4 mt-2">
+                  {/* Logo */}
+                  <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${firm.color} flex items-center justify-center text-white font-bold text-lg shadow-lg`}>
+                    {firm.logo}
                   </div>
                   
                   {/* Name & Rating */}
                   <div className="flex-1">
-                    <h3 className="font-semibold text-white group-hover:text-emerald-400 transition-colors">
+                    <h3 className="font-semibold text-white group-hover:text-emerald-400 transition-colors text-lg">
                       {firm.name}
                     </h3>
                     <div className="flex items-center gap-2 mt-1">
-                      <div className="flex items-center gap-1">
-                        <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
-                        <span className="text-white font-medium text-sm">{firm.rating}</span>
+                      <div className="flex items-center gap-1 bg-amber-500/10 px-2 py-0.5 rounded">
+                        <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+                        <span className="text-amber-400 font-semibold text-sm">{firm.rating}</span>
                       </div>
-                      <span className="text-gray-600">•</span>
-                      <span className="text-gray-500 text-sm">{firm.reviews} reviews</span>
+                      <span className="text-gray-500 text-xs">{firm.reviews} reviews</span>
                     </div>
                   </div>
+                </div>
+
+                {/* Verified Badge */}
+                <div className="flex items-center gap-1.5 mb-4">
+                  <CheckCircle className="w-4 h-4 text-emerald-400" />
+                  <span className="text-emerald-400 text-xs font-medium">Verified & Legit</span>
                 </div>
 
                 {/* Stats */}
@@ -341,20 +361,23 @@ export default function HomePage() {
                   ))}
                 </div>
 
-                {/* Promo Code */}
+                {/* Promo Code - if exists */}
                 {firm.promo && firm.promo.code && (
-                  <div className="flex items-center gap-2 p-2 bg-amber-500/10 border border-amber-500/20 rounded-lg mb-4">
-                    <Gift className="w-4 h-4 text-amber-400" />
+                  <div className="flex items-center gap-2 p-2.5 bg-amber-500/10 border border-amber-500/20 rounded-lg mb-4">
+                    <Gift className="w-4 h-4 text-amber-400 flex-shrink-0" />
                     <span className="text-amber-400 text-sm">
-                      Code: <code className="font-mono font-bold">{firm.promo.code}</code>
+                      Code: <code className="font-mono font-bold bg-amber-500/20 px-1.5 py-0.5 rounded">{firm.promo.code}</code>
                     </span>
                   </div>
                 )}
 
-                {/* CTA */}
+                {/* Spacer to push button to bottom */}
+                <div className="flex-1" />
+
+                {/* CTA - Always at bottom */}
                 <Link
                   href={`/prop-firm/${firm.slug}`}
-                  className="flex items-center justify-center gap-2 w-full py-2.5 bg-gray-800 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors"
+                  className="flex items-center justify-center gap-2 w-full py-3 bg-gray-800 hover:bg-emerald-500 text-white text-sm font-medium rounded-xl transition-colors mt-auto"
                 >
                   View Details
                   <ExternalLink className="w-3.5 h-3.5" />
@@ -369,7 +392,7 @@ export default function HomePage() {
               href="/compare" 
               className="flex items-center justify-center gap-2 w-full py-3 bg-gray-800 text-white font-medium rounded-xl"
             >
-              View All 102+ Firms <ArrowRight className="w-4 h-4" />
+              View All Verified Firms <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>
