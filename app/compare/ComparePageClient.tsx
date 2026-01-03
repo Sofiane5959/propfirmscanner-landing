@@ -772,8 +772,25 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
       result = result.filter(f => f.platforms?.includes(filters.platform))
     }
     
-    // Sort
+    // =====================================================
+    // UPDATED SORTING LOGIC
+    // Promo code firms FIRST (sorted by discount %), then others
+    // =====================================================
     result.sort((a, b) => {
+      const aHasPromo = (a.discount_percent ?? 0) > 0 ? 1 : 0
+      const bHasPromo = (b.discount_percent ?? 0) > 0 ? 1 : 0
+      
+      // Promo firms always come first
+      if (bHasPromo !== aHasPromo) {
+        return bHasPromo - aHasPromo
+      }
+      
+      // Within promo firms: sort by highest discount first
+      if (aHasPromo && bHasPromo) {
+        return (b.discount_percent ?? 0) - (a.discount_percent ?? 0)
+      }
+      
+      // For non-promo firms: use selected sort
       switch (sortBy) {
         case 'rating':
           return (b.trustpilot_rating || 0) - (a.trustpilot_rating || 0)
