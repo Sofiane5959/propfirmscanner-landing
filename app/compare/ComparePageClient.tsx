@@ -57,6 +57,20 @@ interface ComparePageClientProps {
   firms: PropFirm[]
 }
 
+// Filter state type
+interface FilterState {
+  hasDiscount?: boolean
+  minRating?: number | null
+  assetType?: string | null
+  maxPrice?: number | null
+  minProfitSplit?: number | null
+  allowsScalping?: boolean
+  allowsNewsTrading?: boolean
+  allowsEA?: boolean
+  hasInstantFunding?: boolean
+  platform?: string | null
+}
+
 // Format reviews count (34000 -> "34K")
 const formatReviewCount = (count: number | null | undefined): string => {
   if (!count) return ''
@@ -72,19 +86,18 @@ const safeDisplay = (value: number | string | null | undefined, suffix: string =
   return `${value}${suffix}`
 }
 
-// ✅ FIXED: Format daily drawdown (0% = "No limit")
+// Format daily drawdown (0% = "No limit")
 const formatDailyDrawdown = (value: number | null | undefined): string => {
   if (value === null || value === undefined) return 'N/A'
   if (value === 0) return 'No limit'
   return `${value}%`
 }
 
-// ✅ Format profit split correctly (ensure start-max format)
+// Format profit split correctly (ensure start-max format)
 const formatProfitSplit = (start: number | null | undefined, max: number | null | undefined): string => {
   if (!start && !max) return 'N/A'
   if (!start) return `${max}%`
   if (!max) return `${start}%`
-  // Ensure smaller number comes first
   const minVal = Math.min(start, max)
   const maxVal = Math.max(start, max)
   if (minVal === maxVal) return `${minVal}%`
@@ -192,7 +205,7 @@ const PromoBadge = ({ percent, code }: { percent: number, code?: string }) => {
   )
 }
 
-// Ranking Badge Component (for top 3) - Only show for actual ranks
+// Ranking Badge Component (for top 3)
 const RankingBadge = ({ rank }: { rank: number }) => {
   if (!rank || rank <= 0 || rank > 3) return null
   
@@ -239,7 +252,6 @@ const PlatformBadge = ({ platform }: { platform: string }) => {
 const PropFirmCard = ({ firm, isCompact, rank }: { firm: PropFirm, isCompact: boolean, rank: number }) => {
   const [isExpanded, setIsExpanded] = useState(false)
   
-  // Properly check for discount
   const hasDiscount = firm.discount_percent != null && firm.discount_percent > 0
   
   // Compact List View
@@ -317,7 +329,6 @@ const PropFirmCard = ({ firm, isCompact, rank }: { firm: PropFirm, isCompact: bo
       {rank > 0 && rank <= 3 && <RankingBadge rank={rank} />}
       {hasDiscount && <PromoBadge percent={firm.discount_percent} code={firm.discount_code} />}
       
-      {/* Header */}
       <div className={`p-5 pb-4 ${(rank <= 3 && rank > 0) && hasDiscount ? 'pt-14' : (rank <= 3 && rank > 0) || hasDiscount ? 'pt-12' : ''}`}>
         <div className="flex items-start gap-4">
           <div className="w-16 h-16 rounded-xl bg-white flex items-center justify-center overflow-hidden border border-gray-200 p-2 flex-shrink-0">
@@ -355,7 +366,6 @@ const PropFirmCard = ({ firm, isCompact, rank }: { firm: PropFirm, isCompact: bo
         </div>
       </div>
       
-      {/* Key Stats Grid */}
       <div className="px-5 py-4 bg-gray-900/50 border-y border-gray-700/50">
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -390,7 +400,6 @@ const PropFirmCard = ({ firm, isCompact, rank }: { firm: PropFirm, isCompact: bo
         )}
       </div>
       
-      {/* Trading Rules */}
       <div className="p-5 flex-1">
         <div className="flex flex-wrap gap-2 mb-4">
           {firm.allows_scalping && (
@@ -489,7 +498,6 @@ const PropFirmCard = ({ firm, isCompact, rank }: { firm: PropFirm, isCompact: bo
         )}
       </div>
       
-      {/* Action Buttons */}
       <div className="p-5 pt-0 flex gap-3 mt-auto">
         <Link 
           href={`/prop-firm/${firm.slug}`}
@@ -518,8 +526,8 @@ const FilterSection = ({
   firms,
   isOpenDefault = true
 }: { 
-  filters: Record<string, unknown>, 
-  setFilters: (f: Record<string, unknown>) => void,
+  filters: FilterState, 
+  setFilters: (f: FilterState) => void,
   firms: PropFirm[],
   isOpenDefault?: boolean
 }) => {
@@ -628,14 +636,14 @@ const FilterSection = ({
           {/* Price Range */}
           <div>
             <label className="block text-sm font-medium text-gray-400 mb-3">
-              Max Price: ${filters.maxPrice || 'Any'}
+              Max Price: ${filters.maxPrice ?? 'Any'}
             </label>
             <input
               type="range"
               min="0"
               max="1000"
               step="50"
-              value={(filters.maxPrice as number) || 1000}
+              value={filters.maxPrice ?? 1000}
               onChange={(e) => setFilters({ ...filters, maxPrice: parseInt(e.target.value) || null })}
               className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
             />
@@ -671,10 +679,10 @@ const FilterSection = ({
             <label className="block text-sm font-medium text-gray-400 mb-3">Trading Style</label>
             <div className="grid grid-cols-2 gap-2">
               {[
-                { key: 'allowsScalping', label: 'Scalping' },
-                { key: 'allowsNewsTrading', label: 'News Trading' },
-                { key: 'allowsEA', label: 'EAs Allowed' },
-                { key: 'hasInstantFunding', label: 'Instant Funding' },
+                { key: 'allowsScalping' as const, label: 'Scalping' },
+                { key: 'allowsNewsTrading' as const, label: 'News Trading' },
+                { key: 'allowsEA' as const, label: 'EAs Allowed' },
+                { key: 'hasInstantFunding' as const, label: 'Instant Funding' },
               ].map(({ key, label }) => (
                 <button
                   key={key}
@@ -696,7 +704,7 @@ const FilterSection = ({
           <div>
             <label className="block text-sm font-medium text-gray-400 mb-3">Platform</label>
             <select
-              value={(filters.platform as string) || ''}
+              value={filters.platform ?? ''}
               onChange={(e) => setFilters({ ...filters, platform: e.target.value || null })}
               className="w-full px-4 py-2.5 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:border-emerald-500"
             >
@@ -812,7 +820,7 @@ const QuickComparisonTable = ({ firms }: { firms: PropFirm[] }) => {
 // Main Component
 export default function ComparePageClient({ firms }: ComparePageClientProps) {
   const [searchQuery, setSearchQuery] = useState('')
-  const [filters, setFilters] = useState<Record<string, unknown>>({})
+  const [filters, setFilters] = useState<FilterState>({})
   const [sortBy, setSortBy] = useState<'rating' | 'price' | 'split' | 'discount'>('rating')
   const [viewMode, setViewMode] = useState<'grid' | 'list' | 'table'>('grid')
   const [showOnlyVerified, setShowOnlyVerified] = useState(true)
@@ -821,14 +829,12 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
   const filteredFirms = useMemo(() => {
     let result = [...firms]
     
-    // Trust status filter
     if (showOnlyVerified) {
       result = result.filter(f => f.trust_status === 'verified' || !f.trust_status)
     } else {
       result = result.filter(f => f.trust_status !== 'banned')
     }
     
-    // Search
     if (searchQuery) {
       const q = searchQuery.toLowerCase()
       result = result.filter(f => 
@@ -837,40 +843,33 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
       )
     }
     
-    // Has Discount filter
     if (filters.hasDiscount) {
       result = result.filter(f => f.discount_percent != null && f.discount_percent > 0)
     }
     
-    // Rating filter
     if (filters.minRating) {
-      result = result.filter(f => f.trustpilot_rating >= (filters.minRating as number))
+      result = result.filter(f => f.trustpilot_rating >= filters.minRating!)
     }
     
-    // Asset type filter
     if (filters.assetType === 'Futures') {
       result = result.filter(f => f.is_futures)
     } else if (filters.assetType === 'Forex') {
       result = result.filter(f => !f.is_futures)
     }
     
-    // Price filter
-    if (filters.maxPrice && (filters.maxPrice as number) < 1000) {
-      result = result.filter(f => f.min_price <= (filters.maxPrice as number))
+    if (filters.maxPrice && filters.maxPrice < 1000) {
+      result = result.filter(f => f.min_price <= filters.maxPrice!)
     }
     
-    // Profit split filter
     if (filters.minProfitSplit) {
-      result = result.filter(f => f.max_profit_split >= (filters.minProfitSplit as number))
+      result = result.filter(f => f.max_profit_split >= filters.minProfitSplit!)
     }
     
-    // Trading style filters
     if (filters.allowsScalping) result = result.filter(f => f.allows_scalping)
     if (filters.allowsNewsTrading) result = result.filter(f => f.allows_news_trading)
     if (filters.allowsEA) result = result.filter(f => f.allows_ea)
     if (filters.hasInstantFunding) result = result.filter(f => f.has_instant_funding)
     
-    // Platform filter
     if (filters.platform) {
       result = result.filter(f => f.platforms?.some(p => {
         const normalizedP = p === 'DXtrade' ? 'DXTrade' : p === 'MatchTrader' ? 'Match-Trader' : p
@@ -925,7 +924,6 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
 
   return (
     <div className="min-h-screen bg-gray-900">
-      {/* Hero Section */}
       <section className="pt-24 pb-12 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-8">
@@ -937,7 +935,6 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
             </p>
           </div>
           
-          {/* Quick Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4 text-center">
               <p className="text-3xl font-bold text-white">{stats.total}</p>
@@ -960,7 +957,6 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
             </div>
           </div>
           
-          {/* Search Bar */}
           <div className="relative max-w-2xl mx-auto mb-8">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
             <input
@@ -974,11 +970,9 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
         </div>
       </section>
       
-      {/* Main Content */}
       <section className="pb-20 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-4 gap-8">
-            {/* Sidebar - Filters */}
             <div className="lg:col-span-1 space-y-6">
               <FilterSection 
                 filters={filters} 
@@ -987,19 +981,18 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
                 isOpenDefault={true}
               />
               
-              {/* View Options */}
               <div className="bg-gray-800/50 border border-gray-700/50 rounded-2xl p-4">
                 <h3 className="font-semibold text-white mb-3">View Options</h3>
                 
                 <div className="flex gap-2 mb-4">
                   {[
-                    { mode: 'grid', icon: Grid3X3, label: 'Grid' },
-                    { mode: 'list', icon: List, label: 'List' },
-                    { mode: 'table', icon: BarChart3, label: 'Table' },
+                    { mode: 'grid' as const, icon: Grid3X3, label: 'Grid' },
+                    { mode: 'list' as const, icon: List, label: 'List' },
+                    { mode: 'table' as const, icon: BarChart3, label: 'Table' },
                   ].map(({ mode, icon: Icon, label }) => (
                     <button
                       key={mode}
-                      onClick={() => setViewMode(mode as 'grid' | 'list' | 'table')}
+                      onClick={() => setViewMode(mode)}
                       className={`flex-1 py-2 rounded-lg flex items-center justify-center gap-2 text-sm transition-all ${
                         viewMode === mode
                           ? 'bg-emerald-500 text-white'
@@ -1042,7 +1035,6 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
               </div>
             </div>
             
-            {/* Main Content - Firms List */}
             <div className="lg:col-span-3">
               <div className="flex items-center justify-between mb-6">
                 <p className="text-gray-400">
@@ -1054,11 +1046,11 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
                   )}
                   {filters.minRating && (
                     <span className="ml-2 px-2 py-0.5 bg-yellow-500/20 text-yellow-400 text-xs rounded-full">
-                      {filters.minRating as number}+ ⭐
+                      {filters.minRating}+ ⭐
                     </span>
                   )}
                 </p>
-                {Object.keys(filters).some(k => filters[k]) && (
+                {Object.values(filters).some(v => v) && (
                   <button 
                     onClick={() => setFilters({})}
                     className="text-sm text-emerald-400 hover:text-emerald-300"
