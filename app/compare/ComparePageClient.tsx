@@ -1,14 +1,13 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { 
   Search, Filter, ChevronDown, ChevronUp, Star, Check, X, 
-  Clock, DollarSign, TrendingUp, Shield, Zap, Award,
-  ArrowUpDown, Grid3X3, List, ExternalLink, Sparkles,
-  AlertTriangle, Calendar, Percent, Users, BarChart3,
-  Tag, Trophy, BadgeCheck, Copy, CheckCircle2, Info
+  Zap, Grid3X3, List, ExternalLink, Sparkles,
+  AlertTriangle, Calendar, BarChart3,
+  Tag, Trophy, BadgeCheck, Copy, CheckCircle2
 } from 'lucide-react'
 
 // Types
@@ -68,19 +67,19 @@ const formatReviewCount = (count: number | null | undefined): string => {
 }
 
 // Safe display value (handles null/undefined)
-const safeDisplay = (value: any, suffix: string = '', fallback: string = 'N/A'): string => {
+const safeDisplay = (value: number | string | null | undefined, suffix: string = '', fallback: string = 'N/A'): string => {
   if (value === null || value === undefined || value === '') return fallback
   return `${value}${suffix}`
 }
 
-// ✅ NEW: Format daily drawdown (0% = "No limit")
+// ✅ FIXED: Format daily drawdown (0% = "No limit")
 const formatDailyDrawdown = (value: number | null | undefined): string => {
-  if (value === null || value === undefined || value === '') return 'N/A'
+  if (value === null || value === undefined) return 'N/A'
   if (value === 0) return 'No limit'
   return `${value}%`
 }
 
-// ✅ NEW: Format profit split correctly (ensure start-max format)
+// ✅ Format profit split correctly (ensure start-max format)
 const formatProfitSplit = (start: number | null | undefined, max: number | null | undefined): string => {
   if (!start && !max) return 'N/A'
   if (!start) return `${max}%`
@@ -92,7 +91,7 @@ const formatProfitSplit = (start: number | null | undefined, max: number | null 
   return `${minVal}-${maxVal}%`
 }
 
-// Trust Badge Component - ✅ UPDATED with tooltip
+// Trust Badge Component - with tooltip
 const TrustBadge = ({ status }: { status: string }) => {
   const [showTooltip, setShowTooltip] = useState(false)
   
@@ -152,7 +151,7 @@ const TrustBadge = ({ status }: { status: string }) => {
   )
 }
 
-// Promo Badge Component (matching homepage)
+// Promo Badge Component
 const PromoBadge = ({ percent, code }: { percent: number, code?: string }) => {
   const [copied, setCopied] = useState(false)
   
@@ -193,9 +192,8 @@ const PromoBadge = ({ percent, code }: { percent: number, code?: string }) => {
   )
 }
 
-// Ranking Badge Component (for top 3) - ✅ FIXED: Only show for actual top ranked, not for "0"
+// Ranking Badge Component (for top 3) - Only show for actual ranks
 const RankingBadge = ({ rank }: { rank: number }) => {
-  // Only show for ranks 1, 2, 3 - not for 0 or negative
   if (!rank || rank <= 0 || rank > 3) return null
   
   const colors = {
@@ -228,7 +226,6 @@ const PlatformBadge = ({ platform }: { platform: string }) => {
     'Rithmic': 'bg-gray-500/20 text-gray-400',
   }
   
-  // Normalize platform name for display
   const displayName = platform === 'DXtrade' ? 'DXTrade' : platform === 'MatchTrader' ? 'Match-Trader' : platform
   
   return (
@@ -238,11 +235,11 @@ const PlatformBadge = ({ platform }: { platform: string }) => {
   )
 }
 
-// Improved Prop Firm Card Component - ✅ FIXED
+// Prop Firm Card Component
 const PropFirmCard = ({ firm, isCompact, rank }: { firm: PropFirm, isCompact: boolean, rank: number }) => {
   const [isExpanded, setIsExpanded] = useState(false)
   
-  // ✅ FIXED: Properly check for discount - must be > 0 AND not null/undefined
+  // Properly check for discount
   const hasDiscount = firm.discount_percent != null && firm.discount_percent > 0
   
   // Compact List View
@@ -256,9 +253,7 @@ const PropFirmCard = ({ firm, isCompact, rank }: { firm: PropFirm, isCompact: bo
         )}
         
         <div className="flex items-center gap-4">
-          {/* Rank + Logo */}
           <div className="flex items-center gap-3">
-            {/* ✅ FIXED: Only show rank for top 3, and only if they have value */}
             {rank <= 3 && rank > 0 && (
               <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
                 rank === 1 ? 'bg-amber-500 text-white' :
@@ -277,7 +272,6 @@ const PropFirmCard = ({ firm, isCompact, rank }: { firm: PropFirm, isCompact: bo
             </div>
           </div>
           
-          {/* Info */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <h3 className="font-semibold text-white truncate">{firm.name}</h3>
@@ -296,7 +290,6 @@ const PropFirmCard = ({ firm, isCompact, rank }: { firm: PropFirm, isCompact: bo
             </div>
           </div>
           
-          {/* Actions */}
           <div className="flex items-center gap-2">
             <Link 
               href={`/prop-firm/${firm.slug}`}
@@ -321,16 +314,12 @@ const PropFirmCard = ({ firm, isCompact, rank }: { firm: PropFirm, isCompact: bo
   // Grid View - Full Card
   return (
     <div className="bg-gray-800/50 border border-gray-700/50 hover:border-emerald-500/30 rounded-2xl overflow-hidden transition-all duration-300 group relative flex flex-col h-full">
-      {/* ✅ FIXED: Only show Ranking Badge for top 3 with actual rank value */}
       {rank > 0 && rank <= 3 && <RankingBadge rank={rank} />}
-      
-      {/* Promo Badge - ✅ FIXED: Only show if hasDiscount is true */}
       {hasDiscount && <PromoBadge percent={firm.discount_percent} code={firm.discount_code} />}
       
       {/* Header */}
       <div className={`p-5 pb-4 ${(rank <= 3 && rank > 0) && hasDiscount ? 'pt-14' : (rank <= 3 && rank > 0) || hasDiscount ? 'pt-12' : ''}`}>
         <div className="flex items-start gap-4">
-          {/* Logo */}
           <div className="w-16 h-16 rounded-xl bg-white flex items-center justify-center overflow-hidden border border-gray-200 p-2 flex-shrink-0">
             {firm.logo_url ? (
               <Image src={firm.logo_url} alt={firm.name} width={64} height={64} className="object-contain" />
@@ -345,7 +334,6 @@ const PropFirmCard = ({ firm, isCompact, rank }: { firm: PropFirm, isCompact: bo
               <TrustBadge status={firm.trust_status || 'verified'} />
             </div>
             
-            {/* Rating & Reviews */}
             <div className="flex items-center gap-3 flex-wrap">
               <div className="flex items-center gap-1">
                 <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
@@ -384,7 +372,6 @@ const PropFirmCard = ({ firm, isCompact, rank }: { firm: PropFirm, isCompact: bo
           </div>
           <div>
             <p className="text-xs text-gray-500 uppercase tracking-wide">Daily Drawdown</p>
-            {/* ✅ FIXED: Show "No limit" instead of "0%" */}
             <p className="text-white font-semibold">{formatDailyDrawdown(firm.max_daily_drawdown)}</p>
           </div>
           <div>
@@ -393,7 +380,6 @@ const PropFirmCard = ({ firm, isCompact, rank }: { firm: PropFirm, isCompact: bo
           </div>
         </div>
         
-        {/* ✅ NEW: Show Profit Target if available (visible without expanding) */}
         {firm.profit_target_phase1 && (
           <div className="mt-3 pt-3 border-t border-gray-700/50">
             <div className="flex items-center justify-between text-sm">
@@ -434,7 +420,6 @@ const PropFirmCard = ({ firm, isCompact, rank }: { firm: PropFirm, isCompact: bo
           )}
         </div>
         
-        {/* Platforms */}
         {firm.platforms && firm.platforms.length > 0 && (
           <div className="mb-4">
             <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">Platforms</p>
@@ -449,7 +434,6 @@ const PropFirmCard = ({ firm, isCompact, rank }: { firm: PropFirm, isCompact: bo
           </div>
         )}
         
-        {/* Expandable Details */}
         <button 
           onClick={() => setIsExpanded(!isExpanded)}
           className="w-full flex items-center justify-center gap-2 py-2 text-sm text-gray-400 hover:text-white transition-colors"
@@ -460,7 +444,6 @@ const PropFirmCard = ({ firm, isCompact, rank }: { firm: PropFirm, isCompact: bo
         
         {isExpanded && (
           <div className="mt-4 pt-4 border-t border-gray-700/50 space-y-4 animate-in slide-in-from-top-2 duration-200">
-            {/* Key Details */}
             <div className="grid grid-cols-2 gap-3 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-500">Profit Target:</span>
@@ -490,7 +473,6 @@ const PropFirmCard = ({ firm, isCompact, rank }: { firm: PropFirm, isCompact: bo
               </div>
             </div>
             
-            {/* Challenge Types */}
             {firm.challenge_types && firm.challenge_types.length > 0 && (
               <div>
                 <h4 className="text-sm font-medium text-gray-400 mb-2">Challenge Types</h4>
@@ -529,24 +511,22 @@ const PropFirmCard = ({ firm, isCompact, rank }: { firm: PropFirm, isCompact: bo
   )
 }
 
-// Filter Section Component - ✅ UPDATED with Rating filter
+// Filter Section Component
 const FilterSection = ({ 
   filters, 
   setFilters,
   firms,
   isOpenDefault = true
 }: { 
-  filters: any, 
-  setFilters: (f: any) => void,
+  filters: Record<string, unknown>, 
+  setFilters: (f: Record<string, unknown>) => void,
   firms: PropFirm[],
   isOpenDefault?: boolean
 }) => {
   const [isOpen, setIsOpen] = useState(isOpenDefault)
   
-  // Calculate available options from data
   const platforms = useMemo(() => {
     const all = firms.flatMap(f => f.platforms || [])
-    // Normalize platform names
     const normalized = all.map(p => {
       if (p === 'DXtrade') return 'DXTrade'
       if (p === 'MatchTrader') return 'Match-Trader'
@@ -561,7 +541,6 @@ const FilterSection = ({
   
   return (
     <div className="bg-gray-800/50 border border-gray-700/50 rounded-2xl overflow-hidden">
-      {/* Filter Header */}
       <button 
         onClick={() => setIsOpen(!isOpen)}
         className="w-full p-4 flex items-center justify-between hover:bg-gray-800/50 transition-colors lg:cursor-default"
@@ -578,10 +557,9 @@ const FilterSection = ({
         <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform lg:hidden ${isOpen ? 'rotate-180' : ''}`} />
       </button>
       
-      {/* Filter Content - Always open on desktop */}
       <div className={`${isOpen ? 'block' : 'hidden'} lg:block`}>
         <div className="p-4 pt-0 border-t border-gray-700/50 space-y-6">
-          {/* 🔥 Has Discount Filter */}
+          {/* Has Discount Filter */}
           <div>
             <button
               onClick={() => setFilters({ ...filters, hasDiscount: !filters.hasDiscount })}
@@ -601,7 +579,7 @@ const FilterSection = ({
             </button>
           </div>
           
-          {/* ✅ NEW: Rating Filter */}
+          {/* Rating Filter */}
           <div>
             <label className="block text-sm font-medium text-gray-400 mb-3">Min Rating</label>
             <div className="flex flex-wrap gap-2">
@@ -657,7 +635,7 @@ const FilterSection = ({
               min="0"
               max="1000"
               step="50"
-              value={filters.maxPrice || 1000}
+              value={(filters.maxPrice as number) || 1000}
               onChange={(e) => setFilters({ ...filters, maxPrice: parseInt(e.target.value) || null })}
               className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
             />
@@ -718,7 +696,7 @@ const FilterSection = ({
           <div>
             <label className="block text-sm font-medium text-gray-400 mb-3">Platform</label>
             <select
-              value={filters.platform || ''}
+              value={(filters.platform as string) || ''}
               onChange={(e) => setFilters({ ...filters, platform: e.target.value || null })}
               className="w-full px-4 py-2.5 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:border-emerald-500"
             >
@@ -742,7 +720,7 @@ const FilterSection = ({
   )
 }
 
-// Quick Comparison Table - ✅ UPDATED
+// Quick Comparison Table
 const QuickComparisonTable = ({ firms }: { firms: PropFirm[] }) => {
   const displayFirms = firms.slice(0, 20)
   
@@ -811,7 +789,6 @@ const QuickComparisonTable = ({ firms }: { firms: PropFirm[] }) => {
               <td className="text-center py-3 px-2 text-emerald-400 font-medium">
                 {formatProfitSplit(firm.profit_split, firm.max_profit_split)}
               </td>
-              {/* ✅ FIXED: Show "No limit" for 0% daily drawdown */}
               <td className="text-center py-3 px-2 text-gray-300">{formatDailyDrawdown(firm.max_daily_drawdown)}</td>
               <td className="text-center py-3 px-2 text-gray-300">{safeDisplay(firm.max_total_drawdown, '%', '-')}</td>
               <td className="text-center py-3 px-2 text-gray-300">{safeDisplay(firm.profit_target_phase1, '%', '-')}</td>
@@ -835,7 +812,7 @@ const QuickComparisonTable = ({ firms }: { firms: PropFirm[] }) => {
 // Main Component
 export default function ComparePageClient({ firms }: ComparePageClientProps) {
   const [searchQuery, setSearchQuery] = useState('')
-  const [filters, setFilters] = useState<any>({})
+  const [filters, setFilters] = useState<Record<string, unknown>>({})
   const [sortBy, setSortBy] = useState<'rating' | 'price' | 'split' | 'discount'>('rating')
   const [viewMode, setViewMode] = useState<'grid' | 'list' | 'table'>('grid')
   const [showOnlyVerified, setShowOnlyVerified] = useState(true)
@@ -860,14 +837,14 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
       )
     }
     
-    // 🔥 Has Discount filter - ✅ FIXED
+    // Has Discount filter
     if (filters.hasDiscount) {
       result = result.filter(f => f.discount_percent != null && f.discount_percent > 0)
     }
     
-    // ✅ NEW: Rating filter
+    // Rating filter
     if (filters.minRating) {
-      result = result.filter(f => f.trustpilot_rating >= filters.minRating)
+      result = result.filter(f => f.trustpilot_rating >= (filters.minRating as number))
     }
     
     // Asset type filter
@@ -878,13 +855,13 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
     }
     
     // Price filter
-    if (filters.maxPrice && filters.maxPrice < 1000) {
-      result = result.filter(f => f.min_price <= filters.maxPrice)
+    if (filters.maxPrice && (filters.maxPrice as number) < 1000) {
+      result = result.filter(f => f.min_price <= (filters.maxPrice as number))
     }
     
     // Profit split filter
     if (filters.minProfitSplit) {
-      result = result.filter(f => f.max_profit_split >= filters.minProfitSplit)
+      result = result.filter(f => f.max_profit_split >= (filters.minProfitSplit as number))
     }
     
     // Trading style filters
@@ -901,25 +878,19 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
       }))
     }
     
-    // =====================================================
-    // SORTING LOGIC
-    // Promo code firms FIRST (sorted by discount %), then others
-    // =====================================================
+    // Sorting: Promo code firms FIRST, then others
     result.sort((a, b) => {
       const aHasPromo = (a.discount_percent ?? 0) > 0 ? 1 : 0
       const bHasPromo = (b.discount_percent ?? 0) > 0 ? 1 : 0
       
-      // Promo firms always come first
       if (bHasPromo !== aHasPromo) {
         return bHasPromo - aHasPromo
       }
       
-      // Within promo firms: sort by highest discount first
       if (aHasPromo && bHasPromo) {
         return (b.discount_percent ?? 0) - (a.discount_percent ?? 0)
       }
       
-      // For non-promo firms: use selected sort
       switch (sortBy) {
         case 'rating':
           return (b.trustpilot_rating || 0) - (a.trustpilot_rating || 0)
@@ -937,7 +908,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
     return result
   }, [firms, searchQuery, filters, sortBy, showOnlyVerified])
   
-  // Stats - ✅ FIXED to calculate real discount count
+  // Stats
   const stats = useMemo(() => {
     const verifiedFirms = firms.filter(f => f.trust_status === 'verified' || !f.trust_status)
     const withDiscounts = verifiedFirms.filter(f => f.discount_percent != null && f.discount_percent > 0)
@@ -1020,7 +991,6 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
               <div className="bg-gray-800/50 border border-gray-700/50 rounded-2xl p-4">
                 <h3 className="font-semibold text-white mb-3">View Options</h3>
                 
-                {/* View Mode */}
                 <div className="flex gap-2 mb-4">
                   {[
                     { mode: 'grid', icon: Grid3X3, label: 'Grid' },
@@ -1029,7 +999,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
                   ].map(({ mode, icon: Icon, label }) => (
                     <button
                       key={mode}
-                      onClick={() => setViewMode(mode as any)}
+                      onClick={() => setViewMode(mode as 'grid' | 'list' | 'table')}
                       className={`flex-1 py-2 rounded-lg flex items-center justify-center gap-2 text-sm transition-all ${
                         viewMode === mode
                           ? 'bg-emerald-500 text-white'
@@ -1042,12 +1012,11 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
                   ))}
                 </div>
                 
-                {/* Sort */}
                 <div className="space-y-2">
                   <label className="text-sm text-gray-400">Sort by</label>
                   <select
                     value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as any)}
+                    onChange={(e) => setSortBy(e.target.value as 'rating' | 'price' | 'split' | 'discount')}
                     className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:border-emerald-500"
                   >
                     <option value="rating">Highest Rating</option>
@@ -1057,7 +1026,6 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
                   </select>
                 </div>
                 
-                {/* Verified Toggle */}
                 <div className="mt-4 flex items-center justify-between">
                   <span className="text-sm text-gray-400">Verified Only</span>
                   <button
@@ -1076,7 +1044,6 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
             
             {/* Main Content - Firms List */}
             <div className="lg:col-span-3">
-              {/* Results Header */}
               <div className="flex items-center justify-between mb-6">
                 <p className="text-gray-400">
                   Showing <span className="text-white font-medium">{filteredFirms.length}</span> prop firms
@@ -1087,7 +1054,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
                   )}
                   {filters.minRating && (
                     <span className="ml-2 px-2 py-0.5 bg-yellow-500/20 text-yellow-400 text-xs rounded-full">
-                      {filters.minRating}+ ⭐
+                      {filters.minRating as number}+ ⭐
                     </span>
                   )}
                 </p>
@@ -1101,14 +1068,12 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
                 )}
               </div>
               
-              {/* Table View */}
               {viewMode === 'table' && (
                 <div className="bg-gray-800/50 border border-gray-700/50 rounded-2xl overflow-hidden mb-8">
                   <QuickComparisonTable firms={filteredFirms} />
                 </div>
               )}
               
-              {/* Grid/List View */}
               {viewMode !== 'table' && (
                 <div className={
                   viewMode === 'grid'
@@ -1126,7 +1091,6 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
                 </div>
               )}
               
-              {/* Empty State */}
               {filteredFirms.length === 0 && (
                 <div className="text-center py-16">
                   <div className="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center mx-auto mb-4">
