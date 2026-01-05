@@ -8,7 +8,7 @@ import {
   Clock, DollarSign, TrendingUp, Shield, Zap, Award,
   ArrowUpDown, Grid3X3, List, ExternalLink, Sparkles,
   AlertTriangle, Calendar, Percent, Users, BarChart3,
-  Tag, Trophy, BadgeCheck, Copy, CheckCircle2
+  Tag, Trophy, BadgeCheck, Copy, CheckCircle2, Info
 } from 'lucide-react'
 
 // Types
@@ -73,21 +73,82 @@ const safeDisplay = (value: any, suffix: string = '', fallback: string = 'N/A'):
   return `${value}${suffix}`
 }
 
-// Trust Badge Component
+// ✅ NEW: Format daily drawdown (0% = "No limit")
+const formatDailyDrawdown = (value: number | null | undefined): string => {
+  if (value === null || value === undefined || value === '') return 'N/A'
+  if (value === 0) return 'No limit'
+  return `${value}%`
+}
+
+// ✅ NEW: Format profit split correctly (ensure start-max format)
+const formatProfitSplit = (start: number | null | undefined, max: number | null | undefined): string => {
+  if (!start && !max) return 'N/A'
+  if (!start) return `${max}%`
+  if (!max) return `${start}%`
+  // Ensure smaller number comes first
+  const minVal = Math.min(start, max)
+  const maxVal = Math.max(start, max)
+  if (minVal === maxVal) return `${minVal}%`
+  return `${minVal}-${maxVal}%`
+}
+
+// Trust Badge Component - ✅ UPDATED with tooltip
 const TrustBadge = ({ status }: { status: string }) => {
+  const [showTooltip, setShowTooltip] = useState(false)
+  
   const config = {
-    verified: { bg: 'bg-emerald-500/20', text: 'text-emerald-400', border: 'border-emerald-500/30', label: 'Verified', icon: BadgeCheck },
-    banned: { bg: 'bg-red-500/20', text: 'text-red-400', border: 'border-red-500/30', label: 'Avoid', icon: X },
-    under_review: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', border: 'border-yellow-500/30', label: 'Under Review', icon: AlertTriangle },
-    new: { bg: 'bg-blue-500/20', text: 'text-blue-400', border: 'border-blue-500/30', label: 'New', icon: Sparkles },
+    verified: { 
+      bg: 'bg-emerald-500/20', 
+      text: 'text-emerald-400', 
+      border: 'border-emerald-500/30', 
+      label: 'Verified', 
+      icon: BadgeCheck,
+      tooltip: 'We verified this firm pays traders and has a legitimate business presence'
+    },
+    banned: { 
+      bg: 'bg-red-500/20', 
+      text: 'text-red-400', 
+      border: 'border-red-500/30', 
+      label: 'Avoid', 
+      icon: X,
+      tooltip: 'This firm has reported issues with payouts or business practices'
+    },
+    under_review: { 
+      bg: 'bg-yellow-500/20', 
+      text: 'text-yellow-400', 
+      border: 'border-yellow-500/30', 
+      label: 'Under Review', 
+      icon: AlertTriangle,
+      tooltip: 'We are currently reviewing this firm'
+    },
+    new: { 
+      bg: 'bg-blue-500/20', 
+      text: 'text-blue-400', 
+      border: 'border-blue-500/30', 
+      label: 'New', 
+      icon: Sparkles,
+      tooltip: 'This firm was recently added to our database'
+    },
   }
-  const { bg, text, border, label, icon: Icon } = config[status as keyof typeof config] || config.verified
+  const { bg, text, border, label, icon: Icon, tooltip } = config[status as keyof typeof config] || config.verified
   
   return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${bg} ${text} border ${border}`}>
-      <Icon className="w-3 h-3" />
-      {label}
-    </span>
+    <div className="relative inline-block">
+      <span 
+        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${bg} ${text} border ${border} cursor-help`}
+        onMouseEnter={() => setShowTooltip(true)}
+        onMouseLeave={() => setShowTooltip(false)}
+      >
+        <Icon className="w-3 h-3" />
+        {label}
+      </span>
+      {showTooltip && (
+        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg shadow-lg w-48 z-50 border border-gray-700">
+          {tooltip}
+          <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900"></div>
+        </div>
+      )}
+    </div>
   )
 }
 
@@ -132,9 +193,10 @@ const PromoBadge = ({ percent, code }: { percent: number, code?: string }) => {
   )
 }
 
-// Ranking Badge Component (for top 3)
+// Ranking Badge Component (for top 3) - ✅ FIXED: Only show for actual top ranked, not for "0"
 const RankingBadge = ({ rank }: { rank: number }) => {
-  if (rank > 3) return null
+  // Only show for ranks 1, 2, 3 - not for 0 or negative
+  if (!rank || rank <= 0 || rank > 3) return null
   
   const colors = {
     1: 'from-amber-400 to-amber-600',
@@ -155,26 +217,33 @@ const PlatformBadge = ({ platform }: { platform: string }) => {
     'MT4': 'bg-blue-500/20 text-blue-400',
     'MT5': 'bg-indigo-500/20 text-indigo-400',
     'cTrader': 'bg-orange-500/20 text-orange-400',
+    'DXTrade': 'bg-purple-500/20 text-purple-400',
     'DXtrade': 'bg-purple-500/20 text-purple-400',
     'TradeLocker': 'bg-emerald-500/20 text-emerald-400',
     'Match-Trader': 'bg-red-500/20 text-red-400',
+    'MatchTrader': 'bg-red-500/20 text-red-400',
     'NinjaTrader': 'bg-red-500/20 text-red-400',
     'Tradovate': 'bg-cyan-500/20 text-cyan-400',
+    'TradingView': 'bg-blue-500/20 text-blue-400',
+    'Rithmic': 'bg-gray-500/20 text-gray-400',
   }
+  
+  // Normalize platform name for display
+  const displayName = platform === 'DXtrade' ? 'DXTrade' : platform === 'MatchTrader' ? 'Match-Trader' : platform
   
   return (
     <span className={`px-2 py-0.5 rounded text-xs font-medium ${colors[platform] || 'bg-gray-500/20 text-gray-400'}`}>
-      {platform}
+      {displayName}
     </span>
   )
 }
 
-// Improved Prop Firm Card Component
+// Improved Prop Firm Card Component - ✅ FIXED
 const PropFirmCard = ({ firm, isCompact, rank }: { firm: PropFirm, isCompact: boolean, rank: number }) => {
   const [isExpanded, setIsExpanded] = useState(false)
   
-  const hasDiscount = firm.discount_percent && firm.discount_percent > 0
-  const isTopRated = rank <= 3
+  // ✅ FIXED: Properly check for discount - must be > 0 AND not null/undefined
+  const hasDiscount = firm.discount_percent != null && firm.discount_percent > 0
   
   // Compact List View
   if (isCompact) {
@@ -189,7 +258,8 @@ const PropFirmCard = ({ firm, isCompact, rank }: { firm: PropFirm, isCompact: bo
         <div className="flex items-center gap-4">
           {/* Rank + Logo */}
           <div className="flex items-center gap-3">
-            {isTopRated && (
+            {/* ✅ FIXED: Only show rank for top 3, and only if they have value */}
+            {rank <= 3 && rank > 0 && (
               <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
                 rank === 1 ? 'bg-amber-500 text-white' :
                 rank === 2 ? 'bg-gray-400 text-white' :
@@ -222,7 +292,7 @@ const PropFirmCard = ({ firm, isCompact, rank }: { firm: PropFirm, isCompact: bo
                 )}
               </span>
               <span>From ${firm.min_price || 'N/A'}</span>
-              <span className="text-emerald-400">{safeDisplay(firm.max_profit_split, '%', 'N/A')} split</span>
+              <span className="text-emerald-400">{formatProfitSplit(firm.profit_split, firm.max_profit_split)} split</span>
             </div>
           </div>
           
@@ -251,14 +321,14 @@ const PropFirmCard = ({ firm, isCompact, rank }: { firm: PropFirm, isCompact: bo
   // Grid View - Full Card
   return (
     <div className="bg-gray-800/50 border border-gray-700/50 hover:border-emerald-500/30 rounded-2xl overflow-hidden transition-all duration-300 group relative flex flex-col h-full">
-      {/* Ranking Badge */}
-      {isTopRated && <RankingBadge rank={rank} />}
+      {/* ✅ FIXED: Only show Ranking Badge for top 3 with actual rank value */}
+      {rank > 0 && rank <= 3 && <RankingBadge rank={rank} />}
       
-      {/* Promo Badge */}
+      {/* Promo Badge - ✅ FIXED: Only show if hasDiscount is true */}
       {hasDiscount && <PromoBadge percent={firm.discount_percent} code={firm.discount_code} />}
       
       {/* Header */}
-      <div className={`p-5 pb-4 ${isTopRated && hasDiscount ? 'pt-14' : isTopRated || hasDiscount ? 'pt-12' : ''}`}>
+      <div className={`p-5 pb-4 ${(rank <= 3 && rank > 0) && hasDiscount ? 'pt-14' : (rank <= 3 && rank > 0) || hasDiscount ? 'pt-12' : ''}`}>
         <div className="flex items-start gap-4">
           {/* Logo */}
           <div className="w-16 h-16 rounded-xl bg-white flex items-center justify-center overflow-hidden border border-gray-200 p-2 flex-shrink-0">
@@ -280,8 +350,10 @@ const PropFirmCard = ({ firm, isCompact, rank }: { firm: PropFirm, isCompact: bo
               <div className="flex items-center gap-1">
                 <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
                 <span className="font-semibold text-white">{firm.trustpilot_rating?.toFixed(1) || 'N/A'}</span>
-                {firm.trustpilot_reviews && (
+                {firm.trustpilot_reviews ? (
                   <span className="text-gray-500 text-sm">({formatReviewCount(firm.trustpilot_reviews)} reviews)</span>
+                ) : (
+                  <span className="text-gray-600 text-sm">(No reviews)</span>
                 )}
               </div>
               {firm.year_founded && (
@@ -300,26 +372,36 @@ const PropFirmCard = ({ firm, isCompact, rank }: { firm: PropFirm, isCompact: bo
         <div className="grid grid-cols-2 gap-4">
           <div>
             <p className="text-xs text-gray-500 uppercase tracking-wide">Starting Price</p>
-            <p className="text-lg font-bold text-white">${firm.min_price || 'N/A'}</p>
+            <p className="text-lg font-bold text-white">
+              {firm.min_price ? `$${firm.min_price}` : 'N/A'}
+            </p>
           </div>
           <div>
             <p className="text-xs text-gray-500 uppercase tracking-wide">Profit Split</p>
             <p className="text-lg font-bold text-emerald-400">
-              {firm.profit_split && firm.max_profit_split 
-                ? `${firm.profit_split}-${firm.max_profit_split}%`
-                : safeDisplay(firm.max_profit_split, '%', 'N/A')
-              }
+              {formatProfitSplit(firm.profit_split, firm.max_profit_split)}
             </p>
           </div>
           <div>
             <p className="text-xs text-gray-500 uppercase tracking-wide">Daily Drawdown</p>
-            <p className="text-white font-semibold">{safeDisplay(firm.max_daily_drawdown, '%', 'N/A')}</p>
+            {/* ✅ FIXED: Show "No limit" instead of "0%" */}
+            <p className="text-white font-semibold">{formatDailyDrawdown(firm.max_daily_drawdown)}</p>
           </div>
           <div>
             <p className="text-xs text-gray-500 uppercase tracking-wide">Max Drawdown</p>
             <p className="text-white font-semibold">{safeDisplay(firm.max_total_drawdown, '%', 'N/A')}</p>
           </div>
         </div>
+        
+        {/* ✅ NEW: Show Profit Target if available (visible without expanding) */}
+        {firm.profit_target_phase1 && (
+          <div className="mt-3 pt-3 border-t border-gray-700/50">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-gray-500">Profit Target:</span>
+              <span className="text-white font-medium">{firm.profit_target_phase1}%</span>
+            </div>
+          </div>
+        )}
       </div>
       
       {/* Trading Rules */}
@@ -345,7 +427,7 @@ const PropFirmCard = ({ firm, isCompact, rank }: { firm: PropFirm, isCompact: bo
               <Zap className="w-3 h-3" /> Instant Funding
             </span>
           )}
-          {!firm.allows_news_trading && firm.allows_news_trading !== undefined && (
+          {firm.allows_news_trading === false && (
             <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-red-500/10 text-red-400 text-xs rounded-lg border border-red-500/20">
               <X className="w-3 h-3" /> No News Trading
             </span>
@@ -447,7 +529,7 @@ const PropFirmCard = ({ firm, isCompact, rank }: { firm: PropFirm, isCompact: bo
   )
 }
 
-// Filter Section Component
+// Filter Section Component - ✅ UPDATED with Rating filter
 const FilterSection = ({ 
   filters, 
   setFilters,
@@ -464,11 +546,17 @@ const FilterSection = ({
   // Calculate available options from data
   const platforms = useMemo(() => {
     const all = firms.flatMap(f => f.platforms || [])
-    return Array.from(new Set(all)).sort()
+    // Normalize platform names
+    const normalized = all.map(p => {
+      if (p === 'DXtrade') return 'DXTrade'
+      if (p === 'MatchTrader') return 'Match-Trader'
+      return p
+    })
+    return Array.from(new Set(normalized)).sort()
   }, [firms])
   
   const discountCount = useMemo(() => 
-    firms.filter(f => f.discount_percent && f.discount_percent > 0).length
+    firms.filter(f => f.discount_percent != null && f.discount_percent > 0).length
   , [firms])
   
   return (
@@ -493,7 +581,7 @@ const FilterSection = ({
       {/* Filter Content - Always open on desktop */}
       <div className={`${isOpen ? 'block' : 'hidden'} lg:block`}>
         <div className="p-4 pt-0 border-t border-gray-700/50 space-y-6">
-          {/* 🔥 NEW: Has Discount Filter */}
+          {/* 🔥 Has Discount Filter */}
           <div>
             <button
               onClick={() => setFilters({ ...filters, hasDiscount: !filters.hasDiscount })}
@@ -511,6 +599,32 @@ const FilterSection = ({
                 {discountCount}
               </span>
             </button>
+          </div>
+          
+          {/* ✅ NEW: Rating Filter */}
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-3">Min Rating</label>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { value: null, label: 'All' },
+                { value: 4.0, label: '4.0+' },
+                { value: 4.3, label: '4.3+' },
+                { value: 4.5, label: '4.5+' },
+              ].map(({ value, label }) => (
+                <button
+                  key={label}
+                  onClick={() => setFilters({ ...filters, minRating: value })}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-1 ${
+                    filters.minRating === value || (!filters.minRating && value === null)
+                      ? 'bg-yellow-500 text-white'
+                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  }`}
+                >
+                  {value && <Star className="w-3 h-3 fill-current" />}
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
           
           {/* Asset Type */}
@@ -628,7 +742,7 @@ const FilterSection = ({
   )
 }
 
-// Quick Comparison Table
+// Quick Comparison Table - ✅ UPDATED
 const QuickComparisonTable = ({ firms }: { firms: PropFirm[] }) => {
   const displayFirms = firms.slice(0, 20)
   
@@ -677,8 +791,10 @@ const QuickComparisonTable = ({ firms }: { firms: PropFirm[] }) => {
                     <span className="font-medium text-white group-hover:text-emerald-400 transition-colors block">
                       {firm.name}
                     </span>
-                    {firm.trustpilot_reviews && (
+                    {firm.trustpilot_reviews ? (
                       <span className="text-xs text-gray-500">{formatReviewCount(firm.trustpilot_reviews)} reviews</span>
+                    ) : (
+                      <span className="text-xs text-gray-600">No reviews</span>
                     )}
                   </div>
                 </Link>
@@ -689,13 +805,18 @@ const QuickComparisonTable = ({ firms }: { firms: PropFirm[] }) => {
                   {firm.trustpilot_rating?.toFixed(1) || '-'}
                 </span>
               </td>
-              <td className="text-center py-3 px-2 text-white font-medium">${firm.min_price || 'N/A'}</td>
-              <td className="text-center py-3 px-2 text-emerald-400 font-medium">{safeDisplay(firm.max_profit_split, '%', '-')}</td>
-              <td className="text-center py-3 px-2 text-gray-300">{safeDisplay(firm.max_daily_drawdown, '%', '-')}</td>
+              <td className="text-center py-3 px-2 text-white font-medium">
+                {firm.min_price ? `$${firm.min_price}` : 'N/A'}
+              </td>
+              <td className="text-center py-3 px-2 text-emerald-400 font-medium">
+                {formatProfitSplit(firm.profit_split, firm.max_profit_split)}
+              </td>
+              {/* ✅ FIXED: Show "No limit" for 0% daily drawdown */}
+              <td className="text-center py-3 px-2 text-gray-300">{formatDailyDrawdown(firm.max_daily_drawdown)}</td>
               <td className="text-center py-3 px-2 text-gray-300">{safeDisplay(firm.max_total_drawdown, '%', '-')}</td>
               <td className="text-center py-3 px-2 text-gray-300">{safeDisplay(firm.profit_target_phase1, '%', '-')}</td>
               <td className="text-center py-3 px-2 hidden md:table-cell">
-                {firm.discount_percent ? (
+                {firm.discount_percent != null && firm.discount_percent > 0 ? (
                   <span className="px-2 py-0.5 bg-gradient-to-r from-red-500/20 to-orange-500/20 text-orange-400 text-xs font-bold rounded">
                     {firm.discount_percent}% OFF
                   </span>
@@ -739,9 +860,14 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
       )
     }
     
-    // 🔥 NEW: Has Discount filter
+    // 🔥 Has Discount filter - ✅ FIXED
     if (filters.hasDiscount) {
-      result = result.filter(f => f.discount_percent && f.discount_percent > 0)
+      result = result.filter(f => f.discount_percent != null && f.discount_percent > 0)
+    }
+    
+    // ✅ NEW: Rating filter
+    if (filters.minRating) {
+      result = result.filter(f => f.trustpilot_rating >= filters.minRating)
     }
     
     // Asset type filter
@@ -769,11 +895,14 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
     
     // Platform filter
     if (filters.platform) {
-      result = result.filter(f => f.platforms?.includes(filters.platform))
+      result = result.filter(f => f.platforms?.some(p => {
+        const normalizedP = p === 'DXtrade' ? 'DXTrade' : p === 'MatchTrader' ? 'Match-Trader' : p
+        return normalizedP === filters.platform
+      }))
     }
     
     // =====================================================
-    // UPDATED SORTING LOGIC
+    // SORTING LOGIC
     // Promo code firms FIRST (sorted by discount %), then others
     // =====================================================
     result.sort((a, b) => {
@@ -808,10 +937,10 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
     return result
   }, [firms, searchQuery, filters, sortBy, showOnlyVerified])
   
-  // Stats - FIXED to calculate real discount count
+  // Stats - ✅ FIXED to calculate real discount count
   const stats = useMemo(() => {
     const verifiedFirms = firms.filter(f => f.trust_status === 'verified' || !f.trust_status)
-    const withDiscounts = verifiedFirms.filter(f => f.discount_percent && f.discount_percent > 0)
+    const withDiscounts = verifiedFirms.filter(f => f.discount_percent != null && f.discount_percent > 0)
     const avgRating = verifiedFirms.reduce((sum, f) => sum + (f.trustpilot_rating || 0), 0) / verifiedFirms.length
     const avgSplit = verifiedFirms.reduce((sum, f) => sum + (f.max_profit_split || 0), 0) / verifiedFirms.length
     
@@ -954,6 +1083,11 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
                   {filters.hasDiscount && (
                     <span className="ml-2 px-2 py-0.5 bg-orange-500/20 text-orange-400 text-xs rounded-full">
                       With Discounts
+                    </span>
+                  )}
+                  {filters.minRating && (
+                    <span className="ml-2 px-2 py-0.5 bg-yellow-500/20 text-yellow-400 text-xs rounded-full">
+                      {filters.minRating}+ ⭐
                     </span>
                   )}
                 </p>
