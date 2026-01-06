@@ -4,6 +4,7 @@ import './globals.css';
 
 import { AuthProvider } from '@/providers/AuthProvider';
 import { Navbar } from '@/components/Navbar';
+import PromoTicker from '@/components/PromoTicker';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -23,6 +24,7 @@ export default function RootLayout({
       <body className={`${inter.className} bg-gray-950 text-white antialiased`}>
         <AuthProvider>
           <Navbar />
+          <PromoTicker />
           <main className="pt-16">
             {children}
           </main>
