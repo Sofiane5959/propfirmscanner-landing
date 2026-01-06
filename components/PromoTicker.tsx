@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Copy, CheckCircle2, BadgeCheck, Tag, ExternalLink, ShieldCheck } from 'lucide-react'
+import { Copy, CheckCircle2, BadgeCheck, ShieldCheck, ExternalLink } from 'lucide-react'
 
 // =====================================================
 // TYPES
@@ -25,42 +25,7 @@ interface PromoTickerProps {
 }
 
 // =====================================================
-// VERIFIED DEALS - MANUALLY CURATED (Update when promos change)
-// Last updated: January 2026
-// =====================================================
-const VERIFIED_DEALS: PromoDeal[] = [
-  // ✅ VERIFIED: Earn2Trade - 50% OFF with code SCANNER-40
-  { 
-    id: 'earn2trade', 
-    name: 'Earn2Trade', 
-    slug: 'earn2trade', 
-    discount_percent: 50, 
-    discount_code: 'SCANNER-40', 
-    trust_status: 'verified' 
-  },
-  // ✅ VERIFIED: Top One Futures - 40% OFF with code pfs (was 55%, now 40%)
-  { 
-    id: 'top-one-futures', 
-    name: 'Top One Futures', 
-    slug: 'top-one-futures', 
-    discount_percent: 40, 
-    discount_code: 'pfs', 
-    trust_status: 'verified' 
-  },
-  // ✅ VERIFIED: FORFX - 10% OFF with code SCANNER10
-  { 
-    id: 'forfx', 
-    name: 'FORFX', 
-    slug: 'forfx', 
-    discount_percent: 10, 
-    discount_code: 'SCANNER10', 
-    trust_status: 'verified' 
-  },
-  // Add more verified deals here...
-]
-
-// =====================================================
-// COPY BUTTON COMPONENT
+// COPY BUTTON
 // =====================================================
 const CopyButton = ({ code }: { code: string }) => {
   const [copied, setCopied] = useState(false)
@@ -77,7 +42,6 @@ const CopyButton = ({ code }: { code: string }) => {
     <button
       onClick={handleCopy}
       className="p-1 rounded hover:bg-white/10 transition-colors"
-      title={copied ? 'Copied!' : `Copy code: ${code}`}
       aria-label={copied ? 'Code copied' : `Copy promo code ${code}`}
     >
       {copied ? (
@@ -90,7 +54,7 @@ const CopyButton = ({ code }: { code: string }) => {
 }
 
 // =====================================================
-// DEAL PILL COMPONENT
+// DEAL PILL
 // =====================================================
 const DealPill = ({ deal }: { deal: PromoDeal }) => {
   const url = deal.affiliate_url || deal.website_url || `/prop-firm/${deal.slug}`
@@ -138,18 +102,15 @@ const DealPill = ({ deal }: { deal: PromoDeal }) => {
 }
 
 // =====================================================
-// MAIN PROMO TICKER COMPONENT
+// MAIN PROMO TICKER
 // =====================================================
-export default function PromoTicker({ deals }: PromoTickerProps) {
+export default function PromoTicker({ deals = [] }: PromoTickerProps) {
   const [isPaused, setIsPaused] = useState(false)
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const [startX, setStartX] = useState(0)
   const [scrollLeft, setScrollLeft] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
-  
-  // Use provided deals or verified fallback
-  const activeDeals = deals && deals.length > 0 ? deals : VERIFIED_DEALS
   
   // Check for reduced motion preference
   useEffect(() => {
@@ -198,10 +159,10 @@ export default function PromoTicker({ deals }: PromoTickerProps) {
   }
   
   // Hide ticker if no deals
-  if (activeDeals.length === 0) return null
+  if (!deals || deals.length === 0) return null
   
   // Double the deals for seamless loop
-  const duplicatedDeals = [...activeDeals, ...activeDeals]
+  const duplicatedDeals = [...deals, ...deals]
   
   return (
     <div className="w-full bg-gray-900/95 border-b border-gray-800 backdrop-blur-sm sticky top-16 z-40">
@@ -245,7 +206,7 @@ export default function PromoTicker({ deals }: PromoTickerProps) {
           
           {/* View All Link */}
           <Link
-            href="/compare?hasDiscount=true"
+            href="/compare?deals=true"
             className="flex-shrink-0 flex items-center gap-1 px-4 py-2 text-xs text-gray-400 hover:text-emerald-400 transition-colors border-l border-gray-800"
           >
             <span className="hidden sm:inline">All Deals</span>
@@ -275,25 +236,4 @@ export default function PromoTicker({ deals }: PromoTickerProps) {
       `}</style>
     </div>
   )
-}
-
-// =====================================================
-// SSR DATA FETCHER (use in layout.tsx)
-// =====================================================
-export async function getPromoDeals(supabase: any): Promise<PromoDeal[]> {
-  try {
-    const { data, error } = await supabase
-      .from('prop_firms')
-      .select('id, name, slug, logo_url, discount_percent, discount_code, affiliate_url, website_url, trust_status')
-      .gt('discount_percent', 0)
-      .not('discount_code', 'is', null)
-      .eq('trust_status', 'verified') // Only show verified firms
-      .order('discount_percent', { ascending: false })
-    
-    if (error) throw error
-    return data || []
-  } catch (err) {
-    console.error('Error fetching promo deals:', err)
-    return []
-  }
 }
