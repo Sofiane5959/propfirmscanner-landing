@@ -119,7 +119,7 @@ const DealPill = ({ deal }: { deal: PromoDeal }) => {
       </span>
       
       {/* Verified Badge */}
-      <BadgeCheck className="w-3.5 h-3.5 text-emerald-400" title="Verified Prop Firm" />
+      <BadgeCheck className="w-3.5 h-3.5 text-emerald-400" />
       
       {/* Discount Badge */}
       <span className="px-1.5 py-0.5 bg-gradient-to-r from-red-500 to-orange-500 text-white text-[10px] font-bold rounded">
