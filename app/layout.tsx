@@ -5,7 +5,7 @@ import './globals.css';
 import { AuthProvider } from '@/providers/AuthProvider';
 import { Navbar } from '@/components/Navbar';
 import PromoTicker from '@/components/PromoTicker';
-import { createClient } from '@/lib/supabase-server';
+import { createServerSupabaseClient } from '@/lib/supabase-server';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
 // Fetch promo deals for ticker (cached for 1 hour)
 async function getPromoDeals() {
   try {
-    const supabase = createClient();
+    const supabase = createServerSupabaseClient();
     
     const { data, error } = await supabase
       .from('prop_firms')

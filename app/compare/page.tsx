@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
 import { Metadata } from 'next'
-import { createClient } from '@/lib/supabase-server'
+import { createServerSupabaseClient } from '@/lib/supabase-server'
 import ComparePageClient from './ComparePageClient'
 
 export const metadata: Metadata = {
@@ -96,7 +96,7 @@ const faqStructuredData = {
 }
 
 export default async function ComparePage() {
-  const supabase = createClient()
+  const supabase = createServerSupabaseClient()
   
   // Fetch all prop firms
   const { data: firms, error } = await supabase
