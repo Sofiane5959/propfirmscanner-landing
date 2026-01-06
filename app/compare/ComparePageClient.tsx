@@ -8,7 +8,7 @@ import {
   Zap, Grid3X3, List, ExternalLink, Sparkles,
   AlertTriangle, BarChart3, Info,
   Tag, Trophy, BadgeCheck, Copy, CheckCircle2,
-  ChevronLeft, ChevronRight, SlidersHorizontal
+  ChevronLeft, ChevronRight, SlidersHorizontal, RotateCcw
 } from 'lucide-react'
 
 // =====================================================
@@ -63,31 +63,51 @@ interface ComparePageClientProps {
 interface FilterState {
   hasDiscount?: boolean
   highRatingOnly?: boolean
+  minRating?: number | null
   market?: string | null
   maxPrice?: number | null
   minProfitSplit?: number | null
   allowsScalping?: boolean
   allowsNewsTrading?: boolean
   allowsEA?: boolean
+  allowsSwing?: boolean
   hasInstantFunding?: boolean
   platform?: string | null
+  challengeType?: string | null
 }
 
 // =====================================================
 // DATA HYGIENE
 // =====================================================
 const CANONICAL_FIRMS: Record<string, { canonical: string; aliases: string[] }> = {
-  'fundednext': { canonical: 'FundedNext', aliases: ['funded next', 'fundednext futures', 'funded next futures'] },
+  'fundednext': { canonical: 'FundedNext', aliases: ['funded next', 'fundednext futures'] },
   'the5ers': { canonical: 'The5ers', aliases: ['the 5ers', 'the5%ers'] },
   'ftmo': { canonical: 'FTMO', aliases: ['ftmo.com'] },
   'myfundedfx': { canonical: 'MyFundedFX', aliases: ['my funded fx'] },
-  'topstep': { canonical: 'Topstep', aliases: ['topstep trader', 'topsteptrader'] },
+  'topstep': { canonical: 'Topstep', aliases: ['topstep trader'] },
 }
 
 const BLOCKLIST_FIRMS: string[] = ['fundedtech', 'fake prop firm', 'test firm']
 
 const MARKET_TYPES = ['All', 'Forex', 'Futures', 'Crypto', 'Indices', 'Metals', 'Stocks'] as const
 type MarketType = typeof MARKET_TYPES[number]
+
+const RATING_OPTIONS = [
+  { value: null, label: 'Any Rating' },
+  { value: 4.0, label: '4.0+' },
+  { value: 4.3, label: '4.3+' },
+  { value: 4.5, label: '4.5+' },
+  { value: 4.7, label: '4.7+' },
+]
+
+const SORT_OPTIONS = [
+  { value: 'rating', label: 'Highest Rating' },
+  { value: 'price', label: 'Lowest Price' },
+  { value: 'split', label: 'Highest Split' },
+  { value: 'discount', label: 'Best Deals' },
+]
+
+const CHALLENGE_TYPES = ['All', '1-Step', '2-Step', '3-Step', 'Instant', 'Direct'] as const
 
 const normalizeMarket = (assets: string[] | undefined, isFutures: boolean): MarketType[] => {
   const markets: MarketType[] = []
@@ -159,7 +179,7 @@ const getFirmUrl = (firm: PropFirm): string => {
 }
 
 // =====================================================
-// COMPONENTS
+// SMALL COMPONENTS
 // =====================================================
 const Tooltip = ({ children, content }: { children: React.ReactNode; content: string }) => {
   const [show, setShow] = useState(false)
@@ -212,7 +232,17 @@ const MarketChips = ({ markets }: { markets: MarketType[] }) => {
 }
 
 // =====================================================
-// PROP FIRM CARD (Compact)
+// FILTER CHIP (removable)
+// =====================================================
+const FilterChip = ({ label, onRemove }: { label: string; onRemove: () => void }) => (
+  <span className="inline-flex items-center gap-1 px-2 py-1 bg-emerald-500/20 text-emerald-400 text-xs rounded-full">
+    {label}
+    <button onClick={onRemove} className="hover:bg-emerald-500/30 rounded-full p-0.5"><X className="w-3 h-3" /></button>
+  </span>
+)
+
+// =====================================================
+// PROP FIRM CARD
 // =====================================================
 const PropFirmCard = ({ firm, isCompact, rank, markets }: { firm: PropFirm; isCompact: boolean; rank: number; markets: MarketType[] }) => {
   const [isExpanded, setIsExpanded] = useState(false)
@@ -306,112 +336,6 @@ const PropFirmCard = ({ firm, isCompact, rank, markets }: { firm: PropFirm; isCo
 }
 
 // =====================================================
-// COMPACT FILTER BAR (Inline)
-// =====================================================
-const CompactFilterBar = ({ 
-  filters, setFilters, selectedMarket, setSelectedMarket, discountCount, highRatedCount 
-}: { 
-  filters: FilterState; setFilters: (f: FilterState) => void; 
-  selectedMarket: string | null; setSelectedMarket: (m: string | null) => void;
-  discountCount: number; highRatedCount: number;
-}) => {
-  const [showMore, setShowMore] = useState(false)
-  
-  return (
-    <div className="space-y-2">
-      {/* Primary Filters Row */}
-      <div className="flex flex-wrap gap-2">
-        {/* Market Pills */}
-        {MARKET_TYPES.slice(0, 4).map(market => (
-          <button
-            key={market}
-            onClick={() => setSelectedMarket(market === 'All' ? null : market)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-              (market === 'All' && !selectedMarket) || selectedMarket === market
-                ? 'bg-emerald-500 text-white'
-                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-            }`}
-          >
-            {market}
-          </button>
-        ))}
-        
-        {/* Quick Toggles */}
-        {discountCount > 0 && (
-          <button
-            onClick={() => setFilters({ ...filters, hasDiscount: !filters.hasDiscount })}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all flex items-center gap-1 ${
-              filters.hasDiscount ? 'bg-orange-500/20 text-orange-400 ring-1 ring-orange-500/50' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-            }`}
-          >
-            <Tag className="w-3 h-3" /> Deals ({discountCount})
-          </button>
-        )}
-        
-        <button
-          onClick={() => setFilters({ ...filters, highRatingOnly: !filters.highRatingOnly })}
-          className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all flex items-center gap-1 ${
-            filters.highRatingOnly ? 'bg-yellow-500/20 text-yellow-400 ring-1 ring-yellow-500/50' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-          }`}
-        >
-          <Star className="w-3 h-3" /> 4.5+ ({highRatedCount})
-        </button>
-        
-        <button
-          onClick={() => setShowMore(!showMore)}
-          className="px-3 py-1.5 rounded-full text-xs font-medium bg-gray-800 text-gray-400 hover:bg-gray-700 flex items-center gap-1"
-        >
-          <SlidersHorizontal className="w-3 h-3" /> More
-          <ChevronDown className={`w-3 h-3 transition-transform ${showMore ? 'rotate-180' : ''}`} />
-        </button>
-      </div>
-      
-      {/* Extended Filters */}
-      {showMore && (
-        <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-800">
-          {MARKET_TYPES.slice(4).map(market => (
-            <button
-              key={market}
-              onClick={() => setSelectedMarket(market)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                selectedMarket === market ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-              }`}
-            >
-              {market}
-            </button>
-          ))}
-          
-          {[
-            { key: 'allowsScalping' as const, label: 'Scalping' },
-            { key: 'allowsEA' as const, label: 'EAs' },
-            { key: 'hasInstantFunding' as const, label: 'Instant' },
-          ].map(({ key, label }) => (
-            <button
-              key={key}
-              onClick={() => setFilters({ ...filters, [key]: !filters[key] })}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                filters[key] ? 'bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/50' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-          
-          {(Object.values(filters).some(v => v) || selectedMarket) && (
-            <button
-              onClick={() => { setFilters({}); setSelectedMarket(null) }}
-              className="px-3 py-1.5 rounded-full text-xs font-medium bg-red-500/20 text-red-400 hover:bg-red-500/30"
-            >
-              Clear All
-            </button>
-          )}
-        </div>
-      )}
-    </div>
-  )
-}
-
-// =====================================================
 // TABLE VIEW
 // =====================================================
 const QuickComparisonTable = ({ firms, currentPage, setCurrentPage, itemsPerPage }: { firms: PropFirm[]; currentPage: number; setCurrentPage: (p: number) => void; itemsPerPage: number }) => {
@@ -475,6 +399,168 @@ const QuickComparisonTable = ({ firms, currentPage, setCurrentPage, itemsPerPage
 }
 
 // =====================================================
+// ADVANCED FILTERS PANEL
+// =====================================================
+const AdvancedFiltersPanel = ({ 
+  isOpen, 
+  onClose, 
+  filters, 
+  setFilters, 
+  platforms,
+  challengeTypes 
+}: { 
+  isOpen: boolean
+  onClose: () => void
+  filters: FilterState
+  setFilters: (f: FilterState) => void
+  platforms: string[]
+  challengeTypes: string[]
+}) => {
+  if (!isOpen) return null
+  
+  return (
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      
+      {/* Panel */}
+      <div className="relative w-full sm:w-[500px] max-h-[80vh] bg-gray-900 border border-gray-700 rounded-t-2xl sm:rounded-2xl overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 border-b border-gray-700">
+          <h3 className="text-lg font-bold text-white flex items-center gap-2">
+            <SlidersHorizontal className="w-5 h-5 text-emerald-400" />
+            Advanced Filters
+          </h3>
+          <button onClick={onClose} className="p-2 hover:bg-gray-800 rounded-lg transition-colors">
+            <X className="w-5 h-5 text-gray-400" />
+          </button>
+        </div>
+        
+        {/* Content */}
+        <div className="p-4 space-y-6 max-h-[60vh] overflow-y-auto">
+          {/* Platform */}
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-2">Platform</label>
+            <select 
+              value={filters.platform || ''} 
+              onChange={(e) => setFilters({ ...filters, platform: e.target.value || null })}
+              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-emerald-500"
+            >
+              <option value="">All Platforms</option>
+              {platforms.map(p => <option key={p} value={p}>{p}</option>)}
+            </select>
+          </div>
+          
+          {/* Challenge Type */}
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-2">Challenge Type</label>
+            <div className="flex flex-wrap gap-2">
+              {CHALLENGE_TYPES.map(type => (
+                <button
+                  key={type}
+                  onClick={() => setFilters({ ...filters, challengeType: type === 'All' ? null : type })}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    (type === 'All' && !filters.challengeType) || filters.challengeType === type
+                      ? 'bg-emerald-500 text-white'
+                      : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                  }`}
+                >
+                  {type}
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          {/* Trading Style */}
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-2">Trading Style</label>
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                { key: 'allowsScalping' as const, label: 'Scalping Allowed' },
+                { key: 'allowsNewsTrading' as const, label: 'News Trading' },
+                { key: 'allowsEA' as const, label: 'EAs/Bots Allowed' },
+                { key: 'allowsSwing' as const, label: 'Swing Trading' },
+                { key: 'hasInstantFunding' as const, label: 'Instant Funding' },
+              ].map(({ key, label }) => (
+                <button
+                  key={key}
+                  onClick={() => setFilters({ ...filters, [key]: !filters[key] })}
+                  className={`px-3 py-2 rounded-lg text-xs font-medium transition-all flex items-center gap-2 ${
+                    filters[key] 
+                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
+                      : 'bg-gray-800 text-gray-400 border border-transparent hover:bg-gray-700'
+                  }`}
+                >
+                  {filters[key] ? <Check className="w-3.5 h-3.5" /> : <div className="w-3.5 h-3.5" />}
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          {/* Price Range */}
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-2">
+              Max Price: {filters.maxPrice ? `$${filters.maxPrice}` : 'Any'}
+            </label>
+            <input
+              type="range"
+              min="0"
+              max="1000"
+              step="50"
+              value={filters.maxPrice || 1000}
+              onChange={(e) => setFilters({ ...filters, maxPrice: parseInt(e.target.value) === 1000 ? null : parseInt(e.target.value) })}
+              className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+            />
+            <div className="flex justify-between text-xs text-gray-500 mt-1">
+              <span>$0</span>
+              <span>$500</span>
+              <span>Any</span>
+            </div>
+          </div>
+          
+          {/* Profit Split */}
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-2">Min Profit Split</label>
+            <div className="flex flex-wrap gap-2">
+              {[null, 70, 80, 90, 95].map(split => (
+                <button
+                  key={split || 'any'}
+                  onClick={() => setFilters({ ...filters, minProfitSplit: split })}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    filters.minProfitSplit === split
+                      ? 'bg-emerald-500 text-white'
+                      : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                  }`}
+                >
+                  {split ? `${split}%+` : 'Any'}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+        
+        {/* Footer */}
+        <div className="p-4 border-t border-gray-700 flex gap-3">
+          <button
+            onClick={() => setFilters({})}
+            className="flex-1 py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+          >
+            <RotateCcw className="w-4 h-4" /> Reset All
+          </button>
+          <button
+            onClick={onClose}
+            className="flex-1 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors"
+          >
+            Apply Filters
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// =====================================================
 // MAIN COMPONENT
 // =====================================================
 export default function ComparePageClient({ firms }: ComparePageClientProps) {
@@ -486,6 +572,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
   const [showOnlyVerified, setShowOnlyVerified] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage] = useState(24)
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false)
   
   // Process firms
   const processedFirms = useMemo(() => {
@@ -509,6 +596,18 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
     return map
   }, [processedFirms])
   
+  // Available platforms
+  const platforms = useMemo(() => {
+    const all = processedFirms.flatMap(f => f.platforms || [])
+    return Array.from(new Set(all)).sort()
+  }, [processedFirms])
+  
+  // Available challenge types
+  const challengeTypes = useMemo(() => {
+    const all = processedFirms.flatMap(f => f.challenge_types || [])
+    return Array.from(new Set(all)).sort()
+  }, [processedFirms])
+  
   // Stats
   const stats = useMemo(() => {
     const verified = processedFirms.filter(f => f.trust_status === 'verified' || !f.trust_status)
@@ -526,13 +625,15 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
     if (selectedMarket) result = result.filter(f => (firmMarkets.get(f.id) || []).includes(selectedMarket as MarketType))
     if (filters.hasDiscount) result = result.filter(f => f.discount_percent != null && f.discount_percent > 0)
     if (filters.highRatingOnly) result = result.filter(f => f.trustpilot_rating >= 4.5)
-    if (filters.maxPrice && filters.maxPrice < 1000) result = result.filter(f => f.min_price <= filters.maxPrice!)
+    if (filters.minRating) result = result.filter(f => f.trustpilot_rating >= filters.minRating!)
+    if (filters.maxPrice) result = result.filter(f => f.min_price <= filters.maxPrice!)
     if (filters.minProfitSplit) result = result.filter(f => f.max_profit_split >= filters.minProfitSplit!)
     if (filters.allowsScalping) result = result.filter(f => f.allows_scalping)
     if (filters.allowsNewsTrading) result = result.filter(f => f.allows_news_trading)
     if (filters.allowsEA) result = result.filter(f => f.allows_ea)
     if (filters.hasInstantFunding) result = result.filter(f => f.has_instant_funding)
-    if (filters.platform) result = result.filter(f => f.platforms?.some(p => p === filters.platform))
+    if (filters.platform) result = result.filter(f => f.platforms?.includes(filters.platform!))
+    if (filters.challengeType) result = result.filter(f => f.challenge_types?.some(t => t.toLowerCase().includes(filters.challengeType!.toLowerCase())))
     
     result.sort((a, b) => {
       const aPromo = (a.discount_percent ?? 0) > 0 ? 1 : 0, bPromo = (b.discount_percent ?? 0) > 0 ? 1 : 0
@@ -554,70 +655,163 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
   
   const paginatedFirms = useMemo(() => filteredFirms.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage), [filteredFirms, currentPage, itemsPerPage])
   const totalPages = Math.ceil(filteredFirms.length / itemsPerPage)
+  
+  // Active filters for chips
+  const activeFilters = useMemo(() => {
+    const chips: { key: string; label: string; onRemove: () => void }[] = []
+    if (selectedMarket) chips.push({ key: 'market', label: selectedMarket, onRemove: () => setSelectedMarket(null) })
+    if (filters.hasDiscount) chips.push({ key: 'discount', label: 'Deals', onRemove: () => setFilters({ ...filters, hasDiscount: false }) })
+    if (filters.highRatingOnly) chips.push({ key: 'highRating', label: '4.5+ Rated', onRemove: () => setFilters({ ...filters, highRatingOnly: false }) })
+    if (filters.minRating) chips.push({ key: 'minRating', label: `${filters.minRating}+ Rating`, onRemove: () => setFilters({ ...filters, minRating: null }) })
+    if (filters.platform) chips.push({ key: 'platform', label: filters.platform, onRemove: () => setFilters({ ...filters, platform: null }) })
+    if (filters.challengeType) chips.push({ key: 'challengeType', label: filters.challengeType, onRemove: () => setFilters({ ...filters, challengeType: null }) })
+    if (filters.allowsScalping) chips.push({ key: 'scalping', label: 'Scalping', onRemove: () => setFilters({ ...filters, allowsScalping: false }) })
+    if (filters.allowsNewsTrading) chips.push({ key: 'news', label: 'News Trading', onRemove: () => setFilters({ ...filters, allowsNewsTrading: false }) })
+    if (filters.allowsEA) chips.push({ key: 'ea', label: 'EAs Allowed', onRemove: () => setFilters({ ...filters, allowsEA: false }) })
+    if (filters.hasInstantFunding) chips.push({ key: 'instant', label: 'Instant Funding', onRemove: () => setFilters({ ...filters, hasInstantFunding: false }) })
+    if (filters.maxPrice) chips.push({ key: 'maxPrice', label: `Max $${filters.maxPrice}`, onRemove: () => setFilters({ ...filters, maxPrice: null }) })
+    if (filters.minProfitSplit) chips.push({ key: 'minSplit', label: `${filters.minProfitSplit}%+ Split`, onRemove: () => setFilters({ ...filters, minProfitSplit: null }) })
+    return chips
+  }, [selectedMarket, filters])
+  
+  const hasActiveFilters = activeFilters.length > 0 || !showOnlyVerified
+  
+  const resetAllFilters = () => {
+    setFilters({})
+    setSelectedMarket(null)
+    setSearchQuery('')
+    setShowOnlyVerified(true)
+  }
 
   return (
     <div className="min-h-screen bg-gray-900">
-      {/* COMPACT HEADER - Above the fold optimized */}
-      <section className="pt-20 pb-3 px-4">
+      {/* COMPACT HEADER */}
+      <section className="pt-20 pb-2 px-4 border-b border-gray-800">
         <div className="max-w-7xl mx-auto">
-          {/* Compact Title Row */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+          {/* Title Row */}
+          <div className="flex items-center justify-between mb-3">
             <div>
-              <h1 className="text-2xl font-bold text-white">Compare Prop Firms</h1>
-              <p className="text-sm text-gray-500">{stats.total} verified • Updated Jan 2026</p>
+              <h1 className="text-xl font-bold text-white">Compare Prop Firms</h1>
+              <p className="text-xs text-gray-500">{stats.total} verified • Updated Jan 2026</p>
             </div>
-            
-            {/* Search + View Toggle */}
             <div className="flex items-center gap-2">
-              <div className="relative flex-1 sm:w-64">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search..."
-                  className="w-full pl-9 pr-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm placeholder:text-gray-500 focus:outline-none focus:border-emerald-500"
-                />
-              </div>
-              
               <div className="flex border border-gray-700 rounded-lg overflow-hidden">
                 {[{ m: 'grid' as const, i: Grid3X3 }, { m: 'list' as const, i: List }, { m: 'table' as const, i: BarChart3 }].map(({ m, i: Icon }) => (
-                  <button key={m} onClick={() => setViewMode(m)} className={`p-2 ${viewMode === m ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}><Icon className="w-4 h-4" /></button>
+                  <button key={m} onClick={() => setViewMode(m)} className={`p-1.5 ${viewMode === m ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}><Icon className="w-4 h-4" /></button>
                 ))}
               </div>
-              
-              <select value={sortBy} onChange={(e) => setSortBy(e.target.value as typeof sortBy)} className="px-2 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-xs focus:outline-none">
-                <option value="rating">Rating</option>
-                <option value="price">Price</option>
-                <option value="split">Split</option>
-                <option value="discount">Deals</option>
-              </select>
             </div>
           </div>
           
-          {/* Compact Filter Bar */}
-          <CompactFilterBar 
-            filters={filters} 
-            setFilters={setFilters} 
-            selectedMarket={selectedMarket} 
-            setSelectedMarket={setSelectedMarket}
-            discountCount={stats.withDiscounts}
-            highRatedCount={stats.highRated}
-          />
+          {/* QUICK FILTERS ROW */}
+          <div className="flex flex-wrap items-center gap-2 mb-3">
+            {/* Search */}
+            <div className="relative flex-1 min-w-[200px] max-w-[300px]">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search firms..."
+                className="w-full pl-8 pr-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm placeholder:text-gray-500 focus:outline-none focus:border-emerald-500"
+              />
+            </div>
+            
+            {/* Market Pills */}
+            <div className="flex items-center gap-1">
+              {MARKET_TYPES.slice(0, 5).map(market => (
+                <button
+                  key={market}
+                  onClick={() => setSelectedMarket(market === 'All' ? null : market)}
+                  className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    (market === 'All' && !selectedMarket) || selectedMarket === market
+                      ? 'bg-emerald-500 text-white'
+                      : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                  }`}
+                >
+                  {market}
+                </button>
+              ))}
+            </div>
+            
+            {/* Deals Toggle */}
+            {stats.withDiscounts > 0 && (
+              <button
+                onClick={() => setFilters({ ...filters, hasDiscount: !filters.hasDiscount })}
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${
+                  filters.hasDiscount ? 'bg-orange-500/20 text-orange-400 ring-1 ring-orange-500/50' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                }`}
+              >
+                <Tag className="w-3 h-3" /> Deals
+              </button>
+            )}
+            
+            {/* Verified Toggle */}
+            <button
+              onClick={() => setShowOnlyVerified(!showOnlyVerified)}
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${
+                showOnlyVerified ? 'bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/50' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+              }`}
+            >
+              <BadgeCheck className="w-3 h-3" /> Verified
+            </button>
+            
+            {/* Rating Dropdown */}
+            <select
+              value={filters.minRating || ''}
+              onChange={(e) => setFilters({ ...filters, minRating: e.target.value ? parseFloat(e.target.value) : null, highRatingOnly: false })}
+              className="px-2.5 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-gray-400 text-xs focus:outline-none focus:border-emerald-500"
+            >
+              {RATING_OPTIONS.map(opt => (
+                <option key={opt.label} value={opt.value || ''}>{opt.label}</option>
+              ))}
+            </select>
+            
+            {/* Sort Dropdown */}
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+              className="px-2.5 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-gray-400 text-xs focus:outline-none focus:border-emerald-500"
+            >
+              {SORT_OPTIONS.map(opt => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+            
+            {/* More Filters Button */}
+            <button
+              onClick={() => setShowAdvancedFilters(true)}
+              className="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-gray-800 text-gray-400 hover:bg-gray-700 flex items-center gap-1"
+            >
+              <SlidersHorizontal className="w-3 h-3" /> More
+            </button>
+          </div>
+          
+          {/* Active Filter Chips */}
+          {hasActiveFilters && (
+            <div className="flex flex-wrap items-center gap-2 pb-2">
+              {activeFilters.map(chip => (
+                <FilterChip key={chip.key} label={chip.label} onRemove={chip.onRemove} />
+              ))}
+              {activeFilters.length > 0 && (
+                <button
+                  onClick={resetAllFilters}
+                  className="text-xs text-gray-500 hover:text-red-400 flex items-center gap-1"
+                >
+                  <RotateCcw className="w-3 h-3" /> Reset
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </section>
       
-      {/* MAIN CONTENT - Starts higher */}
-      <section className="pb-16 px-4">
+      {/* MAIN CONTENT */}
+      <section className="pb-16 px-4 pt-4">
         <div className="max-w-7xl mx-auto">
           {/* Results Count */}
           <div className="flex items-center justify-between mb-3">
-            <p className="text-xs text-gray-500">
-              {filteredFirms.length} results
-              {selectedMarket && <span className="ml-1 px-1.5 py-0.5 bg-emerald-500/20 text-emerald-400 rounded">{selectedMarket}</span>}
-              {filters.hasDiscount && <span className="ml-1 px-1.5 py-0.5 bg-orange-500/20 text-orange-400 rounded">Deals</span>}
-              {filters.highRatingOnly && <span className="ml-1 px-1.5 py-0.5 bg-yellow-500/20 text-yellow-400 rounded">4.5+</span>}
-            </p>
+            <p className="text-xs text-gray-500">{filteredFirms.length} results</p>
           </div>
           
           {/* Content */}
@@ -651,11 +845,21 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
               <Search className="w-10 h-10 text-gray-600 mx-auto mb-3" />
               <h3 className="text-lg font-semibold text-white mb-1">No firms found</h3>
               <p className="text-sm text-gray-500 mb-3">Try adjusting your filters</p>
-              <button onClick={() => { setFilters({}); setSearchQuery(''); setSelectedMarket(null) }} className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm rounded-lg">Reset</button>
+              <button onClick={resetAllFilters} className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm rounded-lg">Reset Filters</button>
             </div>
           )}
         </div>
       </section>
+      
+      {/* Advanced Filters Panel */}
+      <AdvancedFiltersPanel
+        isOpen={showAdvancedFilters}
+        onClose={() => setShowAdvancedFilters(false)}
+        filters={filters}
+        setFilters={setFilters}
+        platforms={platforms}
+        challengeTypes={challengeTypes}
+      />
     </div>
   )
 }
