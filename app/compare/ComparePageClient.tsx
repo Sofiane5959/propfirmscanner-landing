@@ -5,13 +5,12 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { 
-  Search, ChevronDown, ChevronUp, Star, Check, X, 
-  Grid3X3, List, ExternalLink, Sparkles,
-  AlertTriangle, BarChart3,
-  Tag, Trophy, BadgeCheck, Copy, CheckCircle2,
+  Search, ChevronDown, Star, Check, X, 
+  Grid3X3, List, ExternalLink,
+  BarChart3, Tag, Trophy, BadgeCheck, Copy, CheckCircle2,
   ChevronLeft, ChevronRight, RotateCcw,
   Heart, GitCompare, Zap, TrendingUp,
-  DollarSign, Users, Flame, Layers
+  DollarSign, Users, Flame
 } from 'lucide-react'
 
 // =====================================================
@@ -63,15 +62,14 @@ interface ComparePageClientProps {
   firms: PropFirm[]
 }
 
-// Updated FilterState with arrays for multi-select
 interface FilterState {
   search: string
-  markets: string[]           // Multi-select
-  platforms: string[]         // Multi-select
-  tradingStyles: string[]     // Multi-select
-  ratings: number[]           // Multi-select
-  challengeTypes: string[]    // Multi-select (NEW)
-  bestFor: string[]           // Multi-select
+  markets: string[]
+  platforms: string[]
+  tradingStyles: string[]
+  ratings: number[]
+  challengeTypes: string[]
+  bestFor: string[]
   priceRange: [number, number]
   hasDiscount: boolean
   verifiedOnly: boolean
@@ -119,6 +117,53 @@ const CANONICAL_FIRMS: Record<string, { canonical: string; aliases: string[] }> 
   'ftmo': { canonical: 'FTMO', aliases: ['ftmo.com'] },
   'myfundedfx': { canonical: 'MyFundedFX', aliases: ['my funded fx'] },
   'topstep': { canonical: 'Topstep', aliases: ['topstep trader'] },
+}
+
+// =====================================================
+// HOOKS
+// =====================================================
+// Debounce hook for search and URL sync
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value)
+  
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedValue(value), delay)
+    return () => clearTimeout(timer)
+  }, [value, delay])
+  
+  return debouncedValue
+}
+
+// SSR-safe localStorage hook
+function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T | ((prev: T) => T)) => void] {
+  const [storedValue, setStoredValue] = useState<T>(initialValue)
+  const [isHydrated, setIsHydrated] = useState(false)
+  
+  useEffect(() => {
+    setIsHydrated(true)
+    try {
+      const item = window.localStorage.getItem(key)
+      if (item) setStoredValue(JSON.parse(item))
+    } catch (error) {
+      console.warn(`Error reading localStorage key "${key}":`, error)
+    }
+  }, [key])
+  
+  const setValue = useCallback((value: T | ((prev: T) => T)) => {
+    setStoredValue(prev => {
+      const valueToStore = value instanceof Function ? value(prev) : value
+      if (typeof window !== 'undefined') {
+        try {
+          window.localStorage.setItem(key, JSON.stringify(valueToStore))
+        } catch (error) {
+          console.warn(`Error setting localStorage key "${key}":`, error)
+        }
+      }
+      return valueToStore
+    })
+  }, [key])
+  
+  return [storedValue, setValue]
 }
 
 // =====================================================
@@ -225,7 +270,11 @@ const normalizeChallengeType = (types: string[] | undefined): string[] => {
 const Toast = ({ message, type, onClose }: { message: string; type: 'success' | 'error'; onClose: () => void }) => {
   useEffect(() => { const timer = setTimeout(onClose, 3000); return () => clearTimeout(timer) }, [onClose])
   return (
-    <div className={`fixed bottom-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-in slide-in-from-bottom-2 ${type === 'success' ? 'bg-emerald-500' : 'bg-red-500'} text-white`}>
+    <div 
+      role="alert"
+      aria-live="polite"
+      className={`fixed bottom-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-in slide-in-from-bottom-2 ${type === 'success' ? 'bg-emerald-500' : 'bg-red-500'} text-white`}
+    >
       {type === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <X className="w-4 h-4" />}
       <span className="text-sm font-medium">{message}</span>
     </div>
@@ -246,35 +295,47 @@ const TrustBadge = ({ status }: { status: string }) => {
 const FilterChip = ({ label, onRemove }: { label: string; onRemove: () => void }) => (
   <span className="inline-flex items-center gap-1 px-2 py-1 bg-emerald-500/20 text-emerald-400 text-xs rounded-lg border border-emerald-500/30">
     {label}
-    <button onClick={onRemove} className="hover:text-white"><X className="w-3 h-3" /></button>
+    <button onClick={onRemove} className="hover:text-white" aria-label={`Remove ${label} filter`}><X className="w-3 h-3" /></button>
   </span>
 )
 
-// Filter Dropdown Component
+// Filter Dropdown Component with global state management
 const FilterDropdown = ({ 
   label, 
   count, 
   children,
-  colorClass = 'emerald'
+  colorClass = 'emerald',
+  isOpen,
+  onToggle
 }: { 
   label: string
   count: number
   children: React.ReactNode
   colorClass?: 'emerald' | 'purple' | 'yellow' | 'blue' | 'orange'
+  isOpen: boolean
+  onToggle: () => void
 }) => {
-  const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   
   // Close on click outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false)
+        if (isOpen) onToggle()
       }
     }
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+  }, [isOpen, onToggle])
+  
+  // Close on Escape key
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isOpen) onToggle()
+    }
+    document.addEventListener('keydown', handleEscape)
+    return () => document.removeEventListener('keydown', handleEscape)
+  }, [isOpen, onToggle])
   
   const hasSelection = count > 0
   
@@ -291,7 +352,10 @@ const FilterDropdown = ({
   return (
     <div className="relative" ref={dropdownRef}>
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={onToggle}
+        aria-expanded={isOpen}
+        aria-haspopup="listbox"
+        aria-label={`${label} filter${hasSelection ? `, ${count} selected` : ''}`}
         className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 whitespace-nowrap ${
           hasSelection 
             ? `${colors.bg} ${colors.text} ring-1 ${colors.ring}`
@@ -308,7 +372,10 @@ const FilterDropdown = ({
       </button>
       
       {isOpen && (
-        <div className="absolute top-full left-0 mt-1 p-3 bg-gray-800 border border-gray-700 rounded-xl shadow-xl z-50 min-w-[200px] max-w-[280px]">
+        <div 
+          role="listbox"
+          className="absolute top-full left-0 mt-1 p-3 bg-gray-800 border border-gray-700 rounded-xl shadow-xl z-50 min-w-[200px] max-w-[280px] animate-in fade-in-0 zoom-in-95 duration-150"
+        >
           {children}
         </div>
       )}
@@ -336,6 +403,11 @@ const PriceSlider = ({ value, onChange }: { value: [number, number]; onChange: (
         onChange={(e) => setLocalMax(parseInt(e.target.value))}
         onMouseUp={() => onChange([0, localMax])}
         onTouchEnd={() => onChange([0, localMax])}
+        aria-label="Maximum price filter"
+        aria-valuemin={0}
+        aria-valuemax={1000}
+        aria-valuenow={localMax}
+        aria-valuetext={localMax >= 1000 ? 'Any price' : `Maximum $${localMax}`}
         className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
       />
       <div className="flex justify-between text-[10px] text-gray-500">
@@ -397,7 +469,14 @@ const PropFirmCard = ({
           )}
           
           <div className="flex items-center gap-1">
-            <button onClick={onFavorite} className={`p-2 rounded-lg transition-all ${isFavorite ? 'text-red-400 bg-red-500/20' : 'text-gray-500 hover:text-red-400 hover:bg-gray-700'}`}><Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} /></button>
+            <button 
+              onClick={onFavorite} 
+              aria-label={isFavorite ? `Remove ${firm.name} from favorites` : `Add ${firm.name} to favorites`}
+              aria-pressed={isFavorite}
+              className={`p-2 rounded-lg transition-all ${isFavorite ? 'text-red-400 bg-red-500/20' : 'text-gray-500 hover:text-red-400 hover:bg-gray-700'}`}
+            >
+              <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
+            </button>
             <Link href={`/prop-firm/${firm.slug}`} className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-white text-xs font-medium rounded-lg">Details</Link>
             <a href={getFirmUrl(firm)} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg flex items-center gap-1">Visit <ExternalLink className="w-3 h-3" /></a>
           </div>
@@ -413,7 +492,11 @@ const PropFirmCard = ({
           <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-2.5 py-1 rounded-lg text-xs font-bold shadow-lg">
             {firm.discount_percent}% OFF
             {firm.discount_code && (
-              <button onClick={() => onCopyCode(firm.discount_code)} className="flex items-center gap-1 text-[10px] font-normal opacity-90 hover:opacity-100 mt-0.5">
+              <button 
+                onClick={() => onCopyCode(firm.discount_code)} 
+                aria-label={`Copy discount code ${firm.discount_code}`}
+                className="flex items-center gap-1 text-[10px] font-normal opacity-90 hover:opacity-100 mt-0.5"
+              >
                 <Copy className="w-2.5 h-2.5" />{firm.discount_code}
               </button>
             )}
@@ -444,8 +527,22 @@ const PropFirmCard = ({
           </div>
           
           <div className="flex gap-1">
-            <button onClick={onFavorite} className={`p-2 rounded-lg transition-all ${isFavorite ? 'text-red-400 bg-red-500/20' : 'text-gray-500 hover:text-red-400 hover:bg-gray-700'}`}><Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} /></button>
-            <button onClick={onCompare} className={`p-2 rounded-lg transition-all ${isComparing ? 'text-blue-400 bg-blue-500/20' : 'text-gray-500 hover:text-blue-400 hover:bg-gray-700'}`}><GitCompare className="w-4 h-4" /></button>
+            <button 
+              onClick={onFavorite} 
+              aria-label={isFavorite ? `Remove ${firm.name} from favorites` : `Add ${firm.name} to favorites`}
+              aria-pressed={isFavorite}
+              className={`p-2 rounded-lg transition-all ${isFavorite ? 'text-red-400 bg-red-500/20' : 'text-gray-500 hover:text-red-400 hover:bg-gray-700'}`}
+            >
+              <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
+            </button>
+            <button 
+              onClick={onCompare} 
+              aria-label={isComparing ? `Remove ${firm.name} from comparison` : `Add ${firm.name} to comparison`}
+              aria-pressed={isComparing}
+              className={`p-2 rounded-lg transition-all ${isComparing ? 'text-blue-400 bg-blue-500/20' : 'text-gray-500 hover:text-blue-400 hover:bg-gray-700'}`}
+            >
+              <GitCompare className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </div>
@@ -507,7 +604,7 @@ const CompareBar = ({ firms, onRemove, onClear }: { firms: PropFirm[]; onRemove:
             {firms.map(f => (
               <div key={f.id} className="flex items-center gap-1 px-2 py-1 bg-gray-700 rounded-lg">
                 <span className="text-xs text-white">{f.name}</span>
-                <button onClick={() => onRemove(f.id)} className="text-gray-400 hover:text-red-400"><X className="w-3 h-3" /></button>
+                <button onClick={() => onRemove(f.id)} aria-label={`Remove ${f.name} from comparison`} className="text-gray-400 hover:text-red-400"><X className="w-3 h-3" /></button>
               </div>
             ))}
           </div>
@@ -520,6 +617,35 @@ const CompareBar = ({ firms, onRemove, onClear }: { firms: PropFirm[]; onRemove:
     </div>
   )
 }
+
+// Loading skeleton for better UX
+const CardSkeleton = () => (
+  <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl overflow-hidden animate-pulse">
+    <div className="p-4">
+      <div className="flex items-start gap-3">
+        <div className="w-14 h-14 rounded-xl bg-gray-700" />
+        <div className="flex-1">
+          <div className="h-5 bg-gray-700 rounded w-2/3 mb-2" />
+          <div className="h-4 bg-gray-700 rounded w-1/3" />
+        </div>
+      </div>
+    </div>
+    <div className="px-4 py-3 bg-gray-900/50 border-y border-gray-700/50 grid grid-cols-2 gap-3">
+      <div className="h-10 bg-gray-700 rounded" />
+      <div className="h-10 bg-gray-700 rounded" />
+    </div>
+    <div className="p-4 space-y-3">
+      <div className="flex gap-1">
+        <div className="h-5 w-12 bg-gray-700 rounded" />
+        <div className="h-5 w-12 bg-gray-700 rounded" />
+      </div>
+      <div className="flex gap-2">
+        <div className="h-8 flex-1 bg-gray-700 rounded-lg" />
+        <div className="h-8 flex-1 bg-gray-700 rounded-lg" />
+      </div>
+    </div>
+  </div>
+)
 
 // =====================================================
 // MAIN COMPONENT
@@ -545,22 +671,21 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
   const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'rating')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [currentPage, setCurrentPage] = useState(1)
-  const [favorites, setFavorites] = useState<string[]>([])
   const [compareList, setCompareList] = useState<string[]>([])
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  
+  // SSR-safe favorites with localStorage
+  const [favorites, setFavorites] = useLocalStorage<string[]>('pfs_favorites', [])
   
   const itemsPerPage = 24
   
-  // Load favorites from localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem('pfs_favorites')
-    if (saved) setFavorites(JSON.parse(saved))
-  }, [])
+  // Debounced search for performance
+  const debouncedSearch = useDebounce(filters.search, 300)
   
-  // Save favorites to localStorage
-  useEffect(() => {
-    localStorage.setItem('pfs_favorites', JSON.stringify(favorites))
-  }, [favorites])
+  // Debounced filters for URL sync
+  const debouncedFilters = useDebounce(filters, 500)
   
   const toggleFavorite = useCallback((id: string) => {
     setFavorites(prev => {
@@ -568,7 +693,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
       setToast({ message: prev.includes(id) ? 'Removed from favorites' : 'Added to favorites', type: 'success' })
       return newFavs
     })
-  }, [])
+  }, [setFavorites])
   
   const toggleCompare = useCallback((id: string) => {
     setCompareList(prev => {
@@ -583,24 +708,29 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
     setToast({ message: `Code "${code}" copied!`, type: 'success' })
   }, [])
   
-  // Sync filters to URL
+  // Toggle dropdown (only one open at a time)
+  const toggleDropdown = useCallback((name: string) => {
+    setOpenDropdown(prev => prev === name ? null : name)
+  }, [])
+  
+  // Sync filters to URL (debounced)
   useEffect(() => {
     const params = new URLSearchParams()
-    if (filters.search) params.set('q', filters.search)
-    if (filters.markets.length) params.set('markets', filters.markets.join(','))
-    if (filters.platforms.length) params.set('platforms', filters.platforms.join(','))
-    if (filters.tradingStyles.length) params.set('styles', filters.tradingStyles.join(','))
-    if (filters.ratings.length) params.set('ratings', filters.ratings.join(','))
-    if (filters.challengeTypes.length) params.set('challenges', filters.challengeTypes.join(','))
-    if (filters.bestFor.length) params.set('bestFor', filters.bestFor.join(','))
-    if (filters.priceRange[1] < 1000) params.set('maxPrice', String(filters.priceRange[1]))
-    if (filters.hasDiscount) params.set('deals', 'true')
-    if (!filters.verifiedOnly) params.set('verified', 'false')
+    if (debouncedFilters.search) params.set('q', debouncedFilters.search)
+    if (debouncedFilters.markets.length) params.set('markets', debouncedFilters.markets.join(','))
+    if (debouncedFilters.platforms.length) params.set('platforms', debouncedFilters.platforms.join(','))
+    if (debouncedFilters.tradingStyles.length) params.set('styles', debouncedFilters.tradingStyles.join(','))
+    if (debouncedFilters.ratings.length) params.set('ratings', debouncedFilters.ratings.join(','))
+    if (debouncedFilters.challengeTypes.length) params.set('challenges', debouncedFilters.challengeTypes.join(','))
+    if (debouncedFilters.bestFor.length) params.set('bestFor', debouncedFilters.bestFor.join(','))
+    if (debouncedFilters.priceRange[1] < 1000) params.set('maxPrice', String(debouncedFilters.priceRange[1]))
+    if (debouncedFilters.hasDiscount) params.set('deals', 'true')
+    if (!debouncedFilters.verifiedOnly) params.set('verified', 'false')
     if (sortBy !== 'rating') params.set('sort', sortBy)
     
     const newUrl = params.toString() ? `?${params.toString()}` : '/compare'
     router.replace(newUrl, { scroll: false })
-  }, [filters, sortBy, router])
+  }, [debouncedFilters, sortBy, router])
   
   // Process and deduplicate firms
   const processedFirms = useMemo(() => {
@@ -644,7 +774,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
     return { total: verified.length, withDiscounts: discounts.length }
   }, [processedFirms])
   
-  // Apply filters
+  // Apply filters (use debounced search)
   const filteredFirms = useMemo(() => {
     let result = [...processedFirms]
     
@@ -652,9 +782,9 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
     if (filters.verifiedOnly) result = result.filter(f => f.trust_status === 'verified' || !f.trust_status)
     else result = result.filter(f => f.trust_status !== 'banned')
     
-    // Search
-    if (filters.search) {
-      const q = filters.search.toLowerCase()
+    // Search (use debounced value)
+    if (debouncedSearch) {
+      const q = debouncedSearch.toLowerCase()
       result = result.filter(f => f.name?.toLowerCase().includes(q) || f.slug?.toLowerCase().includes(q))
     }
     
@@ -734,10 +864,17 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
     })
     
     return result
-  }, [processedFirms, firmMarkets, firmChallengeTypes, filters, sortBy])
+  }, [processedFirms, firmMarkets, firmChallengeTypes, filters.verifiedOnly, filters.markets, filters.platforms, filters.tradingStyles, filters.ratings, filters.challengeTypes, filters.bestFor, filters.priceRange, filters.hasDiscount, debouncedSearch, sortBy])
   
-  // Reset page when filters change
-  useEffect(() => { setCurrentPage(1) }, [filters, sortBy])
+  // Reset page when filters change + scroll to top
+  useEffect(() => { 
+    setCurrentPage(1)
+  }, [filters, sortBy])
+  
+  // Scroll to top when page changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [currentPage])
   
   // Pagination
   const paginatedFirms = useMemo(() => filteredFirms.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage), [filteredFirms, currentPage, itemsPerPage])
@@ -779,9 +916,8 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
       hasDiscount: false,
       verifiedOnly: true,
     })
+    setOpenDropdown(null)
   }
-  
-  const hasActiveFilters = activeFilterChips.length > 0 || filters.search
 
   return (
     <div className="min-h-screen bg-gray-900 pb-20">
@@ -800,8 +936,22 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
             </div>
             
             <div className="flex items-center gap-2">
-              <button onClick={() => setViewMode('grid')} className={`p-2 rounded-lg ${viewMode === 'grid' ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400'}`}><Grid3X3 className="w-4 h-4" /></button>
-              <button onClick={() => setViewMode('list')} className={`p-2 rounded-lg ${viewMode === 'list' ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400'}`}><List className="w-4 h-4" /></button>
+              <button 
+                onClick={() => setViewMode('grid')} 
+                aria-label="Grid view"
+                aria-pressed={viewMode === 'grid'}
+                className={`p-2 rounded-lg ${viewMode === 'grid' ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400'}`}
+              >
+                <Grid3X3 className="w-4 h-4" />
+              </button>
+              <button 
+                onClick={() => setViewMode('list')} 
+                aria-label="List view"
+                aria-pressed={viewMode === 'list'}
+                className={`p-2 rounded-lg ${viewMode === 'list' ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400'}`}
+              >
+                <List className="w-4 h-4" />
+              </button>
             </div>
           </div>
           
@@ -817,12 +967,18 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
                   value={filters.search} 
                   onChange={(e) => setFilters(f => ({ ...f, search: e.target.value }))} 
                   placeholder="Search..." 
+                  aria-label="Search prop firms"
                   className="w-full pl-8 pr-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-white text-xs placeholder:text-gray-500 focus:outline-none focus:border-emerald-500" 
                 />
               </div>
               
               {/* Markets Dropdown */}
-              <FilterDropdown label="Markets" count={filters.markets.length}>
+              <FilterDropdown 
+                label="Markets" 
+                count={filters.markets.length}
+                isOpen={openDropdown === 'markets'}
+                onToggle={() => toggleDropdown('markets')}
+              >
                 <div className="flex flex-wrap gap-1.5">
                   {MARKET_OPTIONS.map(market => (
                     <button 
@@ -841,7 +997,12 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
               </FilterDropdown>
               
               {/* Platforms Dropdown */}
-              <FilterDropdown label="Platform" count={filters.platforms.length}>
+              <FilterDropdown 
+                label="Platform" 
+                count={filters.platforms.length}
+                isOpen={openDropdown === 'platforms'}
+                onToggle={() => toggleDropdown('platforms')}
+              >
                 <div className="flex flex-wrap gap-1.5 max-h-[200px] overflow-y-auto">
                   {availablePlatforms.map(platform => (
                     <button 
@@ -860,7 +1021,13 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
               </FilterDropdown>
               
               {/* Challenge Type Dropdown */}
-              <FilterDropdown label="Challenge" count={filters.challengeTypes.length} colorClass="purple">
+              <FilterDropdown 
+                label="Challenge" 
+                count={filters.challengeTypes.length} 
+                colorClass="purple"
+                isOpen={openDropdown === 'challenge'}
+                onToggle={() => toggleDropdown('challenge')}
+              >
                 <div className="flex flex-wrap gap-1.5">
                   {CHALLENGE_TYPE_OPTIONS.map(type => (
                     <button 
@@ -879,7 +1046,12 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
               </FilterDropdown>
               
               {/* Trading Style Dropdown */}
-              <FilterDropdown label="Style" count={filters.tradingStyles.length}>
+              <FilterDropdown 
+                label="Style" 
+                count={filters.tradingStyles.length}
+                isOpen={openDropdown === 'style'}
+                onToggle={() => toggleDropdown('style')}
+              >
                 <div className="flex flex-wrap gap-1.5">
                   {TRADING_STYLE_OPTIONS.map(style => (
                     <button 
@@ -898,7 +1070,13 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
               </FilterDropdown>
               
               {/* Rating Dropdown */}
-              <FilterDropdown label="Rating" count={filters.ratings.length} colorClass="yellow">
+              <FilterDropdown 
+                label="Rating" 
+                count={filters.ratings.length} 
+                colorClass="yellow"
+                isOpen={openDropdown === 'rating'}
+                onToggle={() => toggleDropdown('rating')}
+              >
                 <div className="flex flex-wrap gap-1.5">
                   {RATING_OPTIONS.map(rating => (
                     <button 
@@ -917,7 +1095,13 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
               </FilterDropdown>
               
               {/* Best For Dropdown */}
-              <FilterDropdown label="Best For" count={filters.bestFor.length} colorClass="blue">
+              <FilterDropdown 
+                label="Best For" 
+                count={filters.bestFor.length} 
+                colorClass="blue"
+                isOpen={openDropdown === 'bestFor'}
+                onToggle={() => toggleDropdown('bestFor')}
+              >
                 <div className="flex flex-wrap gap-1.5">
                   {BEST_FOR_OPTIONS.map(opt => {
                     const Icon = opt.icon
@@ -939,7 +1123,12 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
               </FilterDropdown>
               
               {/* Price Dropdown */}
-              <FilterDropdown label={filters.priceRange[1] < 1000 ? `≤$${filters.priceRange[1]}` : 'Price'} count={filters.priceRange[1] < 1000 ? 1 : 0}>
+              <FilterDropdown 
+                label={filters.priceRange[1] < 1000 ? `≤$${filters.priceRange[1]}` : 'Price'} 
+                count={filters.priceRange[1] < 1000 ? 1 : 0}
+                isOpen={openDropdown === 'price'}
+                onToggle={() => toggleDropdown('price')}
+              >
                 <div className="w-[220px]">
                   <PriceSlider value={filters.priceRange} onChange={(v) => setFilters(f => ({ ...f, priceRange: v }))} />
                 </div>
@@ -949,6 +1138,8 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
               {stats.withDiscounts > 0 && (
                 <button 
                   onClick={() => setFilters(f => ({ ...f, hasDiscount: !f.hasDiscount }))} 
+                  aria-pressed={filters.hasDiscount}
+                  aria-label={`Filter by deals only. ${stats.withDiscounts} firms with discounts`}
                   className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.hasDiscount ? 'bg-orange-500 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}
                 >
                   <Tag className="w-3 h-3" /> Deals ({stats.withDiscounts})
@@ -959,6 +1150,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
               <select 
                 value={sortBy} 
                 onChange={(e) => setSortBy(e.target.value)} 
+                aria-label="Sort firms by"
                 className="px-2.5 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-gray-400 text-xs focus:outline-none focus:border-emerald-500"
               >
                 {SORT_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
@@ -968,6 +1160,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
               {activeFilterChips.length > 0 && (
                 <button 
                   onClick={resetFilters} 
+                  aria-label="Reset all filters"
                   className="px-2.5 py-1.5 rounded-lg text-xs font-medium text-gray-500 hover:text-red-400 hover:bg-gray-800 flex items-center gap-1"
                 >
                   <RotateCcw className="w-3 h-3" /> Reset
@@ -1020,10 +1213,11 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
               
               {/* PAGINATION */}
               {totalPages > 1 && (
-                <div className="flex items-center justify-center gap-2 mt-8">
+                <nav aria-label="Pagination" className="flex items-center justify-center gap-2 mt-8">
                   <button 
                     onClick={() => setCurrentPage(p => Math.max(1, p - 1))} 
                     disabled={currentPage === 1}
+                    aria-label="Previous page"
                     className="p-2 rounded-lg bg-gray-800 text-gray-400 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <ChevronLeft className="w-4 h-4" />
@@ -1041,6 +1235,8 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
                         <button
                           key={page}
                           onClick={() => setCurrentPage(page)}
+                          aria-label={`Page ${page}`}
+                          aria-current={currentPage === page ? 'page' : undefined}
                           className={`w-8 h-8 rounded-lg text-sm font-medium ${currentPage === page ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}
                         >
                           {page}
@@ -1052,11 +1248,12 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
                   <button 
                     onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} 
                     disabled={currentPage === totalPages}
+                    aria-label="Next page"
                     className="p-2 rounded-lg bg-gray-800 text-gray-400 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </button>
-                </div>
+                </nav>
               )}
             </>
           ) : (
@@ -1065,8 +1262,8 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
                 <Search className="w-8 h-8 text-gray-600" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">No firms found</h3>
-              <p className="text-gray-500 mb-4">Try adjusting your filters</p>
-              <button onClick={resetFilters} className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm rounded-lg">Reset Filters</button>
+              <p className="text-gray-500 mb-4">Try adjusting your filters or search terms</p>
+              <button onClick={resetFilters} className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm rounded-lg transition-colors">Reset Filters</button>
             </div>
           )}
         </div>
