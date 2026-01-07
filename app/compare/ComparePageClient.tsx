@@ -216,7 +216,7 @@ const normalizeChallengeType = (types: string[] | undefined): string[] => {
     if (lower.includes('2') || lower.includes('two') || lower.includes('standard')) normalized.push('2-Step')
     if (lower.includes('3') || lower.includes('three')) normalized.push('3-Step')
   })
-  return [...new Set(normalized)]
+  return Array.from(new Set(normalized))
 }
 
 // =====================================================
