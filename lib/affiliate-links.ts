@@ -41,7 +41,7 @@ export const AFFILIATE_PROP_FIRMS: PropFirmAffiliate[] = [
     name: 'Blue Guardian',
     slug: 'blue-guardian',
     affiliateLink: 'https://blueguardian.com/?afmc=1tpr',
-    promoCode: 'NEWYEAR',
+    promoCode: null, // Code supprimé - était faux
     hasAffiliate: true,
     verified: true,
     featured: true,
@@ -50,7 +50,7 @@ export const AFFILIATE_PROP_FIRMS: PropFirmAffiliate[] = [
     name: 'Funded Trading Plus',
     slug: 'funded-trading-plus',
     affiliateLink: 'https://www.fundedtradingplus.com?ref=propfirmscanner',
-    promoCode: 'GIFT',
+    promoCode: null, // Code supprimé - était faux
     hasAffiliate: true,
     verified: true,
     featured: true,
@@ -59,7 +59,7 @@ export const AFFILIATE_PROP_FIRMS: PropFirmAffiliate[] = [
     name: 'Instant Funding',
     slug: 'instant-funding',
     affiliateLink: 'https://instantfunding.com/?partner=7543',
-    promoCode: 'AFF7543',
+    promoCode: null, // Code supprimé - était faux
     hasAffiliate: true,
     verified: true,
     featured: true,
@@ -68,7 +68,7 @@ export const AFFILIATE_PROP_FIRMS: PropFirmAffiliate[] = [
     name: 'Alpha Capital Group',
     slug: 'alpha-capital-group',
     affiliateLink: 'https://app.alphacapitalgroup.uk/signup/XYINW',
-    promoCode: 'XYINW',
+    promoCode: null, // Code supprimé - était faux
     hasAffiliate: true,
     verified: true,
     featured: true,
@@ -86,7 +86,7 @@ export const AFFILIATE_PROP_FIRMS: PropFirmAffiliate[] = [
     name: 'Prime Funding',
     slug: 'prime-funding',
     affiliateLink: 'https://prime-funding.com?ref=scanner-20',
-    promoCode: 'scanner-20',
+    promoCode: null, // Code supprimé - était faux
     hasAffiliate: true,
     verified: false,
     featured: true,
@@ -122,7 +122,7 @@ export const AFFILIATE_PROP_FIRMS: PropFirmAffiliate[] = [
     name: 'QT Funded',
     slug: 'qt-funded',
     affiliateLink: 'https://qtfunded.quanttekel.com/ref/5508/',
-    promoCode: 'UAVF1YJJNE',
+    promoCode: null, // Code supprimé - était faux
     hasAffiliate: true,
     verified: false,
     featured: true,
@@ -131,7 +131,7 @@ export const AFFILIATE_PROP_FIRMS: PropFirmAffiliate[] = [
     name: 'FundingTicks',
     slug: 'fundingticks',
     affiliateLink: 'https://app.fundingticks.com/register?ref=C1182EEE',
-    promoCode: 'C1182EEE',
+    promoCode: null, // Code supprimé - était faux
     hasAffiliate: true,
     verified: false,
     featured: true,
@@ -140,7 +140,7 @@ export const AFFILIATE_PROP_FIRMS: PropFirmAffiliate[] = [
     name: 'Top One Futures',
     slug: 'top-one-futures',
     affiliateLink: 'https://toponefutures.com/?linkId=lp_707970&sourceId=scanner-30&tenantId=toponefutures',
-    promoCode: 'pfs',
+    promoCode: 'pfs', // ✅ VRAI CODE - 40% OFF
     hasAffiliate: true,
     verified: false,
     featured: true,
