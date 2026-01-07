@@ -18,7 +18,34 @@ export interface PropFirmAffiliate {
 // =============================================================================
 
 export const AFFILIATE_PROP_FIRMS: PropFirmAffiliate[] = [
-  // TIER 1 - Verified & Active
+  // TIER 1 - Verified & Active with REAL promo codes
+  {
+    name: 'Earn2Trade',
+    slug: 'earn2trade',
+    affiliateLink: 'https://www.earn2trade.com/trader-career-path?a_pid=scanner-40&a_bid=8d7b4b9e',
+    promoCode: 'SCANNER-40', // ✅ VRAI CODE - 50% OFF
+    hasAffiliate: true,
+    verified: true,
+    featured: true,
+  },
+  {
+    name: 'FORFX',
+    slug: 'forfx',
+    affiliateLink: 'https://forfx.com/?campaign=propfirmscanner&ref=286341',
+    promoCode: 'SCANNER10', // ✅ VRAI CODE - 10% OFF
+    hasAffiliate: true,
+    verified: true,
+    featured: true,
+  },
+  {
+    name: 'FunderPro',
+    slug: 'funderpro',
+    affiliateLink: 'https://funderpro.cxclick.com/visit/?bta=47056&brand=funderpro',
+    promoCode: 'pfs40', // ✅ VRAI CODE - 10% OFF
+    hasAffiliate: true,
+    verified: true,
+    featured: true,
+  },
   {
     name: 'The 5%ers',
     slug: 'the5ers',
@@ -180,7 +207,7 @@ export const NON_AFFILIATE_PROP_FIRMS: PropFirmAffiliate[] = [
   { name: 'ThinkCapital', slug: 'thinkcapital', affiliateLink: null, promoCode: null, hasAffiliate: false, verified: false, featured: false },
   { name: 'FXIFY', slug: 'fxify', affiliateLink: null, promoCode: null, hasAffiliate: false, verified: false, featured: false },
   { name: 'Traders Launch', slug: 'traders-launch', affiliateLink: null, promoCode: null, hasAffiliate: false, verified: false, featured: false },
-  { name: 'FORFX', slug: 'forfx', affiliateLink: null, promoCode: null, hasAffiliate: false, verified: false, featured: false },
+  
   { name: 'Lark Funding', slug: 'lark-funding', affiliateLink: null, promoCode: null, hasAffiliate: false, verified: false, featured: false },
   { name: 'My Funded Futures', slug: 'my-funded-futures', affiliateLink: null, promoCode: null, hasAffiliate: false, verified: false, featured: false },
   { name: 'Ment Funding', slug: 'ment-funding', affiliateLink: null, promoCode: null, hasAffiliate: false, verified: false, featured: false },
@@ -202,7 +229,7 @@ export const NON_AFFILIATE_PROP_FIRMS: PropFirmAffiliate[] = [
   { name: 'City Traders Imperium', slug: 'city-traders-imperium', affiliateLink: null, promoCode: null, hasAffiliate: false, verified: false, featured: false },
   { name: 'Darwinex Zero', slug: 'darwinex-zero', affiliateLink: null, promoCode: null, hasAffiliate: false, verified: false, featured: false },
   { name: 'E8 Markets', slug: 'e8-markets', affiliateLink: null, promoCode: null, hasAffiliate: false, verified: false, featured: false },
-  { name: 'Earn2Trade', slug: 'earn2trade', affiliateLink: null, promoCode: null, hasAffiliate: false, verified: false, featured: false },
+  
   { name: 'Elite Trader Funding', slug: 'elite-trader-funding', affiliateLink: null, promoCode: null, hasAffiliate: false, verified: false, featured: false },
   { name: 'Finotive Funding', slug: 'finotive-funding', affiliateLink: null, promoCode: null, hasAffiliate: false, verified: false, featured: false },
   { name: 'Fintokei', slug: 'fintokei', affiliateLink: null, promoCode: null, hasAffiliate: false, verified: false, featured: false },
@@ -213,7 +240,7 @@ export const NON_AFFILIATE_PROP_FIRMS: PropFirmAffiliate[] = [
   { name: 'FundedNext Futures', slug: 'fundednext-futures', affiliateLink: null, promoCode: null, hasAffiliate: false, verified: false, featured: false },
   { name: 'FundedPrime', slug: 'fundedprime', affiliateLink: null, promoCode: null, hasAffiliate: false, verified: false, featured: false },
   { name: 'FundedTech', slug: 'fundedtech', affiliateLink: null, promoCode: null, hasAffiliate: false, verified: false, featured: false },
-  { name: 'FunderPro', slug: 'funderpro', affiliateLink: null, promoCode: null, hasAffiliate: false, verified: false, featured: false },
+  
   { name: 'Hantec Trader', slug: 'hantec-trader', affiliateLink: null, promoCode: null, hasAffiliate: false, verified: false, featured: false },
   { name: 'Hola Prime', slug: 'hola-prime', affiliateLink: null, promoCode: null, hasAffiliate: false, verified: false, featured: false },
   { name: 'IC Funded', slug: 'ic-funded', affiliateLink: null, promoCode: null, hasAffiliate: false, verified: false, featured: false },
