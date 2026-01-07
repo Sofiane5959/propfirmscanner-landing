@@ -1,9 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Metadata } from 'next';
 import Link from 'next/link';
-import Image from 'next/image';
 import { 
   Clock, ArrowRight, Search, Star, BookOpen, 
   Shield, Brain, TrendingUp, Filter, User,
@@ -23,19 +21,30 @@ interface BlogPost {
   readTime: string;
   category: 'Guides' | 'Rules Decoded' | 'Reviews' | 'Psychology';
   featured: boolean;
-  image: string;
   tags: string[];
 }
 
 // =============================================================================
-// BLOG DATA - Images génériques par catégorie
+// CATEGORY STYLING
 // =============================================================================
 
-const CATEGORY_IMAGES: Record<string, string> = {
-  'Guides': 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=80', // Trading charts
-  'Rules Decoded': 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&q=80', // Documents/rules
-  'Reviews': 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80', // Analytics
-  'Psychology': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80', // Mind/thinking
+const CATEGORY_COLORS: Record<string, { bg: string; gradient: string }> = {
+  'Guides': { 
+    bg: 'bg-emerald-500/20', 
+    gradient: 'from-emerald-600/30 via-emerald-500/20 to-teal-500/30' 
+  },
+  'Rules Decoded': { 
+    bg: 'bg-blue-500/20', 
+    gradient: 'from-blue-600/30 via-blue-500/20 to-indigo-500/30' 
+  },
+  'Reviews': { 
+    bg: 'bg-purple-500/20', 
+    gradient: 'from-purple-600/30 via-purple-500/20 to-pink-500/30' 
+  },
+  'Psychology': { 
+    bg: 'bg-orange-500/20', 
+    gradient: 'from-orange-600/30 via-orange-500/20 to-amber-500/30' 
+  },
 };
 
 const CATEGORY_ICONS: Record<string, typeof BookOpen> = {
@@ -44,6 +53,10 @@ const CATEGORY_ICONS: Record<string, typeof BookOpen> = {
   'Reviews': TrendingUp,
   'Psychology': Brain,
 };
+
+// =============================================================================
+// BLOG DATA
+// =============================================================================
 
 const blogPosts: BlogPost[] = [
   {
@@ -55,7 +68,6 @@ const blogPosts: BlogPost[] = [
     readTime: '10 min read',
     category: 'Guides',
     featured: true,
-    image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=80',
     tags: ['beginner', 'comparison', 'strategy'],
   },
   {
@@ -66,7 +78,6 @@ const blogPosts: BlogPost[] = [
     readTime: '8 min read',
     category: 'Rules Decoded',
     featured: false,
-    image: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80',
     tags: ['news trading', 'rules', 'restrictions'],
   },
   {
@@ -77,7 +88,6 @@ const blogPosts: BlogPost[] = [
     readTime: '7 min read',
     category: 'Rules Decoded',
     featured: false,
-    image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80',
     tags: ['consistency', 'rules', 'challenge'],
   },
   {
@@ -89,7 +99,6 @@ const blogPosts: BlogPost[] = [
     readTime: '12 min read',
     category: 'Guides',
     featured: true,
-    image: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&q=80',
     tags: ['strategy', 'challenge', 'tips'],
   },
   {
@@ -101,7 +110,6 @@ const blogPosts: BlogPost[] = [
     readTime: '15 min read',
     category: 'Reviews',
     featured: true,
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80',
     tags: ['ranking', '2025', 'comparison'],
   },
   {
@@ -112,7 +120,6 @@ const blogPosts: BlogPost[] = [
     readTime: '8 min read',
     category: 'Rules Decoded',
     featured: false,
-    image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=80',
     tags: ['drawdown', 'risk management', 'rules'],
   },
   {
@@ -123,7 +130,6 @@ const blogPosts: BlogPost[] = [
     readTime: '6 min read',
     category: 'Guides',
     featured: false,
-    image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&q=80',
     tags: ['payout', 'withdrawal', 'money'],
   },
   {
@@ -134,7 +140,6 @@ const blogPosts: BlogPost[] = [
     readTime: '9 min read',
     category: 'Psychology',
     featured: false,
-    image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=80',
     tags: ['psychology', 'mindset', 'failure'],
   },
   {
@@ -145,10 +150,47 @@ const blogPosts: BlogPost[] = [
     readTime: '7 min read',
     category: 'Guides',
     featured: false,
-    image: 'https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?w=800&q=80',
     tags: ['scaling', 'growth', 'funded'],
   },
 ];
+
+// =============================================================================
+// CATEGORY IMAGE COMPONENT (SVG Placeholder)
+// =============================================================================
+
+function CategoryImage({ category, className = '' }: { category: string; className?: string }) {
+  const colors = CATEGORY_COLORS[category] || CATEGORY_COLORS['Guides'];
+  const Icon = CATEGORY_ICONS[category] || BookOpen;
+  
+  return (
+    <div className={`relative overflow-hidden bg-gradient-to-br ${colors.gradient} ${className}`}>
+      {/* Decorative pattern */}
+      <svg 
+        className="absolute inset-0 w-full h-full opacity-30"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+      >
+        <defs>
+          <pattern id={`grid-${category}`} width="10" height="10" patternUnits="userSpaceOnUse">
+            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-white/20" />
+          </pattern>
+        </defs>
+        <rect width="100" height="100" fill={`url(#grid-${category})`} />
+      </svg>
+      
+      {/* Decorative circles */}
+      <div className="absolute -top-4 -right-4 w-24 h-24 bg-white/5 rounded-full" />
+      <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-white/5 rounded-full" />
+      
+      {/* Center icon */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="p-4 bg-white/10 rounded-2xl backdrop-blur-sm">
+          <Icon className="w-8 h-8 text-white/80" />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // =============================================================================
 // COMPONENTS
@@ -163,26 +205,18 @@ function FeaturedCard({ post }: { post: BlogPost }) {
       href={`/blog/${post.slug}`}
       className="group relative overflow-hidden bg-gray-900 rounded-2xl border border-gray-800 hover:border-emerald-500/50 transition-all duration-300"
     >
-      {/* Image */}
-      <div className="relative h-48 overflow-hidden">
-        <Image
-          src={post.image}
-          alt={post.title}
-          fill
-          className="object-cover transition-transform duration-500 group-hover:scale-110"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent" />
-        
-        {/* Badges */}
-        <div className="absolute top-4 left-4 flex items-center gap-2">
-          <span className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/90 text-white text-xs font-medium rounded-full backdrop-blur-sm">
-            <Icon className="w-3 h-3" />
-            {post.category}
-          </span>
-          <span className="px-2 py-1 bg-yellow-500/90 text-gray-900 text-xs font-bold rounded-full">
-            Featured
-          </span>
-        </div>
+      {/* Image placeholder */}
+      <CategoryImage category={post.category} className="h-48" />
+      
+      {/* Badges */}
+      <div className="absolute top-4 left-4 flex items-center gap-2">
+        <span className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/90 text-white text-xs font-medium rounded-full backdrop-blur-sm">
+          <Icon className="w-3 h-3" />
+          {post.category}
+        </span>
+        <span className="px-2 py-1 bg-yellow-500/90 text-gray-900 text-xs font-bold rounded-full">
+          Featured
+        </span>
       </div>
 
       {/* Content */}
@@ -224,27 +258,19 @@ function ArticleCard({ post }: { post: BlogPost }) {
       href={`/blog/${post.slug}`}
       className="group flex flex-col bg-gray-900/50 rounded-xl border border-gray-800 overflow-hidden hover:border-emerald-500/30 hover:bg-gray-900 transition-all duration-300"
     >
-      {/* Image */}
-      <div className="relative h-40 overflow-hidden">
-        <Image
-          src={post.image}
-          alt={post.title}
-          fill
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-60" />
-        
-        {/* Category Badge */}
-        <div className="absolute top-3 left-3">
-          <span className="flex items-center gap-1.5 px-2.5 py-1 bg-gray-900/80 text-gray-300 text-xs font-medium rounded-full backdrop-blur-sm">
-            <Icon className="w-3 h-3" />
-            {post.category}
-          </span>
-        </div>
+      {/* Image placeholder */}
+      <CategoryImage category={post.category} className="h-40" />
+      
+      {/* Category Badge */}
+      <div className="absolute top-3 left-3">
+        <span className="flex items-center gap-1.5 px-2.5 py-1 bg-gray-900/80 text-gray-300 text-xs font-medium rounded-full backdrop-blur-sm">
+          <Icon className="w-3 h-3" />
+          {post.category}
+        </span>
       </div>
 
       {/* Content */}
-      <div className="flex-1 p-5">
+      <div className="flex-1 p-5 relative">
         <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-emerald-400 transition-colors line-clamp-2">
           {post.title}
         </h3>
@@ -411,7 +437,7 @@ export default function BlogPage() {
   const categories = ['All', 'Guides', 'Rules Decoded', 'Reviews', 'Psychology'];
 
   return (
-    <div className="min-h-screen bg-gray-950">
+    <div className="min-h-screen bg-gray-950 pt-20">
       {/* Hero Header */}
       <header className="relative overflow-hidden bg-gradient-to-b from-gray-900 via-gray-900 to-gray-950 border-b border-gray-800">
         <div className="absolute inset-0 overflow-hidden">
