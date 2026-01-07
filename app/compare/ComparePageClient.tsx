@@ -256,7 +256,7 @@ const MultiSelectPills = ({
   onChange, 
   colorClass = 'bg-emerald-500'
 }: { 
-  options: readonly string[] | { key: string; label: string; icon?: any }[]
+  options: readonly string[] | readonly { key: string; label: string; icon?: any }[]
   selected: string[]
   onChange: (selected: string[]) => void
   colorClass?: string
