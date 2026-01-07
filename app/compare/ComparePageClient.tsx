@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useEffect, useCallback } from 'react'
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -9,7 +9,7 @@ import {
   Grid3X3, List, ExternalLink, Sparkles,
   AlertTriangle, BarChart3,
   Tag, Trophy, BadgeCheck, Copy, CheckCircle2,
-  ChevronLeft, ChevronRight, SlidersHorizontal, RotateCcw,
+  ChevronLeft, ChevronRight, RotateCcw,
   Heart, GitCompare, Zap, TrendingUp,
   DollarSign, Users, Flame, Layers
 } from 'lucide-react'
@@ -250,49 +250,68 @@ const FilterChip = ({ label, onRemove }: { label: string; onRemove: () => void }
   </span>
 )
 
-const MultiSelectPills = ({ 
-  options, 
-  selected, 
-  onChange, 
-  colorClass = 'bg-emerald-500'
+// Filter Dropdown Component
+const FilterDropdown = ({ 
+  label, 
+  count, 
+  children,
+  colorClass = 'emerald'
 }: { 
-  options: readonly string[] | readonly { key: string; label: string; icon?: any }[]
-  selected: string[]
-  onChange: (selected: string[]) => void
-  colorClass?: string
+  label: string
+  count: number
+  children: React.ReactNode
+  colorClass?: 'emerald' | 'purple' | 'yellow' | 'blue' | 'orange'
 }) => {
-  const toggle = (key: string) => {
-    if (selected.includes(key)) {
-      onChange(selected.filter(s => s !== key))
-    } else {
-      onChange([...selected, key])
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+  
+  // Close on click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+      }
     }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+  
+  const hasSelection = count > 0
+  
+  const colorStyles = {
+    emerald: { bg: 'bg-emerald-500/20', text: 'text-emerald-400', ring: 'ring-emerald-500/50', badge: 'bg-emerald-500' },
+    purple: { bg: 'bg-purple-500/20', text: 'text-purple-400', ring: 'ring-purple-500/50', badge: 'bg-purple-500' },
+    yellow: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', ring: 'ring-yellow-500/50', badge: 'bg-yellow-500' },
+    blue: { bg: 'bg-blue-500/20', text: 'text-blue-400', ring: 'ring-blue-500/50', badge: 'bg-blue-500' },
+    orange: { bg: 'bg-orange-500/20', text: 'text-orange-400', ring: 'ring-orange-500/50', badge: 'bg-orange-500' },
   }
   
+  const colors = colorStyles[colorClass]
+  
   return (
-    <div className="flex flex-wrap gap-1.5">
-      {options.map((opt) => {
-        const key = typeof opt === 'string' ? opt : opt.key
-        const label = typeof opt === 'string' ? opt : opt.label
-        const Icon = typeof opt === 'object' && opt.icon ? opt.icon : null
-        const isSelected = selected.includes(key)
-        
-        return (
-          <button
-            key={key}
-            onClick={() => toggle(key)}
-            className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
-              isSelected
-                ? `${colorClass} text-white`
-                : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
-            }`}
-          >
-            {Icon && <Icon className="w-3 h-3" />}
-            {label}
-            {isSelected && <Check className="w-3 h-3" />}
-          </button>
-        )
-      })}
+    <div className="relative" ref={dropdownRef}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 whitespace-nowrap ${
+          hasSelection 
+            ? `${colors.bg} ${colors.text} ring-1 ${colors.ring}`
+            : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+        }`}
+      >
+        {label}
+        {hasSelection && (
+          <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${colors.badge} text-white`}>
+            {count}
+          </span>
+        )}
+        <ChevronDown className={`w-3 h-3 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+      
+      {isOpen && (
+        <div className="absolute top-full left-0 mt-1 p-3 bg-gray-800 border border-gray-700 rounded-xl shadow-xl z-50 min-w-[200px] max-w-[280px]">
+          {children}
+        </div>
+      )}
     </div>
   )
 }
@@ -526,7 +545,6 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
   const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'rating')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [currentPage, setCurrentPage] = useState(1)
-  const [showFilters, setShowFilters] = useState(false)
   const [favorites, setFavorites] = useState<string[]>([])
   const [compareList, setCompareList] = useState<string[]>([])
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
@@ -787,59 +805,155 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
             </div>
           </div>
           
-          {/* SEARCH & QUICK FILTERS */}
+          {/* SEARCH & ALL FILTERS IN BAR */}
           <div className="space-y-3">
+            {/* Main Filter Bar */}
             <div className="flex flex-wrap items-center gap-2">
-              <div className="relative flex-1 min-w-[180px] max-w-[280px]">
+              {/* Search */}
+              <div className="relative min-w-[160px] max-w-[200px]">
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                 <input 
                   type="text" 
                   value={filters.search} 
                   onChange={(e) => setFilters(f => ({ ...f, search: e.target.value }))} 
-                  placeholder="Search firms..." 
-                  className="w-full pl-8 pr-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm placeholder:text-gray-500 focus:outline-none focus:border-emerald-500" 
+                  placeholder="Search..." 
+                  className="w-full pl-8 pr-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-white text-xs placeholder:text-gray-500 focus:outline-none focus:border-emerald-500" 
                 />
               </div>
               
-              {/* Quick Market Pills */}
-              <div className="flex items-center gap-1 flex-wrap">
-                <button 
-                  onClick={() => setFilters(f => ({ ...f, markets: [] }))} 
-                  className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${filters.markets.length === 0 ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}
-                >
-                  All
-                </button>
-                {MARKET_OPTIONS.map(market => (
-                  <button 
-                    key={market} 
-                    onClick={() => setFilters(f => ({ 
-                      ...f, 
-                      markets: f.markets.includes(market) ? f.markets.filter(m => m !== market) : [...f.markets, market] 
-                    }))} 
-                    className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${filters.markets.includes(market) ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}
-                  >
-                    {market}
-                  </button>
-                ))}
-              </div>
+              {/* Markets Dropdown */}
+              <FilterDropdown label="Markets" count={filters.markets.length}>
+                <div className="flex flex-wrap gap-1.5">
+                  {MARKET_OPTIONS.map(market => (
+                    <button 
+                      key={market} 
+                      onClick={() => setFilters(f => ({ 
+                        ...f, 
+                        markets: f.markets.includes(market) ? f.markets.filter(m => m !== market) : [...f.markets, market] 
+                      }))} 
+                      className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.markets.includes(market) ? 'bg-emerald-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}
+                    >
+                      {market}
+                      {filters.markets.includes(market) && <Check className="w-3 h-3" />}
+                    </button>
+                  ))}
+                </div>
+              </FilterDropdown>
               
-              {/* Deals Button */}
+              {/* Platforms Dropdown */}
+              <FilterDropdown label="Platform" count={filters.platforms.length}>
+                <div className="flex flex-wrap gap-1.5 max-h-[200px] overflow-y-auto">
+                  {availablePlatforms.map(platform => (
+                    <button 
+                      key={platform} 
+                      onClick={() => setFilters(f => ({ 
+                        ...f, 
+                        platforms: f.platforms.includes(platform) ? f.platforms.filter(p => p !== platform) : [...f.platforms, platform] 
+                      }))} 
+                      className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.platforms.includes(platform) ? 'bg-emerald-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}
+                    >
+                      {platform}
+                      {filters.platforms.includes(platform) && <Check className="w-3 h-3" />}
+                    </button>
+                  ))}
+                </div>
+              </FilterDropdown>
+              
+              {/* Challenge Type Dropdown */}
+              <FilterDropdown label="Challenge" count={filters.challengeTypes.length} colorClass="purple">
+                <div className="flex flex-wrap gap-1.5">
+                  {CHALLENGE_TYPE_OPTIONS.map(type => (
+                    <button 
+                      key={type} 
+                      onClick={() => setFilters(f => ({ 
+                        ...f, 
+                        challengeTypes: f.challengeTypes.includes(type) ? f.challengeTypes.filter(t => t !== type) : [...f.challengeTypes, type] 
+                      }))} 
+                      className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.challengeTypes.includes(type) ? 'bg-purple-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}
+                    >
+                      {type}
+                      {filters.challengeTypes.includes(type) && <Check className="w-3 h-3" />}
+                    </button>
+                  ))}
+                </div>
+              </FilterDropdown>
+              
+              {/* Trading Style Dropdown */}
+              <FilterDropdown label="Style" count={filters.tradingStyles.length}>
+                <div className="flex flex-wrap gap-1.5">
+                  {TRADING_STYLE_OPTIONS.map(style => (
+                    <button 
+                      key={style.key} 
+                      onClick={() => setFilters(f => ({ 
+                        ...f, 
+                        tradingStyles: f.tradingStyles.includes(style.key) ? f.tradingStyles.filter(s => s !== style.key) : [...f.tradingStyles, style.key] 
+                      }))} 
+                      className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.tradingStyles.includes(style.key) ? 'bg-emerald-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}
+                    >
+                      {style.label}
+                      {filters.tradingStyles.includes(style.key) && <Check className="w-3 h-3" />}
+                    </button>
+                  ))}
+                </div>
+              </FilterDropdown>
+              
+              {/* Rating Dropdown */}
+              <FilterDropdown label="Rating" count={filters.ratings.length} colorClass="yellow">
+                <div className="flex flex-wrap gap-1.5">
+                  {RATING_OPTIONS.map(rating => (
+                    <button 
+                      key={rating} 
+                      onClick={() => setFilters(f => ({ 
+                        ...f, 
+                        ratings: f.ratings.includes(rating) ? f.ratings.filter(r => r !== rating) : [...f.ratings, rating] 
+                      }))} 
+                      className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.ratings.includes(rating) ? 'bg-yellow-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}
+                    >
+                      <Star className="w-3 h-3" />{rating}+
+                      {filters.ratings.includes(rating) && <Check className="w-3 h-3" />}
+                    </button>
+                  ))}
+                </div>
+              </FilterDropdown>
+              
+              {/* Best For Dropdown */}
+              <FilterDropdown label="Best For" count={filters.bestFor.length} colorClass="blue">
+                <div className="flex flex-wrap gap-1.5">
+                  {BEST_FOR_OPTIONS.map(opt => {
+                    const Icon = opt.icon
+                    return (
+                      <button 
+                        key={opt.key} 
+                        onClick={() => setFilters(f => ({ 
+                          ...f, 
+                          bestFor: f.bestFor.includes(opt.key) ? f.bestFor.filter(b => b !== opt.key) : [...f.bestFor, opt.key] 
+                        }))} 
+                        className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.bestFor.includes(opt.key) ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}
+                      >
+                        <Icon className="w-3 h-3" />{opt.label}
+                        {filters.bestFor.includes(opt.key) && <Check className="w-3 h-3" />}
+                      </button>
+                    )
+                  })}
+                </div>
+              </FilterDropdown>
+              
+              {/* Price Dropdown */}
+              <FilterDropdown label={filters.priceRange[1] < 1000 ? `≤$${filters.priceRange[1]}` : 'Price'} count={filters.priceRange[1] < 1000 ? 1 : 0}>
+                <div className="w-[220px]">
+                  <PriceSlider value={filters.priceRange} onChange={(v) => setFilters(f => ({ ...f, priceRange: v }))} />
+                </div>
+              </FilterDropdown>
+              
+              {/* Deals Toggle */}
               {stats.withDiscounts > 0 && (
                 <button 
                   onClick={() => setFilters(f => ({ ...f, hasDiscount: !f.hasDiscount }))} 
-                  className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.hasDiscount ? 'bg-orange-500/20 text-orange-400 ring-1 ring-orange-500/50' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}
+                  className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.hasDiscount ? 'bg-orange-500 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}
                 >
                   <Tag className="w-3 h-3" /> Deals ({stats.withDiscounts})
                 </button>
               )}
-              
-              {/* More Filters Button */}
-              <button 
-                onClick={() => setShowFilters(!showFilters)} 
-                className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${showFilters ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}
-              >
-                <SlidersHorizontal className="w-3 h-3" /> Filters
-              </button>
               
               {/* Sort */}
               <select 
@@ -849,80 +963,22 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
               >
                 {SORT_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
               </select>
+              
+              {/* Reset */}
+              {activeFilterChips.length > 0 && (
+                <button 
+                  onClick={resetFilters} 
+                  className="px-2.5 py-1.5 rounded-lg text-xs font-medium text-gray-500 hover:text-red-400 hover:bg-gray-800 flex items-center gap-1"
+                >
+                  <RotateCcw className="w-3 h-3" /> Reset
+                </button>
+              )}
             </div>
             
-            {/* EXPANDED FILTERS PANEL */}
-            {showFilters && (
-              <div className="p-4 bg-gray-800/50 border border-gray-700 rounded-xl space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  
-                  {/* Price Range */}
-                  <div>
-                    <label className="block text-xs font-medium text-gray-400 mb-2">Max Price</label>
-                    <PriceSlider value={filters.priceRange} onChange={(v) => setFilters(f => ({ ...f, priceRange: v }))} />
-                  </div>
-                  
-                  {/* Platforms */}
-                  <div>
-                    <label className="block text-xs font-medium text-gray-400 mb-2">Platforms</label>
-                    <MultiSelectPills
-                      options={availablePlatforms}
-                      selected={filters.platforms}
-                      onChange={(v) => setFilters(f => ({ ...f, platforms: v }))}
-                    />
-                  </div>
-                  
-                  {/* Challenge Types */}
-                  <div>
-                    <label className="block text-xs font-medium text-gray-400 mb-2">Challenge Type</label>
-                    <MultiSelectPills
-                      options={CHALLENGE_TYPE_OPTIONS}
-                      selected={filters.challengeTypes}
-                      onChange={(v) => setFilters(f => ({ ...f, challengeTypes: v }))}
-                      colorClass="bg-purple-500"
-                    />
-                  </div>
-                  
-                  {/* Trading Styles */}
-                  <div>
-                    <label className="block text-xs font-medium text-gray-400 mb-2">Trading Style</label>
-                    <MultiSelectPills
-                      options={TRADING_STYLE_OPTIONS.map(s => ({ key: s.key, label: s.label }))}
-                      selected={filters.tradingStyles}
-                      onChange={(v) => setFilters(f => ({ ...f, tradingStyles: v }))}
-                    />
-                  </div>
-                  
-                  {/* Ratings */}
-                  <div>
-                    <label className="block text-xs font-medium text-gray-400 mb-2">Min Rating</label>
-                    <MultiSelectPills
-                      options={RATING_OPTIONS.map(r => ({ key: String(r), label: `${r}+` }))}
-                      selected={filters.ratings.map(String)}
-                      onChange={(v) => setFilters(f => ({ ...f, ratings: v.map(Number) }))}
-                      colorClass="bg-yellow-500"
-                    />
-                  </div>
-                  
-                  {/* Best For */}
-                  <div>
-                    <label className="block text-xs font-medium text-gray-400 mb-2">Best For</label>
-                    <MultiSelectPills
-                      options={BEST_FOR_OPTIONS}
-                      selected={filters.bestFor}
-                      onChange={(v) => setFilters(f => ({ ...f, bestFor: v }))}
-                      colorClass="bg-blue-500"
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-            
-            {/* ACTIVE FILTER CHIPS */}
+            {/* Active Filter Chips (compact) */}
             {activeFilterChips.length > 0 && (
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex flex-wrap items-center gap-1.5">
                 {activeFilterChips.map(chip => <FilterChip key={chip.key} label={chip.label} onRemove={chip.onRemove} />)}
-                <button onClick={resetFilters} className="text-xs text-gray-500 hover:text-red-400 flex items-center gap-1"><RotateCcw className="w-3 h-3" /> Reset All</button>
               </div>
             )}
           </div>
