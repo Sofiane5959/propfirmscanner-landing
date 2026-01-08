@@ -5,47 +5,22 @@ import Link from 'next/link';
 import { 
   Clock, ArrowRight, Search, Star, BookOpen, 
   Shield, Brain, TrendingUp, Filter, User,
-  Calendar, ChevronRight, Mail, Sparkles
+  Calendar, ChevronRight, ChevronLeft, Mail, Sparkles,
+  Home
 } from 'lucide-react';
+import { 
+  blogPosts, 
+  CATEGORY_COLORS, 
+  getCategoryCounts, 
+  getAllTags,
+  type BlogPost 
+} from '@/lib/blog-data';
 
 // =============================================================================
-// TYPES
+// CONSTANTS
 // =============================================================================
 
-interface BlogPost {
-  slug: string;
-  title: string;
-  description: string;
-  date: string;
-  updatedDate?: string;
-  readTime: string;
-  category: 'Guides' | 'Rules Decoded' | 'Reviews' | 'Psychology';
-  featured: boolean;
-  tags: string[];
-}
-
-// =============================================================================
-// CATEGORY STYLING
-// =============================================================================
-
-const CATEGORY_COLORS: Record<string, { bg: string; gradient: string }> = {
-  'Guides': { 
-    bg: 'bg-emerald-500/20', 
-    gradient: 'from-emerald-600/30 via-emerald-500/20 to-teal-500/30' 
-  },
-  'Rules Decoded': { 
-    bg: 'bg-blue-500/20', 
-    gradient: 'from-blue-600/30 via-blue-500/20 to-indigo-500/30' 
-  },
-  'Reviews': { 
-    bg: 'bg-purple-500/20', 
-    gradient: 'from-purple-600/30 via-purple-500/20 to-pink-500/30' 
-  },
-  'Psychology': { 
-    bg: 'bg-orange-500/20', 
-    gradient: 'from-orange-600/30 via-orange-500/20 to-amber-500/30' 
-  },
-};
+const POSTS_PER_PAGE = 9;
 
 const CATEGORY_ICONS: Record<string, typeof BookOpen> = {
   'Guides': BookOpen,
@@ -55,107 +30,7 @@ const CATEGORY_ICONS: Record<string, typeof BookOpen> = {
 };
 
 // =============================================================================
-// BLOG DATA
-// =============================================================================
-
-const blogPosts: BlogPost[] = [
-  {
-    slug: 'how-to-choose-right-prop-firm',
-    title: 'How to Choose the Right Prop Firm for Your Trading Style',
-    description: 'With 50+ prop firms available, how do you pick the right one? This guide breaks down key factors based on your trading style and budget.',
-    date: 'December 25, 2024',
-    updatedDate: 'January 2025',
-    readTime: '10 min read',
-    category: 'Guides',
-    featured: true,
-    tags: ['beginner', 'comparison', 'strategy'],
-  },
-  {
-    slug: 'news-trading-rules-explained',
-    title: 'News Trading Rules Explained: What Prop Firms Actually Allow',
-    description: 'Confused about news trading rules? Learn which prop firms allow it, which restrict it, and how to trade news without breaking rules.',
-    date: 'December 25, 2024',
-    readTime: '8 min read',
-    category: 'Rules Decoded',
-    featured: false,
-    tags: ['news trading', 'rules', 'restrictions'],
-  },
-  {
-    slug: 'consistency-rules-explained',
-    title: 'Consistency Rules Explained: The Hidden Rule That Fails Traders',
-    description: 'Consistency rules are the most misunderstood requirement. Learn what they are, which firms have them, and how to pass.',
-    date: 'December 25, 2024',
-    readTime: '7 min read',
-    category: 'Rules Decoded',
-    featured: false,
-    tags: ['consistency', 'rules', 'challenge'],
-  },
-  {
-    slug: 'how-to-pass-prop-firm-challenge',
-    title: 'How to Pass Your Prop Firm Challenge: 10 Proven Strategies',
-    description: 'Learn the exact strategies successful traders use to pass prop firm challenges. From risk management to psychology.',
-    date: 'December 20, 2024',
-    updatedDate: 'January 2025',
-    readTime: '12 min read',
-    category: 'Guides',
-    featured: true,
-    tags: ['strategy', 'challenge', 'tips'],
-  },
-  {
-    slug: 'best-prop-firms-2025',
-    title: 'Best Prop Firms 2025: Complete Ranking & Comparison',
-    description: 'Our comprehensive ranking of the best prop trading firms in 2025. Compare fees, profit splits, rules, and find the perfect firm.',
-    date: 'December 18, 2024',
-    updatedDate: 'January 2025',
-    readTime: '15 min read',
-    category: 'Reviews',
-    featured: true,
-    tags: ['ranking', '2025', 'comparison'],
-  },
-  {
-    slug: 'trailing-drawdown-explained',
-    title: "Trailing Drawdown Explained: Don't Let This Rule Catch You",
-    description: 'Trailing drawdown has ended more challenges than any other rule. Learn how it works and strategies to manage it.',
-    date: 'December 15, 2024',
-    readTime: '8 min read',
-    category: 'Rules Decoded',
-    featured: false,
-    tags: ['drawdown', 'risk management', 'rules'],
-  },
-  {
-    slug: 'prop-firm-payout-guide',
-    title: 'Prop Firm Payouts: How to Get Paid Fast',
-    description: 'Everything about prop firm payouts. Learn about schedules, methods, and how to ensure you get paid quickly.',
-    date: 'December 12, 2024',
-    readTime: '6 min read',
-    category: 'Guides',
-    featured: false,
-    tags: ['payout', 'withdrawal', 'money'],
-  },
-  {
-    slug: 'why-traders-fail-challenges',
-    title: 'Why 90% of Traders Fail Prop Firm Challenges',
-    description: 'Understand the real reasons most traders fail and learn strategies to join the successful 10%.',
-    date: 'December 10, 2024',
-    readTime: '9 min read',
-    category: 'Psychology',
-    featured: false,
-    tags: ['psychology', 'mindset', 'failure'],
-  },
-  {
-    slug: 'scaling-plans-explained',
-    title: 'Prop Firm Scaling Plans: How to Grow Your Account',
-    description: 'Learn how scaling plans work and strategies to maximize your funded account growth from $10K to $1M+.',
-    date: 'December 8, 2024',
-    readTime: '7 min read',
-    category: 'Guides',
-    featured: false,
-    tags: ['scaling', 'growth', 'funded'],
-  },
-];
-
-// =============================================================================
-// CATEGORY IMAGE COMPONENT (SVG Placeholder)
+// CATEGORY IMAGE COMPONENT (SVG Gradient)
 // =============================================================================
 
 function CategoryImage({ category, className = '' }: { category: string; className?: string }) {
@@ -171,11 +46,11 @@ function CategoryImage({ category, className = '' }: { category: string; classNa
         preserveAspectRatio="none"
       >
         <defs>
-          <pattern id={`grid-${category}`} width="10" height="10" patternUnits="userSpaceOnUse">
+          <pattern id={`grid-${category.replace(/\s+/g, '-')}`} width="10" height="10" patternUnits="userSpaceOnUse">
             <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-white/20" />
           </pattern>
         </defs>
-        <rect width="100" height="100" fill={`url(#grid-${category})`} />
+        <rect width="100" height="100" fill={`url(#grid-${category.replace(/\s+/g, '-')})`} />
       </svg>
       
       {/* Decorative circles */}
@@ -193,10 +68,37 @@ function CategoryImage({ category, className = '' }: { category: string; classNa
 }
 
 // =============================================================================
-// COMPONENTS
+// BREADCRUMB COMPONENT
 // =============================================================================
 
-// Featured Article Card (Large)
+function Breadcrumb() {
+  return (
+    <nav aria-label="Breadcrumb" className="mb-6">
+      <ol className="flex items-center gap-2 text-sm">
+        <li>
+          <Link 
+            href="/" 
+            className="flex items-center gap-1 text-gray-400 hover:text-white transition-colors"
+          >
+            <Home className="w-4 h-4" />
+            <span>Home</span>
+          </Link>
+        </li>
+        <li className="text-gray-600">
+          <ChevronRight className="w-4 h-4" />
+        </li>
+        <li>
+          <span className="text-emerald-400 font-medium">Blog</span>
+        </li>
+      </ol>
+    </nav>
+  );
+}
+
+// =============================================================================
+// FEATURED CARD COMPONENT
+// =============================================================================
+
 function FeaturedCard({ post }: { post: BlogPost }) {
   const Icon = CATEGORY_ICONS[post.category];
   
@@ -249,28 +151,32 @@ function FeaturedCard({ post }: { post: BlogPost }) {
   );
 }
 
-// Regular Article Card
+// =============================================================================
+// ARTICLE CARD COMPONENT
+// =============================================================================
+
 function ArticleCard({ post }: { post: BlogPost }) {
   const Icon = CATEGORY_ICONS[post.category];
+  const colors = CATEGORY_COLORS[post.category];
   
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className="group flex flex-col bg-gray-900/50 rounded-xl border border-gray-800 overflow-hidden hover:border-emerald-500/30 hover:bg-gray-900 transition-all duration-300"
+      className="group relative flex flex-col bg-gray-900/50 rounded-xl border border-gray-800 overflow-hidden hover:border-emerald-500/30 hover:bg-gray-900 transition-all duration-300"
     >
-      {/* Image placeholder */}
+      {/* Image placeholder - parent has relative */}
       <CategoryImage category={post.category} className="h-40" />
       
-      {/* Category Badge */}
+      {/* Category Badge - positioned absolute within the relative parent Link */}
       <div className="absolute top-3 left-3">
-        <span className="flex items-center gap-1.5 px-2.5 py-1 bg-gray-900/80 text-gray-300 text-xs font-medium rounded-full backdrop-blur-sm">
+        <span className={`flex items-center gap-1.5 px-2.5 py-1 ${colors.bg} ${colors.text} text-xs font-medium rounded-full backdrop-blur-sm border border-white/10`}>
           <Icon className="w-3 h-3" />
           {post.category}
         </span>
       </div>
 
       {/* Content */}
-      <div className="flex-1 p-5 relative">
+      <div className="flex-1 p-5">
         <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-emerald-400 transition-colors line-clamp-2">
           {post.title}
         </h3>
@@ -294,8 +200,105 @@ function ArticleCard({ post }: { post: BlogPost }) {
   );
 }
 
-// Sidebar Popular Posts
+// =============================================================================
+// PAGINATION COMPONENT
+// =============================================================================
+
+function Pagination({ 
+  currentPage, 
+  totalPages, 
+  onPageChange 
+}: { 
+  currentPage: number; 
+  totalPages: number; 
+  onPageChange: (page: number) => void;
+}) {
+  if (totalPages <= 1) return null;
+
+  const pages = [];
+  const showEllipsisStart = currentPage > 3;
+  const showEllipsisEnd = currentPage < totalPages - 2;
+
+  // Always show first page
+  pages.push(1);
+
+  if (showEllipsisStart) {
+    pages.push('...');
+  }
+
+  // Show pages around current
+  for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+    if (!pages.includes(i)) {
+      pages.push(i);
+    }
+  }
+
+  if (showEllipsisEnd) {
+    pages.push('...');
+  }
+
+  // Always show last page
+  if (totalPages > 1) {
+    pages.push(totalPages);
+  }
+
+  return (
+    <nav aria-label="Pagination" className="flex items-center justify-center gap-2 mt-12">
+      <button
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        className="flex items-center gap-1 px-4 py-2 bg-gray-800 text-gray-400 rounded-lg hover:bg-gray-700 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      >
+        <ChevronLeft className="w-4 h-4" />
+        Prev
+      </button>
+
+      <div className="flex items-center gap-1">
+        {pages.map((page, index) => (
+          page === '...' ? (
+            <span key={`ellipsis-${index}`} className="px-3 py-2 text-gray-500">...</span>
+          ) : (
+            <button
+              key={page}
+              onClick={() => onPageChange(page as number)}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                currentPage === page
+                  ? 'bg-emerald-500 text-white'
+                  : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'
+              }`}
+            >
+              {page}
+            </button>
+          )
+        ))}
+      </div>
+
+      <button
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        className="flex items-center gap-1 px-4 py-2 bg-gray-800 text-gray-400 rounded-lg hover:bg-gray-700 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      >
+        Next
+        <ChevronRight className="w-4 h-4" />
+      </button>
+    </nav>
+  );
+}
+
+// =============================================================================
+// SIDEBAR COMPONENTS
+// =============================================================================
+
 function PopularPosts({ posts }: { posts: BlogPost[] }) {
+  // Get top 4 articles (featured first, then by date)
+  const popularPosts = [...posts]
+    .sort((a, b) => {
+      if (a.featured && !b.featured) return -1;
+      if (!a.featured && b.featured) return 1;
+      return 0;
+    })
+    .slice(0, 4);
+
   return (
     <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-5">
       <h3 className="flex items-center gap-2 font-semibold text-white mb-4">
@@ -303,7 +306,7 @@ function PopularPosts({ posts }: { posts: BlogPost[] }) {
         Popular Articles
       </h3>
       <div className="space-y-4">
-        {posts.slice(0, 4).map((post, index) => (
+        {popularPosts.map((post, index) => (
           <Link
             key={post.slug}
             href={`/blog/${post.slug}`}
@@ -325,7 +328,6 @@ function PopularPosts({ posts }: { posts: BlogPost[] }) {
   );
 }
 
-// Newsletter Signup
 function NewsletterSignup() {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
@@ -335,7 +337,7 @@ function NewsletterSignup() {
     if (!email) return;
     
     setStatus('loading');
-    // Simulate API call
+    // Simulate API call - replace with real newsletter integration
     setTimeout(() => {
       setStatus('success');
       setEmail('');
@@ -380,18 +382,17 @@ function NewsletterSignup() {
   );
 }
 
-// Tags Cloud
 function TagsCloud({ posts }: { posts: BlogPost[] }) {
-  const allTags = Array.from(new Set(posts.flatMap(p => p.tags)));
+  const allTags = getAllTags();
   
   return (
     <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-5">
       <h3 className="font-semibold text-white mb-4">Topics</h3>
       <div className="flex flex-wrap gap-2">
-        {allTags.map(tag => (
+        {allTags.slice(0, 15).map(tag => (
           <span
             key={tag}
-            className="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white text-xs rounded-full cursor-pointer transition-colors"
+            className="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white text-xs rounded-full cursor-pointer transition-colors capitalize"
           >
             {tag}
           </span>
@@ -402,21 +403,32 @@ function TagsCloud({ posts }: { posts: BlogPost[] }) {
 }
 
 // =============================================================================
-// MAIN COMPONENT
+// EMPTY STATE COMPONENT
+// =============================================================================
+
+function EmptyState() {
+  return (
+    <div className="text-center py-16">
+      <div className="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+        <Search className="w-8 h-8 text-gray-600" />
+      </div>
+      <h3 className="text-white font-medium mb-2">No articles found</h3>
+      <p className="text-gray-500 text-sm">Try a different search term or category</p>
+    </div>
+  );
+}
+
+// =============================================================================
+// MAIN BLOG PAGE COMPONENT
 // =============================================================================
 
 export default function BlogPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
+  const [currentPage, setCurrentPage] = useState(1);
 
   // Category counts
-  const categoryCounts = useMemo(() => {
-    const counts: Record<string, number> = { All: blogPosts.length };
-    blogPosts.forEach(post => {
-      counts[post.category] = (counts[post.category] || 0) + 1;
-    });
-    return counts;
-  }, []);
+  const categoryCounts = useMemo(() => getCategoryCounts(), []);
 
   // Filter posts
   const filteredPosts = useMemo(() => {
@@ -431,10 +443,39 @@ export default function BlogPage() {
   }, [activeCategory, searchQuery]);
 
   // Separate featured and regular posts
-  const featuredPosts = filteredPosts.filter(p => p.featured);
-  const regularPosts = filteredPosts.filter(p => !p.featured);
+  const featuredPosts = useMemo(() => filteredPosts.filter(p => p.featured), [filteredPosts]);
+  const regularPosts = useMemo(() => filteredPosts.filter(p => !p.featured), [filteredPosts]);
+
+  // Determine which posts to show in the main grid
+  const postsForGrid = useMemo(() => {
+    if (searchQuery || activeCategory !== 'All') {
+      return filteredPosts; // Show all filtered posts including featured
+    }
+    return regularPosts; // Show only non-featured posts
+  }, [searchQuery, activeCategory, filteredPosts, regularPosts]);
+
+  // Pagination
+  const totalPages = Math.ceil(postsForGrid.length / POSTS_PER_PAGE);
+  const paginatedPosts = useMemo(() => {
+    const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
+    return postsForGrid.slice(startIndex, startIndex + POSTS_PER_PAGE);
+  }, [postsForGrid, currentPage]);
+
+  // Reset to page 1 when filters change
+  const handleCategoryChange = (category: string) => {
+    setActiveCategory(category);
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
 
   const categories = ['All', 'Guides', 'Rules Decoded', 'Reviews', 'Psychology'];
+
+  // Show featured section only on first page with no filters
+  const showFeaturedSection = featuredPosts.length > 0 && activeCategory === 'All' && !searchQuery && currentPage === 1;
 
   return (
     <div className="min-h-screen bg-gray-950 pt-20">
@@ -445,7 +486,10 @@ export default function BlogPage() {
           <div className="absolute top-1/2 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl transform -translate-y-1/2" />
         </div>
 
-        <div className="relative z-10 max-w-6xl mx-auto px-4 py-16">
+        <div className="relative z-10 max-w-6xl mx-auto px-4 py-12">
+          {/* Breadcrumb */}
+          <Breadcrumb />
+
           <div className="text-center">
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
               Prop Firm <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-400">Blog</span>
@@ -461,10 +505,18 @@ export default function BlogPage() {
                 <input
                   type="text"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => handleSearchChange(e.target.value)}
                   placeholder="Search articles..."
                   className="w-full pl-12 pr-4 py-3.5 bg-gray-900 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 transition-colors"
                 />
+                {searchQuery && (
+                  <button
+                    onClick={() => handleSearchChange('')}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
+                  >
+                    ✕
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -480,7 +532,7 @@ export default function BlogPage() {
             return (
               <button
                 key={cat}
-                onClick={() => setActiveCategory(cat)}
+                onClick={() => handleCategoryChange(cat)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
                   activeCategory === cat
                     ? 'bg-emerald-500 text-white'
@@ -505,7 +557,7 @@ export default function BlogPage() {
           {/* Main Content */}
           <div className="flex-1">
             {/* Featured Posts */}
-            {featuredPosts.length > 0 && activeCategory === 'All' && !searchQuery && (
+            {showFeaturedSection && (
               <section className="mb-12">
                 <div className="flex items-center gap-2 mb-6">
                   <Star className="w-5 h-5 text-yellow-400" />
@@ -526,26 +578,29 @@ export default function BlogPage() {
                   {searchQuery 
                     ? `Search Results (${filteredPosts.length})`
                     : activeCategory === 'All' 
-                      ? 'Latest Articles' 
+                      ? `Latest Articles (${postsForGrid.length})` 
                       : `${activeCategory} (${filteredPosts.length})`
                   }
                 </h2>
               </div>
 
-              {filteredPosts.length > 0 ? (
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {(searchQuery || activeCategory !== 'All' ? filteredPosts : regularPosts).map((post) => (
-                    <ArticleCard key={post.slug} post={post} />
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-16">
-                  <div className="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Search className="w-8 h-8 text-gray-600" />
+              {paginatedPosts.length > 0 ? (
+                <>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {paginatedPosts.map((post) => (
+                      <ArticleCard key={post.slug} post={post} />
+                    ))}
                   </div>
-                  <h3 className="text-white font-medium mb-2">No articles found</h3>
-                  <p className="text-gray-500 text-sm">Try a different search term or category</p>
-                </div>
+                  
+                  {/* Pagination */}
+                  <Pagination 
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                  />
+                </>
+              ) : (
+                <EmptyState />
               )}
             </section>
           </div>
@@ -573,6 +628,32 @@ export default function BlogPage() {
           </aside>
         </div>
       </main>
+
+      {/* Bottom CTA Section */}
+      <section className="bg-gradient-to-b from-gray-950 to-gray-900 border-t border-gray-800 py-16">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+            Ready to Get Funded?
+          </h2>
+          <p className="text-gray-400 mb-8 max-w-xl mx-auto">
+            Put this knowledge into practice. Compare 70+ prop firms and find your perfect match.
+          </p>
+          <div className="flex flex-wrap gap-4 justify-center">
+            <Link 
+              href="/compare" 
+              className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors"
+            >
+              Compare Prop Firms
+            </Link>
+            <Link 
+              href="/deals" 
+              className="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-xl transition-colors"
+            >
+              View Deals
+            </Link>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
