@@ -12,22 +12,23 @@ import {
   ExternalLink,
   Trash2,
   BarChart3,
-  Search,
 } from 'lucide-react';
+
+interface PropFirm {
+  id: string;
+  name: string;
+  slug: string;
+  logo_url: string | null;
+  min_account_size: number | null;
+  max_account_size: number | null;
+  profit_split: number | null;
+}
 
 interface FavoriteFirm {
   id: string;
   prop_firm_id: string;
   created_at: string;
-  prop_firm: {
-    id: string;
-    name: string;
-    slug: string;
-    logo_url: string | null;
-    min_account_size: number | null;
-    max_account_size: number | null;
-    profit_split: number | null;
-  };
+  prop_firms: PropFirm | null;
 }
 
 export default function FavoritesPage() {
@@ -58,7 +59,7 @@ export default function FavoritesPage() {
             id,
             prop_firm_id,
             created_at,
-            prop_firm:prop_firms (
+            prop_firms (
               id,
               name,
               slug,
@@ -72,7 +73,7 @@ export default function FavoritesPage() {
           .order('created_at', { ascending: false });
 
         if (error) throw error;
-        setFavorites(data || []);
+        setFavorites((data as FavoriteFirm[]) || []);
       } catch (error) {
         console.error('Error fetching favorites:', error);
       } finally {
@@ -163,67 +164,72 @@ export default function FavoritesPage() {
         ) : (
           /* Favorites List */
           <div className="space-y-4">
-            {favorites.map((favorite) => (
-              <div
-                key={favorite.id}
-                className="bg-gray-900/50 rounded-xl border border-gray-800 p-4 hover:border-gray-700 transition-colors"
-              >
-                <div className="flex items-center gap-4">
-                  {/* Logo */}
-                  <div className="w-12 h-12 rounded-lg bg-gray-800 flex items-center justify-center overflow-hidden flex-shrink-0">
-                    {favorite.prop_firm?.logo_url ? (
-                      <img
-                        src={favorite.prop_firm.logo_url}
-                        alt={favorite.prop_firm?.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <span className="text-lg font-bold text-gray-600">
-                        {favorite.prop_firm?.name?.charAt(0) || '?'}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Info */}
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-white truncate">
-                      {favorite.prop_firm?.name || 'Unknown Firm'}
-                    </h3>
-                    <div className="flex items-center gap-4 text-sm text-gray-400">
-                      {favorite.prop_firm?.profit_split && (
-                        <span>{favorite.prop_firm.profit_split}% profit split</span>
-                      )}
-                      {favorite.prop_firm?.max_account_size && (
-                        <span>Up to ${favorite.prop_firm.max_account_size.toLocaleString()}</span>
+            {favorites.map((favorite) => {
+              const firm = favorite.prop_firms;
+              if (!firm) return null;
+              
+              return (
+                <div
+                  key={favorite.id}
+                  className="bg-gray-900/50 rounded-xl border border-gray-800 p-4 hover:border-gray-700 transition-colors"
+                >
+                  <div className="flex items-center gap-4">
+                    {/* Logo */}
+                    <div className="w-12 h-12 rounded-lg bg-gray-800 flex items-center justify-center overflow-hidden flex-shrink-0">
+                      {firm.logo_url ? (
+                        <img
+                          src={firm.logo_url}
+                          alt={firm.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-lg font-bold text-gray-600">
+                          {firm.name?.charAt(0) || '?'}
+                        </span>
                       )}
                     </div>
-                  </div>
 
-                  {/* Actions */}
-                  <div className="flex items-center gap-2">
-                    <Link
-                      href={`/compare?firm=${favorite.prop_firm?.slug}`}
-                      className="p-2 text-gray-400 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition-colors"
-                      title="View Details"
-                    >
-                      <ExternalLink className="w-5 h-5" />
-                    </Link>
-                    <button
-                      onClick={() => removeFavorite(favorite.id)}
-                      disabled={removing === favorite.id}
-                      className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
-                      title="Remove from Favorites"
-                    >
-                      {removing === favorite.id ? (
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                      ) : (
-                        <Trash2 className="w-5 h-5" />
-                      )}
-                    </button>
+                    {/* Info */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-white truncate">
+                        {firm.name || 'Unknown Firm'}
+                      </h3>
+                      <div className="flex items-center gap-4 text-sm text-gray-400">
+                        {firm.profit_split && (
+                          <span>{firm.profit_split}% profit split</span>
+                        )}
+                        {firm.max_account_size && (
+                          <span>Up to ${firm.max_account_size.toLocaleString()}</span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-2">
+                      <Link
+                        href={`/compare?firm=${firm.slug}`}
+                        className="p-2 text-gray-400 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition-colors"
+                        title="View Details"
+                      >
+                        <ExternalLink className="w-5 h-5" />
+                      </Link>
+                      <button
+                        onClick={() => removeFavorite(favorite.id)}
+                        disabled={removing === favorite.id}
+                        className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
+                        title="Remove from Favorites"
+                      >
+                        {removing === favorite.id ? (
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                        ) : (
+                          <Trash2 className="w-5 h-5" />
+                        )}
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
 
