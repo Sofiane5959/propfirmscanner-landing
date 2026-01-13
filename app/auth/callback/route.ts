@@ -1,30 +1,24 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
+import { cookies } from 'next/headers'
+import { NextResponse } from 'next/server'
 
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'
 
-export async function GET(request: NextRequest) {
-  const requestUrl = new URL(request.url);
-  const code = requestUrl.searchParams.get('code');
-  const origin = requestUrl.origin;
+export async function GET(request: Request) {
+  const requestUrl = new URL(request.url)
+  const code = requestUrl.searchParams.get('code')
 
   if (code) {
+    const cookieStore = cookies()
+    const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
+    
     try {
-      const cookieStore = cookies();
-      const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
-      
-      await supabase.auth.exchangeCodeForSession(code);
-      
-      // Redirect to home page (dashboard will be accessed from there)
-      return NextResponse.redirect(`${origin}/`);
+      await supabase.auth.exchangeCodeForSession(code)
     } catch (error) {
-      console.error('Auth callback error:', error);
-      return NextResponse.redirect(`${origin}/?error=auth_failed`);
+      console.error('Auth error:', error)
     }
   }
 
-  // No code - redirect to home
-  return NextResponse.redirect(`${origin}/`);
+  // Redirect to home page (faster than dashboard)
+  return NextResponse.redirect(new URL('/', requestUrl.origin))
 }
