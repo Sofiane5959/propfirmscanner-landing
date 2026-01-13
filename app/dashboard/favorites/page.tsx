@@ -24,11 +24,18 @@ interface PropFirm {
   profit_split: number | null;
 }
 
+interface FavoriteFromDB {
+  id: string;
+  prop_firm_id: string;
+  created_at: string;
+  prop_firms: PropFirm[];
+}
+
 interface FavoriteFirm {
   id: string;
   prop_firm_id: string;
   created_at: string;
-  prop_firms: PropFirm | null;
+  firm: PropFirm | null;
 }
 
 export default function FavoritesPage() {
@@ -73,7 +80,16 @@ export default function FavoritesPage() {
           .order('created_at', { ascending: false });
 
         if (error) throw error;
-        setFavorites((data as FavoriteFirm[]) || []);
+        
+        // Transform the data to handle Supabase's array response
+        const transformedData: FavoriteFirm[] = (data as unknown as FavoriteFromDB[] || []).map((item) => ({
+          id: item.id,
+          prop_firm_id: item.prop_firm_id,
+          created_at: item.created_at,
+          firm: item.prop_firms && item.prop_firms.length > 0 ? item.prop_firms[0] : null,
+        }));
+        
+        setFavorites(transformedData);
       } catch (error) {
         console.error('Error fetching favorites:', error);
       } finally {
@@ -165,7 +181,7 @@ export default function FavoritesPage() {
           /* Favorites List */
           <div className="space-y-4">
             {favorites.map((favorite) => {
-              const firm = favorite.prop_firms;
+              const firm = favorite.firm;
               if (!firm) return null;
               
               return (
