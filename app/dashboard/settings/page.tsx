@@ -1,158 +1,312 @@
 'use client';
 
-import { useState } from 'react';
-import { useAuth } from '@/providers/AuthProvider';
-import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, User, Mail, Shield, LogOut, Trash2, Loader2 } from 'lucide-react';
+import Link from 'next/link';
+import { useAuth } from '@/providers/AuthProvider';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import {
+  User,
+  Settings,
+  ArrowLeft,
+  Save,
+  Loader2,
+  CheckCircle2,
+  AlertCircle,
+  Mail,
+  Calendar,
+  Shield,
+  Bell,
+  Trash2,
+} from 'lucide-react';
 
 export default function SettingsPage() {
-  const { user, profile, signOut, isLoading } = useAuth();
+  const { user, profile, isLoading } = useAuth();
   const router = useRouter();
-  const [isSigningOut, setIsSigningOut] = useState(false);
+  const supabase = createClientComponentClient();
+  
+  const [fullName, setFullName] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // Redirect if not logged in
-  if (!isLoading && !user) {
-    router.push('/auth/login');
-    return null;
-  }
+  useEffect(() => {
+    if (!isLoading && !user) {
+      router.push('/');
+    }
+  }, [user, isLoading, router]);
 
+  // Load profile data
+  useEffect(() => {
+    if (profile) {
+      setFullName(profile.full_name || '');
+    } else if (user?.user_metadata?.full_name) {
+      setFullName(user.user_metadata.full_name);
+    }
+  }, [profile, user]);
+
+  // Save profile
+  const handleSave = async () => {
+    if (!user) return;
+    
+    setSaving(true);
+    setMessage(null);
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .upsert({
+          id: user.id,
+          email: user.email,
+          full_name: fullName,
+          updated_at: new Date().toISOString(),
+        });
+
+      if (error) throw error;
+
+      setMessage({ type: 'success', text: 'Profile updated successfully!' });
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      setMessage({ type: 'error', text: 'Failed to update profile. Please try again.' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Loading state
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-emerald-400 animate-spin" />
+        <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
       </div>
     );
   }
 
-  const displayName = profile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
-  const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url;
-  const email = user?.email;
-  const createdAt = user?.created_at ? new Date(user.created_at).toLocaleDateString('fr-FR', { 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
-  }) : '';
+  if (!user) return null;
 
-  const handleSignOut = async () => {
-    setIsSigningOut(true);
-    await signOut();
-  };
+  const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url;
 
   return (
     <div className="min-h-screen bg-gray-950">
-      {/* Header */}
-      <header className="bg-gray-900 border-b border-gray-800">
-        <div className="max-w-2xl mx-auto px-4 py-5">
-          <div className="flex items-center gap-4">
-            <Link 
-              href="/dashboard"
-              className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5 text-gray-400" />
-            </Link>
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Back Link */}
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Dashboard
+        </Link>
+
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+            <Settings className="w-6 h-6 text-emerald-400" />
+            Account Settings
+          </h1>
+          <p className="text-gray-400 mt-1">Manage your profile and preferences</p>
+        </div>
+
+        {/* Profile Section */}
+        <div className="bg-gray-900/50 rounded-2xl border border-gray-800 p-6 mb-6">
+          <h2 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
+            <User className="w-5 h-5 text-emerald-400" />
+            Profile Information
+          </h2>
+
+          {/* Avatar */}
+          <div className="flex items-center gap-4 mb-6 pb-6 border-b border-gray-800">
+            {avatarUrl ? (
+              <img src={avatarUrl} alt="Avatar" className="w-20 h-20 rounded-full" referrerPolicy="no-referrer" />
+            ) : (
+              <div className="w-20 h-20 bg-emerald-500/20 rounded-full flex items-center justify-center">
+                <User className="w-10 h-10 text-emerald-400" />
+              </div>
+            )}
             <div>
-              <h1 className="text-xl font-bold text-white">Paramètres</h1>
-              <p className="text-sm text-gray-500">Gérez votre compte</p>
+              <p className="text-sm text-gray-400">Profile picture synced from Google</p>
+            </div>
+          </div>
+
+          {/* Form */}
+          <div className="space-y-4">
+            {/* Full Name */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Full Name
+              </label>
+              <input
+                type="text"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
+                placeholder="Enter your name"
+              />
+            </div>
+
+            {/* Email (read-only) */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Email Address
+              </label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="email"
+                  value={user.email || ''}
+                  disabled
+                  className="flex-1 px-4 py-3 bg-gray-800/50 border border-gray-700/50 rounded-lg text-gray-400 cursor-not-allowed"
+                />
+                {user.email_confirmed_at ? (
+                  <div className="flex items-center gap-1 text-emerald-400 text-sm">
+                    <CheckCircle2 className="w-4 h-4" />
+                    Verified
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1 text-yellow-400 text-sm">
+                    <AlertCircle className="w-4 h-4" />
+                    Unverified
+                  </div>
+                )}
+              </div>
+              <p className="text-xs text-gray-500 mt-1">Email is managed by Google and cannot be changed here.</p>
+            </div>
+
+            {/* Save Button */}
+            <div className="pt-4">
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 text-white rounded-lg transition-colors font-medium"
+              >
+                {saving ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Save className="w-4 h-4" />
+                )}
+                {saving ? 'Saving...' : 'Save Changes'}
+              </button>
+
+              {/* Message */}
+              {message && (
+                <div
+                  className={`mt-4 p-3 rounded-lg flex items-center gap-2 ${
+                    message.type === 'success'
+                      ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                      : 'bg-red-500/10 text-red-400 border border-red-500/20'
+                  }`}
+                >
+                  {message.type === 'success' ? (
+                    <CheckCircle2 className="w-4 h-4" />
+                  ) : (
+                    <AlertCircle className="w-4 h-4" />
+                  )}
+                  {message.text}
+                </div>
+              )}
             </div>
           </div>
         </div>
-      </header>
 
-      {/* Content */}
-      <main className="max-w-2xl mx-auto px-4 py-8 space-y-6">
-        {/* Profile Section */}
-        <section className="bg-gray-900 rounded-2xl border border-gray-800 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-800">
-            <h2 className="text-lg font-semibold text-white">Profil</h2>
-          </div>
-          
-          <div className="p-6">
-            <div className="flex items-center gap-5 mb-6">
-              {avatarUrl ? (
-                <img 
-                  src={avatarUrl} 
-                  alt={displayName}
-                  className="w-20 h-20 rounded-full border-2 border-emerald-500/30"
-                  referrerPolicy="no-referrer"
-                />
-              ) : (
-                <div className="w-20 h-20 bg-emerald-500/20 rounded-full flex items-center justify-center border-2 border-emerald-500/30">
-                  <User className="w-8 h-8 text-emerald-400" />
+        {/* Account Info Section */}
+        <div className="bg-gray-900/50 rounded-2xl border border-gray-800 p-6 mb-6">
+          <h2 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
+            <Shield className="w-5 h-5 text-emerald-400" />
+            Account Information
+          </h2>
+
+          <div className="space-y-4">
+            <div className="flex items-center justify-between py-3 border-b border-gray-800">
+              <div className="flex items-center gap-3">
+                <Mail className="w-5 h-5 text-gray-500" />
+                <div>
+                  <p className="text-sm font-medium text-white">Email</p>
+                  <p className="text-sm text-gray-500">{user.email}</p>
                 </div>
-              )}
-              
-              <div>
-                <h3 className="text-xl font-semibold text-white">{displayName}</h3>
-                <p className="text-gray-500">Membre depuis {createdAt}</p>
               </div>
             </div>
 
-            <div className="space-y-4">
-              <div className="flex items-center gap-4 p-4 bg-gray-800/50 rounded-xl">
-                <Mail className="w-5 h-5 text-gray-400" />
+            <div className="flex items-center justify-between py-3 border-b border-gray-800">
+              <div className="flex items-center gap-3">
+                <Calendar className="w-5 h-5 text-gray-500" />
                 <div>
-                  <p className="text-sm text-gray-500">Email</p>
-                  <p className="text-white">{email}</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4 p-4 bg-gray-800/50 rounded-xl">
-                <Shield className="w-5 h-5 text-gray-400" />
-                <div>
-                  <p className="text-sm text-gray-500">Méthode de connexion</p>
-                  <p className="text-white">Google</p>
+                  <p className="text-sm font-medium text-white">Member Since</p>
+                  <p className="text-sm text-gray-500">
+                    {new Date(user.created_at || Date.now()).toLocaleDateString('en-US', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric',
+                    })}
+                  </p>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
 
-        {/* Account Actions */}
-        <section className="bg-gray-900 rounded-2xl border border-gray-800 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-800">
-            <h2 className="text-lg font-semibold text-white">Actions du compte</h2>
-          </div>
-          
-          <div className="p-6 space-y-3">
-            <button
-              onClick={handleSignOut}
-              disabled={isSigningOut}
-              className="flex items-center gap-3 w-full p-4 bg-gray-800/50 hover:bg-gray-800 rounded-xl transition-colors text-left"
-            >
-              {isSigningOut ? (
-                <Loader2 className="w-5 h-5 text-gray-400 animate-spin" />
-              ) : (
-                <LogOut className="w-5 h-5 text-gray-400" />
-              )}
-              <div>
-                <p className="font-medium text-white">Se déconnecter</p>
-                <p className="text-sm text-gray-500">Vous serez redirigé vers la page d&apos;accueil</p>
+            <div className="flex items-center justify-between py-3">
+              <div className="flex items-center gap-3">
+                <Shield className="w-5 h-5 text-gray-500" />
+                <div>
+                  <p className="text-sm font-medium text-white">Account Plan</p>
+                  <p className="text-sm text-gray-500">Free Plan</p>
+                </div>
               </div>
-            </button>
-
-            <button
-              className="flex items-center gap-3 w-full p-4 bg-red-500/5 hover:bg-red-500/10 rounded-xl transition-colors text-left border border-red-500/20"
-            >
-              <Trash2 className="w-5 h-5 text-red-400" />
-              <div>
-                <p className="font-medium text-red-400">Supprimer le compte</p>
-                <p className="text-sm text-gray-500">Cette action est irréversible</p>
-              </div>
-            </button>
+              <Link
+                href="/mypropfirm"
+                className="px-3 py-1.5 bg-emerald-500/10 text-emerald-400 text-sm rounded-lg hover:bg-emerald-500/20 transition-colors"
+              >
+                Upgrade
+              </Link>
+            </div>
           </div>
-        </section>
+        </div>
 
-        {/* Support */}
-        <section className="bg-gray-900 rounded-2xl border border-gray-800 p-6 text-center">
-          <p className="text-gray-500 text-sm">
-            Besoin d&apos;aide ?{' '}
-            <a href="mailto:support@propfirmscanner.org" className="text-emerald-400 hover:underline">
-              Contactez-nous
-            </a>
+        {/* Notifications Section */}
+        <div className="bg-gray-900/50 rounded-2xl border border-gray-800 p-6 mb-6">
+          <h2 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
+            <Bell className="w-5 h-5 text-emerald-400" />
+            Notification Preferences
+          </h2>
+
+          <div className="space-y-4">
+            <label className="flex items-center justify-between cursor-pointer">
+              <div>
+                <p className="text-sm font-medium text-white">Email Notifications</p>
+                <p className="text-sm text-gray-500">Receive updates about deals and news</p>
+              </div>
+              <input
+                type="checkbox"
+                defaultChecked
+                className="w-5 h-5 rounded bg-gray-800 border-gray-700 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-gray-900"
+              />
+            </label>
+
+            <label className="flex items-center justify-between cursor-pointer">
+              <div>
+                <p className="text-sm font-medium text-white">New Deals Alerts</p>
+                <p className="text-sm text-gray-500">Get notified when new deals are available</p>
+              </div>
+              <input
+                type="checkbox"
+                defaultChecked
+                className="w-5 h-5 rounded bg-gray-800 border-gray-700 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-gray-900"
+              />
+            </label>
+          </div>
+        </div>
+
+        {/* Danger Zone */}
+        <div className="bg-red-500/5 rounded-2xl border border-red-500/20 p-6">
+          <h2 className="text-lg font-semibold text-red-400 mb-4 flex items-center gap-2">
+            <Trash2 className="w-5 h-5" />
+            Danger Zone
+          </h2>
+          <p className="text-gray-400 text-sm mb-4">
+            Once you delete your account, there is no going back. Please be certain.
           </p>
-        </section>
-      </main>
+          <button className="px-4 py-2 bg-red-500/10 text-red-400 border border-red-500/30 rounded-lg hover:bg-red-500/20 transition-colors text-sm">
+            Delete Account
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
