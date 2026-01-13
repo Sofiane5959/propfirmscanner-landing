@@ -5,7 +5,6 @@ import './globals.css';
 import { AuthProvider } from '@/providers/AuthProvider';
 import { Navbar } from '@/components/Navbar';
 import PromoTicker from '@/components/PromoTicker';
-import { createServerSupabaseClient } from '@/lib/supabase-server';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -33,46 +32,17 @@ export const metadata: Metadata = {
   },
 };
 
-// Fetch promo deals for ticker (cached for 1 hour)
-async function getPromoDeals() {
-  try {
-    const supabase = createServerSupabaseClient();
-    
-    const { data, error } = await supabase
-      .from('prop_firms')
-      .select('id, name, slug, logo_url, discount_percent, discount_code, affiliate_url, website_url, trust_status')
-      .gt('discount_percent', 0)
-      .not('discount_code', 'is', null)
-      .or('trust_status.eq.verified,trust_status.is.null')
-      .order('discount_percent', { ascending: false })
-      .limit(10);
-    
-    if (error) {
-      console.error('Error fetching promo deals:', error);
-      return [];
-    }
-    
-    return data || [];
-  } catch (err) {
-    console.error('Failed to fetch promo deals:', err);
-    return [];
-  }
-}
-
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // Fetch deals server-side
-  const deals = await getPromoDeals();
-
   return (
     <html lang="en" className="dark">
       <body className={`${inter.className} bg-gray-950 text-white antialiased`}>
         <AuthProvider>
           <Navbar />
-          <PromoTicker deals={deals} />
+          <PromoTicker deals={[]} />
           <main className="pt-16">
             {children}
           </main>
