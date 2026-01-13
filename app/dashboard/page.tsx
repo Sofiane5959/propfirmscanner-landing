@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/providers/AuthProvider';
@@ -11,50 +11,59 @@ import {
   TrendingUp,
   Target,
   Calendar,
-  Bell,
   ChevronRight,
   Shield,
   BarChart3,
   Wallet,
-  Clock,
-  CheckCircle2,
-  AlertCircle,
   Loader2,
+  LogOut,
 } from 'lucide-react';
 
-// =============================================================================
-// DASHBOARD PAGE
-// =============================================================================
-
 export default function DashboardPage() {
-  const { user, profile, isLoading } = useAuth();
+  const { user, profile, isLoading, signOut } = useAuth();
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
 
-  // Redirect if not logged in
+  // Ensure component is mounted (avoid hydration issues)
   useEffect(() => {
-    if (!isLoading && !user) {
+    setMounted(true);
+  }, []);
+
+  // Redirect if not logged in (only after mounted and not loading)
+  useEffect(() => {
+    if (mounted && !isLoading && !user) {
       router.push('/');
     }
-  }, [user, isLoading, router]);
+  }, [user, isLoading, router, mounted]);
 
-  // Loading state
-  if (isLoading) {
+  // Show loading while checking auth
+  if (!mounted || isLoading) {
     return (
       <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 text-emerald-500 animate-spin mx-auto mb-4" />
+          <p className="text-gray-400">Loading...</p>
+        </div>
       </div>
     );
   }
 
-  // Not logged in
+  // Not logged in - will redirect
   if (!user) {
-    return null;
+    return (
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 text-emerald-500 animate-spin mx-auto mb-4" />
+          <p className="text-gray-400">Redirecting...</p>
+        </div>
+      </div>
+    );
   }
 
   const displayName = profile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Trader';
   const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url;
 
-  // Quick stats (placeholder - à connecter avec vraies données)
+  // Quick stats (placeholder)
   const stats = [
     { label: 'Active Accounts', value: '0', icon: Shield, color: 'emerald' },
     { label: 'Total Invested', value: '$0', icon: Wallet, color: 'blue' },
@@ -70,25 +79,41 @@ export default function DashboardPage() {
     { name: 'Account Settings', href: '/dashboard/settings', icon: Settings, description: 'Manage your profile' },
   ];
 
+  const colorClasses: Record<string, string> = {
+    emerald: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+    blue: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+    purple: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+    orange: 'bg-orange-500/10 text-orange-400 border-orange-500/20',
+  };
+
   return (
     <div className="min-h-screen bg-gray-950">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center gap-4 mb-2">
-            {avatarUrl ? (
-              <img src={avatarUrl} alt={displayName} className="w-16 h-16 rounded-full" referrerPolicy="no-referrer" />
-            ) : (
-              <div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center">
-                <User className="w-8 h-8 text-emerald-400" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              {avatarUrl ? (
+                <img src={avatarUrl} alt={displayName} className="w-16 h-16 rounded-full" referrerPolicy="no-referrer" />
+              ) : (
+                <div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center">
+                  <User className="w-8 h-8 text-emerald-400" />
+                </div>
+              )}
+              <div>
+                <h1 className="text-2xl font-bold text-white">
+                  Welcome back, {displayName}! 👋
+                </h1>
+                <p className="text-gray-400">{user.email}</p>
               </div>
-            )}
-            <div>
-              <h1 className="text-2xl font-bold text-white">
-                Welcome back, {displayName}! 👋
-              </h1>
-              <p className="text-gray-400">{user.email}</p>
             </div>
+            <button
+              onClick={() => signOut()}
+              className="flex items-center gap-2 px-4 py-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+            >
+              <LogOut className="w-5 h-5" />
+              <span className="hidden sm:inline">Sign Out</span>
+            </button>
           </div>
         </div>
 
@@ -96,16 +121,10 @@ export default function DashboardPage() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {stats.map((stat) => {
             const Icon = stat.icon;
-            const colorClasses = {
-              emerald: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-              blue: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-              purple: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-              orange: 'bg-orange-500/10 text-orange-400 border-orange-500/20',
-            };
             return (
               <div
                 key={stat.label}
-                className={`p-4 rounded-xl border ${colorClasses[stat.color as keyof typeof colorClasses]}`}
+                className={`p-4 rounded-xl border ${colorClasses[stat.color]}`}
               >
                 <div className="flex items-center gap-3 mb-2">
                   <Icon className="w-5 h-5" />
@@ -117,137 +136,60 @@ export default function DashboardPage() {
           })}
         </div>
 
-        {/* Main Content Grid */}
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Left Column - Quick Actions */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Quick Actions */}
-            <div className="bg-gray-900/50 rounded-2xl border border-gray-800 p-6">
-              <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                <Target className="w-5 h-5 text-emerald-400" />
-                Quick Actions
-              </h2>
-              <div className="grid sm:grid-cols-2 gap-4">
-                {quickActions.map((action) => {
-                  const Icon = action.icon;
-                  return (
-                    <Link
-                      key={action.name}
-                      href={action.href}
-                      className="flex items-center gap-4 p-4 rounded-xl bg-gray-800/50 hover:bg-gray-800 border border-gray-700/50 hover:border-emerald-500/30 transition-all group"
-                    >
-                      <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:bg-emerald-500/20 transition-colors">
-                        <Icon className="w-5 h-5" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-medium text-white">{action.name}</p>
-                        <p className="text-sm text-gray-500">{action.description}</p>
-                      </div>
-                      <ChevronRight className="w-5 h-5 text-gray-600 group-hover:text-emerald-400 transition-colors" />
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* My Prop Firm Accounts - Placeholder */}
-            <div className="bg-gray-900/50 rounded-2xl border border-gray-800 p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-                  <Shield className="w-5 h-5 text-emerald-400" />
-                  My Prop Firm Accounts
-                </h2>
-                <Link href="/dashboard/accounts" className="text-sm text-emerald-400 hover:text-emerald-300">
-                  View All
-                </Link>
-              </div>
-
-              {/* Empty State */}
-              <div className="text-center py-12 px-4">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800 flex items-center justify-center">
-                  <Shield className="w-8 h-8 text-gray-600" />
-                </div>
-                <h3 className="text-lg font-medium text-white mb-2">No accounts yet</h3>
-                <p className="text-gray-400 mb-4">
-                  Start tracking your prop firm accounts to see your progress here.
-                </p>
+        {/* Quick Actions */}
+        <div className="bg-gray-900/50 rounded-2xl border border-gray-800 p-6 mb-8">
+          <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <Target className="w-5 h-5 text-emerald-400" />
+            Quick Actions
+          </h2>
+          <div className="grid sm:grid-cols-2 gap-4">
+            {quickActions.map((action) => {
+              const Icon = action.icon;
+              return (
                 <Link
-                  href="/compare"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors"
+                  key={action.name}
+                  href={action.href}
+                  className="flex items-center gap-4 p-4 rounded-xl bg-gray-800/50 hover:bg-gray-800 border border-gray-700/50 hover:border-emerald-500/30 transition-all group"
                 >
-                  <BarChart3 className="w-4 h-4" />
-                  Find a Prop Firm
+                  <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:bg-emerald-500/20 transition-colors">
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-white">{action.name}</p>
+                    <p className="text-sm text-gray-500">{action.description}</p>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-gray-600 group-hover:text-emerald-400 transition-colors" />
                 </Link>
-              </div>
-            </div>
+              );
+            })}
           </div>
+        </div>
 
-          {/* Right Column - Sidebar */}
-          <div className="space-y-6">
-            {/* Account Status */}
-            <div className="bg-gray-900/50 rounded-2xl border border-gray-800 p-6">
-              <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                <User className="w-5 h-5 text-emerald-400" />
-                Account Status
-              </h2>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Plan</span>
-                  <span className="px-2 py-1 bg-gray-800 text-gray-300 text-sm rounded">Free</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Member since</span>
-                  <span className="text-white text-sm">
-                    {new Date(user.created_at || Date.now()).toLocaleDateString('en-US', {
-                      month: 'short',
-                      year: 'numeric',
-                    })}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Email verified</span>
-                  {user.email_confirmed_at ? (
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                  ) : (
-                    <AlertCircle className="w-5 h-5 text-yellow-400" />
-                  )}
-                </div>
-              </div>
-
-              {/* Upgrade CTA */}
-              <div className="mt-4 pt-4 border-t border-gray-800">
-                <Link
-                  href="/mypropfirm"
-                  className="block w-full text-center px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-lg transition-all font-medium"
-                >
-                  Upgrade to Pro
-                </Link>
-                <p className="text-xs text-gray-500 text-center mt-2">
-                  Unlock analytics, alerts & more
-                </p>
-              </div>
+        {/* Account Status */}
+        <div className="bg-gray-900/50 rounded-2xl border border-gray-800 p-6">
+          <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <Shield className="w-5 h-5 text-emerald-400" />
+            Account Status
+          </h2>
+          <div className="grid sm:grid-cols-3 gap-4">
+            <div className="p-4 bg-gray-800/50 rounded-xl">
+              <p className="text-sm text-gray-400 mb-1">Plan</p>
+              <p className="font-semibold text-white">Free</p>
             </div>
-
-            {/* Recent Activity - Placeholder */}
-            <div className="bg-gray-900/50 rounded-2xl border border-gray-800 p-6">
-              <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                <Clock className="w-5 h-5 text-emerald-400" />
-                Recent Activity
-              </h2>
-              <div className="text-center py-6">
-                <p className="text-gray-500 text-sm">No recent activity</p>
-              </div>
+            <div className="p-4 bg-gray-800/50 rounded-xl">
+              <p className="text-sm text-gray-400 mb-1">Member Since</p>
+              <p className="font-semibold text-white">
+                {new Date(user.created_at || Date.now()).toLocaleDateString('en-US', {
+                  month: 'short',
+                  year: 'numeric',
+                })}
+              </p>
             </div>
-
-            {/* Notifications */}
-            <div className="bg-gray-900/50 rounded-2xl border border-gray-800 p-6">
-              <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                <Bell className="w-5 h-5 text-emerald-400" />
-                Notifications
-              </h2>
-              <div className="text-center py-6">
-                <p className="text-gray-500 text-sm">You're all caught up!</p>
-              </div>
+            <div className="p-4 bg-gray-800/50 rounded-xl">
+              <p className="text-sm text-gray-400 mb-1">Upgrade</p>
+              <Link href="/mypropfirm" className="font-semibold text-emerald-400 hover:text-emerald-300">
+                Go Pro →
+              </Link>
             </div>
           </div>
         </div>

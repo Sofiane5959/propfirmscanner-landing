@@ -3,33 +3,28 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get('code');
-  const next = requestUrl.searchParams.get('next') ?? '/dashboard';
+  const origin = requestUrl.origin;
 
   if (code) {
-    const cookieStore = cookies();
-    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
-    
     try {
-      // Exchange the code for a session
-      const { error } = await supabase.auth.exchangeCodeForSession(code);
+      const cookieStore = cookies();
+      const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
       
-      if (error) {
-        console.error('Auth callback error:', error);
-        // Redirect to home with error
-        return NextResponse.redirect(new URL('/?error=auth_failed', requestUrl.origin));
-      }
-
-      // Successful authentication - redirect to dashboard or specified page
-      return NextResponse.redirect(new URL(next, requestUrl.origin));
-    } catch (err) {
-      console.error('Auth callback exception:', err);
-      return NextResponse.redirect(new URL('/?error=auth_error', requestUrl.origin));
+      await supabase.auth.exchangeCodeForSession(code);
+      
+      // Redirect to home page (dashboard will be accessed from there)
+      return NextResponse.redirect(`${origin}/`);
+    } catch (error) {
+      console.error('Auth callback error:', error);
+      return NextResponse.redirect(`${origin}/?error=auth_failed`);
     }
   }
 
-  // No code provided - redirect to home
-  return NextResponse.redirect(new URL('/', requestUrl.origin));
+  // No code - redirect to home
+  return NextResponse.redirect(`${origin}/`);
 }
