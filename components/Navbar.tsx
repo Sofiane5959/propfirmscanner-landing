@@ -21,44 +21,40 @@ import {
   GraduationCap,
   Crown,
   FileQuestion,
-  Sparkles,
 } from 'lucide-react';
 
 // =============================================================================
-// NAVIGATION LINKS
+// NAVIGATION LINKS - Tous les liens principaux visibles directement
 // =============================================================================
 
-const navigation = [
+const mainNavigation = [
   { name: 'Compare', href: '/compare', icon: BarChart3 },
   { name: 'Deals', href: '/deals', icon: Tag },
   { name: 'Blog', href: '/blog', icon: FileText },
 ];
 
-// Products dropdown items
-const productsDropdown = [
-  { 
-    name: 'MyPropFirm Pro', 
-    href: '/mypropfirm', 
-    icon: Crown, 
-    description: 'Track & analyze your accounts',
-    badge: 'Coming Soon',
-    badgeColor: 'bg-emerald-500',
-  },
+// Produits (avec badge Coming Soon)
+const productLinks = [
   { 
     name: 'Education', 
     href: '/education', 
-    icon: GraduationCap, 
-    description: 'Courses for beginners & pros',
-    badge: 'Coming Soon',
+    icon: GraduationCap,
+    badge: 'Soon',
     badgeColor: 'bg-purple-500',
   },
   { 
-    name: 'Rules Explained', 
+    name: 'Rules', 
     href: '/rules-explained', 
-    icon: FileQuestion, 
-    description: '$4.99 per prop firm guide',
-    badge: 'Coming Soon',
+    icon: FileQuestion,
+    badge: 'Soon',
     badgeColor: 'bg-blue-500',
+  },
+  { 
+    name: 'MyPropFirm', 
+    href: '/mypropfirm', 
+    icon: Crown,
+    badge: 'Pro',
+    badgeColor: 'bg-emerald-500',
   },
 ];
 
@@ -74,67 +70,6 @@ function GoogleIcon({ className }: { className?: string }) {
       <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
       <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
     </svg>
-  );
-}
-
-// =============================================================================
-// PRODUCTS DROPDOWN
-// =============================================================================
-
-function ProductsDropdown() {
-  const [isOpen, setIsOpen] = useState(false);
-  const pathname = usePathname();
-  
-  const isActive = productsDropdown.some(item => pathname.startsWith(item.href));
-
-  return (
-    <div className="relative">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        onBlur={() => setTimeout(() => setIsOpen(false), 150)}
-        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all
-          ${isActive ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:text-white hover:bg-white/5'}`}
-      >
-        <Sparkles className="w-4 h-4" />
-        Products
-        <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-      </button>
-
-      {isOpen && (
-        <div className="absolute top-full left-0 mt-2 w-72 bg-gray-900 border border-gray-800 rounded-xl shadow-xl z-50 py-2 overflow-hidden">
-          {productsDropdown.map((item) => {
-            const Icon = item.icon;
-            const isItemActive = pathname.startsWith(item.href);
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                onClick={() => setIsOpen(false)}
-                className={`flex items-start gap-3 px-4 py-3 transition-colors
-                  ${isItemActive ? 'bg-emerald-500/10' : 'hover:bg-gray-800'}`}
-              >
-                <div className={`p-2 rounded-lg ${isItemActive ? 'bg-emerald-500/20' : 'bg-gray-800'}`}>
-                  <Icon className={`w-4 h-4 ${isItemActive ? 'text-emerald-400' : 'text-gray-400'}`} />
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className={`text-sm font-medium ${isItemActive ? 'text-emerald-400' : 'text-white'}`}>
-                      {item.name}
-                    </span>
-                    {item.badge && (
-                      <span className={`px-1.5 py-0.5 ${item.badgeColor} text-white text-[10px] font-bold rounded`}>
-                        {item.badge}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-xs text-gray-500 mt-0.5">{item.description}</p>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-      )}
-    </div>
   );
 }
 
@@ -182,7 +117,7 @@ function UserDropdown() {
             <div className="py-2">
               <Link href="/dashboard" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
                 <Shield className="w-4 h-4" />
-                My Prop Firms
+                Dashboard
               </Link>
               <Link href="/dashboard/favorites" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
                 <Star className="w-4 h-4" />
@@ -217,8 +152,6 @@ export function Navbar() {
   const pathname = usePathname();
   const { user, isLoading, signInWithGoogle, signOut } = useAuth();
 
-  const isMyPropFirmsActive = pathname.startsWith('/dashboard');
-
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-gray-950/80 backdrop-blur-xl border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -234,14 +167,15 @@ export function Navbar() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-1">
-            {navigation.map((item) => {
+          <div className="hidden lg:flex items-center space-x-1">
+            {/* Main Navigation Links */}
+            {mainNavigation.map((item) => {
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
               return (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all
+                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all
                     ${isActive ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:text-white hover:bg-white/5'}`}
                 >
                   <item.icon className="w-4 h-4" />
@@ -250,29 +184,48 @@ export function Navbar() {
               );
             })}
 
-            {/* Products Dropdown */}
-            <ProductsDropdown />
+            {/* Separator */}
+            <div className="w-px h-6 bg-gray-700 mx-1" />
+
+            {/* Product Links - Visible directement */}
+            {productLinks.map((item) => {
+              const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all
+                    ${isActive ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:text-white hover:bg-white/5'}`}
+                >
+                  <Icon className="w-4 h-4" />
+                  {item.name}
+                  {item.badge && (
+                    <span className={`px-1.5 py-0.5 ${item.badgeColor} text-white text-[10px] font-bold rounded`}>
+                      {item.badge}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
+
+            {/* Separator */}
+            <div className="w-px h-6 bg-gray-700 mx-1" />
 
             {/* Free Guide */}
-            <Link href="/guide" className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20">
+            <Link 
+              href="/guide" 
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all
+                ${pathname === '/guide' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'}`}
+            >
               <BookOpen className="w-4 h-4" />
               Free Guide
-              <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded">FREE</span>
-            </Link>
-
-            {/* My Prop Firms - Always visible */}
-            <Link
-              href="/dashboard"
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all
-                ${isMyPropFirmsActive ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:text-white hover:bg-white/5'}`}
-            >
-              <Shield className="w-4 h-4" />
-              My Prop Firms
+              <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-[10px] font-bold rounded">FREE</span>
             </Link>
           </div>
 
           {/* Auth Section */}
-          <div className="hidden md:flex items-center space-x-3">
+          <div className="hidden lg:flex items-center space-x-3">
             {isLoading ? (
               <Loader2 className="w-5 h-5 text-gray-500 animate-spin" />
             ) : user ? (
@@ -283,13 +236,16 @@ export function Navbar() {
                 className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors"
               >
                 <GoogleIcon className="w-4 h-4" />
-                Se connecter
+                Sign In
               </button>
             )}
           </div>
 
           {/* Mobile menu button */}
-          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 text-gray-400 hover:text-white">
+          <button 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
+            className="lg:hidden p-2 text-gray-400 hover:text-white"
+          >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
@@ -297,9 +253,10 @@ export function Navbar() {
 
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-gray-900/95 backdrop-blur-lg border-t border-gray-800">
+        <div className="lg:hidden bg-gray-900/95 backdrop-blur-lg border-t border-gray-800">
           <div className="px-4 py-4 space-y-2">
-            {navigation.map((item) => {
+            {/* Main Navigation */}
+            {mainNavigation.map((item) => {
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
               return (
                 <Link
@@ -318,16 +275,16 @@ export function Navbar() {
             {/* Products Section - Mobile */}
             <div className="pt-2 border-t border-gray-800">
               <p className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Products</p>
-              {productsDropdown.map((item) => {
+              {productLinks.map((item) => {
                 const Icon = item.icon;
-                const isItemActive = pathname.startsWith(item.href);
+                const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
                 return (
                   <Link
                     key={item.name}
                     href={item.href}
                     onClick={() => setMobileMenuOpen(false)}
                     className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all
-                      ${isItemActive ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:text-white hover:bg-white/5'}`}
+                      ${isActive ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:text-white hover:bg-white/5'}`}
                   >
                     <Icon className="w-5 h-5" />
                     {item.name}
@@ -341,22 +298,15 @@ export function Navbar() {
               })}
             </div>
 
-            {/* Free Guide */}
-            <Link href="/guide" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium bg-emerald-500/10 text-emerald-400">
+            {/* Free Guide - Mobile */}
+            <Link 
+              href="/guide" 
+              onClick={() => setMobileMenuOpen(false)} 
+              className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium bg-emerald-500/10 text-emerald-400"
+            >
               <BookOpen className="w-5 h-5" />
               Free Guide
               <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded ml-auto">FREE</span>
-            </Link>
-
-            {/* My Prop Firms */}
-            <Link
-              href="/dashboard"
-              onClick={() => setMobileMenuOpen(false)}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all
-                ${isMyPropFirmsActive ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:text-white hover:bg-white/5'}`}
-            >
-              <Shield className="w-5 h-5" />
-              My Prop Firms
             </Link>
 
             {/* User section for mobile */}
@@ -382,12 +332,30 @@ export function Navbar() {
                     </div>
                   </div>
 
-                  <Link href="/dashboard/favorites" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:bg-white/5">
+                  {/* Dashboard Link */}
+                  <Link 
+                    href="/dashboard" 
+                    onClick={() => setMobileMenuOpen(false)} 
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:bg-white/5"
+                  >
+                    <Shield className="w-5 h-5" />
+                    Dashboard
+                  </Link>
+
+                  <Link 
+                    href="/dashboard/favorites" 
+                    onClick={() => setMobileMenuOpen(false)} 
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:bg-white/5"
+                  >
                     <Star className="w-5 h-5" />
                     Mes Favoris
                   </Link>
 
-                  <Link href="/dashboard/settings" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:bg-white/5">
+                  <Link 
+                    href="/dashboard/settings" 
+                    onClick={() => setMobileMenuOpen(false)} 
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:bg-white/5"
+                  >
                     <Settings className="w-5 h-5" />
                     Paramètres
                   </Link>
@@ -406,7 +374,7 @@ export function Navbar() {
                   className="flex items-center justify-center gap-2 w-full px-4 py-3 text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg"
                 >
                   <GoogleIcon className="w-4 h-4" />
-                  Se connecter avec Google
+                  Sign In with Google
                 </button>
               )}
             </div>
