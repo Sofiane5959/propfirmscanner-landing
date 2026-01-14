@@ -6,7 +6,6 @@ import Link from 'next/link';
 import {
   X,
   Check,
-  Minus,
   Star,
   ExternalLink,
   ChevronDown,
@@ -56,46 +55,60 @@ interface CompareModalProps {
   onRemove: (id: string) => void;
 }
 
+interface ComparisonRow {
+  key: keyof PropFirm;
+  label: string;
+  type: 'number' | 'string' | 'boolean' | 'array';
+  suffix?: string;
+  prefix?: string;
+  better?: 'higher' | 'lower';
+}
+
+interface ComparisonSection {
+  title: string;
+  rows: ComparisonRow[];
+}
+
 // =============================================================================
 // COMPARISON CATEGORIES
 // =============================================================================
 
-const COMPARISON_SECTIONS = [
+const COMPARISON_SECTIONS: ComparisonSection[] = [
   {
     title: 'Pricing & Payouts',
     rows: [
-      { key: 'min_price', label: 'Starting Price', format: (v: number) => v ? `$${v}` : '—', better: 'lower' },
-      { key: 'profit_split', label: 'Profit Split', format: (v: number) => v ? `${v}%` : '—', better: 'higher' },
-      { key: 'max_profit_split', label: 'Max Profit Split', format: (v: number) => v ? `${v}%` : '—', better: 'higher' },
-      { key: 'payout_frequency', label: 'Payout Frequency', format: (v: string) => v || '—' },
-      { key: 'fee_refund', label: 'Fee Refundable', format: (v: boolean) => v, type: 'boolean' },
+      { key: 'min_price', label: 'Starting Price', type: 'number', prefix: '$', better: 'lower' },
+      { key: 'profit_split', label: 'Profit Split', type: 'number', suffix: '%', better: 'higher' },
+      { key: 'max_profit_split', label: 'Max Profit Split', type: 'number', suffix: '%', better: 'higher' },
+      { key: 'payout_frequency', label: 'Payout Frequency', type: 'string' },
+      { key: 'fee_refund', label: 'Fee Refundable', type: 'boolean' },
     ],
   },
   {
     title: 'Challenge Rules',
     rows: [
-      { key: 'profit_target_phase1', label: 'Phase 1 Target', format: (v: number) => v ? `${v}%` : '—', better: 'lower' },
-      { key: 'profit_target_phase2', label: 'Phase 2 Target', format: (v: number) => v ? `${v}%` : '—', better: 'lower' },
-      { key: 'max_daily_drawdown', label: 'Daily Drawdown', format: (v: number) => v ? `${v}%` : '—', better: 'higher' },
-      { key: 'max_total_drawdown', label: 'Total Drawdown', format: (v: number) => v ? `${v}%` : '—', better: 'higher' },
-      { key: 'drawdown_type', label: 'Drawdown Type', format: (v: string) => v || '—' },
-      { key: 'min_trading_days', label: 'Min Trading Days', format: (v: number) => v ? `${v} days` : 'None', better: 'lower' },
+      { key: 'profit_target_phase1', label: 'Phase 1 Target', type: 'number', suffix: '%', better: 'lower' },
+      { key: 'profit_target_phase2', label: 'Phase 2 Target', type: 'number', suffix: '%', better: 'lower' },
+      { key: 'max_daily_drawdown', label: 'Daily Drawdown', type: 'number', suffix: '%', better: 'higher' },
+      { key: 'max_total_drawdown', label: 'Total Drawdown', type: 'number', suffix: '%', better: 'higher' },
+      { key: 'drawdown_type', label: 'Drawdown Type', type: 'string' },
+      { key: 'min_trading_days', label: 'Min Trading Days', type: 'number', suffix: ' days', better: 'lower' },
     ],
   },
   {
     title: 'Trading Permissions',
     rows: [
-      { key: 'allows_scalping', label: 'Scalping', format: (v: boolean) => v, type: 'boolean' },
-      { key: 'allows_news_trading', label: 'News Trading', format: (v: boolean) => v, type: 'boolean' },
-      { key: 'allows_ea', label: 'EAs/Bots', format: (v: boolean) => v, type: 'boolean' },
-      { key: 'allows_weekend_holding', label: 'Weekend Holding', format: (v: boolean) => v, type: 'boolean' },
-      { key: 'has_instant_funding', label: 'Instant Funding', format: (v: boolean) => v, type: 'boolean' },
+      { key: 'allows_scalping', label: 'Scalping', type: 'boolean' },
+      { key: 'allows_news_trading', label: 'News Trading', type: 'boolean' },
+      { key: 'allows_ea', label: 'EAs/Bots', type: 'boolean' },
+      { key: 'allows_weekend_holding', label: 'Weekend Holding', type: 'boolean' },
+      { key: 'has_instant_funding', label: 'Instant Funding', type: 'boolean' },
     ],
   },
   {
     title: 'Platforms',
     rows: [
-      { key: 'platforms', label: 'Trading Platforms', format: (v: string[]) => v?.join(', ') || '—' },
+      { key: 'platforms', label: 'Trading Platforms', type: 'array' },
     ],
   },
 ];
@@ -146,6 +159,29 @@ function CopyButton({ code }: { code: string }) {
 }
 
 // =============================================================================
+// FORMAT VALUE HELPER
+// =============================================================================
+
+function formatValue(value: PropFirm[keyof PropFirm], row: ComparisonRow): string {
+  if (value === null || value === undefined) return '—';
+  
+  if (row.type === 'array' && Array.isArray(value)) {
+    return value.length > 0 ? value.join(', ') : '—';
+  }
+  
+  if (row.type === 'number' && typeof value === 'number') {
+    if (value === 0 && row.key === 'min_trading_days') return 'None';
+    return `${row.prefix || ''}${value}${row.suffix || ''}`;
+  }
+  
+  if (row.type === 'string') {
+    return String(value) || '—';
+  }
+  
+  return String(value);
+}
+
+// =============================================================================
 // MAIN COMPONENT
 // =============================================================================
 
@@ -163,18 +199,20 @@ export default function CompareModal({ firms, onClose, onRemove }: CompareModalP
   };
 
   // Find best value for each comparable metric
-  const getBestValue = (key: string, better: 'higher' | 'lower' | undefined) => {
+  const getBestValue = (key: keyof PropFirm, better: 'higher' | 'lower' | undefined): number | null => {
     if (!better) return null;
-    const values = firms.map(f => (f as any)[key]).filter(v => v !== null && v !== undefined);
+    const values = firms
+      .map(f => f[key])
+      .filter((v): v is number => typeof v === 'number' && v !== null && v !== undefined);
     if (values.length === 0) return null;
     return better === 'higher' ? Math.max(...values) : Math.min(...values);
   };
 
   // Determine winner for a row
-  const isWinner = (firm: PropFirm, key: string, better: 'higher' | 'lower' | undefined) => {
+  const isWinner = (firm: PropFirm, key: keyof PropFirm, better: 'higher' | 'lower' | undefined): boolean => {
     if (!better) return false;
-    const value = (firm as any)[key];
-    if (value === null || value === undefined) return false;
+    const value = firm[key];
+    if (typeof value !== 'number' || value === null || value === undefined) return false;
     const best = getBestValue(key, better);
     return value === best;
   };
@@ -219,7 +257,7 @@ export default function CompareModal({ firms, onClose, onRemove }: CompareModalP
             <div className="grid gap-4" style={{ gridTemplateColumns: `200px repeat(${firms.length}, 1fr)` }}>
               <div /> {/* Empty cell for labels */}
               {firms.map(firm => (
-                <div key={firm.id} className="bg-gray-900 rounded-xl p-4 border border-gray-800">
+                <div key={firm.id} className="relative bg-gray-900 rounded-xl p-4 border border-gray-800">
                   <button
                     onClick={() => onRemove(firm.id)}
                     className="absolute top-2 right-2 p-1 text-gray-500 hover:text-red-400 transition-colors"
@@ -310,20 +348,20 @@ export default function CompareModal({ firms, onClose, onRemove }: CompareModalP
 
                         {/* Values */}
                         {firms.map(firm => {
-                          const value = (firm as any)[row.key];
-                          const winner = isWinner(firm, row.key, (row as any).better);
+                          const value = firm[row.key];
+                          const winner = isWinner(firm, row.key, row.better);
 
                           return (
                             <div
                               key={firm.id}
                               className={`text-sm ${winner ? 'text-emerald-400 font-semibold' : 'text-white'}`}
                             >
-                              {(row as any).type === 'boolean' ? (
-                                <BooleanValue value={value} />
+                              {row.type === 'boolean' ? (
+                                <BooleanValue value={Boolean(value)} />
                               ) : (
                                 <span className="flex items-center gap-1">
                                   {winner && <Trophy className="w-3.5 h-3.5 text-yellow-400" />}
-                                  {row.format(value)}
+                                  {formatValue(value, row)}
                                 </span>
                               )}
                             </div>
