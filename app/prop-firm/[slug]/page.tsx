@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { createClient } from '@supabase/supabase-js'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import PropFirmPageClient from './PropFirmPageClient'
 
@@ -7,9 +8,17 @@ interface Props {
   params: { slug: string }
 }
 
+// Create a static Supabase client for build-time (no cookies needed)
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+
+function getStaticSupabaseClient() {
+  return createClient(supabaseUrl, supabaseAnonKey)
+}
+
 // Generate metadata for SEO
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const supabase = createServerSupabaseClient()
+  const supabase = getStaticSupabaseClient()
   
   const { data: firm } = await supabase
     .from('prop_firms')
@@ -31,9 +40,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-// Generate static paths for popular firms
+// Generate static paths for popular firms (NO cookies - uses static client)
 export async function generateStaticParams() {
-  const supabase = createServerSupabaseClient()
+  const supabase = getStaticSupabaseClient()
   
   const { data: firms } = await supabase
     .from('prop_firms')
@@ -45,7 +54,7 @@ export async function generateStaticParams() {
 }
 
 export default async function PropFirmPage({ params }: Props) {
-  const supabase = createServerSupabaseClient()
+  const supabase = getStaticSupabaseClient()
 
   const { data: firm, error } = await supabase
     .from('prop_firms')
