@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/providers/AuthProvider';
@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 
 // =============================================================================
-// NAVIGATION LINKS - Tous les liens principaux visibles directement
+// NAVIGATION LINKS
 // =============================================================================
 
 const mainNavigation = [
@@ -33,7 +33,6 @@ const mainNavigation = [
   { name: 'Blog', href: '/blog', icon: FileText },
 ];
 
-// Produits (avec badge Coming Soon)
 const productLinks = [
   { 
     name: 'Education', 
@@ -74,22 +73,57 @@ function GoogleIcon({ className }: { className?: string }) {
 }
 
 // =============================================================================
-// USER DROPDOWN (when logged in)
+// USER DROPDOWN - Fixed version with proper click handling
 // =============================================================================
 
 function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const { user, profile, signOut } = useAuth();
 
   const displayName = profile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
   const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url;
   const initials = displayName.charAt(0).toUpperCase();
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+
+    if (isOpen) {
+      // Use capture phase to ensure we catch the event before navigation
+      document.addEventListener('mousedown', handleClickOutside, true);
+      return () => document.removeEventListener('mousedown', handleClickOutside, true);
+    }
+  }, [isOpen]);
+
+  // Close on escape key
+  useEffect(() => {
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+      return () => document.removeEventListener('keydown', handleEscape);
+    }
+  }, [isOpen]);
+
   return (
-    <div className="relative">
+    <div className="relative" ref={dropdownRef}>
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsOpen(!isOpen);
+        }}
         className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-white/5 transition-colors"
+        aria-expanded={isOpen}
+        aria-haspopup="true"
       >
         {avatarUrl ? (
           <img src={avatarUrl} alt={displayName} className="w-8 h-8 rounded-full" referrerPolicy="no-referrer" />
@@ -102,42 +136,60 @@ function UserDropdown() {
         <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
-      {/* Dropdown Menu */}
+      {/* Dropdown Menu - No more fixed overlay blocking clicks! */}
       {isOpen && (
-        <>
-          <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-          <div className="absolute right-0 mt-2 w-56 bg-gray-900 border border-gray-800 rounded-xl shadow-xl z-50 py-2">
-            {/* User Info */}
-            <div className="px-4 py-3 border-b border-gray-800">
-              <p className="text-sm font-medium text-white truncate">{displayName}</p>
-              <p className="text-xs text-gray-500 truncate">{user?.email}</p>
-            </div>
-
-            {/* Menu Items */}
-            <div className="py-2">
-              <Link href="/dashboard" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
-                <Shield className="w-4 h-4" />
-                Dashboard
-              </Link>
-              <Link href="/dashboard/favorites" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
-                <Star className="w-4 h-4" />
-                Mes Favoris
-              </Link>
-              <Link href="/dashboard/settings" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
-                <Settings className="w-4 h-4" />
-                Paramètres
-              </Link>
-            </div>
-
-            {/* Logout */}
-            <div className="border-t border-gray-800 pt-2">
-              <button onClick={() => { setIsOpen(false); signOut(); }} className="flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 w-full transition-colors">
-                <LogOut className="w-4 h-4" />
-                Se déconnecter
-              </button>
-            </div>
+        <div 
+          className="absolute right-0 mt-2 w-56 bg-gray-900 border border-gray-800 rounded-xl shadow-xl z-[60] py-2"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* User Info */}
+          <div className="px-4 py-3 border-b border-gray-800">
+            <p className="text-sm font-medium text-white truncate">{displayName}</p>
+            <p className="text-xs text-gray-500 truncate">{user?.email}</p>
           </div>
-        </>
+
+          {/* Menu Items */}
+          <div className="py-2">
+            <Link 
+              href="/dashboard" 
+              onClick={() => setIsOpen(false)} 
+              className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
+            >
+              <Shield className="w-4 h-4" />
+              Dashboard
+            </Link>
+            <Link 
+              href="/dashboard/favorites" 
+              onClick={() => setIsOpen(false)} 
+              className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
+            >
+              <Star className="w-4 h-4" />
+              Mes Favoris
+            </Link>
+            <Link 
+              href="/dashboard/settings" 
+              onClick={() => setIsOpen(false)} 
+              className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
+            >
+              <Settings className="w-4 h-4" />
+              Paramètres
+            </Link>
+          </div>
+
+          {/* Logout */}
+          <div className="border-t border-gray-800 pt-2">
+            <button 
+              onClick={() => { 
+                setIsOpen(false); 
+                signOut(); 
+              }} 
+              className="flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 w-full transition-colors"
+            >
+              <LogOut className="w-4 h-4" />
+              Se déconnecter
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
@@ -152,12 +204,17 @@ export function Navbar() {
   const pathname = usePathname();
   const { user, isLoading, signInWithGoogle, signOut } = useAuth();
 
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-gray-950/80 backdrop-blur-xl border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
+          <Link href="/" className="flex items-center space-x-2 relative z-10">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center">
               <span className="text-white font-bold text-sm">P</span>
             </div>
@@ -166,11 +223,12 @@ export function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-1">
+          {/* Desktop Navigation - Added relative z-10 to ensure clickability */}
+          <div className="hidden lg:flex items-center space-x-1 relative z-10">
             {/* Main Navigation Links */}
             {mainNavigation.map((item) => {
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+              const Icon = item.icon;
               return (
                 <Link
                   key={item.name}
@@ -178,7 +236,7 @@ export function Navbar() {
                   className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all
                     ${isActive ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:text-white hover:bg-white/5'}`}
                 >
-                  <item.icon className="w-4 h-4" />
+                  <Icon className="w-4 h-4" />
                   {item.name}
                 </Link>
               );
@@ -187,10 +245,10 @@ export function Navbar() {
             {/* Separator */}
             <div className="w-px h-6 bg-gray-700 mx-1" />
 
-            {/* Product Links - Visible directement */}
+            {/* Product Links */}
             {productLinks.map((item) => {
-              const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
               const Icon = item.icon;
+              const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
               return (
                 <Link
                   key={item.name}
@@ -224,8 +282,8 @@ export function Navbar() {
             </Link>
           </div>
 
-          {/* Auth Section */}
-          <div className="hidden lg:flex items-center space-x-3">
+          {/* Auth Section - Added relative z-10 */}
+          <div className="hidden lg:flex items-center space-x-3 relative z-10">
             {isLoading ? (
               <Loader2 className="w-5 h-5 text-gray-500 animate-spin" />
             ) : user ? (
@@ -244,7 +302,8 @@ export function Navbar() {
           {/* Mobile menu button */}
           <button 
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
-            className="lg:hidden p-2 text-gray-400 hover:text-white"
+            className="lg:hidden p-2 text-gray-400 hover:text-white relative z-10"
+            aria-label="Toggle menu"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -257,6 +316,7 @@ export function Navbar() {
           <div className="px-4 py-4 space-y-2">
             {/* Main Navigation */}
             {mainNavigation.map((item) => {
+              const Icon = item.icon;
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
               return (
                 <Link
@@ -266,7 +326,7 @@ export function Navbar() {
                   className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all
                     ${isActive ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:text-white hover:bg-white/5'}`}
                 >
-                  <item.icon className="w-5 h-5" />
+                  <Icon className="w-5 h-5" />
                   {item.name}
                 </Link>
               );
@@ -332,7 +392,7 @@ export function Navbar() {
                     </div>
                   </div>
 
-                  {/* Dashboard Link */}
+                  {/* Dashboard Links */}
                   <Link 
                     href="/dashboard" 
                     onClick={() => setMobileMenuOpen(false)} 
