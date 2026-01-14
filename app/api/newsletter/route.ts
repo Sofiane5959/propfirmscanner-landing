@@ -1,60 +1,68 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-const MAILCHIMP_API_KEY = process.env.MAILCHIMP_API_KEY!;
-const MAILCHIMP_AUDIENCE_ID = process.env.MAILCHIMP_AUDIENCE_ID!;
-const MAILCHIMP_DC = MAILCHIMP_API_KEY?.split('-')[1] || 'us18';
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, firstName } = await request.json();
+    const { email, source } = await request.json();
 
+    // Validation email
     if (!email || !email.includes('@')) {
       return NextResponse.json(
-        { error: 'Valid email is required' },
+        { error: 'Invalid email address' },
         { status: 400 }
       );
     }
 
-    const response = await fetch(
-      `https://${MAILCHIMP_DC}.api.mailchimp.com/3.0/lists/${MAILCHIMP_AUDIENCE_ID}/members`,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `apikey ${MAILCHIMP_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email_address: email,
-          status: 'subscribed',
-          merge_fields: {
-            FNAME: firstName || '',
-          },
-          tags: ['propfirmscanner', 'website'],
-        }),
+    const cookieStore = cookies();
+    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+
+    // Check if email already exists
+    const { data: existing } = await supabase
+      .from('newsletter_subscribers')
+      .select('id')
+      .eq('email', email.toLowerCase())
+      .single();
+
+    if (existing) {
+      // Already subscribed - still return success for good UX
+      return NextResponse.json({
+        success: true,
+        message: 'Already subscribed',
+      });
+    }
+
+    // Insert new subscriber
+    const { error } = await supabase
+      .from('newsletter_subscribers')
+      .insert({
+        email: email.toLowerCase(),
+        source: source || 'website',
+        subscribed_at: new Date().toISOString(),
+      });
+
+    if (error) {
+      console.error('Newsletter subscription error:', error);
+      
+      // If table doesn't exist, still return success (graceful degradation)
+      if (error.code === '42P01') {
+        console.warn('newsletter_subscribers table does not exist');
+        return NextResponse.json({
+          success: true,
+          message: 'Subscribed (table not configured)',
+        });
       }
-    );
-
-    const data = await response.json();
-
-    if (response.status === 400 && data.title === 'Member Exists') {
+      
       return NextResponse.json(
-        { error: 'You are already subscribed!' },
-        { status: 400 }
-      );
-    }
-
-    if (!response.ok) {
-      console.error('Mailchimp error:', data);
-      return NextResponse.json(
-        { error: 'Failed to subscribe. Please try again.' },
+        { error: 'Failed to subscribe' },
         { status: 500 }
       );
     }
 
-    return NextResponse.json(
-      { success: true, message: 'Successfully subscribed!' },
-      { status: 201 }
-    );
+    return NextResponse.json({
+      success: true,
+      message: 'Successfully subscribed',
+    });
   } catch (error) {
     console.error('Newsletter API error:', error);
     return NextResponse.json(
@@ -62,4 +70,9 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+// Handle OPTIONS for CORS
+export async function OPTIONS() {
+  return NextResponse.json({}, { status: 200 });
 }

@@ -7,7 +7,7 @@ import {
   ExternalLink, Tag, CheckCircle, Star, Copy, Check,
   Percent, Sparkles, ArrowRight, Zap, Gift
 } from 'lucide-react';
-import { createBrowserClient } from '@supabase/ssr';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 // =============================================================================
 // TYPES
@@ -36,7 +36,6 @@ interface AffiliateData {
 
 // =============================================================================
 // REAL PROMO CODES & AFFILIATE LINKS
-// Only verified, working codes
 // =============================================================================
 
 const AFFILIATE_DATA: AffiliateData[] = [
@@ -159,18 +158,75 @@ const AFFILIATE_DATA: AffiliateData[] = [
 ];
 
 // =============================================================================
-// SUPABASE CLIENT
+// PROMO CODES BANNER - Le composant manquant!
 // =============================================================================
 
-function createClient() {
-  return createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+export function PromoCodesBanner() {
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  
+  const promoCodes = AFFILIATE_DATA.filter(a => a.promoCode && a.discountPercent);
+
+  const handleCopy = useCallback((code: string) => {
+    navigator.clipboard.writeText(code);
+    setCopiedCode(code);
+    setTimeout(() => setCopiedCode(null), 2000);
+  }, []);
+
+  if (promoCodes.length === 0) return null;
+
+  return (
+    <div className="mb-10 p-6 bg-gradient-to-r from-emerald-500/10 via-yellow-500/5 to-orange-500/10 border border-emerald-500/20 rounded-2xl">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="p-2 bg-yellow-500/20 rounded-lg">
+          <Gift className="w-5 h-5 text-yellow-400" />
+        </div>
+        <div>
+          <h3 className="font-semibold text-white">Quick Copy Promo Codes</h3>
+          <p className="text-sm text-gray-400">Click any code to copy instantly</p>
+        </div>
+      </div>
+      
+      <div className="flex flex-wrap gap-3">
+        {promoCodes.map((promo) => (
+          <button
+            key={promo.slug}
+            onClick={() => handleCopy(promo.promoCode!)}
+            className={`group flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all ${
+              copiedCode === promo.promoCode
+                ? 'bg-emerald-500/20 border border-emerald-500/50'
+                : 'bg-gray-800/80 border border-gray-700 hover:border-gray-600 hover:bg-gray-800'
+            }`}
+          >
+            <div className="text-left">
+              <span className="block text-white text-sm font-medium">
+                {promo.slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+              </span>
+              <span className="block text-emerald-400 text-xs font-semibold">
+                {promo.discountPercent}% OFF
+              </span>
+            </div>
+            <code className={`px-3 py-1.5 text-sm font-mono rounded-lg transition-all ${
+              copiedCode === promo.promoCode
+                ? 'bg-emerald-500 text-white'
+                : 'bg-yellow-500/20 text-yellow-400 group-hover:bg-yellow-500/30'
+            }`}>
+              {copiedCode === promo.promoCode ? (
+                <span className="flex items-center gap-1">
+                  <Check className="w-3.5 h-3.5" /> Copied!
+                </span>
+              ) : (
+                promo.promoCode
+              )}
+            </code>
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }
 
 // =============================================================================
-// DEAL CARD COMPONENT - Design moderne comme /compare
+// DEAL CARD COMPONENT
 // =============================================================================
 
 interface DealCardProps {
@@ -231,147 +287,63 @@ function DealCard({ firm, affiliate, onCopyCode, copiedCode, featured = false }:
             {firm.trustpilot_rating > 0 && (
               <div className="flex items-center gap-1.5 mt-1">
                 <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                <span className="text-white font-medium">{firm.trustpilot_rating.toFixed(1)}</span>
-                {firm.trustpilot_reviews > 0 && (
-                  <span className="text-gray-500 text-sm">({firm.trustpilot_reviews.toLocaleString()})</span>
-                )}
+                <span className="text-white text-sm font-medium">{firm.trustpilot_rating.toFixed(1)}</span>
+                <span className="text-gray-500 text-xs">({firm.trustpilot_reviews} reviews)</span>
               </div>
             )}
           </div>
         </div>
 
-        {/* Stats Row */}
+        {/* Stats */}
         <div className="grid grid-cols-2 gap-3 mb-4">
-          <div className="bg-gray-800/50 rounded-lg p-3">
-            <p className="text-gray-500 text-xs uppercase tracking-wide mb-1">From</p>
+          <div className="bg-gray-800/50 rounded-lg p-3 text-center">
+            <p className="text-gray-500 text-xs mb-1">From</p>
             <p className="text-white font-semibold">${firm.min_price || '—'}</p>
           </div>
-          <div className="bg-gray-800/50 rounded-lg p-3">
-            <p className="text-gray-500 text-xs uppercase tracking-wide mb-1">Split</p>
+          <div className="bg-gray-800/50 rounded-lg p-3 text-center">
+            <p className="text-gray-500 text-xs mb-1">Profit Split</p>
             <p className="text-emerald-400 font-semibold">{firm.profit_split || '—'}%</p>
           </div>
         </div>
 
-        {/* Promo Code Section */}
-        {hasPromoCode && (
-          <div className="mb-4 p-3 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/30 rounded-xl">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Tag className="w-4 h-4 text-yellow-400" />
-                <span className="text-gray-400 text-sm">Code:</span>
-              </div>
-              <button
-                onClick={() => onCopyCode(affiliate.promoCode!)}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg font-mono text-sm font-medium transition-all ${
-                  copiedCode === affiliate.promoCode
-                    ? 'bg-emerald-500/20 text-emerald-400'
-                    : 'bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30'
-                }`}
-              >
-                {copiedCode === affiliate.promoCode ? (
-                  <>
-                    <Check className="w-3.5 h-3.5" />
-                    Copied!
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-3.5 h-3.5" />
-                    {affiliate.promoCode}
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* CTA Buttons */}
+        {/* Actions */}
         <div className="flex gap-2">
+          {hasPromoCode && (
+            <button
+              onClick={() => onCopyCode(affiliate.promoCode!)}
+              className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-medium transition-all ${
+                copiedCode === affiliate.promoCode
+                  ? 'bg-emerald-500 text-white'
+                  : 'bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30'
+              }`}
+            >
+              {copiedCode === affiliate.promoCode ? (
+                <>
+                  <Check className="w-4 h-4" />
+                  Copied!
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4" />
+                  {affiliate.promoCode}
+                </>
+              )}
+            </button>
+          )}
+          
           <Link
-            href={`/compare/${firm.slug}`}
-            className="flex-1 flex items-center justify-center gap-2 py-3 bg-gray-800 hover:bg-gray-700 text-white text-sm font-medium rounded-xl transition-colors"
-          >
-            Details
-          </Link>
-          <a
             href={affiliate.affiliateLink}
             target="_blank"
             rel="noopener noreferrer"
-            className={`flex-1 flex items-center justify-center gap-2 py-3 text-white text-sm font-medium rounded-xl transition-all ${
-              hasPromoCode
-                ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 shadow-lg shadow-emerald-500/25'
-                : 'bg-emerald-500 hover:bg-emerald-600'
+            className={`flex items-center justify-center gap-2 py-3 rounded-xl font-medium transition-all ${
+              hasPromoCode 
+                ? 'flex-1 bg-emerald-500 hover:bg-emerald-600 text-white' 
+                : 'flex-1 bg-gray-700 hover:bg-gray-600 text-white'
             }`}
           >
-            Visit
+            Visit Site
             <ExternalLink className="w-4 h-4" />
-          </a>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// =============================================================================
-// PROMO CODES BANNER - Redesign
-// =============================================================================
-
-export function PromoCodesBanner() {
-  const [copiedCode, setCopiedCode] = useState<string | null>(null);
-  
-  const promoCodes = AFFILIATE_DATA.filter(a => a.promoCode && a.discountPercent);
-
-  const handleCopy = useCallback((code: string) => {
-    navigator.clipboard.writeText(code);
-    setCopiedCode(code);
-    setTimeout(() => setCopiedCode(null), 2000);
-  }, []);
-
-  if (promoCodes.length === 0) return null;
-
-  return (
-    <div className="relative overflow-hidden bg-gradient-to-br from-gray-900 via-gray-900 to-emerald-900/20 border border-emerald-500/30 rounded-2xl p-6 mb-8">
-      {/* Background decoration */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-48 h-48 bg-yellow-500/5 rounded-full blur-3xl" />
-      
-      <div className="relative z-10">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="p-2.5 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-xl">
-            <Gift className="w-6 h-6 text-yellow-400" />
-          </div>
-          <div>
-            <h3 className="font-bold text-white text-lg">Exclusive Promo Codes</h3>
-            <p className="text-gray-400 text-sm">Verified discounts • Updated January 2025</p>
-          </div>
-        </div>
-
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {promoCodes.map((promo) => (
-            <button
-              key={promo.slug}
-              onClick={() => handleCopy(promo.promoCode!)}
-              className={`group relative flex items-center justify-between p-4 rounded-xl border transition-all ${
-                copiedCode === promo.promoCode
-                  ? 'bg-emerald-500/20 border-emerald-500/50'
-                  : 'bg-gray-800/50 border-gray-700 hover:border-yellow-500/50 hover:bg-gray-800'
-              }`}
-            >
-              <div className="flex flex-col items-start">
-                <span className="text-gray-400 text-xs">{promo.slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</span>
-                <span className="text-white font-mono font-semibold">{promo.promoCode}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="px-2 py-1 bg-red-500/20 text-red-400 text-xs font-bold rounded">
-                  {promo.discountPercent}%
-                </span>
-                {copiedCode === promo.promoCode ? (
-                  <Check className="w-4 h-4 text-emerald-400" />
-                ) : (
-                  <Copy className="w-4 h-4 text-gray-500 group-hover:text-yellow-400 transition-colors" />
-                )}
-              </div>
-            </button>
-          ))}
+          </Link>
         </div>
       </div>
     </div>
@@ -417,7 +389,7 @@ export function DealsGrid() {
   useEffect(() => {
     async function fetchFirms() {
       try {
-        const supabase = createClient();
+        const supabase = createClientComponentClient();
         const slugs = AFFILIATE_DATA.map(a => a.slug);
         
         const { data, error } = await supabase
@@ -447,7 +419,7 @@ export function DealsGrid() {
   const firmsWithDeals = AFFILIATE_DATA.map(affiliate => {
     const firm = firms.find(f => f.slug === affiliate.slug);
     return { affiliate, firm };
-  }).filter(({ firm }) => firm); // Only show firms found in Supabase
+  }).filter(({ firm }) => firm);
 
   // Separate firms with promo codes from those without
   const firmsWithCodes = firmsWithDeals.filter(({ affiliate }) => affiliate.promoCode && affiliate.discountPercent);
@@ -458,7 +430,7 @@ export function DealsGrid() {
 
   return (
     <div className="space-y-12">
-      {/* Featured Deals Section - Firms WITH promo codes */}
+      {/* Featured Deals Section */}
       <section>
         <div className="flex items-center gap-3 mb-6">
           <div className="p-2.5 bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 rounded-xl">
@@ -496,7 +468,7 @@ export function DealsGrid() {
         )}
       </section>
 
-      {/* Partner Links Section - Firms WITHOUT promo codes */}
+      {/* Partner Links Section */}
       {firmsWithoutCodes.length > 0 && (
         <section>
           <div className="flex items-center gap-3 mb-6">
@@ -531,7 +503,7 @@ export function DealsGrid() {
         </section>
       )}
 
-      {/* CTA to Compare Page */}
+      {/* CTA */}
       <section className="text-center py-8">
         <div className="inline-flex flex-col items-center gap-4 p-8 bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700 rounded-2xl">
           <p className="text-gray-400">Looking for more prop firms?</p>
@@ -539,7 +511,7 @@ export function DealsGrid() {
             href="/compare"
             className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-xl transition-colors"
           >
-            Browse All {firms.length > 0 ? '70+' : ''} Prop Firms
+            Browse All 70+ Prop Firms
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
@@ -549,7 +521,7 @@ export function DealsGrid() {
 }
 
 // =============================================================================
-// FEATURED FIRMS SIDEBAR (Optional - pour autres pages)
+// FEATURED FIRMS SIDEBAR
 // =============================================================================
 
 export function FeaturedFirmsSidebar() {
