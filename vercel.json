@@ -1,3 +1,8 @@
 {
-  "framework": "nextjs"
+  "crons": [
+    {
+      "path": "/api/check-price-alerts",
+      "schedule": "0 */6 * * *"
+    }
+  ]
 }
