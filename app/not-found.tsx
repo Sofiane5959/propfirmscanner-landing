@@ -1,7 +1,12 @@
+'use client'
+
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Home, Search, ArrowLeft } from 'lucide-react'
 
 export default function NotFound() {
+  const router = useRouter()
+
   return (
     <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
       <div className="text-center max-w-md">
@@ -17,7 +22,7 @@ export default function NotFound() {
           Page Not Found
         </h1>
         <p className="text-gray-400 mb-8">
-          Oops! The page you're looking for doesn't exist or has been moved.
+          Oops! The page you&apos;re looking for doesn&apos;t exist or has been moved.
         </p>
 
         {/* Actions */}
@@ -40,7 +45,7 @@ export default function NotFound() {
 
         {/* Back Link */}
         <button
-          onClick={() => window.history.back()}
+          onClick={() => router.back()}
           className="mt-6 inline-flex items-center gap-2 text-gray-500 hover:text-gray-300 transition-colors text-sm"
         >
           <ArrowLeft className="w-4 h-4" />
