@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Copy, CheckCircle2, BadgeCheck, ShieldCheck, ExternalLink } from 'lucide-react'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 // =====================================================
 // TYPES
@@ -104,13 +105,53 @@ const DealPill = ({ deal }: { deal: PromoDeal }) => {
 // =====================================================
 // MAIN PROMO TICKER
 // =====================================================
-export default function PromoTicker({ deals = [] }: PromoTickerProps) {
+export default function PromoTicker({ deals: initialDeals = [] }: PromoTickerProps) {
+  const [deals, setDeals] = useState<PromoDeal[]>(initialDeals)
+  const [isLoading, setIsLoading] = useState(initialDeals.length === 0)
   const [isPaused, setIsPaused] = useState(false)
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const [startX, setStartX] = useState(0)
   const [scrollLeft, setScrollLeft] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
+  
+  // Fetch deals from Supabase on mount
+  useEffect(() => {
+    // Skip if deals were provided via props
+    if (initialDeals.length > 0) {
+      setIsLoading(false)
+      return
+    }
+    
+    const fetchDeals = async () => {
+      try {
+        const supabase = createClientComponentClient()
+        
+        const { data, error } = await supabase
+          .from('prop_firms')
+          .select('id, name, slug, logo_url, discount_percent, discount_code, affiliate_url, website_url, trust_status')
+          .gt('discount_percent', 0)
+          .not('discount_code', 'is', null)
+          .order('discount_percent', { ascending: false })
+          .limit(10)
+        
+        if (error) {
+          console.error('Error fetching promo deals:', error)
+          return
+        }
+        
+        if (data && data.length > 0) {
+          setDeals(data)
+        }
+      } catch (err) {
+        console.error('Failed to fetch promo deals:', err)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    
+    fetchDeals()
+  }, [initialDeals.length])
   
   // Check for reduced motion preference
   useEffect(() => {
@@ -158,7 +199,8 @@ export default function PromoTicker({ deals = [] }: PromoTickerProps) {
     containerRef.current.scrollLeft = scrollLeft - walk
   }
   
-  // Hide ticker if no deals
+  // Hide ticker while loading or if no deals
+  if (isLoading) return null
   if (!deals || deals.length === 0) return null
   
   // Double the deals for seamless loop
