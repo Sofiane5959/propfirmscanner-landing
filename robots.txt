@@ -1,0 +1,13 @@
+# Robots.txt for PropFirmScanner
+# https://www.propfirmscanner.org
+
+User-agent: *
+Allow: /
+
+# Disallow admin/private areas
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /auth/
+
+# Sitemap
+Sitemap: https://www.propfirmscanner.org/sitemap.xml
