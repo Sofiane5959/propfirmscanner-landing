@@ -1,7 +1,15 @@
 import { Suspense } from 'react'
 import { Metadata } from 'next'
-import { createServerSupabaseClient } from '@/lib/supabase-server'
+import { createClient } from '@supabase/supabase-js'
 import ComparePageClient from './ComparePageClient'
+
+// Static Supabase client (no cookies - works for public data)
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+
+function getStaticSupabaseClient() {
+  return createClient(supabaseUrl, supabaseAnonKey)
+}
 
 export const metadata: Metadata = {
   title: 'Compare Prop Firms - Find Your Perfect Match | PropFirmScanner',
@@ -96,9 +104,9 @@ const faqStructuredData = {
 }
 
 export default async function ComparePage() {
-  const supabase = createServerSupabaseClient()
+  const supabase = getStaticSupabaseClient()
   
-  // Fetch all prop firms
+  // Fetch all prop firms (public data - no auth needed)
   const { data: firms, error } = await supabase
     .from('prop_firms')
     .select('*')
