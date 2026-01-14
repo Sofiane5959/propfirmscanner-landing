@@ -5,10 +5,10 @@ import './globals.css';
 import { AuthProvider } from '@/providers/AuthProvider';
 import { Navbar } from '@/components/Navbar';
 import PromoTicker from '@/components/PromoTicker';
+import Footer from '@/components/Footer';
 
 const inter = Inter({ subsets: ['latin'] });
 
-// Viewport configuration (separate from metadata in Next.js 14+)
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
@@ -36,12 +36,6 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: 'PropFirmScanner' }],
   creator: 'PropFirmScanner',
-  publisher: 'PropFirmScanner',
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
   openGraph: {
     type: 'website',
     locale: 'en_US',
@@ -63,7 +57,6 @@ export const metadata: Metadata = {
     title: 'PropFirmScanner - Compare Prop Trading Firms',
     description: 'Compare 80+ prop trading firms and track your accounts.',
     images: ['/og-image.png'],
-    creator: '@propfirmscanner',
   },
   robots: {
     index: true,
@@ -77,20 +70,6 @@ export const metadata: Metadata = {
     },
   },
   manifest: '/manifest.json',
-  icons: {
-    icon: [
-      { url: '/favicon.ico' },
-      { url: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
-    ],
-    apple: [
-      { url: '/icons/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
-    ],
-  },
-  verification: {
-    // Add your verification codes here
-    // google: 'your-google-verification-code',
-    // yandex: 'your-yandex-verification-code',
-  },
 };
 
 export default function RootLayout({
@@ -101,28 +80,22 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <head>
-        {/* Preconnect to external resources */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        
-        {/* PWA */}
-        <meta name="application-name" content="PropFirmScanner" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="PropFirmScanner" />
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="msapplication-TileColor" content="#10b981" />
       </head>
       <body className={`${inter.className} bg-gray-950 text-white antialiased`}>
         <AuthProvider>
           <Navbar />
           <PromoTicker deals={[]} />
-          <main className="pt-16">
+          <main className="pt-16 min-h-screen">
             {children}
           </main>
+          <Footer />
         </AuthProvider>
         
-        {/* JSON-LD Organization Schema */}
+        {/* JSON-LD Schema */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -132,10 +105,7 @@ export default function RootLayout({
               name: 'PropFirmScanner',
               url: 'https://www.propfirmscanner.org',
               logo: 'https://www.propfirmscanner.org/logo.png',
-              description: 'Compare and track prop trading firms. Find the best prop firm for your trading style.',
-              sameAs: [
-                // Add social media URLs here
-              ],
+              description: 'Compare and track prop trading firms.',
             }),
           }}
         />

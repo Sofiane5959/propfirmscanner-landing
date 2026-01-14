@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { 
   Twitter, 
   Mail, 
-  ExternalLink,
   Shield,
   BarChart3,
   Tag,
@@ -32,8 +31,8 @@ const footerLinks = {
     { name: 'MyFundedFX', href: '/prop-firm/myfundedfx' },
   ],
   legal: [
-    { name: 'Privacy Policy', href: '/privacy' },
-    { name: 'Terms of Service', href: '/terms' },
+    { name: 'Privacy Policy', href: '/privacy-policy' },
+    { name: 'Terms of Service', href: '/terms-of-service' },
     { name: 'Disclaimer', href: '/disclaimer' },
     { name: 'Contact', href: '/contact' },
   ],
@@ -59,7 +58,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-gray-400 text-sm mb-4">
-              Compare 80+ prop trading firms and find your perfect match. Never break a rule again.
+              Compare 80+ prop trading firms and find your perfect match.
             </p>
             <div className="flex gap-3">
               <a
@@ -156,15 +155,12 @@ export default function Footer() {
       <div className="border-t border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-gray-500 text-sm text-center md:text-left">
+            <p className="text-gray-500 text-sm">
               © {currentYear} PropFirmScanner. All rights reserved.
             </p>
-            
-            {/* Disclaimer */}
             <p className="text-gray-600 text-xs text-center md:text-right max-w-xl">
               <Shield className="w-3 h-3 inline mr-1" />
-              PropFirmScanner is an independent comparison platform. We may earn affiliate 
-              commissions. Trading involves risk.
+              PropFirmScanner is an independent comparison platform. We may earn affiliate commissions. Trading involves risk.
             </p>
           </div>
         </div>
