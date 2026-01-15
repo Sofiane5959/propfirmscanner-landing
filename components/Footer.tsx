@@ -155,7 +155,7 @@ export default function Footer() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-gray-500 text-sm">
-              © {currentYear} PropFirmScanner. All rights reserved.
+              &copy; {currentYear} PropFirmScanner. All rights reserved.
             </p>
             <p className="text-gray-600 text-xs text-center md:text-right max-w-xl">
               <Shield className="w-3 h-3 inline mr-1" />
