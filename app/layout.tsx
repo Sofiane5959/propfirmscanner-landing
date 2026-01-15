@@ -5,32 +5,12 @@ import './globals.css';
 import { AuthProvider } from '@/providers/AuthProvider';
 import { Navbar } from '@/components/Navbar';
 import PromoTicker from '@/components/PromoTicker';
-import Footer from '@/components/Footer';
+// Supprime la ligne : import Footer from '@/components/Footer';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://propfirmscanner.org'),
-  title: 'PropFirmScanner - Compare & Track Prop Trading Firms',
-  description: 'Compare prop trading firms, track your accounts, and never break a rule again. Your complete prop firm management dashboard.',
-  keywords: 'prop firm, prop trading, FTMO, funded trader, trading challenge, forex prop firm',
-  openGraph: {
-    type: 'website',
-    locale: 'en_US',
-    url: 'https://propfirmscanner.org',
-    siteName: 'PropFirmScanner',
-    title: 'PropFirmScanner - Compare & Track Prop Trading Firms',
-    description: 'Compare prop trading firms, track your accounts, and never break a rule again.',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'PropFirmScanner',
-    description: 'Compare prop trading firms and track your accounts.',
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  // ... garder tel quel
 };
 
 export default function RootLayout({
@@ -47,7 +27,7 @@ export default function RootLayout({
           <main className="pt-16">
             {children}
           </main>
-          <Footer />
+          {/* Supprime <Footer /> */}
         </AuthProvider>
       </body>
     </html>
