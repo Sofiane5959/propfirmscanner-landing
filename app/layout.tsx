@@ -6,6 +6,7 @@ import { AuthProvider } from '@/providers/AuthProvider';
 import { Navbar } from '@/components/Navbar';
 import PromoTicker from '@/components/PromoTicker';
 import Footer from '@/components/Footer';
+import GoogleAnalytics from '@/components/GoogleAnalytics';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -40,6 +41,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
+      <head>
+        <GoogleAnalytics />
+      </head>
       <body className={`${inter.className} bg-gray-950 text-white antialiased`}>
         <AuthProvider>
           <Navbar />
