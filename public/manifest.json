@@ -1,102 +1,78 @@
 {
-  "name": "PropFirm Scanner",
-  "short_name": "PropFirm",
-  "description": "Compare 90+ prop trading firms. Find your perfect match.",
+  "name": "PropFirmScanner",
+  "short_name": "PropFirmScanner",
+  "description": "Compare & Track Prop Trading Firms",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#111827",
-  "theme_color": "#10b981",
+  "background_color": "#030712",
+  "theme_color": "#10B981",
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/icons/icon-72x72.png",
+      "src": "/icons/icon-72.png",
       "sizes": "72x72",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-96x96.png",
+      "src": "/icons/icon-96.png",
       "sizes": "96x96",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-128x128.png",
+      "src": "/icons/icon-128.png",
       "sizes": "128x128",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-144x144.png",
+      "src": "/icons/icon-144.png",
       "sizes": "144x144",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-152x152.png",
+      "src": "/icons/icon-152.png",
       "sizes": "152x152",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-192x192.png",
+      "src": "/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-384x384.png",
+      "src": "/icons/icon-384.png",
       "sizes": "384x384",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-512x512.png",
+      "src": "/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any maskable"
     }
   ],
-  "screenshots": [
-    {
-      "src": "/screenshots/desktop.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "PropFirm Scanner Homepage"
-    },
-    {
-      "src": "/screenshots/mobile.png",
-      "sizes": "750x1334",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "PropFirm Scanner Mobile"
-    }
-  ],
-  "categories": ["finance", "business", "utilities"],
+  "categories": ["finance", "business"],
+  "screenshots": [],
   "shortcuts": [
     {
       "name": "Compare Firms",
       "short_name": "Compare",
       "description": "Compare prop trading firms",
       "url": "/compare",
-      "icons": [{ "src": "/icons/compare-96x96.png", "sizes": "96x96" }]
+      "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
     },
     {
-      "name": "Deals",
-      "short_name": "Deals",
-      "description": "View discount codes",
-      "url": "/deals",
-      "icons": [{ "src": "/icons/deals-96x96.png", "sizes": "96x96" }]
-    },
-    {
-      "name": "Risk Calculator",
-      "short_name": "Calculator",
-      "description": "Calculate position size",
-      "url": "/tools/risk-calculator",
-      "icons": [{ "src": "/icons/calculator-96x96.png", "sizes": "96x96" }]
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "Track your challenges",
+      "url": "/dashboard",
+      "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
     }
-  ],
-  "related_applications": [],
-  "prefer_related_applications": false
+  ]
 }
