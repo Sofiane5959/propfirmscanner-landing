@@ -12,6 +12,7 @@ import {
   Heart, GitCompare, Zap, TrendingUp,
   DollarSign, Users, Flame
 } from 'lucide-react'
+import { PriceAlertButton } from '@/components/PriceAlert'
 
 // =====================================================
 // TYPES
@@ -477,6 +478,12 @@ const PropFirmCard = ({
             >
               <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
             </button>
+            <PriceAlertButton 
+              firmId={firm.id}
+              firmName={firm.name}
+              firmSlug={firm.slug}
+              currentPrice={firm.min_price || 0}
+            />
             <Link href={`/prop-firm/${firm.slug}`} className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-white text-xs font-medium rounded-lg">Details</Link>
             <a href={getFirmUrl(firm)} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg flex items-center gap-1">Visit <ExternalLink className="w-3 h-3" /></a>
           </div>
@@ -543,6 +550,12 @@ const PropFirmCard = ({
             >
               <GitCompare className="w-4 h-4" />
             </button>
+            <PriceAlertButton 
+              firmId={firm.id}
+              firmName={firm.name}
+              firmSlug={firm.slug}
+              currentPrice={firm.min_price || 0}
+            />
           </div>
         </div>
       </div>
