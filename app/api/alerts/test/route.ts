@@ -1,32 +1,30 @@
-// CE FICHIER VA DANS: app/api/alerts/test/route.ts
+// CE FICHIER VA DANS: app/api/test-email/route.ts
+// SUPPRIMER APRÈS LE TEST !
 
 import { NextResponse } from 'next/server';
-import { sendAlert } from '@/lib/email';
-import { createServerSupabaseClient } from '@/lib/supabase-server';
+import { sendEmail } from '@/lib/email';
 
-export async function POST() {
+export async function GET() {
   try {
-    const supabase = createServerSupabaseClient();
-    
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Send a test email
-    const result = await sendAlert('drawdown_warning', user.email!, {
-      userName: user.user_metadata?.full_name || 'Trader',
-      accountName: 'Test Account',
-      firmName: 'FTMO (Test)',
-      currentValue: 4000,
-      limitValue: 5000,
-      percentage: 80,
+    const result = await sendEmail({
+      to: 'brik.sofiane1991@gmail.com', // Ton email
+      subject: '🎉 Test PropFirmScanner - Email fonctionne!',
+      html: `
+        <div style="font-family: sans-serif; padding: 20px; background: #111; color: white;">
+          <h1 style="color: #10b981;">✅ Ça marche!</h1>
+          <p>Les notifications email sont configurées correctement.</p>
+          <p>Tu peux maintenant supprimer le fichier test-email/route.ts</p>
+        </div>
+      `,
     });
 
     return NextResponse.json(result);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Test email error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ 
+      success: false, 
+      error: error.message,
+      details: error.toString()
+    }, { status: 500 });
   }
 }
