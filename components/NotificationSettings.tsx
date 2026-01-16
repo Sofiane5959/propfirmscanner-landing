@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Bell, Mail, AlertTriangle, Target, Clock, TrendingDown } from 'lucide-react';
-import { createClient } from '@/lib/supabase-client';
+import { supabase } from '@/lib/supabase-client';
 
 interface NotificationPreferences {
   email_enabled: boolean;
@@ -36,14 +36,14 @@ export default function NotificationSettings() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-  const supabase = createClient();
-
   useEffect(() => {
     loadPreferences();
   }, []);
 
   const loadPreferences = async () => {
     try {
+      if (!supabase) return;
+      
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
@@ -68,6 +68,8 @@ export default function NotificationSettings() {
     setMessage(null);
 
     try {
+      if (!supabase) throw new Error('Supabase not initialized');
+      
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
