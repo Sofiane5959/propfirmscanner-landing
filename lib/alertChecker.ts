@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase-server';
+import { createServerSupabaseClient } from '@/lib/supabase-server';
 import { sendAlert, AlertType, AlertData } from '@/lib/email';
 
 interface Account {
@@ -16,7 +16,7 @@ interface Account {
 }
 
 export async function checkAccountAlerts(account: Account) {
-  const supabase = await createClient();
+  const supabase = createServerSupabaseClient();
   
   // Get user info
   const { data: userData } = await supabase
@@ -185,7 +185,7 @@ export async function checkAccountAlerts(account: Account) {
 
 // Function to check all accounts (called by cron job)
 export async function checkAllAccountsForAlerts() {
-  const supabase = await createClient();
+  const supabase = createServerSupabaseClient();
   
   const { data: accounts, error } = await supabase
     .from('challenge_accounts')
