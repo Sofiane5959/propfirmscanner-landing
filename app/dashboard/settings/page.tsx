@@ -16,9 +16,9 @@ import {
   Mail,
   Calendar,
   Shield,
-  Bell,
   Trash2,
 } from 'lucide-react';
+import NotificationSettings from '@/components/NotificationSettings';
 
 export default function SettingsPage() {
   const { user, profile, isLoading } = useAuth();
@@ -259,38 +259,9 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Notifications Section */}
-        <div className="bg-gray-900/50 rounded-2xl border border-gray-800 p-6 mb-6">
-          <h2 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
-            <Bell className="w-5 h-5 text-emerald-400" />
-            Notification Preferences
-          </h2>
-
-          <div className="space-y-4">
-            <label className="flex items-center justify-between cursor-pointer">
-              <div>
-                <p className="text-sm font-medium text-white">Email Notifications</p>
-                <p className="text-sm text-gray-500">Receive updates about deals and news</p>
-              </div>
-              <input
-                type="checkbox"
-                defaultChecked
-                className="w-5 h-5 rounded bg-gray-800 border-gray-700 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-gray-900"
-              />
-            </label>
-
-            <label className="flex items-center justify-between cursor-pointer">
-              <div>
-                <p className="text-sm font-medium text-white">New Deals Alerts</p>
-                <p className="text-sm text-gray-500">Get notified when new deals are available</p>
-              </div>
-              <input
-                type="checkbox"
-                defaultChecked
-                className="w-5 h-5 rounded bg-gray-800 border-gray-700 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-gray-900"
-              />
-            </label>
-          </div>
+        {/* Notification Settings Component */}
+        <div className="mb-6">
+          <NotificationSettings />
         </div>
 
         {/* Danger Zone */}
