@@ -1,8 +1,10 @@
+// CE FICHIER VA DANS: app/api/cron/check-alerts/route.ts
+
 import { NextRequest, NextResponse } from 'next/server';
 import { checkAllAccountsForAlerts } from '@/lib/alertChecker';
 
 // This endpoint should be called by a cron job
-// Vercel Cron: Add to vercel.json
+// Vercel Cron: configured in vercel.json
 export async function GET(request: NextRequest) {
   // Verify cron secret to prevent unauthorized access
   const authHeader = request.headers.get('authorization');

@@ -1,6 +1,8 @@
+// CE FICHIER VA DANS: app/api/alerts/test/route.ts
+
 import { NextResponse } from 'next/server';
 import { sendAlert } from '@/lib/email';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase-server';
 
 export async function POST() {
   try {

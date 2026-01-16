@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase-server';
 import { sendAlert, AlertType, AlertData } from '@/lib/email';
 
 interface Account {
@@ -15,41 +15,25 @@ interface Account {
   challenge_end_date: string | null;
 }
 
-interface UserWithPreferences {
-  email: string;
-  full_name: string;
-  preferences: {
-    email_enabled: boolean;
-    drawdown_warning: boolean;
-    drawdown_warning_threshold: number;
-    drawdown_critical: boolean;
-    drawdown_critical_threshold: number;
-    daily_loss_warning: boolean;
-    daily_loss_threshold: number;
-    profit_target: boolean;
-    challenge_expiring: boolean;
-    challenge_expiring_days: number;
-  };
-}
-
 export async function checkAccountAlerts(account: Account) {
   const supabase = await createClient();
   
-  // Get user preferences
-  const { data: user } = await supabase
-    .from('users')
-    .select('email, raw_user_meta_data->full_name')
+  // Get user info
+  const { data: userData } = await supabase
+    .from('profiles')
+    .select('email, full_name')
     .eq('id', account.user_id)
     .single();
 
+  // Get user preferences
   const { data: preferences } = await supabase
     .from('notification_preferences')
     .select('*')
     .eq('user_id', account.user_id)
     .single();
 
-  if (!user?.email || !preferences?.email_enabled) {
-    return;
+  if (!userData?.email || !preferences?.email_enabled) {
+    return 0;
   }
 
   // Check if we already sent this alert today
@@ -68,15 +52,17 @@ export async function checkAccountAlerts(account: Account) {
   // Calculate drawdown percentage
   const currentDrawdown = account.initial_balance - account.current_balance;
   const maxDrawdownAmount = account.initial_balance * (account.max_drawdown / 100);
-  const drawdownPercentage = (currentDrawdown / maxDrawdownAmount) * 100;
+  const drawdownPercentage = maxDrawdownAmount > 0 ? (currentDrawdown / maxDrawdownAmount) * 100 : 0;
 
   // Calculate daily loss percentage
-  const dailyLossPercentage = (account.current_daily_loss / account.daily_loss_limit) * 100;
+  const dailyLossPercentage = account.daily_loss_limit > 0 
+    ? (account.current_daily_loss / account.daily_loss_limit) * 100 
+    : 0;
 
   // Calculate profit percentage
   const profit = account.current_balance - account.initial_balance;
   const profitTarget = account.initial_balance * (account.profit_target / 100);
-  const profitPercentage = (profit / profitTarget) * 100;
+  const profitPercentage = profitTarget > 0 ? (profit / profitTarget) * 100 : 0;
 
   // Check drawdown critical (highest priority)
   if (
@@ -87,7 +73,7 @@ export async function checkAccountAlerts(account: Account) {
     alerts.push({
       type: 'drawdown_critical',
       data: {
-        userName: user.full_name || 'Trader',
+        userName: userData.full_name || 'Trader',
         accountName: account.account_name,
         firmName: account.firm_name,
         currentValue: currentDrawdown,
@@ -100,13 +86,13 @@ export async function checkAccountAlerts(account: Account) {
   else if (
     preferences.drawdown_warning &&
     drawdownPercentage >= preferences.drawdown_warning_threshold &&
-    drawdownPercentage < preferences.drawdown_critical_threshold &&
+    drawdownPercentage < (preferences.drawdown_critical_threshold || 95) &&
     !sentAlertTypes.includes('drawdown_warning')
   ) {
     alerts.push({
       type: 'drawdown_warning',
       data: {
-        userName: user.full_name || 'Trader',
+        userName: userData.full_name || 'Trader',
         accountName: account.account_name,
         firmName: account.firm_name,
         currentValue: currentDrawdown,
@@ -119,13 +105,13 @@ export async function checkAccountAlerts(account: Account) {
   // Check daily loss warning
   if (
     preferences.daily_loss_warning &&
-    dailyLossPercentage >= preferences.daily_loss_threshold &&
+    dailyLossPercentage >= (preferences.daily_loss_threshold || 80) &&
     !sentAlertTypes.includes('daily_loss_warning')
   ) {
     alerts.push({
       type: 'daily_loss_warning',
       data: {
-        userName: user.full_name || 'Trader',
+        userName: userData.full_name || 'Trader',
         accountName: account.account_name,
         firmName: account.firm_name,
         currentValue: account.current_daily_loss,
@@ -144,7 +130,7 @@ export async function checkAccountAlerts(account: Account) {
     alerts.push({
       type: 'profit_target_reached',
       data: {
-        userName: user.full_name || 'Trader',
+        userName: userData.full_name || 'Trader',
         accountName: account.account_name,
         firmName: account.firm_name,
         currentValue: profit,
@@ -164,11 +150,11 @@ export async function checkAccountAlerts(account: Account) {
     const now = new Date();
     const daysRemaining = Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
 
-    if (daysRemaining <= preferences.challenge_expiring_days && daysRemaining > 0) {
+    if (daysRemaining <= (preferences.challenge_expiring_days || 7) && daysRemaining > 0) {
       alerts.push({
         type: 'challenge_expiring',
         data: {
-          userName: user.full_name || 'Trader',
+          userName: userData.full_name || 'Trader',
           accountName: account.account_name,
           firmName: account.firm_name,
           currentValue: profit,
@@ -182,7 +168,16 @@ export async function checkAccountAlerts(account: Account) {
 
   // Send all alerts
   for (const alert of alerts) {
-    await sendAlert(alert.type, user.email, alert.data);
+    await sendAlert(alert.type, userData.email, alert.data);
+    
+    // Log the alert
+    await supabase.from('alert_logs').insert({
+      user_id: account.user_id,
+      alert_type: alert.type,
+      account_name: account.account_name,
+      sent_at: new Date().toISOString(),
+      success: true,
+    });
   }
 
   return alerts.length;
@@ -198,7 +193,7 @@ export async function checkAllAccountsForAlerts() {
 
   if (error || !accounts) {
     console.error('Error fetching accounts:', error);
-    return;
+    return 0;
   }
 
   let totalAlerts = 0;

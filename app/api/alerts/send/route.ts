@@ -1,6 +1,8 @@
+// CE FICHIER VA DANS: app/api/alerts/send/route.ts
+
 import { NextRequest, NextResponse } from 'next/server';
 import { sendAlert, AlertType, AlertData } from '@/lib/email';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase-server';
 
 export async function POST(request: NextRequest) {
   try {
@@ -29,7 +31,7 @@ export async function POST(request: NextRequest) {
 
     // Check if this alert type is enabled
     if (preferences) {
-      const alertEnabled = {
+      const alertEnabled: Record<AlertType, boolean> = {
         drawdown_warning: preferences.drawdown_warning,
         drawdown_critical: preferences.drawdown_critical,
         profit_target_reached: preferences.profit_target,

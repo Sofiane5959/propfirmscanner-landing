@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Bell, Mail, AlertTriangle, Target, Clock, TrendingDown } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase-client';
 
 interface NotificationPreferences {
   email_enabled: boolean;
@@ -47,7 +47,7 @@ export default function NotificationSettings() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('notification_preferences')
         .select('*')
         .eq('user_id', user.id)
@@ -157,7 +157,7 @@ export default function NotificationSettings() {
           <Mail className="w-5 h-5 text-gray-400" />
           <div>
             <p className="text-white font-medium">Notifications par email</p>
-            <p className="text-gray-400 text-sm">Recevoir les alertes sur contact@propfirmscanner.org</p>
+            <p className="text-gray-400 text-sm">Recevoir les alertes par email</p>
           </div>
         </div>
         <Toggle
