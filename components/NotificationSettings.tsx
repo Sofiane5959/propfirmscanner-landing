@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Bell, Mail, AlertTriangle, Target, Clock, TrendingDown } from 'lucide-react';
-import { supabase } from '@/lib/supabase-client';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 interface NotificationPreferences {
   email_enabled: boolean;
@@ -36,16 +36,19 @@ export default function NotificationSettings() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
+  const supabase = createClientComponentClient();
+
   useEffect(() => {
     loadPreferences();
   }, []);
 
   const loadPreferences = async () => {
     try {
-      if (!supabase) return;
-      
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        setLoading(false);
+        return;
+      }
 
       const { data } = await supabase
         .from('notification_preferences')
@@ -68,8 +71,6 @@ export default function NotificationSettings() {
     setMessage(null);
 
     try {
-      if (!supabase) throw new Error('Supabase not initialized');
-      
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
@@ -93,17 +94,22 @@ export default function NotificationSettings() {
   };
 
   const sendTestEmail = async () => {
+    setMessage(null);
     try {
       const response = await fetch('/api/alerts/test', {
         method: 'POST',
+        credentials: 'include',
       });
       
-      if (response.ok) {
+      const data = await response.json();
+      
+      if (response.ok && data.success) {
         setMessage({ type: 'success', text: 'Email de test envoyé!' });
       } else {
-        throw new Error('Failed to send test email');
+        throw new Error(data.error || 'Failed to send test email');
       }
     } catch (error) {
+      console.error('Test email error:', error);
       setMessage({ type: 'error', text: 'Erreur lors de l\'envoi' });
     }
   };
