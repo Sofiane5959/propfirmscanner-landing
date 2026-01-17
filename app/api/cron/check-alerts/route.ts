@@ -4,11 +4,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { sendAlert, AlertType, AlertData } from '@/lib/email';
 
-// Create admin client for cron job (bypasses RLS)
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// Create admin client lazily (not at build time)
+function getSupabaseAdmin() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 export async function GET(request: NextRequest) {
   // Verify cron secret to prevent unauthorized access
@@ -33,6 +35,8 @@ export async function GET(request: NextRequest) {
 }
 
 async function checkAllAccountsForAlerts() {
+  const supabaseAdmin = getSupabaseAdmin();
+  
   // Get all accounts with user preferences
   const { data: accounts, error } = await supabaseAdmin
     .from('challenge_accounts')
@@ -55,6 +59,8 @@ async function checkAllAccountsForAlerts() {
 }
 
 async function checkAccountAlerts(account: any) {
+  const supabaseAdmin = getSupabaseAdmin();
+  
   // Get user info
   const { data: userData } = await supabaseAdmin
     .from('profiles')
