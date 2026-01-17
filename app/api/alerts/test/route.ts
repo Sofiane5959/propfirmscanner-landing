@@ -1,30 +1,40 @@
-// CE FICHIER VA DANS: app/api/test-email/route.ts
-// SUPPRIMER APRÈS LE TEST !
+// CE FICHIER VA DANS: app/api/alerts/test/route.ts
 
 import { NextResponse } from 'next/server';
-import { sendEmail } from '@/lib/email';
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
+import { sendAlert } from '@/lib/email';
 
-export async function GET() {
+export async function POST() {
   try {
-    const result = await sendEmail({
-      to: 'brik.sofiane1991@gmail.com', // Ton email
-      subject: '🎉 Test PropFirmScanner - Email fonctionne!',
-      html: `
-        <div style="font-family: sans-serif; padding: 20px; background: #111; color: white;">
-          <h1 style="color: #10b981;">✅ Ça marche!</h1>
-          <p>Les notifications email sont configurées correctement.</p>
-          <p>Tu peux maintenant supprimer le fichier test-email/route.ts</p>
-        </div>
-      `,
+    const supabase = createRouteHandlerClient({ cookies });
+    
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Get user profile for name
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('full_name')
+      .eq('id', user.id)
+      .single();
+
+    // Send a test email
+    const result = await sendAlert('drawdown_warning', user.email!, {
+      userName: profile?.full_name || user.user_metadata?.full_name || 'Trader',
+      accountName: 'Test Account',
+      firmName: 'FTMO (Test)',
+      currentValue: 4000,
+      limitValue: 5000,
+      percentage: 80,
     });
 
     return NextResponse.json(result);
-  } catch (error: any) {
+  } catch (error) {
     console.error('Test email error:', error);
-    return NextResponse.json({ 
-      success: false, 
-      error: error.message,
-      details: error.toString()
-    }, { status: 500 });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
