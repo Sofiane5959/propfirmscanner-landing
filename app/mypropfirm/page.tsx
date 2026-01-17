@@ -5,7 +5,7 @@ import {
   Home, ChevronRight, Crown, CheckCircle2, Lock, Sparkles,
   BarChart3, Bell, Shield, Zap, Users, TrendingUp,
   Calculator, FileText, Star, ArrowRight, Rocket,
-  PieChart, Target, Clock, Award, Heart
+  PieChart, Target, Clock, Award, Heart, MessageSquare
 } from 'lucide-react';
 
 // =============================================================================
@@ -108,32 +108,12 @@ const pricingPlans = [
   },
 ];
 
+// ✅ STATS CORRIGÉES - Uniquement des données vérifiables
 const stats = [
-  { value: '70+', label: 'Prop Firms Tracked' },
-  { value: '15K+', label: 'Active Users' },
-  { value: '89%', label: 'Success Rate' },
-  { value: '24/7', label: 'Support' },
-];
-
-const testimonials = [
-  {
-    name: 'Michael T.',
-    role: 'Funded Trader, 3 accounts',
-    content: 'The analytics dashboard alone is worth the subscription. I can finally see all my accounts in one place.',
-    avatar: 'MT',
-  },
-  {
-    name: 'Jennifer L.',
-    role: 'Challenge Trader',
-    content: 'The rule violation alerts saved my account twice already. Would have hit daily drawdown without them.',
-    avatar: 'JL',
-  },
-  {
-    name: 'Robert K.',
-    role: 'Full-time Trader',
-    content: 'Best investment I made for my trading career. The performance reports helped me identify my weak spots.',
-    avatar: 'RK',
-  },
+  { value: '80+', label: 'Prop Firms Compared' },
+  { value: '100%', label: 'Free to Start' },
+  { value: 'Daily', label: 'Data Updates' },
+  { value: '24/7', label: 'Access' },
 ];
 
 // =============================================================================
@@ -212,7 +192,7 @@ export default function MyPropFirmPage() {
               </Link>
             </div>
             
-            {/* Stats */}
+            {/* Stats - CORRIGÉES */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {stats.map((stat, index) => (
                 <div key={index} className="text-center">
@@ -330,33 +310,65 @@ export default function MyPropFirmPage() {
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* ✅ SECTION REMPLACÉE - Plus de faux témoignages */}
+      {/* Community / Beta Section */}
       <section className="max-w-6xl mx-auto px-4 py-20">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-white mb-4">Loved by Traders</h2>
-          <p className="text-gray-400">See what our users have to say</p>
+          <h2 className="text-3xl font-bold text-white mb-4">Join Our Community</h2>
+          <p className="text-gray-400">Be part of the growing PropFirmScanner community</p>
         </div>
         
         <div className="grid md:grid-cols-3 gap-6">
-          {testimonials.map((testimonial, index) => (
-            <div key={index} className="bg-gray-900/50 rounded-xl border border-gray-800 p-6">
-              <div className="flex items-center gap-1 mb-4">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
-                ))}
-              </div>
-              <p className="text-gray-300 mb-6">&quot;{testimonial.content}&quot;</p>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-emerald-500/20 rounded-full flex items-center justify-center text-emerald-400 font-semibold text-sm">
-                  {testimonial.avatar}
-                </div>
-                <div>
-                  <p className="text-white font-medium">{testimonial.name}</p>
-                  <p className="text-gray-500 text-sm">{testimonial.role}</p>
-                </div>
-              </div>
+          {/* Card 1 - Beta Testers */}
+          <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-6 text-center">
+            <div className="w-12 h-12 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Users className="w-6 h-6 text-emerald-400" />
             </div>
-          ))}
+            <h3 className="text-white font-semibold mb-2">Beta Testers Wanted</h3>
+            <p className="text-gray-500 text-sm mb-4">
+              Help us shape the future of prop firm tracking tools.
+            </p>
+            <span className="inline-flex items-center gap-2 text-emerald-400 text-sm">
+              <Lock className="w-4 h-4" />
+              Coming Soon
+            </span>
+          </div>
+
+          {/* Card 2 - Free Tools */}
+          <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-6 text-center">
+            <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <BarChart3 className="w-6 h-6 text-blue-400" />
+            </div>
+            <h3 className="text-white font-semibold mb-2">Free Tools Available</h3>
+            <p className="text-gray-500 text-sm mb-4">
+              Compare 80+ prop firms right now, completely free.
+            </p>
+            <Link 
+              href="/compare"
+              className="inline-flex items-center gap-2 text-blue-400 text-sm hover:text-blue-300 transition-colors"
+            >
+              Start Comparing
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          {/* Card 3 - Feedback */}
+          <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-6 text-center">
+            <div className="w-12 h-12 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <MessageSquare className="w-6 h-6 text-purple-400" />
+            </div>
+            <h3 className="text-white font-semibold mb-2">Share Your Feedback</h3>
+            <p className="text-gray-500 text-sm mb-4">
+              Tell us what features you&apos;d like to see in MyPropFirm Pro.
+            </p>
+            <Link 
+              href="/contact"
+              className="inline-flex items-center gap-2 text-purple-400 text-sm hover:text-purple-300 transition-colors"
+            >
+              Contact Us
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
         </div>
       </section>
 
