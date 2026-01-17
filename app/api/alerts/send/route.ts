@@ -1,12 +1,13 @@
 // CE FICHIER VA DANS: app/api/alerts/send/route.ts
 
 import { NextRequest, NextResponse } from 'next/server';
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 import { sendAlert, AlertType, AlertData } from '@/lib/email';
-import { createServerSupabaseClient } from '@/lib/supabase-server';
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createServerSupabaseClient();
+    const supabase = createRouteHandlerClient({ cookies });
     
     // Verify user is authenticated
     const { data: { user }, error: authError } = await supabase.auth.getUser();
