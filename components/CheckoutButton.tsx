@@ -1,29 +1,37 @@
 'use client';
 
 import { useState } from 'react';
-import { Loader2, CreditCard } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
+
+// =============================================================================
+// TYPES
+// =============================================================================
+
+type ProductType = 'pro_monthly' | 'rules_guide';
 
 interface CheckoutButtonProps {
-  priceId: string;
-  mode: 'subscription' | 'payment';
+  productType: ProductType;
   children: React.ReactNode;
   className?: string;
   disabled?: boolean;
 }
 
-export default function CheckoutButton({ 
-  priceId, 
-  mode, 
+// =============================================================================
+// COMPONENT
+// =============================================================================
+
+export function CheckoutButton({ 
+  productType, 
   children, 
   className = '',
   disabled = false 
 }: CheckoutButtonProps) {
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleCheckout = async () => {
-    if (disabled || loading) return;
+    if (disabled || isLoading) return;
     
-    setLoading(true);
+    setIsLoading(true);
 
     try {
       const response = await fetch('/api/stripe/checkout', {
@@ -31,39 +39,38 @@ export default function CheckoutButton({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          priceId,
-          mode,
-        }),
+        body: JSON.stringify({ productType }),
       });
 
       const data = await response.json();
 
       if (data.error) {
-        throw new Error(data.error);
+        console.error('Checkout error:', data.error);
+        alert('An error occurred. Please try again.');
+        return;
       }
 
-      // Rediriger vers Stripe Checkout
       if (data.url) {
+        // Redirect to Stripe Checkout
         window.location.href = data.url;
       }
     } catch (error) {
       console.error('Checkout error:', error);
-      alert('Something went wrong. Please try again.');
+      alert('An error occurred. Please try again.');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   return (
     <button
       onClick={handleCheckout}
-      disabled={disabled || loading}
-      className={`inline-flex items-center justify-center gap-2 transition-all ${className} ${
-        loading ? 'opacity-70 cursor-wait' : ''
-      } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+      disabled={disabled || isLoading}
+      className={`flex items-center justify-center gap-2 ${className} ${
+        (disabled || isLoading) ? 'opacity-50 cursor-not-allowed' : ''
+      }`}
     >
-      {loading ? (
+      {isLoading ? (
         <>
           <Loader2 className="w-5 h-5 animate-spin" />
           Processing...
@@ -74,3 +81,5 @@ export default function CheckoutButton({
     </button>
   );
 }
+
+export default CheckoutButton;

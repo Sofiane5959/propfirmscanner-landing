@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/providers/AuthProvider';
 import { AuthGuardModal } from '@/components/AuthGuardModal';
-import { PRICING, formatPrice } from '@/lib/subscription';
+import { CheckoutButton } from '@/components/CheckoutButton';
 import {
   Check,
   X,
@@ -36,7 +36,6 @@ interface PlanConfig {
   badge?: string;
   features: PlanFeature[];
   cta: string;
-  ctaVariant: 'primary' | 'secondary';
 }
 
 // =============================================================================
@@ -58,12 +57,11 @@ const FREE_PLAN: PlanConfig = {
     { text: 'Evaluation tracking', included: false },
   ],
   cta: 'Start Free',
-  ctaVariant: 'secondary',
 };
 
 const PRO_PLAN: PlanConfig = {
   name: 'Pro',
-  price: PRICING.pro.monthly,
+  price: 29.99,
   description: 'For serious prop firm traders',
   badge: 'Most Popular',
   features: [
@@ -77,7 +75,6 @@ const PRO_PLAN: PlanConfig = {
     { text: 'Push notifications (coming soon)', included: true },
   ],
   cta: 'Upgrade to Pro',
-  ctaVariant: 'primary',
 };
 
 // =============================================================================
@@ -99,7 +96,7 @@ const FAQ_ITEMS = [
   },
   {
     question: 'Can I cancel anytime?',
-    answer: 'Yes. You can cancel your Pro subscription at any time. You\'ll retain access until the end of your billing period.',
+    answer: "Yes. You can cancel your Pro subscription at any time. You'll retain access until the end of your billing period.",
   },
   {
     question: 'What payment methods do you accept?',
@@ -138,25 +135,76 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
 // PLAN CARD COMPONENT
 // =============================================================================
 
-function PlanCard({
+function FreePlanCard({
   plan,
   isCurrentPlan,
   onSelect,
-  isLoading,
 }: {
   plan: PlanConfig;
   isCurrentPlan: boolean;
   onSelect: () => void;
-  isLoading: boolean;
 }) {
-  const isPro = plan.name === 'Pro';
-
   return (
-    <div 
-      className={`relative bg-gray-900 rounded-2xl border ${
-        isPro ? 'border-amber-500/50' : 'border-gray-800'
-      } p-8 flex flex-col`}
-    >
+    <div className="relative bg-gray-900 rounded-2xl border border-gray-800 p-8 flex flex-col">
+      {/* Header */}
+      <div className="mb-6">
+        <h3 className="text-xl font-bold text-white mb-2">{plan.name}</h3>
+        <p className="text-sm text-gray-500">{plan.description}</p>
+      </div>
+
+      {/* Price */}
+      <div className="mb-6">
+        <span className="text-4xl font-bold text-white">Free</span>
+      </div>
+
+      {/* Features */}
+      <ul className="space-y-3 mb-8 flex-1">
+        {plan.features.map((feature, i) => (
+          <li key={i} className="flex items-start gap-3">
+            {feature.included ? (
+              <Check className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+            ) : (
+              <X className="w-5 h-5 text-gray-700 flex-shrink-0" />
+            )}
+            <span className={`text-sm ${feature.included ? 'text-gray-300' : 'text-gray-600'}`}>
+              {feature.text}
+            </span>
+          </li>
+        ))}
+      </ul>
+
+      {/* CTA */}
+      <button
+        onClick={onSelect}
+        disabled={isCurrentPlan}
+        className={`w-full py-3.5 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 text-white ${
+          isCurrentPlan ? 'opacity-50 cursor-not-allowed' : ''
+        }`}
+      >
+        {isCurrentPlan ? 'Current Plan' : (
+          <>
+            {plan.cta}
+            <ArrowRight className="w-4 h-4" />
+          </>
+        )}
+      </button>
+    </div>
+  );
+}
+
+function ProPlanCard({
+  plan,
+  isCurrentPlan,
+  isLoggedIn,
+  onAuthRequired,
+}: {
+  plan: PlanConfig;
+  isCurrentPlan: boolean;
+  isLoggedIn: boolean;
+  onAuthRequired: () => void;
+}) {
+  return (
+    <div className="relative bg-gray-900 rounded-2xl border border-amber-500/50 p-8 flex flex-col">
       {/* Badge */}
       {plan.badge && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
@@ -169,7 +217,7 @@ function PlanCard({
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-2">
-          {isPro && <Crown className="w-5 h-5 text-amber-400" />}
+          <Crown className="w-5 h-5 text-amber-400" />
           <h3 className="text-xl font-bold text-white">{plan.name}</h3>
         </div>
         <p className="text-sm text-gray-500">{plan.description}</p>
@@ -178,12 +226,8 @@ function PlanCard({
       {/* Price */}
       <div className="mb-6">
         <div className="flex items-baseline gap-1">
-          <span className="text-4xl font-bold text-white">
-            {plan.price === 0 ? 'Free' : formatPrice(plan.price)}
-          </span>
-          {plan.price > 0 && (
-            <span className="text-gray-500">/month</span>
-          )}
+          <span className="text-4xl font-bold text-white">€{plan.price}</span>
+          <span className="text-gray-500">/month</span>
         </div>
       </div>
 
@@ -191,12 +235,8 @@ function PlanCard({
       <ul className="space-y-3 mb-8 flex-1">
         {plan.features.map((feature, i) => (
           <li key={i} className="flex items-start gap-3">
-            {feature.included ? (
-              <Check className={`w-5 h-5 flex-shrink-0 ${feature.highlight ? 'text-amber-400' : 'text-emerald-400'}`} />
-            ) : (
-              <X className="w-5 h-5 text-gray-700 flex-shrink-0" />
-            )}
-            <span className={`text-sm ${feature.included ? (feature.highlight ? 'text-white font-medium' : 'text-gray-300') : 'text-gray-600'}`}>
+            <Check className={`w-5 h-5 flex-shrink-0 ${feature.highlight ? 'text-amber-400' : 'text-emerald-400'}`} />
+            <span className={`text-sm ${feature.highlight ? 'text-white font-medium' : 'text-gray-300'}`}>
               {feature.text}
             </span>
           </li>
@@ -204,26 +244,30 @@ function PlanCard({
       </ul>
 
       {/* CTA */}
-      <button
-        onClick={onSelect}
-        disabled={isLoading || isCurrentPlan}
-        className={`w-full py-3.5 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
-          isPro
-            ? 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg shadow-orange-500/20'
-            : 'bg-gray-800 hover:bg-gray-700 text-white'
-        } ${(isLoading || isCurrentPlan) ? 'opacity-50 cursor-not-allowed' : ''}`}
-      >
-        {isLoading ? (
-          <Loader2 className="w-5 h-5 animate-spin" />
-        ) : isCurrentPlan ? (
-          'Current Plan'
-        ) : (
-          <>
-            {plan.cta}
-            <ArrowRight className="w-4 h-4" />
-          </>
-        )}
-      </button>
+      {isCurrentPlan ? (
+        <button
+          disabled
+          className="w-full py-3.5 rounded-xl font-semibold bg-gray-700 text-gray-400 cursor-not-allowed"
+        >
+          Current Plan
+        </button>
+      ) : isLoggedIn ? (
+        <CheckoutButton
+          productType="pro_monthly"
+          className="w-full py-3.5 rounded-xl font-semibold bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg shadow-orange-500/20"
+        >
+          {plan.cta}
+          <ArrowRight className="w-4 h-4" />
+        </CheckoutButton>
+      ) : (
+        <button
+          onClick={onAuthRequired}
+          className="w-full py-3.5 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg shadow-orange-500/20"
+        >
+          Sign in to Upgrade
+          <ArrowRight className="w-4 h-4" />
+        </button>
+      )}
     </div>
   );
 }
@@ -235,13 +279,11 @@ function PlanCard({
 function PricingContent() {
   const { user } = useAuth();
   const searchParams = useSearchParams();
-  const [isLoading, setIsLoading] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
 
   const showUpgradeHighlight = searchParams.get('upgrade') === 'true';
   
-  // TODO: Get actual user plan from profile
-  // Using separate boolean to avoid TypeScript literal type inference
+  // TODO: Get actual user plan from profile/database
   const isProUser = false;
 
   const handleSelectFree = () => {
@@ -249,24 +291,6 @@ function PricingContent() {
       setAuthModalOpen(true);
     } else {
       window.location.href = '/dashboard';
-    }
-  };
-
-  const handleSelectPro = async () => {
-    if (!user) {
-      setAuthModalOpen(true);
-      return;
-    }
-
-    setIsLoading(true);
-    
-    try {
-      // TODO: Implement Stripe checkout
-      alert('Stripe checkout will be implemented here. For now, this is a placeholder.');
-    } catch (error) {
-      console.error('Checkout error:', error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -300,17 +324,16 @@ function PricingContent() {
 
       {/* Plans */}
       <div className="grid md:grid-cols-2 gap-8 mb-16">
-        <PlanCard
+        <FreePlanCard
           plan={FREE_PLAN}
           isCurrentPlan={!isProUser && !!user}
           onSelect={handleSelectFree}
-          isLoading={false}
         />
-        <PlanCard
+        <ProPlanCard
           plan={PRO_PLAN}
           isCurrentPlan={isProUser}
-          onSelect={handleSelectPro}
-          isLoading={isLoading}
+          isLoggedIn={!!user}
+          onAuthRequired={() => setAuthModalOpen(true)}
         />
       </div>
 
@@ -380,7 +403,7 @@ function PricingContent() {
       <AuthGuardModal
         isOpen={authModalOpen}
         onClose={() => setAuthModalOpen(false)}
-        action="accéder à cette fonctionnalité"
+        action="access this feature"
       />
     </>
   );
@@ -394,7 +417,11 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen bg-gray-950 pt-20 pb-16">
       <div className="max-w-5xl mx-auto px-4">
-        <Suspense fallback={<div className="text-center py-20"><Loader2 className="w-8 h-8 text-emerald-400 animate-spin mx-auto" /></div>}>
+        <Suspense fallback={
+          <div className="text-center py-20">
+            <Loader2 className="w-8 h-8 text-emerald-400 animate-spin mx-auto" />
+          </div>
+        }>
           <PricingContent />
         </Suspense>
       </div>
