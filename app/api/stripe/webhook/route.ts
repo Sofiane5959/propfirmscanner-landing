@@ -39,8 +39,9 @@ export async function POST(request: NextRequest) {
       signature,
       process.env.STRIPE_WEBHOOK_SECRET!
     );
-  } catch (err: any) {
-    console.error('Webhook signature verification failed:', err.message);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    console.error('Webhook signature verification failed:', message);
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
   }
 
@@ -59,8 +60,9 @@ export async function POST(request: NextRequest) {
           const customerId = session.customer as string;
           
           // Get subscription details to find end date
-          const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-          const endDate = new Date(subscription.current_period_end * 1000);
+          const subscriptionResponse = await stripe.subscriptions.retrieve(subscriptionId);
+          const subscriptionData = subscriptionResponse as unknown as Stripe.Subscription;
+          const endDate = new Date(subscriptionData.current_period_end * 1000);
           
           // Update user profile
           const { error } = await supabase
