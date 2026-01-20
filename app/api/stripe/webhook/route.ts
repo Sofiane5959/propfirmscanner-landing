@@ -60,8 +60,8 @@ export async function POST(request: NextRequest) {
           const customerId = session.customer as string;
           
           // Get subscription details to find end date
-          const subscriptionResponse = await stripe.subscriptions.retrieve(subscriptionId);
-          const subscriptionData = subscriptionResponse as unknown as Stripe.Subscription;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const subscriptionData: any = await stripe.subscriptions.retrieve(subscriptionId);
           const endDate = new Date(subscriptionData.current_period_end * 1000);
           
           // Update user profile
@@ -87,7 +87,8 @@ export async function POST(request: NextRequest) {
       // SUBSCRIPTION UPDATED - Renewal, plan change
       // ===========================================
       case 'customer.subscription.updated': {
-        const subscription = event.data.object as Stripe.Subscription;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const subscription: any = event.data.object;
         const customerId = subscription.customer as string;
         const endDate = new Date(subscription.current_period_end * 1000);
         const isActive = ['active', 'trialing'].includes(subscription.status);
@@ -112,7 +113,8 @@ export async function POST(request: NextRequest) {
       // SUBSCRIPTION DELETED - Cancelled
       // ===========================================
       case 'customer.subscription.deleted': {
-        const subscription = event.data.object as Stripe.Subscription;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const subscription: any = event.data.object;
         const customerId = subscription.customer as string;
 
         const { error } = await supabase
@@ -135,7 +137,8 @@ export async function POST(request: NextRequest) {
       // PAYMENT FAILED
       // ===========================================
       case 'invoice.payment_failed': {
-        const invoice = event.data.object as Stripe.Invoice;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const invoice: any = event.data.object;
         const customerId = invoice.customer as string;
         
         console.log(`⚠️ Payment failed for customer ${customerId}`);
