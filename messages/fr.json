@@ -1,119 +1,58 @@
 {
-  "common": {
-    "home": "Accueil",
+  "nav": {
     "compare": "Comparer",
     "deals": "Promos",
     "blog": "Blog",
-    "education": "Formation",
+    "education": "Éducation",
     "rules": "Règles",
-    "pricing": "Tarifs",
-    "dashboard": "Tableau de bord",
-    "login": "Connexion",
-    "logout": "Déconnexion",
-    "signup": "Inscription",
-    "getStarted": "Commencer",
-    "learnMore": "En savoir plus",
-    "contactUs": "Contactez-nous",
     "freeGuide": "Guide Gratuit",
-    "pro": "Pro",
-    "free": "Gratuit",
+    "free": "GRATUIT",
     "soon": "Bientôt",
-    "comingSoon": "Bientôt disponible",
-    "save": "Enregistrer",
-    "cancel": "Annuler",
-    "delete": "Supprimer",
-    "edit": "Modifier",
+    "products": "Produits",
+    "language": "Langue",
+    "signIn": "Connexion",
+    "signInGoogle": "Se connecter avec Google",
+    "signOut": "Déconnexion",
+    "dashboard": "Tableau de bord",
+    "favorites": "Mes Favoris",
+    "settings": "Paramètres"
+  },
+  "common": {
     "loading": "Chargement...",
     "error": "Erreur",
-    "success": "Succès"
+    "success": "Succès",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "close": "Fermer",
+    "back": "Retour",
+    "next": "Suivant",
+    "submit": "Soumettre",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "viewAll": "Voir tout",
+    "learnMore": "En savoir plus",
+    "getStarted": "Commencer"
   },
   "hero": {
-    "title": "Trouvez Votre",
-    "titleHighlight": "Prop Firm Idéale",
-    "subtitle": "Comparez plus de 80 prop firms, trouvez les meilleures offres et suivez vos comptes funded - tout en un seul endroit.",
-    "cta": "Comparer les Prop Firms",
-    "ctaSecondary": "Voir les Promos"
-  },
-  "features": {
-    "compare": {
-      "title": "Comparer les Prop Firms",
-      "description": "Comparaison côte à côte de plus de 80 prop trading firms"
-    },
-    "deals": {
-      "title": "Offres Exclusives",
-      "description": "Économisez avec des codes promo et réductions vérifiés"
-    },
-    "tracker": {
-      "title": "Suivi de Compte",
-      "description": "Suivez vos challenges, drawdown et objectifs de profit"
-    },
-    "alerts": {
-      "title": "Alertes de Règles",
-      "description": "Soyez notifié avant de violer les règles d'une prop firm"
-    }
-  },
-  "stats": {
-    "propFirms": "Prop Firms",
-    "traders": "Traders",
-    "saved": "Économisés en Frais",
-    "countries": "Pays"
-  },
-  "pricing": {
-    "title": "Tarification Simple",
-    "subtitle": "Commencez gratuitement, passez Pro quand vous êtes prêt",
-    "free": {
-      "name": "Gratuit",
-      "description": "Outils de base pour démarrer",
-      "cta": "Commencer Gratuitement"
-    },
-    "pro": {
-      "name": "Pro",
-      "description": "Tout ce qu'il faut pour être funded",
-      "price": "29,99 €",
-      "period": "/mois",
-      "cta": "Passer à Pro",
-      "popular": "Le Plus Populaire"
-    },
-    "features": {
-      "compare": "Comparer les prop firms",
-      "calculator": "Calculateur de position",
-      "tracking": "Suivi de compte",
-      "alerts": "Alertes de violation",
-      "reports": "Rapports de performance",
-      "journal": "Journal de trading",
-      "unlimited": "Comptes illimités",
-      "support": "Support prioritaire"
-    }
-  },
-  "dashboard": {
-    "welcome": "Bon retour",
-    "overview": "Aperçu",
-    "accounts": "Comptes",
-    "settings": "Paramètres",
-    "addAccount": "Ajouter un Compte",
-    "totalProfit": "Profit Total",
-    "activeAccounts": "Comptes Actifs",
-    "alertsToday": "Alertes Aujourd'hui"
+    "badge": "Mis à jour janvier 2026",
+    "title": "Comparez les Prop Firms.",
+    "titleHighlight": "Suivez votre Challenge.",
+    "description": "Comparez les prop firms vérifiées côte à côte. Filtrez par règles, frais et partage des profits. Suivez votre drawdown avec notre tableau de bord intelligent.",
+    "cta1": "Comparer toutes les Firms",
+    "cta2": "Suivre mon Challenge",
+    "trust1": "100% Gratuit",
+    "trust2": "Aucune inscription requise",
+    "trust3": "Mis à jour quotidiennement"
   },
   "footer": {
-    "description": "La plateforme ultime de comparaison et suivi de prop firms.",
-    "quickLinks": "Liens Rapides",
+    "description": "La plateforme de comparaison de prop firms la plus complète. Prenez des décisions éclairées avec des données réelles.",
+    "navigation": "Navigation",
     "resources": "Ressources",
     "legal": "Légal",
-    "privacy": "Politique de Confidentialité",
-    "terms": "Conditions d'Utilisation",
+    "followUs": "Suivez-nous",
     "copyright": "© 2026 PropFirmScanner. Tous droits réservés."
-  },
-  "auth": {
-    "loginTitle": "Bon retour",
-    "loginSubtitle": "Connectez-vous à votre compte",
-    "signupTitle": "Créer un compte",
-    "signupSubtitle": "Commencez votre aventure prop firm",
-    "email": "Email",
-    "password": "Mot de passe",
-    "forgotPassword": "Mot de passe oublié ?",
-    "noAccount": "Pas encore de compte ?",
-    "hasAccount": "Déjà un compte ?",
-    "continueWith": "Ou continuer avec"
   }
 }

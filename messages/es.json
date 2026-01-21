@@ -1,119 +1,58 @@
 {
-  "common": {
-    "home": "Inicio",
+  "nav": {
     "compare": "Comparar",
     "deals": "Ofertas",
     "blog": "Blog",
     "education": "Educación",
     "rules": "Reglas",
-    "pricing": "Precios",
-    "dashboard": "Panel",
-    "login": "Iniciar Sesión",
-    "logout": "Cerrar Sesión",
-    "signup": "Registrarse",
-    "getStarted": "Comenzar",
-    "learnMore": "Más Información",
-    "contactUs": "Contáctenos",
     "freeGuide": "Guía Gratis",
-    "pro": "Pro",
-    "free": "Gratis",
+    "free": "GRATIS",
     "soon": "Pronto",
-    "comingSoon": "Próximamente",
-    "save": "Guardar",
-    "cancel": "Cancelar",
-    "delete": "Eliminar",
-    "edit": "Editar",
+    "products": "Productos",
+    "language": "Idioma",
+    "signIn": "Iniciar sesión",
+    "signInGoogle": "Iniciar sesión con Google",
+    "signOut": "Cerrar sesión",
+    "dashboard": "Panel",
+    "favorites": "Mis Favoritos",
+    "settings": "Configuración"
+  },
+  "common": {
     "loading": "Cargando...",
     "error": "Error",
-    "success": "Éxito"
+    "success": "Éxito",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "close": "Cerrar",
+    "back": "Volver",
+    "next": "Siguiente",
+    "submit": "Enviar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "sort": "Ordenar",
+    "viewAll": "Ver todo",
+    "learnMore": "Saber más",
+    "getStarted": "Empezar"
   },
   "hero": {
-    "title": "Encuentra Tu",
-    "titleHighlight": "Prop Firm Perfecta",
-    "subtitle": "Compara más de 80 prop firms, encuentra las mejores ofertas y rastrea tus cuentas funded - todo en un solo lugar.",
-    "cta": "Comparar Prop Firms",
-    "ctaSecondary": "Ver Ofertas"
-  },
-  "features": {
-    "compare": {
-      "title": "Comparar Prop Firms",
-      "description": "Comparación lado a lado de más de 80 prop trading firms"
-    },
-    "deals": {
-      "title": "Ofertas Exclusivas",
-      "description": "Ahorra con códigos de descuento y promociones verificadas"
-    },
-    "tracker": {
-      "title": "Rastreador de Cuentas",
-      "description": "Rastrea tus challenges, drawdown y objetivos de ganancias"
-    },
-    "alerts": {
-      "title": "Alertas de Reglas",
-      "description": "Recibe notificaciones antes de romper las reglas de la prop firm"
-    }
-  },
-  "stats": {
-    "propFirms": "Prop Firms",
-    "traders": "Traders",
-    "saved": "Ahorrado en Comisiones",
-    "countries": "Países"
-  },
-  "pricing": {
-    "title": "Precios Simples",
-    "subtitle": "Comienza gratis, mejora cuando estés listo",
-    "free": {
-      "name": "Gratis",
-      "description": "Herramientas básicas para empezar",
-      "cta": "Empezar Gratis"
-    },
-    "pro": {
-      "name": "Pro",
-      "description": "Todo lo que necesitas para ser funded",
-      "price": "29,99 €",
-      "period": "/mes",
-      "cta": "Mejorar a Pro",
-      "popular": "Más Popular"
-    },
-    "features": {
-      "compare": "Comparar prop firms",
-      "calculator": "Calculadora de posición",
-      "tracking": "Seguimiento de cuenta",
-      "alerts": "Alertas de violación",
-      "reports": "Informes de rendimiento",
-      "journal": "Diario de trading",
-      "unlimited": "Cuentas ilimitadas",
-      "support": "Soporte prioritario"
-    }
-  },
-  "dashboard": {
-    "welcome": "Bienvenido de nuevo",
-    "overview": "Resumen",
-    "accounts": "Cuentas",
-    "settings": "Configuración",
-    "addAccount": "Añadir Cuenta",
-    "totalProfit": "Ganancia Total",
-    "activeAccounts": "Cuentas Activas",
-    "alertsToday": "Alertas Hoy"
+    "badge": "Actualizado enero 2026",
+    "title": "Compara Prop Firms.",
+    "titleHighlight": "Rastrea tu Challenge.",
+    "description": "Compara prop firms verificadas lado a lado. Filtra por reglas, tarifas y reparto de beneficios. Rastrea tu drawdown con nuestro panel inteligente.",
+    "cta1": "Comparar todas las Firms",
+    "cta2": "Rastrear mi Challenge",
+    "trust1": "100% Gratis",
+    "trust2": "Sin registro requerido",
+    "trust3": "Actualizado diariamente"
   },
   "footer": {
-    "description": "La plataforma definitiva de comparación y seguimiento de prop firms.",
-    "quickLinks": "Enlaces Rápidos",
+    "description": "La plataforma de comparación de prop firms más completa. Toma decisiones informadas con datos reales.",
+    "navigation": "Navegación",
     "resources": "Recursos",
     "legal": "Legal",
-    "privacy": "Política de Privacidad",
-    "terms": "Términos de Servicio",
+    "followUs": "Síguenos",
     "copyright": "© 2026 PropFirmScanner. Todos los derechos reservados."
-  },
-  "auth": {
-    "loginTitle": "Bienvenido de nuevo",
-    "loginSubtitle": "Inicia sesión en tu cuenta",
-    "signupTitle": "Crear una cuenta",
-    "signupSubtitle": "Comienza tu viaje prop firm",
-    "email": "Email",
-    "password": "Contraseña",
-    "forgotPassword": "¿Olvidaste tu contraseña?",
-    "noAccount": "¿No tienes cuenta?",
-    "hasAccount": "¿Ya tienes cuenta?",
-    "continueWith": "O continuar con"
   }
 }

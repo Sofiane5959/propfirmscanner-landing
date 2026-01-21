@@ -1,119 +1,58 @@
 {
-  "common": {
-    "home": "Home",
+  "nav": {
     "compare": "Compare",
     "deals": "Deals",
     "blog": "Blog",
     "education": "Education",
     "rules": "Rules",
-    "pricing": "Pricing",
-    "dashboard": "Dashboard",
-    "login": "Login",
-    "logout": "Logout",
-    "signup": "Sign Up",
-    "getStarted": "Get Started",
-    "learnMore": "Learn More",
-    "contactUs": "Contact Us",
     "freeGuide": "Free Guide",
-    "pro": "Pro",
-    "free": "Free",
+    "free": "FREE",
     "soon": "Soon",
-    "comingSoon": "Coming Soon",
-    "save": "Save",
-    "cancel": "Cancel",
-    "delete": "Delete",
-    "edit": "Edit",
+    "products": "Products",
+    "language": "Language",
+    "signIn": "Sign In",
+    "signInGoogle": "Sign In with Google",
+    "signOut": "Sign Out",
+    "dashboard": "Dashboard",
+    "favorites": "My Favorites",
+    "settings": "Settings"
+  },
+  "common": {
     "loading": "Loading...",
     "error": "Error",
-    "success": "Success"
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "viewAll": "View All",
+    "learnMore": "Learn More",
+    "getStarted": "Get Started"
   },
   "hero": {
-    "title": "Find Your Perfect",
-    "titleHighlight": "Prop Firm",
-    "subtitle": "Compare 80+ prop firms, find the best deals, and track your funded accounts - all in one place.",
-    "cta": "Compare Prop Firms",
-    "ctaSecondary": "View Deals"
-  },
-  "features": {
-    "compare": {
-      "title": "Compare Prop Firms",
-      "description": "Side-by-side comparison of 80+ prop trading firms"
-    },
-    "deals": {
-      "title": "Exclusive Deals",
-      "description": "Save money with verified discount codes and promotions"
-    },
-    "tracker": {
-      "title": "Account Tracker",
-      "description": "Track your challenges, drawdown, and profit targets"
-    },
-    "alerts": {
-      "title": "Rule Alerts",
-      "description": "Get notified before you break any prop firm rules"
-    }
-  },
-  "stats": {
-    "propFirms": "Prop Firms",
-    "traders": "Traders",
-    "saved": "Saved in Fees",
-    "countries": "Countries"
-  },
-  "pricing": {
-    "title": "Simple Pricing",
-    "subtitle": "Start free, upgrade when you're ready",
-    "free": {
-      "name": "Free",
-      "description": "Basic tools for getting started",
-      "cta": "Start Free"
-    },
-    "pro": {
-      "name": "Pro",
-      "description": "Everything you need to get funded",
-      "price": "€29.99",
-      "period": "/month",
-      "cta": "Upgrade to Pro",
-      "popular": "Most Popular"
-    },
-    "features": {
-      "compare": "Compare prop firms",
-      "calculator": "Position calculator",
-      "tracking": "Account tracking",
-      "alerts": "Rule violation alerts",
-      "reports": "Performance reports",
-      "journal": "Trade journal",
-      "unlimited": "Unlimited accounts",
-      "support": "Priority support"
-    }
-  },
-  "dashboard": {
-    "welcome": "Welcome back",
-    "overview": "Overview",
-    "accounts": "Accounts",
-    "settings": "Settings",
-    "addAccount": "Add Account",
-    "totalProfit": "Total Profit",
-    "activeAccounts": "Active Accounts",
-    "alertsToday": "Alerts Today"
+    "badge": "Updated January 2026",
+    "title": "Compare Prop Firms.",
+    "titleHighlight": "Track Your Challenge.",
+    "description": "Compare verified prop trading firms side-by-side. Filter by rules, fees, and profit split. Track your drawdown with our smart dashboard.",
+    "cta1": "Compare All Firms",
+    "cta2": "Track My Challenge",
+    "trust1": "100% Free",
+    "trust2": "No Registration Required",
+    "trust3": "Updated Daily"
   },
   "footer": {
-    "description": "The ultimate prop firm comparison and tracking platform.",
-    "quickLinks": "Quick Links",
+    "description": "The most comprehensive prop firm comparison platform. Make informed decisions with real data.",
+    "navigation": "Navigation",
     "resources": "Resources",
     "legal": "Legal",
-    "privacy": "Privacy Policy",
-    "terms": "Terms of Service",
+    "followUs": "Follow Us",
     "copyright": "© 2026 PropFirmScanner. All rights reserved."
-  },
-  "auth": {
-    "loginTitle": "Welcome back",
-    "loginSubtitle": "Sign in to your account",
-    "signupTitle": "Create an account",
-    "signupSubtitle": "Start your prop firm journey",
-    "email": "Email",
-    "password": "Password",
-    "forgotPassword": "Forgot password?",
-    "noAccount": "Don't have an account?",
-    "hasAccount": "Already have an account?",
-    "continueWith": "Or continue with"
   }
 }

@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/providers/AuthProvider';
 import {
   Shield,
@@ -23,40 +24,6 @@ import {
   FileQuestion,
   Globe,
 } from 'lucide-react';
-
-// =============================================================================
-// NAVIGATION LINKS
-// =============================================================================
-
-const mainNavigation = [
-  { name: 'Compare', href: '/compare', icon: BarChart3 },
-  { name: 'Deals', href: '/deals', icon: Tag },
-  { name: 'Blog', href: '/blog', icon: FileText },
-];
-
-const productLinks = [
-  { 
-    name: 'Education', 
-    href: '/education', 
-    icon: GraduationCap,
-    badge: 'Soon',
-    badgeColor: 'bg-purple-500',
-  },
-  { 
-    name: 'Rules', 
-    href: '/rules-explained', 
-    icon: FileQuestion,
-    badge: 'Soon',
-    badgeColor: 'bg-blue-500',
-  },
-  { 
-    name: 'MyPropFirm', 
-    href: '/mypropfirm', 
-    icon: Crown,
-    badge: 'Pro',
-    badgeColor: 'bg-emerald-500',
-  },
-];
 
 // =============================================================================
 // LANGUAGE CONFIG
@@ -107,7 +74,6 @@ function LanguageSelector() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
-  // Détecter la langue actuelle depuis l'URL
   const getCurrentLocale = (): Locale => {
     const segments = pathname.split('/');
     if (segments[1] && locales.includes(segments[1] as Locale)) {
@@ -118,7 +84,6 @@ function LanguageSelector() {
 
   const currentLocale = getCurrentLocale();
 
-  // Changer de langue
   const switchLocale = (newLocale: Locale) => {
     const segments = pathname.split('/');
     
@@ -137,7 +102,6 @@ function LanguageSelector() {
     setIsOpen(false);
   };
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -190,6 +154,7 @@ function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { user, profile, signOut } = useAuth();
+  const t = useTranslations('nav');
 
   const displayName = profile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
   const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url;
@@ -249,22 +214,22 @@ function UserDropdown() {
           <div className="py-2">
             <Link href="/dashboard" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
               <Shield className="w-4 h-4" />
-              Dashboard
+              {t('dashboard')}
             </Link>
             <Link href="/dashboard/favorites" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
               <Star className="w-4 h-4" />
-              Mes Favoris
+              {t('favorites')}
             </Link>
             <Link href="/dashboard/settings" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
               <Settings className="w-4 h-4" />
-              Paramètres
+              {t('settings')}
             </Link>
           </div>
 
           <div className="border-t border-gray-800 pt-2">
             <button onClick={() => { setIsOpen(false); signOut(); }} className="flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 w-full transition-colors">
               <LogOut className="w-4 h-4" />
-              Se déconnecter
+              {t('signOut')}
             </button>
           </div>
         </div>
@@ -281,6 +246,38 @@ export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const { user, isLoading, signInWithGoogle, signOut } = useAuth();
+  const t = useTranslations('nav');
+
+  // Navigation avec traductions
+  const mainNavigation = [
+    { name: t('compare'), href: '/compare', icon: BarChart3 },
+    { name: t('deals'), href: '/deals', icon: Tag },
+    { name: t('blog'), href: '/blog', icon: FileText },
+  ];
+
+  const productLinks = [
+    { 
+      name: t('education'), 
+      href: '/education', 
+      icon: GraduationCap,
+      badge: t('soon'),
+      badgeColor: 'bg-purple-500',
+    },
+    { 
+      name: t('rules'), 
+      href: '/rules-explained', 
+      icon: FileQuestion,
+      badge: t('soon'),
+      badgeColor: 'bg-blue-500',
+    },
+    { 
+      name: 'MyPropFirm', 
+      href: '/mypropfirm', 
+      icon: Crown,
+      badge: 'Pro',
+      badgeColor: 'bg-emerald-500',
+    },
+  ];
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-white/10">
@@ -305,7 +302,7 @@ export function Navbar() {
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
               return (
                 <Link
-                  key={item.name}
+                  key={item.href}
                   href={item.href}
                   className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all
                     ${isActive ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:text-white hover:bg-white/5'}`}
@@ -325,7 +322,7 @@ export function Navbar() {
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
               return (
                 <Link
-                  key={item.name}
+                  key={item.href}
                   href={item.href}
                   className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all
                     ${isActive ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:text-white hover:bg-white/5'}`}
@@ -351,8 +348,8 @@ export function Navbar() {
                 ${pathname === '/guide' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'}`}
             >
               <BookOpen className="w-4 h-4" />
-              Free Guide
-              <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-[10px] font-bold rounded">FREE</span>
+              {t('freeGuide')}
+              <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-[10px] font-bold rounded">{t('free')}</span>
             </Link>
           </div>
 
@@ -372,7 +369,7 @@ export function Navbar() {
                 className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors"
               >
                 <GoogleIcon className="w-4 h-4" />
-                Sign In
+                {t('signIn')}
               </button>
             )}
           </div>
@@ -397,7 +394,7 @@ export function Navbar() {
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
               return (
                 <Link
-                  key={item.name}
+                  key={item.href}
                   href={item.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all
@@ -411,13 +408,13 @@ export function Navbar() {
 
             {/* Products Section - Mobile */}
             <div className="pt-2 border-t border-gray-800">
-              <p className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Products</p>
+              <p className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('products')}</p>
               {productLinks.map((item) => {
                 const Icon = item.icon;
                 const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
                 return (
                   <Link
-                    key={item.name}
+                    key={item.href}
                     href={item.href}
                     onClick={() => setMobileMenuOpen(false)}
                     className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all
@@ -442,13 +439,13 @@ export function Navbar() {
               className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium bg-emerald-500/10 text-emerald-400"
             >
               <BookOpen className="w-5 h-5" />
-              Free Guide
-              <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded ml-auto">FREE</span>
+              {t('freeGuide')}
+              <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded ml-auto">{t('free')}</span>
             </Link>
 
             {/* Language Selector Mobile */}
             <div className="pt-2 border-t border-gray-800">
-              <p className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Language</p>
+              <p className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('language')}</p>
               <div className="grid grid-cols-2 gap-2 px-2">
                 {locales.map((locale) => {
                   const segments = pathname.split('/');
@@ -509,22 +506,22 @@ export function Navbar() {
 
                   <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:bg-white/5">
                     <Shield className="w-5 h-5" />
-                    Dashboard
+                    {t('dashboard')}
                   </Link>
                   <Link href="/dashboard/favorites" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:bg-white/5">
                     <Star className="w-5 h-5" />
-                    Mes Favoris
+                    {t('favorites')}
                   </Link>
                   <Link href="/dashboard/settings" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:bg-white/5">
                     <Settings className="w-5 h-5" />
-                    Paramètres
+                    {t('settings')}
                   </Link>
                   <button
                     onClick={() => { setMobileMenuOpen(false); signOut(); }}
                     className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 w-full"
                   >
                     <LogOut className="w-5 h-5" />
-                    Se déconnecter
+                    {t('signOut')}
                   </button>
                 </>
               ) : (
@@ -533,7 +530,7 @@ export function Navbar() {
                   className="flex items-center justify-center gap-2 w-full px-4 py-3 text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg"
                 >
                   <GoogleIcon className="w-4 h-4" />
-                  Sign In with Google
+                  {t('signInGoogle')}
                 </button>
               )}
             </div>
