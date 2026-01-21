@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useTranslations } from 'next-intl';
 import { useAuth } from '@/providers/AuthProvider';
 import {
   Shield,
@@ -24,6 +23,121 @@ import {
   FileQuestion,
   Globe,
 } from 'lucide-react';
+
+// =============================================================================
+// TRANSLATIONS - All languages inline (no external dependency)
+// =============================================================================
+
+const translations: Record<string, Record<string, string>> = {
+  en: {
+    compare: 'Compare',
+    deals: 'Deals',
+    blog: 'Blog',
+    education: 'Education',
+    rules: 'Rules',
+    freeGuide: 'Free Guide',
+    free: 'FREE',
+    soon: 'Soon',
+    products: 'Products',
+    language: 'Language',
+    signIn: 'Sign In',
+    signInGoogle: 'Sign In with Google',
+    signOut: 'Sign Out',
+    dashboard: 'Dashboard',
+    favorites: 'My Favorites',
+    settings: 'Settings',
+  },
+  fr: {
+    compare: 'Comparer',
+    deals: 'Promos',
+    blog: 'Blog',
+    education: 'Education',
+    rules: 'Regles',
+    freeGuide: 'Guide Gratuit',
+    free: 'GRATUIT',
+    soon: 'Bientot',
+    products: 'Produits',
+    language: 'Langue',
+    signIn: 'Connexion',
+    signInGoogle: 'Se connecter avec Google',
+    signOut: 'Deconnexion',
+    dashboard: 'Tableau de bord',
+    favorites: 'Mes Favoris',
+    settings: 'Parametres',
+  },
+  de: {
+    compare: 'Vergleichen',
+    deals: 'Angebote',
+    blog: 'Blog',
+    education: 'Bildung',
+    rules: 'Regeln',
+    freeGuide: 'Kostenloser Guide',
+    free: 'GRATIS',
+    soon: 'Bald',
+    products: 'Produkte',
+    language: 'Sprache',
+    signIn: 'Anmelden',
+    signInGoogle: 'Mit Google anmelden',
+    signOut: 'Abmelden',
+    dashboard: 'Dashboard',
+    favorites: 'Meine Favoriten',
+    settings: 'Einstellungen',
+  },
+  es: {
+    compare: 'Comparar',
+    deals: 'Ofertas',
+    blog: 'Blog',
+    education: 'Educacion',
+    rules: 'Reglas',
+    freeGuide: 'Guia Gratis',
+    free: 'GRATIS',
+    soon: 'Pronto',
+    products: 'Productos',
+    language: 'Idioma',
+    signIn: 'Iniciar sesion',
+    signInGoogle: 'Iniciar sesion con Google',
+    signOut: 'Cerrar sesion',
+    dashboard: 'Panel',
+    favorites: 'Mis Favoritos',
+    settings: 'Configuracion',
+  },
+  ar: {
+    compare: 'مقارنة',
+    deals: 'العروض',
+    blog: 'المدونة',
+    education: 'التعليم',
+    rules: 'القواعد',
+    freeGuide: 'دليل مجاني',
+    free: 'مجاني',
+    soon: 'قريبا',
+    products: 'المنتجات',
+    language: 'اللغة',
+    signIn: 'تسجيل الدخول',
+    signInGoogle: 'تسجيل الدخول بجوجل',
+    signOut: 'تسجيل الخروج',
+    dashboard: 'لوحة التحكم',
+    favorites: 'المفضلة',
+    settings: 'الاعدادات',
+  },
+  hi: {
+    compare: 'तुलना करें',
+    deals: 'डील्स',
+    blog: 'ब्लॉग',
+    education: 'शिक्षा',
+    rules: 'नियम',
+    freeGuide: 'मुफ्त गाइड',
+    free: 'मुफ्त',
+    soon: 'जल्द',
+    products: 'उत्पाद',
+    language: 'भाषा',
+    signIn: 'साइन इन',
+    signInGoogle: 'Google से साइन इन',
+    signOut: 'साइन आउट',
+    dashboard: 'डैशबोर्ड',
+    favorites: 'पसंदीदा',
+    settings: 'सेटिंग्स',
+  },
+};
 
 // =============================================================================
 // LANGUAGE CONFIG
@@ -50,6 +164,15 @@ const localeFlags: Record<Locale, string> = {
   hi: '🇮🇳',
 };
 
+// Get current locale from pathname
+function getLocaleFromPath(pathname: string): Locale {
+  const segments = pathname.split('/');
+  if (segments[1] && locales.includes(segments[1] as Locale)) {
+    return segments[1] as Locale;
+  }
+  return 'en';
+}
+
 // =============================================================================
 // GOOGLE ICON
 // =============================================================================
@@ -69,20 +192,10 @@ function GoogleIcon({ className }: { className?: string }) {
 // LANGUAGE SELECTOR
 // =============================================================================
 
-function LanguageSelector() {
+function LanguageSelector({ currentLocale }: { currentLocale: Locale }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-
-  const getCurrentLocale = (): Locale => {
-    const segments = pathname.split('/');
-    if (segments[1] && locales.includes(segments[1] as Locale)) {
-      return segments[1] as Locale;
-    }
-    return 'en';
-  };
-
-  const currentLocale = getCurrentLocale();
 
   const switchLocale = (newLocale: Locale) => {
     const segments = pathname.split('/');
@@ -150,7 +263,7 @@ function LanguageSelector() {
 // USER DROPDOWN
 // =============================================================================
 
-function UserDropdown({ t }: { t: (key: string) => string }) {
+function UserDropdown({ t }: { t: Record<string, string> }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { user, profile, signOut } = useAuth();
@@ -213,22 +326,22 @@ function UserDropdown({ t }: { t: (key: string) => string }) {
           <div className="py-2">
             <Link href="/dashboard" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
               <Shield className="w-4 h-4" />
-              {t('dashboard')}
+              {t.dashboard}
             </Link>
             <Link href="/dashboard/favorites" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
               <Star className="w-4 h-4" />
-              {t('favorites')}
+              {t.favorites}
             </Link>
             <Link href="/dashboard/settings" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
               <Settings className="w-4 h-4" />
-              {t('settings')}
+              {t.settings}
             </Link>
           </div>
 
           <div className="border-t border-gray-800 pt-2">
             <button onClick={() => { setIsOpen(false); signOut(); }} className="flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 w-full transition-colors">
               <LogOut className="w-4 h-4" />
-              {t('signOut')}
+              {t.signOut}
             </button>
           </div>
         </div>
@@ -246,29 +359,30 @@ export function Navbar() {
   const pathname = usePathname();
   const { user, isLoading, signInWithGoogle, signOut } = useAuth();
   
-  // Use translations
-  const t = useTranslations('nav');
+  // Get locale and translations
+  const currentLocale = getLocaleFromPath(pathname);
+  const t = translations[currentLocale] || translations.en;
 
-  // Navigation avec traductions
+  // Navigation
   const mainNavigation = [
-    { name: t('compare'), href: '/compare', icon: BarChart3 },
-    { name: t('deals'), href: '/deals', icon: Tag },
-    { name: t('blog'), href: '/blog', icon: FileText },
+    { name: t.compare, href: '/compare', icon: BarChart3 },
+    { name: t.deals, href: '/deals', icon: Tag },
+    { name: t.blog, href: '/blog', icon: FileText },
   ];
 
   const productLinks = [
     { 
-      name: t('education'), 
+      name: t.education, 
       href: '/education', 
       icon: GraduationCap,
-      badge: t('soon'),
+      badge: t.soon,
       badgeColor: 'bg-purple-500',
     },
     { 
-      name: t('rules'), 
+      name: t.rules, 
       href: '/rules-explained', 
       icon: FileQuestion,
-      badge: t('soon'),
+      badge: t.soon,
       badgeColor: 'bg-blue-500',
     },
     { 
@@ -297,7 +411,6 @@ export function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-1">
-            {/* Main Nav */}
             {mainNavigation.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
@@ -314,10 +427,8 @@ export function Navbar() {
               );
             })}
 
-            {/* Separator */}
             <div className="w-px h-6 bg-gray-700 mx-1" />
 
-            {/* Product Links */}
             {productLinks.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
@@ -339,27 +450,23 @@ export function Navbar() {
               );
             })}
 
-            {/* Separator */}
             <div className="w-px h-6 bg-gray-700 mx-1" />
 
-            {/* Free Guide */}
             <Link 
               href="/guide" 
               className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all
                 ${pathname === '/guide' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'}`}
             >
               <BookOpen className="w-4 h-4" />
-              {t('freeGuide')}
-              <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-[10px] font-bold rounded">{t('free')}</span>
+              {t.freeGuide}
+              <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-[10px] font-bold rounded">{t.free}</span>
             </Link>
           </div>
 
-          {/* Right Section: Language + Auth */}
+          {/* Right Section */}
           <div className="hidden lg:flex items-center space-x-2 relative z-10">
-            {/* Language Selector */}
-            <LanguageSelector />
+            <LanguageSelector currentLocale={currentLocale} />
             
-            {/* Auth */}
             {isLoading ? (
               <Loader2 className="w-5 h-5 text-gray-500 animate-spin" />
             ) : user ? (
@@ -370,7 +477,7 @@ export function Navbar() {
                 className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors"
               >
                 <GoogleIcon className="w-4 h-4" />
-                {t('signIn')}
+                {t.signIn}
               </button>
             )}
           </div>
@@ -389,7 +496,6 @@ export function Navbar() {
       {mobileMenuOpen && (
         <div className="lg:hidden bg-gray-900/95 backdrop-blur-lg border-t border-gray-800">
           <div className="px-4 py-4 space-y-2">
-            {/* Main Navigation */}
             {mainNavigation.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
@@ -407,9 +513,8 @@ export function Navbar() {
               );
             })}
 
-            {/* Products Section - Mobile */}
             <div className="pt-2 border-t border-gray-800">
-              <p className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('products')}</p>
+              <p className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">{t.products}</p>
               {productLinks.map((item) => {
                 const Icon = item.icon;
                 const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
@@ -433,27 +538,24 @@ export function Navbar() {
               })}
             </div>
 
-            {/* Free Guide - Mobile */}
             <Link 
               href="/guide" 
               onClick={() => setMobileMenuOpen(false)} 
               className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium bg-emerald-500/10 text-emerald-400"
             >
               <BookOpen className="w-5 h-5" />
-              {t('freeGuide')}
-              <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded ml-auto">{t('free')}</span>
+              {t.freeGuide}
+              <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded ml-auto">{t.free}</span>
             </Link>
 
-            {/* Language Selector Mobile */}
             <div className="pt-2 border-t border-gray-800">
-              <p className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('language')}</p>
+              <p className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">{t.language}</p>
               <div className="grid grid-cols-2 gap-2 px-2">
                 {locales.map((locale) => {
-                  const segments = pathname.split('/');
-                  const currentLocale = segments[1] && locales.includes(segments[1] as Locale) ? segments[1] : 'en';
                   const isActive = currentLocale === locale;
                   
                   const switchLocale = () => {
+                    const segments = pathname.split('/');
                     if (segments[1] && locales.includes(segments[1] as Locale)) {
                       segments[1] = locale;
                     } else {
@@ -483,7 +585,6 @@ export function Navbar() {
               </div>
             </div>
 
-            {/* User section for mobile */}
             <div className="pt-4 border-t border-gray-800 space-y-2">
               {isLoading ? (
                 <div className="flex justify-center py-3">
@@ -507,22 +608,22 @@ export function Navbar() {
 
                   <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:bg-white/5">
                     <Shield className="w-5 h-5" />
-                    {t('dashboard')}
+                    {t.dashboard}
                   </Link>
                   <Link href="/dashboard/favorites" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:bg-white/5">
                     <Star className="w-5 h-5" />
-                    {t('favorites')}
+                    {t.favorites}
                   </Link>
                   <Link href="/dashboard/settings" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:bg-white/5">
                     <Settings className="w-5 h-5" />
-                    {t('settings')}
+                    {t.settings}
                   </Link>
                   <button
                     onClick={() => { setMobileMenuOpen(false); signOut(); }}
                     className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 w-full"
                   >
                     <LogOut className="w-5 h-5" />
-                    {t('signOut')}
+                    {t.signOut}
                   </button>
                 </>
               ) : (
@@ -531,7 +632,7 @@ export function Navbar() {
                   className="flex items-center justify-center gap-2 w-full px-4 py-3 text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg"
                 >
                   <GoogleIcon className="w-4 h-4" />
-                  {t('signInGoogle')}
+                  {t.signInGoogle}
                 </button>
               )}
             </div>
