@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/providers/AuthProvider';
 import {
   Shield,
@@ -25,56 +26,6 @@ import {
 } from 'lucide-react';
 
 // =============================================================================
-// TRY TO IMPORT TRANSLATIONS (may fail on error pages)
-// =============================================================================
-
-let useTranslations: any;
-try {
-  useTranslations = require('next-intl').useTranslations;
-} catch {
-  useTranslations = null;
-}
-
-// Default translations fallback
-const defaultTranslations: Record<string, string> = {
-  compare: 'Compare',
-  deals: 'Deals',
-  blog: 'Blog',
-  education: 'Education',
-  rules: 'Rules',
-  freeGuide: 'Free Guide',
-  free: 'FREE',
-  soon: 'Soon',
-  products: 'Products',
-  language: 'Language',
-  signIn: 'Sign In',
-  signInGoogle: 'Sign In with Google',
-  signOut: 'Sign Out',
-  dashboard: 'Dashboard',
-  favorites: 'My Favorites',
-  settings: 'Settings',
-};
-
-// Safe translation hook
-function useSafeTranslations(namespace: string) {
-  try {
-    if (useTranslations) {
-      const t = useTranslations(namespace);
-      return (key: string) => {
-        try {
-          return t(key);
-        } catch {
-          return defaultTranslations[key] || key;
-        }
-      };
-    }
-  } catch {
-    // Fallback if translations context is not available
-  }
-  return (key: string) => defaultTranslations[key] || key;
-}
-
-// =============================================================================
 // LANGUAGE CONFIG
 // =============================================================================
 
@@ -83,9 +34,9 @@ type Locale = (typeof locales)[number];
 
 const localeNames: Record<Locale, string> = {
   en: 'English',
-  fr: 'Français',
+  fr: 'Francais',
   de: 'Deutsch',
-  es: 'Español',
+  es: 'Espanol',
   ar: 'العربية',
   hi: 'हिन्दी',
 };
@@ -199,11 +150,10 @@ function LanguageSelector() {
 // USER DROPDOWN
 // =============================================================================
 
-function UserDropdown() {
+function UserDropdown({ t }: { t: (key: string) => string }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { user, profile, signOut } = useAuth();
-  const t = useSafeTranslations('nav');
 
   const displayName = profile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
   const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url;
@@ -295,7 +245,9 @@ export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const { user, isLoading, signInWithGoogle, signOut } = useAuth();
-  const t = useSafeTranslations('nav');
+  
+  // Use translations
+  const t = useTranslations('nav');
 
   // Navigation avec traductions
   const mainNavigation = [
@@ -411,7 +363,7 @@ export function Navbar() {
             {isLoading ? (
               <Loader2 className="w-5 h-5 text-gray-500 animate-spin" />
             ) : user ? (
-              <UserDropdown />
+              <UserDropdown t={t} />
             ) : (
               <button
                 onClick={signInWithGoogle}
