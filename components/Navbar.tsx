@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useTranslations } from 'next-intl';
 import { useAuth } from '@/providers/AuthProvider';
 import {
   Shield,
@@ -24,6 +23,56 @@ import {
   FileQuestion,
   Globe,
 } from 'lucide-react';
+
+// =============================================================================
+// TRY TO IMPORT TRANSLATIONS (may fail on error pages)
+// =============================================================================
+
+let useTranslations: any;
+try {
+  useTranslations = require('next-intl').useTranslations;
+} catch {
+  useTranslations = null;
+}
+
+// Default translations fallback
+const defaultTranslations: Record<string, string> = {
+  compare: 'Compare',
+  deals: 'Deals',
+  blog: 'Blog',
+  education: 'Education',
+  rules: 'Rules',
+  freeGuide: 'Free Guide',
+  free: 'FREE',
+  soon: 'Soon',
+  products: 'Products',
+  language: 'Language',
+  signIn: 'Sign In',
+  signInGoogle: 'Sign In with Google',
+  signOut: 'Sign Out',
+  dashboard: 'Dashboard',
+  favorites: 'My Favorites',
+  settings: 'Settings',
+};
+
+// Safe translation hook
+function useSafeTranslations(namespace: string) {
+  try {
+    if (useTranslations) {
+      const t = useTranslations(namespace);
+      return (key: string) => {
+        try {
+          return t(key);
+        } catch {
+          return defaultTranslations[key] || key;
+        }
+      };
+    }
+  } catch {
+    // Fallback if translations context is not available
+  }
+  return (key: string) => defaultTranslations[key] || key;
+}
 
 // =============================================================================
 // LANGUAGE CONFIG
@@ -154,7 +203,7 @@ function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { user, profile, signOut } = useAuth();
-  const t = useTranslations('nav');
+  const t = useSafeTranslations('nav');
 
   const displayName = profile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
   const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url;
@@ -246,7 +295,7 @@ export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const { user, isLoading, signInWithGoogle, signOut } = useAuth();
-  const t = useTranslations('nav');
+  const t = useSafeTranslations('nav');
 
   // Navigation avec traductions
   const mainNavigation = [
