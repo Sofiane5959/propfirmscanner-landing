@@ -175,25 +175,28 @@ function getLocaleFromPath(pathname: string): Locale {
 
 // Build URL for locale switch
 function buildLocaleUrl(pathname: string, newLocale: Locale): string {
-  // Get path segments without empty strings
   const segments = pathname.split('/').filter(Boolean);
-  
-  // Check if first segment is a locale
   const firstIsLocale = segments.length > 0 && locales.includes(segments[0] as Locale);
   
-  // Remove existing locale if present
   if (firstIsLocale) {
     segments.shift();
   }
   
-  // Build new URL
   if (newLocale === 'en') {
-    // English = no prefix, go to root or path without locale
     return segments.length > 0 ? '/' + segments.join('/') : '/';
   } else {
-    // Other languages = add prefix
     return '/' + newLocale + (segments.length > 0 ? '/' + segments.join('/') : '');
   }
+}
+
+// Switch locale - clears cookie and navigates
+function switchLocale(pathname: string, newLocale: Locale) {
+  // IMPORTANT: Clear the NEXT_LOCALE cookie so middleware doesn't redirect back
+  document.cookie = 'NEXT_LOCALE=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+  document.cookie = 'NEXT_LOCALE=' + newLocale + '; path=/; max-age=31536000';
+  
+  const url = buildLocaleUrl(pathname, newLocale);
+  window.location.href = url;
 }
 
 // =============================================================================
@@ -212,12 +215,17 @@ function GoogleIcon({ className }: { className?: string }) {
 }
 
 // =============================================================================
-// LANGUAGE SELECTOR - Using direct <a> links
+// LANGUAGE SELECTOR
 // =============================================================================
 
 function LanguageSelector({ currentLocale, pathname }: { currentLocale: Locale; pathname: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const handleSwitch = (locale: Locale) => {
+    setIsOpen(false);
+    switchLocale(pathname, locale);
+  };
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -245,9 +253,9 @@ function LanguageSelector({ currentLocale, pathname }: { currentLocale: Locale; 
       {isOpen && (
         <div className="absolute right-0 mt-2 w-40 bg-gray-900 border border-gray-800 rounded-xl shadow-xl z-[60] py-1">
           {locales.map((locale) => (
-            <a
+            <button
               key={locale}
-              href={buildLocaleUrl(pathname, locale)}
+              onClick={() => handleSwitch(locale)}
               className={`w-full flex items-center gap-3 px-4 py-2 text-sm text-left hover:bg-gray-800 transition-colors ${
                 currentLocale === locale ? 'text-emerald-400 bg-gray-800/50' : 'text-gray-300'
               }`}
@@ -255,7 +263,7 @@ function LanguageSelector({ currentLocale, pathname }: { currentLocale: Locale; 
               <span>{localeFlags[locale]}</span>
               <span>{localeNames[locale]}</span>
               {currentLocale === locale && <span className="ml-auto text-emerald-400">✓</span>}
-            </a>
+            </button>
           ))}
         </div>
       )}
@@ -401,7 +409,6 @@ export function Navbar() {
 
           {/* Desktop Navigation - Aligned Left */}
           <div className="hidden lg:flex items-center gap-1 flex-1">
-            {/* Main Nav */}
             {mainNavigation.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
@@ -418,10 +425,8 @@ export function Navbar() {
               );
             })}
 
-            {/* Separator */}
             <div className="w-px h-6 bg-gray-700 mx-1" />
 
-            {/* Product Links */}
             {productLinks.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
@@ -443,10 +448,8 @@ export function Navbar() {
               );
             })}
 
-            {/* Separator */}
             <div className="w-px h-6 bg-gray-700 mx-1" />
 
-            {/* Free Guide */}
             <Link 
               href="/guide" 
               className={`flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-sm font-medium transition-all
@@ -458,12 +461,10 @@ export function Navbar() {
             </Link>
           </div>
 
-          {/* Right Section - Always visible */}
+          {/* Right Section */}
           <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
-            {/* Language Selector */}
             <LanguageSelector currentLocale={currentLocale} pathname={pathname} />
             
-            {/* Auth */}
             {isLoading ? (
               <Loader2 className="w-5 h-5 text-gray-500 animate-spin" />
             ) : user ? (
@@ -493,7 +494,6 @@ export function Navbar() {
       {mobileMenuOpen && (
         <div className="lg:hidden bg-gray-900/95 backdrop-blur-lg border-t border-gray-800">
           <div className="px-4 py-4 space-y-2">
-            {/* Main Navigation */}
             {mainNavigation.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
@@ -511,7 +511,6 @@ export function Navbar() {
               );
             })}
 
-            {/* Products Section - Mobile */}
             <div className="pt-2 border-t border-gray-800">
               <p className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">{t.products}</p>
               {productLinks.map((item) => {
@@ -537,7 +536,6 @@ export function Navbar() {
               })}
             </div>
 
-            {/* Free Guide - Mobile */}
             <Link 
               href="/guide" 
               onClick={() => setMobileMenuOpen(false)} 
@@ -554,19 +552,20 @@ export function Navbar() {
               <div className="grid grid-cols-2 gap-2 px-2">
                 {locales.map((locale) => {
                   const isActive = currentLocale === locale;
-                  const url = buildLocaleUrl(pathname, locale);
-
                   return (
-                    <a
+                    <button
                       key={locale}
-                      href={url}
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        switchLocale(pathname, locale);
+                      }}
                       className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
                         isActive ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:bg-white/5'
                       }`}
                     >
                       <span>{localeFlags[locale]}</span>
                       <span>{localeNames[locale]}</span>
-                    </a>
+                    </button>
                   );
                 })}
               </div>
