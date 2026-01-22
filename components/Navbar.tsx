@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 
 // =============================================================================
-// TRANSLATIONS - Shortened for navbar fit
+// TRANSLATIONS - 7 Languages (EN, FR, DE, ES, PT, AR, HI)
 // =============================================================================
 
 const translations: Record<string, Record<string, string>> = {
@@ -101,6 +101,24 @@ const translations: Record<string, Record<string, string>> = {
     favorites: 'Favoritos',
     settings: 'Ajustes',
   },
+  pt: {
+    compare: 'Comparar',
+    deals: 'Ofertas',
+    blog: 'Blog',
+    education: 'Educacao',
+    rules: 'Regras',
+    freeGuide: 'Guia',
+    free: 'GRATIS',
+    soon: 'Em breve',
+    products: 'Produtos',
+    language: 'Idioma',
+    signIn: 'Entrar',
+    signInGoogle: 'Entrar com Google',
+    signOut: 'Sair',
+    dashboard: 'Painel',
+    favorites: 'Favoritos',
+    settings: 'Configuracoes',
+  },
   ar: {
     compare: 'مقارنة',
     deals: 'العروض',
@@ -140,10 +158,10 @@ const translations: Record<string, Record<string, string>> = {
 };
 
 // =============================================================================
-// LANGUAGE CONFIG
+// LANGUAGE CONFIG - 7 Languages
 // =============================================================================
 
-const locales = ['en', 'fr', 'de', 'es', 'ar', 'hi'] as const;
+const locales = ['en', 'fr', 'de', 'es', 'pt', 'ar', 'hi'] as const;
 type Locale = (typeof locales)[number];
 
 const localeNames: Record<Locale, string> = {
@@ -151,6 +169,7 @@ const localeNames: Record<Locale, string> = {
   fr: 'Francais',
   de: 'Deutsch',
   es: 'Espanol',
+  pt: 'Portugues',
   ar: 'العربية',
   hi: 'हिन्दी',
 };
@@ -160,6 +179,7 @@ const localeFlags: Record<Locale, string> = {
   fr: '🇫🇷',
   de: '🇩🇪',
   es: '🇪🇸',
+  pt: '🇧🇷',
   ar: '🇸🇦',
   hi: '🇮🇳',
 };
@@ -246,7 +266,7 @@ function LanguageSelector({ currentLocale, pathname }: { currentLocale: Locale; 
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-40 bg-gray-900 border border-gray-800 rounded-xl shadow-xl z-[60] py-1">
+        <div className="absolute right-0 mt-2 w-40 bg-gray-900 border border-gray-800 rounded-xl shadow-xl z-[60] py-1 max-h-80 overflow-y-auto">
           {locales.map((locale) => (
             <button
               key={locale}
@@ -456,7 +476,7 @@ export function Navbar() {
             </Link>
           </div>
 
-          {/* Right Section - Always visible */}
+          {/* Right Section */}
           <div className="hidden lg:flex items-center gap-1 flex-shrink-0 ml-2">
             <LanguageSelector currentLocale={currentLocale} pathname={pathname} />
             

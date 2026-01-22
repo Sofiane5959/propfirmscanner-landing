@@ -5,7 +5,7 @@
     "blog": "Blog",
     "education": "Education",
     "rules": "Regles",
-    "freeGuide": "Guide Gratuit",
+    "freeGuide": "Guide",
     "free": "GRATUIT",
     "soon": "Bientot",
     "products": "Produits",
@@ -16,6 +16,97 @@
     "dashboard": "Tableau de bord",
     "favorites": "Mes Favoris",
     "settings": "Parametres"
+  },
+  "hero": {
+    "badge": "Mis a jour janvier 2026",
+    "title": "Comparez les Prop Firms.",
+    "titleHighlight": "Suivez votre Challenge.",
+    "description": "Comparez les prop firms verifiees cote a cote. Filtrez par regles, frais et partage des profits. Suivez votre drawdown avec notre tableau de bord intelligent.",
+    "cta1": "Comparer les Firms",
+    "cta2": "Suivre mon Challenge",
+    "trust1": "100% Gratuit",
+    "trust2": "Sans inscription",
+    "trust3": "Mis a jour quotidiennement"
+  },
+  "features": {
+    "title": "Tout ce dont vous avez besoin",
+    "subtitle": "Tous les outils pour trouver et suivre votre prop firm ideale",
+    "compare": {
+      "title": "Comparaison intelligente",
+      "description": "Comparez plus de 50 prop firms avec des filtres detailles pour les regles, frais et partage des profits"
+    },
+    "track": {
+      "title": "Suivi de Challenge",
+      "description": "Surveillez votre drawdown, objectifs de profit et jours de trading en temps reel"
+    },
+    "alerts": {
+      "title": "Alertes intelligentes",
+      "description": "Soyez notifie quand vous approchez des limites ou quand les offres expirent"
+    },
+    "deals": {
+      "title": "Offres exclusives",
+      "description": "Economisez jusqu'a 50% avec nos codes promo verifies"
+    }
+  },
+  "cta": {
+    "title": "Pret a trouver votre Prop Firm ideale ?",
+    "description": "Rejoignez des milliers de traders qui utilisent PropFirmScanner pour comparer les firms et suivre leurs challenges.",
+    "button": "Commencer a comparer - C'est gratuit"
+  },
+  "footer": {
+    "description": "La plateforme de comparaison de prop firms la plus complete. Prenez des decisions eclairees avec des donnees reelles.",
+    "navigation": "Navigation",
+    "resources": "Ressources",
+    "legal": "Legal",
+    "followUs": "Suivez-nous",
+    "copyright": "2026 PropFirmScanner. Tous droits reserves.",
+    "compare": "Comparer les Firms",
+    "deals": "Promos & Coupons",
+    "blog": "Blog",
+    "guide": "Guide Gratuit",
+    "calculator": "Calculateur de Risque",
+    "glossary": "Glossaire Trading",
+    "privacy": "Politique de confidentialite",
+    "terms": "Conditions d'utilisation",
+    "contact": "Nous contacter"
+  },
+  "compare": {
+    "title": "Comparer les Prop Firms",
+    "subtitle": "Trouvez la prop firm parfaite pour votre style de trading",
+    "filters": "Filtres",
+    "sortBy": "Trier par",
+    "price": "Prix",
+    "profitSplit": "Partage des profits",
+    "accountSize": "Taille du compte",
+    "rating": "Note",
+    "viewDetails": "Voir les details",
+    "compare": "Comparer",
+    "noResults": "Aucune firm ne correspond a vos filtres",
+    "resetFilters": "Reinitialiser les filtres"
+  },
+  "deals": {
+    "title": "Offres & Coupons exclusifs",
+    "subtitle": "Economisez sur votre prochain challenge",
+    "verified": "Verifie",
+    "expires": "Expire le",
+    "copyCode": "Copier le code",
+    "copied": "Copie !",
+    "getCoupon": "Obtenir le coupon",
+    "allDeals": "Toutes les offres",
+    "featured": "En vedette"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "welcome": "Bienvenue",
+    "totalProfit": "Profit total",
+    "activeAccounts": "Comptes actifs",
+    "favorites": "Favoris",
+    "alertsToday": "Alertes aujourd'hui",
+    "myAccounts": "Mes comptes",
+    "addAccount": "Ajouter un compte",
+    "viewAll": "Voir tout",
+    "noAccounts": "Aucun compte",
+    "addFirstAccount": "Ajoutez votre premier compte prop firm pour commencer le suivi"
   },
   "common": {
     "loading": "Chargement...",
@@ -35,24 +126,5 @@
     "viewAll": "Voir tout",
     "learnMore": "En savoir plus",
     "getStarted": "Commencer"
-  },
-  "hero": {
-    "badge": "Mis a jour janvier 2026",
-    "title": "Comparez les Prop Firms.",
-    "titleHighlight": "Suivez votre Challenge.",
-    "description": "Comparez les prop firms verifiees cote a cote. Filtrez par regles, frais et partage des profits.",
-    "cta1": "Comparer toutes les Firms",
-    "cta2": "Suivre mon Challenge",
-    "trust1": "100% Gratuit",
-    "trust2": "Aucune inscription requise",
-    "trust3": "Mis a jour quotidiennement"
-  },
-  "footer": {
-    "description": "La plateforme de comparaison de prop firms la plus complete.",
-    "navigation": "Navigation",
-    "resources": "Ressources",
-    "legal": "Legal",
-    "followUs": "Suivez-nous",
-    "copyright": "2026 PropFirmScanner. Tous droits reserves."
   }
 }

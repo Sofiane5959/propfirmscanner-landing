@@ -1,0 +1,130 @@
+{
+  "nav": {
+    "compare": "Comparar",
+    "deals": "Ofertas",
+    "blog": "Blog",
+    "education": "Educacao",
+    "rules": "Regras",
+    "freeGuide": "Guia",
+    "free": "GRATIS",
+    "soon": "Em breve",
+    "products": "Produtos",
+    "language": "Idioma",
+    "signIn": "Entrar",
+    "signInGoogle": "Entrar com Google",
+    "signOut": "Sair",
+    "dashboard": "Painel",
+    "favorites": "Favoritos",
+    "settings": "Configuracoes"
+  },
+  "hero": {
+    "badge": "Atualizado janeiro 2026",
+    "title": "Compare Prop Firms.",
+    "titleHighlight": "Acompanhe seu Challenge.",
+    "description": "Compare prop firms verificadas lado a lado. Filtre por regras, taxas e divisao de lucros. Acompanhe seu drawdown com nosso painel inteligente.",
+    "cta1": "Comparar todas as Firms",
+    "cta2": "Acompanhar meu Challenge",
+    "trust1": "100% Gratis",
+    "trust2": "Sem cadastro",
+    "trust3": "Atualizado diariamente"
+  },
+  "features": {
+    "title": "Tudo o que voce precisa",
+    "subtitle": "Todas as ferramentas para encontrar e acompanhar sua prop firm perfeita",
+    "compare": {
+      "title": "Comparacao inteligente",
+      "description": "Compare mais de 50 prop firms com filtros detalhados para regras, taxas e divisao de lucros"
+    },
+    "track": {
+      "title": "Rastreador de Challenge",
+      "description": "Monitore seu drawdown, metas de lucro e dias de trading em tempo real"
+    },
+    "alerts": {
+      "title": "Alertas inteligentes",
+      "description": "Seja notificado quando se aproximar dos limites ou quando as ofertas expirarem"
+    },
+    "deals": {
+      "title": "Ofertas exclusivas",
+      "description": "Economize ate 50% com nossos codigos de desconto verificados"
+    }
+  },
+  "cta": {
+    "title": "Pronto para encontrar sua Prop Firm perfeita?",
+    "description": "Junte-se a milhares de traders que usam PropFirmScanner para comparar firms e acompanhar seus challenges.",
+    "button": "Comecar a comparar - E gratis"
+  },
+  "footer": {
+    "description": "A plataforma de comparacao de prop firms mais completa. Tome decisoes informadas com dados reais.",
+    "navigation": "Navegacao",
+    "resources": "Recursos",
+    "legal": "Legal",
+    "followUs": "Siga-nos",
+    "copyright": "2026 PropFirmScanner. Todos os direitos reservados.",
+    "compare": "Comparar Firms",
+    "deals": "Ofertas e Cupons",
+    "blog": "Blog",
+    "guide": "Guia Gratis",
+    "calculator": "Calculadora de Risco",
+    "glossary": "Glossario de Trading",
+    "privacy": "Politica de Privacidade",
+    "terms": "Termos de Servico",
+    "contact": "Contato"
+  },
+  "compare": {
+    "title": "Comparar Prop Firms",
+    "subtitle": "Encontre a prop firm perfeita para seu estilo de trading",
+    "filters": "Filtros",
+    "sortBy": "Ordenar por",
+    "price": "Preco",
+    "profitSplit": "Divisao de lucros",
+    "accountSize": "Tamanho da conta",
+    "rating": "Avaliacao",
+    "viewDetails": "Ver detalhes",
+    "compare": "Comparar",
+    "noResults": "Nenhuma firm corresponde aos seus filtros",
+    "resetFilters": "Redefinir filtros"
+  },
+  "deals": {
+    "title": "Ofertas e Cupons exclusivos",
+    "subtitle": "Economize no seu proximo challenge",
+    "verified": "Verificado",
+    "expires": "Expira",
+    "copyCode": "Copiar codigo",
+    "copied": "Copiado!",
+    "getCoupon": "Obter cupom",
+    "allDeals": "Todas as ofertas",
+    "featured": "Destaque"
+  },
+  "dashboard": {
+    "title": "Painel",
+    "welcome": "Bem-vindo de volta",
+    "totalProfit": "Lucro total",
+    "activeAccounts": "Contas ativas",
+    "favorites": "Favoritos",
+    "alertsToday": "Alertas hoje",
+    "myAccounts": "Minhas contas",
+    "addAccount": "Adicionar conta",
+    "viewAll": "Ver tudo",
+    "noAccounts": "Sem contas ainda",
+    "addFirstAccount": "Adicione sua primeira conta de prop firm para comecar a acompanhar"
+  },
+  "common": {
+    "loading": "Carregando...",
+    "error": "Erro",
+    "success": "Sucesso",
+    "cancel": "Cancelar",
+    "save": "Salvar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "close": "Fechar",
+    "back": "Voltar",
+    "next": "Proximo",
+    "submit": "Enviar",
+    "search": "Pesquisar",
+    "filter": "Filtrar",
+    "sort": "Ordenar",
+    "viewAll": "Ver tudo",
+    "learnMore": "Saiba mais",
+    "getStarted": "Comecar"
+  }
+}

@@ -1,11 +1,11 @@
 {
   "nav": {
-    "compare": "Vergleichen",
+    "compare": "Vergleich",
     "deals": "Angebote",
     "blog": "Blog",
     "education": "Bildung",
     "rules": "Regeln",
-    "freeGuide": "Kostenloser Guide",
+    "freeGuide": "Guide",
     "free": "GRATIS",
     "soon": "Bald",
     "products": "Produkte",
@@ -14,19 +14,110 @@
     "signInGoogle": "Mit Google anmelden",
     "signOut": "Abmelden",
     "dashboard": "Dashboard",
-    "favorites": "Meine Favoriten",
+    "favorites": "Favoriten",
     "settings": "Einstellungen"
   },
+  "hero": {
+    "badge": "Aktualisiert Januar 2026",
+    "title": "Prop Firms vergleichen.",
+    "titleHighlight": "Challenge verfolgen.",
+    "description": "Vergleichen Sie verifizierte Prop Firms nebeneinander. Filtern Sie nach Regeln, Gebuhren und Gewinnaufteilung. Verfolgen Sie Ihren Drawdown mit unserem intelligenten Dashboard.",
+    "cta1": "Alle Firms vergleichen",
+    "cta2": "Meine Challenge verfolgen",
+    "trust1": "100% Kostenlos",
+    "trust2": "Keine Anmeldung erforderlich",
+    "trust3": "Taglich aktualisiert"
+  },
+  "features": {
+    "title": "Alles was Sie brauchen",
+    "subtitle": "Alle Tools um Ihre perfekte Prop Firm zu finden und zu verfolgen",
+    "compare": {
+      "title": "Intelligenter Vergleich",
+      "description": "Vergleichen Sie 50+ Prop Firms mit detaillierten Filtern fur Regeln, Gebuhren und Gewinnaufteilung"
+    },
+    "track": {
+      "title": "Challenge Tracker",
+      "description": "Uberwachen Sie Ihren Drawdown, Gewinnziele und Handelstage in Echtzeit"
+    },
+    "alerts": {
+      "title": "Intelligente Alarme",
+      "description": "Werden Sie benachrichtigt wenn Sie Limits nahern oder Angebote ablaufen"
+    },
+    "deals": {
+      "title": "Exklusive Angebote",
+      "description": "Sparen Sie bis zu 50% mit unseren verifizierten Rabattcodes"
+    }
+  },
+  "cta": {
+    "title": "Bereit Ihre perfekte Prop Firm zu finden?",
+    "description": "Schliessen Sie sich Tausenden von Tradern an die PropFirmScanner nutzen um Firms zu vergleichen und Challenges zu verfolgen.",
+    "button": "Vergleich starten - Kostenlos"
+  },
+  "footer": {
+    "description": "Die umfassendste Prop Firm Vergleichsplattform. Treffen Sie fundierte Entscheidungen mit echten Daten.",
+    "navigation": "Navigation",
+    "resources": "Ressourcen",
+    "legal": "Rechtliches",
+    "followUs": "Folgen Sie uns",
+    "copyright": "2026 PropFirmScanner. Alle Rechte vorbehalten.",
+    "compare": "Firms vergleichen",
+    "deals": "Angebote & Coupons",
+    "blog": "Blog",
+    "guide": "Kostenloser Guide",
+    "calculator": "Risiko-Rechner",
+    "glossary": "Trading Glossar",
+    "privacy": "Datenschutz",
+    "terms": "Nutzungsbedingungen",
+    "contact": "Kontakt"
+  },
+  "compare": {
+    "title": "Prop Firms vergleichen",
+    "subtitle": "Finden Sie die perfekte Prop Firm fur Ihren Trading-Stil",
+    "filters": "Filter",
+    "sortBy": "Sortieren nach",
+    "price": "Preis",
+    "profitSplit": "Gewinnaufteilung",
+    "accountSize": "Kontogrosse",
+    "rating": "Bewertung",
+    "viewDetails": "Details anzeigen",
+    "compare": "Vergleichen",
+    "noResults": "Keine Firms entsprechen Ihren Filtern",
+    "resetFilters": "Filter zurucksetzen"
+  },
+  "deals": {
+    "title": "Exklusive Angebote & Coupons",
+    "subtitle": "Sparen Sie bei Ihrer nachsten Challenge",
+    "verified": "Verifiziert",
+    "expires": "Lauft ab",
+    "copyCode": "Code kopieren",
+    "copied": "Kopiert!",
+    "getCoupon": "Coupon holen",
+    "allDeals": "Alle Angebote",
+    "featured": "Empfohlen"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Willkommen zuruck",
+    "totalProfit": "Gesamtgewinn",
+    "activeAccounts": "Aktive Konten",
+    "favorites": "Favoriten",
+    "alertsToday": "Alarme heute",
+    "myAccounts": "Meine Konten",
+    "addAccount": "Konto hinzufugen",
+    "viewAll": "Alle anzeigen",
+    "noAccounts": "Noch keine Konten",
+    "addFirstAccount": "Fugen Sie Ihr erstes Prop Firm Konto hinzu um mit dem Tracking zu beginnen"
+  },
   "common": {
-    "loading": "Wird geladen...",
+    "loading": "Laden...",
     "error": "Fehler",
     "success": "Erfolg",
     "cancel": "Abbrechen",
     "save": "Speichern",
-    "delete": "Löschen",
+    "delete": "Loschen",
     "edit": "Bearbeiten",
-    "close": "Schließen",
-    "back": "Zurück",
+    "close": "Schliessen",
+    "back": "Zuruck",
     "next": "Weiter",
     "submit": "Absenden",
     "search": "Suchen",
@@ -35,24 +126,5 @@
     "viewAll": "Alle anzeigen",
     "learnMore": "Mehr erfahren",
     "getStarted": "Loslegen"
-  },
-  "hero": {
-    "badge": "Aktualisiert Januar 2026",
-    "title": "Prop Firms vergleichen.",
-    "titleHighlight": "Challenge verfolgen.",
-    "description": "Vergleichen Sie verifizierte Prop-Trading-Firmen nebeneinander. Filtern Sie nach Regeln, Gebühren und Gewinnaufteilung. Verfolgen Sie Ihren Drawdown mit unserem intelligenten Dashboard.",
-    "cta1": "Alle Firmen vergleichen",
-    "cta2": "Meine Challenge verfolgen",
-    "trust1": "100% Kostenlos",
-    "trust2": "Keine Registrierung erforderlich",
-    "trust3": "Täglich aktualisiert"
-  },
-  "footer": {
-    "description": "Die umfassendste Plattform zum Vergleich von Prop Firms. Treffen Sie fundierte Entscheidungen mit echten Daten.",
-    "navigation": "Navigation",
-    "resources": "Ressourcen",
-    "legal": "Rechtliches",
-    "followUs": "Folgen Sie uns",
-    "copyright": "© 2026 PropFirmScanner. Alle Rechte vorbehalten."
   }
 }

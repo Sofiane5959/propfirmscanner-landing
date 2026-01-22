@@ -17,6 +17,97 @@
     "favorites": "My Favorites",
     "settings": "Settings"
   },
+  "hero": {
+    "badge": "Updated January 2026",
+    "title": "Compare Prop Firms.",
+    "titleHighlight": "Track Your Challenge.",
+    "description": "Compare verified prop firms side by side. Filter by rules, fees and profit splits. Track your drawdown with our smart dashboard.",
+    "cta1": "Compare All Firms",
+    "cta2": "Track My Challenge",
+    "trust1": "100% Free",
+    "trust2": "No Signup Required",
+    "trust3": "Updated Daily"
+  },
+  "features": {
+    "title": "Everything You Need",
+    "subtitle": "All the tools to find and track your perfect prop firm",
+    "compare": {
+      "title": "Smart Comparison",
+      "description": "Compare 50+ prop firms with detailed filters for rules, fees, and profit splits"
+    },
+    "track": {
+      "title": "Challenge Tracker",
+      "description": "Monitor your drawdown, profit targets, and trading days in real-time"
+    },
+    "alerts": {
+      "title": "Smart Alerts",
+      "description": "Get notified when you approach limits or when deals expire"
+    },
+    "deals": {
+      "title": "Exclusive Deals",
+      "description": "Save up to 50% with our verified discount codes"
+    }
+  },
+  "cta": {
+    "title": "Ready to Find Your Perfect Prop Firm?",
+    "description": "Join thousands of traders who use PropFirmScanner to compare firms and track their challenges.",
+    "button": "Start Comparing - It's Free"
+  },
+  "footer": {
+    "description": "The most comprehensive prop firm comparison platform. Make informed decisions with real data.",
+    "navigation": "Navigation",
+    "resources": "Resources",
+    "legal": "Legal",
+    "followUs": "Follow Us",
+    "copyright": "2026 PropFirmScanner. All rights reserved.",
+    "compare": "Compare Firms",
+    "deals": "Deals & Coupons",
+    "blog": "Blog",
+    "guide": "Free Guide",
+    "calculator": "Risk Calculator",
+    "glossary": "Trading Glossary",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "contact": "Contact Us"
+  },
+  "compare": {
+    "title": "Compare Prop Firms",
+    "subtitle": "Find the perfect prop firm for your trading style",
+    "filters": "Filters",
+    "sortBy": "Sort by",
+    "price": "Price",
+    "profitSplit": "Profit Split",
+    "accountSize": "Account Size",
+    "rating": "Rating",
+    "viewDetails": "View Details",
+    "compare": "Compare",
+    "noResults": "No firms match your filters",
+    "resetFilters": "Reset Filters"
+  },
+  "deals": {
+    "title": "Exclusive Deals & Coupons",
+    "subtitle": "Save money on your next prop firm challenge",
+    "verified": "Verified",
+    "expires": "Expires",
+    "copyCode": "Copy Code",
+    "copied": "Copied!",
+    "getCoupon": "Get Coupon",
+    "allDeals": "All Deals",
+    "featured": "Featured"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome back",
+    "totalProfit": "Total Profit",
+    "activeAccounts": "Active Accounts",
+    "favorites": "Favorites",
+    "alertsToday": "Alerts Today",
+    "myAccounts": "My Accounts",
+    "addAccount": "Add Account",
+    "viewAll": "View All",
+    "noAccounts": "No accounts yet",
+    "addFirstAccount": "Add your first prop firm account to start tracking"
+  },
   "common": {
     "loading": "Loading...",
     "error": "Error",
@@ -35,24 +126,5 @@
     "viewAll": "View All",
     "learnMore": "Learn More",
     "getStarted": "Get Started"
-  },
-  "hero": {
-    "badge": "Updated January 2026",
-    "title": "Compare Prop Firms.",
-    "titleHighlight": "Track Your Challenge.",
-    "description": "Compare verified prop trading firms side-by-side. Filter by rules, fees, and profit split. Track your drawdown with our smart dashboard.",
-    "cta1": "Compare All Firms",
-    "cta2": "Track My Challenge",
-    "trust1": "100% Free",
-    "trust2": "No Registration Required",
-    "trust3": "Updated Daily"
-  },
-  "footer": {
-    "description": "The most comprehensive prop firm comparison platform. Make informed decisions with real data.",
-    "navigation": "Navigation",
-    "resources": "Resources",
-    "legal": "Legal",
-    "followUs": "Follow Us",
-    "copyright": "© 2026 PropFirmScanner. All rights reserved."
   }
 }
