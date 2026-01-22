@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 
 // =============================================================================
-// TRANSLATIONS
+// TRANSLATIONS - Shortened for navbar fit
 // =============================================================================
 
 const translations: Record<string, Record<string, string>> = {
@@ -53,7 +53,7 @@ const translations: Record<string, Record<string, string>> = {
     blog: 'Blog',
     education: 'Education',
     rules: 'Regles',
-    freeGuide: 'Guide Gratuit',
+    freeGuide: 'Guide',
     free: 'GRATUIT',
     soon: 'Bientot',
     products: 'Produits',
@@ -66,12 +66,12 @@ const translations: Record<string, Record<string, string>> = {
     settings: 'Parametres',
   },
   de: {
-    compare: 'Vergleichen',
+    compare: 'Vergleich',
     deals: 'Angebote',
     blog: 'Blog',
     education: 'Bildung',
     rules: 'Regeln',
-    freeGuide: 'Gratis Guide',
+    freeGuide: 'Guide',
     free: 'GRATIS',
     soon: 'Bald',
     products: 'Produkte',
@@ -89,7 +89,7 @@ const translations: Record<string, Record<string, string>> = {
     blog: 'Blog',
     education: 'Educacion',
     rules: 'Reglas',
-    freeGuide: 'Guia Gratis',
+    freeGuide: 'Guia',
     free: 'GRATIS',
     soon: 'Pronto',
     products: 'Productos',
@@ -107,7 +107,7 @@ const translations: Record<string, Record<string, string>> = {
     blog: 'المدونة',
     education: 'التعليم',
     rules: 'القواعد',
-    freeGuide: 'دليل مجاني',
+    freeGuide: 'دليل',
     free: 'مجاني',
     soon: 'قريبا',
     products: 'المنتجات',
@@ -125,7 +125,7 @@ const translations: Record<string, Record<string, string>> = {
     blog: 'ब्लॉग',
     education: 'शिक्षा',
     rules: 'नियम',
-    freeGuide: 'मुफ्त गाइड',
+    freeGuide: 'गाइड',
     free: 'मुफ्त',
     soon: 'जल्द',
     products: 'उत्पाद',
@@ -164,7 +164,6 @@ const localeFlags: Record<Locale, string> = {
   hi: '🇮🇳',
 };
 
-// Get current locale from pathname
 function getLocaleFromPath(pathname: string): Locale {
   const firstSegment = pathname.split('/')[1];
   if (firstSegment && locales.includes(firstSegment as Locale)) {
@@ -173,7 +172,6 @@ function getLocaleFromPath(pathname: string): Locale {
   return 'en';
 }
 
-// Build URL for locale switch
 function buildLocaleUrl(pathname: string, newLocale: Locale): string {
   const segments = pathname.split('/').filter(Boolean);
   const firstIsLocale = segments.length > 0 && locales.includes(segments[0] as Locale);
@@ -189,12 +187,9 @@ function buildLocaleUrl(pathname: string, newLocale: Locale): string {
   }
 }
 
-// Switch locale - clears cookie and navigates
 function switchLocale(pathname: string, newLocale: Locale) {
-  // IMPORTANT: Clear the NEXT_LOCALE cookie so middleware doesn't redirect back
   document.cookie = 'NEXT_LOCALE=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
   document.cookie = 'NEXT_LOCALE=' + newLocale + '; path=/; max-age=31536000';
-  
   const url = buildLocaleUrl(pathname, newLocale);
   window.location.href = url;
 }
@@ -243,10 +238,10 @@ function LanguageSelector({ currentLocale, pathname }: { currentLocale: Locale; 
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1.5 px-2 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+        className="flex items-center gap-1 px-2 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
       >
         <Globe className="w-4 h-4" />
-        <span>{localeFlags[currentLocale]}</span>
+        <span className="uppercase text-xs">{currentLocale}</span>
         <ChevronDown className={`w-3 h-3 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
@@ -394,8 +389,8 @@ export function Navbar() {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-white/10">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-16 gap-4">
+      <div className="max-w-[1440px] mx-auto px-3 sm:px-4 lg:px-6">
+        <div className="flex items-center justify-between h-16">
           
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2 flex-shrink-0">
@@ -407,8 +402,8 @@ export function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop Navigation - Aligned Left */}
-          <div className="hidden lg:flex items-center gap-1 flex-1">
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex items-center gap-0.5 flex-1 ml-4">
             {mainNavigation.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
@@ -416,7 +411,7 @@ export function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-sm font-medium transition-all
+                  className={`flex items-center gap-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-all
                     ${isActive ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:text-white hover:bg-white/5'}`}
                 >
                   <Icon className="w-4 h-4" />
@@ -425,7 +420,7 @@ export function Navbar() {
               );
             })}
 
-            <div className="w-px h-6 bg-gray-700 mx-1" />
+            <div className="w-px h-5 bg-gray-700 mx-1" />
 
             {productLinks.map((item) => {
               const Icon = item.icon;
@@ -434,13 +429,13 @@ export function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-sm font-medium transition-all
+                  className={`flex items-center gap-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-all
                     ${isActive ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:text-white hover:bg-white/5'}`}
                 >
                   <Icon className="w-4 h-4" />
                   {item.name}
                   {item.badge && (
-                    <span className={`px-1.5 py-0.5 ${item.badgeColor} text-white text-[10px] font-bold rounded`}>
+                    <span className={`px-1 py-0.5 ${item.badgeColor} text-white text-[9px] font-bold rounded`}>
                       {item.badge}
                     </span>
                   )}
@@ -448,21 +443,21 @@ export function Navbar() {
               );
             })}
 
-            <div className="w-px h-6 bg-gray-700 mx-1" />
+            <div className="w-px h-5 bg-gray-700 mx-1" />
 
             <Link 
               href="/guide" 
-              className={`flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-sm font-medium transition-all
+              className={`flex items-center gap-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-all
                 ${pathname === '/guide' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'}`}
             >
               <BookOpen className="w-4 h-4" />
               {t.freeGuide}
-              <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-[10px] font-bold rounded">{t.free}</span>
+              <span className="px-1 py-0.5 bg-emerald-500 text-white text-[9px] font-bold rounded">{t.free}</span>
             </Link>
           </div>
 
-          {/* Right Section */}
-          <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
+          {/* Right Section - Always visible */}
+          <div className="hidden lg:flex items-center gap-1 flex-shrink-0 ml-2">
             <LanguageSelector currentLocale={currentLocale} pathname={pathname} />
             
             {isLoading ? (
@@ -472,7 +467,7 @@ export function Navbar() {
             ) : (
               <button
                 onClick={signInWithGoogle}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors whitespace-nowrap"
+                className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors whitespace-nowrap"
               >
                 <GoogleIcon className="w-4 h-4" />
                 {t.signIn}
@@ -546,7 +541,6 @@ export function Navbar() {
               <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded ml-auto">{t.free}</span>
             </Link>
 
-            {/* Language Selector Mobile */}
             <div className="pt-2 border-t border-gray-800">
               <p className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">{t.language}</p>
               <div className="grid grid-cols-2 gap-2 px-2">
@@ -571,7 +565,6 @@ export function Navbar() {
               </div>
             </div>
 
-            {/* User section for mobile */}
             <div className="pt-4 border-t border-gray-800 space-y-2">
               {isLoading ? (
                 <div className="flex justify-center py-3">
