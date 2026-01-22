@@ -94,12 +94,12 @@ const translations: Record<string, Record<string, string>> = {
     soon: 'Pronto',
     products: 'Productos',
     language: 'Idioma',
-    signIn: 'Iniciar sesion',
-    signInGoogle: 'Iniciar sesion con Google',
-    signOut: 'Cerrar sesion',
+    signIn: 'Entrar',
+    signInGoogle: 'Entrar con Google',
+    signOut: 'Salir',
     dashboard: 'Panel',
     favorites: 'Mis Favoritos',
-    settings: 'Configuracion',
+    settings: 'Ajustes',
   },
   ar: {
     compare: 'مقارنة',
@@ -112,15 +112,15 @@ const translations: Record<string, Record<string, string>> = {
     soon: 'قريبا',
     products: 'المنتجات',
     language: 'اللغة',
-    signIn: 'تسجيل الدخول',
-    signInGoogle: 'تسجيل الدخول بجوجل',
-    signOut: 'تسجيل الخروج',
+    signIn: 'دخول',
+    signInGoogle: 'دخول بجوجل',
+    signOut: 'خروج',
     dashboard: 'لوحة التحكم',
     favorites: 'المفضلة',
     settings: 'الاعدادات',
   },
   hi: {
-    compare: 'तुलना करें',
+    compare: 'तुलना',
     deals: 'डील्स',
     blog: 'ब्लॉग',
     education: 'शिक्षा',
@@ -130,9 +130,9 @@ const translations: Record<string, Record<string, string>> = {
     soon: 'जल्द',
     products: 'उत्पाद',
     language: 'भाषा',
-    signIn: 'साइन इन',
-    signInGoogle: 'Google से साइन इन',
-    signOut: 'साइन आउट',
+    signIn: 'लॉगिन',
+    signInGoogle: 'Google से लॉगिन',
+    signOut: 'लॉगआउट',
     dashboard: 'डैशबोर्ड',
     favorites: 'पसंदीदा',
     settings: 'सेटिंग्स',
@@ -198,17 +198,22 @@ function LanguageSelector({ currentLocale }: { currentLocale: Locale }) {
   const pathname = usePathname();
 
   const switchLocale = (newLocale: Locale) => {
-    const segments = pathname.split('/');
+    const segments = pathname.split('/').filter(Boolean); // Remove empty strings
     
-    if (segments[1] && locales.includes(segments[1] as Locale)) {
-      segments[1] = newLocale;
+    // Check if first segment is a locale
+    if (segments[0] && locales.includes(segments[0] as Locale)) {
+      segments[0] = newLocale; // Replace existing locale
     } else {
-      segments.splice(1, 0, newLocale);
+      segments.unshift(newLocale); // Add locale at start
     }
     
-    let newPath = segments.join('/');
+    // Build new path
+    let newPath = '/' + segments.join('/');
+    
+    // If switching to English, remove the /en prefix
     if (newLocale === 'en') {
-      newPath = newPath.replace('/en', '') || '/';
+      segments.shift(); // Remove 'en'
+      newPath = segments.length > 0 ? '/' + segments.join('/') : '/';
     }
     
     window.location.href = newPath;
@@ -228,7 +233,7 @@ function LanguageSelector({ currentLocale }: { currentLocale: Locale }) {
   }, [isOpen]);
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative flex-shrink-0" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-1.5 px-2.5 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
@@ -297,7 +302,7 @@ function UserDropdown({ t }: { t: Record<string, string> }) {
   }, [isOpen]);
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative flex-shrink-0" ref={dropdownRef}>
       <button
         onClick={(e) => {
           e.stopPropagation();
@@ -400,7 +405,7 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16">
           
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2 relative z-10">
+          <Link href="/" className="flex items-center space-x-2 relative z-10 flex-shrink-0">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center">
               <span className="text-white font-bold text-sm">P</span>
             </div>
@@ -410,7 +415,7 @@ export function Navbar() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-1">
+          <div className="hidden lg:flex items-center space-x-1 flex-1 justify-center">
             {mainNavigation.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
@@ -418,7 +423,7 @@ export function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap
                     ${isActive ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:text-white hover:bg-white/5'}`}
                 >
                   <Icon className="w-4 h-4" />
@@ -436,7 +441,7 @@ export function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap
                     ${isActive ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:text-white hover:bg-white/5'}`}
                 >
                   <Icon className="w-4 h-4" />
@@ -454,7 +459,7 @@ export function Navbar() {
 
             <Link 
               href="/guide" 
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap
                 ${pathname === '/guide' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'}`}
             >
               <BookOpen className="w-4 h-4" />
@@ -464,7 +469,7 @@ export function Navbar() {
           </div>
 
           {/* Right Section */}
-          <div className="hidden lg:flex items-center space-x-2 relative z-10">
+          <div className="hidden lg:flex items-center space-x-2 relative z-10 flex-shrink-0">
             <LanguageSelector currentLocale={currentLocale} />
             
             {isLoading ? (
@@ -474,7 +479,7 @@ export function Navbar() {
             ) : (
               <button
                 onClick={signInWithGoogle}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors"
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors whitespace-nowrap flex-shrink-0"
               >
                 <GoogleIcon className="w-4 h-4" />
                 {t.signIn}
@@ -555,16 +560,21 @@ export function Navbar() {
                   const isActive = currentLocale === locale;
                   
                   const switchLocale = () => {
-                    const segments = pathname.split('/');
-                    if (segments[1] && locales.includes(segments[1] as Locale)) {
-                      segments[1] = locale;
+                    const segments = pathname.split('/').filter(Boolean);
+                    
+                    if (segments[0] && locales.includes(segments[0] as Locale)) {
+                      segments[0] = locale;
                     } else {
-                      segments.splice(1, 0, locale);
+                      segments.unshift(locale);
                     }
-                    let newPath = segments.join('/');
+                    
+                    let newPath = '/' + segments.join('/');
+                    
                     if (locale === 'en') {
-                      newPath = newPath.replace('/en', '') || '/';
+                      segments.shift();
+                      newPath = segments.length > 0 ? '/' + segments.join('/') : '/';
                     }
+                    
                     window.location.href = newPath;
                     setMobileMenuOpen(false);
                   };
