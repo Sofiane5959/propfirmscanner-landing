@@ -166,40 +166,11 @@ const localeFlags: Record<Locale, string> = {
 
 // Get current locale from pathname
 function getLocaleFromPath(pathname: string): Locale {
-  for (const locale of locales) {
-    if (pathname === `/${locale}` || pathname.startsWith(`/${locale}/`)) {
-      return locale;
-    }
+  const firstSegment = pathname.split('/')[1];
+  if (firstSegment && locales.includes(firstSegment as Locale)) {
+    return firstSegment as Locale;
   }
   return 'en';
-}
-
-// Get path without locale
-function getPathWithoutLocale(pathname: string): string {
-  for (const locale of locales) {
-    if (pathname === `/${locale}`) {
-      return '/';
-    }
-    if (pathname.startsWith(`/${locale}/`)) {
-      return pathname.substring(locale.length + 1);
-    }
-  }
-  return pathname;
-}
-
-// Build new path with locale
-function buildLocalePath(pathname: string, newLocale: Locale): string {
-  const pathWithoutLocale = getPathWithoutLocale(pathname);
-  
-  if (newLocale === 'en') {
-    return pathWithoutLocale || '/';
-  }
-  
-  if (pathWithoutLocale === '/') {
-    return `/${newLocale}`;
-  }
-  
-  return `/${newLocale}${pathWithoutLocale}`;
 }
 
 // =============================================================================
@@ -221,15 +192,34 @@ function GoogleIcon({ className }: { className?: string }) {
 // LANGUAGE SELECTOR
 // =============================================================================
 
-function LanguageSelector({ currentLocale }: { currentLocale: Locale }) {
+function LanguageSelector({ currentLocale, pathname }: { currentLocale: Locale; pathname: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const pathname = usePathname();
 
-  const handleSwitchLocale = (newLocale: Locale) => {
-    const newPath = buildLocalePath(pathname, newLocale);
-    console.log('Switching to:', newLocale, 'New path:', newPath); // Debug
-    window.location.href = newPath;
+  const switchToLocale = (newLocale: Locale) => {
+    // Get path segments
+    const segments = pathname.split('/').filter(Boolean);
+    
+    // Check if first segment is a locale
+    const firstIsLocale = segments.length > 0 && locales.includes(segments[0] as Locale);
+    
+    // Remove locale if present
+    if (firstIsLocale) {
+      segments.shift();
+    }
+    
+    // Build new URL
+    let newUrl: string;
+    if (newLocale === 'en') {
+      // English = no prefix
+      newUrl = segments.length > 0 ? '/' + segments.join('/') : '/';
+    } else {
+      // Other languages = add prefix
+      newUrl = '/' + newLocale + (segments.length > 0 ? '/' + segments.join('/') : '');
+    }
+    
+    // Navigate
+    window.location.assign(newUrl);
     setIsOpen(false);
   };
 
@@ -252,7 +242,7 @@ function LanguageSelector({ currentLocale }: { currentLocale: Locale }) {
         className="flex items-center gap-1.5 px-2.5 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
       >
         <Globe className="w-4 h-4" />
-        <span>{localeFlags[currentLocale]}</span>
+        <span className="uppercase">{currentLocale}</span>
         <ChevronDown className={`w-3 h-3 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
@@ -261,7 +251,7 @@ function LanguageSelector({ currentLocale }: { currentLocale: Locale }) {
           {locales.map((locale) => (
             <button
               key={locale}
-              onClick={() => handleSwitchLocale(locale)}
+              onClick={() => switchToLocale(locale)}
               className={`w-full flex items-center gap-3 px-4 py-2 text-sm text-left hover:bg-gray-800 transition-colors ${
                 currentLocale === locale ? 'text-emerald-400 bg-gray-800/50' : 'text-gray-300'
               }`}
@@ -318,7 +308,7 @@ function UserDropdown({ t }: { t: Record<string, string> }) {
             <span className="text-sm font-medium text-emerald-400">{initials}</span>
           </div>
         )}
-        <span className="text-sm text-gray-300 hidden xl:block max-w-[80px] truncate">{displayName}</span>
+        <span className="text-sm text-gray-300 hidden sm:block max-w-[100px] truncate">{displayName}</span>
         <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
@@ -401,10 +391,10 @@ export function Navbar() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center h-16">
+        <div className="flex items-center justify-between h-16">
           
-          {/* Logo - Fixed width */}
-          <Link href="/" className="flex items-center space-x-2 relative z-10 w-[180px] flex-shrink-0">
+          {/* Logo */}
+          <Link href="/" className="flex items-center space-x-2 flex-shrink-0">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center">
               <span className="text-white font-bold text-sm">P</span>
             </div>
@@ -413,8 +403,9 @@ export function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop Navigation - Center, takes remaining space */}
-          <div className="hidden lg:flex items-center justify-center flex-1 space-x-1 overflow-hidden">
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex items-center space-x-1">
+            {/* Main Nav */}
             {mainNavigation.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
@@ -422,17 +413,19 @@ export function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-1 px-2 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all
                     ${isActive ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:text-white hover:bg-white/5'}`}
                 >
                   <Icon className="w-4 h-4" />
-                  <span className="hidden xl:inline">{item.name}</span>
+                  {item.name}
                 </Link>
               );
             })}
 
-            <div className="w-px h-6 bg-gray-700 mx-1 flex-shrink-0" />
+            {/* Separator */}
+            <div className="w-px h-6 bg-gray-700 mx-1" />
 
+            {/* Product Links */}
             {productLinks.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
@@ -440,11 +433,11 @@ export function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-1 px-2 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all
                     ${isActive ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:text-white hover:bg-white/5'}`}
                 >
                   <Icon className="w-4 h-4" />
-                  <span className="hidden xl:inline">{item.name}</span>
+                  {item.name}
                   {item.badge && (
                     <span className={`px-1.5 py-0.5 ${item.badgeColor} text-white text-[10px] font-bold rounded`}>
                       {item.badge}
@@ -454,23 +447,27 @@ export function Navbar() {
               );
             })}
 
-            <div className="w-px h-6 bg-gray-700 mx-1 flex-shrink-0" />
+            {/* Separator */}
+            <div className="w-px h-6 bg-gray-700 mx-1" />
 
+            {/* Free Guide */}
             <Link 
               href="/guide" 
-              className={`flex items-center gap-1 px-2 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all
                 ${pathname === '/guide' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'}`}
             >
               <BookOpen className="w-4 h-4" />
-              <span className="hidden xl:inline">{t.freeGuide}</span>
+              {t.freeGuide}
               <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-[10px] font-bold rounded">{t.free}</span>
             </Link>
           </div>
 
-          {/* Right Section - Fixed width */}
-          <div className="hidden lg:flex items-center space-x-2 relative z-10 w-[200px] justify-end flex-shrink-0">
-            <LanguageSelector currentLocale={currentLocale} />
+          {/* Right Section */}
+          <div className="hidden lg:flex items-center space-x-2 flex-shrink-0">
+            {/* Language Selector */}
+            <LanguageSelector currentLocale={currentLocale} pathname={pathname} />
             
+            {/* Auth */}
             {isLoading ? (
               <Loader2 className="w-5 h-5 text-gray-500 animate-spin" />
             ) : user ? (
@@ -478,7 +475,7 @@ export function Navbar() {
             ) : (
               <button
                 onClick={signInWithGoogle}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors whitespace-nowrap"
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors"
               >
                 <GoogleIcon className="w-4 h-4" />
                 {t.signIn}
@@ -489,7 +486,7 @@ export function Navbar() {
           {/* Mobile menu button */}
           <button 
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
-            className="lg:hidden p-2 text-gray-400 hover:text-white relative z-10 ml-auto"
+            className="lg:hidden p-2 text-gray-400 hover:text-white"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -500,6 +497,7 @@ export function Navbar() {
       {mobileMenuOpen && (
         <div className="lg:hidden bg-gray-900/95 backdrop-blur-lg border-t border-gray-800">
           <div className="px-4 py-4 space-y-2">
+            {/* Main Navigation */}
             {mainNavigation.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
@@ -517,6 +515,7 @@ export function Navbar() {
               );
             })}
 
+            {/* Products Section - Mobile */}
             <div className="pt-2 border-t border-gray-800">
               <p className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">{t.products}</p>
               {productLinks.map((item) => {
@@ -542,6 +541,7 @@ export function Navbar() {
               })}
             </div>
 
+            {/* Free Guide - Mobile */}
             <Link 
               href="/guide" 
               onClick={() => setMobileMenuOpen(false)} 
@@ -552,6 +552,7 @@ export function Navbar() {
               <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded ml-auto">{t.free}</span>
             </Link>
 
+            {/* Language Selector Mobile */}
             <div className="pt-2 border-t border-gray-800">
               <p className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">{t.language}</p>
               <div className="grid grid-cols-2 gap-2 px-2">
@@ -559,8 +560,18 @@ export function Navbar() {
                   const isActive = currentLocale === locale;
                   
                   const handleSwitch = () => {
-                    const newPath = buildLocalePath(pathname, locale);
-                    window.location.href = newPath;
+                    const segments = pathname.split('/').filter(Boolean);
+                    const firstIsLocale = segments.length > 0 && locales.includes(segments[0] as Locale);
+                    if (firstIsLocale) segments.shift();
+                    
+                    let newUrl: string;
+                    if (locale === 'en') {
+                      newUrl = segments.length > 0 ? '/' + segments.join('/') : '/';
+                    } else {
+                      newUrl = '/' + locale + (segments.length > 0 ? '/' + segments.join('/') : '');
+                    }
+                    
+                    window.location.assign(newUrl);
                     setMobileMenuOpen(false);
                   };
 
@@ -580,6 +591,7 @@ export function Navbar() {
               </div>
             </div>
 
+            {/* User section for mobile */}
             <div className="pt-4 border-t border-gray-800 space-y-2">
               {isLoading ? (
                 <div className="flex justify-center py-3">
