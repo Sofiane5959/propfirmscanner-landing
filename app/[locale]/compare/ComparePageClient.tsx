@@ -3,7 +3,340 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
+
+// =============================================================================
+// LOCALE DETECTION & TRANSLATIONS
+// =============================================================================
+
+const locales = ['en', 'fr', 'de', 'es', 'pt', 'ar', 'hi'] as const;
+type Locale = (typeof locales)[number];
+
+function getLocaleFromPath(pathname: string): Locale {
+  const firstSegment = pathname.split('/')[1];
+  if (firstSegment && locales.includes(firstSegment as Locale)) {
+    return firstSegment as Locale;
+  }
+  return 'en';
+}
+
+const translations: Record<Locale, Record<string, string>> = {
+  en: {
+    pageTitle: 'Compare Prop Firms',
+    pageSubtitle: 'Find your perfect match with smart filters',
+    searchPlaceholder: 'Search firms...',
+    markets: 'Markets',
+    platform: 'Platform',
+    challenge: 'Challenge',
+    style: 'Style',
+    rating: 'Rating',
+    bestFor: 'Best For',
+    price: 'Price',
+    deals: 'Deals',
+    reset: 'Reset',
+    showing: 'Showing',
+    propFirms: 'prop firms',
+    favorites: 'favorites',
+    noFirmsFound: 'No firms found',
+    tryAdjusting: 'Try adjusting your filters or search terms',
+    resetFilters: 'Reset Filters',
+    details: 'Details',
+    visit: 'Visit',
+    compare: 'Compare',
+    compareNow: 'Compare Now',
+    clear: 'Clear',
+    verified: 'Verified',
+    avoid: 'Avoid',
+    underReview: 'Under Review',
+    new: 'New',
+    split: 'Split',
+    scalping: 'Scalping',
+    newsTrading: 'News Trading',
+    easBots: 'EAs/Bots',
+    swingWeekend: 'Swing/Weekend',
+    beginners: 'Beginners',
+    bestValue: 'Best Value',
+    highSplit: 'High Split',
+    scalpers: 'Scalpers',
+    instantFunding: 'Instant Funding',
+    highestRating: 'Highest Rating',
+    lowestPrice: 'Lowest Price',
+    highestSplit: 'Highest Split',
+    bestDeals: 'Best Deals',
+    mostReviews: 'Most Reviews',
+    copied: 'Copied!',
+  },
+  fr: {
+    pageTitle: 'Comparer les Prop Firms',
+    pageSubtitle: 'Trouvez votre match parfait avec des filtres intelligents',
+    searchPlaceholder: 'Rechercher...',
+    markets: 'Marches',
+    platform: 'Plateforme',
+    challenge: 'Challenge',
+    style: 'Style',
+    rating: 'Note',
+    bestFor: 'Ideal pour',
+    price: 'Prix',
+    deals: 'Promos',
+    reset: 'Reset',
+    showing: 'Affichage de',
+    propFirms: 'prop firms',
+    favorites: 'favoris',
+    noFirmsFound: 'Aucune firm trouvee',
+    tryAdjusting: 'Essayez d\'ajuster vos filtres ou termes de recherche',
+    resetFilters: 'Reinitialiser',
+    details: 'Details',
+    visit: 'Visiter',
+    compare: 'Comparer',
+    compareNow: 'Comparer',
+    clear: 'Effacer',
+    verified: 'Verifie',
+    avoid: 'A eviter',
+    underReview: 'En revision',
+    new: 'Nouveau',
+    split: 'Split',
+    scalping: 'Scalping',
+    newsTrading: 'Trading News',
+    easBots: 'EAs/Bots',
+    swingWeekend: 'Swing/Weekend',
+    beginners: 'Debutants',
+    bestValue: 'Meilleur Rapport',
+    highSplit: 'Haut Split',
+    scalpers: 'Scalpers',
+    instantFunding: 'Financement Instant',
+    highestRating: 'Meilleure Note',
+    lowestPrice: 'Prix le Plus Bas',
+    highestSplit: 'Meilleur Split',
+    bestDeals: 'Meilleures Offres',
+    mostReviews: 'Plus d\'Avis',
+    copied: 'Copie !',
+  },
+  de: {
+    pageTitle: 'Prop Firms Vergleichen',
+    pageSubtitle: 'Finden Sie Ihr perfektes Match mit smarten Filtern',
+    searchPlaceholder: 'Suchen...',
+    markets: 'Markte',
+    platform: 'Plattform',
+    challenge: 'Challenge',
+    style: 'Stil',
+    rating: 'Bewertung',
+    bestFor: 'Ideal fur',
+    price: 'Preis',
+    deals: 'Angebote',
+    reset: 'Reset',
+    showing: 'Zeige',
+    propFirms: 'Prop Firms',
+    favorites: 'Favoriten',
+    noFirmsFound: 'Keine Firms gefunden',
+    tryAdjusting: 'Versuchen Sie Ihre Filter anzupassen',
+    resetFilters: 'Filter zurucksetzen',
+    details: 'Details',
+    visit: 'Besuchen',
+    compare: 'Vergleichen',
+    compareNow: 'Jetzt Vergleichen',
+    clear: 'Loschen',
+    verified: 'Verifiziert',
+    avoid: 'Vermeiden',
+    underReview: 'In Prufung',
+    new: 'Neu',
+    split: 'Split',
+    scalping: 'Scalping',
+    newsTrading: 'News Trading',
+    easBots: 'EAs/Bots',
+    swingWeekend: 'Swing/Weekend',
+    beginners: 'Anfanger',
+    bestValue: 'Bestes Preis-Leistung',
+    highSplit: 'Hoher Split',
+    scalpers: 'Scalper',
+    instantFunding: 'Sofort-Finanzierung',
+    highestRating: 'Beste Bewertung',
+    lowestPrice: 'Niedrigster Preis',
+    highestSplit: 'Hochster Split',
+    bestDeals: 'Beste Angebote',
+    mostReviews: 'Meiste Bewertungen',
+    copied: 'Kopiert!',
+  },
+  es: {
+    pageTitle: 'Comparar Prop Firms',
+    pageSubtitle: 'Encuentra tu match perfecto con filtros inteligentes',
+    searchPlaceholder: 'Buscar...',
+    markets: 'Mercados',
+    platform: 'Plataforma',
+    challenge: 'Challenge',
+    style: 'Estilo',
+    rating: 'Valoracion',
+    bestFor: 'Ideal para',
+    price: 'Precio',
+    deals: 'Ofertas',
+    reset: 'Reset',
+    showing: 'Mostrando',
+    propFirms: 'prop firms',
+    favorites: 'favoritos',
+    noFirmsFound: 'No se encontraron firms',
+    tryAdjusting: 'Intenta ajustar tus filtros o terminos de busqueda',
+    resetFilters: 'Restablecer filtros',
+    details: 'Detalles',
+    visit: 'Visitar',
+    compare: 'Comparar',
+    compareNow: 'Comparar Ahora',
+    clear: 'Limpiar',
+    verified: 'Verificado',
+    avoid: 'Evitar',
+    underReview: 'En revision',
+    new: 'Nuevo',
+    split: 'Split',
+    scalping: 'Scalping',
+    newsTrading: 'Trading Noticias',
+    easBots: 'EAs/Bots',
+    swingWeekend: 'Swing/Weekend',
+    beginners: 'Principiantes',
+    bestValue: 'Mejor Valor',
+    highSplit: 'Alto Split',
+    scalpers: 'Scalpers',
+    instantFunding: 'Financiacion Instantanea',
+    highestRating: 'Mayor Valoracion',
+    lowestPrice: 'Precio Mas Bajo',
+    highestSplit: 'Mayor Split',
+    bestDeals: 'Mejores Ofertas',
+    mostReviews: 'Mas Resenas',
+    copied: 'Copiado!',
+  },
+  pt: {
+    pageTitle: 'Comparar Prop Firms',
+    pageSubtitle: 'Encontre seu match perfeito com filtros inteligentes',
+    searchPlaceholder: 'Pesquisar...',
+    markets: 'Mercados',
+    platform: 'Plataforma',
+    challenge: 'Challenge',
+    style: 'Estilo',
+    rating: 'Avaliacao',
+    bestFor: 'Ideal para',
+    price: 'Preco',
+    deals: 'Ofertas',
+    reset: 'Reset',
+    showing: 'Mostrando',
+    propFirms: 'prop firms',
+    favorites: 'favoritos',
+    noFirmsFound: 'Nenhuma firm encontrada',
+    tryAdjusting: 'Tente ajustar seus filtros ou termos de pesquisa',
+    resetFilters: 'Redefinir filtros',
+    details: 'Detalhes',
+    visit: 'Visitar',
+    compare: 'Comparar',
+    compareNow: 'Comparar Agora',
+    clear: 'Limpar',
+    verified: 'Verificado',
+    avoid: 'Evitar',
+    underReview: 'Em revisao',
+    new: 'Novo',
+    split: 'Split',
+    scalping: 'Scalping',
+    newsTrading: 'Trading Noticias',
+    easBots: 'EAs/Bots',
+    swingWeekend: 'Swing/Weekend',
+    beginners: 'Iniciantes',
+    bestValue: 'Melhor Valor',
+    highSplit: 'Alto Split',
+    scalpers: 'Scalpers',
+    instantFunding: 'Financiamento Instantaneo',
+    highestRating: 'Maior Avaliacao',
+    lowestPrice: 'Menor Preco',
+    highestSplit: 'Maior Split',
+    bestDeals: 'Melhores Ofertas',
+    mostReviews: 'Mais Avaliacoes',
+    copied: 'Copiado!',
+  },
+  ar: {
+    pageTitle: 'مقارنة شركات Prop',
+    pageSubtitle: 'اعثر على تطابقك المثالي مع فلاتر ذكية',
+    searchPlaceholder: 'بحث...',
+    markets: 'الاسواق',
+    platform: 'المنصة',
+    challenge: 'التحدي',
+    style: 'الاسلوب',
+    rating: 'التقييم',
+    bestFor: 'الافضل لـ',
+    price: 'السعر',
+    deals: 'العروض',
+    reset: 'اعادة',
+    showing: 'عرض',
+    propFirms: 'شركات prop',
+    favorites: 'المفضلة',
+    noFirmsFound: 'لم يتم العثور على شركات',
+    tryAdjusting: 'حاول تعديل الفلاتر او مصطلحات البحث',
+    resetFilters: 'اعادة تعيين الفلاتر',
+    details: 'التفاصيل',
+    visit: 'زيارة',
+    compare: 'مقارنة',
+    compareNow: 'قارن الان',
+    clear: 'مسح',
+    verified: 'موثق',
+    avoid: 'تجنب',
+    underReview: 'قيد المراجعة',
+    new: 'جديد',
+    split: 'التقسيم',
+    scalping: 'سكالبينج',
+    newsTrading: 'تداول الاخبار',
+    easBots: 'EAs/روبوتات',
+    swingWeekend: 'سوينج/ويكند',
+    beginners: 'مبتدئين',
+    bestValue: 'افضل قيمة',
+    highSplit: 'تقسيم عالي',
+    scalpers: 'سكالبرز',
+    instantFunding: 'تمويل فوري',
+    highestRating: 'اعلى تقييم',
+    lowestPrice: 'اقل سعر',
+    highestSplit: 'اعلى تقسيم',
+    bestDeals: 'افضل العروض',
+    mostReviews: 'اكثر التقييمات',
+    copied: 'تم النسخ!',
+  },
+  hi: {
+    pageTitle: 'Prop Firms की तुलना करें',
+    pageSubtitle: 'स्मार्ट फ़िल्टर के साथ अपना परफेक्ट मैच खोजें',
+    searchPlaceholder: 'खोजें...',
+    markets: 'बाज़ार',
+    platform: 'प्लेटफ़ॉर्म',
+    challenge: 'चैलेंज',
+    style: 'स्टाइल',
+    rating: 'रेटिंग',
+    bestFor: 'के लिए बेस्ट',
+    price: 'कीमत',
+    deals: 'डील्स',
+    reset: 'रीसेट',
+    showing: 'दिखा रहे हैं',
+    propFirms: 'prop firms',
+    favorites: 'पसंदीदा',
+    noFirmsFound: 'कोई firm नहीं मिली',
+    tryAdjusting: 'अपने फ़िल्टर या खोज शब्दों को समायोजित करने का प्रयास करें',
+    resetFilters: 'फ़िल्टर रीसेट करें',
+    details: 'विवरण',
+    visit: 'विज़िट',
+    compare: 'तुलना',
+    compareNow: 'अभी तुलना करें',
+    clear: 'साफ़ करें',
+    verified: 'सत्यापित',
+    avoid: 'बचें',
+    underReview: 'समीक्षाधीन',
+    new: 'नया',
+    split: 'स्प्लिट',
+    scalping: 'स्कैल्पिंग',
+    newsTrading: 'न्यूज़ ट्रेडिंग',
+    easBots: 'EAs/बॉट्स',
+    swingWeekend: 'स्विंग/वीकेंड',
+    beginners: 'शुरुआती',
+    bestValue: 'बेस्ट वैल्यू',
+    highSplit: 'हाई स्प्लिट',
+    scalpers: 'स्कैल्पर्स',
+    instantFunding: 'इंस्टेंट फंडिंग',
+    highestRating: 'सबसे ऊंची रेटिंग',
+    lowestPrice: 'सबसे कम कीमत',
+    highestSplit: 'सबसे ऊंचा स्प्लिट',
+    bestDeals: 'बेस्ट डील्स',
+    mostReviews: 'सबसे ज़्यादा रिव्यू',
+    copied: 'कॉपी हो गया!',
+  },
+};
 import { 
   Search, ChevronDown, Star, Check, X, 
   Grid3X3, List, ExternalLink,
@@ -666,6 +999,11 @@ const CardSkeleton = () => (
 export default function ComparePageClient({ firms }: ComparePageClientProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const pathname = usePathname()
+  
+  // Get translations
+  const currentLocale = getLocaleFromPath(pathname)
+  const t = translations[currentLocale] || translations.en
   
   // Initialize filters from URL
   const [filters, setFilters] = useState<FilterState>(() => ({
@@ -942,7 +1280,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
             <div>
               <div className="flex items-center gap-3 mb-1">
-                <h1 className="text-xl font-bold text-white">Compare Prop Firms</h1>
+                <h1 className="text-xl font-bold text-white">{t.pageTitle}</h1>
                 <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-xs rounded-full flex items-center gap-1"><BadgeCheck className="w-3 h-3" />Scanned & Verified</span>
               </div>
               <p className="text-sm text-gray-500">{stats.total} verified firms • Updated Jan 2026</p>
@@ -979,7 +1317,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
                   type="text" 
                   value={filters.search} 
                   onChange={(e) => setFilters(f => ({ ...f, search: e.target.value }))} 
-                  placeholder="Search..." 
+                  placeholder={t.searchPlaceholder} 
                   aria-label="Search prop firms"
                   className="w-full pl-8 pr-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-white text-xs placeholder:text-gray-500 focus:outline-none focus:border-emerald-500" 
                 />
@@ -987,7 +1325,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
               
               {/* Markets Dropdown */}
               <FilterDropdown 
-                label="Markets" 
+                label={t.markets} 
                 count={filters.markets.length}
                 isOpen={openDropdown === 'markets'}
                 onToggle={() => toggleDropdown('markets')}
@@ -1011,7 +1349,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
               
               {/* Platforms Dropdown */}
               <FilterDropdown 
-                label="Platform" 
+                label={t.platform} 
                 count={filters.platforms.length}
                 isOpen={openDropdown === 'platforms'}
                 onToggle={() => toggleDropdown('platforms')}
@@ -1035,7 +1373,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
               
               {/* Challenge Type Dropdown */}
               <FilterDropdown 
-                label="Challenge" 
+                label={t.challenge} 
                 count={filters.challengeTypes.length} 
                 colorClass="purple"
                 isOpen={openDropdown === 'challenge'}
@@ -1060,7 +1398,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
               
               {/* Trading Style Dropdown */}
               <FilterDropdown 
-                label="Style" 
+                label={t.style} 
                 count={filters.tradingStyles.length}
                 isOpen={openDropdown === 'style'}
                 onToggle={() => toggleDropdown('style')}
@@ -1084,7 +1422,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
               
               {/* Rating Dropdown */}
               <FilterDropdown 
-                label="Rating" 
+                label={t.rating} 
                 count={filters.ratings.length} 
                 colorClass="yellow"
                 isOpen={openDropdown === 'rating'}
@@ -1109,7 +1447,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
               
               {/* Best For Dropdown */}
               <FilterDropdown 
-                label="Best For" 
+                label={t.bestFor} 
                 count={filters.bestFor.length} 
                 colorClass="blue"
                 isOpen={openDropdown === 'bestFor'}
@@ -1197,7 +1535,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
           {/* Results Count */}
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm text-gray-400">
-              Showing <span className="text-white font-medium">{filteredFirms.length}</span> prop firms
+              {t.showing} <span className="text-white font-medium">{filteredFirms.length}</span> {t.propFirms}
             </p>
             {favorites.length > 0 && (
               <span className="text-xs text-gray-500">{favorites.length} favorites</span>
@@ -1274,9 +1612,9 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
               <div className="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center mx-auto mb-4">
                 <Search className="w-8 h-8 text-gray-600" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">No firms found</h3>
-              <p className="text-gray-500 mb-4">Try adjusting your filters or search terms</p>
-              <button onClick={resetFilters} className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm rounded-lg transition-colors">Reset Filters</button>
+              <h3 className="text-xl font-semibold text-white mb-2">{t.noFirmsFound}</h3>
+              <p className="text-gray-500 mb-4">{t.tryAdjusting}</p>
+              <button onClick={resetFilters} className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm rounded-lg transition-colors">{t.resetFilters}</button>
             </div>
           )}
         </div>
