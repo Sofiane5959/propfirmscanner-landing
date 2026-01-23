@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import FirmLogo from '@/components/FirmLogo';
 import { 
   ArrowRight, 
   Shield, 
@@ -20,6 +19,22 @@ import {
   Award,
   Sparkles,
 } from 'lucide-react';
+
+// Simple FirmLogo component
+function FirmLogoSimple({ logoUrl, logoFallback, color }: { logoUrl: string | null; logoFallback: string; color: string }) {
+  if (logoUrl) {
+    return (
+      <div className="w-12 h-12 rounded-xl bg-gray-800 flex items-center justify-center overflow-hidden">
+        <img src={logoUrl} alt="" className="w-8 h-8 object-contain" />
+      </div>
+    );
+  }
+  return (
+    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center`}>
+      <span className="text-white font-bold text-sm">{logoFallback}</span>
+    </div>
+  );
+}
 
 // =============================================================================
 // LOCALE DETECTION
@@ -681,7 +696,7 @@ export default function HomeContent() {
                 
                 {/* Firm info */}
                 <div className="flex items-center gap-4 mb-4 mt-2">
-                  <FirmLogo firm={firm} size="md" />
+                  <FirmLogoSimple logoUrl={firm.logoUrl} logoFallback={firm.logoFallback} color={firm.color} />
                   <div>
                     <h3 className="text-white font-semibold">{firm.name}</h3>
                     <div className="flex items-center gap-2 text-sm">
