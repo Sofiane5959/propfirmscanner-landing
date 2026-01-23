@@ -2,11 +2,270 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { 
   Clock, ArrowRight, Search, Star, BookOpen, 
   Shield, Brain, TrendingUp, Filter, User,
   Calendar, ChevronRight, Mail, Sparkles, Home
 } from 'lucide-react';
+
+// =============================================================================
+// LOCALE DETECTION & TRANSLATIONS
+// =============================================================================
+
+const locales = ['en', 'fr', 'de', 'es', 'pt', 'ar', 'hi'] as const;
+type Locale = (typeof locales)[number];
+
+function getLocaleFromPath(pathname: string): Locale {
+  const firstSegment = pathname.split('/')[1];
+  if (firstSegment && locales.includes(firstSegment as Locale)) {
+    return firstSegment as Locale;
+  }
+  return 'en';
+}
+
+const translations: Record<Locale, Record<string, string>> = {
+  en: {
+    // Header
+    blogTitle: 'Prop Firm',
+    blogTitleHighlight: 'Blog',
+    blogSubtitle: 'Expert guides, rule explanations, and strategies to help you get funded.',
+    searchPlaceholder: 'Search articles...',
+    // Breadcrumb
+    home: 'Home',
+    blog: 'Blog',
+    // Categories
+    all: 'All',
+    guides: 'Guides',
+    rulesDecoded: 'Rules Decoded',
+    reviews: 'Reviews',
+    psychology: 'Psychology',
+    // Sections
+    featuredArticles: 'Featured Articles',
+    latestArticles: 'Latest Articles',
+    searchResults: 'Search Results',
+    // Empty state
+    noArticlesFound: 'No articles found',
+    tryDifferentSearch: 'Try a different search term or category',
+    // Pagination
+    previous: 'Previous',
+    next: 'Next',
+    // Sidebar
+    newsletter: 'Newsletter',
+    newsletterDesc: 'Get weekly prop firm tips, deals, and strategy insights.',
+    emailPlaceholder: 'Enter your email',
+    subscribe: 'Subscribe',
+    subscribing: 'Subscribing...',
+    subscribed: 'Subscribed!',
+    popularArticles: 'Popular Articles',
+    popularTags: 'Popular Tags',
+    // CTA
+    readyToGetFunded: 'Ready to Get Funded?',
+    compareDesc: 'Compare 70+ prop firms and find your perfect match.',
+    comparePropFirms: 'Compare Prop Firms',
+    // Card
+    minRead: 'min read',
+    readMore: 'Read More',
+  },
+  fr: {
+    blogTitle: 'Blog',
+    blogTitleHighlight: 'Prop Firm',
+    blogSubtitle: 'Guides experts, explications des règles et stratégies pour vous aider à être financé.',
+    searchPlaceholder: 'Rechercher des articles...',
+    home: 'Accueil',
+    blog: 'Blog',
+    all: 'Tout',
+    guides: 'Guides',
+    rulesDecoded: 'Règles Décryptées',
+    reviews: 'Avis',
+    psychology: 'Psychologie',
+    featuredArticles: 'Articles en Vedette',
+    latestArticles: 'Derniers Articles',
+    searchResults: 'Résultats de Recherche',
+    noArticlesFound: 'Aucun article trouvé',
+    tryDifferentSearch: 'Essayez un autre terme de recherche ou une autre catégorie',
+    previous: 'Précédent',
+    next: 'Suivant',
+    newsletter: 'Newsletter',
+    newsletterDesc: 'Recevez des conseils hebdomadaires sur les prop firms, offres et stratégies.',
+    emailPlaceholder: 'Entrez votre email',
+    subscribe: 'S\'abonner',
+    subscribing: 'Inscription...',
+    subscribed: 'Inscrit !',
+    popularArticles: 'Articles Populaires',
+    popularTags: 'Tags Populaires',
+    readyToGetFunded: 'Prêt à Être Financé ?',
+    compareDesc: 'Comparez 70+ prop firms et trouvez votre match parfait.',
+    comparePropFirms: 'Comparer les Prop Firms',
+    minRead: 'min de lecture',
+    readMore: 'Lire Plus',
+  },
+  de: {
+    blogTitle: 'Prop Firm',
+    blogTitleHighlight: 'Blog',
+    blogSubtitle: 'Experten-Guides, Regelerklärungen und Strategien, um finanziert zu werden.',
+    searchPlaceholder: 'Artikel suchen...',
+    home: 'Startseite',
+    blog: 'Blog',
+    all: 'Alle',
+    guides: 'Guides',
+    rulesDecoded: 'Regeln Erklärt',
+    reviews: 'Bewertungen',
+    psychology: 'Psychologie',
+    featuredArticles: 'Empfohlene Artikel',
+    latestArticles: 'Neueste Artikel',
+    searchResults: 'Suchergebnisse',
+    noArticlesFound: 'Keine Artikel gefunden',
+    tryDifferentSearch: 'Versuchen Sie einen anderen Suchbegriff oder Kategorie',
+    previous: 'Zurück',
+    next: 'Weiter',
+    newsletter: 'Newsletter',
+    newsletterDesc: 'Erhalten Sie wöchentlich Prop-Firm-Tipps, Angebote und Strategien.',
+    emailPlaceholder: 'E-Mail eingeben',
+    subscribe: 'Abonnieren',
+    subscribing: 'Wird abonniert...',
+    subscribed: 'Abonniert!',
+    popularArticles: 'Beliebte Artikel',
+    popularTags: 'Beliebte Tags',
+    readyToGetFunded: 'Bereit für Finanzierung?',
+    compareDesc: 'Vergleichen Sie 70+ Prop Firms und finden Sie Ihren perfekten Match.',
+    comparePropFirms: 'Prop Firms Vergleichen',
+    minRead: 'Min. Lesezeit',
+    readMore: 'Mehr Lesen',
+  },
+  es: {
+    blogTitle: 'Blog',
+    blogTitleHighlight: 'Prop Firm',
+    blogSubtitle: 'Guías expertas, explicaciones de reglas y estrategias para ayudarte a ser financiado.',
+    searchPlaceholder: 'Buscar artículos...',
+    home: 'Inicio',
+    blog: 'Blog',
+    all: 'Todo',
+    guides: 'Guías',
+    rulesDecoded: 'Reglas Decodificadas',
+    reviews: 'Reseñas',
+    psychology: 'Psicología',
+    featuredArticles: 'Artículos Destacados',
+    latestArticles: 'Últimos Artículos',
+    searchResults: 'Resultados de Búsqueda',
+    noArticlesFound: 'No se encontraron artículos',
+    tryDifferentSearch: 'Intenta con otro término de búsqueda o categoría',
+    previous: 'Anterior',
+    next: 'Siguiente',
+    newsletter: 'Newsletter',
+    newsletterDesc: 'Recibe consejos semanales sobre prop firms, ofertas y estrategias.',
+    emailPlaceholder: 'Ingresa tu email',
+    subscribe: 'Suscribirse',
+    subscribing: 'Suscribiendo...',
+    subscribed: '¡Suscrito!',
+    popularArticles: 'Artículos Populares',
+    popularTags: 'Tags Populares',
+    readyToGetFunded: '¿Listo para ser Financiado?',
+    compareDesc: 'Compara 70+ prop firms y encuentra tu match perfecto.',
+    comparePropFirms: 'Comparar Prop Firms',
+    minRead: 'min de lectura',
+    readMore: 'Leer Más',
+  },
+  pt: {
+    blogTitle: 'Blog',
+    blogTitleHighlight: 'Prop Firm',
+    blogSubtitle: 'Guias especializados, explicações de regras e estratégias para ajudá-lo a ser financiado.',
+    searchPlaceholder: 'Pesquisar artigos...',
+    home: 'Início',
+    blog: 'Blog',
+    all: 'Todos',
+    guides: 'Guias',
+    rulesDecoded: 'Regras Decodificadas',
+    reviews: 'Avaliações',
+    psychology: 'Psicologia',
+    featuredArticles: 'Artigos em Destaque',
+    latestArticles: 'Últimos Artigos',
+    searchResults: 'Resultados da Pesquisa',
+    noArticlesFound: 'Nenhum artigo encontrado',
+    tryDifferentSearch: 'Tente um termo de pesquisa ou categoria diferente',
+    previous: 'Anterior',
+    next: 'Próximo',
+    newsletter: 'Newsletter',
+    newsletterDesc: 'Receba dicas semanais sobre prop firms, ofertas e estratégias.',
+    emailPlaceholder: 'Digite seu email',
+    subscribe: 'Inscrever-se',
+    subscribing: 'Inscrevendo...',
+    subscribed: 'Inscrito!',
+    popularArticles: 'Artigos Populares',
+    popularTags: 'Tags Populares',
+    readyToGetFunded: 'Pronto para ser Financiado?',
+    compareDesc: 'Compare 70+ prop firms e encontre seu match perfeito.',
+    comparePropFirms: 'Comparar Prop Firms',
+    minRead: 'min de leitura',
+    readMore: 'Ler Mais',
+  },
+  ar: {
+    blogTitle: 'مدونة',
+    blogTitleHighlight: 'شركات التداول',
+    blogSubtitle: 'أدلة خبراء وشرح القواعد واستراتيجيات لمساعدتك في الحصول على التمويل.',
+    searchPlaceholder: 'البحث في المقالات...',
+    home: 'الرئيسية',
+    blog: 'المدونة',
+    all: 'الكل',
+    guides: 'الأدلة',
+    rulesDecoded: 'القواعد مفسرة',
+    reviews: 'المراجعات',
+    psychology: 'علم النفس',
+    featuredArticles: 'مقالات مميزة',
+    latestArticles: 'أحدث المقالات',
+    searchResults: 'نتائج البحث',
+    noArticlesFound: 'لم يتم العثور على مقالات',
+    tryDifferentSearch: 'جرب مصطلح بحث أو فئة مختلفة',
+    previous: 'السابق',
+    next: 'التالي',
+    newsletter: 'النشرة الإخبارية',
+    newsletterDesc: 'احصل على نصائح أسبوعية حول شركات التداول والعروض والاستراتيجيات.',
+    emailPlaceholder: 'أدخل بريدك الإلكتروني',
+    subscribe: 'اشترك',
+    subscribing: 'جاري الاشتراك...',
+    subscribed: 'تم الاشتراك!',
+    popularArticles: 'المقالات الشائعة',
+    popularTags: 'العلامات الشائعة',
+    readyToGetFunded: 'هل أنت مستعد للتمويل؟',
+    compareDesc: 'قارن أكثر من 70 شركة تداول وابحث عن الأنسب لك.',
+    comparePropFirms: 'مقارنة شركات التداول',
+    minRead: 'دقيقة قراءة',
+    readMore: 'اقرأ المزيد',
+  },
+  hi: {
+    blogTitle: 'प्रॉप फर्म',
+    blogTitleHighlight: 'ब्लॉग',
+    blogSubtitle: 'विशेषज्ञ गाइड्स, नियम स्पष्टीकरण और फंडेड होने में मदद के लिए रणनीतियां।',
+    searchPlaceholder: 'आर्टिकल्स खोजें...',
+    home: 'होम',
+    blog: 'ब्लॉग',
+    all: 'सभी',
+    guides: 'गाइड्स',
+    rulesDecoded: 'नियम समझाए गए',
+    reviews: 'रिव्यूज',
+    psychology: 'मनोविज्ञान',
+    featuredArticles: 'फीचर्ड आर्टिकल्स',
+    latestArticles: 'नवीनतम आर्टिकल्स',
+    searchResults: 'खोज परिणाम',
+    noArticlesFound: 'कोई आर्टिकल नहीं मिला',
+    tryDifferentSearch: 'कोई अलग सर्च टर्म या कैटेगरी आज़माएं',
+    previous: 'पिछला',
+    next: 'अगला',
+    newsletter: 'न्यूज़लेटर',
+    newsletterDesc: 'साप्ताहिक प्रॉप फर्म टिप्स, डील्स और स्ट्रैटेजी इनसाइट्स पाएं।',
+    emailPlaceholder: 'अपना ईमेल दर्ज करें',
+    subscribe: 'सब्सक्राइब करें',
+    subscribing: 'सब्सक्राइब हो रहा है...',
+    subscribed: 'सब्सक्राइब्ड!',
+    popularArticles: 'लोकप्रिय आर्टिकल्स',
+    popularTags: 'लोकप्रिय टैग्स',
+    readyToGetFunded: 'फंडेड होने के लिए तैयार?',
+    compareDesc: '70+ प्रॉप फर्म्स की तुलना करें और अपना परफेक्ट मैच खोजें।',
+    comparePropFirms: 'प्रॉप फर्म्स की तुलना करें',
+    minRead: 'मिनट पढ़ें',
+    readMore: 'और पढ़ें',
+  },
+};
 
 // =============================================================================
 // TYPES
@@ -189,7 +448,7 @@ const blogPosts: BlogPost[] = [
   {
     slug: 'daily-drawdown-rules',
     title: 'Daily Drawdown Rules: The #1 Account Killer',
-    description: 'Daily drawdown limits fail more traders than any other rule. Learn exactly how they work and how to stay safe.',
+    description: 'Master daily drawdown rules before they end your challenge. Step-by-step guide to staying within limits.',
     date: 'December 5, 2024',
     readTime: '8 min read',
     category: 'Rules Decoded',
@@ -197,254 +456,163 @@ const blogPosts: BlogPost[] = [
     tags: ['drawdown', 'daily limit', 'rules'],
   },
   {
-    slug: 'forex-vs-futures-prop-firms',
-    title: 'Forex vs Futures Prop Firms: Complete Comparison',
-    description: 'Should you trade forex or futures with a prop firm? Compare rules, fees, and opportunities for each market.',
-    date: 'December 2, 2024',
+    slug: 'best-prop-firms-for-beginners',
+    title: 'Best Prop Firms for Beginners in 2025',
+    description: 'Starting your prop firm journey? These firms offer the best conditions for new traders.',
+    date: 'December 3, 2024',
     readTime: '9 min read',
     category: 'Guides',
     featured: false,
-    tags: ['forex', 'futures', 'comparison'],
+    tags: ['beginner', 'first challenge', 'tips'],
   },
   {
-    slug: 'prop-firm-fees-explained',
-    title: 'Prop Firm Fees Explained: What You Actually Pay',
-    description: 'Break down all the fees: challenge fees, monthly fees, reset fees. Learn how to calculate true costs.',
-    date: 'November 28, 2024',
+    slug: 'overtrading-psychology',
+    title: 'Overtrading: The Silent Challenge Killer',
+    description: 'Learn to recognize and overcome overtrading - the habit that fails more traders than bad strategy.',
+    date: 'December 1, 2024',
     readTime: '7 min read',
-    category: 'Guides',
+    category: 'Psychology',
     featured: false,
-    tags: ['fees', 'cost', 'pricing'],
+    tags: ['overtrading', 'discipline', 'psychology'],
   },
   {
-    slug: 'trading-with-multiple-prop-firms',
-    title: 'Trading Multiple Prop Firm Accounts: Strategy Guide',
-    description: 'Is trading multiple accounts worth it? Learn the pros, cons, and strategies for managing several funded accounts.',
-    date: 'November 25, 2024',
-    readTime: '8 min read',
-    category: 'Guides',
+    slug: 'funded-next-review',
+    title: 'FundedNext Review 2025: Worth the Hype?',
+    description: 'Detailed analysis of FundedNext including their express model, profit splits, and real trader experiences.',
+    date: 'November 28, 2024',
+    readTime: '10 min read',
+    category: 'Reviews',
     featured: false,
-    tags: ['multiple accounts', 'strategy', 'scaling'],
+    tags: ['FundedNext', 'review', '2025'],
   },
   {
     slug: 'weekend-holding-rules',
-    title: 'Weekend Holding Rules: What You Need to Know',
-    description: 'Can you hold trades over the weekend? Understand different prop firm policies and gap risk management.',
-    date: 'November 20, 2024',
+    title: 'Weekend Holding Rules: Can You Hold Trades Over the Weekend?',
+    description: 'Complete guide to weekend holding policies across major prop firms. Know the rules before you trade.',
+    date: 'November 25, 2024',
     readTime: '6 min read',
     category: 'Rules Decoded',
     featured: false,
     tags: ['weekend', 'holding', 'rules'],
   },
   {
-    slug: 'revenge-trading-how-to-stop',
+    slug: 'revenge-trading',
     title: 'Revenge Trading: How to Stop Destroying Your Account',
-    description: 'Revenge trading kills more challenges than bad strategy. Learn to recognize and overcome this destructive pattern.',
-    date: 'November 15, 2024',
+    description: 'Revenge trading has blown more accounts than any strategy. Learn to recognize it and break the cycle.',
+    date: 'November 22, 2024',
     readTime: '8 min read',
     category: 'Psychology',
     featured: false,
-    tags: ['revenge trading', 'psychology', 'discipline'],
+    tags: ['revenge trading', 'emotions', 'discipline'],
   },
   {
-    slug: 'ea-trading-prop-firms',
-    title: 'EA & Bot Trading with Prop Firms: Complete Guide',
-    description: 'Which prop firms allow EAs and trading bots? Rules, restrictions, and best practices for automated trading.',
-    date: 'November 10, 2024',
+    slug: 'instant-funding-vs-challenge',
+    title: 'Instant Funding vs Challenge: Which is Better?',
+    description: 'Compare instant funding programs to traditional challenges. Pros, cons, and which suits your style.',
+    date: 'November 20, 2024',
+    readTime: '9 min read',
+    category: 'Guides',
+    featured: false,
+    tags: ['instant funding', 'challenge', 'comparison'],
+  },
+  {
+    slug: 'ea-bot-trading-rules',
+    title: 'EA & Bot Trading Rules: Which Prop Firms Allow Automation?',
+    description: 'Want to use EAs or trading bots? Here\'s which prop firms allow them and what restrictions apply.',
+    date: 'November 18, 2024',
     readTime: '7 min read',
     category: 'Rules Decoded',
     featured: false,
-    tags: ['EA', 'bots', 'automated trading'],
-  },
-  {
-    slug: 'first-prop-firm-guide',
-    title: 'Your First Prop Firm Challenge: Complete Beginner Guide',
-    description: 'Everything you need to know before starting your first challenge. From choosing a firm to passing Phase 1.',
-    date: 'October 25, 2024',
-    readTime: '12 min read',
-    category: 'Guides',
-    featured: false,
-    tags: ['beginner', 'first challenge', 'guide'],
+    tags: ['EA', 'bots', 'automation', 'rules'],
   },
 ];
 
 // =============================================================================
-// CSS ANIMATIONS (inline styles for Tailwind)
+// HELPER: Get category translation key
+// =============================================================================
+
+function getCategoryKey(category: string): string {
+  const map: Record<string, string> = {
+    'All': 'all',
+    'Guides': 'guides',
+    'Rules Decoded': 'rulesDecoded',
+    'Reviews': 'reviews',
+    'Psychology': 'psychology',
+  };
+  return map[category] || category.toLowerCase();
+}
+
+// =============================================================================
+// ANIMATION STYLES
 // =============================================================================
 
 const animationStyles = `
-  @keyframes float {
-    0%, 100% { transform: translateY(0px) rotate(0deg); }
-    50% { transform: translateY(-10px) rotate(3deg); }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
   }
-  
-  @keyframes pulse-glow {
-    0%, 100% { opacity: 0.3; transform: scale(1); }
-    50% { opacity: 0.6; transform: scale(1.1); }
-  }
-  
-  @keyframes gradient-shift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-  
-  @keyframes shimmer {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
-  }
-  
-  @keyframes spin-slow {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-  
-  @keyframes bounce-subtle {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-5px); }
-  }
-  
-  .animate-float { animation: float 6s ease-in-out infinite; }
-  .animate-float-delayed { animation: float 6s ease-in-out infinite 2s; }
-  .animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
-  .animate-gradient { 
-    background-size: 200% 200%;
-    animation: gradient-shift 8s ease infinite; 
-  }
-  .animate-shimmer { animation: shimmer 2s infinite; }
-  .animate-spin-slow { animation: spin-slow 20s linear infinite; }
-  .animate-bounce-subtle { animation: bounce-subtle 2s ease-in-out infinite; }
+  .animate-fadeInUp { animation: fadeInUp 0.6s ease-out forwards; }
 `;
-
-// =============================================================================
-// CATEGORY IMAGE COMPONENT (Enhanced with Animations)
-// =============================================================================
-
-function CategoryImage({ category, className = '', featured = false }: { category: string; className?: string; featured?: boolean }) {
-  const colors = CATEGORY_COLORS[category] || CATEGORY_COLORS['Guides'];
-  const Icon = CATEGORY_ICONS[category] || BookOpen;
-  
-  return (
-    <div className={`relative overflow-hidden bg-gradient-to-br ${colors.gradient} animate-gradient ${className}`}>
-      {/* Animated gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-black/20 via-transparent to-white/10 opacity-50" />
-      
-      {/* Animated grid pattern */}
-      <svg 
-        className="absolute inset-0 w-full h-full opacity-20"
-        viewBox="0 0 100 100"
-        preserveAspectRatio="none"
-      >
-        <defs>
-          <pattern id={`grid-${category}-${featured ? 'f' : 'r'}`} width="10" height="10" patternUnits="userSpaceOnUse">
-            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-white/30" />
-          </pattern>
-        </defs>
-        <rect width="100" height="100" fill={`url(#grid-${category}-${featured ? 'f' : 'r'})`} />
-      </svg>
-      
-      {/* Animated decorative circles */}
-      <div className="absolute -top-6 -right-6 w-32 h-32 bg-white/10 rounded-full animate-pulse-glow" />
-      <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-white/5 rounded-full animate-pulse-glow" style={{ animationDelay: '1.5s' }} />
-      <div className="absolute top-1/2 right-1/4 w-20 h-20 bg-white/5 rounded-full animate-float-delayed" />
-      
-      {/* Spinning decorative ring */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 border border-white/10 rounded-full animate-spin-slow" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 border border-white/5 rounded-full animate-spin-slow" style={{ animationDirection: 'reverse' }} />
-      
-      {/* Shimmer effect on hover */}
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 overflow-hidden">
-        <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-      </div>
-      
-      {/* Floating particles */}
-      <div className="absolute top-4 right-8 w-2 h-2 bg-white/30 rounded-full animate-float" />
-      <div className="absolute bottom-8 left-6 w-1.5 h-1.5 bg-white/40 rounded-full animate-float-delayed" />
-      <div className="absolute top-1/3 left-1/4 w-1 h-1 bg-white/50 rounded-full animate-bounce-subtle" />
-      
-      {/* Center icon with animations */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="relative group-hover:scale-110 transition-transform duration-500">
-          {/* Glow behind icon */}
-          <div className="absolute inset-0 bg-white/20 rounded-2xl blur-xl scale-150 animate-pulse-glow" />
-          
-          {/* Icon container */}
-          <div className="relative p-4 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/20 group-hover:bg-white/20 group-hover:border-white/30 transition-all duration-300 animate-float">
-            <Icon className="w-8 h-8 text-white/90 group-hover:text-white transition-colors group-hover:scale-110 transform duration-300" />
-          </div>
-        </div>
-      </div>
-      
-      {/* Bottom gradient fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-gray-900/50 to-transparent" />
-    </div>
-  );
-}
 
 // =============================================================================
 // COMPONENTS
 // =============================================================================
 
-// Breadcrumb Component
-function Breadcrumb() {
+function Breadcrumb({ t, locale }: { t: Record<string, string>; locale: Locale }) {
   return (
-    <nav className="flex items-center gap-2 text-sm text-gray-400 mb-6">
-      <Link href="/" className="flex items-center gap-1 hover:text-emerald-400 transition-colors">
+    <nav className="flex items-center gap-2 text-sm mb-6">
+      <Link href={`/${locale}`} className="text-gray-500 hover:text-white flex items-center gap-1 transition-colors">
         <Home className="w-4 h-4" />
-        Home
+        {t.home}
       </Link>
-      <ChevronRight className="w-4 h-4" />
-      <span className="text-white">Blog</span>
+      <span className="text-gray-600">/</span>
+      <span className="text-emerald-400">{t.blog}</span>
     </nav>
   );
 }
 
-// Featured Article Card (Large)
-function FeaturedCard({ post }: { post: BlogPost }) {
+function FeaturedCard({ post, locale, t }: { post: BlogPost; locale: Locale; t: Record<string, string> }) {
+  const colors = CATEGORY_COLORS[post.category];
   const Icon = CATEGORY_ICONS[post.category];
-  
-  return (
-    <Link
-      href={`/blog/${post.slug}`}
-      className="group relative overflow-hidden bg-gray-900 rounded-2xl border border-gray-800 hover:border-emerald-500/50 transition-all duration-500 hover:shadow-xl hover:shadow-emerald-500/10 hover:-translate-y-1"
-    >
-      {/* Image with animations */}
-      <CategoryImage category={post.category} className="h-48" featured={true} />
-      
-      {/* Badges */}
-      <div className="absolute top-4 left-4 flex items-center gap-2 z-10">
-        <span className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/90 text-white text-xs font-medium rounded-full backdrop-blur-sm shadow-lg">
-          <Icon className="w-3 h-3" />
-          {post.category}
-        </span>
-        <span className="px-2 py-1 bg-yellow-500/90 text-gray-900 text-xs font-bold rounded-full animate-pulse">
-          Featured
-        </span>
-      </div>
+  const categoryLabel = t[getCategoryKey(post.category)] || post.category;
 
-      {/* Content */}
-      <div className="p-6">
-        <h3 className="text-xl font-bold text-white mb-3 group-hover:text-emerald-400 transition-colors duration-300 line-clamp-2">
+  return (
+    <Link 
+      href={`/${locale}/blog/${post.slug}`}
+      className="group relative bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-gray-700 transition-all duration-300"
+    >
+      {/* Gradient overlay */}
+      <div className={`absolute inset-0 bg-gradient-to-br ${colors.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+      
+      <div className="relative p-6">
+        <div className="flex items-center gap-2 mb-3">
+          <span className={`flex items-center gap-1.5 px-2.5 py-1 ${colors.bg} rounded-full text-xs font-medium`}>
+            <Icon className="w-3 h-3" />
+            {categoryLabel}
+          </span>
+          <span className="flex items-center gap-1 text-xs text-gray-500">
+            <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+            Featured
+          </span>
+        </div>
+        
+        <h3 className="text-lg font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors line-clamp-2">
           {post.title}
         </h3>
+        
         <p className="text-gray-400 text-sm mb-4 line-clamp-2">
           {post.description}
         </p>
         
-        {/* Meta */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4 text-sm text-gray-500">
+          <div className="flex items-center gap-3 text-xs text-gray-500">
             <span className="flex items-center gap-1">
-              <User className="w-3.5 h-3.5" />
-              PropFirmScanner
-            </span>
-            <span className="flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5" />
-              {post.readTime}
+              <Clock className="w-3 h-3" />
+              {post.readTime.replace('min read', t.minRead)}
             </span>
           </div>
-          <span className="flex items-center gap-1 text-emerald-400 text-sm font-medium group-hover:gap-2 transition-all duration-300">
-            Read <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          <span className="text-emerald-400 text-sm font-medium flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            {t.readMore} <ArrowRight className="w-4 h-4" />
           </span>
         </div>
       </div>
@@ -452,129 +620,96 @@ function FeaturedCard({ post }: { post: BlogPost }) {
   );
 }
 
-// Regular Article Card
-function ArticleCard({ post }: { post: BlogPost }) {
+function ArticleCard({ post, locale, t }: { post: BlogPost; locale: Locale; t: Record<string, string> }) {
+  const colors = CATEGORY_COLORS[post.category];
   const Icon = CATEGORY_ICONS[post.category];
-  
+  const categoryLabel = t[getCategoryKey(post.category)] || post.category;
+
   return (
-    <Link
-      href={`/blog/${post.slug}`}
-      className="group relative flex flex-col bg-gray-900/50 rounded-xl border border-gray-800 overflow-hidden hover:border-emerald-500/30 hover:bg-gray-900 transition-all duration-500 hover:shadow-lg hover:shadow-emerald-500/5 hover:-translate-y-1"
+    <Link 
+      href={`/${locale}/blog/${post.slug}`}
+      className="group bg-gray-900/50 border border-gray-800 rounded-xl p-5 hover:border-gray-700 hover:bg-gray-900 transition-all duration-300"
     >
-      {/* Image with animations */}
-      <CategoryImage category={post.category} className="h-40" />
-      
-      {/* Category Badge */}
-      <div className="absolute top-3 left-3 z-10">
-        <span className="flex items-center gap-1.5 px-2.5 py-1 bg-gray-900/80 text-gray-300 text-xs font-medium rounded-full backdrop-blur-sm border border-gray-700/50 group-hover:border-emerald-500/30 group-hover:text-emerald-400 transition-all duration-300">
+      <div className="flex items-center gap-2 mb-3">
+        <span className={`flex items-center gap-1.5 px-2.5 py-1 ${colors.bg} rounded-full text-xs font-medium`}>
           <Icon className="w-3 h-3" />
-          {post.category}
+          {categoryLabel}
         </span>
       </div>
-
-      {/* Content */}
-      <div className="flex-1 p-5">
-        <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-emerald-400 transition-colors duration-300 line-clamp-2">
-          {post.title}
-        </h3>
-        <p className="text-gray-500 text-sm mb-4 line-clamp-2">
-          {post.description}
-        </p>
-        
-        {/* Meta */}
-        <div className="flex items-center justify-between text-xs text-gray-500">
-          <div className="flex items-center gap-1">
-            <Calendar className="w-3.5 h-3.5" />
-            {post.updatedDate ? `Updated ${post.updatedDate}` : post.date}
-          </div>
-          <div className="flex items-center gap-1">
-            <Clock className="w-3.5 h-3.5" />
-            {post.readTime}
-          </div>
-        </div>
+      
+      <h3 className="text-base font-semibold text-white mb-2 group-hover:text-emerald-400 transition-colors line-clamp-2">
+        {post.title}
+      </h3>
+      
+      <p className="text-gray-500 text-sm mb-3 line-clamp-2">
+        {post.description}
+      </p>
+      
+      <div className="flex items-center gap-3 text-xs text-gray-500">
+        <span className="flex items-center gap-1">
+          <Calendar className="w-3 h-3" />
+          {post.date}
+        </span>
+        <span className="flex items-center gap-1">
+          <Clock className="w-3 h-3" />
+          {post.readTime.replace('min read', t.minRead)}
+        </span>
       </div>
     </Link>
   );
 }
 
-// Sidebar Popular Posts
-function PopularPosts({ posts }: { posts: BlogPost[] }) {
-  return (
-    <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-5">
-      <h3 className="flex items-center gap-2 font-semibold text-white mb-4">
-        <TrendingUp className="w-4 h-4 text-emerald-400" />
-        Popular Articles
-      </h3>
-      <div className="space-y-4">
-        {posts.slice(0, 4).map((post, index) => (
-          <Link
-            key={post.slug}
-            href={`/blog/${post.slug}`}
-            className="group flex gap-3"
-          >
-            <span className="flex-shrink-0 w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center text-gray-500 font-bold text-sm group-hover:bg-emerald-500/20 group-hover:text-emerald-400 transition-colors">
-              {index + 1}
-            </span>
-            <div className="flex-1 min-w-0">
-              <h4 className="text-sm text-white group-hover:text-emerald-400 transition-colors line-clamp-2">
-                {post.title}
-              </h4>
-              <span className="text-xs text-gray-500">{post.readTime}</span>
-            </div>
-          </Link>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// Newsletter Signup
-function NewsletterSignup() {
+function NewsletterSignup({ t }: { t: Record<string, string> }) {
   const [email, setEmail] = useState('');
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success'>('idle');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
     
     setStatus('loading');
-    setTimeout(() => {
+    
+    try {
+      await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, source: 'blog' }),
+      });
       setStatus('success');
       setEmail('');
-    }, 1000);
+    } catch {
+      setStatus('idle');
+    }
   };
 
   return (
-    <div className="bg-gradient-to-br from-emerald-500/10 to-blue-500/10 border border-emerald-500/30 rounded-xl p-5">
+    <div className="bg-gradient-to-br from-emerald-500/10 to-blue-500/10 border border-emerald-500/20 rounded-xl p-5">
       <div className="flex items-center gap-2 mb-3">
         <Mail className="w-5 h-5 text-emerald-400" />
-        <h3 className="font-semibold text-white">Newsletter</h3>
+        <h3 className="font-semibold text-white">{t.newsletter}</h3>
       </div>
-      <p className="text-gray-400 text-sm mb-4">
-        Get weekly prop firm tips and exclusive deals.
-      </p>
+      <p className="text-gray-400 text-sm mb-4">{t.newsletterDesc}</p>
       
       {status === 'success' ? (
-        <div className="flex items-center gap-2 p-3 bg-emerald-500/20 rounded-lg text-emerald-400 text-sm">
+        <div className="flex items-center gap-2 text-emerald-400 text-sm">
           <Sparkles className="w-4 h-4" />
-          Thanks for subscribing!
+          {t.subscribed}
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="space-y-3">
+        <form onSubmit={handleSubmit} className="flex gap-2">
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email"
-            className="w-full px-4 py-2.5 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:border-emerald-500 transition-colors"
-            required
+            placeholder={t.emailPlaceholder}
+            className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm placeholder:text-gray-500 focus:outline-none focus:border-emerald-500"
           />
           <button
             type="submit"
             disabled={status === 'loading'}
-            className="w-full px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 text-white text-sm font-medium rounded-lg transition-colors"
+            className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
           >
-            {status === 'loading' ? 'Subscribing...' : 'Subscribe'}
+            {status === 'loading' ? t.subscribing : t.subscribe}
           </button>
         </form>
       )}
@@ -582,20 +717,55 @@ function NewsletterSignup() {
   );
 }
 
-// Tags Cloud
-function TagsCloud({ posts }: { posts: BlogPost[] }) {
-  const allTags = Array.from(new Set(posts.flatMap(p => p.tags)));
+function PopularPosts({ posts, locale, t }: { posts: BlogPost[]; locale: Locale; t: Record<string, string> }) {
+  const popular = posts.filter(p => p.featured).slice(0, 5);
   
   return (
-    <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-5">
-      <h3 className="font-semibold text-white mb-4">Topics</h3>
+    <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-5">
+      <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+        <TrendingUp className="w-4 h-4 text-emerald-400" />
+        {t.popularArticles}
+      </h3>
+      <div className="space-y-3">
+        {popular.map((post, i) => (
+          <Link
+            key={post.slug}
+            href={`/${locale}/blog/${post.slug}`}
+            className="flex items-start gap-3 group"
+          >
+            <span className="text-emerald-400 font-bold text-sm mt-0.5">0{i + 1}</span>
+            <span className="text-gray-400 text-sm group-hover:text-white transition-colors line-clamp-2">
+              {post.title}
+            </span>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TagsCloud({ posts, t }: { posts: BlogPost[]; t: Record<string, string> }) {
+  const allTags = posts.flatMap(p => p.tags);
+  const tagCounts = allTags.reduce((acc, tag) => {
+    acc[tag] = (acc[tag] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+  
+  const topTags = Object.entries(tagCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 12)
+    .map(([tag]) => tag);
+
+  return (
+    <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-5">
+      <h3 className="font-semibold text-white mb-4">{t.popularTags}</h3>
       <div className="flex flex-wrap gap-2">
-        {allTags.map(tag => (
+        {topTags.map(tag => (
           <span
             key={tag}
-            className="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white text-xs rounded-full cursor-pointer transition-colors"
+            className="px-3 py-1 bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white text-xs rounded-full transition-colors cursor-pointer"
           >
-            {tag}
+            #{tag}
           </span>
         ))}
       </div>
@@ -608,10 +778,16 @@ function TagsCloud({ posts }: { posts: BlogPost[] }) {
 // =============================================================================
 
 export default function BlogPage() {
+  const pathname = usePathname();
+  const locale = getLocaleFromPath(pathname);
+  const t = translations[locale];
+  
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 9;
+
+  const categories = ['All', 'Guides', 'Rules Decoded', 'Reviews', 'Psychology'];
 
   // Category counts
   const categoryCounts = useMemo(() => {
@@ -625,27 +801,34 @@ export default function BlogPage() {
   // Filter posts
   const filteredPosts = useMemo(() => {
     return blogPosts.filter(post => {
-      const matchesCategory = activeCategory === 'All' || post.category === activeCategory;
-      const matchesSearch = !searchQuery || 
+      const matchesSearch = searchQuery === '' || 
         post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         post.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
         post.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-      return matchesCategory && matchesSearch;
+      
+      const matchesCategory = activeCategory === 'All' || post.category === activeCategory;
+      
+      return matchesSearch && matchesCategory;
     });
-  }, [activeCategory, searchQuery]);
+  }, [searchQuery, activeCategory]);
 
-  // Separate featured and regular posts
-  const featuredPosts = filteredPosts.filter(p => p.featured);
-  const regularPosts = filteredPosts.filter(p => !p.featured);
-  
-  // Pagination
+  // Featured posts (only on first page, no search, all category)
+  const featuredPosts = useMemo(() => {
+    return blogPosts.filter(p => p.featured);
+  }, []);
+
+  // Regular posts (non-featured for pagination)
+  const regularPosts = useMemo(() => {
+    return blogPosts.filter(p => !p.featured);
+  }, []);
+
+  // Paginated posts
+  const paginatedPosts = useMemo(() => {
+    const start = (currentPage - 1) * postsPerPage;
+    return regularPosts.slice(start, start + postsPerPage);
+  }, [regularPosts, currentPage]);
+
   const totalPages = Math.ceil(regularPosts.length / postsPerPage);
-  const paginatedPosts = regularPosts.slice(
-    (currentPage - 1) * postsPerPage,
-    currentPage * postsPerPage
-  );
-
-  const categories = ['All', 'Guides', 'Rules Decoded', 'Reviews', 'Psychology'];
 
   return (
     <>
@@ -653,7 +836,7 @@ export default function BlogPage() {
       <style dangerouslySetInnerHTML={{ __html: animationStyles }} />
       
       <div className="min-h-screen bg-gray-950">
-        {/* Hero Header - Reduced padding to eliminate empty space */}
+        {/* Hero Header */}
         <header className="relative overflow-hidden bg-gradient-to-b from-gray-900 via-gray-900 to-gray-950 border-b border-gray-800">
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl transform -translate-y-1/2" />
@@ -662,14 +845,14 @@ export default function BlogPage() {
 
           <div className="relative z-10 max-w-6xl mx-auto px-4 pt-6 pb-12">
             {/* Breadcrumb */}
-            <Breadcrumb />
+            <Breadcrumb t={t} locale={locale} />
             
             <div className="text-center">
               <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-                Prop Firm <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-400">Blog</span>
+                {t.blogTitle} <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-400">{t.blogTitleHighlight}</span>
               </h1>
               <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-8">
-                Expert guides, rule explanations, and strategies to help you get funded.
+                {t.blogSubtitle}
               </p>
 
               {/* Search Bar */}
@@ -683,7 +866,7 @@ export default function BlogPage() {
                       setSearchQuery(e.target.value);
                       setCurrentPage(1);
                     }}
-                    placeholder="Search articles..."
+                    placeholder={t.searchPlaceholder}
                     className="w-full pl-12 pr-4 py-3.5 bg-gray-900 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 transition-colors"
                   />
                 </div>
@@ -698,6 +881,7 @@ export default function BlogPage() {
           <div className="flex flex-wrap gap-2 mb-10">
             {categories.map((cat) => {
               const Icon = cat === 'All' ? Filter : CATEGORY_ICONS[cat];
+              const catLabel = t[getCategoryKey(cat)] || cat;
               return (
                 <button
                   key={cat}
@@ -712,7 +896,7 @@ export default function BlogPage() {
                   }`}
                 >
                   {Icon && <Icon className="w-4 h-4" />}
-                  {cat}
+                  {catLabel}
                   <span className={`px-1.5 py-0.5 rounded-full text-xs ${
                     activeCategory === cat
                       ? 'bg-emerald-600 text-white'
@@ -733,11 +917,11 @@ export default function BlogPage() {
                 <section className="mb-12">
                   <div className="flex items-center gap-2 mb-6">
                     <Star className="w-5 h-5 text-yellow-400" />
-                    <h2 className="text-xl font-bold text-white">Featured Articles</h2>
+                    <h2 className="text-xl font-bold text-white">{t.featuredArticles}</h2>
                   </div>
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {featuredPosts.map((post) => (
-                      <FeaturedCard key={post.slug} post={post} />
+                      <FeaturedCard key={post.slug} post={post} locale={locale} t={t} />
                     ))}
                   </div>
                 </section>
@@ -748,10 +932,10 @@ export default function BlogPage() {
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-bold text-white">
                     {searchQuery 
-                      ? `Search Results (${filteredPosts.length})`
+                      ? `${t.searchResults} (${filteredPosts.length})`
                       : activeCategory === 'All' 
-                        ? `Latest Articles (${regularPosts.length})` 
-                        : `${activeCategory} (${filteredPosts.length})`
+                        ? `${t.latestArticles} (${regularPosts.length})` 
+                        : `${t[getCategoryKey(activeCategory)] || activeCategory} (${filteredPosts.length})`
                     }
                   </h2>
                 </div>
@@ -760,7 +944,7 @@ export default function BlogPage() {
                   <>
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {(searchQuery || activeCategory !== 'All' ? filteredPosts : paginatedPosts).map((post) => (
-                        <ArticleCard key={post.slug} post={post} />
+                        <ArticleCard key={post.slug} post={post} locale={locale} t={t} />
                       ))}
                     </div>
                     
@@ -772,7 +956,7 @@ export default function BlogPage() {
                           disabled={currentPage === 1}
                           className="px-4 py-2 bg-gray-800 text-gray-400 rounded-lg hover:bg-gray-700 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
-                          Previous
+                          {t.previous}
                         </button>
                         <div className="flex gap-1">
                           {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
@@ -794,7 +978,7 @@ export default function BlogPage() {
                           disabled={currentPage === totalPages}
                           className="px-4 py-2 bg-gray-800 text-gray-400 rounded-lg hover:bg-gray-700 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
-                          Next
+                          {t.next}
                         </button>
                       </div>
                     )}
@@ -804,8 +988,8 @@ export default function BlogPage() {
                     <div className="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
                       <Search className="w-8 h-8 text-gray-600" />
                     </div>
-                    <h3 className="text-white font-medium mb-2">No articles found</h3>
-                    <p className="text-gray-500 text-sm">Try a different search term or category</p>
+                    <h3 className="text-white font-medium mb-2">{t.noArticlesFound}</h3>
+                    <p className="text-gray-500 text-sm">{t.tryDifferentSearch}</p>
                   </div>
                 )}
               </section>
@@ -813,21 +997,21 @@ export default function BlogPage() {
 
             {/* Sidebar */}
             <aside className="lg:w-80 flex-shrink-0 space-y-6">
-              <NewsletterSignup />
-              <PopularPosts posts={blogPosts} />
-              <TagsCloud posts={blogPosts} />
+              <NewsletterSignup t={t} />
+              <PopularPosts posts={blogPosts} locale={locale} t={t} />
+              <TagsCloud posts={blogPosts} t={t} />
               
               {/* CTA Card */}
               <div className="bg-gradient-to-br from-emerald-500/20 to-blue-500/20 border border-emerald-500/30 rounded-xl p-5">
-                <h3 className="font-semibold text-white mb-2">Ready to Get Funded?</h3>
+                <h3 className="font-semibold text-white mb-2">{t.readyToGetFunded}</h3>
                 <p className="text-gray-400 text-sm mb-4">
-                  Compare 70+ prop firms and find your perfect match.
+                  {t.compareDesc}
                 </p>
                 <Link
-                  href="/compare"
+                  href={`/${locale}/compare`}
                   className="flex items-center justify-center gap-2 w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors"
                 >
-                  Compare Prop Firms
+                  {t.comparePropFirms}
                   <ChevronRight className="w-4 h-4" />
                 </Link>
               </div>
