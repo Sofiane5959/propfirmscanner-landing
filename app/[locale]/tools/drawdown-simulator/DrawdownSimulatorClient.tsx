@@ -1,10 +1,208 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { 
   TrendingDown, Play, RotateCcw, AlertTriangle,
   Info, CheckCircle, XCircle
 } from 'lucide-react'
+
+// =============================================================================
+// LOCALE DETECTION & TRANSLATIONS
+// =============================================================================
+
+const locales = ['en', 'fr', 'de', 'es', 'pt', 'ar', 'hi'] as const;
+type Locale = (typeof locales)[number];
+
+function getLocaleFromPath(pathname: string): Locale {
+  const firstSegment = pathname.split('/')[1];
+  if (firstSegment && locales.includes(firstSegment as Locale)) {
+    return firstSegment as Locale;
+  }
+  return 'en';
+}
+
+const translations: Record<Locale, Record<string, string>> = {
+  en: {
+    title: 'Drawdown Simulator',
+    subtitle: 'Understand how static vs trailing drawdown works',
+    accountSize: 'Account Size',
+    maxDrawdown: 'Max Drawdown %',
+    dailyDrawdown: 'Daily Drawdown %',
+    simulate: 'Simulate',
+    staticDrawdown: 'Static Drawdown',
+    trailingDrawdown: 'Trailing Drawdown',
+    ddUsed: 'DD Used',
+    limit: 'Limit',
+    remaining: 'Remaining',
+    highWaterMark: 'High Water Mark',
+    trailingLimit: 'Trailing Limit',
+    staticTip: 'Static: Limit is fixed from starting balance. Easier to manage.',
+    trailingTip: 'Trailing: Limit moves up with profits. Be careful!',
+    addTrade: 'Add Trade (Manual Mode)',
+    currentBalance: 'Current Balance',
+    tradeHistory: 'Trade History',
+    pnl: 'P&L',
+    balance: 'Balance',
+    hwm: 'HWM',
+    staticDD: 'Static DD',
+    trailingDD: 'Trailing DD',
+  },
+  fr: {
+    title: 'Simulateur de Drawdown',
+    subtitle: 'Comprenez comment fonctionne le drawdown statique vs trailing',
+    accountSize: 'Taille du Compte',
+    maxDrawdown: 'Drawdown Max %',
+    dailyDrawdown: 'Drawdown Journalier %',
+    simulate: 'Simuler',
+    staticDrawdown: 'Drawdown Statique',
+    trailingDrawdown: 'Drawdown Trailing',
+    ddUsed: 'DD Utilisé',
+    limit: 'Limite',
+    remaining: 'Restant',
+    highWaterMark: 'High Water Mark',
+    trailingLimit: 'Limite Trailing',
+    staticTip: 'Statique : La limite est fixée depuis le solde initial. Plus facile à gérer.',
+    trailingTip: 'Trailing : La limite monte avec les profits. Attention !',
+    addTrade: 'Ajouter un Trade (Mode Manuel)',
+    currentBalance: 'Solde Actuel',
+    tradeHistory: 'Historique des Trades',
+    pnl: 'P&L',
+    balance: 'Solde',
+    hwm: 'HWM',
+    staticDD: 'DD Statique',
+    trailingDD: 'DD Trailing',
+  },
+  de: {
+    title: 'Drawdown-Simulator',
+    subtitle: 'Verstehen Sie, wie statisches vs. Trailing-Drawdown funktioniert',
+    accountSize: 'Kontogröße',
+    maxDrawdown: 'Max Drawdown %',
+    dailyDrawdown: 'Täglicher Drawdown %',
+    simulate: 'Simulieren',
+    staticDrawdown: 'Statischer Drawdown',
+    trailingDrawdown: 'Trailing Drawdown',
+    ddUsed: 'DD Verwendet',
+    limit: 'Limit',
+    remaining: 'Verbleibend',
+    highWaterMark: 'High Water Mark',
+    trailingLimit: 'Trailing-Limit',
+    staticTip: 'Statisch: Limit ist vom Startguthaben fixiert. Einfacher zu verwalten.',
+    trailingTip: 'Trailing: Limit steigt mit Gewinnen. Vorsicht!',
+    addTrade: 'Trade Hinzufügen (Manueller Modus)',
+    currentBalance: 'Aktueller Saldo',
+    tradeHistory: 'Trade-Verlauf',
+    pnl: 'P&L',
+    balance: 'Saldo',
+    hwm: 'HWM',
+    staticDD: 'Statischer DD',
+    trailingDD: 'Trailing DD',
+  },
+  es: {
+    title: 'Simulador de Drawdown',
+    subtitle: 'Entiende cómo funciona el drawdown estático vs trailing',
+    accountSize: 'Tamaño de Cuenta',
+    maxDrawdown: 'Drawdown Máx %',
+    dailyDrawdown: 'Drawdown Diario %',
+    simulate: 'Simular',
+    staticDrawdown: 'Drawdown Estático',
+    trailingDrawdown: 'Drawdown Trailing',
+    ddUsed: 'DD Usado',
+    limit: 'Límite',
+    remaining: 'Restante',
+    highWaterMark: 'High Water Mark',
+    trailingLimit: 'Límite Trailing',
+    staticTip: 'Estático: El límite es fijo desde el saldo inicial. Más fácil de gestionar.',
+    trailingTip: 'Trailing: El límite sube con las ganancias. ¡Cuidado!',
+    addTrade: 'Agregar Trade (Modo Manual)',
+    currentBalance: 'Saldo Actual',
+    tradeHistory: 'Historial de Trades',
+    pnl: 'P&L',
+    balance: 'Saldo',
+    hwm: 'HWM',
+    staticDD: 'DD Estático',
+    trailingDD: 'DD Trailing',
+  },
+  pt: {
+    title: 'Simulador de Drawdown',
+    subtitle: 'Entenda como funciona o drawdown estático vs trailing',
+    accountSize: 'Tamanho da Conta',
+    maxDrawdown: 'Drawdown Máx %',
+    dailyDrawdown: 'Drawdown Diário %',
+    simulate: 'Simular',
+    staticDrawdown: 'Drawdown Estático',
+    trailingDrawdown: 'Drawdown Trailing',
+    ddUsed: 'DD Usado',
+    limit: 'Limite',
+    remaining: 'Restante',
+    highWaterMark: 'High Water Mark',
+    trailingLimit: 'Limite Trailing',
+    staticTip: 'Estático: O limite é fixo desde o saldo inicial. Mais fácil de gerenciar.',
+    trailingTip: 'Trailing: O limite sobe com os lucros. Cuidado!',
+    addTrade: 'Adicionar Trade (Modo Manual)',
+    currentBalance: 'Saldo Atual',
+    tradeHistory: 'Histórico de Trades',
+    pnl: 'P&L',
+    balance: 'Saldo',
+    hwm: 'HWM',
+    staticDD: 'DD Estático',
+    trailingDD: 'DD Trailing',
+  },
+  ar: {
+    title: 'محاكي السحب',
+    subtitle: 'افهم كيف يعمل السحب الثابت مقابل المتحرك',
+    accountSize: 'حجم الحساب',
+    maxDrawdown: 'السحب الأقصى %',
+    dailyDrawdown: 'السحب اليومي %',
+    simulate: 'محاكاة',
+    staticDrawdown: 'السحب الثابت',
+    trailingDrawdown: 'السحب المتحرك',
+    ddUsed: 'DD المستخدم',
+    limit: 'الحد',
+    remaining: 'المتبقي',
+    highWaterMark: 'أعلى علامة مائية',
+    trailingLimit: 'الحد المتحرك',
+    staticTip: 'ثابت: الحد ثابت من الرصيد الأولي. أسهل في الإدارة.',
+    trailingTip: 'متحرك: الحد يرتفع مع الأرباح. كن حذراً!',
+    addTrade: 'إضافة صفقة (الوضع اليدوي)',
+    currentBalance: 'الرصيد الحالي',
+    tradeHistory: 'سجل الصفقات',
+    pnl: 'الربح/الخسارة',
+    balance: 'الرصيد',
+    hwm: 'HWM',
+    staticDD: 'DD ثابت',
+    trailingDD: 'DD متحرك',
+  },
+  hi: {
+    title: 'ड्रॉडाउन सिम्युलेटर',
+    subtitle: 'समझें कि स्टैटिक vs ट्रेलिंग ड्रॉडाउन कैसे काम करता है',
+    accountSize: 'अकाउंट साइज',
+    maxDrawdown: 'मैक्स ड्रॉडाउन %',
+    dailyDrawdown: 'दैनिक ड्रॉडाउन %',
+    simulate: 'सिमुलेट',
+    staticDrawdown: 'स्टैटिक ड्रॉडाउन',
+    trailingDrawdown: 'ट्रेलिंग ड्रॉडाउन',
+    ddUsed: 'DD उपयोग',
+    limit: 'सीमा',
+    remaining: 'शेष',
+    highWaterMark: 'हाई वॉटर मार्क',
+    trailingLimit: 'ट्रेलिंग सीमा',
+    staticTip: 'स्टैटिक: सीमा प्रारंभिक बैलेंस से निश्चित है। प्रबंधित करना आसान।',
+    trailingTip: 'ट्रेलिंग: सीमा मुनाफे के साथ बढ़ती है। सावधान रहें!',
+    addTrade: 'ट्रेड जोड़ें (मैनुअल मोड)',
+    currentBalance: 'वर्तमान बैलेंस',
+    tradeHistory: 'ट्रेड इतिहास',
+    pnl: 'P&L',
+    balance: 'बैलेंस',
+    hwm: 'HWM',
+    staticDD: 'स्टैटिक DD',
+    trailingDD: 'ट्रेलिंग DD',
+  },
+};
+
+// =============================================================================
+// TYPES
+// =============================================================================
 
 interface Trade {
   id: number
@@ -17,11 +215,18 @@ interface Trade {
   trailingRemaining: number
 }
 
+// =============================================================================
+// COMPONENT
+// =============================================================================
+
 export default function DrawdownSimulatorClient() {
+  const pathname = usePathname();
+  const locale = getLocaleFromPath(pathname);
+  const t = translations[locale];
+
   const [accountSize, setAccountSize] = useState(100000)
   const [maxDrawdown, setMaxDrawdown] = useState(10)
   const [dailyDrawdown, setDailyDrawdown] = useState(5)
-  const [drawdownType, setDrawdownType] = useState<'static' | 'trailing'>('trailing')
   
   const [trades, setTrades] = useState<Trade[]>([])
   const [currentBalance, setCurrentBalance] = useState(accountSize)
@@ -29,12 +234,9 @@ export default function DrawdownSimulatorClient() {
   const [isRunning, setIsRunning] = useState(false)
   const [failed, setFailed] = useState<'static' | 'trailing' | null>(null)
 
-  // Calculate limits
   const staticLimit = accountSize * (1 - maxDrawdown / 100)
   const trailingLimit = highWaterMark * (1 - maxDrawdown / 100)
-  const dailyLimit = currentBalance * (1 - dailyDrawdown / 100)
 
-  // Reset simulation
   const reset = () => {
     setTrades([])
     setCurrentBalance(accountSize)
@@ -43,7 +245,6 @@ export default function DrawdownSimulatorClient() {
     setIsRunning(false)
   }
 
-  // Add a trade
   const addTrade = (pnl: number) => {
     if (failed) return
 
@@ -71,7 +272,6 @@ export default function DrawdownSimulatorClient() {
     setCurrentBalance(newBalance)
     setHighWaterMark(newHighWater)
 
-    // Check for failure
     if (staticRemaining <= 0) {
       setFailed('static')
     } else if (trailingRemaining <= 0) {
@@ -79,7 +279,6 @@ export default function DrawdownSimulatorClient() {
     }
   }
 
-  // Quick trade buttons
   const quickTrades = [
     { label: '+$2,000', value: 2000, color: 'bg-emerald-500 hover:bg-emerald-600' },
     { label: '+$1,000', value: 1000, color: 'bg-emerald-500/80 hover:bg-emerald-600' },
@@ -89,7 +288,6 @@ export default function DrawdownSimulatorClient() {
     { label: '-$2,000', value: -2000, color: 'bg-red-500 hover:bg-red-600' },
   ]
 
-  // Auto simulation
   const runSimulation = () => {
     setIsRunning(true)
     reset()
@@ -99,7 +297,6 @@ export default function DrawdownSimulatorClient() {
     const simTrades: Trade[] = []
     
     for (let i = 0; i < 20; i++) {
-      // Random PnL between -3% and +4%
       const pnlPercent = (Math.random() * 7) - 3
       const pnl = Math.round(balance * (pnlPercent / 100))
       
@@ -125,7 +322,6 @@ export default function DrawdownSimulatorClient() {
       }
     }
 
-    // Animate trades
     simTrades.forEach((trade, index) => {
       setTimeout(() => {
         setTrades(simTrades.slice(0, index + 1))
@@ -153,15 +349,15 @@ export default function DrawdownSimulatorClient() {
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center mx-auto mb-4">
             <TrendingDown className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Drawdown Simulator</h1>
-          <p className="text-gray-400">Understand how static vs trailing drawdown works</p>
+          <h1 className="text-3xl font-bold text-white mb-2">{t.title}</h1>
+          <p className="text-gray-400">{t.subtitle}</p>
         </div>
 
         {/* Settings */}
         <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 mb-6">
           <div className="grid md:grid-cols-4 gap-4">
             <div>
-              <label className="text-gray-400 text-sm mb-1 block">Account Size</label>
+              <label className="text-gray-400 text-sm mb-1 block">{t.accountSize}</label>
               <select
                 value={accountSize}
                 onChange={(e) => { setAccountSize(Number(e.target.value)); reset(); }}
@@ -173,7 +369,7 @@ export default function DrawdownSimulatorClient() {
               </select>
             </div>
             <div>
-              <label className="text-gray-400 text-sm mb-1 block">Max Drawdown %</label>
+              <label className="text-gray-400 text-sm mb-1 block">{t.maxDrawdown}</label>
               <select
                 value={maxDrawdown}
                 onChange={(e) => { setMaxDrawdown(Number(e.target.value)); reset(); }}
@@ -185,7 +381,7 @@ export default function DrawdownSimulatorClient() {
               </select>
             </div>
             <div>
-              <label className="text-gray-400 text-sm mb-1 block">Daily Drawdown %</label>
+              <label className="text-gray-400 text-sm mb-1 block">{t.dailyDrawdown}</label>
               <select
                 value={dailyDrawdown}
                 onChange={(e) => setDailyDrawdown(Number(e.target.value))}
@@ -203,7 +399,7 @@ export default function DrawdownSimulatorClient() {
                 className="flex-1 px-4 py-2 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-500/50 text-white rounded-lg flex items-center justify-center gap-2"
               >
                 <Play className="w-4 h-4" />
-                Simulate
+                {t.simulate}
               </button>
               <button
                 onClick={reset}
@@ -219,7 +415,7 @@ export default function DrawdownSimulatorClient() {
           {/* Static DD */}
           <div className={`bg-gray-800/50 border rounded-xl p-6 ${failed === 'static' ? 'border-red-500' : 'border-gray-700'}`}>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-white">Static Drawdown</h2>
+              <h2 className="text-lg font-semibold text-white">{t.staticDrawdown}</h2>
               {failed === 'static' ? (
                 <XCircle className="w-6 h-6 text-red-400" />
               ) : (
@@ -229,7 +425,7 @@ export default function DrawdownSimulatorClient() {
             
             <div className="mb-4">
               <div className="flex justify-between text-sm mb-1">
-                <span className="text-gray-400">DD Used</span>
+                <span className="text-gray-400">{t.ddUsed}</span>
                 <span className="text-white">{trades.length > 0 ? trades[trades.length - 1].staticDD.toFixed(2) : 0}%</span>
               </div>
               <div className="h-3 bg-gray-700 rounded-full overflow-hidden">
@@ -240,17 +436,17 @@ export default function DrawdownSimulatorClient() {
               </div>
               <div className="flex justify-between text-xs text-gray-500 mt-1">
                 <span>0%</span>
-                <span>{maxDrawdown}% (Limit)</span>
+                <span>{maxDrawdown}% ({t.limit})</span>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-gray-900/50 rounded-lg p-3">
-                <div className="text-gray-400 text-xs">Limit</div>
+                <div className="text-gray-400 text-xs">{t.limit}</div>
                 <div className="text-white font-semibold">${staticLimit.toLocaleString()}</div>
               </div>
               <div className="bg-gray-900/50 rounded-lg p-3">
-                <div className="text-gray-400 text-xs">Remaining</div>
+                <div className="text-gray-400 text-xs">{t.remaining}</div>
                 <div className="text-emerald-400 font-semibold">
                   {trades.length > 0 ? trades[trades.length - 1].staticRemaining.toFixed(2) : maxDrawdown}%
                 </div>
@@ -259,7 +455,7 @@ export default function DrawdownSimulatorClient() {
 
             <div className="mt-4 p-3 bg-emerald-500/10 rounded-lg">
               <p className="text-emerald-400 text-sm">
-                ✓ <strong>Static:</strong> Limit is fixed from starting balance. Easier to manage.
+                ✓ <strong>Static:</strong> {t.staticTip}
               </p>
             </div>
           </div>
@@ -267,7 +463,7 @@ export default function DrawdownSimulatorClient() {
           {/* Trailing DD */}
           <div className={`bg-gray-800/50 border rounded-xl p-6 ${failed === 'trailing' ? 'border-red-500' : 'border-gray-700'}`}>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-white">Trailing Drawdown</h2>
+              <h2 className="text-lg font-semibold text-white">{t.trailingDrawdown}</h2>
               {failed === 'trailing' ? (
                 <XCircle className="w-6 h-6 text-red-400" />
               ) : (
@@ -277,7 +473,7 @@ export default function DrawdownSimulatorClient() {
             
             <div className="mb-4">
               <div className="flex justify-between text-sm mb-1">
-                <span className="text-gray-400">DD Used</span>
+                <span className="text-gray-400">{t.ddUsed}</span>
                 <span className="text-white">{trades.length > 0 ? trades[trades.length - 1].trailingDD.toFixed(2) : 0}%</span>
               </div>
               <div className="h-3 bg-gray-700 rounded-full overflow-hidden">
@@ -288,24 +484,24 @@ export default function DrawdownSimulatorClient() {
               </div>
               <div className="flex justify-between text-xs text-gray-500 mt-1">
                 <span>0%</span>
-                <span>{maxDrawdown}% (Limit)</span>
+                <span>{maxDrawdown}% ({t.limit})</span>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-gray-900/50 rounded-lg p-3">
-                <div className="text-gray-400 text-xs">High Water Mark</div>
+                <div className="text-gray-400 text-xs">{t.highWaterMark}</div>
                 <div className="text-white font-semibold">${highWaterMark.toLocaleString()}</div>
               </div>
               <div className="bg-gray-900/50 rounded-lg p-3">
-                <div className="text-gray-400 text-xs">Trailing Limit</div>
+                <div className="text-gray-400 text-xs">{t.trailingLimit}</div>
                 <div className="text-yellow-400 font-semibold">${Math.round(trailingLimit).toLocaleString()}</div>
               </div>
             </div>
 
             <div className="mt-4 p-3 bg-yellow-500/10 rounded-lg">
               <p className="text-yellow-400 text-sm">
-                ⚠️ <strong>Trailing:</strong> Limit moves up with profits. Be careful!
+                ⚠️ <strong>Trailing:</strong> {t.trailingTip}
               </p>
             </div>
           </div>
@@ -313,7 +509,7 @@ export default function DrawdownSimulatorClient() {
 
         {/* Quick Trade Buttons */}
         <div className="mt-6 bg-gray-800/50 border border-gray-700 rounded-xl p-6">
-          <h3 className="text-white font-semibold mb-4">Add Trade (Manual Mode)</h3>
+          <h3 className="text-white font-semibold mb-4">{t.addTrade}</h3>
           <div className="flex flex-wrap gap-2">
             {quickTrades.map((trade) => (
               <button
@@ -327,24 +523,24 @@ export default function DrawdownSimulatorClient() {
             ))}
           </div>
           <p className="text-gray-500 text-sm mt-3">
-            Current Balance: <span className="text-white font-semibold">${currentBalance.toLocaleString()}</span>
+            {t.currentBalance}: <span className="text-white font-semibold">${currentBalance.toLocaleString()}</span>
           </p>
         </div>
 
         {/* Trade History */}
         {trades.length > 0 && (
           <div className="mt-6 bg-gray-800/50 border border-gray-700 rounded-xl p-6">
-            <h3 className="text-white font-semibold mb-4">Trade History</h3>
+            <h3 className="text-white font-semibold mb-4">{t.tradeHistory}</h3>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-700">
                     <th className="text-left py-2 px-3 text-gray-400">#</th>
-                    <th className="text-right py-2 px-3 text-gray-400">P&L</th>
-                    <th className="text-right py-2 px-3 text-gray-400">Balance</th>
-                    <th className="text-right py-2 px-3 text-gray-400">HWM</th>
-                    <th className="text-right py-2 px-3 text-gray-400">Static DD</th>
-                    <th className="text-right py-2 px-3 text-gray-400">Trailing DD</th>
+                    <th className="text-right py-2 px-3 text-gray-400">{t.pnl}</th>
+                    <th className="text-right py-2 px-3 text-gray-400">{t.balance}</th>
+                    <th className="text-right py-2 px-3 text-gray-400">{t.hwm}</th>
+                    <th className="text-right py-2 px-3 text-gray-400">{t.staticDD}</th>
+                    <th className="text-right py-2 px-3 text-gray-400">{t.trailingDD}</th>
                   </tr>
                 </thead>
                 <tbody>
