@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/providers/AuthProvider';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
@@ -13,6 +13,140 @@ import {
   Trash2,
   BarChart3,
 } from 'lucide-react';
+
+// =============================================================================
+// LOCALE DETECTION & TRANSLATIONS
+// =============================================================================
+
+const locales = ['en', 'fr', 'de', 'es', 'pt', 'ar', 'hi'] as const;
+type Locale = (typeof locales)[number];
+
+function getLocaleFromPath(pathname: string): Locale {
+  const firstSegment = pathname.split('/')[1];
+  if (firstSegment && locales.includes(firstSegment as Locale)) {
+    return firstSegment as Locale;
+  }
+  return 'en';
+}
+
+const translations: Record<Locale, Record<string, string>> = {
+  en: {
+    backToDashboard: 'Back to Dashboard',
+    myFavorites: 'My Favorites',
+    savedFirms: 'saved prop firm',
+    savedFirmsPlural: 'saved prop firms',
+    noFavoritesYet: 'No favorites yet',
+    noFavoritesDesc: 'Start comparing prop firms and save your favorites to easily access them later.',
+    comparePropFirms: 'Compare Prop Firms',
+    profitSplit: 'profit split',
+    upTo: 'Up to',
+    viewDetails: 'View Details',
+    removeFromFavorites: 'Remove from Favorites',
+    wantToCompare: 'Want to compare your favorites?',
+    seeSideBySide: 'See them side by side to make a decision',
+    compareNow: 'Compare Now',
+  },
+  fr: {
+    backToDashboard: 'Retour au Tableau de Bord',
+    myFavorites: 'Mes Favoris',
+    savedFirms: 'prop firm sauvegardée',
+    savedFirmsPlural: 'prop firms sauvegardées',
+    noFavoritesYet: 'Aucun favori encore',
+    noFavoritesDesc: 'Commencez à comparer les prop firms et sauvegardez vos favoris pour y accéder facilement.',
+    comparePropFirms: 'Comparer les Prop Firms',
+    profitSplit: 'partage des profits',
+    upTo: "Jusqu'à",
+    viewDetails: 'Voir Détails',
+    removeFromFavorites: 'Retirer des Favoris',
+    wantToCompare: 'Vous voulez comparer vos favoris ?',
+    seeSideBySide: 'Voyez-les côte à côte pour prendre une décision',
+    compareNow: 'Comparer Maintenant',
+  },
+  de: {
+    backToDashboard: 'Zurück zum Dashboard',
+    myFavorites: 'Meine Favoriten',
+    savedFirms: 'gespeicherte Prop Firm',
+    savedFirmsPlural: 'gespeicherte Prop Firms',
+    noFavoritesYet: 'Noch keine Favoriten',
+    noFavoritesDesc: 'Beginnen Sie mit dem Vergleich und speichern Sie Ihre Favoriten für einfachen Zugriff.',
+    comparePropFirms: 'Prop Firms Vergleichen',
+    profitSplit: 'Gewinnaufteilung',
+    upTo: 'Bis zu',
+    viewDetails: 'Details Ansehen',
+    removeFromFavorites: 'Aus Favoriten Entfernen',
+    wantToCompare: 'Möchten Sie Ihre Favoriten vergleichen?',
+    seeSideBySide: 'Sehen Sie sie nebeneinander für eine Entscheidung',
+    compareNow: 'Jetzt Vergleichen',
+  },
+  es: {
+    backToDashboard: 'Volver al Panel',
+    myFavorites: 'Mis Favoritos',
+    savedFirms: 'prop firm guardada',
+    savedFirmsPlural: 'prop firms guardadas',
+    noFavoritesYet: 'Sin favoritos aún',
+    noFavoritesDesc: 'Comienza a comparar prop firms y guarda tus favoritos para acceder fácilmente.',
+    comparePropFirms: 'Comparar Prop Firms',
+    profitSplit: 'división de ganancias',
+    upTo: 'Hasta',
+    viewDetails: 'Ver Detalles',
+    removeFromFavorites: 'Quitar de Favoritos',
+    wantToCompare: '¿Quieres comparar tus favoritos?',
+    seeSideBySide: 'Míralos lado a lado para tomar una decisión',
+    compareNow: 'Comparar Ahora',
+  },
+  pt: {
+    backToDashboard: 'Voltar ao Painel',
+    myFavorites: 'Meus Favoritos',
+    savedFirms: 'prop firm salva',
+    savedFirmsPlural: 'prop firms salvas',
+    noFavoritesYet: 'Nenhum favorito ainda',
+    noFavoritesDesc: 'Comece a comparar prop firms e salve seus favoritos para acesso fácil.',
+    comparePropFirms: 'Comparar Prop Firms',
+    profitSplit: 'divisão de lucros',
+    upTo: 'Até',
+    viewDetails: 'Ver Detalhes',
+    removeFromFavorites: 'Remover dos Favoritos',
+    wantToCompare: 'Quer comparar seus favoritos?',
+    seeSideBySide: 'Veja-os lado a lado para tomar uma decisão',
+    compareNow: 'Comparar Agora',
+  },
+  ar: {
+    backToDashboard: 'العودة للوحة التحكم',
+    myFavorites: 'مفضلاتي',
+    savedFirms: 'شركة تداول محفوظة',
+    savedFirmsPlural: 'شركات تداول محفوظة',
+    noFavoritesYet: 'لا توجد مفضلات بعد',
+    noFavoritesDesc: 'ابدأ بمقارنة شركات التداول واحفظ مفضلاتك للوصول السهل.',
+    comparePropFirms: 'مقارنة شركات التداول',
+    profitSplit: 'تقسيم الأرباح',
+    upTo: 'حتى',
+    viewDetails: 'عرض التفاصيل',
+    removeFromFavorites: 'إزالة من المفضلة',
+    wantToCompare: 'تريد مقارنة مفضلاتك؟',
+    seeSideBySide: 'شاهدها جنباً إلى جنب لاتخاذ قرار',
+    compareNow: 'قارن الآن',
+  },
+  hi: {
+    backToDashboard: 'डैशबोर्ड पर वापस',
+    myFavorites: 'मेरे पसंदीदा',
+    savedFirms: 'सेव की गई प्रॉप फर्म',
+    savedFirmsPlural: 'सेव की गई प्रॉप फर्म्स',
+    noFavoritesYet: 'अभी कोई पसंदीदा नहीं',
+    noFavoritesDesc: 'प्रॉप फर्म्स की तुलना शुरू करें और आसान पहुंच के लिए अपने पसंदीदा सेव करें।',
+    comparePropFirms: 'प्रॉप फर्म्स की तुलना करें',
+    profitSplit: 'प्रॉफिट स्प्लिट',
+    upTo: 'तक',
+    viewDetails: 'विवरण देखें',
+    removeFromFavorites: 'पसंदीदा से हटाएं',
+    wantToCompare: 'अपने पसंदीदा की तुलना करना चाहते हैं?',
+    seeSideBySide: 'निर्णय लेने के लिए उन्हें साथ-साथ देखें',
+    compareNow: 'अभी तुलना करें',
+  },
+};
+
+// =============================================================================
+// TYPES
+// =============================================================================
 
 interface PropFirm {
   id: string;
@@ -38,7 +172,15 @@ interface FavoriteFirm {
   firm: PropFirm | null;
 }
 
+// =============================================================================
+// MAIN COMPONENT
+// =============================================================================
+
 export default function FavoritesPage() {
+  const pathname = usePathname();
+  const locale = getLocaleFromPath(pathname);
+  const t = translations[locale];
+  
   const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
   const supabase = createClientComponentClient();
@@ -81,7 +223,6 @@ export default function FavoritesPage() {
 
         if (error) throw error;
         
-        // Transform the data to handle Supabase's array response
         const transformedData: FavoriteFirm[] = (data as unknown as FavoriteFromDB[] || []).map((item) => ({
           id: item.id,
           prop_firm_id: item.prop_firm_id,
@@ -136,21 +277,21 @@ export default function FavoritesPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Back Link */}
         <Link
-          href="/dashboard"
+          href={`/${locale}/dashboard`}
           className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Dashboard
+          {t.backToDashboard}
         </Link>
 
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-white flex items-center gap-2">
             <Star className="w-6 h-6 text-yellow-400" />
-            My Favorites
+            {t.myFavorites}
           </h1>
           <p className="text-gray-400 mt-1">
-            {favorites.length} saved prop firm{favorites.length !== 1 ? 's' : ''}
+            {favorites.length} {favorites.length !== 1 ? t.savedFirmsPlural : t.savedFirms}
           </p>
         </div>
 
@@ -165,16 +306,16 @@ export default function FavoritesPage() {
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800 flex items-center justify-center">
               <Star className="w-8 h-8 text-gray-600" />
             </div>
-            <h2 className="text-xl font-semibold text-white mb-2">No favorites yet</h2>
+            <h2 className="text-xl font-semibold text-white mb-2">{t.noFavoritesYet}</h2>
             <p className="text-gray-400 mb-6 max-w-md mx-auto">
-              Start comparing prop firms and save your favorites to easily access them later.
+              {t.noFavoritesDesc}
             </p>
             <Link
-              href="/compare"
+              href={`/${locale}/compare`}
               className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors font-medium"
             >
               <BarChart3 className="w-5 h-5" />
-              Compare Prop Firms
+              {t.comparePropFirms}
             </Link>
           </div>
         ) : (
@@ -212,10 +353,10 @@ export default function FavoritesPage() {
                       </h3>
                       <div className="flex items-center gap-4 text-sm text-gray-400">
                         {firm.profit_split && (
-                          <span>{firm.profit_split}% profit split</span>
+                          <span>{firm.profit_split}% {t.profitSplit}</span>
                         )}
                         {firm.max_account_size && (
-                          <span>Up to ${firm.max_account_size.toLocaleString()}</span>
+                          <span>{t.upTo} ${firm.max_account_size.toLocaleString()}</span>
                         )}
                       </div>
                     </div>
@@ -223,9 +364,9 @@ export default function FavoritesPage() {
                     {/* Actions */}
                     <div className="flex items-center gap-2">
                       <Link
-                        href={`/compare?firm=${firm.slug}`}
+                        href={`/${locale}/compare?firm=${firm.slug}`}
                         className="p-2 text-gray-400 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition-colors"
-                        title="View Details"
+                        title={t.viewDetails}
                       >
                         <ExternalLink className="w-5 h-5" />
                       </Link>
@@ -233,7 +374,7 @@ export default function FavoritesPage() {
                         onClick={() => removeFavorite(favorite.id)}
                         disabled={removing === favorite.id}
                         className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
-                        title="Remove from Favorites"
+                        title={t.removeFromFavorites}
                       >
                         {removing === favorite.id ? (
                           <Loader2 className="w-5 h-5 animate-spin" />
@@ -254,14 +395,14 @@ export default function FavoritesPage() {
           <div className="mt-8 p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-xl">
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium text-white">Want to compare your favorites?</p>
-                <p className="text-sm text-gray-400">See them side by side to make a decision</p>
+                <p className="font-medium text-white">{t.wantToCompare}</p>
+                <p className="text-sm text-gray-400">{t.seeSideBySide}</p>
               </div>
               <Link
-                href="/compare"
+                href={`/${locale}/compare`}
                 className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors text-sm font-medium"
               >
-                Compare Now
+                {t.compareNow}
               </Link>
             </div>
           </div>

@@ -1,10 +1,102 @@
 'use client'
 
 import { useState } from 'react'
+import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, BookOpen, AlertTriangle, Check, X, Search, ChevronDown, ChevronUp } from 'lucide-react'
 
-// Rules database
+// =============================================================================
+// LOCALE DETECTION & TRANSLATIONS
+// =============================================================================
+
+const locales = ['en', 'fr', 'de', 'es', 'pt', 'ar', 'hi'] as const;
+type Locale = (typeof locales)[number];
+
+function getLocaleFromPath(pathname: string): Locale {
+  const firstSegment = pathname.split('/')[1];
+  if (firstSegment && locales.includes(firstSegment as Locale)) {
+    return firstSegment as Locale;
+  }
+  return 'en';
+}
+
+const translations: Record<Locale, Record<string, string>> = {
+  en: {
+    rulesHiddenRisks: 'Rules & Hidden Risks',
+    avoidMistakes: 'Avoid common mistakes for each prop firm',
+    searchPropFirms: 'Search prop firms...',
+    keyRules: 'Key Rules',
+    hiddenRulesGotchas: 'Hidden Rules / Gotchas',
+    commonMistakes: 'Common Mistakes',
+    bestFor: 'Best For',
+    avoidIf: 'Avoid If',
+  },
+  fr: {
+    rulesHiddenRisks: 'Règles & Risques Cachés',
+    avoidMistakes: 'Évitez les erreurs courantes pour chaque prop firm',
+    searchPropFirms: 'Rechercher des prop firms...',
+    keyRules: 'Règles Clés',
+    hiddenRulesGotchas: 'Règles Cachées / Pièges',
+    commonMistakes: 'Erreurs Courantes',
+    bestFor: 'Idéal Pour',
+    avoidIf: 'À Éviter Si',
+  },
+  de: {
+    rulesHiddenRisks: 'Regeln & Versteckte Risiken',
+    avoidMistakes: 'Vermeiden Sie häufige Fehler bei jeder Prop Firm',
+    searchPropFirms: 'Prop Firms suchen...',
+    keyRules: 'Wichtige Regeln',
+    hiddenRulesGotchas: 'Versteckte Regeln / Fallen',
+    commonMistakes: 'Häufige Fehler',
+    bestFor: 'Ideal Für',
+    avoidIf: 'Vermeiden Wenn',
+  },
+  es: {
+    rulesHiddenRisks: 'Reglas & Riesgos Ocultos',
+    avoidMistakes: 'Evita errores comunes para cada prop firm',
+    searchPropFirms: 'Buscar prop firms...',
+    keyRules: 'Reglas Clave',
+    hiddenRulesGotchas: 'Reglas Ocultas / Trampas',
+    commonMistakes: 'Errores Comunes',
+    bestFor: 'Ideal Para',
+    avoidIf: 'Evitar Si',
+  },
+  pt: {
+    rulesHiddenRisks: 'Regras & Riscos Ocultos',
+    avoidMistakes: 'Evite erros comuns para cada prop firm',
+    searchPropFirms: 'Pesquisar prop firms...',
+    keyRules: 'Regras Principais',
+    hiddenRulesGotchas: 'Regras Ocultas / Armadilhas',
+    commonMistakes: 'Erros Comuns',
+    bestFor: 'Ideal Para',
+    avoidIf: 'Evitar Se',
+  },
+  ar: {
+    rulesHiddenRisks: 'القواعد والمخاطر الخفية',
+    avoidMistakes: 'تجنب الأخطاء الشائعة لكل شركة تداول',
+    searchPropFirms: 'بحث شركات التداول...',
+    keyRules: 'القواعد الرئيسية',
+    hiddenRulesGotchas: 'القواعد الخفية / الفخاخ',
+    commonMistakes: 'الأخطاء الشائعة',
+    bestFor: 'مثالي لـ',
+    avoidIf: 'تجنب إذا',
+  },
+  hi: {
+    rulesHiddenRisks: 'नियम और छिपे जोखिम',
+    avoidMistakes: 'प्रत्येक प्रॉप फर्म के लिए सामान्य गलतियों से बचें',
+    searchPropFirms: 'प्रॉप फर्म खोजें...',
+    keyRules: 'मुख्य नियम',
+    hiddenRulesGotchas: 'छिपे नियम / जाल',
+    commonMistakes: 'सामान्य गलतियां',
+    bestFor: 'के लिए बेहतर',
+    avoidIf: 'अगर बचें',
+  },
+};
+
+// =============================================================================
+// RULES DATABASE
+// =============================================================================
+
 const rulesDatabase = [
   {
     slug: 'ftmo',
@@ -19,7 +111,7 @@ const rulesDatabase = [
     ],
     hiddenRules: [
       'No trading 2 minutes before/after high-impact news events',
-      'Consistency rule applies on verification - don\'t make 80%+ profits in 1-2 trades',
+      "Consistency rule applies on verification - don't make 80%+ profits in 1-2 trades",
       'Maximum position size relative to account is monitored',
       'Swap triple on Wednesdays - plan overnight holds accordingly',
     ],
@@ -30,7 +122,7 @@ const rulesDatabase = [
       'Making all profits in one big trade during verification',
     ],
     bestFor: ['Consistent traders', 'Those who avoid news', 'Swing traders'],
-    avoidIf: ['You\'re a news trader', 'You rely on 1-2 big trades', 'You need instant funding'],
+    avoidIf: ["You're a news trader", 'You rely on 1-2 big trades', 'You need instant funding'],
   },
   {
     slug: 'fundednext',
@@ -45,8 +137,8 @@ const rulesDatabase = [
     ],
     hiddenRules: [
       'Copy trading is actively monitored - using same strategy as many traders can flag your account',
-      '15% profit share during challenge - but only if you don\'t breach',
-      '1-Step has stricter limits (3% daily vs 5%) - many traders don\'t adjust',
+      "15% profit share during challenge - but only if you don't breach",
+      "1-Step has stricter limits (3% daily vs 5%) - many traders don't adjust",
       'Account scaling available on funded accounts with consistent performance',
     ],
     commonMistakes: [
@@ -56,7 +148,7 @@ const rulesDatabase = [
       'Ignoring the 15% profit share opportunity during challenge',
     ],
     bestFor: ['News traders', 'EA traders', 'Those who want earnings during challenge'],
-    avoidIf: ['You use widely shared EAs', 'You can\'t adjust to different DD limits'],
+    avoidIf: ['You use widely shared EAs', "You can't adjust to different DD limits"],
   },
   {
     slug: 'my-funded-futures',
@@ -82,7 +174,7 @@ const rulesDatabase = [
       'Not understanding when the trailing drawdown starts',
     ],
     bestFor: ['Intraday traders', 'Those who want no daily DD limit', 'Consistent traders'],
-    avoidIf: ['You hold over weekends', 'You make big % on single days', 'You\'re confused by trailing DD'],
+    avoidIf: ['You hold over weekends', 'You make big % on single days', "You're confused by trailing DD"],
   },
   {
     slug: 'topstep',
@@ -151,7 +243,7 @@ const rulesDatabase = [
     hiddenRules: [
       'News trading restricted unless you purchase the add-on',
       'Best day rule: 35% max on some programs',
-      'Add-on features change rules - verify they\'re applied',
+      "Add-on features change rules - verify they're applied",
       '100% profit split achievable through scaling',
     ],
     commonMistakes: [
@@ -161,11 +253,19 @@ const rulesDatabase = [
       'Forgetting to activate purchased add-ons',
     ],
     bestFor: ['Those who want no min days', 'Weekend holders', 'Traders willing to pay for flexibility'],
-    avoidIf: ['You\'re a news trader (without add-on)', 'You need standardized rules'],
+    avoidIf: ["You're a news trader (without add-on)", 'You need standardized rules'],
   },
 ]
 
+// =============================================================================
+// MAIN COMPONENT
+// =============================================================================
+
 export default function RulesPage() {
+  const pathname = usePathname()
+  const locale = getLocaleFromPath(pathname)
+  const t = translations[locale]
+  
   const [searchQuery, setSearchQuery] = useState('')
   const [expandedFirm, setExpandedFirm] = useState<string | null>(null)
   
@@ -179,15 +279,15 @@ export default function RulesPage() {
       <header className="border-b border-gray-800 bg-gray-900/95 backdrop-blur sticky top-0 z-50">
         <div className="max-w-3xl mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
-            <Link href="/dashboard" className="p-2 hover:bg-gray-800 rounded-lg transition-colors">
+            <Link href={`/${locale}/dashboard`} className="p-2 hover:bg-gray-800 rounded-lg transition-colors">
               <ArrowLeft className="w-5 h-5 text-gray-400" />
             </Link>
             <div>
               <h1 className="text-lg font-bold text-white flex items-center gap-2">
                 <BookOpen className="w-5 h-5 text-purple-400" />
-                Rules & Hidden Risks
+                {t.rulesHiddenRisks}
               </h1>
-              <p className="text-sm text-gray-500">Avoid common mistakes for each prop firm</p>
+              <p className="text-sm text-gray-500">{t.avoidMistakes}</p>
             </div>
           </div>
         </div>
@@ -201,7 +301,7 @@ export default function RulesPage() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search prop firms..."
+            placeholder={t.searchPropFirms}
             className="w-full pl-12 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder:text-gray-500 focus:outline-none focus:border-purple-500"
           />
         </div>
@@ -236,7 +336,7 @@ export default function RulesPage() {
                 <div className="px-4 pb-4 space-y-4">
                   {/* Key Rules */}
                   <div>
-                    <h3 className="text-sm font-medium text-gray-400 uppercase tracking-wide mb-2">Key Rules</h3>
+                    <h3 className="text-sm font-medium text-gray-400 uppercase tracking-wide mb-2">{t.keyRules}</h3>
                     <div className="bg-gray-900/50 rounded-lg divide-y divide-gray-800">
                       {firm.keyRules.map((item, i) => (
                         <div key={i} className="flex justify-between py-2 px-3 text-sm">
@@ -257,7 +357,7 @@ export default function RulesPage() {
                   <div>
                     <h3 className="text-sm font-medium text-yellow-400 uppercase tracking-wide mb-2 flex items-center gap-2">
                       <AlertTriangle className="w-4 h-4" />
-                      Hidden Rules / Gotchas
+                      {t.hiddenRulesGotchas}
                     </h3>
                     <div className="bg-yellow-500/5 border border-yellow-500/20 rounded-lg p-3">
                       <ul className="space-y-2">
@@ -275,7 +375,7 @@ export default function RulesPage() {
                   <div>
                     <h3 className="text-sm font-medium text-red-400 uppercase tracking-wide mb-2 flex items-center gap-2">
                       <X className="w-4 h-4" />
-                      Common Mistakes
+                      {t.commonMistakes}
                     </h3>
                     <div className="bg-red-500/5 border border-red-500/20 rounded-lg p-3">
                       <ul className="space-y-2">
@@ -294,7 +394,7 @@ export default function RulesPage() {
                     <div>
                       <h3 className="text-sm font-medium text-emerald-400 uppercase tracking-wide mb-2 flex items-center gap-2">
                         <Check className="w-4 h-4" />
-                        Best For
+                        {t.bestFor}
                       </h3>
                       <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-lg p-3">
                         <ul className="space-y-1">
@@ -310,7 +410,7 @@ export default function RulesPage() {
                     <div>
                       <h3 className="text-sm font-medium text-red-400 uppercase tracking-wide mb-2 flex items-center gap-2">
                         <X className="w-4 h-4" />
-                        Avoid If
+                        {t.avoidIf}
                       </h3>
                       <div className="bg-red-500/5 border border-red-500/20 rounded-lg p-3">
                         <ul className="space-y-1">
