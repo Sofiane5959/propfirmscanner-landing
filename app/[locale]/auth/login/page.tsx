@@ -1,10 +1,176 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Shield, Mail, Loader2, AlertCircle } from 'lucide-react';
+
+// =============================================================================
+// LOCALE DETECTION & TRANSLATIONS
+// =============================================================================
+
+const locales = ['en', 'fr', 'de', 'es', 'pt', 'ar', 'hi'] as const;
+type Locale = (typeof locales)[number];
+
+function getLocaleFromPath(pathname: string): Locale {
+  const firstSegment = pathname.split('/')[1];
+  if (firstSegment && locales.includes(firstSegment as Locale)) {
+    return firstSegment as Locale;
+  }
+  return 'en';
+}
+
+const translations: Record<Locale, Record<string, string>> = {
+  en: {
+    title: 'Sign In',
+    subtitle: 'Access your personal space',
+    continueGoogle: 'Continue with Google',
+    continueEmail: 'Continue with Email (coming soon)',
+    loading: 'Signing in...',
+    or: 'or',
+    terms: 'By signing in, you agree to our',
+    termsLink: 'Terms of Service',
+    and: 'and our',
+    privacyLink: 'Privacy Policy',
+    error: 'An error occurred. Please try again.',
+    // Benefits
+    multiAccount: 'Multi-accounts',
+    multiAccountDesc: 'Manage all your prop firms',
+    simulation: 'Simulation',
+    simulationDesc: 'Test your trades',
+    alerts: 'Alerts',
+    alertsDesc: 'Never miss a rule',
+    favorites: 'Favorites',
+    favoritesDesc: 'Save your firms',
+  },
+  fr: {
+    title: 'Connectez-vous',
+    subtitle: 'Accédez à votre espace personnel',
+    continueGoogle: 'Continuer avec Google',
+    continueEmail: 'Continuer avec Email (bientôt)',
+    loading: 'Connexion en cours...',
+    or: 'ou',
+    terms: 'En vous connectant, vous acceptez nos',
+    termsLink: 'Conditions d\'utilisation',
+    and: 'et notre',
+    privacyLink: 'Politique de confidentialité',
+    error: 'Une erreur est survenue. Veuillez réessayer.',
+    multiAccount: 'Multi-comptes',
+    multiAccountDesc: 'Gérez toutes vos prop firms',
+    simulation: 'Simulation',
+    simulationDesc: 'Testez vos trades',
+    alerts: 'Alertes',
+    alertsDesc: 'Ne ratez aucune règle',
+    favorites: 'Favoris',
+    favoritesDesc: 'Sauvegardez vos firms',
+  },
+  de: {
+    title: 'Anmelden',
+    subtitle: 'Zugang zu Ihrem persönlichen Bereich',
+    continueGoogle: 'Mit Google fortfahren',
+    continueEmail: 'Mit E-Mail fortfahren (bald)',
+    loading: 'Anmeldung läuft...',
+    or: 'oder',
+    terms: 'Mit der Anmeldung akzeptieren Sie unsere',
+    termsLink: 'Nutzungsbedingungen',
+    and: 'und unsere',
+    privacyLink: 'Datenschutzrichtlinie',
+    error: 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.',
+    multiAccount: 'Multi-Konten',
+    multiAccountDesc: 'Verwalten Sie alle Ihre Prop Firms',
+    simulation: 'Simulation',
+    simulationDesc: 'Testen Sie Ihre Trades',
+    alerts: 'Warnungen',
+    alertsDesc: 'Verpassen Sie keine Regel',
+    favorites: 'Favoriten',
+    favoritesDesc: 'Speichern Sie Ihre Firms',
+  },
+  es: {
+    title: 'Iniciar Sesión',
+    subtitle: 'Accede a tu espacio personal',
+    continueGoogle: 'Continuar con Google',
+    continueEmail: 'Continuar con Email (próximamente)',
+    loading: 'Iniciando sesión...',
+    or: 'o',
+    terms: 'Al iniciar sesión, aceptas nuestros',
+    termsLink: 'Términos de Servicio',
+    and: 'y nuestra',
+    privacyLink: 'Política de Privacidad',
+    error: 'Ocurrió un error. Por favor intenta de nuevo.',
+    multiAccount: 'Multi-cuentas',
+    multiAccountDesc: 'Gestiona todas tus prop firms',
+    simulation: 'Simulación',
+    simulationDesc: 'Prueba tus trades',
+    alerts: 'Alertas',
+    alertsDesc: 'No te pierdas ninguna regla',
+    favorites: 'Favoritos',
+    favoritesDesc: 'Guarda tus firms',
+  },
+  pt: {
+    title: 'Entrar',
+    subtitle: 'Acesse seu espaço pessoal',
+    continueGoogle: 'Continuar com Google',
+    continueEmail: 'Continuar com Email (em breve)',
+    loading: 'Entrando...',
+    or: 'ou',
+    terms: 'Ao entrar, você concorda com nossos',
+    termsLink: 'Termos de Serviço',
+    and: 'e nossa',
+    privacyLink: 'Política de Privacidade',
+    error: 'Ocorreu um erro. Por favor, tente novamente.',
+    multiAccount: 'Multi-contas',
+    multiAccountDesc: 'Gerencie todas as suas prop firms',
+    simulation: 'Simulação',
+    simulationDesc: 'Teste seus trades',
+    alerts: 'Alertas',
+    alertsDesc: 'Não perca nenhuma regra',
+    favorites: 'Favoritos',
+    favoritesDesc: 'Salve suas firms',
+  },
+  ar: {
+    title: 'تسجيل الدخول',
+    subtitle: 'الوصول إلى مساحتك الشخصية',
+    continueGoogle: 'المتابعة مع Google',
+    continueEmail: 'المتابعة بالبريد الإلكتروني (قريباً)',
+    loading: 'جاري تسجيل الدخول...',
+    or: 'أو',
+    terms: 'بتسجيل الدخول، أنت توافق على',
+    termsLink: 'شروط الخدمة',
+    and: 'و',
+    privacyLink: 'سياسة الخصوصية',
+    error: 'حدث خطأ. يرجى المحاولة مرة أخرى.',
+    multiAccount: 'حسابات متعددة',
+    multiAccountDesc: 'إدارة جميع شركاتك',
+    simulation: 'محاكاة',
+    simulationDesc: 'اختبر صفقاتك',
+    alerts: 'تنبيهات',
+    alertsDesc: 'لا تفوت أي قاعدة',
+    favorites: 'المفضلة',
+    favoritesDesc: 'احفظ شركاتك',
+  },
+  hi: {
+    title: 'साइन इन करें',
+    subtitle: 'अपने व्यक्तिगत स्थान तक पहुंचें',
+    continueGoogle: 'Google से जारी रखें',
+    continueEmail: 'ईमेल से जारी रखें (जल्द आ रहा है)',
+    loading: 'साइन इन हो रहा है...',
+    or: 'या',
+    terms: 'साइन इन करके, आप हमारी',
+    termsLink: 'सेवा की शर्तें',
+    and: 'और हमारी',
+    privacyLink: 'गोपनीयता नीति',
+    error: 'एक त्रुटि हुई। कृपया पुनः प्रयास करें।',
+    multiAccount: 'मल्टी-अकाउंट',
+    multiAccountDesc: 'अपनी सभी प्रॉप फर्म्स प्रबंधित करें',
+    simulation: 'सिमुलेशन',
+    simulationDesc: 'अपने ट्रेड्स टेस्ट करें',
+    alerts: 'अलर्ट',
+    alertsDesc: 'कोई नियम न चूकें',
+    favorites: 'पसंदीदा',
+    favoritesDesc: 'अपनी फर्म्स सेव करें',
+  },
+};
 
 // =============================================================================
 // GOOGLE ICON COMPONENT
@@ -38,6 +204,10 @@ function GoogleIcon({ className }: { className?: string }) {
 // =============================================================================
 
 export default function LoginPage() {
+  const pathname = usePathname();
+  const locale = getLocaleFromPath(pathname);
+  const t = translations[locale];
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -59,9 +229,8 @@ export default function LoginPage() {
         setError(error.message);
         setIsLoading(false);
       }
-      // If successful, user will be redirected to Google
     } catch (err) {
-      setError('Une erreur est survenue. Veuillez réessayer.');
+      setError(t.error);
       setIsLoading(false);
     }
   };
@@ -71,7 +240,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         {/* Logo & Title */}
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 mb-6">
+          <Link href={`/${locale}`} className="inline-flex items-center gap-2 mb-6">
             <div className="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center">
               <Shield className="w-5 h-5 text-emerald-400" />
             </div>
@@ -79,10 +248,10 @@ export default function LoginPage() {
           </Link>
           
           <h1 className="text-2xl font-bold text-white mb-2">
-            Connectez-vous
+            {t.title}
           </h1>
           <p className="text-gray-400">
-            Accédez à votre espace personnel
+            {t.subtitle}
           </p>
         </div>
 
@@ -107,7 +276,7 @@ export default function LoginPage() {
             ) : (
               <GoogleIcon className="w-5 h-5" />
             )}
-            {isLoading ? 'Connexion en cours...' : 'Continuer avec Google'}
+            {isLoading ? t.loading : t.continueGoogle}
           </button>
 
           {/* Divider */}
@@ -116,7 +285,7 @@ export default function LoginPage() {
               <div className="w-full border-t border-gray-800"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-gray-900 text-gray-500">ou</span>
+              <span className="px-4 bg-gray-900 text-gray-500">{t.or}</span>
             </div>
           </div>
 
@@ -126,18 +295,18 @@ export default function LoginPage() {
             className="w-full flex items-center justify-center gap-3 py-3.5 bg-gray-800 text-gray-500 font-medium rounded-xl cursor-not-allowed"
           >
             <Mail className="w-5 h-5" />
-            Continuer avec Email (bientôt)
+            {t.continueEmail}
           </button>
 
           {/* Terms */}
           <p className="mt-6 text-center text-xs text-gray-500">
-            En vous connectant, vous acceptez nos{' '}
-            <Link href="/terms" className="text-emerald-400 hover:underline">
-              Conditions d&apos;utilisation
+            {t.terms}{' '}
+            <Link href={`/${locale}/terms`} className="text-emerald-400 hover:underline">
+              {t.termsLink}
             </Link>{' '}
-            et notre{' '}
-            <Link href="/privacy" className="text-emerald-400 hover:underline">
-              Politique de confidentialité
+            {t.and}{' '}
+            <Link href={`/${locale}/privacy`} className="text-emerald-400 hover:underline">
+              {t.privacyLink}
             </Link>
           </p>
         </div>
@@ -145,20 +314,20 @@ export default function LoginPage() {
         {/* Benefits */}
         <div className="mt-8 grid grid-cols-2 gap-4">
           <div className="p-4 bg-gray-900/50 rounded-xl border border-gray-800">
-            <p className="text-sm font-medium text-white">Multi-comptes</p>
-            <p className="text-xs text-gray-500 mt-1">Gérez toutes vos prop firms</p>
+            <p className="text-sm font-medium text-white">{t.multiAccount}</p>
+            <p className="text-xs text-gray-500 mt-1">{t.multiAccountDesc}</p>
           </div>
           <div className="p-4 bg-gray-900/50 rounded-xl border border-gray-800">
-            <p className="text-sm font-medium text-white">Simulation</p>
-            <p className="text-xs text-gray-500 mt-1">Testez vos trades</p>
+            <p className="text-sm font-medium text-white">{t.simulation}</p>
+            <p className="text-xs text-gray-500 mt-1">{t.simulationDesc}</p>
           </div>
           <div className="p-4 bg-gray-900/50 rounded-xl border border-gray-800">
-            <p className="text-sm font-medium text-white">Alertes</p>
-            <p className="text-xs text-gray-500 mt-1">Ne ratez aucune règle</p>
+            <p className="text-sm font-medium text-white">{t.alerts}</p>
+            <p className="text-xs text-gray-500 mt-1">{t.alertsDesc}</p>
           </div>
           <div className="p-4 bg-gray-900/50 rounded-xl border border-gray-800">
-            <p className="text-sm font-medium text-white">Favoris</p>
-            <p className="text-xs text-gray-500 mt-1">Sauvegardez vos firms</p>
+            <p className="text-sm font-medium text-white">{t.favorites}</p>
+            <p className="text-xs text-gray-500 mt-1">{t.favoritesDesc}</p>
           </div>
         </div>
       </div>
