@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PropFirmScanner Academy — Prop Firm Fundamentals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:        #05091a;
+  --bg2:       #0b1126;
+  --bg3:       #111a35;
+  --border:    #1c2850;
+  --accent:    #00d4a0;
+  --accent2:   #ff6b35;
+  --accent3:   #5b8def;
+  --text:      #e2eaff;
+  --muted:     #5a6e99;
+  --muted2:    #3a4d72;
+  --green:     #00d4a0;
+  --orange:    #ff6b35;
+  --blue:      #5b8def;
+  --red:       #ff4d6a;
+  --font-head: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-family:var(--font-body);overflow:hidden}
+body{display:flex;flex-direction:column}
+
+/* ── APP SHELL ── */
+#root{display:flex;flex-direction:column;height:100vh;overflow:hidden}
+
+/* ── TOPBAR ── */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;height:56px;
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  flex-shrink:0;z-index:10;
+}
+.topbar-brand{display:flex;align-items:center;gap:10px}
+.topbar-logo{font-family:var(--font-head);font-weight:800;font-size:15px;color:var(--accent);letter-spacing:.5px}
+.topbar-sep{color:var(--muted2);margin:0 4px}
+.topbar-course{font-size:13px;color:var(--muted);font-weight:500}
+.topbar-right{display:flex;align-items:center;gap:16px}
+.progress-pill{
+  display:flex;align-items:center;gap:8px;
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:20px;padding:5px 12px;
+}
+.progress-pill-bar{width:80px;height:4px;background:var(--muted2);border-radius:2px;overflow:hidden}
+.progress-pill-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .4s ease}
+.progress-pill-label{font-size:11px;color:var(--muted);font-family:var(--font-mono)}
+.score-badge{
+  display:flex;align-items:center;gap:5px;
+  background:rgba(0,212,160,.1);border:1px solid rgba(0,212,160,.2);
+  border-radius:20px;padding:5px 12px;
+  font-size:12px;font-family:var(--font-mono);color:var(--accent);
+}
+
+/* ── MAIN CONTENT ── */
+.app-body{display:flex;flex:1;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:260px;flex-shrink:0;
+  background:var(--bg2);border-right:1px solid var(--border);
+  overflow-y:auto;display:flex;flex-direction:column;
+}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-track{background:transparent}
+.sidebar::-webkit-scrollbar-thumb{background:var(--muted2);border-radius:2px}
+.sidebar-header{padding:16px;border-bottom:1px solid var(--border)}
+.sidebar-title{font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px}
+.lesson-item{
+  display:flex;align-items:center;gap:12px;
+  padding:11px 16px;cursor:pointer;
+  border-bottom:1px solid rgba(28,40,80,.5);
+  transition:background .15s;position:relative;
+}
+.lesson-item:hover{background:rgba(91,141,239,.05)}
+.lesson-item.active{background:rgba(0,212,160,.07);border-right:3px solid var(--accent)}
+.lesson-item.completed .lesson-dot{background:var(--accent)!important;border-color:var(--accent)!important}
+.lesson-dot{
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;flex-shrink:0;
+  border:2px solid var(--muted2);background:transparent;
+  transition:all .2s;
+}
+.lesson-item.active .lesson-dot{border-color:var(--accent);background:rgba(0,212,160,.15)}
+.lesson-meta{flex:1;min-width:0}
+.lesson-name{font-size:12.5px;font-weight:600;color:var(--text);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lesson-item.active .lesson-name{color:var(--accent)}
+.lesson-dur{font-size:10.5px;color:var(--muted);margin-top:2px;font-family:var(--font-mono)}
+.lesson-check{font-size:13px;color:var(--accent)}
+
+/* ── MAIN AREA ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+
+/* ── AUDIO PLAYER BAR ── */
+.audio-bar{
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  padding:10px 24px;display:flex;align-items:center;gap:16px;
+  flex-shrink:0;
+}
+.audio-controls{display:flex;align-items:center;gap:10px}
+.btn-play{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--accent);border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .1s,background .15s;color:#000;font-size:14px;
+}
+.btn-play:hover{background:#00f0b5;transform:scale(1.05)}
+.btn-play:active{transform:scale(.95)}
+.btn-skip{
+  width:28px;height:28px;border-radius:50%;
+  background:var(--bg3);border:1px solid var(--border);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--muted);font-size:11px;transition:all .15s;
+}
+.btn-skip:hover{border-color:var(--accent);color:var(--accent)}
+.audio-info{flex:1;min-width:0}
+.audio-title{font-size:12px;color:var(--muted);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.audio-progress{height:4px;background:var(--muted2);border-radius:2px;cursor:pointer;position:relative}
+.audio-progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .1s linear}
+.audio-progress:hover .audio-progress-thumb{opacity:1}
+.audio-progress-thumb{
+  position:absolute;top:50%;transform:translate(-50%,-50%);
+  width:10px;height:10px;border-radius:50%;background:var(--accent);
+  opacity:0;transition:opacity .15s;pointer-events:none;
+}
+.audio-time{font-size:11px;color:var(--muted);font-family:var(--font-mono);white-space:nowrap}
+.audio-parts{display:flex;gap:4px;align-items:center}
+.part-dot{
+  width:6px;height:6px;border-radius:50%;background:var(--muted2);
+  cursor:pointer;transition:background .15s;
+}
+.part-dot.active{background:var(--accent)}
+.part-dot.played{background:rgba(0,212,160,.4)}
+
+/* ── SLIDE AREA ── */
+.slide-area{flex:1;overflow:hidden;display:flex;flex-direction:column;position:relative}
+.slide-container{flex:1;overflow-y:auto;padding:32px;display:flex;justify-content:center}
+.slide-container::-webkit-scrollbar{width:4px}
+.slide-container::-webkit-scrollbar-thumb{background:var(--muted2);border-radius:2px}
+.slide-wrap{width:100%;max-width:760px;animation:slideIn .35s ease}
+@keyframes slideIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── SLIDE NAV FOOTER ── */
+.slide-nav{
+  background:var(--bg2);border-top:1px solid var(--border);
+  padding:12px 24px;display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+}
+.slide-dots{display:flex;gap:6px;align-items:center}
+.sdot{
+  width:7px;height:7px;border-radius:50%;background:var(--muted2);
+  cursor:pointer;transition:all .2s;
+}
+.sdot.active{width:20px;border-radius:4px;background:var(--accent)}
+.sdot.done{background:rgba(0,212,160,.5)}
+.nav-btn{
+  display:flex;align-items:center;gap:6px;
+  padding:8px 18px;border-radius:8px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--text);cursor:pointer;
+  font-size:13px;font-weight:500;transition:all .15s;font-family:var(--font-body);
+}
+.nav-btn:hover{border-color:var(--accent);color:var(--accent)}
+.nav-btn.primary{background:var(--accent);color:#000;border-color:var(--accent)}
+.nav-btn.primary:hover{background:#00f0b5}
+.nav-btn:disabled{opacity:.35;cursor:not-allowed}
+.slide-counter{font-size:12px;color:var(--muted);font-family:var(--font-mono)}
+
+/* ═══════════════════════════════
+   SLIDE TYPES
+═══════════════════════════════ */
+
+/* COVER */
+.slide-cover{
+  min-height:380px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;
+  padding:40px 24px;
+  background:linear-gradient(135deg,rgba(0,212,160,.06) 0%,rgba(91,141,239,.04) 100%);
+  border:1px solid var(--border);border-radius:16px;position:relative;overflow:hidden;
+}
+.slide-cover::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(0,212,160,.12) 0%,transparent 65%);
+  pointer-events:none;
+}
+.cover-badge{
+  display:inline-block;padding:5px 14px;border-radius:20px;
+  background:rgba(0,212,160,.1);border:1px solid rgba(0,212,160,.25);
+  font-size:11px;font-weight:700;color:var(--accent);letter-spacing:1px;
+  text-transform:uppercase;margin-bottom:20px;font-family:var(--font-mono);
+}
+.cover-title{
+  font-family:var(--font-head);font-size:clamp(24px,4vw,36px);
+  font-weight:800;color:var(--text);line-height:1.2;margin-bottom:12px;
+}
+.cover-sub{font-size:15px;color:var(--muted);margin-bottom:30px;font-weight:400}
+.cover-highlights{
+  display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
+}
+.cover-hl{
+  padding:6px 14px;border-radius:20px;
+  background:var(--bg3);border:1px solid var(--border);
+  font-size:12px;color:var(--text);font-weight:500;
+}
+
+/* DEFINITION */
+.slide-definition{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:32px;overflow:hidden}
+.slide-icon{font-size:28px;margin-bottom:16px;display:block}
+.slide-h{font-family:var(--font-head);font-size:clamp(18px,2.5vw,24px);font-weight:700;color:var(--text);margin-bottom:20px}
+.def-box{
+  background:rgba(0,212,160,.06);border-left:3px solid var(--accent);
+  border-radius:0 8px 8px 0;padding:16px 20px;margin:16px 0;
+}
+.def-term{font-family:var(--font-mono);font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.def-text{font-size:14px;color:var(--text);line-height:1.7}
+.def-tags{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0}
+.def-tag{
+  padding:4px 12px;border-radius:20px;
+  background:var(--bg3);border:1px solid var(--border);
+  font-size:11px;color:var(--muted);font-weight:500;
+}
+.def-note{
+  background:rgba(91,141,239,.07);border:1px solid rgba(91,141,239,.15);
+  border-radius:8px;padding:12px 16px;margin-top:16px;
+  font-size:13px;color:var(--blue);font-style:italic;line-height:1.6;
+}
+
+/* LIST */
+.slide-list{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:32px}
+.slide-intro{font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.6}
+.list-items{display:flex;flex-direction:column;gap:10px}
+.list-item{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:12px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;
+  animation:fadeUp .3s ease both;
+  transition:border-color .15s;
+}
+.list-item:hover{border-color:var(--muted2)}
+.list-item-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.list-item-text{font-size:13.5px;color:var(--text);line-height:1.5}
+
+/* STEPS */
+.slide-steps{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:32px}
+.steps-list{display:flex;flex-direction:column;gap:12px;margin-top:16px}
+.step-item{
+  display:flex;gap:16px;padding:16px;
+  background:var(--bg3);border:1px solid var(--border);border-radius:12px;
+  animation:fadeUp .3s ease both;
+}
+.step-num{
+  flex-shrink:0;width:36px;height:36px;border-radius:8px;
+  background:rgba(0,212,160,.12);border:1px solid rgba(0,212,160,.25);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--accent);
+}
+.step-content{}
+.step-title{font-size:13.5px;font-weight:600;color:var(--text);margin-bottom:4px}
+.step-desc{font-size:12.5px;color:var(--muted);line-height:1.6}
+
+/* STATS */
+.slide-stats{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:32px}
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:20px 0}
+.stat-card{
+  padding:20px;border-radius:12px;border:1px solid var(--border);
+  background:var(--bg3);text-align:center;animation:fadeUp .3s ease both;
+}
+.stat-value{
+  font-family:var(--font-head);font-size:clamp(22px,3vw,32px);
+  font-weight:800;margin-bottom:6px;
+}
+.stat-value.green{color:var(--green)}
+.stat-value.orange{color:var(--orange)}
+.stat-value.blue{color:var(--blue)}
+.stat-value.red{color:var(--red)}
+.stat-label{font-size:12px;color:var(--muted);line-height:1.4}
+.stats-note{
+  background:rgba(91,141,239,.07);border:1px solid rgba(91,141,239,.15);
+  border-radius:8px;padding:12px 16px;
+  font-size:13px;color:var(--blue);line-height:1.6;
+}
+
+/* COMPARE */
+.slide-compare{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:32px}
+.compare-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13px}
+.compare-table th{
+  padding:10px 14px;text-align:left;
+  background:var(--bg3);border-bottom:2px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.5px;
+  color:var(--muted);
+}
+.compare-table th:first-child{color:var(--muted);border-radius:8px 0 0 0}
+.compare-table th.left-col{color:var(--orange)}
+.compare-table th.right-col{color:var(--green)}
+.compare-table td{
+  padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;
+}
+.compare-table tr:last-child td{border-bottom:none}
+.compare-table tr:hover td{background:rgba(255,255,255,.02)}
+.compare-winner{
+  margin-top:16px;padding:12px 16px;border-radius:8px;
+  background:rgba(0,212,160,.07);border:1px solid rgba(0,212,160,.2);
+  display:flex;align-items:center;gap:8px;
+  font-size:13px;color:var(--accent);
+}
+
+/* FORMULA */
+.slide-formula{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:32px}
+.formula-sections{display:flex;flex-direction:column;gap:14px;margin:20px 0}
+.formula-section{border-radius:12px;padding:18px;border:1px solid var(--border);background:var(--bg3)}
+.formula-section.green{border-left:3px solid var(--green)}
+.formula-section.orange{border-left:3px solid var(--orange)}
+.formula-section.red{border-left:3px solid var(--red)}
+.formula-section.blue{border-left:3px solid var(--blue)}
+.fs-name{font-family:var(--font-mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.fs-formula{
+  font-family:var(--font-mono);font-size:14px;color:var(--accent);
+  background:rgba(0,212,160,.08);padding:8px 12px;border-radius:6px;margin:8px 0;
+}
+.fs-example{font-size:13px;color:var(--text);margin:6px 0;line-height:1.5}
+.fs-note{font-size:12px;color:var(--muted);font-style:italic;margin-top:6px}
+.formula-critical{
+  background:rgba(255,77,106,.07);border:1px solid rgba(255,77,106,.2);
+  border-radius:8px;padding:14px 16px;
+  font-size:13px;font-weight:600;color:var(--red);
+}
+
+/* SCENARIO */
+.slide-scenario{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:32px}
+.scenario-box{background:var(--bg3);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:16px}
+.scenario-setup{padding:16px 20px;border-bottom:1px solid var(--border)}
+.scenario-label{font-family:var(--font-mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.scenario-text{font-size:13.5px;color:var(--text);line-height:1.6}
+.scenario-event{padding:16px 20px;border-bottom:1px solid var(--border);background:rgba(255,107,53,.04)}
+.scenario-question{padding:16px 20px;border-bottom:1px solid var(--border);background:rgba(91,141,239,.05)}
+.scenario-answer{padding:16px 20px;background:rgba(0,212,160,.05)}
+.scenario-answer .scenario-text{color:var(--accent);font-weight:600}
+.scenario-lesson{
+  padding:14px 20px;background:var(--bg2);border-top:2px solid var(--accent);
+  font-size:13px;color:var(--text);line-height:1.6;font-style:italic;
+}
+
+/* PROMO */
+.slide-promo{
+  background:linear-gradient(135deg,rgba(0,212,160,.08) 0%,rgba(91,141,239,.06) 100%);
+  border:1px solid rgba(0,212,160,.2);border-radius:16px;padding:32px;
+  position:relative;overflow:hidden;
+}
+.slide-promo::after{
+  content:'⚡';position:absolute;right:24px;top:50%;transform:translateY(-50%);
+  font-size:80px;opacity:.05;
+}
+.promo-brand{
+  font-family:var(--font-head);font-size:20px;font-weight:800;
+  color:var(--accent);margin-bottom:12px;
+}
+.promo-desc{font-size:14px;color:var(--text);line-height:1.7;margin-bottom:20px}
+.promo-links{display:flex;flex-wrap:wrap;gap:8px}
+.promo-link{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:9px 16px;border-radius:8px;text-decoration:none;
+  background:rgba(0,212,160,.1);border:1px solid rgba(0,212,160,.25);
+  font-size:13px;font-weight:600;color:var(--accent);
+  transition:all .15s;
+}
+.promo-link:hover{background:rgba(0,212,160,.2);transform:translateY(-1px)}
+
+/* ═══════════════════════════════
+   QUIZ
+═══════════════════════════════ */
+.quiz-slide{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:32px}
+.quiz-header{display:flex;align-items:center;gap:10px;margin-bottom:24px}
+.quiz-badge{
+  padding:5px 12px;border-radius:20px;
+  background:rgba(255,107,53,.1);border:1px solid rgba(255,107,53,.25);
+  font-size:11px;font-weight:700;color:var(--orange);text-transform:uppercase;
+  letter-spacing:1px;font-family:var(--font-mono);
+}
+.quiz-title{font-family:var(--font-head);font-size:18px;font-weight:700;color:var(--text)}
+.quiz-question-block{margin-bottom:24px}
+.quiz-q-num{font-family:var(--font-mono);font-size:11px;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+.quiz-q-text{font-size:15px;font-weight:600;color:var(--text);line-height:1.5;margin-bottom:14px}
+.quiz-options{display:flex;flex-direction:column;gap:8px}
+.quiz-option{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 16px;border-radius:10px;cursor:pointer;
+  border:1px solid var(--border);background:var(--bg3);
+  transition:all .15s;font-size:13.5px;color:var(--text);text-align:left;
+  font-family:var(--font-body);width:100%;
+}
+.quiz-option:hover:not(:disabled){border-color:var(--accent);background:rgba(0,212,160,.06)}
+.quiz-option.correct{border-color:var(--green)!important;background:rgba(0,212,160,.08)!important;color:var(--green)}
+.quiz-option.wrong{border-color:var(--red)!important;background:rgba(255,77,106,.06)!important;color:var(--red)}
+.quiz-option-letter{
+  width:24px;height:24px;border-radius:6px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--bg2);border:1px solid var(--border);
+  font-size:11px;font-weight:700;font-family:var(--font-mono);
+}
+.quiz-option.correct .quiz-option-letter{background:var(--green);border-color:var(--green);color:#000}
+.quiz-option.wrong .quiz-option-letter{background:var(--red);border-color:var(--red);color:#fff}
+.quiz-explanation{
+  margin-top:12px;padding:12px 16px;border-radius:8px;
+  background:rgba(91,141,239,.07);border:1px solid rgba(91,141,239,.15);
+  font-size:13px;color:var(--blue);line-height:1.6;
+}
+.quiz-score-final{
+  text-align:center;padding:24px;background:var(--bg3);
+  border-radius:12px;border:1px solid var(--border);margin-top:16px;
+}
+.quiz-score-val{
+  font-family:var(--font-head);font-size:48px;font-weight:800;
+  color:var(--accent);line-height:1;margin-bottom:8px;
+}
+.quiz-score-label{font-size:14px;color:var(--muted)}
+.quiz-next-btn{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  margin-top:20px;padding:12px 24px;border-radius:10px;
+  background:var(--accent);color:#000;border:none;cursor:pointer;
+  font-size:14px;font-weight:700;font-family:var(--font-body);
+  transition:all .15s;width:100%;
+}
+.quiz-next-btn:hover{background:#00f0b5;transform:translateY(-1px)}
+
+/* ── COMPLETION SCREEN ── */
+.completion{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  flex-direction:column;text-align:center;padding:40px;
+}
+.completion-icon{font-size:64px;margin-bottom:24px}
+.completion-title{font-family:var(--font-head);font-size:32px;font-weight:800;color:var(--accent);margin-bottom:12px}
+.completion-sub{font-size:16px;color:var(--muted);max-width:400px;line-height:1.6}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .sidebar{display:none}
+  .slide-container{padding:16px}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .audio-bar{padding:10px 16px}
+  .topbar{padding:0 16px}
+}
+@media(max-width:480px){
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .compare-table{font-size:11px}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
+
+// ═══════════════════════════════════════════════════
+// COURSE DATA
+// ═══════════════════════════════════════════════════
+const BASE = 'https://pub-afcf969c10cb4697963cea551092f5ff.r2.dev';
+const r2 = (f) => `${BASE}/${encodeURIComponent(f)}`;
+
+const AUDIO_FILES = {
+  intro:      [r2('49 introduction cours 1.mp3')],
+  lesson1:    [r2('49 lesson 1 cours 1.mp3'), r2('49 lesson 1 part 2.mp3')],
+  lesson2:    [r2('49 lesson 2 part 1.mp3'), r2('49 lesson 2 part 2.mp3'), r2('49 lesson 2 part 3.mp3')],
+  lesson3:    [r2('49 lesson 3 part 1.mp3'), r2('49 lesson 3 part 2.mp3')],
+  lesson4:    [r2('49 lesson 4 part 1.mp3'), r2('49 lesson 4 part 2.mp3')],
+  lesson5:    [r2('49 lesson 5.mp3')],
+  lesson6:    [r2('49 lesson 6 part 1.mp3'), r2('49 lesson 6 part2.mp3')],
+  lesson7:    [r2('49 lesson 7 part1.mp3'), r2('49 lesson 7 part2.mp3')],
+  lesson8:    [r2('49 lesson 8 part1.mp3'), r2('49 lesson 8 part2.mp3')],
+  conclusion: [r2('49 lesson conclusion.mp3')],
+};
+
+const COURSE_DATA = [
+  { id:0,key:'intro',title:'Introduction',duration:'~4 min',icon:'🚀',audioFiles:AUDIO_FILES.intro,
+    slides:[
+      {type:'cover',title:"Welcome to Prop Firm Fundamentals",subtitle:"Your roadmap to funded trading",badge:"PropFirmScanner Academy",highlights:['10 in-depth lessons','~2 hours of content','Interactive quizzes','Real tools & frameworks']},
+      {type:'list',title:"What You'll Learn",icon:'📚',intro:'By the end of this course, you will be able to:',items:[{icon:'🏦',text:'Understand exactly how prop firms work and make money'},{icon:'📋',text:'Navigate challenge rules without breaking them'},{icon:'🛡️',text:'Apply the 5 golden rules of risk management'},{icon:'🔍',text:'Choose the right prop firm for your style'},{icon:'🧠',text:'Master the psychological side of funded trading'},{icon:'💰',text:'Request payouts and scale your account'}]},
+      {type:'definition',title:'Who Is This Course For?',icon:'🎯',term:"The Target Trader",definition:"Anyone who wants to trade with real capital — without risking their own money. Whether you have zero experience or have tried a challenge before and failed, this course gives you the foundation to succeed.",tags:['Beginners welcome','No strategy required','Any trading style'],note:'You do NOT need to be a profitable trader yet to start this course.'},
+      {type:'promo',title:'Your Secret Weapon',icon:'⚡',brand:'PropFirmScanner.org',description:'The tool used by 10,000+ traders to compare prop firms, find exclusive deals, and track payouts.',links:[{label:'Compare Firms →',url:'https://propfirmscanner.org/compare'},{label:'Exclusive Deals →',url:'https://propfirmscanner.org/deals'},{label:'Free Guide →',url:'https://propfirmscanner.org/guide'}]},
+    ],quiz:null},
+
+  { id:1,key:'lesson1',title:'What Are Prop Firms & How They Work',duration:'~13 min',icon:'🏦',audioFiles:AUDIO_FILES.lesson1,
+    slides:[
+      {type:'definition',title:"What Is a Prop Firm?",icon:'🏦',term:"Proprietary Trading Firm",definition:"A company that provides traders with capital to trade financial markets. Instead of risking their own money, traders use the firm's funds and share a percentage of the profits — typically 80% to the trader, 20% to the firm.",tags:['Funded accounts','Profit sharing','No personal risk'],note:'"The firm profits from your success, not your failure. Aligned incentives."'},
+      {type:'compare',title:'Traditional Trading vs Prop Trading',leftLabel:'Traditional Trading',rightLabel:'Prop Trading',rows:[{label:'Capital Required',left:'$10,000–$50,000+',right:'$50–$500 challenge fee'},{label:'Risk',left:'100% your money',right:"Firm's capital after challenge"},{label:'Profit',left:'100% yours',right:'80–90% yours'},{label:'Leverage',left:'Limited by broker',right:'Up to 1:100'},{label:'Scaling',left:'Depends on savings',right:'Earn more capital'}],winner:'right',winnerNote:'Lower barrier to entry, higher leverage potential'},
+      {type:'steps',title:'How The Business Model Works',icon:'⚙️',intro:'How prop firms actually make money:',steps:[{number:'01',title:'Challenge Fees',desc:'Traders pay $50–$500 to attempt a challenge. Most fail — this is the primary revenue.'},{number:'02',title:'Simulated Capital',desc:'Most firms use simulated (paper) accounts, not real market capital. Risk is minimal.'},{number:'03',title:'Profit Split',desc:'Profitable traders get 80–90% of profits. The firm keeps 10–20% as its cut.'},{number:'04',title:'Risk Limits',desc:'Strict drawdown rules protect the firm. Most traders are cut before they cost the firm anything.'}]},
+      {type:'stats',title:'The Industry By Numbers',icon:'📊',stats:[{value:'$4B+',label:'Industry size (2024)',color:'green'},{value:'200+',label:'Active prop firms globally',color:'green'},{value:'5–15%',label:'Challenge pass rate',color:'orange'},{value:'$200M+',label:'Paid out to traders annually',color:'green'}],note:'Despite the high failure rate, funded traders collectively earn hundreds of millions per year.'},
+      {type:'list',title:'Key Players in the Ecosystem',icon:'🌐',intro:'Understanding the landscape:',items:[{icon:'🏢',text:'Prop Firms — Provide capital and set the rules (FTMO, Funded Next, MyForexFunds...)'},{icon:'📊',text:'Brokers — Execute trades, provide the platform (MT4/MT5, cTrader)'},{icon:'🛠️',text:'Comparison Tools — PropFirmScanner.org helps you find the best deals'},{icon:'👨‍💼',text:"Traders — You. The one who does the actual work"},{icon:'📰',text:'Communities — Discord servers, YouTube channels, forums'}]},
+    ],
+    quiz:{title:'Lesson 1 Quiz',questions:[
+      {id:'l1q1',question:'What is the PRIMARY revenue source for most prop firms?',options:['Taking a cut of trader profits','Challenge fees paid by traders','Charging monthly subscriptions','Selling trading software'],correct:1,explanation:"Most prop firms earn the majority of their revenue from challenge fees. The majority of traders fail and never receive funded accounts — making challenge fees the core business model."},
+      {id:'l1q2',question:'In a typical prop firm profit split, how much does the TRADER keep?',options:['50%','60%','80–90%','100%'],correct:2,explanation:'Most reputable prop firms offer 80–90% profit splits to the trader. Some firms even offer up to 95% as traders scale up their accounts.'},
+      {id:'l1q3',question:'What type of capital do most modern prop firms use?',options:['Real capital from their own balance sheet','Capital borrowed from banks','Simulated/paper trading accounts','Investor funds from hedge funds'],correct:2,explanation:'Most prop firms use simulated accounts, NOT real market capital. This is why they can offer large account sizes at low challenge prices — their actual risk exposure is minimal.'},
+    ]}},
+
+  { id:2,key:'lesson2',title:'Understanding Challenge Rules',duration:'~15 min',icon:'📋',audioFiles:AUDIO_FILES.lesson2,
+    slides:[
+      {type:'steps',title:'The Two-Phase Challenge Model',icon:'🏆',intro:'Most firms use a 2-phase system before you get funded:',steps:[{number:'Phase 1',title:'Evaluation',desc:'Prove you can hit a profit target (usually 8–10%) while respecting drawdown limits. Time limit: typically 30–60 days.'},{number:'Phase 2',title:'Verification',desc:'Confirm your consistency with a lower target (usually 5%). Same drawdown rules apply. Usually 60 days.'},{number:'Funded',title:'Live Account',desc:'You receive a funded account and can start requesting payouts. First payout often after 14–30 days.'}]},
+      {type:'stats',title:'Profit Target Requirements',icon:'🎯',stats:[{value:'8–10%',label:'Phase 1 profit target',color:'green'},{value:'5%',label:'Phase 2 profit target',color:'green'},{value:'30–60',label:'Days for Phase 1',color:'blue'},{value:'0%',label:'Min days required (some firms)',color:'orange'}],note:'Some firms have NO minimum trading days — you could pass in 1 day if you hit the target. Others require 3–10 minimum trading days.'},
+      {type:'formula',title:'Drawdown Rules Explained',icon:'📉',sections:[{name:'Daily Drawdown Limit',formula:'Max loss in a single trading day',example:'$100,000 account × 5% = $5,000 max daily loss',note:'If you lose $5,000 in one day → challenge FAILED. Resets at midnight server time.',color:'orange'},{name:'Overall (Max) Drawdown',formula:'Max total loss from starting balance',example:'$100,000 account × 10% = $10,000 max total loss',note:'If your balance drops below $90,000 at any point → challenge FAILED.',color:'red'}],critical:'These two limits are the #1 reason traders fail challenges. Know them. Track them DAILY.'},
+      {type:'list',title:'Consistency Rules',icon:'📐',intro:'Many firms enforce consistency to prevent "lucky day" passes:',items:[{icon:'📊',text:'Best day profit cannot exceed 30–50% of total profit (common rule)'},{icon:'📅',text:'Minimum trading days requirement (typically 3–10 days)'},{icon:'⏰',text:'Cannot hold trades over weekend (news risk protection)'},{icon:'🔄',text:'Must trade at least X days per month on funded account'},{icon:'💡',text:'TIP: Check if your firm has a consistency rule BEFORE you trade'}]},
+      {type:'list',title:'Prohibited Trading Behaviors',icon:'🚫',intro:'These will get your account TERMINATED immediately:',items:[{icon:'🤖',text:'High-frequency trading / latency arbitrage'},{icon:'📰',text:'Trading during major news events (some firms prohibit this)'},{icon:'🌙',text:'Holding trades over weekend (many firms ban this)'},{icon:'👥',text:'Copy trading / EA not approved by the firm'},{icon:'🔒',text:'Hedging across accounts at the same firm'},{icon:'⚠️',text:'Always read the Terms & Conditions. Ignorance is not a defense.'}]},
+      {type:'scenario',title:'Real Scenario: The Drawdown Trap',icon:'⚠️',scenario:{setup:'You have a $100,000 account with 5% daily drawdown and 10% max drawdown.',event:'You start Monday with $97,000 (already lost $3,000 total). You have a bad day and lose $4,500.',question:'Did you violate any rules?',answer:'YES — Both rules violated! Daily loss ($4,500) exceeds 5% daily limit ($4,850 based on current balance). AND your total is now $92,500, dangerously close to the $90,000 max drawdown floor.',lesson:'Track BOTH limits every single day. Use a spreadsheet or the PropFirmScanner drawdown calculator.'}},
+    ],
+    quiz:{title:'Lesson 2 Quiz',questions:[
+      {id:'l2q1',question:'On a $50,000 account with 5% daily drawdown — what is your maximum loss allowed in one day?',options:['$1,000','$2,500','$5,000','$10,000'],correct:1,explanation:'$50,000 × 5% = $2,500 maximum daily loss. Exceeding this in a single day immediately fails the challenge.'},
+      {id:'l2q2',question:'Phase 2 of a challenge typically requires what profit target?',options:['Same as Phase 1 (8–10%)','5%','2%','15%'],correct:1,explanation:'Phase 2 (Verification) typically requires 5% profit — lower than Phase 1 — to confirm you can trade consistently.'},
+      {id:'l2q3',question:'What happens if you violate the "best day" consistency rule?',options:['You get a warning','Your profit for that day is removed','Your challenge or funded account is terminated','You have to restart Phase 1'],correct:2,explanation:'Violating the consistency rule results in immediate account termination. There are no warnings.'},
+    ]}},
+
+  { id:3,key:'lesson3',title:'Basic Risk Management (5 Golden Rules)',duration:'~12 min',icon:'🛡️',audioFiles:AUDIO_FILES.lesson3,
+    slides:[
+      {type:'definition',title:"Why Risk Management Comes First",icon:'🛡️',term:"The Trader's Paradox",definition:"Most traders focus on WINNING. Successful traders focus on NOT LOSING. In prop trading, one bad day can wipe out 10 good days. Risk management is not just a rule — it's your competitive advantage.",tags:['Protect capital first','Profits follow discipline','Consistency beats big wins'],note:'"The goal is not to make money. The goal is to not lose money. The profits come naturally." — Professional trader mindset'},
+      {type:'formula',title:'Golden Rule #1: 1–2% Max Risk Per Trade',icon:'📐',sections:[{name:'Position Sizing Formula',formula:'Risk Amount = Account Size × Risk %',example:'$100,000 × 1% = $1,000 max risk per trade',note:'If your stop loss is 20 pips, your position size = $1,000 ÷ 20 pips = $50/pip',color:'green'},{name:'Why 1% Not More?',formula:'At 1% risk: need 10 consecutive losses to lose 10%',example:'At 5% risk: only 2 bad trades = 10% drawdown = challenge FAILED',note:'1% risk gives you 10 chances to course-correct. 5% gives you 2.',color:'orange'}],critical:'Never risk more than 2% on any single trade. Ever. This is non-negotiable.'},
+      {type:'list',title:'Golden Rule #2: Daily Loss Limit',icon:'📅',intro:"Set your OWN daily loss limit — stricter than the firm's:",items:[{icon:'🎯',text:"Firm allows 5% daily drawdown? Set YOUR limit at 3%"},{icon:'🛑',text:'If you hit your personal limit → STOP trading for the day'},{icon:'🚫',text:'No exceptions. Not even "just one more trade to recover"'},{icon:'📊',text:'Track in real-time: spreadsheet, TradingView alerts, or journal'},{icon:'💡',text:"PRO TIP: When you're down 2%, your judgment is already impaired. Stop."}]},
+      {type:'list',title:'Golden Rules #3, #4 & #5',icon:'⚡',intro:'The remaining 3 golden rules:',items:[{icon:'📋',text:'RULE #3: Never enter a trade without a plan. Know your entry, stop loss, and target BEFORE clicking buy/sell.'},{icon:'📏',text:'RULE #4: Size your positions correctly. Use a position size calculator every time — never guess.'},{icon:'🔄',text:"RULE #5: Never revenge trade. Lost 3 trades in a row? Walk away. Revenge trades are emotional, not rational."},{icon:'🏆',text:'BONUS: Keep a trading journal. Review your trades weekly. Patterns reveal your real edge (or lack of it).'}]},
+      {type:'scenario',title:'Risk Management in Action',icon:'📊',scenario:{setup:'Trader A vs Trader B, both start with $100,000 funded accounts.',event:'Week 1: Both lose 5 trades in a row. Trader A risks 3% per trade. Trader B risks 1% per trade.',question:"What is each trader's account balance after 5 losing trades?",answer:'Trader A: $100,000 → $85,737 (lost $14,263 — near max drawdown!)\nTrader B: $100,000 → $95,099 (lost only $4,901 — plenty of room left)',lesson:'Position sizing is the difference between surviving a losing streak and blowing your account.'}},
+    ],
+    quiz:{title:'Lesson 3 Quiz',questions:[
+      {id:'l3q1',question:'On a $200,000 funded account, risking 1% per trade — what is your maximum dollar risk per trade?',options:['$200','$1,000','$2,000','$5,000'],correct:2,explanation:'$200,000 × 1% = $2,000 maximum risk per trade. This keeps individual losses small and protects your total drawdown.'},
+      {id:'l3q2',question:"You've had 3 losing trades and are frustrated. What should you do?",options:['Double your position size to recover faster','Take one more trade to "get back" to breakeven','Stop trading for the day and review tomorrow','Switch to a different instrument'],correct:2,explanation:'After consecutive losses, your emotional state affects your judgment. The professional move is to stop for the day.'},
+    ]}},
+
+  { id:4,key:'lesson4',title:'Choosing Your First Prop Firm',duration:'~9 min',icon:'🔍',audioFiles:AUDIO_FILES.lesson4,
+    slides:[
+      {type:'list',title:'Key Criteria to Evaluate',icon:'🔍',intro:'What separates a great prop firm from a scam:',items:[{icon:'💳',text:'Challenge fee & refundability — Is the fee refunded on first payout?'},{icon:'📊',text:'Drawdown rules — Trailing vs static? Daily vs max only?'},{icon:'💰',text:'Profit split — 80%? 90%? Does it scale up?'},{icon:'⚡',text:'Payout speed & frequency — Weekly? Biweekly? Crypto available?'},{icon:'📈',text:'Scaling plan — Can you grow from $25K to $200K?'},{icon:'🛡️',text:'Reputation — Years in business, community reviews, payout proof'}]},
+      {type:'compare',title:'Trailing vs Static Drawdown',leftLabel:'Trailing Drawdown',rightLabel:'Static Drawdown',rows:[{label:'How it works',left:'Moves up with profits',right:'Fixed at account start'},{label:'Difficulty',left:'Harder — locks in gains',right:'Easier — never moves'},{label:'Example',left:'Hit $105K → floor moves to $95K',right:'Start at $100K → floor always $90K'},{label:'Risk to trader',left:'Higher',right:'Lower'},{label:'Best for',left:'Experienced traders',right:'Beginners'}],winner:'right',winnerNote:'As a beginner, look for STATIC drawdown firms'},
+      {type:'list',title:'🚩 Red Flags to Avoid',icon:'⚠️',intro:'Walk away from firms that show these signs:',items:[{icon:'🚩',text:'No clear payout proof from real traders — just marketing screenshots'},{icon:'🚩',text:'Extremely low challenge fee with unrealistic conditions ($5 for $100K account)'},{icon:'🚩',text:'Hidden rules in fine print (extra consistency rules not clearly stated)'},{icon:'🚩',text:'Slow or disputed payouts — check Reddit, TrustPilot, YouTube reviews'},{icon:'🚩',text:'New firm with no history (under 1 year old — high risk of scam)'},{icon:'✅',text:'SAFE BET: Use PropFirmScanner.org/compare for vetted firms only'}]},
+      {type:'promo',title:'Use PropFirmScanner to Compare',icon:'⚡',brand:'PropFirmScanner.org/compare',description:'The fastest way to compare 50+ prop firms side by side. Filter by account size, drawdown type, profit split, and price. Updated weekly.',links:[{label:'Compare All Firms →',url:'https://propfirmscanner.org/compare'},{label:'Best Deals This Month →',url:'https://propfirmscanner.org/deals'},{label:"Beginner's Guide →",url:'https://propfirmscanner.org/guide'}]},
+      {type:'list',title:'Top Firms for Beginners (2025)',icon:'🏆',intro:'Firms known for beginner-friendly rules:',items:[{icon:'🥇',text:'FTMO — Industry standard, great reputation, static drawdown, refundable fee'},{icon:'🥈',text:'Funded Next — Competitive pricing, fast payouts, good scaling plan'},{icon:'🥉',text:'The Funded Trader — Flexible rules, multiple challenge types'},{icon:'🏅',text:'Apex Trader Funding — Futures focused, unlimited evaluation attempts'},{icon:'💡',text:'TIP: Always check PropFirmScanner.org/deals for discount codes before buying'}]},
+    ],
+    quiz:{title:'Lesson 4 Quiz',questions:[
+      {id:'l4q1',question:"You're a beginner. Which drawdown type should you prioritize?",options:['Trailing drawdown — it rewards profits','Static drawdown — the floor never moves','No drawdown limit — maximum freedom','Daily drawdown only, no max drawdown'],correct:1,explanation:'Static drawdown is beginner-friendly because the floor is fixed from day one. Trailing drawdown moves up with your profits.'},
+      {id:'l4q2',question:'A prop firm launched 3 months ago is offering a $100K account for $5. What should you do?',options:['Jump on it — great deal!','Do thorough research before considering it','Avoid it — too new and too cheap, likely a scam','Ask friends if they\'ve tried it'],correct:2,explanation:'New firms with suspiciously low prices are a major red flag. Legitimate firms have a track record of paying out traders.'},
+    ]}},
+
+  { id:5,key:'lesson5',title:'Account Setup Walkthrough',duration:'~6 min',icon:'⚙️',audioFiles:AUDIO_FILES.lesson5,
+    slides:[
+      {type:'steps',title:'Account Setup: Step by Step',icon:'⚙️',intro:'From payment to first trade in 6 steps:',steps:[{number:'01',title:'Purchase the Challenge',desc:'Go to PropFirmScanner.org/deals for discounts. Select account size ($10K–$200K). Pay via card or crypto.'},{number:'02',title:'Receive Credentials',desc:"You'll get an email with MT4/MT5 login details. Usually within minutes to 24 hours."},{number:'03',title:'Download Platform',desc:'Download MT4 or MT5 from MetaTrader website. Connect using the server address provided by the firm.'},{number:'04',title:'Configure Risk Settings',desc:'Set up position size calculator. Define max lot sizes for your 1% risk rule. Test with micro lots first.'},{number:'05',title:'Verify Everything',desc:'Check balance shows correctly. Confirm drawdown limits match. Test a micro trade to verify connectivity.'},{number:'06',title:'Create Your Dashboard',desc:"Set up a tracking spreadsheet: daily P&L, drawdown used, days traded, notes. You're ready."}]},
+      {type:'list',title:'MT4/MT5 Setup Checklist',icon:'✅',intro:'Tick every box before your first real trade:',items:[{icon:'✅',text:"Platform downloaded and connected to firm's server"},{icon:'✅',text:'Account balance verified matches your challenge size'},{icon:'✅',text:'Position size calculator installed (use the free Myfxbook one)'},{icon:'✅',text:'News calendar bookmarked (Forexfactory.com or Investing.com)'},{icon:'✅',text:'Drawdown limits noted in your trading journal'},{icon:'✅',text:'Daily max loss alert set (if platform supports it)'}]},
+      {type:'list',title:'Your First Week Game Plan',icon:'🗓️',intro:"Don't rush. Week 1 is for observation:",items:[{icon:'👁️',text:'Day 1–2: Observe only. Watch how your instruments move. No trades.'},{icon:'📊',text:'Day 3: Trade micro lots to test your strategy. Risk $0 effectively.'},{icon:'📝',text:'Day 4–5: Take 2–3 real trades. Journal every decision.'},{icon:'🔍',text:"Day 6: Review journal. What worked? What didn't?"},{icon:'💡',text:'Remember: Time is on your side. Phase 1 is 30–60 days. Don\'t rush.'}]},
+    ],
+    quiz:{title:'Lesson 5 Quiz',questions:[
+      {id:'l5q1',question:'What should you do on Day 1 of your challenge?',options:['Start trading aggressively to build a buffer','Test your strategy with full size positions','Observe the market without trading','Place 5 trades to cover the challenge fee quickly'],correct:2,explanation:'Day 1 should be observation only. Get comfortable with the platform, observe market conditions, and avoid the urge to trade immediately.'},
+      {id:'l5q2',question:'What is the FIRST thing you should verify after receiving your account credentials?',options:['Start trading immediately to build profits','Verify the account balance matches your challenge size','Change the password','Add indicators to the chart'],correct:1,explanation:'Always verify the account balance first. Confirm balance, drawdown limits, and connectivity before risking any capital.'},
+    ]}},
+
+  { id:6,key:'lesson6',title:'Common Beginner Mistakes to Avoid',duration:'~9 min',icon:'⚠️',audioFiles:AUDIO_FILES.lesson6,
+    slides:[
+      {type:'list',title:'The 5 Most Costly Mistakes',icon:'💥',intro:'80% of challenge failures come from these 5 mistakes:',items:[{icon:'💥',text:'Mistake #1: OVERLEVERAGING — Using lot sizes too large for account size'},{icon:'📰',text:'Mistake #2: TRADING THE NEWS — Unpredictable volatility destroys accounts'},{icon:'📋',text:'Mistake #3: IGNORING THE RULES — Not reading the T&C before trading'},{icon:'😤',text:'Mistake #4: EMOTIONAL TRADING — Fear, greed, and revenge trades'},{icon:'📓',text:'Mistake #5: NO TRADING JOURNAL — Flying blind without data'}]},
+      {type:'scenario',title:'Mistake #1: Overleveraging',icon:'💥',scenario:{setup:'Beginner trader has $50,000 challenge. Gets excited about a setup and opens 5 lots on EUR/USD (worth $500,000 notional).',event:'The trade goes against them by 50 pips.',question:'How much did they lose?',answer:'5 lots × 50 pips × $10/pip = $2,500 loss in one trade = 5% of account GONE. Daily drawdown limit hit. Challenge over.',lesson:'Maximum lot size for a $50K account at 1% risk with 50 pip stop = 1 lot. That\'s it. Always calculate first.'}},
+      {type:'list',title:'Mistake #2: Trading the News',icon:'📰',intro:'Why news events destroy undisciplined traders:',items:[{icon:'⚡',text:'NFP, FOMC, CPI releases cause 50–200 pip moves in SECONDS'},{icon:'📊',text:'Spread widens to 10–50 pips during news — your stop is irrelevant'},{icon:'🔄',text:'Whipsaws can hit both your stop AND your target in the same second'},{icon:'🚫',text:'Many prop firms PROHIBIT trading 2 minutes before/after major news'},{icon:'✅',text:'SOLUTION: Check Forexfactory.com every morning. Avoid red folder events.'}]},
+      {type:'steps',title:'The Anti-Mistake System',icon:'🛡️',intro:'Build these habits BEFORE you start:',steps:[{number:'1',title:'Read the Rules Twice',desc:'Print or save the T&C. Highlight every rule. Test your knowledge before day 1.'},{number:'2',title:'Use a Position Calculator',desc:'Never guess lot sizes. Use Myfxbook position size calculator or a spreadsheet for every trade.'},{number:'3',title:'Block News Times',desc:"Put red news events in your calendar. Don't trade 15 min before or after."},{number:'4',title:'Set a Daily Loss Alarm',desc:"When you hit 2.5% down — stop. Walk away. Come back tomorrow."},{number:'5',title:'Journal Every Trade',desc:'Photo of chart, reason for entry, result, emotion during trade. Review weekly.'}]},
+    ],
+    quiz:{title:'Lesson 6 Quiz',questions:[
+      {id:'l6q1',question:'Why is trading during major news events dangerous for prop traders specifically?',options:["News is only for stock traders, not forex","Spreads widen and some firms prohibit it — a violation terminates your account","News events are not predictable","It's not dangerous, it's the best opportunity"],correct:1,explanation:'During major news, spreads widen dramatically making your stop loss meaningless. Worse, many firms explicitly prohibit news trading.'},
+      {id:'l6q2',question:'What is the main purpose of a trading journal?',options:['To prove your profits to the IRS','To identify your personal patterns, mistakes, and edge through data','To share trades with other traders','Required by most prop firms'],correct:1,explanation:'A trading journal is your personal performance database. It reveals which setups work for you and what causes your losses.'},
+    ]}},
+
+  { id:7,key:'lesson7',title:'Introduction to Trading Psychology',duration:'~11 min',icon:'🧠',audioFiles:AUDIO_FILES.lesson7,
+    slides:[
+      {type:'definition',title:'The Mental Game',icon:'🧠',term:"Trading Psychology",definition:"The study of how emotions, cognitive biases, and mental states affect trading decisions. Studies show that 80% of trading failure is psychological — not strategic. You can have the best system in the world and still blow your account with the wrong mindset.",tags:['Fear','Greed','FOMO','Revenge trading'],note:'"The market doesn\'t beat traders. Traders beat themselves." — Every successful trader ever'},
+      {type:'compare',title:'Fear vs Greed',leftLabel:'Fear',rightLabel:'Greed',rows:[{label:'Trigger',left:'Loss, drawdown, uncertainty',right:'Big winning streak, FOMO'},{label:'Behavior',left:'Exit too early, avoid valid setups',right:'Oversize, overtrade, no stop loss'},{label:'Result',left:'Missing profits, under-performance',right:'Blowing the account'},{label:'Solution',left:'Trust your system, journal the fear',right:'Stick to position rules, take breaks'}],winner:null,winnerNote:"Both are equally destructive. The best traders feel them but don't act on them."},
+      {type:'steps',title:'The Emotional Trading Cycle',icon:'🔄',intro:'The 7 stages most traders cycle through:',steps:[{number:'1',title:'Excitement',desc:"Challenge starts. \"I'm going to crush this.\" Overconfidence."},{number:'2',title:'First Loss',desc:'Normal setback. Most traders increase risk to "recover." This is the trap.'},{number:'3',title:'Frustration',desc:'Second or third loss. "The market is against me." Judgment impaired.'},{number:'4',title:'Panic',desc:'Hitting drawdown limits. Fear takes over. Bad decisions accelerate.'},{number:'5',title:'Acceptance',desc:'The challenge fails OR the trader steps back and reviews.'},{number:'6',title:'Learning',desc:'Review journal. Understand what happened. Build discipline.'},{number:'7',title:'Discipline',desc:'Rules become automatic. Emotions observed, not obeyed. This is the goal.'}]},
+      {type:'list',title:'Building Mental Resilience',icon:'💪',intro:'Practical techniques that actually work:',items:[{icon:'🎯',text:'PROCESS GOALS not outcome goals — "Follow my rules 100%" not "Make $1,000"'},{icon:'⏸️',text:'MANDATORY BREAKS — After 2 consecutive losses, mandatory 24-hour break'},{icon:'📓',text:'EMOTIONS LOG — Journal your emotional state before AND after every trade'},{icon:'🧘',text:'PRE-TRADE ROUTINE — 5 min checklist before every session. If you skip it, don\'t trade.'},{icon:'🔢',text:"TRADE SMALL — When in doubt, half your size. You'll think more clearly."}]},
+      {type:'list',title:'The Pre-Trade Routine (5 min)',icon:'☀️',intro:'Do this EVERY morning before the market opens:',items:[{icon:'📰',text:'1. Check the economic calendar — Any red events today? Plan around them.'},{icon:'📊',text:"2. Review yesterday's trades — Any patterns? Same mistakes repeated?"},{icon:'🎯',text:"3. Set today's goals — \"I'll trade max 2 setups. Stop at 1.5% loss.\" Write it down."},{icon:'🧘',text:"4. Check your mental state — Rate yourself 1-10. If below 7, reduce size or don't trade."},{icon:'✅',text:'5. Confirm rules — Recite your 3 most important trading rules aloud. Sounds silly. Works.'}]},
+    ],
+    quiz:{title:'Lesson 7 Quiz',questions:[
+      {id:'l7q1',question:'After 3 consecutive losses, what is the psychologically correct action?',options:['Increase position size to recover faster','Switch to a different trading strategy immediately','Take a break (at least 24 hours) and review your journal','Trade the same way — losses are just bad luck'],correct:2,explanation:"After consecutive losses, your brain is flooded with cortisol which impairs decision-making. A mandatory break and journal review is the professional response."},
+      {id:'l7q2',question:'What is the main benefit of setting PROCESS goals vs OUTCOME goals?',options:['Process goals make more money','You control the process, not the outcome — focusing on what you control reduces anxiety','Outcome goals are too ambitious','Process goals are easier to achieve'],correct:1,explanation:"You cannot control whether a trade wins or loses. You CAN control whether you followed your rules."},
+    ]}},
+
+  { id:8,key:'lesson8',title:'Payout Process Explained',duration:'~11 min',icon:'💰',audioFiles:AUDIO_FILES.lesson8,
+    slides:[
+      {type:'steps',title:'When Can You Request a Payout?',icon:'💰',intro:'The typical payout eligibility requirements:',steps:[{number:'1',title:'Minimum Trading Days',desc:'Most firms require 14–30 calendar days after account activation before first payout.'},{number:'2',title:'Minimum Profit',desc:'You must have at least 1–5% unrealized profit to request. Varies by firm.'},{number:'3',title:'Compliance',desc:'Account must be in full compliance — no rule violations, no active investigations.'},{number:'4',title:'Request Submission',desc:'Submit via the firm\'s dashboard. Provide payment method (bank, Wise, crypto, Deel).'},{number:'5',title:'Processing Time',desc:'Typically 1–7 business days. Some firms offer same-day crypto payouts.'}]},
+      {type:'stats',title:'Profit Split Models',icon:'💹',stats:[{value:'80/20',label:'Standard split (you/firm)',color:'blue'},{value:'90/10',label:'Premium split (scaled accounts)',color:'green'},{value:'95/5',label:'Elite split (some firms, high tier)',color:'green'},{value:'100%',label:'First payout at some firms',color:'orange'}],note:'Some firms offer 100% of the first payout as a bonus to attract traders. Great deal if the rest of the terms are competitive.'},
+      {type:'compare',title:'Payout Methods Compared',leftLabel:'Traditional (Bank/Wise)',rightLabel:'Crypto (USDT/BTC)',rows:[{label:'Processing Time',left:'2–7 business days',right:'1–24 hours'},{label:'Fees',left:'$10–$30 transfer fee',right:'Gas fees only ($1–5)'},{label:'Privacy',left:'Full KYC required',right:'Wallet address only'},{label:'Availability',left:'All firms',right:'70%+ of firms now offer'},{label:'Best for',left:'Large payouts, tax records',right:'Speed, smaller payouts'}],winner:null,winnerNote:'Use crypto for speed, bank for large amounts or tax purposes'},
+      {type:'list',title:'Scaling Plans Explained',icon:'📈',intro:'How to grow from $25K to $200K+:',items:[{icon:'📊',text:'STANDARD SCALE: Hit profit targets consistently for 3–6 months → firm increases account size by 25–50%'},{icon:'🚀',text:'FAST TRACK: Some firms offer "Scale On Demand" — hit 10% profit → instant upgrade'},{icon:'💰',text:'EXAMPLE: $25K → $50K → $100K → $200K over 12–18 months'},{icon:'🏆',text:'ELITE: Some traders manage $500K–$2M across multiple firm accounts'},{icon:'💡',text:'TIP: Check scaling conditions at propfirmscanner.org/compare before choosing a firm'}]},
+    ],
+    quiz:{title:'Lesson 8 Quiz',questions:[
+      {id:'l8q1',question:'What is the typical waiting period before your first payout request?',options:["Same day you're funded","14–30 calendar days","90 days","6 months"],correct:1,explanation:'Most firms require 14–30 calendar days after your funded account activation before allowing the first payout.'},
+      {id:'l8q2',question:'What is the main advantage of crypto payouts vs bank transfers?',options:['Crypto payouts have no fees at all','Speed — crypto processes in hours vs days for bank transfers','Crypto payouts are always higher percentage','Crypto is only for large withdrawals'],correct:1,explanation:'The primary advantage of crypto payouts is speed. Bank/Wise transfers take 2–7 business days. Crypto can be in your wallet within hours.'},
+    ]}},
+
+  { id:9,key:'conclusion',title:'Conclusion & Action Plan',duration:'~4 min',icon:'🏆',audioFiles:AUDIO_FILES.conclusion,
+    slides:[
+      {type:'cover',title:'Congratulations! 🎉',subtitle:"You've completed Prop Firm Fundamentals",badge:'Course Complete',highlights:['10 lessons completed','Risk management mastered','Ready for your first challenge',"You're ahead of 90% of beginners"]},
+      {type:'steps',title:'Your 30-Day Action Plan',icon:'🗓️',intro:'What to do in the next 30 days:',steps:[{number:'Week 1',title:'Choose & Buy a Challenge',desc:'Use propfirmscanner.org/compare. Pick a firm with static drawdown. Use a discount code from /deals. Account size: $25K–$50K for beginners.'},{number:'Week 2',title:'Set Up & Paper Trade',desc:'Configure MT4/MT5. Set up your journal. Trade micro lots for 3 days to validate your strategy before risking real challenge balance.'},{number:'Week 3',title:'Trade the Challenge',desc:'Apply everything from this course. Max 1% risk. No news. Daily loss limit. Journal every trade. Trust the process.'},{number:'Week 4',title:'Review & Refine',desc:'Review week 1–2 journal entries. Identify patterns. Adjust if needed. The goal: pass Phase 1 with consistency, not luck.'}]},
+      {type:'list',title:'Continue Your Education',icon:'📚',intro:'What to study after this course:',items:[{icon:'📊',text:'Technical analysis: Support/resistance, trend structure, supply & demand'},{icon:'📰',text:'Fundamental analysis: How to trade news events profitably'},{icon:'🤖',text:'EA/Automation basics: How to build simple rule-based systems'},{icon:'💡',text:'Check PropFirmScanner Academy for advanced courses coming soon'},{icon:'🎯',text:'Next course: "Prop Firm Mastery" — Advanced strategies and scaling ($99.99)'}]},
+      {type:'promo',title:'Stay Connected',icon:'🌐',brand:'PropFirmScanner Community',description:'Join thousands of funded traders. Compare firms, share results, find deals, and keep learning.',links:[{label:'Compare Firms →',url:'https://propfirmscanner.org/compare'},{label:'Find Deals →',url:'https://propfirmscanner.org/deals'},{label:'Education Hub →',url:'https://propfirmscanner.org/education'},{label:'Free Guide →',url:'https://propfirmscanner.org/guide'}]},
+      {type:'definition',title:'One Final Message',icon:'💬',term:"The Truth About Prop Trading",definition:"Prop trading is not a get-rich-quick scheme. It's a skill — developed through practice, discipline, and data. The traders who succeed aren't the most talented. They're the most consistent. Rules. Journal. Patience. That's the edge.",tags:['Discipline wins','Consistency > talent','Trust the process'],note:"See you in Prop Firm Mastery. — The PropFirmScanner Team 🚀"},
+    ],quiz:null},
+];
+
+// ═══════════════════════════════════════════════════
+// SLIDE RENDERERS
+// ═══════════════════════════════════════════════════
+function SlideRenderer({ slide, key: _k }) {
+  const { type } = slide;
+  if (type === 'cover')       return <SlideCover s={slide}/>;
+  if (type === 'definition')  return <SlideDef s={slide}/>;
+  if (type === 'list')        return <SlideList s={slide}/>;
+  if (type === 'steps')       return <SlideSteps s={slide}/>;
+  if (type === 'stats')       return <SlideStats s={slide}/>;
+  if (type === 'compare')     return <SlideCompare s={slide}/>;
+  if (type === 'formula')     return <SlideFormula s={slide}/>;
+  if (type === 'scenario')    return <SlideScenario s={slide}/>;
+  if (type === 'promo')       return <SlidePromo s={slide}/>;
+  return null;
+}
+
+function SlideCover({s}) {
+  return (
+    <div className="slide-cover">
+      <div className="cover-badge">{s.badge}</div>
+      <div className="cover-title">{s.title}</div>
+      <div className="cover-sub">{s.subtitle}</div>
+      <div className="cover-highlights">
+        {s.highlights.map((h,i) => <span key={i} className="cover-hl">{h}</span>)}
+      </div>
+    </div>
+  );
+}
+
+function SlideDef({s}) {
+  return (
+    <div className="slide-definition">
+      {s.icon && <span className="slide-icon">{s.icon}</span>}
+      <div className="slide-h">{s.title}</div>
+      <div className="def-box">
+        <div className="def-term">{s.term}</div>
+        <div className="def-text">{s.definition}</div>
+      </div>
+      {s.tags && <div className="def-tags">{s.tags.map((t,i) => <span key={i} className="def-tag">{t}</span>)}</div>}
+      {s.note && <div className="def-note">💡 {s.note}</div>}
+    </div>
+  );
+}
+
+function SlideList({s}) {
+  return (
+    <div className="slide-list">
+      {s.icon && <span className="slide-icon">{s.icon}</span>}
+      <div className="slide-h">{s.title}</div>
+      {s.intro && <div className="slide-intro">{s.intro}</div>}
+      <div className="list-items">
+        {s.items.map((item,i) => (
+          <div key={i} className="list-item" style={{animationDelay:`${i*60}ms`}}>
+            <span className="list-item-icon">{item.icon}</span>
+            <span className="list-item-text">{item.text}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SlideSteps({s}) {
+  return (
+    <div className="slide-steps">
+      {s.icon && <span className="slide-icon">{s.icon}</span>}
+      <div className="slide-h">{s.title}</div>
+      {s.intro && <div className="slide-intro">{s.intro}</div>}
+      <div className="steps-list">
+        {s.steps.map((step,i) => (
+          <div key={i} className="step-item" style={{animationDelay:`${i*80}ms`}}>
+            <div className="step-num">{step.number}</div>
+            <div className="step-content">
+              <div className="step-title">{step.title}</div>
+              <div className="step-desc">{step.desc}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SlideStats({s}) {
+  return (
+    <div className="slide-stats">
+      {s.icon && <span className="slide-icon">{s.icon}</span>}
+      <div className="slide-h">{s.title}</div>
+      <div className="stats-grid">
+        {s.stats.map((st,i) => (
+          <div key={i} className="stat-card" style={{animationDelay:`${i*70}ms`}}>
+            <div className={`stat-value ${st.color}`}>{st.value}</div>
+            <div className="stat-label">{st.label}</div>
+          </div>
+        ))}
+      </div>
+      {s.note && <div className="stats-note">💡 {s.note}</div>}
+    </div>
+  );
+}
+
+function SlideCompare({s}) {
+  return (
+    <div className="slide-compare">
+      <div className="slide-h">{s.title}</div>
+      <table className="compare-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th className="left-col">{s.leftLabel}</th>
+            <th className="right-col">{s.rightLabel}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {s.rows.map((row,i) => (
+            <tr key={i}>
+              <td style={{color:'var(--muted)',fontFamily:'var(--font-mono)',fontSize:'11px',whiteSpace:'nowrap'}}>{row.label}</td>
+              <td style={{color: s.winner === 'left' ? 'var(--green)' : 'var(--text)'}}>{row.left}</td>
+              <td style={{color: s.winner === 'right' ? 'var(--green)' : 'var(--text)'}}>{row.right}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {s.winnerNote && (
+        <div className="compare-winner">
+          <span>{s.winner ? (s.winner === 'right' ? '✅ Winner: ' + s.rightLabel : '✅ Winner: ' + s.leftLabel) : 'ℹ️'}</span>
+          <span>{s.winnerNote}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SlideFormula({s}) {
+  return (
+    <div className="slide-formula">
+      {s.icon && <span className="slide-icon">{s.icon}</span>}
+      <div className="slide-h">{s.title}</div>
+      <div className="formula-sections">
+        {s.sections.map((sec,i) => (
+          <div key={i} className={`formula-section ${sec.color}`}>
+            <div className="fs-name">{sec.name}</div>
+            <div className="fs-formula">{sec.formula}</div>
+            <div className="fs-example">📌 {sec.example}</div>
+            {sec.note && <div className="fs-note">{sec.note}</div>}
+          </div>
+        ))}
+      </div>
+      {s.critical && <div className="formula-critical">⚠️ {s.critical}</div>}
+    </div>
+  );
+}
+
+function SlideScenario({s}) {
+  const sc = s.scenario;
+  return (
+    <div className="slide-scenario">
+      {s.icon && <span className="slide-icon">{s.icon}</span>}
+      <div className="slide-h">{s.title}</div>
+      <div className="scenario-box">
+        <div className="scenario-setup">
+          <div className="scenario-label">📋 Setup</div>
+          <div className="scenario-text">{sc.setup}</div>
+        </div>
+        <div className="scenario-event">
+          <div className="scenario-label">⚡ What Happens</div>
+          <div className="scenario-text">{sc.event}</div>
+        </div>
+        <div className="scenario-question">
+          <div className="scenario-label">❓ Question</div>
+          <div className="scenario-text" style={{color:'var(--blue)',fontWeight:600}}>{sc.question}</div>
+        </div>
+        <div className="scenario-answer">
+          <div className="scenario-label">✅ Answer</div>
+          <div className="scenario-text" style={{whiteSpace:'pre-line'}}>{sc.answer}</div>
+        </div>
+        <div className="scenario-lesson">💡 <strong>Key Takeaway:</strong> {sc.lesson}</div>
+      </div>
+    </div>
+  );
+}
+
+function SlidePromo({s}) {
+  return (
+    <div className="slide-promo">
+      <div className="promo-brand">{s.brand}</div>
+      <div className="promo-desc">{s.description}</div>
+      <div className="promo-links">
+        {s.links.map((l,i) => (
+          <a key={i} href={l.url} target="_blank" rel="noreferrer" className="promo-link">{l.label}</a>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════
+// QUIZ COMPONENT
+// ═══════════════════════════════════════════════════
+function QuizSlide({ quiz, onComplete, quizAnswers, setQuizAnswers }) {
+  const [current, setCurrent] = useState(0);
+  const [showExplanation, setShowExplanation] = useState(false);
+  const [done, setDone] = useState(false);
+
+  const q = quiz.questions[current];
+  const answered = quizAnswers[q.id];
+
+  const handleOption = (idx) => {
+    if (answered !== undefined) return;
+    setQuizAnswers(prev => ({...prev, [q.id]: idx}));
+    setShowExplanation(true);
+  };
+
+  const handleNext = () => {
+    if (current + 1 < quiz.questions.length) {
+      setCurrent(c => c + 1);
+      setShowExplanation(false);
+    } else {
+      setDone(true);
+    }
+  };
+
+  const score = quiz.questions.filter(q2 => quizAnswers[q2.id] === q2.correct).length;
+
+  if (done) {
+    const pct = Math.round((score / quiz.questions.length) * 100);
+    return (
+      <div className="quiz-slide">
+        <div className="quiz-header">
+          <span className="quiz-badge">Quiz Complete</span>
+          <span className="quiz-title">{quiz.title}</span>
+        </div>
+        <div className="quiz-score-final">
+          <div className="quiz-score-val">{pct}%</div>
+          <div className="quiz-score-label">
+            {score}/{quiz.questions.length} correct — {pct >= 80 ? '🏆 Excellent! Ready for the next lesson.' : pct >= 50 ? '👍 Good job! Review the lesson to improve.' : '📚 Review this lesson and try again.'}
+          </div>
+        </div>
+        <button className="quiz-next-btn" onClick={onComplete}>Continue to Next Lesson →</button>
+      </div>
+    );
+  }
+
+  const letters = ['A','B','C','D'];
+
+  return (
+    <div className="quiz-slide">
+      <div className="quiz-header">
+        <span className="quiz-badge">Quiz</span>
+        <span className="quiz-title">{quiz.title}</span>
+      </div>
+      <div className="quiz-question-block">
+        <div className="quiz-q-num">Question {current + 1} of {quiz.questions.length}</div>
+        <div className="quiz-q-text">{q.question}</div>
+        <div className="quiz-options">
+          {q.options.map((opt, idx) => {
+            let cls = 'quiz-option';
+            if (answered !== undefined) {
+              if (idx === q.correct) cls += ' correct';
+              else if (idx === answered && answered !== q.correct) cls += ' wrong';
+            }
+            return (
+              <button key={idx} className={cls} onClick={() => handleOption(idx)} disabled={answered !== undefined}>
+                <span className="quiz-option-letter">{letters[idx]}</span>
+                {opt}
+              </button>
+            );
+          })}
+        </div>
+        {showExplanation && answered !== undefined && (
+          <div className="quiz-explanation">
+            {answered === q.correct ? '✅ Correct! ' : '❌ Not quite. '}
+            {q.explanation}
+          </div>
+        )}
+      </div>
+      {answered !== undefined && (
+        <button className="quiz-next-btn" onClick={handleNext}>
+          {current + 1 < quiz.questions.length ? 'Next Question →' : 'See Results →'}
+        </button>
+      )}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════
+// AUDIO PLAYER
+// ═══════════════════════════════════════════════════
+function AudioPlayer({ audioFiles, lessonKey }) {
+  const [partIdx, setPartIdx] = useState(0);
+  const [playing, setPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const audioRef = useRef(null);
+
+  // Reset when lesson changes
+  useEffect(() => {
+    setPartIdx(0);
+    setPlaying(false);
+    setProgress(0);
+    setCurrentTime(0);
+    setDuration(0);
+  }, [lessonKey]);
+
+  // Update src when part changes
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.src = audioFiles[partIdx];
+      audioRef.current.load();
+      if (playing) audioRef.current.play().catch(() => {});
+    }
+  }, [partIdx]);
+
+  const togglePlay = () => {
+    if (!audioRef.current) return;
+    if (playing) {
+      audioRef.current.pause();
+      setPlaying(false);
+    } else {
+      audioRef.current.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
+    }
+  };
+
+  const handleTimeUpdate = () => {
+    if (!audioRef.current) return;
+    const t = audioRef.current.currentTime;
+    const d = audioRef.current.duration || 0;
+    setCurrentTime(t);
+    setDuration(d);
+    setProgress(d > 0 ? (t / d) * 100 : 0);
+  };
+
+  const handleEnded = () => {
+    if (partIdx + 1 < audioFiles.length) {
+      setPartIdx(p => p + 1);
+      setPlaying(true);
+      setTimeout(() => {
+        if (audioRef.current) audioRef.current.play().catch(() => {});
+      }, 200);
+    } else {
+      setPlaying(false);
+      setProgress(100);
+    }
+  };
+
+  const seekTo = (e) => {
+    if (!audioRef.current || !duration) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const pct = (e.clientX - rect.left) / rect.width;
+    audioRef.current.currentTime = pct * duration;
+  };
+
+  const fmt = (s) => {
+    if (!s || isNaN(s)) return '0:00';
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return `${m}:${sec.toString().padStart(2,'0')}`;
+  };
+
+  const partName = audioFiles[partIdx]?.split('/').pop().replace('.mp3','') || '';
+
+  return (
+    <div className="audio-bar">
+      <audio ref={audioRef} onTimeUpdate={handleTimeUpdate} onEnded={handleEnded} onLoadedMetadata={handleTimeUpdate}/>
+      <div className="audio-controls">
+        <button className="btn-skip" onClick={() => { setPartIdx(Math.max(0, partIdx-1)); }}>⏮</button>
+        <button className="btn-play" onClick={togglePlay}>
+          {playing ? '⏸' : '▶'}
+        </button>
+        <button className="btn-skip" onClick={() => { if (partIdx+1 < audioFiles.length) setPartIdx(p=>p+1); }}>⏭</button>
+      </div>
+      <div className="audio-info">
+        <div className="audio-title">🎧 {partName}</div>
+        <div className="audio-progress" onClick={seekTo}>
+          <div className="audio-progress-fill" style={{width:`${progress}%`}}/>
+        </div>
+      </div>
+      <div className="audio-time">{fmt(currentTime)} / {fmt(duration)}</div>
+      {audioFiles.length > 1 && (
+        <div className="audio-parts">
+          {audioFiles.map((_,i) => (
+            <div key={i} className={`part-dot ${i === partIdx ? 'active' : i < partIdx ? 'played' : ''}`}
+              onClick={() => { setPartIdx(i); setPlaying(false); }}
+              title={`Part ${i+1}`}/>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════
+// MAIN APP
+// ═══════════════════════════════════════════════════
+function App() {
+  const [lessonIdx, setLessonIdx] = useState(0);
+  const [slideIdx, setSlideIdx] = useState(0);
+  const [showQuiz, setShowQuiz] = useState(false);
+  const [completedLessons, setCompletedLessons] = useState(new Set());
+  const [quizAnswers, setQuizAnswers] = useState({});
+  const [slideKey, setSlideKey] = useState(0);
+
+  const lesson = COURSE_DATA[lessonIdx];
+  const totalSlides = lesson.slides.length;
+  const totalQuizQuestions = COURSE_DATA.reduce((acc, l) => acc + (l.quiz ? l.quiz.questions.length : 0), 0);
+  const answeredCorrect = COURSE_DATA.reduce((acc, l) => {
+    if (!l.quiz) return acc;
+    return acc + l.quiz.questions.filter(q => quizAnswers[q.id] === q.correct).length;
+  }, 0);
+
+  const completedCount = completedLessons.size;
+  const totalLessons = COURSE_DATA.length;
+  const progressPct = Math.round((completedCount / totalLessons) * 100);
+
+  const goToSlide = (idx) => {
+    setSlideIdx(idx);
+    setShowQuiz(false);
+    setSlideKey(k => k + 1);
+  };
+
+  const goToLesson = (idx) => {
+    setLessonIdx(idx);
+    setSlideIdx(0);
+    setShowQuiz(false);
+    setSlideKey(k => k + 1);
+  };
+
+  const nextSlide = () => {
+    if (slideIdx + 1 < totalSlides) {
+      goToSlide(slideIdx + 1);
+    } else if (lesson.quiz) {
+      setShowQuiz(true);
+      setSlideKey(k => k + 1);
+    } else {
+      completeLesson();
+    }
+  };
+
+  const completeLesson = () => {
+    setCompletedLessons(prev => new Set([...prev, lesson.id]));
+    if (lessonIdx + 1 < COURSE_DATA.length) {
+      goToLesson(lessonIdx + 1);
+    }
+  };
+
+  const handleQuizComplete = () => {
+    completeLesson();
+  };
+
+  return (
+    <div id="root">
+      {/* TOPBAR */}
+      <div className="topbar">
+        <div className="topbar-brand">
+          <span className="topbar-logo">PropFirmScanner</span>
+          <span className="topbar-sep">/</span>
+          <span className="topbar-course">Prop Firm Fundamentals</span>
+        </div>
+        <div className="topbar-right">
+          <div className="progress-pill">
+            <div className="progress-pill-bar"><div className="progress-pill-fill" style={{width:`${progressPct}%`}}/></div>
+            <span className="progress-pill-label">{completedCount}/{totalLessons}</span>
+          </div>
+          {totalQuizQuestions > 0 && (
+            <div className="score-badge">🏆 {answeredCorrect}/{totalQuizQuestions}</div>
+          )}
+        </div>
+      </div>
+
+      {/* BODY */}
+      <div className="app-body">
+        {/* SIDEBAR */}
+        <div className="sidebar">
+          <div className="sidebar-header"><div className="sidebar-title">Course Lessons</div></div>
+          {COURSE_DATA.map((l, i) => (
+            <div key={l.id}
+              className={`lesson-item ${i === lessonIdx ? 'active' : ''} ${completedLessons.has(l.id) ? 'completed' : ''}`}
+              onClick={() => goToLesson(i)}>
+              <div className="lesson-dot">
+                {completedLessons.has(l.id) ? '✓' : l.icon}
+              </div>
+              <div className="lesson-meta">
+                <div className="lesson-name">{l.id === 0 ? 'Intro' : l.id === 9 ? 'Conclusion' : `L${l.id}: ${l.title}`}</div>
+                <div className="lesson-dur">{l.duration}</div>
+              </div>
+              {completedLessons.has(l.id) && <span className="lesson-check">✓</span>}
+            </div>
+          ))}
+        </div>
+
+        {/* MAIN */}
+        <div className="main">
+          <AudioPlayer audioFiles={lesson.audioFiles} lessonKey={lesson.key}/>
+
+          <div className="slide-area">
+            <div className="slide-container">
+              <div className="slide-wrap" key={slideKey}>
+                {showQuiz && lesson.quiz ? (
+                  <QuizSlide
+                    quiz={lesson.quiz}
+                    onComplete={handleQuizComplete}
+                    quizAnswers={quizAnswers}
+                    setQuizAnswers={setQuizAnswers}
+                  />
+                ) : (
+                  <SlideRenderer slide={lesson.slides[slideIdx]}/>
+                )}
+              </div>
+            </div>
+
+            {/* SLIDE NAV */}
+            <div className="slide-nav">
+              <button className="nav-btn" onClick={() => {
+                if (showQuiz) { setShowQuiz(false); setSlideKey(k=>k+1); }
+                else if (slideIdx > 0) goToSlide(slideIdx - 1);
+                else if (lessonIdx > 0) goToLesson(lessonIdx - 1);
+              }}>← Prev</button>
+
+              <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:6}}>
+                <div className="slide-dots">
+                  {lesson.slides.map((_,i) => (
+                    <div key={i} className={`sdot ${!showQuiz && i === slideIdx ? 'active' : ''} ${!showQuiz && i < slideIdx ? 'done' : ''}`}
+                      onClick={() => goToSlide(i)}/>
+                  ))}
+                  {lesson.quiz && <div className={`sdot ${showQuiz ? 'active' : ''}`} title="Quiz" style={{background: showQuiz ? 'var(--orange)' : undefined}} onClick={() => { setShowQuiz(true); setSlideKey(k=>k+1); }}/>}
+                </div>
+                <div className="slide-counter">
+                  {showQuiz ? 'Quiz' : `${slideIdx + 1} / ${totalSlides}`}
+                  {' · '}{lesson.icon} {lesson.id === 0 ? 'Introduction' : lesson.id === 9 ? 'Conclusion' : `Lesson ${lesson.id}`}
+                </div>
+              </div>
+
+              <button className="nav-btn primary" onClick={() => {
+                if (showQuiz) return;
+                nextSlide();
+              }} disabled={showQuiz}>
+                {slideIdx + 1 < totalSlides ? 'Next →' : lesson.quiz ? 'Take Quiz →' : 'Complete ✓'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
