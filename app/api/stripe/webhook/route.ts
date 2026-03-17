@@ -2,15 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
-// =============================================================================
-// INITIALIZATION
-// =============================================================================
-
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-12-15.clover',
 });
 
-// Supabase Admin client (bypasses RLS)
 function getSupabaseAdmin() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -18,27 +13,18 @@ function getSupabaseAdmin() {
   );
 }
 
-// =============================================================================
-// WEBHOOK HANDLER
-// =============================================================================
-
 export async function POST(request: NextRequest) {
   const body = await request.text();
   const signature = request.headers.get('stripe-signature');
 
   if (!signature) {
-    console.error('Missing Stripe signature');
     return NextResponse.json({ error: 'Missing signature' }, { status: 400 });
   }
 
   let event: Stripe.Event;
 
   try {
-    event = stripe.webhooks.constructEvent(
-      body,
-      signature,
-      process.env.STRIPE_WEBHOOK_SECRET!
-    );
+    event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET!);
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Unknown error';
     console.error('Webhook signature verification failed:', message);
@@ -49,22 +35,39 @@ export async function POST(request: NextRequest) {
 
   try {
     switch (event.type) {
-      // ===========================================
-      // CHECKOUT COMPLETED - New subscription
-      // ===========================================
+
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
-        
-        if (session.mode === 'subscription' && session.customer_email) {
+        const productType = session.metadata?.productType;
+        const customerEmail = session.customer_email;
+
+        // ✅ ACHAT DU COURS
+        if (productType === 'course_fundamentals' && customerEmail) {
+          const customerId = session.customer as string;
+
+          const { error } = await supabase
+            .from('profiles')
+            .update({
+              has_course_fundamentals: true,
+              stripe_customer_id: customerId,
+            })
+            .eq('email', customerEmail);
+
+          if (error) {
+            console.error('Error granting course access:', error);
+          } else {
+            console.log(`✅ Course access granted to ${customerEmail}`);
+          }
+        }
+
+        // Abonnement Pro (existant)
+        if (session.mode === 'subscription' && customerEmail) {
           const subscriptionId = session.subscription as string;
           const customerId = session.customer as string;
-          
-          // Get subscription details to find end date
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const subscriptionData: any = await stripe.subscriptions.retrieve(subscriptionId);
           const endDate = new Date(subscriptionData.current_period_end * 1000);
-          
-          // Update user profile
+
           const { error } = await supabase
             .from('profiles')
             .update({
@@ -72,20 +75,14 @@ export async function POST(request: NextRequest) {
               stripe_customer_id: customerId,
               subscription_end_date: endDate.toISOString(),
             })
-            .eq('email', session.customer_email);
+            .eq('email', customerEmail);
 
-          if (error) {
-            console.error('Error updating profile:', error);
-          } else {
-            console.log(`✅ User ${session.customer_email} upgraded to Pro!`);
-          }
+          if (error) console.error('Error updating profile:', error);
+          else console.log(`✅ User ${customerEmail} upgraded to Pro!`);
         }
         break;
       }
 
-      // ===========================================
-      // SUBSCRIPTION UPDATED - Renewal, plan change
-      // ===========================================
       case 'customer.subscription.updated': {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const subscription: any = event.data.object;
@@ -95,23 +92,13 @@ export async function POST(request: NextRequest) {
 
         const { error } = await supabase
           .from('profiles')
-          .update({
-            is_pro: isActive,
-            subscription_end_date: endDate.toISOString(),
-          })
+          .update({ is_pro: isActive, subscription_end_date: endDate.toISOString() })
           .eq('stripe_customer_id', customerId);
 
-        if (error) {
-          console.error('Error updating subscription:', error);
-        } else {
-          console.log(`✅ Subscription updated for customer ${customerId}`);
-        }
+        if (error) console.error('Error updating subscription:', error);
         break;
       }
 
-      // ===========================================
-      // SUBSCRIPTION DELETED - Cancelled
-      // ===========================================
       case 'customer.subscription.deleted': {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const subscription: any = event.data.object;
@@ -119,30 +106,17 @@ export async function POST(request: NextRequest) {
 
         const { error } = await supabase
           .from('profiles')
-          .update({
-            is_pro: false,
-            subscription_end_date: null,
-          })
+          .update({ is_pro: false, subscription_end_date: null })
           .eq('stripe_customer_id', customerId);
 
-        if (error) {
-          console.error('Error cancelling subscription:', error);
-        } else {
-          console.log(`❌ Subscription cancelled for customer ${customerId}`);
-        }
+        if (error) console.error('Error cancelling subscription:', error);
         break;
       }
 
-      // ===========================================
-      // PAYMENT FAILED
-      // ===========================================
       case 'invoice.payment_failed': {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const invoice: any = event.data.object;
-        const customerId = invoice.customer as string;
-        
-        console.log(`⚠️ Payment failed for customer ${customerId}`);
-        // Optionally: send email notification, set a flag, etc.
+        console.log(`⚠️ Payment failed for customer ${invoice.customer}`);
         break;
       }
 
@@ -154,9 +128,6 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Webhook processing error:', error);
-    return NextResponse.json(
-      { error: 'Webhook processing failed' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Webhook processing failed' }, { status: 500 });
   }
 }
