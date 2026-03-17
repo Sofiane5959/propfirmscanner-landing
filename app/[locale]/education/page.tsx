@@ -16,19 +16,19 @@ const courses = [
     id: 'beginner',
     title: 'Prop Firm Fundamentals',
     subtitle: 'For Beginners',
-    price: 19.99,
-    originalPrice: 49.99,
-    badge: 'Best Value',
+    price: 69.99,
+    originalPrice: 149.99,
+    badge: 'Now Live 🚀',
     badgeColor: 'bg-emerald-500',
     description: 'Everything you need to know to start your prop firm journey. Perfect for traders who are new to funded accounts.',
-    duration: '4+ hours',
-    lessons: 12,
+    duration: '~2 hours',
+    lessons: 10,
     students: '2,400+',
     rating: 4.8,
     features: [
       'What are prop firms & how they work',
       'Understanding challenge rules',
-      'Basic risk management',
+      'Basic risk management (5 golden rules)',
       'Choosing your first prop firm',
       'Account setup walkthrough',
       'Common beginner mistakes to avoid',
@@ -38,6 +38,9 @@ const courses = [
     gradient: 'from-emerald-500/20 to-teal-500/20',
     borderColor: 'border-emerald-500/30',
     icon: BookOpen,
+    live: true,
+    gumroadUrl: 'https://brikster65.gumroad.com/l/synkry',
+    courseUrl: '/education/fundamentals',
   },
   {
     id: 'advanced',
@@ -45,7 +48,7 @@ const courses = [
     subtitle: 'Advanced Strategies',
     price: 99.99,
     originalPrice: 199.99,
-    badge: 'Most Popular',
+    badge: 'Coming Soon',
     badgeColor: 'bg-yellow-500',
     description: 'Advanced strategies and techniques used by consistently funded traders. Take your prop firm trading to the next level.',
     duration: '12+ hours',
@@ -67,14 +70,17 @@ const courses = [
     gradient: 'from-purple-500/20 to-pink-500/20',
     borderColor: 'border-purple-500/30',
     icon: Trophy,
+    live: false,
+    gumroadUrl: null,
+    courseUrl: null,
   },
 ];
 
 const benefits = [
   {
     icon: Play,
-    title: 'Video Lessons',
-    description: 'High-quality video content you can watch anytime',
+    title: 'Audio Lessons',
+    description: 'High-quality audio narration you can follow along anytime',
   },
   {
     icon: Users,
@@ -83,8 +89,8 @@ const benefits = [
   },
   {
     icon: Award,
-    title: 'Certificate',
-    description: 'Get certified upon course completion',
+    title: 'Interactive Quizzes',
+    description: 'Test your knowledge after every lesson',
   },
   {
     icon: Zap,
@@ -135,7 +141,7 @@ function ComingSoonBadge() {
   return (
     <div className="absolute inset-0 bg-gray-950/80 backdrop-blur-sm z-20 flex items-center justify-center rounded-2xl">
       <div className="text-center">
-        <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full text-white font-bold text-lg mb-3 animate-pulse">
+        <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full text-white font-bold text-lg mb-3 animate-pulse">
           <Lock className="w-5 h-5" />
           Coming Soon
         </div>
@@ -150,9 +156,9 @@ function CourseCard({ course }: { course: typeof courses[0] }) {
   
   return (
     <div className={`relative bg-gradient-to-br ${course.gradient} rounded-2xl border ${course.borderColor} overflow-hidden`}>
-      {/* Coming Soon Overlay */}
-      <ComingSoonBadge />
-      
+      {/* Coming Soon Overlay — only for non-live courses */}
+      {!course.live && <ComingSoonBadge />}
+
       {/* Badge */}
       <div className="absolute top-4 right-4 z-10">
         <span className={`px-3 py-1 ${course.badgeColor} text-white text-xs font-bold rounded-full`}>
@@ -215,12 +221,34 @@ function CourseCard({ course }: { course: typeof courses[0] }) {
             </div>
             <p className="text-emerald-400 text-sm">Save {Math.round((1 - course.price / course.originalPrice) * 100)}%</p>
           </div>
-          <button 
-            disabled
-            className="px-6 py-3 bg-gray-700 text-gray-400 font-semibold rounded-xl cursor-not-allowed"
-          >
-            Join Waitlist
-          </button>
+
+          {course.live ? (
+            <div className="flex flex-col gap-2 items-end">
+              {/* Buy button → Gumroad */}
+              <a
+                href={course.gumroadUrl!}
+                target="_blank"
+                rel="noreferrer"
+                className="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold rounded-xl transition-colors text-sm"
+              >
+                Buy Now →
+              </a>
+              {/* Already bought → access course */}
+              <Link
+                href={course.courseUrl!}
+                className="text-xs text-emerald-400 hover:text-emerald-300 underline underline-offset-2 transition-colors"
+              >
+                Already purchased? Access here
+              </Link>
+            </div>
+          ) : (
+            <button 
+              disabled
+              className="px-6 py-3 bg-gray-700 text-gray-400 font-semibold rounded-xl cursor-not-allowed"
+            >
+              Join Waitlist
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -345,14 +373,19 @@ export default function EducationPage() {
       {/* CTA Section */}
       <section className="max-w-4xl mx-auto px-4 pb-16">
         <div className="bg-gradient-to-r from-emerald-500/20 to-blue-500/20 rounded-2xl border border-emerald-500/30 p-8 md:p-12 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">Ready to Get Started?</h2>
+          <h2 className="text-3xl font-bold text-white mb-4">Ready to Get Funded?</h2>
           <p className="text-gray-400 mb-6 max-w-xl mx-auto">
-            Join our waitlist to be the first to know when courses launch. Early subscribers get exclusive discounts!
+            Start with Prop Firm Fundamentals and get your first funded account in 30 days.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button disabled className="px-8 py-3 bg-gray-700 text-gray-400 font-semibold rounded-xl cursor-not-allowed">
-              Coming Soon
-            </button>
+            <a
+              href="https://brikster65.gumroad.com/l/synkry"
+              target="_blank"
+              rel="noreferrer"
+              className="px-8 py-3 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold rounded-xl transition-colors"
+            >
+              Get Prop Firm Fundamentals — $69.99
+            </a>
             <Link 
               href="/blog"
               className="px-8 py-3 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-xl transition-colors"
