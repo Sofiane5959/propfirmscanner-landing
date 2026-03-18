@@ -26,7 +26,7 @@ export default async function FundamentalsPage({
 
   if (!user) {
     // Not logged in → redirect to sign in, come back after
-    redirect('/sign-in?redirect=/education/fundamentals');
+    redirect('/auth/login?redirect=/education/fundamentals');
   }
 
   // Check if user has purchased the course
