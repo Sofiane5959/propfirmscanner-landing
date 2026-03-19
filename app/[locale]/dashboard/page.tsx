@@ -24,6 +24,8 @@ import {
   AlertTriangle,
   Target,
   Wallet,
+  GraduationCap,
+  BookOpen,
 } from 'lucide-react';
 import AccountOverview from '@/components/AccountOverview';
 
@@ -47,33 +49,32 @@ const translations: Record<Locale, Record<string, string>> = {
     dashboard: 'Dashboard',
     welcomeBack: 'Welcome back',
     addAccount: 'Add Account',
-    // Stats
     totalProfit: 'Total Profit',
     activeAccounts: 'Active Accounts',
     favorites: 'Favorites',
     alertsToday: 'Alerts Today',
-    // Accounts section
     myAccounts: 'My Accounts',
     viewAll: 'View All',
     noAccountsYet: 'No accounts yet',
     startTracking: 'Start tracking your prop firm challenges',
     addFirstAccount: 'Add Your First Account',
     viewMoreAccounts: 'View {count} more accounts',
-    // Profile card
     memberSince: 'Member since',
     plan: 'Plan',
     free: 'Free',
     settings: 'Settings',
-    // Quick actions
     quickActions: 'Quick Actions',
     compareFirms: 'Compare Firms',
     viewDeals: 'View Deals',
     myFavorites: 'My Favorites',
     alertSettings: 'Alert Settings',
-    // Pro banner
     upgradeToPro: 'Upgrade to Pro',
     proDescription: 'Unlock advanced analytics, unlimited accounts, and priority alerts.',
     learnMore: 'Learn More',
+    // Courses
+    myCourses: 'My Courses',
+    accessCourse: 'Access →',
+    buyCourse: 'Get Access — $69.99',
   },
   fr: {
     dashboard: 'Tableau de Bord',
@@ -101,6 +102,10 @@ const translations: Record<Locale, Record<string, string>> = {
     upgradeToPro: 'Passer à Pro',
     proDescription: 'Débloquez des analyses avancées, comptes illimités et alertes prioritaires.',
     learnMore: 'En Savoir Plus',
+    // Courses
+    myCourses: 'Mes Cours',
+    accessCourse: 'Accéder →',
+    buyCourse: 'Obtenir l\'accès — $69.99',
   },
   de: {
     dashboard: 'Dashboard',
@@ -128,6 +133,9 @@ const translations: Record<Locale, Record<string, string>> = {
     upgradeToPro: 'Auf Pro Upgraden',
     proDescription: 'Erweiterte Analysen, unbegrenzte Konten und Prioritäts-Alarme freischalten.',
     learnMore: 'Mehr Erfahren',
+    myCourses: 'Meine Kurse',
+    accessCourse: 'Zugriff →',
+    buyCourse: 'Zugang holen — $69.99',
   },
   es: {
     dashboard: 'Panel de Control',
@@ -155,6 +163,9 @@ const translations: Record<Locale, Record<string, string>> = {
     upgradeToPro: 'Actualizar a Pro',
     proDescription: 'Desbloquea análisis avanzados, cuentas ilimitadas y alertas prioritarias.',
     learnMore: 'Saber Más',
+    myCourses: 'Mis Cursos',
+    accessCourse: 'Acceder →',
+    buyCourse: 'Obtener acceso — $69.99',
   },
   pt: {
     dashboard: 'Painel de Controle',
@@ -182,6 +193,9 @@ const translations: Record<Locale, Record<string, string>> = {
     upgradeToPro: 'Atualizar para Pro',
     proDescription: 'Desbloqueie análises avançadas, contas ilimitadas e alertas prioritários.',
     learnMore: 'Saiba Mais',
+    myCourses: 'Meus Cursos',
+    accessCourse: 'Acessar →',
+    buyCourse: 'Obter acesso — $69.99',
   },
   ar: {
     dashboard: 'لوحة التحكم',
@@ -209,6 +223,9 @@ const translations: Record<Locale, Record<string, string>> = {
     upgradeToPro: 'الترقية إلى Pro',
     proDescription: 'افتح التحليلات المتقدمة والحسابات غير المحدودة والتنبيهات ذات الأولوية.',
     learnMore: 'اعرف المزيد',
+    myCourses: 'دوراتي',
+    accessCourse: 'الوصول →',
+    buyCourse: 'احصل على الوصول — $69.99',
   },
   hi: {
     dashboard: 'डैशबोर्ड',
@@ -236,6 +253,9 @@ const translations: Record<Locale, Record<string, string>> = {
     upgradeToPro: 'Pro में अपग्रेड करें',
     proDescription: 'उन्नत एनालिटिक्स, असीमित अकाउंट्स और प्राथमिकता अलर्ट्स अनलॉक करें।',
     learnMore: 'और जानें',
+    myCourses: 'मेरे कोर्स',
+    accessCourse: 'एक्सेस करें →',
+    buyCourse: 'एक्सेस पाएं — $69.99',
   },
 };
 
@@ -287,12 +307,29 @@ export default function DashboardPage() {
   const [loadingStats, setLoadingStats] = useState(true);
   const [loadingAccounts, setLoadingAccounts] = useState(true);
 
+  // ─── NEW: état accès cours ───────────────────────────────────────────────
+  const [hasCourse, setHasCourse] = useState(false);
+
   // Redirect if not logged in
   useEffect(() => {
     if (!isLoading && !user) {
       router.push('/');
     }
   }, [user, isLoading, router]);
+
+  // ─── NEW: fetch accès cours ──────────────────────────────────────────────
+  useEffect(() => {
+    const fetchCourseAccess = async () => {
+      if (!user) return;
+      const { data } = await supabase
+        .from('profiles')
+        .select('has_course_fundamentals')
+        .eq('id', user.id)
+        .single();
+      setHasCourse(data?.has_course_fundamentals ?? false);
+    };
+    if (user) fetchCourseAccess();
+  }, [user, supabase]);
 
   // Fetch accounts
   useEffect(() => {
@@ -309,7 +346,6 @@ export default function DashboardPage() {
         if (error) throw error;
         setAccounts(data || []);
         
-        // Calculate total profit
         const totalProfit = (data || []).reduce((sum, acc) => {
           return sum + (acc.current_balance - acc.initial_balance);
         }, 0);
@@ -337,13 +373,11 @@ export default function DashboardPage() {
       if (!user) return;
       
       try {
-        // Get favorites count
         const { count: favCount } = await supabase
           .from('user_favorites')
           .select('*', { count: 'exact', head: true })
           .eq('user_id', user.id);
         
-        // Get today's alerts count
         const today = new Date().toISOString().split('T')[0];
         const { count: alertCount } = await supabase
           .from('alert_logs')
@@ -368,7 +402,6 @@ export default function DashboardPage() {
     }
   }, [user, supabase]);
 
-  // Format member since date based on locale
   const getMemberSince = () => {
     if (!user?.created_at) return '';
     const date = new Date(user.created_at);
@@ -387,7 +420,6 @@ export default function DashboardPage() {
     });
   };
 
-  // Loading state
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-950 flex items-center justify-center">
@@ -581,6 +613,42 @@ export default function DashboardPage() {
                 {t.settings}
               </Link>
             </div>
+
+            {/* ─── MY COURSES (NEW) ─────────────────────────────────────────── */}
+            <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-6">
+              <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+                <GraduationCap className="w-5 h-5 text-emerald-400" />
+                {t.myCourses}
+              </h3>
+              <div className={`rounded-lg border p-4 flex items-center justify-between gap-3
+                ${hasCourse
+                  ? 'border-emerald-500/30 bg-emerald-500/5'
+                  : 'border-gray-700 bg-gray-800/50'}`}>
+                <div className="flex items-center gap-3 min-w-0">
+                  <BookOpen className={`w-5 h-5 shrink-0 ${hasCourse ? 'text-emerald-400' : 'text-gray-500'}`} />
+                  <div className="min-w-0">
+                    <p className="text-white text-sm font-medium truncate">Prop Firm Fundamentals</p>
+                    <p className="text-gray-500 text-xs">10 lessons · 17 audio files</p>
+                  </div>
+                </div>
+                {hasCourse ? (
+                  <Link
+                    href={`/${locale}/education/fundamentals`}
+                    className="shrink-0 text-xs bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-lg transition-colors font-medium"
+                  >
+                    {t.accessCourse}
+                  </Link>
+                ) : (
+                  <Link
+                    href={`/${locale}/education`}
+                    className="shrink-0 text-xs border border-emerald-500 text-emerald-400 hover:bg-emerald-500/10 px-3 py-1.5 rounded-lg transition-colors font-medium whitespace-nowrap"
+                  >
+                    {t.buyCourse}
+                  </Link>
+                )}
+              </div>
+            </div>
+            {/* ──────────────────────────────────────────────────────────────── */}
 
             {/* Quick Actions */}
             <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-6">

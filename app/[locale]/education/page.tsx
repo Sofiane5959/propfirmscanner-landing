@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import { useAuth } from '@/providers/AuthProvider';
 import { 
   Home, ChevronRight, BookOpen, GraduationCap, Trophy, 
   CheckCircle2, Play, Clock, Users, Star, Lock,
@@ -91,21 +93,34 @@ const testimonials = [
 ];
 
 // =============================================================================
-// BUY BUTTON — Stripe Checkout
+// BUY BUTTON — vérifie Google OAuth avant Stripe
 // =============================================================================
 
 function BuyButton({ productType }: { productType: string }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const { user } = useAuth();
+  const router = useRouter();
+  const pathname = usePathname();
 
   const handleBuy = async () => {
+    // Pas connecté → login Google d'abord, retour sur /education après
+    if (!user) {
+      router.push(`/auth/login?redirect=${encodeURIComponent(pathname)}`);
+      return;
+    }
+
     setLoading(true);
     setError('');
     try {
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productType }),
+        body: JSON.stringify({
+          productType,
+          userId: user.id,    // 🔑 utilisé par le webhook pour Supabase
+          email: user.email,  // 🔑 pré-rempli dans Stripe Checkout
+        }),
       });
       const data = await res.json();
       if (data.url) {
@@ -127,7 +142,10 @@ function BuyButton({ productType }: { productType: string }) {
         disabled={loading}
         className="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-60 text-white font-semibold rounded-xl transition-colors text-sm flex items-center gap-2"
       >
-        {loading ? <><Loader2 className="w-4 h-4 animate-spin"/> Processing...</> : 'Buy Now →'}
+        {loading
+          ? <><Loader2 className="w-4 h-4 animate-spin" /> Processing...</>
+          : user ? 'Buy Now →' : 'Sign in & Buy →'
+        }
       </button>
       {error && <span className="text-red-400 text-xs">{error}</span>}
     </div>
