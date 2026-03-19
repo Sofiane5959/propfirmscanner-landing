@@ -16,6 +16,7 @@ export async function POST(req: Request) {
     ],
     mode: 'payment',
     customer_email: email || undefined, // pré-rempli automatiquement si connecté via Google
+    allow_promotion_codes: true,        // affiche le champ code promo dans Stripe
     metadata: {
       productType,           // "course_fundamentals" — utilisé par le webhook
       userId: userId || '',  // ID Supabase — utilisé par le webhook pour update direct
