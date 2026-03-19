@@ -1273,13 +1273,7 @@ function LicenseGate({ onUnlock }) {
   );
 }
 
-function Root() {
-  const [unlocked, setUnlocked] = React.useState(false);
-  if (!unlocked) return <LicenseGate onUnlock={() => setUnlocked(true)} />;
-  return <App />;
-}
-
-ReactDOM.createRoot(document.getElementById('root')).render(<Root/>);
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
 </body>
 </html>
