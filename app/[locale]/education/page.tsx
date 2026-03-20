@@ -2,17 +2,11 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { useAuth } from '@/providers/AuthProvider';
 import { 
   Home, ChevronRight, BookOpen, GraduationCap, Trophy, 
   CheckCircle2, Play, Clock, Users, Star, Lock,
   Zap, Award, Loader2
 } from 'lucide-react';
-
-// =============================================================================
-// COURSE DATA
-// =============================================================================
 
 const courses = [
   {
@@ -93,34 +87,21 @@ const testimonials = [
 ];
 
 // =============================================================================
-// BUY BUTTON — vérifie Google OAuth avant Stripe
+// BUY BUTTON — Direct Stripe, aucun compte requis
 // =============================================================================
 
 function BuyButton({ productType }: { productType: string }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const { user } = useAuth();
-  const router = useRouter();
-  const pathname = usePathname();
 
   const handleBuy = async () => {
-    // Pas connecté → login Google d'abord, retour sur /education après
-    if (!user) {
-      router.push(`/auth/login?redirect=${encodeURIComponent(pathname)}`);
-      return;
-    }
-
     setLoading(true);
     setError('');
     try {
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          productType,
-          userId: user.id,    // 🔑 utilisé par le webhook pour Supabase
-          email: user.email,  // 🔑 pré-rempli dans Stripe Checkout
-        }),
+        body: JSON.stringify({ productType }),
       });
       const data = await res.json();
       if (data.url) {
@@ -144,17 +125,13 @@ function BuyButton({ productType }: { productType: string }) {
       >
         {loading
           ? <><Loader2 className="w-4 h-4 animate-spin" /> Processing...</>
-          : user ? 'Buy Now →' : 'Sign in & Buy →'
+          : 'Buy Now →'
         }
       </button>
       {error && <span className="text-red-400 text-xs">{error}</span>}
     </div>
   );
 }
-
-// =============================================================================
-// COMPONENTS
-// =============================================================================
 
 function Breadcrumb() {
   return (
@@ -237,10 +214,6 @@ function CourseCard({ course }: { course: typeof courses[0] }) {
     </div>
   );
 }
-
-// =============================================================================
-// MAIN PAGE
-// =============================================================================
 
 export default function EducationPage() {
   return (
