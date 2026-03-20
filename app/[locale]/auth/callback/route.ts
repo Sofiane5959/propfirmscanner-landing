@@ -9,7 +9,6 @@ export async function GET(request: Request) {
   const code = requestUrl.searchParams.get('code')
   const token_hash = requestUrl.searchParams.get('token_hash')
   const type = requestUrl.searchParams.get('type')
-  const next = requestUrl.searchParams.get('next') || '/education/fundamentals'
 
   const cookieStore = cookies()
   const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
@@ -22,7 +21,6 @@ export async function GET(request: Request) {
     })
 
     if (!error) {
-      // Connecté via magic link → redirect vers le cours
       return NextResponse.redirect(
         new URL('/education/fundamentals?welcome=true', requestUrl.origin)
       )
@@ -42,8 +40,7 @@ export async function GET(request: Request) {
       console.error('OAuth error:', error)
     }
 
-    // Redirect vers le dashboard ou la page demandée
-    const redirectTo = requestUrl.searchParams.get('redirect') || '/dashboard'
+    const redirectTo = requestUrl.searchParams.get('redirect') || '/education/fundamentals'
     return NextResponse.redirect(new URL(redirectTo, requestUrl.origin))
   }
 
