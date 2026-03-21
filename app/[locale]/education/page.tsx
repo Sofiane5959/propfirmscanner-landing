@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { 
   Home, ChevronRight, BookOpen, GraduationCap, Trophy, 
   CheckCircle2, Play, Clock, Users, Star, Lock,
@@ -85,6 +86,46 @@ const testimonials = [
   { name: 'Sarah K.', role: 'Full-time Trader', content: 'The advanced course transformed my approach to risk management. Now managing 3 funded accounts.', rating: 5 },
   { name: 'David R.', role: 'Part-time Trader', content: 'Worth every penny. The psychology module alone saved me from blowing multiple accounts.', rating: 5 },
 ];
+
+// =============================================================================
+// PAYMENT SUCCESS BANNER
+// =============================================================================
+
+function PaymentSuccessBanner() {
+  const searchParams = useSearchParams();
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get('payment') === 'success') {
+      setShow(true);
+    }
+  }, [searchParams]);
+
+  if (!show) return null;
+
+  return (
+    <div className="max-w-4xl mx-auto px-4 pt-8">
+      <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-6 flex items-start gap-4">
+        <div className="w-12 h-12 bg-emerald-500/20 rounded-full flex items-center justify-center shrink-0">
+          <CheckCircle2 className="w-6 h-6 text-emerald-400" />
+        </div>
+        <div>
+          <h3 className="text-white font-bold text-lg mb-1">🎉 Payment confirmed!</h3>
+          <p className="text-gray-300 text-sm mb-2">
+            Check your email — we sent you a magic link to access your course instantly.
+          </p>
+          <p className="text-gray-500 text-xs">
+            Didn&apos;t receive it? Check your spam folder or{' '}
+            <Link href="/auth/login" className="text-emerald-400 hover:underline">
+              sign in here
+            </Link>.
+          </p>
+        </div>
+        <button onClick={() => setShow(false)} className="text-gray-500 hover:text-white ml-auto shrink-0 text-lg">✕</button>
+      </div>
+    </div>
+  );
+}
 
 // =============================================================================
 // BUY BUTTON — Direct Stripe, aucun compte requis
@@ -218,6 +259,7 @@ function CourseCard({ course }: { course: typeof courses[0] }) {
 export default function EducationPage() {
   return (
     <div className="min-h-screen bg-gray-950">
+      <PaymentSuccessBanner />
       <section className="relative overflow-hidden bg-gradient-to-b from-gray-900 via-gray-900 to-gray-950 border-b border-gray-800">
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl transform -translate-y-1/2" />

@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     metadata: {
       productType, // "course_fundamentals"
     },
-    success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/education/fundamentals?payment=success`,
+    success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/education?payment=success`,
     cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/education`,
   });
 
