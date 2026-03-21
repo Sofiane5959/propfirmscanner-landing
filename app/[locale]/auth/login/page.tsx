@@ -32,7 +32,7 @@ export default function LoginPage() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const locale = getLocaleFromPath(pathname);
-  const redirect = searchParams.get('redirect') || '/dashboard';
+  const redirect = searchParams.get('redirect') || '/education/fundamentals';
 
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isEmailLoading, setIsEmailLoading] = useState(false);
