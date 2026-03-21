@@ -343,6 +343,10 @@ function UserDropdown({ t }: { t: Record<string, string> }) {
               <Shield className="w-4 h-4" />
               {t.dashboard}
             </Link>
+            <Link href="/education/fundamentals" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
+              <GraduationCap className="w-4 h-4" />
+              My Courses
+            </Link>
             <Link href="/dashboard/favorites" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
               <Star className="w-4 h-4" />
               {t.favorites}
@@ -485,13 +489,13 @@ export function Navbar() {
             ) : user ? (
               <UserDropdown t={t} />
             ) : (
-              <button
-                onClick={signInWithGoogle}
+              <Link
+                href="/auth/login"
                 className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors whitespace-nowrap"
               >
                 <GoogleIcon className="w-4 h-4" />
                 {t.signIn}
-              </button>
+              </Link>
             )}
           </div>
 
@@ -627,13 +631,14 @@ export function Navbar() {
                   </button>
                 </>
               ) : (
-                <button
-                  onClick={() => { setMobileMenuOpen(false); signInWithGoogle(); }}
+                <Link
+                  href="/auth/login"
+                  onClick={() => setMobileMenuOpen(false)}
                   className="flex items-center justify-center gap-2 w-full px-4 py-3 text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg"
                 >
                   <GoogleIcon className="w-4 h-4" />
-                  {t.signInGoogle}
-                </button>
+                  {t.signIn}
+                </Link>
               )}
             </div>
           </div>
