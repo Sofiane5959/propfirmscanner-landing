@@ -26,6 +26,8 @@ import {
   Wallet,
   GraduationCap,
   BookOpen,
+  Lock,
+  Zap,
 } from 'lucide-react';
 import AccountOverview from '@/components/AccountOverview';
 
@@ -439,17 +441,73 @@ export default function DashboardPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-              <Shield className="w-6 h-6 text-emerald-400" />
-              {t.dashboard}
-            </h1>
-            <p className="text-gray-400 mt-1">{t.welcomeBack}, {displayName}!</p>
+            <p className="text-gray-400 text-sm">{t.welcomeBack}</p>
+            <h1 className="text-2xl font-bold text-white">{displayName}!</h1>
           </div>
+          <div className="flex items-center gap-3">
+            <span className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs rounded-full">Free plan</span>
+            <Link
+              href={`/${locale}/dashboard/upgrade`}
+              className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors text-sm font-medium"
+            >
+              <Zap className="w-4 h-4" />
+              <span>Upgrade Pro</span>
+              <span className="flex items-center gap-1">
+                <span className="line-through text-purple-300 text-xs">$49.99</span>
+                <span className="bg-yellow-400 text-yellow-900 text-xs font-bold px-1.5 py-0.5 rounded">$29.99 · First 100</span>
+              </span>
+            </Link>
+          </div>
+        </div>
+
+        {/* My Course — Hero Card */}
+        {hasCourse ? (
+          <Link
+            href={`/${locale}/education/fundamentals`}
+            className="flex items-center justify-between bg-gradient-to-r from-emerald-900/60 to-teal-900/60 border border-emerald-500/30 rounded-xl p-5 mb-6 hover:border-emerald-500/60 transition-all group"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center shrink-0">
+                <GraduationCap className="w-6 h-6 text-emerald-400" />
+              </div>
+              <div>
+                <p className="text-xs text-emerald-400 uppercase tracking-wider mb-1">My Course</p>
+                <p className="text-white font-semibold">Prop Firm Fundamentals</p>
+                <p className="text-gray-400 text-sm">10 lessons · 17 audio files · 8 quizzes</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 bg-emerald-500 group-hover:bg-emerald-400 text-white px-4 py-2 rounded-lg transition-colors text-sm font-medium">
+              Access course →
+            </div>
+          </Link>
+        ) : (
+          <Link
+            href={`/${locale}/education`}
+            className="flex items-center justify-between bg-gray-900/50 border border-gray-700 border-dashed rounded-xl p-5 mb-6 hover:border-emerald-500/40 transition-all group"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center shrink-0">
+                <GraduationCap className="w-6 h-6 text-gray-500" />
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Course</p>
+                <p className="text-white font-semibold">Prop Firm Fundamentals</p>
+                <p className="text-gray-400 text-sm">Get lifetime access — $69.99</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 border border-emerald-500 text-emerald-400 px-4 py-2 rounded-lg text-sm font-medium">
+              Get Access →
+            </div>
+          </Link>
+        )}
+
+        {/* Add Account button */}
+        <div className="flex justify-end mb-6">
           <Link
             href={`/${locale}/dashboard/accounts/new`}
-            className="flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors text-sm"
           >
             <Plus className="w-4 h-4" />
             {t.addAccount}
@@ -614,41 +672,7 @@ export default function DashboardPage() {
               </Link>
             </div>
 
-            {/* ─── MY COURSES (NEW) ─────────────────────────────────────────── */}
-            <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-6">
-              <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
-                <GraduationCap className="w-5 h-5 text-emerald-400" />
-                {t.myCourses}
-              </h3>
-              <div className={`rounded-lg border p-4 flex items-center justify-between gap-3
-                ${hasCourse
-                  ? 'border-emerald-500/30 bg-emerald-500/5'
-                  : 'border-gray-700 bg-gray-800/50'}`}>
-                <div className="flex items-center gap-3 min-w-0">
-                  <BookOpen className={`w-5 h-5 shrink-0 ${hasCourse ? 'text-emerald-400' : 'text-gray-500'}`} />
-                  <div className="min-w-0">
-                    <p className="text-white text-sm font-medium truncate">Prop Firm Fundamentals</p>
-                    <p className="text-gray-500 text-xs">10 lessons · 17 audio files</p>
-                  </div>
-                </div>
-                {hasCourse ? (
-                  <Link
-                    href={`/${locale}/education/fundamentals`}
-                    className="shrink-0 text-xs bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-lg transition-colors font-medium"
-                  >
-                    {t.accessCourse}
-                  </Link>
-                ) : (
-                  <Link
-                    href={`/${locale}/education`}
-                    className="shrink-0 text-xs border border-emerald-500 text-emerald-400 hover:bg-emerald-500/10 px-3 py-1.5 rounded-lg transition-colors font-medium whitespace-nowrap"
-                  >
-                    {t.buyCourse}
-                  </Link>
-                )}
-              </div>
-            </div>
-            {/* ──────────────────────────────────────────────────────────────── */}
+
 
             {/* Quick Actions */}
             <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-6">
