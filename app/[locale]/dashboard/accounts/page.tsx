@@ -237,8 +237,6 @@ const translations: Record<Locale, Record<string, string>> = {
   },
 };
 
-// 🔒 PROTECTION: Seuls ces emails peuvent voir cette page
-const ALLOWED_EMAILS = ['brik.sofiane1991@gmail.com'];
 
 interface Account {
   id: string;
@@ -338,32 +336,7 @@ export default function AccountsListPage() {
 
   if (!user) return null;
 
-  // 🔒 PROTECTION: Vérifier si l'utilisateur est autorisé
-  const isAllowed = ALLOWED_EMAILS.includes(user.email || '');
   
-  if (!isAllowed) {
-    return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-20 h-20 bg-purple-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Shield className="w-10 h-10 text-purple-500" />
-          </div>
-          <h1 className="text-2xl font-bold text-white mb-2">{t.comingSoon}</h1>
-          <p className="text-gray-400 mb-6">
-            {t.comingSoonDesc}
-          </p>
-          <Link
-            href={`/${locale}/dashboard`}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors"
-          >
-            <ChevronLeft className="w-4 h-4" />
-            {t.backToDashboard}
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gray-950">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
