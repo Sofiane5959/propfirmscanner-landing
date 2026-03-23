@@ -27,7 +27,7 @@ function getLocaleFromPath(p: string): Locale {
 // =============================================================================
 // CHALLENGE CARD — Visual Drawdown Tracker
 // =============================================================================
-function ChallengeCard({ account }: { account: any }) {
+function ChallengeCard({ account, locale }: { account: any; locale: string }) {
   const balance = account.current_balance || account.initial_balance;
   const pnl = balance - account.initial_balance;
   const pnlPct = ((pnl / account.initial_balance) * 100);
@@ -133,7 +133,7 @@ function ChallengeCard({ account }: { account: any }) {
           <span className="text-xs text-gray-600">No end date</span>
         )}
         <Link
-          href={`/dashboard/accounts/${account.id}`}
+          href={`/${locale}/dashboard/accounts/${account.id}`}
           className="text-xs text-emerald-400 hover:text-emerald-300 flex items-center gap-1"
         >
           Details <ChevronRight className="w-3 h-3" />
@@ -561,7 +561,7 @@ export default function DashboardPage() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {accounts.slice(0, 3).map(a => <ChallengeCard key={a.id} account={a} />)}
+                  {accounts.slice(0, 3).map(a => <ChallengeCard key={a.id} account={a} locale={locale} />)}
                   {accounts.length > 3 && (
                     <Link href={`/${locale}/dashboard/accounts`}
                       className="flex items-center justify-center gap-2 py-3 bg-gray-800/50 hover:bg-gray-800 text-gray-400 hover:text-white rounded-xl transition-colors text-sm">
