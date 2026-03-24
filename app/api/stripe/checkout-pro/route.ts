@@ -3,6 +3,9 @@ import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
+// Price ID hardcodé pour éviter les problèmes de variables d'environnement
+const PRO_MONTHLY_PRICE_ID = 'price_1TEWh05fsECZtds2llPxhHVb';
+
 export async function POST() {
   try {
     const session = await stripe.checkout.sessions.create({
@@ -10,7 +13,7 @@ export async function POST() {
       payment_method_types: ['card'],
       line_items: [
         {
-          price: process.env.STRIPE_PRICE_PRO_MONTHLY!,
+          price: PRO_MONTHLY_PRICE_ID,
           quantity: 1,
         },
       ],
