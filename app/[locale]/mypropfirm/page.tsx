@@ -1,10 +1,6 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
-import { useAuth } from '@/providers/AuthProvider';
-import { AuthGuardModal } from '@/components/AuthGuardModal';
-import { CheckoutButton } from '@/components/CheckoutButton';
 import { 
   Home, ChevronRight, Crown, CheckCircle2, Sparkles,
   BarChart3, Bell, Shield, Zap, Users, TrendingUp,
@@ -97,11 +93,6 @@ function Breadcrumb() {
 // =============================================================================
 
 export default function MyPropFirmPage() {
-  const { user } = useAuth();
-  const [authModalOpen, setAuthModalOpen] = useState(false);
-
-  // TODO: Get actual subscription status from profile/database
-  const isProUser = false;
 
   return (
     <div className="min-h-screen bg-gray-950">
@@ -130,31 +121,13 @@ export default function MyPropFirmPage() {
             
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              {isProUser ? (
-                <Link 
-                  href="/dashboard"
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-emerald-500 to-blue-500 hover:from-emerald-600 hover:to-blue-600 text-white font-semibold rounded-xl transition-all shadow-lg shadow-emerald-500/20"
-                >
-                  <BarChart3 className="w-5 h-5" />
-                  Go to Dashboard
-                </Link>
-              ) : user ? (
-                <CheckoutButton
-                  productType="pro_monthly"
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold rounded-xl transition-all shadow-lg shadow-orange-500/20"
-                >
-                  <Crown className="w-5 h-5" />
-                  Upgrade to Pro - €29.99/mo
-                </CheckoutButton>
-              ) : (
-                <button 
-                  onClick={() => setAuthModalOpen(true)}
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold rounded-xl transition-all shadow-lg shadow-orange-500/20"
-                >
-                  <Crown className="w-5 h-5" />
-                  Get Started - €29.99/mo
-                </button>
-              )}
+              <Link
+                href="/dashboard/upgrade"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold rounded-xl transition-all shadow-lg shadow-orange-500/20"
+              >
+                <Crown className="w-5 h-5" />
+                Upgrade to Pro — $29.99/mo
+              </Link>
               <Link 
                 href="/compare"
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-xl transition-colors"
@@ -274,33 +247,28 @@ export default function MyPropFirmPage() {
                 </div>
                 <p className="text-gray-500 text-sm mb-6">Everything you need to get funded</p>
                 
-                <div className="flex items-baseline gap-2 mb-6">
-                  <span className="text-4xl font-bold text-white">€29.99</span>
-                  <span className="text-gray-500">/month</span>
+                <div className="mb-6">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-bold text-white">$29.99</span>
+                    <span className="text-gray-500">/month</span>
+                    <span className="text-gray-600 line-through text-sm">$49.99</span>
+                  </div>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-yellow-500/20 border border-yellow-500/30 rounded-full text-xs text-yellow-400 font-semibold">
+                      ✦ First 100 users
+                    </span>
+                    <span className="text-gray-500 text-xs">then $49.99/mo</span>
+                  </div>
                 </div>
                 
                 {/* Pro CTA Button */}
-                {isProUser ? (
-                  <div className="w-full py-3 rounded-xl font-semibold mb-8 bg-gray-700 text-gray-400 text-center">
-                    Current Plan
-                  </div>
-                ) : user ? (
-                  <CheckoutButton
-                    productType="pro_monthly"
-                    className="w-full py-3 rounded-xl font-semibold mb-8 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg shadow-orange-500/20"
-                  >
-                    Upgrade to Pro
-                    <ArrowRight className="w-4 h-4" />
-                  </CheckoutButton>
-                ) : (
-                  <button 
-                    onClick={() => setAuthModalOpen(true)}
-                    className="w-full py-3 rounded-xl font-semibold mb-8 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2"
-                  >
-                    Sign in to Upgrade
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                )}
+                <Link
+                  href="/dashboard/upgrade"
+                  className="w-full py-3 rounded-xl font-semibold mb-8 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2"
+                >
+                  Upgrade to Pro
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
                 
                 {/* Features */}
                 <div className="space-y-3">
@@ -400,23 +368,13 @@ export default function MyPropFirmPage() {
             Stop guessing about your prop firm limits. Track everything, avoid violations, and maximize your chances of success.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            {user ? (
-              <CheckoutButton
-                productType="pro_monthly"
-                className="px-8 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold rounded-xl shadow-lg shadow-orange-500/20"
-              >
-                <Crown className="w-5 h-5" />
-                Upgrade to Pro
-              </CheckoutButton>
-            ) : (
-              <button 
-                onClick={() => setAuthModalOpen(true)}
-                className="px-8 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold rounded-xl shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2"
-              >
-                <Crown className="w-5 h-5" />
-                Get Started
-              </button>
-            )}
+            <Link
+              href="/dashboard/upgrade"
+              className="px-8 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold rounded-xl shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2"
+            >
+              <Crown className="w-5 h-5" />
+              Upgrade to Pro
+            </Link>
             <Link 
               href="/compare"
               className="px-8 py-3 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-xl transition-colors flex items-center gap-2 justify-center"
@@ -428,12 +386,7 @@ export default function MyPropFirmPage() {
         </div>
       </section>
 
-      {/* Auth Modal */}
-      <AuthGuardModal
-        isOpen={authModalOpen}
-        onClose={() => setAuthModalOpen(false)}
-        action="upgrade to Pro"
-      />
     </div>
   );
 }
+
