@@ -12,6 +12,56 @@ const supabase = createClient(
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+// =============================================================================
+// HELPER — Met à jour is_pro dans Supabase par email
+// =============================================================================
+
+async function setIsProByEmail(email: string, isPro: boolean): Promise<void> {
+  const { data: usersData, error: listError } = await supabase.auth.admin.listUsers();
+
+  if (listError) {
+    console.error('Error listing users:', listError);
+    return;
+  }
+
+  const user = usersData?.users?.find((u) => u.email === email);
+
+  if (!user) {
+    console.warn(`setIsProByEmail: no user found for ${email}`);
+    return;
+  }
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({ is_pro: isPro })
+    .eq('id', user.id);
+
+  if (error) {
+    console.error(`Error updating is_pro for ${email}:`, error);
+  } else {
+    console.log(`✅ is_pro=${isPro} set for ${email} (id: ${user.id})`);
+  }
+}
+
+// =============================================================================
+// HELPER — Récupère l'email depuis un Stripe Customer ID
+// =============================================================================
+
+async function getEmailFromCustomer(customerId: string): Promise<string | null> {
+  try {
+    const customer = await stripe.customers.retrieve(customerId);
+    if (customer.deleted) return null;
+    return (customer as Stripe.Customer).email ?? null;
+  } catch (err) {
+    console.error('Error retrieving customer:', err);
+    return null;
+  }
+}
+
+// =============================================================================
+// WEBHOOK HANDLER
+// =============================================================================
+
 export async function POST(req: Request) {
   const body = await req.text();
   const sig = req.headers.get('stripe-signature')!;
@@ -24,30 +74,34 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Webhook error' }, { status: 400 });
   }
 
+  console.log(`Webhook event: ${event.type}`);
+
+  // ===========================================================================
+  // 1. ACHAT ONE-TIME — Cours Fundamentals
+  // ===========================================================================
+
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object as Stripe.Checkout.Session;
 
-    // ── Email: customer_details.email est plus fiable que customer_email ──
     const email = session.customer_details?.email || session.customer_email;
     const productType = session.metadata?.productType;
 
-    console.log(`Webhook received: productType=${productType}, email=${email}`);
+    console.log(`checkout.session.completed: productType=${productType}, email=${email}`);
 
     if (productType === 'course_fundamentals' && email) {
       let userId: string;
 
-      // ── 1. Chercher si l'utilisateur existe déjà dans auth.users ──────────
+      // Chercher si l'utilisateur existe déjà
       const { data: usersData, error: listError } = await supabase.auth.admin.listUsers();
-      
+
       if (listError) {
         console.error('Error listing users:', listError);
         return NextResponse.json({ error: 'Database error' }, { status: 500 });
       }
 
-      const existingUser = usersData?.users?.find(u => u.email === email);
+      const existingUser = usersData?.users?.find((u) => u.email === email);
 
       if (existingUser) {
-        // Utilisateur existant → juste activer le cours
         userId = existingUser.id;
         console.log(`Existing user found: ${userId}`);
 
@@ -55,9 +109,7 @@ export async function POST(req: Request) {
           .from('profiles')
           .update({ has_course_fundamentals: true })
           .eq('id', userId);
-
       } else {
-        // ── 2. Créer le compte Supabase automatiquement ──────────────────────
         const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
           email,
           email_confirm: true,
@@ -74,8 +126,7 @@ export async function POST(req: Request) {
         userId = newUser.user.id;
         console.log(`New user created: ${userId}`);
 
-        // Attendre que le trigger Supabase crée le profil
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise((resolve) => setTimeout(resolve, 2000));
 
         await supabase
           .from('profiles')
@@ -83,7 +134,7 @@ export async function POST(req: Request) {
           .eq('id', userId);
       }
 
-      // ── 3. Générer un magic link (valable 24h) ────────────────────────────
+      // Générer un magic link
       const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
         type: 'magiclink',
         email,
@@ -96,12 +147,13 @@ export async function POST(req: Request) {
         console.error('Magic link error:', linkError);
       }
 
-      const magicLink = linkData?.properties?.action_link ||
+      const magicLink =
+        linkData?.properties?.action_link ||
         `${process.env.NEXT_PUBLIC_SITE_URL}/auth/login`;
 
       console.log(`Magic link generated: ${magicLink ? 'OK' : 'FALLBACK'}`);
 
-      // ── 4. Envoyer l'email via Resend ─────────────────────────────────────
+      // Envoyer l'email via Resend
       const { data: emailData, error: emailError } = await resend.emails.send({
         from: 'PropFirmScanner Academy <academy@propfirmscanner.org>',
         to: email,
@@ -199,6 +251,53 @@ export async function POST(req: Request) {
         console.log(`✅ Email sent to ${email}, id: ${emailData?.id}`);
       }
     }
+  }
+
+  // ===========================================================================
+  // 2. ABONNEMENT PRO — Activation
+  // ===========================================================================
+
+  if (
+    event.type === 'customer.subscription.created' ||
+    event.type === 'customer.subscription.updated'
+  ) {
+    const subscription = event.data.object as Stripe.Subscription;
+    const customerId = subscription.customer as string;
+    const status = subscription.status;
+
+    console.log(`Subscription ${event.type}: customerId=${customerId}, status=${status}`);
+
+    // On active is_pro seulement si le sub est actif ou en période d'essai
+    const isActive = status === 'active' || status === 'trialing';
+
+    const email = await getEmailFromCustomer(customerId);
+
+    if (!email) {
+      console.warn(`No email found for customer ${customerId}`);
+      return NextResponse.json({ received: true });
+    }
+
+    await setIsProByEmail(email, isActive);
+  }
+
+  // ===========================================================================
+  // 3. ABONNEMENT PRO — Annulation / Expiration
+  // ===========================================================================
+
+  if (event.type === 'customer.subscription.deleted') {
+    const subscription = event.data.object as Stripe.Subscription;
+    const customerId = subscription.customer as string;
+
+    console.log(`Subscription cancelled: customerId=${customerId}`);
+
+    const email = await getEmailFromCustomer(customerId);
+
+    if (!email) {
+      console.warn(`No email found for customer ${customerId}`);
+      return NextResponse.json({ received: true });
+    }
+
+    await setIsProByEmail(email, false);
   }
 
   return NextResponse.json({ received: true });

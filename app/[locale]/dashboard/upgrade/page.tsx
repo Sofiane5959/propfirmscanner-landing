@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useTransition } from 'react';
-import { usePathname } from 'next/navigation';
+import { useState, useTransition, useEffect, Suspense } from 'react';
+import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Crown, Check, Zap, Shield, TrendingUp, ArrowLeft, Loader2, Gift } from 'lucide-react';
+import { Crown, Check, Zap, Shield, TrendingUp, ArrowLeft, Loader2, Gift, Sparkles, X } from 'lucide-react';
 import { redeemProCode } from '@/lib/actions/redeem-code';
 
 // =============================================================================
@@ -26,26 +26,22 @@ const translations: Record<Locale, Record<string, string>> = {
     backToDashboard: 'Back to Dashboard',
     upgradeToPro: 'Upgrade to Pro',
     unlockUnlimited: 'Unlock unlimited accounts and simulations to protect all your prop firm challenges.',
-    // Plans
     freePlan: 'Free',
     currentPlan: 'Current plan',
     proPlan: 'Pro',
     unlimitedPower: 'Unlimited power',
     recommended: 'RECOMMENDED',
     perMonth: '/month',
-    // Free features
     trackOneAccount: 'Track 1 prop firm account',
     threeSimulations: '3 trade simulations per day',
     basicRisk: 'Basic risk calculations',
     rulesDatabase: 'Rules & hidden risks database',
-    // Pro features
     unlimitedAccounts: 'Unlimited prop firm accounts',
     unlimitedSimulations: 'Unlimited trade simulations',
     advancedAnalytics: 'Advanced risk analytics',
     emailAlerts: 'Email alerts (coming soon)',
     prioritySupport: 'Priority support',
     earlyAccess: 'Early access to new features',
-    // Pro Code
     haveProCode: 'Have a Pro Code?',
     enterCodeActivate: 'Enter your access code to activate Pro',
     enterCodePlaceholder: 'Enter your code (e.g., PROPFIRM2025)',
@@ -53,7 +49,6 @@ const translations: Record<Locale, Record<string, string>> = {
     activatePro: 'Activate Pro',
     activating: 'Activating...',
     dontHaveCode: "Don't have a code? Contact us at",
-    // Why Pro
     whyUpgrade: 'Why upgrade to Pro?',
     multipleAccounts: 'Multiple Accounts',
     multipleAccountsDesc: 'Track all your prop firm challenges in one place.',
@@ -61,6 +56,12 @@ const translations: Record<Locale, Record<string, string>> = {
     unlimitedSimsDesc: 'Test every trade idea before risking real capital.',
     stayCompliant: 'Stay Compliant',
     stayCompliantDesc: 'Never accidentally break a rule and lose your account.',
+    upgradeNow: 'Upgrade to Pro — $29.99/mo',
+    upgradeLoading: 'Redirecting to checkout...',
+    first100: 'First 100 users',
+    thenPrice: 'then $49.99/mo',
+    successTitle: '🎉 Welcome to Pro!',
+    successDesc: 'Your account has been upgraded. All features are now unlocked.',
   },
   fr: {
     backToDashboard: 'Retour au Tableau de Bord',
@@ -83,7 +84,7 @@ const translations: Record<Locale, Record<string, string>> = {
     prioritySupport: 'Support prioritaire',
     earlyAccess: 'Accès anticipé aux nouvelles fonctionnalités',
     haveProCode: 'Vous avez un Code Pro ?',
-    enterCodeActivate: 'Entrez votre code d\'accès pour activer Pro',
+    enterCodeActivate: "Entrez votre code d'accès pour activer Pro",
     enterCodePlaceholder: 'Entrez votre code (ex: PROPFIRM2025)',
     pleaseEnterCode: 'Veuillez entrer un code.',
     activatePro: 'Activer Pro',
@@ -95,7 +96,13 @@ const translations: Record<Locale, Record<string, string>> = {
     unlimitedSims: 'Simulations Illimitées',
     unlimitedSimsDesc: 'Testez chaque idée de trade avant de risquer du capital réel.',
     stayCompliant: 'Restez Conforme',
-    stayCompliantDesc: 'Ne violez jamais accidentellement une règle et perdez votre compte.',
+    stayCompliantDesc: "Ne violez jamais accidentellement une règle et perdez votre compte.",
+    upgradeNow: 'Passer à Pro — 29,99$/mois',
+    upgradeLoading: 'Redirection vers le paiement...',
+    first100: '100 premiers utilisateurs',
+    thenPrice: 'puis 49,99$/mois',
+    successTitle: '🎉 Bienvenue dans Pro !',
+    successDesc: 'Votre compte a été mis à niveau. Toutes les fonctionnalités sont débloquées.',
   },
   de: {
     backToDashboard: 'Zurück zum Dashboard',
@@ -131,6 +138,12 @@ const translations: Record<Locale, Record<string, string>> = {
     unlimitedSimsDesc: 'Testen Sie jede Trade-Idee, bevor Sie echtes Kapital riskieren.',
     stayCompliant: 'Bleiben Sie Konform',
     stayCompliantDesc: 'Verletzen Sie nie versehentlich eine Regel und verlieren Ihr Konto.',
+    upgradeNow: 'Auf Pro upgraden — 29,99$/Monat',
+    upgradeLoading: 'Weiterleitung zur Zahlung...',
+    first100: 'Erste 100 Nutzer',
+    thenPrice: 'dann 49,99$/Monat',
+    successTitle: '🎉 Willkommen bei Pro!',
+    successDesc: 'Ihr Konto wurde aktualisiert. Alle Funktionen sind jetzt freigeschaltet.',
   },
   es: {
     backToDashboard: 'Volver al Panel',
@@ -166,6 +179,12 @@ const translations: Record<Locale, Record<string, string>> = {
     unlimitedSimsDesc: 'Prueba cada idea de trade antes de arriesgar capital real.',
     stayCompliant: 'Mantente Conforme',
     stayCompliantDesc: 'Nunca rompas accidentalmente una regla y pierdas tu cuenta.',
+    upgradeNow: 'Actualizar a Pro — $29.99/mes',
+    upgradeLoading: 'Redirigiendo al pago...',
+    first100: 'Primeros 100 usuarios',
+    thenPrice: 'luego $49.99/mes',
+    successTitle: '🎉 ¡Bienvenido a Pro!',
+    successDesc: 'Tu cuenta ha sido actualizada. Todas las funciones están desbloqueadas.',
   },
   pt: {
     backToDashboard: 'Voltar ao Painel',
@@ -201,6 +220,12 @@ const translations: Record<Locale, Record<string, string>> = {
     unlimitedSimsDesc: 'Teste cada ideia de trade antes de arriscar capital real.',
     stayCompliant: 'Fique Conforme',
     stayCompliantDesc: 'Nunca quebre acidentalmente uma regra e perca sua conta.',
+    upgradeNow: 'Atualizar para Pro — $29.99/mês',
+    upgradeLoading: 'Redirecionando para pagamento...',
+    first100: 'Primeiros 100 usuários',
+    thenPrice: 'depois $49.99/mês',
+    successTitle: '🎉 Bem-vindo ao Pro!',
+    successDesc: 'Sua conta foi atualizada. Todos os recursos estão desbloqueados.',
   },
   ar: {
     backToDashboard: 'العودة للوحة التحكم',
@@ -236,6 +261,12 @@ const translations: Record<Locale, Record<string, string>> = {
     unlimitedSimsDesc: 'اختبر كل فكرة تداول قبل المخاطرة برأس مال حقيقي.',
     stayCompliant: 'ابق ملتزماً',
     stayCompliantDesc: 'لا تخرق قاعدة بالخطأ وتفقد حسابك.',
+    upgradeNow: 'الترقية إلى Pro — 29.99$/شهر',
+    upgradeLoading: 'جاري التوجيه للدفع...',
+    first100: 'أول 100 مستخدم',
+    thenPrice: 'ثم 49.99$/شهر',
+    successTitle: '🎉 مرحباً بك في Pro!',
+    successDesc: 'تمت ترقية حسابك. جميع الميزات مفتوحة الآن.',
   },
   hi: {
     backToDashboard: 'डैशबोर्ड पर वापस',
@@ -271,45 +302,113 @@ const translations: Record<Locale, Record<string, string>> = {
     unlimitedSimsDesc: 'असली पूंजी जोखिम में डालने से पहले हर ट्रेड आइडिया टेस्ट करें।',
     stayCompliant: 'अनुपालन बनाए रखें',
     stayCompliantDesc: 'गलती से कोई नियम न तोड़ें और अपना अकाउंट न खोएं।',
+    upgradeNow: 'Pro में अपग्रेड करें — $29.99/महीना',
+    upgradeLoading: 'पेमेंट पर जा रहे हैं...',
+    first100: 'पहले 100 यूज़र',
+    thenPrice: 'फिर $49.99/महीना',
+    successTitle: '🎉 Pro में स्वागत है!',
+    successDesc: 'आपका अकाउंट अपग्रेड हो गया। सभी फीचर्स अनलॉक हैं।',
   },
 };
 
 // =============================================================================
-// MAIN COMPONENT
+// SUCCESS TOAST COMPONENT
 // =============================================================================
 
-export default function UpgradePage() {
+function SuccessToast({ message, onClose }: { message: string; onClose: () => void }) {
+  useEffect(() => {
+    const timer = setTimeout(onClose, 6000);
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
+  return (
+    <div className="fixed top-6 right-6 z-50 max-w-sm animate-in slide-in-from-top-2 fade-in duration-300">
+      <div className="bg-emerald-900 border border-emerald-500/50 rounded-2xl p-4 shadow-2xl flex items-start gap-3">
+        <div className="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
+          <Sparkles className="w-4 h-4 text-white" />
+        </div>
+        <p className="text-emerald-100 text-sm flex-1">{message}</p>
+        <button onClick={onClose} className="text-emerald-400 hover:text-white transition-colors">
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// =============================================================================
+// INNER COMPONENT (uses useSearchParams — must be inside Suspense)
+// =============================================================================
+
+function UpgradePageInner() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const locale = getLocaleFromPath(pathname);
   const t = translations[locale];
-  
+
   const [code, setCode] = useState('');
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
 
+  // ── Show success toast if redirected back with ?upgraded=true ──
+  useEffect(() => {
+    if (searchParams.get('upgraded') === 'true') {
+      setShowSuccessToast(true);
+      // Clean up URL without reload
+      const url = new URL(window.location.href);
+      url.searchParams.delete('upgraded');
+      window.history.replaceState({}, '', url.toString());
+    }
+  }, [searchParams]);
+
+  // ── Handle Stripe checkout for Pro subscription ────────────────
+  const handleStripeCheckout = async () => {
+    setIsCheckoutLoading(true);
+    try {
+      const res = await fetch('/api/stripe/checkout-pro', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.url) {
+        throw new Error(data.error || 'Failed to create checkout session');
+      }
+
+      window.location.href = data.url;
+    } catch (err) {
+      console.error('Checkout error:', err);
+      setIsCheckoutLoading(false);
+    }
+  };
+
+  // ── Handle Pro Code redemption ─────────────────────────────────
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!code.trim()) {
       setMessage({ type: 'error', text: t.pleaseEnterCode });
       return;
     }
-    
+
     startTransition(async () => {
       const result = await redeemProCode(code);
-      
+
       setMessage({
         type: result.success ? 'success' : 'error',
         text: result.message,
       });
-      
+
       if (result.success) {
         setCode('');
       }
     });
   };
 
-  // Feature lists with translations
   const FREE_FEATURES = [
     t.trackOneAccount,
     t.threeSimulations,
@@ -328,9 +427,17 @@ export default function UpgradePage() {
 
   return (
     <div className="min-h-screen bg-gray-900 pt-20 pb-12">
+      {/* Success Toast */}
+      {showSuccessToast && (
+        <SuccessToast
+          message={`${t.successTitle} ${t.successDesc}`}
+          onClose={() => setShowSuccessToast(false)}
+        />
+      )}
+
       <div className="max-w-4xl mx-auto px-4">
         {/* Back link */}
-        <Link 
+        <Link
           href={`/${locale}/dashboard`}
           className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition-colors"
         >
@@ -352,7 +459,7 @@ export default function UpgradePage() {
         </div>
 
         {/* Plans comparison */}
-        <div className="grid md:grid-cols-2 gap-6 mb-12">
+        <div className="grid md:grid-cols-2 gap-6 mb-8">
           {/* Free Plan */}
           <div className="bg-gray-800 rounded-2xl p-6 border border-gray-700">
             <div className="flex items-center gap-3 mb-4">
@@ -364,12 +471,12 @@ export default function UpgradePage() {
                 <p className="text-gray-400 text-sm">{t.currentPlan}</p>
               </div>
             </div>
-            
+
             <div className="mb-6">
               <span className="text-3xl font-bold text-white">$0</span>
               <span className="text-gray-400">{t.perMonth}</span>
             </div>
-            
+
             <ul className="space-y-3">
               {FREE_FEATURES.map((feature, i) => (
                 <li key={i} className="flex items-start gap-3 text-gray-300">
@@ -386,7 +493,7 @@ export default function UpgradePage() {
             <div className="absolute top-4 right-4 px-3 py-1 bg-emerald-500 text-white text-xs font-semibold rounded-full">
               {t.recommended}
             </div>
-            
+
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 bg-emerald-500/20 rounded-lg">
                 <Zap className="w-5 h-5 text-emerald-400" />
@@ -396,13 +503,24 @@ export default function UpgradePage() {
                 <p className="text-emerald-400 text-sm">{t.unlimitedPower}</p>
               </div>
             </div>
-            
-            <div className="mb-6">
-              <span className="text-3xl font-bold text-white">$9</span>
-              <span className="text-gray-400">{t.perMonth}</span>
+
+            {/* ── PRIX CORRIGÉ ── */}
+            <div className="mb-2">
+              <div className="flex items-baseline gap-2">
+                <span className="text-3xl font-bold text-white">$29.99</span>
+                <span className="text-gray-400">{t.perMonth}</span>
+                <span className="text-gray-500 line-through text-sm">$49.99</span>
+              </div>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-yellow-500/20 border border-yellow-500/30 rounded-full text-xs text-yellow-400 font-semibold">
+                  <Sparkles className="w-3 h-3" />
+                  {t.first100}
+                </span>
+                <span className="text-gray-500 text-xs">{t.thenPrice}</span>
+              </div>
             </div>
-            
-            <ul className="space-y-3">
+
+            <ul className="space-y-3 mb-6 mt-4">
               {PRO_FEATURES.map((feature, i) => (
                 <li key={i} className="flex items-start gap-3 text-white">
                   <Check className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0" />
@@ -412,6 +530,28 @@ export default function UpgradePage() {
             </ul>
           </div>
         </div>
+
+        {/* ── CTA BUTTON Stripe ── */}
+        <button
+          onClick={handleStripeCheckout}
+          disabled={isCheckoutLoading}
+          className="w-full py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white font-bold text-lg rounded-2xl transition-all shadow-lg shadow-emerald-900/40 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-3 mb-4"
+        >
+          {isCheckoutLoading ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              {t.upgradeLoading}
+            </>
+          ) : (
+            <>
+              <Crown className="w-5 h-5" />
+              {t.upgradeNow}
+            </>
+          )}
+        </button>
+        <p className="text-center text-gray-500 text-xs mb-12">
+          Secure payment via Stripe · Cancel anytime
+        </p>
 
         {/* Pro Code Form */}
         <div className="bg-gray-800 rounded-2xl p-6 border border-gray-700">
@@ -424,7 +564,7 @@ export default function UpgradePage() {
               <p className="text-gray-400 text-sm">{t.enterCodeActivate}</p>
             </div>
           </div>
-          
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <input
@@ -440,18 +580,17 @@ export default function UpgradePage() {
                 maxLength={30}
               />
             </div>
-            
-            {/* Message */}
+
             {message && (
               <div className={`p-4 rounded-xl ${
-                message.type === 'success' 
-                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
+                message.type === 'success'
+                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
                   : 'bg-red-500/20 text-red-400 border border-red-500/30'
               }`}>
                 {message.text}
               </div>
             )}
-            
+
             <button
               type="submit"
               disabled={isPending || !code.trim()}
@@ -470,7 +609,7 @@ export default function UpgradePage() {
               )}
             </button>
           </form>
-          
+
           <p className="text-gray-500 text-sm text-center mt-4">
             {t.dontHaveCode}{' '}
             <a href="mailto:pro@propfirmscanner.org" className="text-emerald-400 hover:underline">
@@ -482,40 +621,46 @@ export default function UpgradePage() {
         {/* Why Pro */}
         <div className="mt-12 text-center">
           <h3 className="text-xl font-semibold text-white mb-6">{t.whyUpgrade}</h3>
-          
+
           <div className="grid md:grid-cols-3 gap-6">
             <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700/50">
               <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
                 <TrendingUp className="w-6 h-6 text-blue-400" />
               </div>
               <h4 className="font-semibold text-white mb-2">{t.multipleAccounts}</h4>
-              <p className="text-gray-400 text-sm">
-                {t.multipleAccountsDesc}
-              </p>
+              <p className="text-gray-400 text-sm">{t.multipleAccountsDesc}</p>
             </div>
-            
+
             <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700/50">
               <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
                 <Zap className="w-6 h-6 text-emerald-400" />
               </div>
               <h4 className="font-semibold text-white mb-2">{t.unlimitedSims}</h4>
-              <p className="text-gray-400 text-sm">
-                {t.unlimitedSimsDesc}
-              </p>
+              <p className="text-gray-400 text-sm">{t.unlimitedSimsDesc}</p>
             </div>
-            
+
             <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700/50">
               <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
                 <Shield className="w-6 h-6 text-purple-400" />
               </div>
               <h4 className="font-semibold text-white mb-2">{t.stayCompliant}</h4>
-              <p className="text-gray-400 text-sm">
-                {t.stayCompliantDesc}
-              </p>
+              <p className="text-gray-400 text-sm">{t.stayCompliantDesc}</p>
             </div>
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+// =============================================================================
+// MAIN EXPORT — wrapped in Suspense for useSearchParams
+// =============================================================================
+
+export default function UpgradePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-900" />}>
+      <UpgradePageInner />
+    </Suspense>
   );
 }
