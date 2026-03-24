@@ -8,6 +8,7 @@ import {
   CheckCircle2, Play, Clock, Users, Star, Lock,
   Zap, Award, Loader2
 } from 'lucide-react';
+import AdvancedCourseSection from './AdvancedCourseSection';
 
 const courses = [
   {
@@ -332,6 +333,8 @@ export default function EducationPage() {
           ))}
         </div>
       </section>
+
+      <AdvancedCourseSection />
 
       <section className="max-w-4xl mx-auto px-4 pb-16">
         <div className="bg-gradient-to-r from-emerald-500/20 to-blue-500/20 rounded-2xl border border-emerald-500/30 p-8 md:p-12 text-center">
