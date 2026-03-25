@@ -8,7 +8,6 @@ import {
   CheckCircle2, Play, Clock, Users, Star, Lock,
   Zap, Award, Loader2
 } from 'lucide-react';
-import AdvancedCourseSection from './AdvancedCourseSection';
 
 const courses = [
   {
@@ -45,10 +44,10 @@ const courses = [
     id: 'advanced',
     title: 'Prop Firm Mastery',
     subtitle: 'Advanced Strategies',
-    price: 99.99,
-    originalPrice: 199.99,
-    badge: 'Coming Soon',
-    badgeColor: 'bg-yellow-500',
+    price: 199,
+    originalPrice: 499.99,
+    badge: 'Early Bird 🔥',
+    badgeColor: 'bg-orange-500',
     description: 'Advanced strategies and techniques used by consistently funded traders. Take your prop firm trading to the next level.',
     duration: '12+ hours',
     lessons: 36,
@@ -132,6 +131,71 @@ function PaymentSuccessBanner() {
 // BUY BUTTON — Direct Stripe, aucun compte requis
 // =============================================================================
 
+
+// =============================================================================
+// WAITLIST INLINE — inside the advanced course card
+// =============================================================================
+
+function WaitlistInCard() {
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setStatus('loading');
+    try {
+      const res = await fetch('/api/waitlist/advanced', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      setStatus(res.ok ? 'success' : 'error');
+      if (res.ok) setEmail('');
+    } catch {
+      setStatus('error');
+    }
+  };
+
+  if (status === 'success') {
+    return (
+      <div className="flex items-center gap-3 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
+        <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+        <div>
+          <p className="text-emerald-400 font-semibold text-sm">You're on the list!</p>
+          <p className="text-gray-400 text-xs">We'll email you first at early bird price.</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="your@email.com"
+        required
+        className="w-full px-4 py-2.5 bg-gray-900/80 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 text-sm"
+        disabled={status === 'loading'}
+      />
+      <button
+        type="submit"
+        disabled={status === 'loading' || !email.trim()}
+        className="w-full py-2.5 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-white font-semibold rounded-xl transition-all disabled:opacity-50 text-sm flex items-center justify-center gap-2"
+      >
+        {status === 'loading' ? (
+          <Loader2 className="w-4 h-4 animate-spin" />
+        ) : (
+          'Join Waitlist — Early Bird $199'
+        )}
+      </button>
+      {status === 'error' && <p className="text-red-400 text-xs">Something went wrong. Try again.</p>}
+    </form>
+  );
+}
+
 function BuyButton({ productType }: { productType: string }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -204,7 +268,6 @@ function CourseCard({ course }: { course: typeof courses[0] }) {
   const Icon = course.icon;
   return (
     <div className={`relative bg-gradient-to-br ${course.gradient} rounded-2xl border ${course.borderColor} overflow-hidden`}>
-      {!course.live && <ComingSoonBadge />}
       <div className="absolute top-4 right-4 z-10">
         <span className={`px-3 py-1 ${course.badgeColor} text-white text-xs font-bold rounded-full`}>{course.badge}</span>
       </div>
@@ -247,9 +310,7 @@ function CourseCard({ course }: { course: typeof courses[0] }) {
               </Link>
             </div>
           ) : (
-            <button disabled className="px-6 py-3 bg-gray-700 text-gray-400 font-semibold rounded-xl cursor-not-allowed">
-              Join Waitlist
-            </button>
+            <WaitlistInCard />
           )}
         </div>
       </div>
@@ -333,8 +394,6 @@ export default function EducationPage() {
           ))}
         </div>
       </section>
-
-      <AdvancedCourseSection />
 
       <section className="max-w-4xl mx-auto px-4 pb-16">
         <div className="bg-gradient-to-r from-emerald-500/20 to-blue-500/20 rounded-2xl border border-emerald-500/30 p-8 md:p-12 text-center">
