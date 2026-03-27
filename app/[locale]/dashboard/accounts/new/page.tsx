@@ -68,7 +68,7 @@ export default function NewAccountPage() {
         .select("firm_name")
         .order("firm_name");
       if (data) {
-        const unique = [...new Set(data.map((d: any) => d.firm_name))].sort() as string[];
+        const unique = Array.from(new Set(data.map((d: any) => d.firm_name))).sort() as string[];
         setFirmNames(unique);
       }
       setLoadingFirms(false);
@@ -85,7 +85,7 @@ export default function NewAccountPage() {
         .select("account_size")
         .eq("firm_name", form.firm_name);
       if (data) {
-        const unique = [...new Set(data.map((d: any) => d.account_size))].sort((a: any, b: any) => a - b) as number[];
+        const unique = Array.from(new Set(data.map((d: any) => d.account_size))).sort((a: any, b: any) => a - b) as number[];
         setAccountSizes(unique);
       }
     }
