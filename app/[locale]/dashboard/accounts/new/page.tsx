@@ -2,7 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 interface Challenge {
   id: string;
@@ -44,7 +49,6 @@ const defaultForm: FormData = {
 
 export default function NewAccountPage() {
   const router = useRouter();
-  const supabase = createClient();
 
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<FormData>(defaultForm);
@@ -64,7 +68,7 @@ export default function NewAccountPage() {
         .select("firm_name")
         .order("firm_name");
       if (data) {
-        const unique = [...new Set(data.map((d) => d.firm_name))].sort();
+        const unique = [...new Set(data.map((d: any) => d.firm_name))].sort() as string[];
         setFirmNames(unique);
       }
       setLoadingFirms(false);
@@ -81,7 +85,7 @@ export default function NewAccountPage() {
         .select("account_size")
         .eq("firm_name", form.firm_name);
       if (data) {
-        const unique = [...new Set(data.map((d) => d.account_size))].sort((a, b) => a - b);
+        const unique = [...new Set(data.map((d: any) => d.account_size))].sort((a: any, b: any) => a - b) as number[];
         setAccountSizes(unique);
       }
     }
