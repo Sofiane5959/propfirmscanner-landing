@@ -1,591 +1,430 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import Link from 'next/link';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { useAuth } from '@/providers/AuthProvider';
-import {
-  ArrowLeft,
-  Loader2,
-  Target,
-  DollarSign,
-  Percent,
-  Calendar,
-  Building2,
-  CheckCircle,
-} from 'lucide-react';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
-// =============================================================================
-// LOCALE DETECTION & TRANSLATIONS
-// =============================================================================
-
-const locales = ['en', 'fr', 'de', 'es', 'pt', 'ar', 'hi'] as const;
-type Locale = (typeof locales)[number];
-
-function getLocaleFromPath(pathname: string): Locale {
-  const firstSegment = pathname.split('/')[1];
-  if (firstSegment && locales.includes(firstSegment as Locale)) {
-    return firstSegment as Locale;
-  }
-  return 'en';
+interface Challenge {
+  id: string;
+  name: string;
+  account_size: number;
+  steps: string;
+  max_drawdown: number;
+  max_daily_loss: number;
+  phase1_profit_target: number;
+  phase2_profit_target: number | null;
+  price: number;
+  discounted_price: number | null;
+  consistency_rule: string | null;
 }
 
-const translations: Record<Locale, Record<string, string>> = {
-  en: {
-    backToDashboard: 'Back to Dashboard',
-    addNewChallenge: 'Add New Challenge Account',
-    trackProgress: 'Track your prop firm challenge progress',
-    accountAdded: 'Account Added!',
-    redirecting: 'Redirecting to dashboard...',
-    // Sections
-    accountDetails: 'Account Details',
-    balanceTargets: 'Balance & Targets',
-    challengeRules: 'Challenge Rules',
-    challengeDuration: 'Challenge Duration',
-    // Fields
-    accountName: 'Account Name',
-    accountNamePlaceholder: 'e.g., FTMO 100k Phase 1',
-    propFirm: 'Prop Firm',
-    selectFirm: 'Select a firm...',
-    firmName: 'Firm Name',
-    enterFirmName: 'Enter firm name',
-    initialBalance: 'Initial Balance ($)',
-    currentBalance: 'Current Balance ($)',
-    maxDrawdown: 'Max Drawdown (%)',
-    dailyLossLimit: 'Daily Loss Limit ($)',
-    profitTarget: 'Profit Target (%)',
-    challengeEndDate: 'Challenge End Date (optional)',
-    leaveEmpty: "Leave empty if there's no time limit",
-    // Actions
-    cancel: 'Cancel',
-    addAccount: 'Add Account',
-    adding: 'Adding...',
-    // Errors
-    selectOrEnterFirm: 'Please select or enter a firm name',
-    failedToAdd: 'Failed to add account',
-  },
-  fr: {
-    backToDashboard: 'Retour au Tableau de Bord',
-    addNewChallenge: 'Ajouter un Nouveau Compte Challenge',
-    trackProgress: 'Suivez la progression de votre challenge prop firm',
-    accountAdded: 'Compte Ajouté !',
-    redirecting: 'Redirection vers le tableau de bord...',
-    accountDetails: 'Détails du Compte',
-    balanceTargets: 'Solde & Objectifs',
-    challengeRules: 'Règles du Challenge',
-    challengeDuration: 'Durée du Challenge',
-    accountName: 'Nom du Compte',
-    accountNamePlaceholder: 'ex: FTMO 100k Phase 1',
-    propFirm: 'Prop Firm',
-    selectFirm: 'Sélectionner une firm...',
-    firmName: 'Nom de la Firm',
-    enterFirmName: 'Entrer le nom de la firm',
-    initialBalance: 'Solde Initial ($)',
-    currentBalance: 'Solde Actuel ($)',
-    maxDrawdown: 'Drawdown Max (%)',
-    dailyLossLimit: 'Limite de Perte Journalière ($)',
-    profitTarget: 'Objectif de Profit (%)',
-    challengeEndDate: 'Date de Fin du Challenge (optionnel)',
-    leaveEmpty: "Laisser vide s'il n'y a pas de limite de temps",
-    cancel: 'Annuler',
-    addAccount: 'Ajouter le Compte',
-    adding: 'Ajout...',
-    selectOrEnterFirm: 'Veuillez sélectionner ou entrer un nom de firm',
-    failedToAdd: "Échec de l'ajout du compte",
-  },
-  de: {
-    backToDashboard: 'Zurück zum Dashboard',
-    addNewChallenge: 'Neues Challenge-Konto Hinzufügen',
-    trackProgress: 'Verfolgen Sie Ihren Prop Firm Challenge Fortschritt',
-    accountAdded: 'Konto Hinzugefügt!',
-    redirecting: 'Weiterleitung zum Dashboard...',
-    accountDetails: 'Kontodetails',
-    balanceTargets: 'Saldo & Ziele',
-    challengeRules: 'Challenge-Regeln',
-    challengeDuration: 'Challenge-Dauer',
-    accountName: 'Kontoname',
-    accountNamePlaceholder: 'z.B., FTMO 100k Phase 1',
-    propFirm: 'Prop Firm',
-    selectFirm: 'Firma auswählen...',
-    firmName: 'Firmenname',
-    enterFirmName: 'Firmennamen eingeben',
-    initialBalance: 'Anfangssaldo ($)',
-    currentBalance: 'Aktueller Saldo ($)',
-    maxDrawdown: 'Max Drawdown (%)',
-    dailyLossLimit: 'Tägliches Verlustlimit ($)',
-    profitTarget: 'Gewinnziel (%)',
-    challengeEndDate: 'Challenge-Enddatum (optional)',
-    leaveEmpty: 'Leer lassen, wenn kein Zeitlimit besteht',
-    cancel: 'Abbrechen',
-    addAccount: 'Konto Hinzufügen',
-    adding: 'Wird hinzugefügt...',
-    selectOrEnterFirm: 'Bitte wählen oder geben Sie einen Firmennamen ein',
-    failedToAdd: 'Konto konnte nicht hinzugefügt werden',
-  },
-  es: {
-    backToDashboard: 'Volver al Panel',
-    addNewChallenge: 'Agregar Nueva Cuenta de Desafío',
-    trackProgress: 'Rastrea el progreso de tu desafío prop firm',
-    accountAdded: '¡Cuenta Agregada!',
-    redirecting: 'Redirigiendo al panel...',
-    accountDetails: 'Detalles de la Cuenta',
-    balanceTargets: 'Saldo y Objetivos',
-    challengeRules: 'Reglas del Desafío',
-    challengeDuration: 'Duración del Desafío',
-    accountName: 'Nombre de la Cuenta',
-    accountNamePlaceholder: 'ej: FTMO 100k Fase 1',
-    propFirm: 'Prop Firm',
-    selectFirm: 'Seleccionar una firma...',
-    firmName: 'Nombre de la Firma',
-    enterFirmName: 'Ingresar nombre de la firma',
-    initialBalance: 'Saldo Inicial ($)',
-    currentBalance: 'Saldo Actual ($)',
-    maxDrawdown: 'Drawdown Máximo (%)',
-    dailyLossLimit: 'Límite de Pérdida Diaria ($)',
-    profitTarget: 'Objetivo de Ganancia (%)',
-    challengeEndDate: 'Fecha de Fin del Desafío (opcional)',
-    leaveEmpty: 'Dejar vacío si no hay límite de tiempo',
-    cancel: 'Cancelar',
-    addAccount: 'Agregar Cuenta',
-    adding: 'Agregando...',
-    selectOrEnterFirm: 'Por favor selecciona o ingresa un nombre de firma',
-    failedToAdd: 'Error al agregar la cuenta',
-  },
-  pt: {
-    backToDashboard: 'Voltar ao Painel',
-    addNewChallenge: 'Adicionar Nova Conta de Desafio',
-    trackProgress: 'Acompanhe o progresso do seu desafio prop firm',
-    accountAdded: 'Conta Adicionada!',
-    redirecting: 'Redirecionando para o painel...',
-    accountDetails: 'Detalhes da Conta',
-    balanceTargets: 'Saldo e Metas',
-    challengeRules: 'Regras do Desafio',
-    challengeDuration: 'Duração do Desafio',
-    accountName: 'Nome da Conta',
-    accountNamePlaceholder: 'ex: FTMO 100k Fase 1',
-    propFirm: 'Prop Firm',
-    selectFirm: 'Selecionar uma firma...',
-    firmName: 'Nome da Firma',
-    enterFirmName: 'Digite o nome da firma',
-    initialBalance: 'Saldo Inicial ($)',
-    currentBalance: 'Saldo Atual ($)',
-    maxDrawdown: 'Drawdown Máximo (%)',
-    dailyLossLimit: 'Limite de Perda Diária ($)',
-    profitTarget: 'Meta de Lucro (%)',
-    challengeEndDate: 'Data de Término do Desafio (opcional)',
-    leaveEmpty: 'Deixe vazio se não houver limite de tempo',
-    cancel: 'Cancelar',
-    addAccount: 'Adicionar Conta',
-    adding: 'Adicionando...',
-    selectOrEnterFirm: 'Por favor selecione ou digite um nome de firma',
-    failedToAdd: 'Falha ao adicionar conta',
-  },
-  ar: {
-    backToDashboard: 'العودة للوحة التحكم',
-    addNewChallenge: 'إضافة حساب تحدي جديد',
-    trackProgress: 'تتبع تقدم تحدي شركة التداول',
-    accountAdded: 'تمت إضافة الحساب!',
-    redirecting: 'جاري التوجيه للوحة التحكم...',
-    accountDetails: 'تفاصيل الحساب',
-    balanceTargets: 'الرصيد والأهداف',
-    challengeRules: 'قواعد التحدي',
-    challengeDuration: 'مدة التحدي',
-    accountName: 'اسم الحساب',
-    accountNamePlaceholder: 'مثال: FTMO 100k المرحلة 1',
-    propFirm: 'شركة التداول',
-    selectFirm: 'اختر شركة...',
-    firmName: 'اسم الشركة',
-    enterFirmName: 'أدخل اسم الشركة',
-    initialBalance: 'الرصيد الأولي ($)',
-    currentBalance: 'الرصيد الحالي ($)',
-    maxDrawdown: 'السحب الأقصى (%)',
-    dailyLossLimit: 'حد الخسارة اليومية ($)',
-    profitTarget: 'هدف الربح (%)',
-    challengeEndDate: 'تاريخ انتهاء التحدي (اختياري)',
-    leaveEmpty: 'اتركه فارغاً إذا لم يكن هناك حد زمني',
-    cancel: 'إلغاء',
-    addAccount: 'إضافة الحساب',
-    adding: 'جاري الإضافة...',
-    selectOrEnterFirm: 'يرجى اختيار أو إدخال اسم الشركة',
-    failedToAdd: 'فشل إضافة الحساب',
-  },
-  hi: {
-    backToDashboard: 'डैशबोर्ड पर वापस',
-    addNewChallenge: 'नया चैलेंज अकाउंट जोड़ें',
-    trackProgress: 'अपने प्रॉप फर्म चैलेंज की प्रगति ट्रैक करें',
-    accountAdded: 'अकाउंट जोड़ा गया!',
-    redirecting: 'डैशबोर्ड पर रीडायरेक्ट हो रहा है...',
-    accountDetails: 'अकाउंट विवरण',
-    balanceTargets: 'बैलेंस और लक्ष्य',
-    challengeRules: 'चैलेंज नियम',
-    challengeDuration: 'चैलेंज अवधि',
-    accountName: 'अकाउंट का नाम',
-    accountNamePlaceholder: 'जैसे: FTMO 100k फेज 1',
-    propFirm: 'प्रॉप फर्म',
-    selectFirm: 'फर्म चुनें...',
-    firmName: 'फर्म का नाम',
-    enterFirmName: 'फर्म का नाम दर्ज करें',
-    initialBalance: 'प्रारंभिक बैलेंस ($)',
-    currentBalance: 'वर्तमान बैलेंस ($)',
-    maxDrawdown: 'मैक्स ड्रॉडाउन (%)',
-    dailyLossLimit: 'दैनिक नुकसान सीमा ($)',
-    profitTarget: 'प्रॉफिट टारगेट (%)',
-    challengeEndDate: 'चैलेंज समाप्ति तिथि (वैकल्पिक)',
-    leaveEmpty: 'अगर कोई समय सीमा नहीं है तो खाली छोड़ें',
-    cancel: 'रद्द करें',
-    addAccount: 'अकाउंट जोड़ें',
-    adding: 'जोड़ा जा रहा है...',
-    selectOrEnterFirm: 'कृपया फर्म का नाम चुनें या दर्ज करें',
-    failedToAdd: 'अकाउंट जोड़ने में विफल',
-  },
+interface FormData {
+  account_name: string;
+  firm_name: string;
+  initial_balance: number | "";
+  challenge_end_date: string;
+  max_drawdown: number | "";
+  daily_loss_limit: number | "";
+  profit_target: number | "";
+  current_balance: number | "";
+  current_daily_loss: number | "";
+}
+
+const defaultForm: FormData = {
+  account_name: "",
+  firm_name: "",
+  initial_balance: "",
+  challenge_end_date: "",
+  max_drawdown: "",
+  daily_loss_limit: "",
+  profit_target: "",
+  current_balance: "",
+  current_daily_loss: 0,
 };
 
-const POPULAR_FIRMS = [
-  'FTMO',
-  'Funded Next',
-  'The Funded Trader',
-  'True Forex Funds',
-  'MyForexFunds',
-  'E8 Funding',
-  'Fidelcrest',
-  'TopStep',
-  'Apex Trader Funding',
-  'Other',
-];
-
 export default function NewAccountPage() {
-  const pathname = usePathname();
-  const locale = getLocaleFromPath(pathname);
-  const t = translations[locale];
-  
-  const { user } = useAuth();
   const router = useRouter();
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
 
+  const [step, setStep] = useState(1);
+  const [form, setForm] = useState<FormData>(defaultForm);
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [firmNames, setFirmNames] = useState<string[]>([]);
+  const [accountSizes, setAccountSizes] = useState<number[]>([]);
+  const [challenges, setChallenges] = useState<Challenge[]>([]);
+  const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(null);
+  const [loadingFirms, setLoadingFirms] = useState(true);
 
-  const [formData, setFormData] = useState({
-    account_name: '',
-    firm_name: '',
-    custom_firm: '',
-    initial_balance: '',
-    current_balance: '',
-    max_drawdown: '10',
-    daily_loss_limit: '',
-    profit_target: '10',
-    challenge_end_date: '',
-  });
+  // Load firms on mount
+  useEffect(() => {
+    async function loadFirms() {
+      const { data } = await supabase
+        .from("prop_firm_challenges")
+        .select("firm_name")
+        .order("firm_name");
+      if (data) {
+        const unique = [...new Set(data.map((d) => d.firm_name))].sort();
+        setFirmNames(unique);
+      }
+      setLoadingFirms(false);
+    }
+    loadFirms();
+  }, []);
+
+  // Load account sizes when firm changes
+  useEffect(() => {
+    if (!form.firm_name || form.firm_name === "__other__") return;
+    async function loadSizes() {
+      const { data } = await supabase
+        .from("prop_firm_challenges")
+        .select("account_size")
+        .eq("firm_name", form.firm_name);
+      if (data) {
+        const unique = [...new Set(data.map((d) => d.account_size))].sort((a, b) => a - b);
+        setAccountSizes(unique);
+      }
+    }
+    loadSizes();
+  }, [form.firm_name]);
+
+  // Load challenges when firm + size selected
+  useEffect(() => {
+    if (!form.firm_name || !form.initial_balance || form.firm_name === "__other__") return;
+    async function loadChallenges() {
+      const { data } = await supabase
+        .from("prop_firm_challenges")
+        .select("*")
+        .eq("firm_name", form.firm_name)
+        .eq("account_size", form.initial_balance)
+        .order("steps");
+      if (data) setChallenges(data);
+    }
+    loadChallenges();
+  }, [form.firm_name, form.initial_balance]);
+
+  const handleFirmChange = (firmName: string) => {
+    setForm({ ...defaultForm, firm_name: firmName, account_name: form.account_name });
+    setAccountSizes([]);
+    setChallenges([]);
+    setSelectedChallenge(null);
+  };
+
+  const handleChallengeSelect = (c: Challenge) => {
+    setSelectedChallenge(c);
+    setForm((prev) => ({
+      ...prev,
+      max_drawdown: c.max_drawdown ?? "",
+      daily_loss_limit: c.max_daily_loss ?? 0,
+      profit_target: c.phase1_profit_target ?? "",
+    }));
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-
-    if (name === 'initial_balance' && !formData.current_balance) {
-      setFormData(prev => ({ ...prev, current_balance: value }));
-    }
-
-    if (name === 'initial_balance' && value) {
-      const dailyLimit = parseFloat(value) * 0.05;
-      setFormData(prev => ({ ...prev, daily_loss_limit: dailyLimit.toString() }));
-    }
+    setForm((prev) => ({
+      ...prev,
+      [name]: value === "" ? "" : isNaN(Number(value)) ? value : Number(value),
+    }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) return;
-
+  const handleSubmit = async () => {
     setLoading(true);
-    setError('');
-
+    setError(null);
     try {
-      const firmName = formData.firm_name === 'Other' ? formData.custom_firm : formData.firm_name;
-
-      if (!firmName) {
-        throw new Error(t.selectOrEnterFirm);
-      }
-
-      const { error: insertError } = await supabase.from('challenge_accounts').insert({
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+      const { error: dbError } = await supabase.from("challenge_accounts").insert({
         user_id: user.id,
-        account_name: formData.account_name,
-        firm_name: firmName,
-        initial_balance: parseFloat(formData.initial_balance),
-        current_balance: parseFloat(formData.current_balance),
-        max_drawdown: parseFloat(formData.max_drawdown),
-        daily_loss_limit: parseFloat(formData.daily_loss_limit) || 0,
-        profit_target: parseFloat(formData.profit_target),
-        current_daily_loss: 0,
-        challenge_end_date: formData.challenge_end_date || null,
+        account_name: form.account_name,
+        firm_name: form.firm_name,
+        initial_balance: Number(form.initial_balance),
+        current_balance: Number(form.current_balance) || Number(form.initial_balance),
+        max_drawdown: Number(form.max_drawdown),
+        daily_loss_limit: Number(form.daily_loss_limit),
+        profit_target: Number(form.profit_target),
+        current_daily_loss: Number(form.current_daily_loss) || 0,
+        challenge_end_date: form.challenge_end_date || null,
       });
-
-      if (insertError) throw insertError;
-
-      setSuccess(true);
-      setTimeout(() => {
-        router.push(`/${locale}/dashboard`);
-      }, 2000);
+      if (dbError) throw dbError;
+      router.push("/dashboard/mypropfirm?added=true");
     } catch (err: any) {
-      console.error('Error adding account:', err);
-      setError(err.message || t.failedToAdd);
+      setError(err.message || "An error occurred");
     } finally {
       setLoading(false);
     }
   };
 
-  if (success) {
-    return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-20 h-20 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="w-10 h-10 text-emerald-500" />
+  const canGoNext = () => {
+    if (step === 1) return form.account_name && form.firm_name && form.initial_balance !== "";
+    if (step === 2) return form.max_drawdown !== "" && form.profit_target !== "";
+    return true;
+  };
+
+  const StepIndicator = () => (
+    <div className="flex items-center justify-center gap-2 mb-8">
+      {[1, 2, 3].map((s) => (
+        <div key={s} className="flex items-center gap-2">
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${
+            s === step ? "bg-blue-600 text-white ring-4 ring-blue-600/20"
+            : s < step ? "bg-green-500 text-white"
+            : "bg-gray-700 text-gray-400"
+          }`}>
+            {s < step ? "✓" : s}
           </div>
-          <h1 className="text-2xl font-bold text-white mb-2">{t.accountAdded}</h1>
-          <p className="text-gray-400">{t.redirecting}</p>
+          {s < 3 && <div className={`w-12 h-0.5 ${s < step ? "bg-green-500" : "bg-gray-700"}`} />}
+        </div>
+      ))}
+    </div>
+  );
+
+  const Step1 = () => (
+    <div className="space-y-5">
+      <div>
+        <label className="block text-sm font-medium text-gray-300 mb-1.5">Account Name</label>
+        <input
+          type="text" name="account_name" value={form.account_name}
+          onChange={handleChange} placeholder="e.g. FTMO 100K Phase 1"
+          className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-300 mb-1.5">
+          Prop Firm
+          <span className="ml-2 text-xs text-gray-500">— {firmNames.length} firms, 764 real challenges</span>
+        </label>
+        <select
+          name="firm_name" value={form.firm_name}
+          onChange={(e) => handleFirmChange(e.target.value)}
+          className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+        >
+          <option value="">{loadingFirms ? "Loading…" : "Select a firm…"}</option>
+          {firmNames.map((name) => (
+            <option key={name} value={name}>{name}</option>
+          ))}
+          <option value="__other__">Other (manual entry)</option>
+        </select>
+      </div>
+
+      {form.firm_name && form.firm_name !== "__other__" && accountSizes.length > 0 && (
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-1.5">Account Size</label>
+          <select
+            name="initial_balance" value={form.initial_balance}
+            onChange={handleChange}
+            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          >
+            <option value="">Select size…</option>
+            {accountSizes.map((size) => (
+              <option key={size} value={size}>${size.toLocaleString()}</option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {form.firm_name === "__other__" && (
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-1.5">Initial Balance</label>
+          <div className="relative">
+            <input
+              type="number" name="initial_balance" value={form.initial_balance}
+              onChange={handleChange} placeholder="100000"
+              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 pr-8 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            />
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
+          </div>
+        </div>
+      )}
+
+      <div>
+        <label className="block text-sm font-medium text-gray-300 mb-1.5">
+          Challenge End Date <span className="text-xs text-gray-500">(optional)</span>
+        </label>
+        <input
+          type="date" name="challenge_end_date" value={form.challenge_end_date}
+          onChange={handleChange}
+          className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+        />
+      </div>
+    </div>
+  );
+
+  const Step2 = () => (
+    <div className="space-y-5">
+      {challenges.length > 0 && (
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            Select Challenge Type
+            <span className="ml-2 text-xs text-gray-500">— auto-fills rules</span>
+          </label>
+          <div className="grid gap-2 max-h-64 overflow-y-auto pr-1">
+            {challenges.map((c) => (
+              <button
+                key={c.id}
+                onClick={() => handleChallengeSelect(c)}
+                className={`text-left px-4 py-3 rounded-lg border transition text-sm ${
+                  selectedChallenge?.id === c.id
+                    ? "border-blue-500 bg-blue-900/30 text-white"
+                    : "border-gray-700 bg-gray-800 text-gray-300 hover:border-gray-600"
+                }`}
+              >
+                <div className="font-medium truncate">{c.name}</div>
+                <div className="text-xs text-gray-400 mt-0.5 flex gap-3">
+                  <span>{c.steps.replace("_", "-")}</span>
+                  <span>DD {c.max_drawdown}%</span>
+                  <span>Daily {c.max_daily_loss ?? "—"}%</span>
+                  <span>Target {c.phase1_profit_target}%</span>
+                  {(c.discounted_price || c.price) && (
+                    <span className="text-green-400">${c.discounted_price ?? c.price}</span>
+                  )}
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {selectedChallenge && (
+        <div className="bg-green-900/20 border border-green-700/40 rounded-lg px-4 py-2 text-xs text-green-400">
+          ✓ Rules auto-filled from propfirmmatch.com real data
+        </div>
+      )}
+
+      <div>
+        <label className="block text-sm font-medium text-gray-300 mb-1.5">
+          Max Total Drawdown <span className="text-xs text-gray-500">%</span>
+        </label>
+        <input
+          type="number" name="max_drawdown" value={form.max_drawdown}
+          onChange={handleChange} placeholder="10"
+          className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-300 mb-1.5">
+          Daily Loss Limit <span className="text-xs text-gray-500">% (0 = no limit)</span>
+        </label>
+        <input
+          type="number" name="daily_loss_limit" value={form.daily_loss_limit}
+          onChange={handleChange} placeholder="5"
+          className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-300 mb-1.5">
+          Profit Target <span className="text-xs text-gray-500">% phase 1</span>
+        </label>
+        <input
+          type="number" name="profit_target" value={form.profit_target}
+          onChange={handleChange} placeholder="10"
+          className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+        />
+      </div>
+    </div>
+  );
+
+  const Step3 = () => (
+    <div className="space-y-5">
+      <div>
+        <label className="block text-sm font-medium text-gray-300 mb-1.5">
+          Current Balance <span className="text-xs text-gray-500">(blank = starting balance)</span>
+        </label>
+        <div className="relative">
+          <input
+            type="number" name="current_balance" value={form.current_balance}
+            onChange={handleChange} placeholder={String(form.initial_balance || "100000")}
+            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 pr-8 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          />
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
         </div>
       </div>
-    );
-  }
+
+      <div>
+        <label className="block text-sm font-medium text-gray-300 mb-1.5">
+          Today's Loss So Far <span className="text-xs text-gray-500">$</span>
+        </label>
+        <input
+          type="number" name="current_daily_loss" value={form.current_daily_loss}
+          onChange={handleChange} placeholder="0"
+          className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+        />
+      </div>
+
+      {error && (
+        <div className="bg-red-900/40 border border-red-700/50 rounded-lg px-4 py-3 text-red-300 text-sm">
+          {error}
+        </div>
+      )}
+
+      <div className="bg-gray-800/60 rounded-lg p-4 text-sm space-y-1.5">
+        <p className="font-medium text-gray-300 mb-2">Summary</p>
+        {[
+          ["Firm", form.firm_name],
+          ["Account", form.account_name],
+          ["Balance", `$${Number(form.initial_balance).toLocaleString()}`],
+          ["Max Drawdown", `${form.max_drawdown}%`],
+          ["Daily Loss", !form.daily_loss_limit || form.daily_loss_limit === 0 ? "No limit" : `${form.daily_loss_limit}%`],
+          ["Profit Target", `${form.profit_target}%`],
+        ].map(([label, value]) => (
+          <div key={label} className="flex justify-between text-gray-400">
+            <span>{label}</span>
+            <span className="text-white">{value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  const stepLabels = ["General Info", "Challenge Rules", "Current Metrics"];
 
   return (
-    <div className="min-h-screen bg-gray-950">
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Link
-          href={`/${locale}/dashboard`}
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          {t.backToDashboard}
-        </Link>
-
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Target className="w-6 h-6 text-emerald-400" />
-            {t.addNewChallenge}
-          </h1>
-          <p className="text-gray-400 mt-1">{t.trackProgress}</p>
+    <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4 py-12">
+      <div className="w-full max-w-md">
+        <div className="mb-8 text-center">
+          <h1 className="text-2xl font-bold text-white">Add Challenge Account</h1>
+          <p className="text-gray-400 text-sm mt-1">{stepLabels[step - 1]}</p>
         </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Account Details */}
-          <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-6">
-            <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <Building2 className="w-5 h-5 text-emerald-400" />
-              {t.accountDetails}
-            </h2>
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t.accountName} *
-                </label>
-                <input
-                  type="text"
-                  name="account_name"
-                  value={formData.account_name}
-                  onChange={handleChange}
-                  placeholder={t.accountNamePlaceholder}
-                  required
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 transition-colors"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t.propFirm} *
-                </label>
-                <select
-                  name="firm_name"
-                  value={formData.firm_name}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-emerald-500 transition-colors"
-                >
-                  <option value="">{t.selectFirm}</option>
-                  {POPULAR_FIRMS.map(firm => (
-                    <option key={firm} value={firm}>{firm}</option>
-                  ))}
-                </select>
-              </div>
-
-              {formData.firm_name === 'Other' && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    {t.firmName} *
-                  </label>
-                  <input
-                    type="text"
-                    name="custom_firm"
-                    value={formData.custom_firm}
-                    onChange={handleChange}
-                    placeholder={t.enterFirmName}
-                    required
-                    className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 transition-colors"
-                  />
-                </div>
-              )}
-            </div>
+        <StepIndicator />
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-xl">
+          {step === 1 && <Step1 />}
+          {step === 2 && <Step2 />}
+          {step === 3 && <Step3 />}
+          <div className="flex gap-3 mt-8">
+            {step > 1 && (
+              <button
+                onClick={() => setStep((s) => s - 1)}
+                className="flex-1 py-2.5 rounded-lg border border-gray-700 text-gray-300 hover:bg-gray-800 transition font-medium"
+              >
+                Back
+              </button>
+            )}
+            {step < 3 ? (
+              <button
+                onClick={() => setStep((s) => s + 1)}
+                disabled={!canGoNext()}
+                className="flex-1 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold transition"
+              >
+                Continue
+              </button>
+            ) : (
+              <button
+                onClick={handleSubmit}
+                disabled={loading}
+                className="flex-1 py-2.5 rounded-lg bg-green-600 hover:bg-green-500 disabled:opacity-50 text-white font-semibold transition"
+              >
+                {loading ? "Saving…" : "Add Account"}
+              </button>
+            )}
           </div>
-
-          {/* Balance & Targets */}
-          <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-6">
-            <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <DollarSign className="w-5 h-5 text-emerald-400" />
-              {t.balanceTargets}
-            </h2>
-
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t.initialBalance} *
-                </label>
-                <input
-                  type="number"
-                  name="initial_balance"
-                  value={formData.initial_balance}
-                  onChange={handleChange}
-                  placeholder="100000"
-                  required
-                  min="0"
-                  step="0.01"
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 transition-colors"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t.currentBalance} *
-                </label>
-                <input
-                  type="number"
-                  name="current_balance"
-                  value={formData.current_balance}
-                  onChange={handleChange}
-                  placeholder="100000"
-                  required
-                  min="0"
-                  step="0.01"
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 transition-colors"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Rules */}
-          <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-6">
-            <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <Percent className="w-5 h-5 text-emerald-400" />
-              {t.challengeRules}
-            </h2>
-
-            <div className="grid sm:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t.maxDrawdown}
-                </label>
-                <input
-                  type="number"
-                  name="max_drawdown"
-                  value={formData.max_drawdown}
-                  onChange={handleChange}
-                  placeholder="10"
-                  min="0"
-                  max="100"
-                  step="0.1"
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 transition-colors"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t.dailyLossLimit}
-                </label>
-                <input
-                  type="number"
-                  name="daily_loss_limit"
-                  value={formData.daily_loss_limit}
-                  onChange={handleChange}
-                  placeholder="5000"
-                  min="0"
-                  step="0.01"
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 transition-colors"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t.profitTarget}
-                </label>
-                <input
-                  type="number"
-                  name="profit_target"
-                  value={formData.profit_target}
-                  onChange={handleChange}
-                  placeholder="10"
-                  min="0"
-                  max="100"
-                  step="0.1"
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 transition-colors"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Duration */}
-          <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-6">
-            <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-emerald-400" />
-              {t.challengeDuration}
-            </h2>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                {t.challengeEndDate}
-              </label>
-              <input
-                type="date"
-                name="challenge_end_date"
-                value={formData.challenge_end_date}
-                onChange={handleChange}
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-emerald-500 transition-colors"
-              />
-              <p className="text-xs text-gray-500 mt-2">{t.leaveEmpty}</p>
-            </div>
-          </div>
-
-          {error && (
-            <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-500">
-              {error}
-            </div>
-          )}
-
-          <div className="flex gap-4">
-            <Link
-              href={`/${locale}/dashboard`}
-              className="flex-1 py-3 px-6 bg-gray-800 hover:bg-gray-700 text-white text-center rounded-lg transition-colors"
-            >
-              {t.cancel}
-            </Link>
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex-1 py-3 px-6 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  {t.adding}
-                </>
-              ) : (
-                <>
-                  <Target className="w-4 h-4" />
-                  {t.addAccount}
-                </>
-              )}
-            </button>
-          </div>
-        </form>
+        </div>
+        <div className="text-center mt-4">
+          <button onClick={() => router.back()} className="text-sm text-gray-500 hover:text-gray-400 transition">
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   );
