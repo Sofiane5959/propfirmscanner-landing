@@ -246,46 +246,112 @@ function TradeSimulator() {
 }
 
 // =============================================================================
-// ECONOMIC CALENDAR (Pro — mock data)
+// ECONOMIC CALENDAR — Real data from Forex Factory
 // =============================================================================
+const CURRENCY_FLAGS_DASH: Record<string, string> = {
+  USD: '🇺🇸', EUR: '🇪🇺', GBP: '🇬🇧', JPY: '🇯🇵',
+  AUD: '🇦🇺', CAD: '🇨🇦', CHF: '🇨🇭', NZD: '🇳🇿',
+};
+
+interface CalendarEvent {
+  title: string;
+  country: string;
+  date: string;
+  time: string;
+  impact: 'High' | 'Medium' | 'Low' | 'Holiday';
+  forecast: string;
+  previous: string;
+  actual: string;
+}
+
+function isTodayDash(dateStr: string): boolean {
+  return dateStr.startsWith(new Date().toISOString().split('T')[0]);
+}
+
+function formatTimeDash(timeStr: string): string {
+  if (!timeStr || timeStr === 'All Day' || timeStr === 'Tentative') return timeStr || '';
+  try {
+    const [h, m] = timeStr.split(':');
+    const hour = parseInt(h);
+    return `${hour % 12 || 12}:${m} ${hour >= 12 ? 'PM' : 'AM'}`;
+  } catch { return timeStr; }
+}
+
 function EconomicCalendarLocked({ locale }: { locale: string }) {
-  const events = [
-    { time: '08:30', name: 'US CPI', impact: 'HIGH', currency: 'USD' },
-    { time: '10:00', name: 'Fed Powell Speech', impact: 'HIGH', currency: 'USD' },
-    { time: '13:30', name: 'ECB Minutes', impact: 'MED', currency: 'EUR' },
-    { time: '15:00', name: 'US Retail Sales', impact: 'MED', currency: 'USD' },
-  ];
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/calendar')
+      .then(r => r.json())
+      .then((data: CalendarEvent[]) => {
+        const today = data
+          .filter(e => isTodayDash(e.date) && (e.impact === 'High' || e.impact === 'Medium'))
+          .slice(0, 5);
+        setEvents(today);
+      })
+      .catch(() => setEvents([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const highCount = events.filter(e => e.impact === 'High').length;
+
   return (
-    <div className="bg-gray-900/60 rounded-xl border border-gray-800 p-5 relative overflow-hidden">
+    <div className="bg-gray-900/60 rounded-xl border border-gray-800 p-5">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-semibold text-white flex items-center gap-2">
           <Calendar className="w-5 h-5 text-orange-400" />
           Economic Calendar
+          {highCount > 0 && (
+            <span className="px-2 py-0.5 bg-red-900/40 text-red-400 text-xs rounded-full border border-red-800/50">
+              {highCount} high impact
+            </span>
+          )}
         </h3>
-        <span className="bg-purple-500/20 border border-purple-500/30 text-purple-300 text-xs px-2 py-0.5 rounded-full flex items-center gap-1">
-          <Crown className="w-3 h-3" /> Pro
-        </span>
-      </div>
-      <div className="space-y-2 blur-sm pointer-events-none select-none">
-        {events.map((e, i) => (
-          <div key={i} className="flex items-center gap-3 p-2 bg-gray-800/50 rounded-lg">
-            <span className="text-xs text-gray-500 w-10 shrink-0">{e.time}</span>
-            <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${e.impact === 'HIGH' ? 'bg-red-500' : 'bg-yellow-500'}`}></span>
-            <span className="text-sm text-white flex-1">{e.name}</span>
-            <span className="text-xs text-gray-500">{e.currency}</span>
-          </div>
-        ))}
-      </div>
-      <div className="absolute inset-0 flex items-center justify-center bg-gray-950/60 rounded-xl">
-        <Link href={`/${locale}/dashboard/upgrade`}
-          className="flex flex-col items-center gap-2 text-center">
-          <div className="w-10 h-10 bg-purple-500/20 rounded-full flex items-center justify-center">
-            <Lock className="w-5 h-5 text-purple-400" />
-          </div>
-          <p className="text-sm text-white font-medium">Unlock with Pro</p>
-          <p className="text-xs text-gray-400">Today's high-impact events</p>
-          <span className="text-xs bg-purple-600 text-white px-3 py-1 rounded-full">Upgrade →</span>
+        <Link href={`/${locale}/dashboard/calendar`} className="text-xs text-blue-400 hover:text-blue-300 transition">
+          View all →
         </Link>
+      </div>
+
+      {loading ? (
+        <div className="space-y-2">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="h-10 bg-gray-800 rounded-lg animate-pulse" />
+          ))}
+        </div>
+      ) : events.length === 0 ? (
+        <div className="text-center py-6">
+          <p className="text-gray-500 text-sm">No high-impact events today 🎉</p>
+          <Link href={`/${locale}/dashboard/calendar`} className="text-xs text-blue-400 hover:text-blue-300 mt-1 inline-block">
+            View this week →
+          </Link>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {events.map((event, i) => (
+            <div key={i} className={`flex items-center gap-3 px-3 py-2.5 rounded-lg ${
+              event.impact === 'High' ? 'bg-red-900/10 border border-red-900/30' : 'bg-gray-800/60'
+            }`}>
+              <span className="text-sm w-4 shrink-0">{event.impact === 'High' ? '🔴' : '🟡'}</span>
+              <span className="text-xs text-gray-400 w-16 shrink-0 font-mono">{formatTimeDash(event.time)}</span>
+              <span className="text-xs text-gray-300 shrink-0">{CURRENCY_FLAGS_DASH[event.country] || ''} {event.country}</span>
+              <span className="text-xs text-white truncate flex-1">{event.title}</span>
+              {event.actual ? (
+                <span className="text-xs text-green-400 shrink-0">{event.actual}</span>
+              ) : event.forecast ? (
+                <span className="text-xs text-gray-500 shrink-0">F: {event.forecast}</span>
+              ) : null}
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="mt-3 pt-3 border-t border-gray-800 flex justify-between items-center">
+        <p className="text-xs text-gray-600">Source: Forex Factory</p>
+        <div className="flex gap-3 text-xs text-gray-600">
+          <span>🔴 High</span>
+          <span>🟡 Medium</span>
+        </div>
       </div>
     </div>
   );
