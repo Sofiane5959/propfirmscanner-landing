@@ -222,7 +222,6 @@ export default function FavoritesPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <h3 className="font-semibold text-white">{firm.name}</h3>
-                        )}
                         {firm.country && (
                           <span className="text-xs text-gray-500">{COUNTRY_FLAGS[firm.country] || ''} {firm.country}</span>
                         )}
