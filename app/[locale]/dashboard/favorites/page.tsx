@@ -20,14 +20,14 @@ interface PropFirm {
   name: string;
   slug: string;
   logo_url: string | null;
-  max_allocation: number | null;
-  review_score: number | null;
-  reviews_count: number | null;
-  trustpilot_score: number | null;
+  max_profit_split: number | null;
+  trustpilot_rating: number | null;
+  trustpilot_reviews: number | null;
   country: string | null;
   rank: number | null;
-  program_types: string[] | null;
+  challenge_types: string[] | null;
   affiliate_url: string | null;
+  min_price: number | null;
 }
 
 interface FavoriteFirm {
@@ -44,12 +44,10 @@ const COUNTRY_FLAGS: Record<string, string> = {
   IT: '🇮🇹', MU: '🇲🇺', VG: '🇻🇬', VC: '🇻🇨',
 };
 
-const IMG_BASE = 'https://imagedelivery.net/XknxnEJnSzLFsNzPLnfHOA';
-
 function getFirmLogoUrl(logoUrl: string | null): string | null {
   if (!logoUrl) return null;
   if (logoUrl.startsWith('http')) return logoUrl;
-  return `${IMG_BASE}/${logoUrl}/public`;
+  return logoUrl;
 }
 
 export default function FavoritesPage() {
@@ -85,12 +83,12 @@ export default function FavoritesPage() {
           return;
         }
 
-        // Step 2: get prop firm details — try by text id cast
+        // Step 2: get prop firm details by text id
         const firmIds = favRows.map((f: any) => f.prop_firm_id);
 
         const { data: firms, error: firmsError } = await supabase
           .from('prop_firms')
-          .select('id, name, slug, logo_url, max_allocation, review_score, reviews_count, trustpilot_score, country, rank, program_types, affiliate_url')
+          .select('id, name, slug, logo_url, max_profit_split, trustpilot_rating, trustpilot_reviews, country, rank, challenge_types, affiliate_url, min_price')
           .in('id', firmIds);
 
         if (firmsError) throw firmsError;
@@ -208,15 +206,15 @@ export default function FavoritesPage() {
               );
 
               const logoUrl = getFirmLogoUrl(firm.logo_url);
-              const score = firm.trustpilot_score || firm.review_score;
+              const score = firm.trustpilot_rating;
 
               return (
                 <div key={favorite.id}
                   className="bg-gray-900/60 rounded-xl border border-gray-800 hover:border-gray-700 transition-colors p-4">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-gray-800 flex items-center justify-center overflow-hidden shrink-0">
+                    <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center overflow-hidden shrink-0 border border-gray-200 p-1">
                       {logoUrl ? (
-                        <img src={logoUrl} alt={firm.name} className="w-full h-full object-contain p-1" />
+                        <img src={logoUrl} alt={firm.name} className="w-full h-full object-contain" />
                       ) : (
                         <span className="text-lg font-bold text-gray-500">{firm.name?.charAt(0)}</span>
                       )}
@@ -236,15 +234,20 @@ export default function FavoritesPage() {
                         {score && (
                           <span className="flex items-center gap-1 text-xs text-yellow-400">
                             <Star className="w-3 h-3 fill-yellow-400" /> {score.toFixed(1)}
-                            {firm.reviews_count ? <span className="text-gray-500">({firm.reviews_count})</span> : null}
+                            {firm.trustpilot_reviews
+                              ? <span className="text-gray-500">({firm.trustpilot_reviews.toLocaleString()})</span>
+                              : null}
                           </span>
                         )}
-                        {firm.max_allocation && (
-                          <span className="text-xs text-gray-400 flex items-center gap-1">
-                            <TrendingUp className="w-3 h-3" /> Up to ${(firm.max_allocation / 1000).toFixed(0)}K
+                        {firm.min_price && (
+                          <span className="text-xs text-gray-400">From ${firm.min_price}</span>
+                        )}
+                        {firm.max_profit_split && (
+                          <span className="text-xs text-emerald-400 flex items-center gap-1">
+                            <TrendingUp className="w-3 h-3" /> Up to {firm.max_profit_split}%
                           </span>
                         )}
-                        {firm.program_types && firm.program_types.slice(0, 3).map((t) => (
+                        {firm.challenge_types && firm.challenge_types.slice(0, 3).map((t) => (
                           <span key={t} className="text-xs bg-gray-800 text-gray-400 px-1.5 py-0.5 rounded">
                             {t.replace('_Steps', '-Step').replace('_', ' ')}
                           </span>
