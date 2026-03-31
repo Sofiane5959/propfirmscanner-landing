@@ -19,7 +19,7 @@ interface PropFirm {
   id: string;
   name: string;
   slug: string;
-  logo_path: string | null;
+  logo_url: string | null;
   max_allocation: number | null;
   review_score: number | null;
   reviews_count: number | null;
@@ -46,10 +46,10 @@ const COUNTRY_FLAGS: Record<string, string> = {
 
 const IMG_BASE = 'https://imagedelivery.net/XknxnEJnSzLFsNzPLnfHOA';
 
-function getFirmLogoUrl(logoPath: string | null): string | null {
-  if (!logoPath) return null;
-  if (logoPath.startsWith('http')) return logoPath;
-  return `${IMG_BASE}/${logoPath}/public`;
+function getFirmLogoUrl(logoUrl: string | null): string | null {
+  if (!logoUrl) return null;
+  if (logoUrl.startsWith('http')) return logoUrl;
+  return `${IMG_BASE}/${logoUrl}/public`;
 }
 
 export default function FavoritesPage() {
@@ -90,7 +90,7 @@ export default function FavoritesPage() {
 
         const { data: firms, error: firmsError } = await supabase
           .from('prop_firms')
-          .select('id, name, slug, logo_path, max_allocation, review_score, reviews_count, trustpilot_score, country, rank, program_types, affiliate_url')
+          .select('id, name, slug, logo_url, max_allocation, review_score, reviews_count, trustpilot_score, country, rank, program_types, affiliate_url')
           .in('id', firmIds);
 
         if (firmsError) throw firmsError;
@@ -207,7 +207,7 @@ export default function FavoritesPage() {
                 </div>
               );
 
-              const logoUrl = getFirmLogoUrl(firm.logo_path);
+              const logoUrl = getFirmLogoUrl(firm.logo_url);
               const score = firm.trustpilot_score || firm.review_score;
 
               return (
