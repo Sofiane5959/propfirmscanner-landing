@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 // =============================================================================
 // LOCALE DETECTION & TRANSLATIONS
@@ -1027,8 +1028,26 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   
-  // SSR-safe favorites with localStorage
+  // Favorites — localStorage (optimistic UI) + Supabase sync
   const [favorites, setFavorites] = useLocalStorage<string[]>('pfs_favorites', [])
+  const supabase = createClientComponentClient()
+
+  // On mount: load favorites from Supabase and merge with localStorage
+  useEffect(() => {
+    const loadFromSupabase = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      const { data } = await supabase
+        .from('user_favorites')
+        .select('prop_firm_id')
+        .eq('user_id', user.id)
+      if (data && data.length > 0) {
+        const dbIds = data.map((r: any) => r.prop_firm_id as string)
+        setFavorites(prev => Array.from(new Set([...prev, ...dbIds])))
+      }
+    }
+    loadFromSupabase()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
   
   const itemsPerPage = 24
   
@@ -1038,13 +1057,38 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
   // Debounced filters for URL sync
   const debouncedFilters = useDebounce(filters, 500)
   
-  const toggleFavorite = useCallback((id: string) => {
+  const toggleFavorite = useCallback(async (id: string) => {
+    const isCurrentlyFavorite = favorites.includes(id)
+
+    // Optimistic update (instant UI feedback)
     setFavorites(prev => {
       const newFavs = prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]
       setToast({ message: prev.includes(id) ? 'Removed from favorites' : 'Added to favorites', type: 'success' })
       return newFavs
     })
-  }, [setFavorites])
+
+    // Sync to Supabase in background
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return // not logged in, localStorage only is fine
+      if (isCurrentlyFavorite) {
+        await supabase
+          .from('user_favorites')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('prop_firm_id', id)
+      } else {
+        await supabase
+          .from('user_favorites')
+          .upsert(
+            { user_id: user.id, prop_firm_id: id },
+            { onConflict: 'user_id,prop_firm_id' }
+          )
+      }
+    } catch (err) {
+      console.error('Failed to sync favorite to Supabase:', err)
+    }
+  }, [favorites, setFavorites, supabase])
   
   const toggleCompare = useCallback((id: string) => {
     setCompareList(prev => {
