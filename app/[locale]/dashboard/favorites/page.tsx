@@ -5,21 +5,16 @@ import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/providers/AuthProvider';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import {
-  Star, ArrowLeft, Loader2, ExternalLink, Trash2, BarChart3,
-  TrendingUp, Award, Globe,
-} from 'lucide-react';
+import { Star, ArrowLeft, Loader2, ExternalLink, Trash2, BarChart3, TrendingUp } from 'lucide-react';
 
 const locales = ['en', 'fr', 'de', 'es', 'pt', 'ar', 'hi'] as const;
 type Locale = (typeof locales)[number];
 
 function getLocaleFromPath(pathname: string): Locale {
-  const firstSegment = pathname.split('/')[1];
-  if (firstSegment && locales.includes(firstSegment as Locale)) return firstSegment as Locale;
-  return 'en';
+  const s = pathname.split('/')[1];
+  return locales.includes(s as Locale) ? (s as Locale) : 'en';
 }
 
-// ── Types ─────────────────────────────────────────────────────
 interface PropFirm {
   id: string;
   name: string;
@@ -32,15 +27,7 @@ interface PropFirm {
   country: string | null;
   rank: number | null;
   program_types: string[] | null;
-  platforms: string[] | null;
   affiliate_url: string | null;
-}
-
-interface FavoriteFromDB {
-  id: string;
-  prop_firm_id: string;
-  created_at: string;
-  prop_firms: PropFirm | PropFirm[];
 }
 
 interface FavoriteFirm {
@@ -65,7 +52,6 @@ function getFirmLogoUrl(logoPath: string | null): string | null {
   return `${IMG_BASE}/${logoPath}/public`;
 }
 
-// ── Main Component ────────────────────────────────────────────
 export default function FavoritesPage() {
   const pathname = usePathname();
   const locale = getLocaleFromPath(pathname);
@@ -86,45 +72,42 @@ export default function FavoritesPage() {
     if (!user) return;
     const fetchFavorites = async () => {
       try {
-        const { data, error } = await supabase
+        // Step 1: get favorite rows
+        const { data: favRows, error: favError } = await supabase
           .from('user_favorites')
-          .select(`
-            id,
-            prop_firm_id,
-            created_at,
-            prop_firms (
-              id,
-              name,
-              slug,
-              logo_path,
-              max_allocation,
-              review_score,
-              reviews_count,
-              trustpilot_score,
-              country,
-              rank,
-              program_types,
-              platforms,
-              affiliate_url
-            )
-          `)
+          .select('id, prop_firm_id, created_at')
           .eq('user_id', user.id)
           .order('created_at', { ascending: false });
 
-        if (error) throw error;
+        if (favError) throw favError;
+        if (!favRows || favRows.length === 0) {
+          setFavorites([]);
+          return;
+        }
 
-        const transformed: FavoriteFirm[] = (data as unknown as FavoriteFromDB[] || []).map((item) => {
-          const firmData = item.prop_firms;
-          const firm = Array.isArray(firmData)
-            ? (firmData.length > 0 ? firmData[0] : null)
-            : firmData || null;
-          return { id: item.id, prop_firm_id: item.prop_firm_id, created_at: item.created_at, firm };
-        });
+        // Step 2: get prop firm details — try by text id cast
+        const firmIds = favRows.map((f: any) => f.prop_firm_id);
 
-        setFavorites(transformed);
+        const { data: firms, error: firmsError } = await supabase
+          .from('prop_firms')
+          .select('id, name, slug, logo_path, max_allocation, review_score, reviews_count, trustpilot_score, country, rank, program_types, affiliate_url')
+          .in('id', firmIds);
+
+        if (firmsError) throw firmsError;
+
+        const firmsMap = new Map((firms || []).map((f: PropFirm) => [f.id, f]));
+
+        const combined: FavoriteFirm[] = favRows.map((fav: any) => ({
+          id: fav.id,
+          prop_firm_id: fav.prop_firm_id,
+          created_at: fav.created_at,
+          firm: firmsMap.get(fav.prop_firm_id) || null,
+        }));
+
+        setFavorites(combined);
       } catch (err: any) {
         console.error('Error fetching favorites:', err);
-        setError('Failed to load favorites. Please try again.');
+        setError(`Failed to load favorites: ${err?.message || 'Unknown error'}`);
       } finally {
         setLoading(false);
       }
@@ -194,7 +177,6 @@ export default function FavoritesPage() {
           </div>
 
         ) : favorites.length === 0 ? (
-          /* Empty State */
           <div className="bg-gray-900/50 rounded-2xl border border-dashed border-gray-700 p-12 text-center">
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800 flex items-center justify-center">
               <Star className="w-8 h-8 text-gray-600" />
@@ -210,11 +192,21 @@ export default function FavoritesPage() {
           </div>
 
         ) : (
-          /* Favorites Grid */
           <div className="space-y-3">
             {favorites.map((favorite) => {
               const firm = favorite.firm;
-              if (!firm) return null;
+              if (!firm) return (
+                <div key={favorite.id} className="bg-gray-900/60 rounded-xl border border-gray-800 p-4">
+                  <div className="flex items-center justify-between">
+                    <p className="text-gray-500 text-sm">Firm data not found</p>
+                    <button onClick={() => removeFavorite(favorite.id)}
+                      className="p-2 text-gray-600 hover:text-red-400 rounded-lg transition-colors">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              );
+
               const logoUrl = getFirmLogoUrl(firm.logo_path);
               const score = firm.trustpilot_score || firm.review_score;
 
@@ -222,8 +214,6 @@ export default function FavoritesPage() {
                 <div key={favorite.id}
                   className="bg-gray-900/60 rounded-xl border border-gray-800 hover:border-gray-700 transition-colors p-4">
                   <div className="flex items-center gap-4">
-
-                    {/* Logo */}
                     <div className="w-12 h-12 rounded-xl bg-gray-800 flex items-center justify-center overflow-hidden shrink-0">
                       {logoUrl ? (
                         <img src={logoUrl} alt={firm.name} className="w-full h-full object-contain p-1" />
@@ -232,19 +222,14 @@ export default function FavoritesPage() {
                       )}
                     </div>
 
-                    {/* Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <h3 className="font-semibold text-white">{firm.name}</h3>
                         {firm.rank && (
-                          <span className="text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full">
-                            #{firm.rank}
-                          </span>
+                          <span className="text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full">#{firm.rank}</span>
                         )}
                         {firm.country && (
-                          <span className="text-xs text-gray-500">
-                            {COUNTRY_FLAGS[firm.country] || ''} {firm.country}
-                          </span>
+                          <span className="text-xs text-gray-500">{COUNTRY_FLAGS[firm.country] || ''} {firm.country}</span>
                         )}
                       </div>
                       <div className="flex items-center gap-4 mt-1 flex-wrap">
@@ -259,19 +244,14 @@ export default function FavoritesPage() {
                             <TrendingUp className="w-3 h-3" /> Up to ${(firm.max_allocation / 1000).toFixed(0)}K
                           </span>
                         )}
-                        {firm.program_types && firm.program_types.length > 0 && (
-                          <div className="flex gap-1">
-                            {firm.program_types.slice(0, 3).map((t) => (
-                              <span key={t} className="text-xs bg-gray-800 text-gray-400 px-1.5 py-0.5 rounded">
-                                {t.replace('_Steps', '-Step').replace('_', ' ')}
-                              </span>
-                            ))}
-                          </div>
-                        )}
+                        {firm.program_types && firm.program_types.slice(0, 3).map((t) => (
+                          <span key={t} className="text-xs bg-gray-800 text-gray-400 px-1.5 py-0.5 rounded">
+                            {t.replace('_Steps', '-Step').replace('_', ' ')}
+                          </span>
+                        ))}
                       </div>
                     </div>
 
-                    {/* Actions */}
                     <div className="flex items-center gap-1 shrink-0">
                       {firm.affiliate_url && (
                         <a href={firm.affiliate_url} target="_blank" rel="noopener noreferrer"
@@ -280,11 +260,6 @@ export default function FavoritesPage() {
                           <ExternalLink className="w-4 h-4" />
                         </a>
                       )}
-                      <Link href={`/${locale}/prop-firms/${firm.slug}`}
-                        className="p-2 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
-                        title="View details">
-                        <BarChart3 className="w-4 h-4" />
-                      </Link>
                       <button onClick={() => removeFavorite(favorite.id)}
                         disabled={removing === favorite.id}
                         className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
@@ -299,7 +274,6 @@ export default function FavoritesPage() {
               );
             })}
 
-            {/* Compare CTA */}
             <div className="mt-6 p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-xl">
               <div className="flex items-center justify-between gap-4">
                 <div>
