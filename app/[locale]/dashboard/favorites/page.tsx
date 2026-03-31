@@ -24,7 +24,6 @@ interface PropFirm {
   trustpilot_rating: number | null;
   trustpilot_reviews: number | null;
   country: string | null;
-  rank: number | null;
   challenge_types: string[] | null;
   affiliate_url: string | null;
   min_price: number | null;
@@ -88,7 +87,7 @@ export default function FavoritesPage() {
 
         const { data: firms, error: firmsError } = await supabase
           .from('prop_firms')
-          .select('id, name, slug, logo_url, max_profit_split, trustpilot_rating, trustpilot_reviews, country, rank, challenge_types, affiliate_url, min_price')
+          .select('id, name, slug, logo_url, max_profit_split, trustpilot_rating, trustpilot_reviews, country, challenge_types, affiliate_url, min_price')
           .in('id', firmIds);
 
         if (firmsError) throw firmsError;
@@ -223,8 +222,6 @@ export default function FavoritesPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <h3 className="font-semibold text-white">{firm.name}</h3>
-                        {firm.rank && (
-                          <span className="text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full">#{firm.rank}</span>
                         )}
                         {firm.country && (
                           <span className="text-xs text-gray-500">{COUNTRY_FLAGS[firm.country] || ''} {firm.country}</span>
