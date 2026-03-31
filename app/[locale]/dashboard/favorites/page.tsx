@@ -206,22 +206,36 @@ export default function FavoritesPage() {
 
               const logoUrl = getFirmLogoUrl(firm.logo_url);
               const score = firm.trustpilot_rating;
+              const firmUrl = firm.affiliate_url || null;
 
               return (
                 <div key={favorite.id}
                   className="bg-gray-900/60 rounded-xl border border-gray-800 hover:border-gray-700 transition-colors p-4">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center overflow-hidden shrink-0 border border-gray-200 p-1">
+                    <a
+                      href={firmUrl || '#'}
+                      target={firmUrl ? '_blank' : undefined}
+                      rel="noopener noreferrer"
+                      onClick={firmUrl ? undefined : (e) => e.preventDefault()}
+                      className={`w-12 h-12 rounded-xl bg-white flex items-center justify-center overflow-hidden shrink-0 border border-gray-200 p-1 transition-all ${firmUrl ? 'hover:ring-2 hover:ring-emerald-400 hover:scale-105' : 'cursor-default'}`}
+                    >
                       {logoUrl ? (
                         <img src={logoUrl} alt={firm.name} className="w-full h-full object-contain" />
                       ) : (
                         <span className="text-lg font-bold text-gray-500">{firm.name?.charAt(0)}</span>
                       )}
-                    </div>
+                    </a>
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className="font-semibold text-white">{firm.name}</h3>
+                        {firmUrl ? (
+                          <a href={firmUrl} target="_blank" rel="noopener noreferrer"
+                            className="font-semibold text-white hover:text-emerald-400 transition-colors">
+                            {firm.name}
+                          </a>
+                        ) : (
+                          <h3 className="font-semibold text-white">{firm.name}</h3>
+                        )}
                         {firm.country && (
                           <span className="text-xs text-gray-500">{COUNTRY_FLAGS[firm.country] || ''} {firm.country}</span>
                         )}
