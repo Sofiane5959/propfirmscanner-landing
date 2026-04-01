@@ -1,17 +1,33 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { 
-  Home, ChevronRight, BookOpen, GraduationCap, Trophy, 
+import { usePathname } from 'next/navigation';
+import { useAuth } from '@/providers/AuthProvider';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import {
+  Home, ChevronRight, BookOpen, GraduationCap, Trophy,
   CheckCircle2, Play, Clock, Users, Star, Lock,
-  Zap, Award, Loader2
+  Zap, Award, Loader2, ArrowRight,
 } from 'lucide-react';
 
+// =============================================================================
+// LOCALE
+// =============================================================================
+const locales = ['en', 'fr', 'de', 'es', 'pt', 'ar', 'hi'] as const;
+type Locale = (typeof locales)[number];
+function getLocaleFromPath(pathname: string): Locale {
+  const s = pathname.split('/')[1];
+  return locales.includes(s as Locale) ? (s as Locale) : 'en';
+}
+
+// =============================================================================
+// COURSES DATA
+// =============================================================================
 const courses = [
   {
-    id: 'beginner',
+    id: 'fundamentals',
+    productType: 'course_fundamentals',
     title: 'Prop Firm Fundamentals',
     subtitle: 'For Beginners',
     price: 69.99,
@@ -37,11 +53,11 @@ const courses = [
     borderColor: 'border-emerald-500/30',
     icon: BookOpen,
     live: true,
-    productType: 'course_fundamentals',
     courseUrl: '/education/fundamentals',
   },
   {
-    id: 'advanced',
+    id: 'mastery',
+    productType: null,
     title: 'Prop Firm Mastery',
     subtitle: 'Advanced Strategies',
     price: 199,
@@ -69,7 +85,6 @@ const courses = [
     borderColor: 'border-purple-500/30',
     icon: Trophy,
     live: false,
-    productType: null,
     courseUrl: null,
   },
 ];
@@ -90,16 +105,14 @@ const testimonials = [
 // =============================================================================
 // PAYMENT SUCCESS BANNER
 // =============================================================================
-
 function PaymentSuccessBanner() {
-  const searchParams = useSearchParams();
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    if (searchParams.get('payment') === 'success') {
+    if (typeof window !== 'undefined' && window.location.search.includes('payment=success')) {
       setShow(true);
     }
-  }, [searchParams]);
+  }, []);
 
   if (!show) return null;
 
@@ -112,13 +125,7 @@ function PaymentSuccessBanner() {
         <div>
           <h3 className="text-white font-bold text-lg mb-1">🎉 Payment confirmed!</h3>
           <p className="text-gray-300 text-sm mb-2">
-            Check your email — we sent you a magic link to access your course instantly.
-          </p>
-          <p className="text-gray-500 text-xs">
-            Didn&apos;t receive it? Check your spam folder or{' '}
-            <Link href="/auth/login" className="text-emerald-400 hover:underline">
-              sign in here
-            </Link>.
+            Your course is now unlocked. Start learning below!
           </p>
         </div>
         <button onClick={() => setShow(false)} className="text-gray-500 hover:text-white ml-auto shrink-0 text-lg">✕</button>
@@ -128,74 +135,8 @@ function PaymentSuccessBanner() {
 }
 
 // =============================================================================
-// BUY BUTTON — Direct Stripe, aucun compte requis
+// BUY BUTTON
 // =============================================================================
-
-
-// =============================================================================
-// WAITLIST INLINE — inside the advanced course card
-// =============================================================================
-
-function WaitlistInCard() {
-  const [email, setEmail] = useState('');
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.trim()) return;
-    setStatus('loading');
-    try {
-      const res = await fetch('/api/waitlist/advanced', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-      setStatus(res.ok ? 'success' : 'error');
-      if (res.ok) setEmail('');
-    } catch {
-      setStatus('error');
-    }
-  };
-
-  if (status === 'success') {
-    return (
-      <div className="flex items-center gap-3 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
-        <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
-        <div>
-          <p className="text-emerald-400 font-semibold text-sm">You're on the list!</p>
-          <p className="text-gray-400 text-xs">We'll email you first at early bird price.</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-2">
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="your@email.com"
-        required
-        className="w-full px-4 py-2.5 bg-gray-900/80 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 text-sm"
-        disabled={status === 'loading'}
-      />
-      <button
-        type="submit"
-        disabled={status === 'loading' || !email.trim()}
-        className="w-full py-2.5 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-white font-semibold rounded-xl transition-all disabled:opacity-50 text-sm flex items-center justify-center gap-2"
-      >
-        {status === 'loading' ? (
-          <Loader2 className="w-4 h-4 animate-spin" />
-        ) : (
-          'Join Waitlist — Early Bird $199'
-        )}
-      </button>
-      {status === 'error' && <p className="text-red-400 text-xs">Something went wrong. Try again.</p>}
-    </form>
-  );
-}
-
 function BuyButton({ productType }: { productType: string }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -231,7 +172,7 @@ function BuyButton({ productType }: { productType: string }) {
       >
         {loading
           ? <><Loader2 className="w-4 h-4 animate-spin" /> Processing...</>
-          : 'Buy Now →'
+          : 'Get Access →'
         }
       </button>
       {error && <span className="text-red-400 text-xs">{error}</span>}
@@ -239,24 +180,93 @@ function BuyButton({ productType }: { productType: string }) {
   );
 }
 
-function Breadcrumb() {
+// =============================================================================
+// CONTINUE LEARNING BUTTON
+// =============================================================================
+function ContinueLearningButton({ courseUrl, locale }: { courseUrl: string; locale: string }) {
+  const fullUrl = `/${locale}${courseUrl}`;
   return (
-    <nav className="flex items-center gap-2 text-sm text-gray-400 mb-8">
-      <Link href="/" className="flex items-center gap-1 hover:text-emerald-400 transition-colors">
-        <Home className="w-4 h-4" />Home
-      </Link>
-      <ChevronRight className="w-4 h-4" />
-      <span className="text-white">Education</span>
-    </nav>
+    <Link
+      href={fullUrl}
+      className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold rounded-xl transition-colors text-sm"
+    >
+      <Play className="w-4 h-4 fill-white" />
+      Continue Learning →
+    </Link>
   );
 }
 
-function ComingSoonBadge() {
+// =============================================================================
+// WAITLIST INLINE
+// =============================================================================
+function WaitlistInCard() {
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setStatus('loading');
+    try {
+      const res = await fetch('/api/waitlist/advanced', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      setStatus(res.ok ? 'success' : 'error');
+      if (res.ok) setEmail('');
+    } catch {
+      setStatus('error');
+    }
+  };
+
+  if (status === 'success') {
+    return (
+      <div className="flex items-center gap-3 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
+        <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+        <div>
+          <p className="text-emerald-400 font-semibold text-sm">You&apos;re on the list!</p>
+          <p className="text-gray-400 text-xs">We&apos;ll email you first at early bird price.</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="your@email.com"
+        required
+        className="w-full px-4 py-2.5 bg-gray-900/80 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 text-sm"
+        disabled={status === 'loading'}
+      />
+      <button
+        type="submit"
+        disabled={status === 'loading' || !email.trim()}
+        className="w-full py-2.5 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-white font-semibold rounded-xl transition-all disabled:opacity-50 text-sm flex items-center justify-center gap-2"
+      >
+        {status === 'loading'
+          ? <Loader2 className="w-4 h-4 animate-spin" />
+          : 'Join Waitlist — Early Bird $199'
+        }
+      </button>
+      {status === 'error' && <p className="text-red-400 text-xs">Something went wrong. Try again.</p>}
+    </form>
+  );
+}
+
+// =============================================================================
+// COMING SOON OVERLAY
+// =============================================================================
+function ComingSoonOverlay() {
   return (
     <div className="absolute inset-0 bg-gray-950/80 backdrop-blur-sm z-20 flex items-center justify-center rounded-2xl">
       <div className="text-center">
         <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full text-white font-bold text-lg mb-3 animate-pulse">
-          <Lock className="w-5 h-5" />Coming Soon
+          <Lock className="w-5 h-5" /> Coming Soon
         </div>
         <p className="text-gray-400 text-sm">Course launching soon. Join waitlist!</p>
       </div>
@@ -264,28 +274,68 @@ function ComingSoonBadge() {
   );
 }
 
-function CourseCard({ course }: { course: typeof courses[0] }) {
+// =============================================================================
+// COURSE CARD
+// =============================================================================
+function CourseCard({
+  course,
+  hasFundamentals,
+  locale,
+  authLoading,
+}: {
+  course: typeof courses[0];
+  hasFundamentals: boolean;
+  locale: string;
+  authLoading: boolean;
+}) {
   const Icon = course.icon;
+  const isFundamentals = course.id === 'fundamentals';
+  const userOwns = isFundamentals && hasFundamentals;
+
   return (
     <div className={`relative bg-gradient-to-br ${course.gradient} rounded-2xl border ${course.borderColor} overflow-hidden`}>
+      {/* Badge */}
       <div className="absolute top-4 right-4 z-10">
-        <span className={`px-3 py-1 ${course.badgeColor} text-white text-xs font-bold rounded-full`}>{course.badge}</span>
+        <span className={`px-3 py-1 ${course.badgeColor} text-white text-xs font-bold rounded-full`}>
+          {course.badge}
+        </span>
       </div>
+
+      {/* Coming soon overlay for non-live courses */}
+      {!course.live && <ComingSoonOverlay />}
+
+      {/* Owned badge */}
+      {userOwns && (
+        <div className="absolute top-4 left-4 z-10">
+          <span className="flex items-center gap-1 px-3 py-1 bg-emerald-500 text-white text-xs font-bold rounded-full">
+            <CheckCircle2 className="w-3 h-3" /> Owned
+          </span>
+        </div>
+      )}
+
       <div className="p-8">
+        {/* Header */}
         <div className="flex items-start gap-4 mb-6">
-          <div className="p-3 bg-white/10 rounded-xl"><Icon className="w-8 h-8 text-white" /></div>
+          <div className="p-3 bg-white/10 rounded-xl">
+            <Icon className="w-8 h-8 text-white" />
+          </div>
           <div>
             <p className="text-emerald-400 text-sm font-medium mb-1">{course.subtitle}</p>
             <h3 className="text-2xl font-bold text-white">{course.title}</h3>
           </div>
         </div>
+
         <p className="text-gray-400 mb-6">{course.description}</p>
-        <div className="flex items-center gap-6 mb-6 text-sm">
+
+        {/* Stats */}
+        <div className="flex items-center gap-6 mb-6 text-sm flex-wrap">
           <div className="flex items-center gap-1.5 text-gray-400"><Clock className="w-4 h-4" />{course.duration}</div>
           <div className="flex items-center gap-1.5 text-gray-400"><Play className="w-4 h-4" />{course.lessons} lessons</div>
           <div className="flex items-center gap-1.5 text-gray-400"><Users className="w-4 h-4" />{course.students}</div>
           <div className="flex items-center gap-1.5 text-yellow-400"><Star className="w-4 h-4 fill-current" />{course.rating}</div>
         </div>
+
+        {/* Features */}
         <div className="space-y-3 mb-8">
           {course.features.map((feature, i) => (
             <div key={i} className="flex items-start gap-3">
@@ -294,20 +344,40 @@ function CourseCard({ course }: { course: typeof courses[0] }) {
             </div>
           ))}
         </div>
-        <div className="flex items-center justify-between pt-6 border-t border-white/10">
+
+        {/* Footer — price + CTA */}
+        <div className="flex items-center justify-between pt-6 border-t border-white/10 gap-4">
           <div>
             <div className="flex items-baseline gap-2">
               <span className="text-3xl font-bold text-white">${course.price}</span>
               <span className="text-gray-500 line-through">${course.originalPrice}</span>
             </div>
-            <p className="text-emerald-400 text-sm">Save {Math.round((1 - course.price / course.originalPrice) * 100)}%</p>
+            <p className="text-emerald-400 text-sm">
+              Save {Math.round((1 - course.price / course.originalPrice) * 100)}%
+            </p>
           </div>
+
           {course.live && course.productType ? (
             <div className="flex flex-col gap-2 items-end">
-              <BuyButton productType={course.productType} />
-              <Link href={course.courseUrl!} className="text-xs text-emerald-400 hover:text-emerald-300 underline underline-offset-2 transition-colors">
-                Already purchased? Access here
-              </Link>
+              {authLoading ? (
+                <div className="px-6 py-3 bg-gray-700 rounded-xl">
+                  <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
+                </div>
+              ) : userOwns ? (
+                <ContinueLearningButton courseUrl={course.courseUrl!} locale={locale} />
+              ) : (
+                <>
+                  <BuyButton productType={course.productType} />
+                  {course.courseUrl && (
+                    <Link
+                      href={`/${locale}${course.courseUrl}`}
+                      className="text-xs text-emerald-400 hover:text-emerald-300 underline underline-offset-2 transition-colors"
+                    >
+                      Already purchased? Access here
+                    </Link>
+                  )}
+                </>
+              )}
             </div>
           ) : (
             <WaitlistInCard />
@@ -318,25 +388,70 @@ function CourseCard({ course }: { course: typeof courses[0] }) {
   );
 }
 
+// =============================================================================
+// MAIN PAGE
+// =============================================================================
 export default function EducationPage() {
+  const pathname = usePathname();
+  const locale = getLocaleFromPath(pathname);
+  const { user, isLoading: authLoading } = useAuth();
+  const supabase = createClientComponentClient();
+
+  const [hasFundamentals, setHasFundamentals] = useState(false);
+  const [profileLoading, setProfileLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user) {
+      setProfileLoading(false);
+      return;
+    }
+    const fetchProfile = async () => {
+      const { data } = await supabase
+        .from('profiles')
+        .select('has_course_fundamentals')
+        .eq('id', user.id)
+        .single();
+      setHasFundamentals(data?.has_course_fundamentals ?? false);
+      setProfileLoading(false);
+    };
+    fetchProfile();
+  }, [user, supabase]);
+
+  const isLoading = authLoading || profileLoading;
+
   return (
     <div className="min-h-screen bg-gray-950">
       <PaymentSuccessBanner />
+
+      {/* HERO */}
       <section className="relative overflow-hidden bg-gradient-to-b from-gray-900 via-gray-900 to-gray-950 border-b border-gray-800">
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl transform -translate-y-1/2" />
-          <div className="absolute top-1/2 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl transform -translate-y-1/2" />
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl -translate-y-1/2" />
+          <div className="absolute top-1/2 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl -translate-y-1/2" />
         </div>
         <div className="relative z-10 max-w-6xl mx-auto px-4 pt-6 pb-16">
-          <Breadcrumb />
+          {/* Breadcrumb */}
+          <nav className="flex items-center gap-2 text-sm text-gray-400 mb-8">
+            <Link href="/" className="flex items-center gap-1 hover:text-emerald-400 transition-colors">
+              <Home className="w-4 h-4" /> Home
+            </Link>
+            <ChevronRight className="w-4 h-4" />
+            <span className="text-white">Education</span>
+          </nav>
+
           <div className="text-center max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/30 rounded-full text-emerald-400 text-sm font-medium mb-6">
-              <GraduationCap className="w-4 h-4" />PropFirmScanner Academy
+              <GraduationCap className="w-4 h-4" /> PropFirmScanner Academy
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Learn to Get <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-400">Funded</span>
+              Learn to Get{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-400">
+                Funded
+              </span>
             </h1>
-            <p className="text-xl text-gray-400 mb-8">Master prop firm trading with our comprehensive courses. From beginner basics to advanced strategies.</p>
+            <p className="text-xl text-gray-400 mb-8">
+              Master prop firm trading with our comprehensive courses. From beginner basics to advanced strategies.
+            </p>
             <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-400">
               <div className="flex items-center gap-2"><Users className="w-5 h-5 text-emerald-400" /><span>3,000+ Students</span></div>
               <div className="flex items-center gap-2"><Star className="w-5 h-5 text-yellow-400 fill-current" /><span>4.8 Average Rating</span></div>
@@ -346,16 +461,51 @@ export default function EducationPage() {
         </div>
       </section>
 
+      {/* OWNED COURSE QUICK ACCESS — shown only if user owns fundamentals */}
+      {!isLoading && hasFundamentals && (
+        <div className="max-w-6xl mx-auto px-4 pt-8">
+          <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-5 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center shrink-0">
+                <BookOpen className="w-5 h-5 text-emerald-400" />
+              </div>
+              <div>
+                <p className="text-white font-semibold text-sm">Prop Firm Fundamentals</p>
+                <p className="text-emerald-400 text-xs">You have access — pick up where you left off</p>
+              </div>
+            </div>
+            <Link
+              href={`/${locale}/education/fundamentals`}
+              className="shrink-0 flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold rounded-xl transition-colors text-sm"
+            >
+              <Play className="w-4 h-4 fill-white" /> Continue <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* COURSES GRID */}
       <section className="max-w-6xl mx-auto px-4 py-16">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-white mb-4">Choose Your Path</h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">Whether you&apos;re just starting out or looking to scale your funded accounts, we have the right course for you.</p>
+          <p className="text-gray-400 max-w-2xl mx-auto">
+            Whether you&apos;re just starting out or looking to scale your funded accounts, we have the right course for you.
+          </p>
         </div>
         <div className="grid md:grid-cols-2 gap-8">
-          {courses.map((course) => <CourseCard key={course.id} course={course} />)}
+          {courses.map((course) => (
+            <CourseCard
+              key={course.id}
+              course={course}
+              hasFundamentals={hasFundamentals}
+              locale={locale}
+              authLoading={isLoading}
+            />
+          ))}
         </div>
       </section>
 
+      {/* WHAT'S INCLUDED */}
       <section className="bg-gray-900/50 border-y border-gray-800">
         <div className="max-w-6xl mx-auto px-4 py-16">
           <div className="text-center mb-12">
@@ -379,6 +529,7 @@ export default function EducationPage() {
         </div>
       </section>
 
+      {/* TESTIMONIALS */}
       <section className="max-w-6xl mx-auto px-4 py-16">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-white mb-4">Student Success Stories</h2>
@@ -387,22 +538,44 @@ export default function EducationPage() {
         <div className="grid md:grid-cols-3 gap-6">
           {testimonials.map((t, i) => (
             <div key={i} className="bg-gray-900/50 rounded-xl border border-gray-800 p-6">
-              <div className="flex gap-1 mb-4">{[...Array(t.rating)].map((_, j) => <Star key={j} className="w-4 h-4 text-yellow-400 fill-current" />)}</div>
+              <div className="flex gap-1 mb-4">
+                {Array.from({ length: t.rating }).map((_, j) => (
+                  <Star key={j} className="w-4 h-4 text-yellow-400 fill-current" />
+                ))}
+              </div>
               <p className="text-gray-300 mb-4">&quot;{t.content}&quot;</p>
-              <div><p className="text-white font-medium">{t.name}</p><p className="text-gray-500 text-sm">{t.role}</p></div>
+              <div>
+                <p className="text-white font-medium">{t.name}</p>
+                <p className="text-gray-500 text-sm">{t.role}</p>
+              </div>
             </div>
           ))}
         </div>
       </section>
 
+      {/* CTA BOTTOM */}
       <section className="max-w-4xl mx-auto px-4 pb-16">
         <div className="bg-gradient-to-r from-emerald-500/20 to-blue-500/20 rounded-2xl border border-emerald-500/30 p-8 md:p-12 text-center">
           <h2 className="text-3xl font-bold text-white mb-4">Ready to Get Funded?</h2>
-          <p className="text-gray-400 mb-6 max-w-xl mx-auto">Start with Prop Firm Fundamentals and get your first funded account in 30 days.</p>
+          <p className="text-gray-400 mb-6 max-w-xl mx-auto">
+            Start with Prop Firm Fundamentals and get your first funded account in 30 days.
+          </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <BuyButton productType="course_fundamentals" />
-            <Link href="/blog" className="px-8 py-3 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-xl transition-colors">
-              Read Free Articles
+            {!isLoading && hasFundamentals ? (
+              <Link
+                href={`/${locale}/education/fundamentals`}
+                className="inline-flex items-center gap-2 px-8 py-3 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold rounded-xl transition-colors"
+              >
+                <Play className="w-5 h-5 fill-white" /> Continue Learning
+              </Link>
+            ) : (
+              <BuyButton productType="course_fundamentals" />
+            )}
+            <Link
+              href={`/${locale}/compare`}
+              className="px-8 py-3 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-xl transition-colors"
+            >
+              Browse Prop Firms
             </Link>
           </div>
         </div>
