@@ -1,10 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
-const supabase = createClientComponentClient();
+const locales = ['en', 'fr', 'de', 'es', 'pt', 'ar', 'hi'] as const;
+type Locale = (typeof locales)[number];
+function getLocaleFromPath(pathname: string): Locale {
+  const s = pathname.split('/')[1];
+  return locales.includes(s as Locale) ? (s as Locale) : 'en';
+}
 
 interface Challenge {
   id: string;
@@ -20,6 +25,7 @@ interface Challenge {
   consistency_rule: string | null;
 }
 
+// All fields stored as strings to allow free typing
 interface FormData {
   account_name: string;
   firm_name: string;
@@ -46,6 +52,9 @@ const defaultForm: FormData = {
 
 export default function NewAccountPage() {
   const router = useRouter();
+  const pathname = usePathname();
+  const locale = getLocaleFromPath(pathname);
+  const supabase = createClientComponentClient();
 
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<FormData>(defaultForm);
@@ -97,7 +106,7 @@ export default function NewAccountPage() {
         .from("prop_firm_challenges")
         .select("*")
         .eq("firm_name", form.firm_name)
-        .eq("account_size", form.initial_balance)
+        .eq("account_size", Number(form.initial_balance))
         .order("steps");
       if (data) setChallenges(data);
     }
@@ -121,6 +130,7 @@ export default function NewAccountPage() {
     }));
   };
 
+  // Store everything as string — conversion only happens at submit
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -145,7 +155,7 @@ export default function NewAccountPage() {
         challenge_end_date: form.challenge_end_date || null,
       });
       if (dbError) throw dbError;
-      router.push("/dashboard/mypropfirm?added=true");
+      router.push(`/${locale}/dashboard?added=true`);
     } catch (err: any) {
       setError(err.message || "An error occurred");
     } finally {
@@ -154,7 +164,7 @@ export default function NewAccountPage() {
   };
 
   const canGoNext = () => {
-    if (step === 1) return form.account_name.trim() && form.firm_name && form.initial_balance !== "";
+    if (step === 1) return form.account_name.trim() !== "" && form.firm_name !== "" && form.initial_balance !== "";
     if (step === 2) return form.max_drawdown !== "" && form.profit_target !== "";
     return true;
   };
@@ -215,7 +225,7 @@ export default function NewAccountPage() {
           >
             <option value="">Select size…</option>
             {accountSizes.map((size) => (
-              <option key={size} value={size}>${size.toLocaleString()}</option>
+              <option key={size} value={String(size)}>${size.toLocaleString()}</option>
             ))}
           </select>
         </div>
@@ -226,8 +236,12 @@ export default function NewAccountPage() {
           <label className="block text-sm font-medium text-gray-300 mb-1.5">Initial Balance</label>
           <div className="relative">
             <input
-              type="number" name="initial_balance" value={form.initial_balance}
-              onChange={handleChange} placeholder="100000"
+              type="text"
+              inputMode="numeric"
+              name="initial_balance"
+              value={form.initial_balance}
+              onChange={handleChange}
+              placeholder="100000"
               className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 pr-8 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
@@ -240,9 +254,11 @@ export default function NewAccountPage() {
           Challenge End Date <span className="text-xs text-gray-500">(optional)</span>
         </label>
         <input
-          type="date" name="challenge_end_date" value={form.challenge_end_date}
+          type="date"
+          name="challenge_end_date"
+          value={form.challenge_end_date}
           onChange={handleChange}
-          className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition [color-scheme:dark]"
         />
       </div>
     </div>
@@ -294,7 +310,7 @@ export default function NewAccountPage() {
           Max Total Drawdown <span className="text-xs text-gray-500">%</span>
         </label>
         <input
-          type="number" name="max_drawdown" value={form.max_drawdown}
+          type="text" inputMode="decimal" name="max_drawdown" value={form.max_drawdown}
           onChange={handleChange} placeholder="10"
           className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
         />
@@ -305,7 +321,7 @@ export default function NewAccountPage() {
           Daily Loss Limit <span className="text-xs text-gray-500">% (0 = no limit)</span>
         </label>
         <input
-          type="number" name="daily_loss_limit" value={form.daily_loss_limit}
+          type="text" inputMode="decimal" name="daily_loss_limit" value={form.daily_loss_limit}
           onChange={handleChange} placeholder="5"
           className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
         />
@@ -316,7 +332,7 @@ export default function NewAccountPage() {
           Profit Target <span className="text-xs text-gray-500">% phase 1</span>
         </label>
         <input
-          type="number" name="profit_target" value={form.profit_target}
+          type="text" inputMode="decimal" name="profit_target" value={form.profit_target}
           onChange={handleChange} placeholder="10"
           className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
         />
@@ -332,8 +348,12 @@ export default function NewAccountPage() {
         </label>
         <div className="relative">
           <input
-            type="number" name="current_balance" value={form.current_balance}
-            onChange={handleChange} placeholder={String(form.initial_balance || "100000")}
+            type="text"
+            inputMode="numeric"
+            name="current_balance"
+            value={form.current_balance}
+            onChange={handleChange}
+            placeholder={form.initial_balance || "100000"}
             className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 pr-8 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
           />
           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
@@ -342,11 +362,15 @@ export default function NewAccountPage() {
 
       <div>
         <label className="block text-sm font-medium text-gray-300 mb-1.5">
-          Today's Loss So Far <span className="text-xs text-gray-500">$</span>
+          Today&apos;s Loss So Far <span className="text-xs text-gray-500">$</span>
         </label>
         <input
-          type="number" name="current_daily_loss" value={form.current_daily_loss}
-          onChange={handleChange} placeholder="0"
+          type="text"
+          inputMode="numeric"
+          name="current_daily_loss"
+          value={form.current_daily_loss}
+          onChange={handleChange}
+          placeholder="0"
           className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
         />
       </div>
