@@ -742,7 +742,6 @@ export default function DashboardPage() {
                   <p className="text-gray-500 text-xs">{favoriteCount} firm{favoriteCount > 1 ? 's' : ''} saved</p>
                 </div>
               )}
-              )}
             </div>
 
             {/* Quick Actions */}
