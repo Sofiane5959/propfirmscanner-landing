@@ -2,12 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@supabase/supabase-js";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+const supabase = createClientComponentClient();
 
 interface Challenge {
   id: string;
@@ -26,13 +23,13 @@ interface Challenge {
 interface FormData {
   account_name: string;
   firm_name: string;
-  initial_balance: number | "";
+  initial_balance: string;
   challenge_end_date: string;
-  max_drawdown: number | "";
-  daily_loss_limit: number | "";
-  profit_target: number | "";
-  current_balance: number | "";
-  current_daily_loss: number | "";
+  max_drawdown: string;
+  daily_loss_limit: string;
+  profit_target: string;
+  current_balance: string;
+  current_daily_loss: string;
 }
 
 const defaultForm: FormData = {
@@ -44,7 +41,7 @@ const defaultForm: FormData = {
   daily_loss_limit: "",
   profit_target: "",
   current_balance: "",
-  current_daily_loss: 0,
+  current_daily_loss: "0",
 };
 
 export default function NewAccountPage() {
@@ -118,18 +115,15 @@ export default function NewAccountPage() {
     setSelectedChallenge(c);
     setForm((prev) => ({
       ...prev,
-      max_drawdown: c.max_drawdown ?? "",
-      daily_loss_limit: c.max_daily_loss ?? 0,
-      profit_target: c.phase1_profit_target ?? "",
+      max_drawdown: String(c.max_drawdown ?? ""),
+      daily_loss_limit: String(c.max_daily_loss ?? "0"),
+      profit_target: String(c.phase1_profit_target ?? ""),
     }));
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: value === "" ? "" : isNaN(Number(value)) ? value : Number(value),
-    }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async () => {
@@ -160,7 +154,7 @@ export default function NewAccountPage() {
   };
 
   const canGoNext = () => {
-    if (step === 1) return form.account_name && form.firm_name && form.initial_balance !== "";
+    if (step === 1) return form.account_name.trim() && form.firm_name && form.initial_balance !== "";
     if (step === 2) return form.max_drawdown !== "" && form.profit_target !== "";
     return true;
   };
@@ -368,9 +362,9 @@ export default function NewAccountPage() {
         {[
           ["Firm", form.firm_name],
           ["Account", form.account_name],
-          ["Balance", `$${Number(form.initial_balance).toLocaleString()}`],
+          ["Balance", `$${Number(form.initial_balance || 0).toLocaleString()}`],
           ["Max Drawdown", `${form.max_drawdown}%`],
-          ["Daily Loss", !form.daily_loss_limit || form.daily_loss_limit === 0 ? "No limit" : `${form.daily_loss_limit}%`],
+          ["Daily Loss", !form.daily_loss_limit || form.daily_loss_limit === "0" ? "No limit" : `${form.daily_loss_limit}%`],
           ["Profit Target", `${form.profit_target}%`],
         ].map(([label, value]) => (
           <div key={label} className="flex justify-between text-gray-400">
