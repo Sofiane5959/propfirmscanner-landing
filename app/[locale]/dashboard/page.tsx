@@ -429,6 +429,7 @@ export default function DashboardPage() {
   const [loadingAccounts, setLoadingAccounts] = useState(true);
   const [hasCourse, setHasCourse] = useState(false);
   const [favoriteCount, setFavoriteCount] = useState(0);
+  const [favoriteFirms, setFavoriteFirms] = useState<{ name: string; logo_url: string | null; affiliate_url: string | null }[]>([]);
   const [totalProfit, setTotalProfit] = useState(0);
   const [lastUpdated, setLastUpdated] = useState(new Date());
 
@@ -438,14 +439,27 @@ export default function DashboardPage() {
     if (!user) return;
     setLoadingAccounts(true);
     try {
-      const [{ data: accs }, { data: prof }, { count: favs }] = await Promise.all([
+      const [{ data: accs }, { data: prof }, { data: favRows }] = await Promise.all([
         supabase.from('challenge_accounts').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
         supabase.from('profiles').select('has_course_fundamentals').eq('id', user.id).single(),
-        supabase.from('user_favorites').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
+        supabase.from('user_favorites').select('prop_firm_id').eq('user_id', user.id).limit(4),
       ]);
       setAccounts(accs || []);
       setHasCourse(prof?.has_course_fundamentals ?? false);
-      setFavoriteCount(favs || 0);
+      setFavoriteCount(favRows?.length || 0);
+
+      // Fetch firm logos for sidebar preview
+      if (favRows && favRows.length > 0) {
+        const firmIds = favRows.map((f: any) => f.prop_firm_id);
+        const { data: firms } = await supabase
+          .from('prop_firms')
+          .select('name, logo_url, affiliate_url')
+          .in('id', firmIds);
+        setFavoriteFirms(firms || []);
+      } else {
+        setFavoriteFirms([]);
+      }
+
       setTotalProfit((accs || []).reduce((s, a) => s + (a.current_balance - a.initial_balance), 0));
       setLastUpdated(new Date());
     } catch (e) { console.error(e); }
@@ -495,21 +509,29 @@ export default function DashboardPage() {
             <button onClick={fetchData} className="p-2 text-gray-500 hover:text-white transition-colors" title="Refresh">
               <RefreshCw className="w-4 h-4" />
             </button>
-            <span className="text-xs text-gray-600">Updated {lastUpdated.toLocaleTimeString()}</span>
-            <span className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs rounded-full">Free plan</span>
-            <Link href={`/${locale}/dashboard/upgrade`}
-              className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors text-sm font-medium">
-              <Zap className="w-4 h-4" />
-              <span>Pro</span>
-              <span className="line-through text-purple-300 text-xs">$49.99</span>
-              <span className="bg-yellow-400 text-yellow-900 text-xs font-bold px-1.5 py-0.5 rounded">$29.99 · First 100</span>
-            </Link>
+            <span className="text-xs text-gray-600 hidden sm:inline">Updated {lastUpdated.toLocaleTimeString()}</span>
+            {profile?.is_pro ? (
+              <span className="px-3 py-1 bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs rounded-full flex items-center gap-1">
+                <Zap className="w-3 h-3" /> Pro
+              </span>
+            ) : (
+              <>
+                <span className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs rounded-full hidden sm:inline">Free plan</span>
+                <Link href={`/${locale}/dashboard/upgrade`}
+                  className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors text-sm font-medium">
+                  <Zap className="w-4 h-4" />
+                  <span>Pro</span>
+                  <span className="line-through text-purple-300 text-xs hidden sm:inline">$49.99</span>
+                  <span className="bg-yellow-400 text-yellow-900 text-xs font-bold px-1.5 py-0.5 rounded">$29.99</span>
+                </Link>
+              </>
+            )}
           </div>
         </div>
 
         {/* ── MY COURSE HERO ─────────────────────────────────────────────── */}
         {hasCourse ? (
-          <Link href={`/${locale}/education/fundamentals`}
+          <Link href={`/${locale}/education`}
             className="flex items-center justify-between bg-gradient-to-r from-emerald-900/60 to-teal-900/50 border border-emerald-500/30 rounded-xl p-5 mb-6 hover:border-emerald-400/60 transition-all group">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center shrink-0">
@@ -662,7 +684,10 @@ export default function DashboardPage() {
               </div>
               <div className="flex items-center justify-between text-xs mb-4">
                 <span className="text-gray-500 flex items-center gap-1.5"><Crown className="w-3 h-3" /> Plan</span>
-                <span className="text-emerald-400 font-medium">Free</span>
+                {profile?.is_pro
+                  ? <span className="text-purple-400 font-medium flex items-center gap-1"><Zap className="w-3 h-3" /> Pro</span>
+                  : <span className="text-emerald-400 font-medium">Free</span>
+                }
               </div>
               <Link href={`/${locale}/dashboard/settings`}
                 className="w-full flex items-center justify-center gap-2 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg transition-colors text-sm">
@@ -687,7 +712,34 @@ export default function DashboardPage() {
                   </Link>
                 </div>
               ) : (
-                <p className="text-gray-400 text-sm">{favoriteCount} firms saved</p>
+                <div>
+                  <div className="flex items-center gap-2 flex-wrap mb-2">
+                    {favoriteFirms.map((firm, i) => (
+                      <a
+                        key={i}
+                        href={firm.affiliate_url || '#'}
+                        target={firm.affiliate_url ? '_blank' : undefined}
+                        rel="noopener noreferrer"
+                        title={firm.name}
+                        className="w-9 h-9 rounded-lg bg-white border border-gray-200 flex items-center justify-center overflow-hidden p-1 hover:ring-2 hover:ring-emerald-400 transition-all shrink-0"
+                      >
+                        {firm.logo_url ? (
+                          <img src={firm.logo_url} alt={firm.name} className="w-full h-full object-contain" />
+                        ) : (
+                          <span className="text-xs font-bold text-gray-600">{firm.name.charAt(0)}</span>
+                        )}
+                      </a>
+                    ))}
+                    {favoriteCount > 4 && (
+                      <Link href={`/${locale}/dashboard/favorites`}
+                        className="w-9 h-9 rounded-lg bg-gray-800 border border-gray-700 flex items-center justify-center text-xs text-gray-400 hover:text-white transition-colors">
+                        +{favoriteCount - 4}
+                      </Link>
+                    )}
+                  </div>
+                  <p className="text-gray-500 text-xs">{favoriteCount} firm{favoriteCount > 1 ? 's' : ''} saved</p>
+                </div>
+              )}
               )}
             </div>
 
@@ -714,33 +766,43 @@ export default function DashboardPage() {
             {/* Trading Ideas */}
             <TradingIdeasLocked locale={locale} />
 
-            {/* Pro Banner */}
-            <div className="bg-gradient-to-br from-purple-900/40 to-gray-900 border border-purple-500/20 rounded-xl p-5">
-              <div className="flex items-center gap-2 mb-3">
-                <Sparkles className="w-5 h-5 text-purple-400" />
-                <h3 className="font-semibold text-white text-sm">Unlock Pro</h3>
+            {/* Pro Banner — hidden for Pro users */}
+            {profile?.is_pro ? (
+              <div className="bg-gradient-to-br from-purple-900/30 to-gray-900 border border-purple-500/20 rounded-xl p-5">
+                <div className="flex items-center gap-2 mb-2">
+                  <Zap className="w-4 h-4 text-purple-400" />
+                  <h3 className="font-semibold text-white text-sm">You&apos;re on Pro 🎉</h3>
+                </div>
+                <p className="text-gray-400 text-xs">All features unlocked. Thank you for your support!</p>
               </div>
-              <ul className="space-y-1.5 mb-4">
-                {[
-                  'Unlimited challenge accounts',
-                  'Drawdown breach alerts',
-                  'Economic calendar (daily)',
-                  'Educational trading ideas',
-                  'Advanced trade simulator',
-                ].map((f, i) => (
-                  <li key={i} className="flex items-center gap-2 text-xs text-gray-300">
-                    <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />{f}
-                  </li>
-                ))}
-              </ul>
-              <Link href={`/${locale}/dashboard/upgrade`}
-                className="w-full flex items-center justify-center gap-2 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors text-sm font-medium">
-                <Zap className="w-4 h-4" />
-                <span className="line-through text-purple-300 text-xs">$49.99</span>
-                <span>$29.99/mo</span>
-                <span className="bg-yellow-400 text-yellow-900 text-xs font-bold px-1.5 py-0.5 rounded">First 100</span>
-              </Link>
-            </div>
+            ) : (
+              <div className="bg-gradient-to-br from-purple-900/40 to-gray-900 border border-purple-500/20 rounded-xl p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <Sparkles className="w-5 h-5 text-purple-400" />
+                  <h3 className="font-semibold text-white text-sm">Unlock Pro</h3>
+                </div>
+                <ul className="space-y-1.5 mb-4">
+                  {[
+                    'Unlimited challenge accounts',
+                    'Drawdown breach alerts',
+                    'Economic calendar (daily)',
+                    'Educational trading ideas',
+                    'Advanced trade simulator',
+                  ].map((f, i) => (
+                    <li key={i} className="flex items-center gap-2 text-xs text-gray-300">
+                      <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />{f}
+                    </li>
+                  ))}
+                </ul>
+                <Link href={`/${locale}/dashboard/upgrade`}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors text-sm font-medium">
+                  <Zap className="w-4 h-4" />
+                  <span className="line-through text-purple-300 text-xs">$49.99</span>
+                  <span>$29.99/mo</span>
+                  <span className="bg-yellow-400 text-yellow-900 text-xs font-bold px-1.5 py-0.5 rounded">First 100</span>
+                </Link>
+              </div>
+            )}
 
           </div>
         </div>
