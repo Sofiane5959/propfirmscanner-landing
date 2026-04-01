@@ -428,6 +428,7 @@ export default function DashboardPage() {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [loadingAccounts, setLoadingAccounts] = useState(true);
   const [hasCourse, setHasCourse] = useState(false);
+  const [isPro, setIsPro] = useState(false);
   const [favoriteCount, setFavoriteCount] = useState(0);
   const [favoriteFirms, setFavoriteFirms] = useState<{ name: string; logo_url: string | null; affiliate_url: string | null }[]>([]);
   const [totalProfit, setTotalProfit] = useState(0);
@@ -441,11 +442,12 @@ export default function DashboardPage() {
     try {
       const [{ data: accs }, { data: prof }, { data: favRows }] = await Promise.all([
         supabase.from('challenge_accounts').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
-        supabase.from('profiles').select('has_course_fundamentals').eq('id', user.id).single(),
+        supabase.from('profiles').select('has_course_fundamentals, is_pro').eq('id', user.id).single(),
         supabase.from('user_favorites').select('prop_firm_id').eq('user_id', user.id).limit(4),
       ]);
       setAccounts(accs || []);
       setHasCourse(prof?.has_course_fundamentals ?? false);
+      setIsPro(prof?.is_pro ?? false);
       setFavoriteCount(favRows?.length || 0);
 
       // Fetch firm logos for sidebar preview
@@ -510,7 +512,7 @@ export default function DashboardPage() {
               <RefreshCw className="w-4 h-4" />
             </button>
             <span className="text-xs text-gray-600 hidden sm:inline">Updated {lastUpdated.toLocaleTimeString()}</span>
-            {profile?.is_pro ? (
+            {isPro ? (
               <span className="px-3 py-1 bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs rounded-full flex items-center gap-1">
                 <Zap className="w-3 h-3" /> Pro
               </span>
@@ -684,7 +686,7 @@ export default function DashboardPage() {
               </div>
               <div className="flex items-center justify-between text-xs mb-4">
                 <span className="text-gray-500 flex items-center gap-1.5"><Crown className="w-3 h-3" /> Plan</span>
-                {profile?.is_pro
+                {isPro
                   ? <span className="text-purple-400 font-medium flex items-center gap-1"><Zap className="w-3 h-3" /> Pro</span>
                   : <span className="text-emerald-400 font-medium">Free</span>
                 }
@@ -767,7 +769,7 @@ export default function DashboardPage() {
             <TradingIdeasLocked locale={locale} />
 
             {/* Pro Banner — hidden for Pro users */}
-            {profile?.is_pro ? (
+            {isPro ? (
               <div className="bg-gradient-to-br from-purple-900/30 to-gray-900 border border-purple-500/20 rounded-xl p-5">
                 <div className="flex items-center gap-2 mb-2">
                   <Zap className="w-4 h-4 text-purple-400" />
