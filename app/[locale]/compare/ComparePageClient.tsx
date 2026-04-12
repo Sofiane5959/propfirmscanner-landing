@@ -1252,7 +1252,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
           .eq('user_id', user.id)
         if (favData && favData.length > 0) {
           const dbIds = favData.map((r: any) => r.prop_firm_id as string)
-          setFavorites(prev => Array.from(new Set([...prev, ...dbIds])))
+          setFavorites(prev => Array.from(new Set(prev.concat(dbIds))))
         }
         // Load user's own reviews
         const { data: userReviewData } = await supabase
@@ -1360,7 +1360,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
         }
         return newMap
       })
-      setUserReviewedFirms(prev => new Set([...prev, firmId]))
+      setUserReviewedFirms(prev => new Set(Array.from(prev).concat(firmId)))
       setToast({ message: t.reviewSubmitted, type: 'success' })
     } catch (err) {
       console.error('Failed to submit review:', err)
