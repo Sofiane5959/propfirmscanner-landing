@@ -66,6 +66,20 @@ const translations: Record<Locale, Record<string, string>> = {
     bestDeals: 'Best Deals',
     mostReviews: 'Most Reviews',
     copied: 'Copied!',
+    rateBtn: 'Rate',
+    communityRating: 'Community',
+    writeReview: 'Rate this firm',
+    shareExperience: 'Share your experience',
+    yourRating: 'Your rating',
+    tradingStyleUsed: 'Your trading style',
+    commentPlaceholder: 'How was your experience? Payouts, support, rules...',
+    submitReview: 'Submit Review',
+    submitting: 'Submitting...',
+    reviewSubmitted: 'Review submitted! Thank you 🙏',
+    alreadyReviewedNote: 'You already reviewed this firm — submitting will update your review.',
+    signInToReview: 'Sign in to leave a review',
+    thankYouReview: 'Thank you!',
+    thankYouSub: 'Your review helps the community.',
   },
   fr: {
     pageTitle: 'Comparer les Prop Firms',
@@ -111,6 +125,20 @@ const translations: Record<Locale, Record<string, string>> = {
     bestDeals: 'Meilleures Offres',
     mostReviews: 'Plus d\'Avis',
     copied: 'Copie !',
+    rateBtn: 'Noter',
+    communityRating: 'Communaute',
+    writeReview: 'Noter cette firm',
+    shareExperience: 'Partagez votre experience',
+    yourRating: 'Votre note',
+    tradingStyleUsed: 'Votre style de trading',
+    commentPlaceholder: 'Comment s\'est passee votre experience ? Paiements, support, regles...',
+    submitReview: 'Soumettre',
+    submitting: 'Envoi...',
+    reviewSubmitted: 'Avis soumis ! Merci 🙏',
+    alreadyReviewedNote: 'Vous avez deja note cette firm — soumettre mettra a jour votre avis.',
+    signInToReview: 'Connectez-vous pour noter',
+    thankYouReview: 'Merci !',
+    thankYouSub: 'Votre avis aide la communaute.',
   },
   de: {
     pageTitle: 'Prop Firms Vergleichen',
@@ -156,6 +184,20 @@ const translations: Record<Locale, Record<string, string>> = {
     bestDeals: 'Beste Angebote',
     mostReviews: 'Meiste Bewertungen',
     copied: 'Kopiert!',
+    rateBtn: 'Bewerten',
+    communityRating: 'Community',
+    writeReview: 'Bewerten',
+    shareExperience: 'Teile deine Erfahrung',
+    yourRating: 'Deine Bewertung',
+    tradingStyleUsed: 'Dein Trading-Stil',
+    commentPlaceholder: 'Wie war deine Erfahrung? Auszahlungen, Support, Regeln...',
+    submitReview: 'Bewertung senden',
+    submitting: 'Senden...',
+    reviewSubmitted: 'Bewertung eingereicht! Danke 🙏',
+    alreadyReviewedNote: 'Du hast diese Firma bereits bewertet — deine Bewertung wird aktualisiert.',
+    signInToReview: 'Anmelden um zu bewerten',
+    thankYouReview: 'Danke!',
+    thankYouSub: 'Deine Bewertung hilft der Community.',
   },
   es: {
     pageTitle: 'Comparar Prop Firms',
@@ -201,6 +243,20 @@ const translations: Record<Locale, Record<string, string>> = {
     bestDeals: 'Mejores Ofertas',
     mostReviews: 'Mas Resenas',
     copied: 'Copiado!',
+    rateBtn: 'Valorar',
+    communityRating: 'Comunidad',
+    writeReview: 'Valorar firma',
+    shareExperience: 'Comparte tu experiencia',
+    yourRating: 'Tu valoracion',
+    tradingStyleUsed: 'Tu estilo de trading',
+    commentPlaceholder: 'Como fue tu experiencia? Pagos, soporte, reglas...',
+    submitReview: 'Enviar valoracion',
+    submitting: 'Enviando...',
+    reviewSubmitted: 'Valoracion enviada! Gracias 🙏',
+    alreadyReviewedNote: 'Ya valoraste esta firma — enviar actualizara tu valoracion.',
+    signInToReview: 'Inicia sesion para valorar',
+    thankYouReview: 'Gracias!',
+    thankYouSub: 'Tu valoracion ayuda a la comunidad.',
   },
   pt: {
     pageTitle: 'Comparar Prop Firms',
@@ -246,6 +302,20 @@ const translations: Record<Locale, Record<string, string>> = {
     bestDeals: 'Melhores Ofertas',
     mostReviews: 'Mais Avaliacoes',
     copied: 'Copiado!',
+    rateBtn: 'Avaliar',
+    communityRating: 'Comunidade',
+    writeReview: 'Avaliar firma',
+    shareExperience: 'Compartilhe sua experiencia',
+    yourRating: 'Sua avaliacao',
+    tradingStyleUsed: 'Seu estilo de trading',
+    commentPlaceholder: 'Como foi sua experiencia? Pagamentos, suporte, regras...',
+    submitReview: 'Enviar avaliacao',
+    submitting: 'Enviando...',
+    reviewSubmitted: 'Avaliacao enviada! Obrigado 🙏',
+    alreadyReviewedNote: 'Voce ja avaliou esta firma — enviar ira atualizar sua avaliacao.',
+    signInToReview: 'Faca login para avaliar',
+    thankYouReview: 'Obrigado!',
+    thankYouSub: 'Sua avaliacao ajuda a comunidade.',
   },
   ar: {
     pageTitle: 'مقارنة شركات Prop',
@@ -291,6 +361,20 @@ const translations: Record<Locale, Record<string, string>> = {
     bestDeals: 'افضل العروض',
     mostReviews: 'اكثر التقييمات',
     copied: 'تم النسخ!',
+    rateBtn: 'تقييم',
+    communityRating: 'المجتمع',
+    writeReview: 'تقييم الشركة',
+    shareExperience: 'شارك تجربتك',
+    yourRating: 'تقييمك',
+    tradingStyleUsed: 'اسلوب تداولك',
+    commentPlaceholder: 'كيف كانت تجربتك؟ الدفعات، الدعم، القواعد...',
+    submitReview: 'ارسال التقييم',
+    submitting: 'جاري الارسال...',
+    reviewSubmitted: 'تم ارسال التقييم! شكرا 🙏',
+    alreadyReviewedNote: 'لقد قيّمت هذه الشركة بالفعل — الارسال سيحدث تقييمك.',
+    signInToReview: 'سجل الدخول للتقييم',
+    thankYouReview: 'شكرا!',
+    thankYouSub: 'تقييمك يساعد المجتمع.',
   },
   hi: {
     pageTitle: 'Prop Firms की तुलना करें',
@@ -336,15 +420,30 @@ const translations: Record<Locale, Record<string, string>> = {
     bestDeals: 'बेस्ट डील्स',
     mostReviews: 'सबसे ज़्यादा रिव्यू',
     copied: 'कॉपी हो गया!',
+    rateBtn: 'रेट करें',
+    communityRating: 'कम्युनिटी',
+    writeReview: 'रेट करें',
+    shareExperience: 'अपना अनुभव साझा करें',
+    yourRating: 'आपकी रेटिंग',
+    tradingStyleUsed: 'आपका ट्रेडिंग स्टाइल',
+    commentPlaceholder: 'आपका अनुभव कैसा था? पेआउट, सपोर्ट, नियम...',
+    submitReview: 'रिव्यू सबमिट करें',
+    submitting: 'सबमिट हो रहा है...',
+    reviewSubmitted: 'रिव्यू सबमिट हो गया! धन्यवाद 🙏',
+    alreadyReviewedNote: 'आपने इस firm को पहले ही रेट किया है — सबमिट करने से आपका रिव्यू अपडेट होगा।',
+    signInToReview: 'रेट करने के लिए साइन इन करें',
+    thankYouReview: 'धन्यवाद!',
+    thankYouSub: 'आपका रिव्यू कम्युनिटी की मदद करता है।',
   },
 };
+
 import { 
   Search, ChevronDown, Star, Check, X, 
   Grid3X3, List, ExternalLink,
   BarChart3, Tag, Trophy, BadgeCheck, Copy, CheckCircle2,
   ChevronLeft, ChevronRight, RotateCcw,
   Heart, GitCompare, Zap, TrendingUp,
-  DollarSign, Users, Flame
+  DollarSign, Users, Flame, MessageSquare
 } from 'lucide-react'
 import { PriceAlertButton } from '@/components/PriceAlert'
 
@@ -391,6 +490,11 @@ interface PropFirm {
   discount_percent: number
   year_founded: number
   headquarters: string
+}
+
+interface ReviewAggregate {
+  avg: number
+  count: number
 }
 
 interface ComparePageClientProps {
@@ -454,28 +558,26 @@ const CANONICAL_FIRMS: Record<string, { canonical: string; aliases: string[] }> 
   'topstep': { canonical: 'Topstep', aliases: ['topstep trader'] },
 }
 
+const TRADING_STYLES_REVIEW = ['Scalping', 'Day Trading', 'Swing', 'News Trading', 'EAs/Bots']
+
+const RATING_LABELS = ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent']
+
 // =====================================================
 // HOOKS
 // =====================================================
-// Debounce hook for search and URL sync
 function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value)
-  
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedValue(value), delay)
     return () => clearTimeout(timer)
   }, [value, delay])
-  
   return debouncedValue
 }
 
-// SSR-safe localStorage hook
 function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T | ((prev: T) => T)) => void] {
   const [storedValue, setStoredValue] = useState<T>(initialValue)
-  const [isHydrated, setIsHydrated] = useState(false)
   
   useEffect(() => {
-    setIsHydrated(true)
     try {
       const item = window.localStorage.getItem(key)
       if (item) setStoredValue(JSON.parse(item))
@@ -508,7 +610,6 @@ const normalizeMarkets = (assets: string[] | undefined, isFutures: boolean): str
   const markets: string[] = []
   if (isFutures) markets.push('Futures')
   if (!assets || assets.length === 0) return isFutures ? ['Futures'] : ['Forex']
-  
   assets.forEach(asset => {
     const lower = asset.toLowerCase()
     if (lower.includes('forex') || lower.includes('fx') || lower.includes('eur') || lower.includes('usd')) { if (!markets.includes('Forex')) markets.push('Forex') }
@@ -518,7 +619,6 @@ const normalizeMarkets = (assets: string[] | undefined, isFutures: boolean): str
     if (lower.includes('stock') || lower.includes('equity')) { if (!markets.includes('Stocks')) markets.push('Stocks') }
     if (lower.includes('futures') || lower.includes('future')) { if (!markets.includes('Futures')) markets.push('Futures') }
   })
-  
   if (markets.length === 0) markets.push('Forex')
   return markets
 }
@@ -556,7 +656,7 @@ const getFirmUrl = (firm: PropFirm): string => {
 
 const getBestForScore = (firm: PropFirm, category: string): number => {
   switch (category) {
-    case 'beginners':
+    case 'beginners': {
       let score = 0
       if (firm.min_price && firm.min_price <= 100) score += 30
       if (firm.trustpilot_rating >= 4.3) score += 25
@@ -564,21 +664,24 @@ const getBestForScore = (firm: PropFirm, category: string): number => {
       if (firm.min_trading_days === 0) score += 15
       if (firm.fee_refund) score += 10
       return score
-    case 'value':
+    }
+    case 'value': {
       let vScore = 0
       if (firm.min_price && firm.min_price <= 50) vScore += 35
       if (firm.max_profit_split >= 90) vScore += 25
       if (firm.discount_percent > 0) vScore += 20
       if (firm.fee_refund) vScore += 20
       return vScore
+    }
     case 'highsplit':
       return firm.max_profit_split >= 90 ? 100 : firm.max_profit_split >= 80 ? 50 : 0
-    case 'scalpers':
+    case 'scalpers': {
       let sScore = 0
       if (firm.allows_scalping) sScore += 50
       if (firm.max_daily_drawdown >= 5) sScore += 25
       if (firm.trustpilot_rating >= 4) sScore += 25
       return sScore
+    }
     case 'instant':
       return firm.has_instant_funding ? 100 : 0
     default:
@@ -605,11 +708,7 @@ const normalizeChallengeType = (types: string[] | undefined): string[] => {
 const Toast = ({ message, type, onClose }: { message: string; type: 'success' | 'error'; onClose: () => void }) => {
   useEffect(() => { const timer = setTimeout(onClose, 3000); return () => clearTimeout(timer) }, [onClose])
   return (
-    <div 
-      role="alert"
-      aria-live="polite"
-      className={`fixed bottom-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-in slide-in-from-bottom-2 ${type === 'success' ? 'bg-emerald-500' : 'bg-red-500'} text-white`}
-    >
+    <div role="alert" aria-live="polite" className={`fixed bottom-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-in slide-in-from-bottom-2 ${type === 'success' ? 'bg-emerald-500' : 'bg-red-500'} text-white`}>
       {type === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <X className="w-4 h-4" />}
       <span className="text-sm font-medium">{message}</span>
     </div>
@@ -634,25 +733,15 @@ const FilterChip = ({ label, onRemove }: { label: string; onRemove: () => void }
   </span>
 )
 
-// Filter Dropdown Component with global state management
 const FilterDropdown = ({ 
-  label, 
-  count, 
-  children,
-  colorClass = 'emerald',
-  isOpen,
-  onToggle
+  label, count, children, colorClass = 'emerald', isOpen, onToggle
 }: { 
-  label: string
-  count: number
-  children: React.ReactNode
+  label: string; count: number; children: React.ReactNode
   colorClass?: 'emerald' | 'purple' | 'yellow' | 'blue' | 'orange'
-  isOpen: boolean
-  onToggle: () => void
+  isOpen: boolean; onToggle: () => void
 }) => {
   const dropdownRef = useRef<HTMLDivElement>(null)
   
-  // Close on click outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -663,7 +752,6 @@ const FilterDropdown = ({
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [isOpen, onToggle])
   
-  // Close on Escape key
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && isOpen) onToggle()
@@ -673,7 +761,6 @@ const FilterDropdown = ({
   }, [isOpen, onToggle])
   
   const hasSelection = count > 0
-  
   const colorStyles = {
     emerald: { bg: 'bg-emerald-500/20', text: 'text-emerald-400', ring: 'ring-emerald-500/50', badge: 'bg-emerald-500' },
     purple: { bg: 'bg-purple-500/20', text: 'text-purple-400', ring: 'ring-purple-500/50', badge: 'bg-purple-500' },
@@ -681,7 +768,6 @@ const FilterDropdown = ({
     blue: { bg: 'bg-blue-500/20', text: 'text-blue-400', ring: 'ring-blue-500/50', badge: 'bg-blue-500' },
     orange: { bg: 'bg-orange-500/20', text: 'text-orange-400', ring: 'ring-orange-500/50', badge: 'bg-orange-500' },
   }
-  
   const colors = colorStyles[colorClass]
   
   return (
@@ -692,25 +778,15 @@ const FilterDropdown = ({
         aria-haspopup="listbox"
         aria-label={`${label} filter${hasSelection ? `, ${count} selected` : ''}`}
         className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 whitespace-nowrap ${
-          hasSelection 
-            ? `${colors.bg} ${colors.text} ring-1 ${colors.ring}`
-            : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+          hasSelection ? `${colors.bg} ${colors.text} ring-1 ${colors.ring}` : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
         }`}
       >
         {label}
-        {hasSelection && (
-          <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${colors.badge} text-white`}>
-            {count}
-          </span>
-        )}
+        {hasSelection && <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${colors.badge} text-white`}>{count}</span>}
         <ChevronDown className={`w-3 h-3 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
-      
       {isOpen && (
-        <div 
-          role="listbox"
-          className="absolute top-full left-0 mt-1 p-3 bg-gray-800 border border-gray-700 rounded-xl shadow-xl z-50 min-w-[200px] max-w-[280px] animate-in fade-in-0 zoom-in-95 duration-150"
-        >
+        <div role="listbox" className="absolute top-full left-0 mt-1 p-3 bg-gray-800 border border-gray-700 rounded-xl shadow-xl z-50 min-w-[200px] max-w-[280px] animate-in fade-in-0 zoom-in-95 duration-150">
           {children}
         </div>
       )}
@@ -720,9 +796,7 @@ const FilterDropdown = ({
 
 const PriceSlider = ({ value, onChange }: { value: [number, number]; onChange: (v: [number, number]) => void }) => {
   const [localMax, setLocalMax] = useState(value[1])
-  
   useEffect(() => { setLocalMax(value[1]) }, [value])
-  
   return (
     <div className="space-y-2">
       <div className="flex justify-between text-xs text-gray-400">
@@ -730,42 +804,181 @@ const PriceSlider = ({ value, onChange }: { value: [number, number]; onChange: (
         <span className="text-emerald-400 font-medium">{localMax >= 1000 ? 'Any' : `$${localMax}`}</span>
       </div>
       <input
-        type="range"
-        min={0}
-        max={1000}
-        step={25}
-        value={localMax}
+        type="range" min={0} max={1000} step={25} value={localMax}
         onChange={(e) => setLocalMax(parseInt(e.target.value))}
         onMouseUp={() => onChange([0, localMax])}
         onTouchEnd={() => onChange([0, localMax])}
         aria-label="Maximum price filter"
-        aria-valuemin={0}
-        aria-valuemax={1000}
-        aria-valuenow={localMax}
-        aria-valuetext={localMax >= 1000 ? 'Any price' : `Maximum $${localMax}`}
         className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
       />
       <div className="flex justify-between text-[10px] text-gray-500">
-        <span>$0</span>
-        <span>$250</span>
-        <span>$500</span>
-        <span>$750</span>
-        <span>$1000+</span>
+        <span>$0</span><span>$250</span><span>$500</span><span>$750</span><span>$1000+</span>
       </div>
     </div>
   )
 }
 
+// =====================================================
+// REVIEW MODAL
+// =====================================================
+const ReviewModal = ({
+  firm,
+  t,
+  onClose,
+  onSubmit,
+  alreadyReviewed,
+}: {
+  firm: PropFirm
+  t: Record<string, string>
+  onClose: () => void
+  onSubmit: (firmId: string, rating: number, comment: string, style: string) => Promise<void>
+  alreadyReviewed: boolean
+}) => {
+  const [rating, setRating] = useState(0)
+  const [hoverRating, setHoverRating] = useState(0)
+  const [comment, setComment] = useState('')
+  const [tradingStyle, setTradingStyle] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+
+  // Close on backdrop click
+  const handleBackdrop = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) onClose()
+  }
+
+  const handleSubmit = async () => {
+    if (rating === 0) return
+    setIsSubmitting(true)
+    await onSubmit(firm.id, rating, comment, tradingStyle)
+    setSubmitted(true)
+    setIsSubmitting(false)
+    setTimeout(onClose, 2200)
+  }
+
+  return (
+    <div
+      className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      onClick={handleBackdrop}
+    >
+      <div className="bg-gray-900 border border-gray-700 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+        {submitted ? (
+          <div className="text-center py-8">
+            <div className="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
+              <CheckCircle2 className="w-8 h-8 text-emerald-400" />
+            </div>
+            <h3 className="text-white font-bold text-xl mb-1">{t.thankYouReview}</h3>
+            <p className="text-gray-400 text-sm">{t.thankYouSub}</p>
+          </div>
+        ) : (
+          <>
+            {/* Header */}
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center p-1 flex-shrink-0">
+                  {firm.logo_url
+                    ? <Image src={firm.logo_url} alt={firm.name} width={40} height={40} className="object-contain" />
+                    : <span className="font-bold text-emerald-600 text-lg">{firm.name[0]}</span>
+                  }
+                </div>
+                <div>
+                  <h3 className="text-white font-bold text-base">{firm.name}</h3>
+                  <p className="text-gray-400 text-xs">{t.shareExperience}</p>
+                </div>
+              </div>
+              <button onClick={onClose} aria-label="Close" className="text-gray-500 hover:text-white transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Star selector */}
+            <div className="mb-5">
+              <p className="text-sm text-gray-400 mb-2">{t.yourRating} *</p>
+              <div className="flex gap-2 mb-1">
+                {[1, 2, 3, 4, 5].map(s => (
+                  <button
+                    key={s}
+                    onMouseEnter={() => setHoverRating(s)}
+                    onMouseLeave={() => setHoverRating(0)}
+                    onClick={() => setRating(s)}
+                    aria-label={`Rate ${s} star${s > 1 ? 's' : ''}`}
+                    className="transition-transform hover:scale-110 focus:outline-none"
+                  >
+                    <Star className={`w-9 h-9 transition-colors ${(hoverRating || rating) >= s ? 'text-yellow-400 fill-yellow-400' : 'text-gray-600'}`} />
+                  </button>
+                ))}
+              </div>
+              {rating > 0 && (
+                <p className="text-xs text-yellow-400 font-medium">{RATING_LABELS[rating]}</p>
+              )}
+            </div>
+
+            {/* Trading style */}
+            <div className="mb-4">
+              <p className="text-sm text-gray-400 mb-2">{t.tradingStyleUsed}</p>
+              <div className="flex flex-wrap gap-2">
+                {TRADING_STYLES_REVIEW.map(style => (
+                  <button
+                    key={style}
+                    onClick={() => setTradingStyle(prev => prev === style ? '' : style)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                      tradingStyle === style
+                        ? 'bg-emerald-500 text-white'
+                        : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                    }`}
+                  >
+                    {style}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Comment */}
+            <div className="mb-5">
+              <p className="text-sm text-gray-400 mb-2">Your experience <span className="text-gray-600">(optional)</span></p>
+              <textarea
+                value={comment}
+                onChange={e => setComment(e.target.value)}
+                placeholder={t.commentPlaceholder}
+                className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-sm text-white placeholder-gray-500 resize-none focus:outline-none focus:border-emerald-500 transition-colors"
+                rows={3}
+                maxLength={500}
+              />
+              <p className="text-[10px] text-gray-600 text-right mt-0.5">{comment.length}/500</p>
+            </div>
+
+            {/* Submit */}
+            <button
+              onClick={handleSubmit}
+              disabled={rating === 0 || isSubmitting}
+              className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors"
+            >
+              {isSubmitting ? t.submitting : t.submitReview}
+            </button>
+
+            {alreadyReviewed && (
+              <p className="text-center text-xs text-yellow-400 mt-3">
+                ⚠️ {t.alreadyReviewedNote}
+              </p>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// =====================================================
+// PROP FIRM CARD
+// =====================================================
 const PropFirmCard = ({ 
-  firm, 
-  isCompact, 
-  rank,
-  markets,
-  isFavorite,
-  onFavorite,
-  isComparing,
-  onCompare,
-  onCopyCode
+  firm, isCompact, rank, markets,
+  isFavorite, onFavorite,
+  isComparing, onCompare,
+  onCopyCode,
+  communityRating,
+  onRate,
+  hasReviewed,
+  t,
 }: { 
   firm: PropFirm
   isCompact: boolean
@@ -776,6 +989,10 @@ const PropFirmCard = ({
   isComparing: boolean
   onCompare: () => void
   onCopyCode: (code: string) => void
+  communityRating: ReviewAggregate | null
+  onRate: () => void
+  hasReviewed: boolean
+  t: Record<string, string>
 }) => {
   const hasDiscount = firm.discount_percent && firm.discount_percent > 0
   
@@ -786,7 +1003,6 @@ const PropFirmCard = ({
           <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center overflow-hidden p-1 flex-shrink-0">
             {firm.logo_url ? <Image src={firm.logo_url} alt={firm.name} width={40} height={40} className="object-contain" /> : <span className="text-lg font-bold text-emerald-600">{firm.name.charAt(0)}</span>}
           </div>
-          
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
               <h3 className="font-semibold text-white truncate text-sm">{firm.name}</h3>
@@ -794,50 +1010,44 @@ const PropFirmCard = ({
             </div>
             <div className="flex items-center gap-3 text-xs text-gray-400 mt-0.5">
               <span className="flex items-center gap-1"><Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />{firm.trustpilot_rating?.toFixed(1) || 'N/A'}</span>
+              {communityRating && communityRating.count > 0 && (
+                <span className="flex items-center gap-1 text-purple-400">
+                  <MessageSquare className="w-3 h-3" />{communityRating.avg.toFixed(1)} ({communityRating.count})
+                </span>
+              )}
               <span>${firm.min_price || 'N/A'}</span>
               <span className="text-emerald-400">{formatProfitSplit(firm.profit_split, firm.max_profit_split)}</span>
             </div>
           </div>
-          
           {hasDiscount && (
             <span className="px-2 py-1 bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs font-bold rounded-lg">{firm.discount_percent}% OFF</span>
           )}
-          
           <div className="flex items-center gap-1">
-            <button 
-              onClick={onFavorite} 
-              aria-label={isFavorite ? `Remove ${firm.name} from favorites` : `Add ${firm.name} to favorites`}
-              aria-pressed={isFavorite}
-              className={`p-2 rounded-lg transition-all ${isFavorite ? 'text-red-400 bg-red-500/20' : 'text-gray-500 hover:text-red-400 hover:bg-gray-700'}`}
-            >
+            <button onClick={onFavorite} aria-label={isFavorite ? `Remove ${firm.name} from favorites` : `Add ${firm.name} to favorites`} aria-pressed={isFavorite} className={`p-2 rounded-lg transition-all ${isFavorite ? 'text-red-400 bg-red-500/20' : 'text-gray-500 hover:text-red-400 hover:bg-gray-700'}`}>
               <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
             </button>
-            <PriceAlertButton 
-              firmId={firm.id}
-              firmName={firm.name}
-              firmSlug={firm.slug}
-              currentPrice={firm.min_price || 0}
-            />
+            <button onClick={onRate} aria-label={`Rate ${firm.name}`} title={hasReviewed ? 'Update your review' : 'Rate this firm'} className={`p-2 rounded-lg transition-all ${hasReviewed ? 'text-yellow-400 bg-yellow-500/20' : 'text-gray-500 hover:text-yellow-400 hover:bg-gray-700'}`}>
+              <Star className={`w-4 h-4 ${hasReviewed ? 'fill-current' : ''}`} />
+            </button>
+            <PriceAlertButton firmId={firm.id} firmName={firm.name} firmSlug={firm.slug} currentPrice={firm.min_price || 0} />
             <Link href={`/prop-firm/${firm.slug}`} className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-white text-xs font-medium rounded-lg">Details</Link>
-            <a href={getFirmUrl(firm)} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg flex items-center gap-1">Visit <ExternalLink className="w-3 h-3" /></a>
+            <a href={getFirmUrl(firm)} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg flex items-center gap-1">
+              Visit <ExternalLink className="w-3 h-3" />
+            </a>
           </div>
         </div>
       </div>
     )
   }
-  
+
   return (
-    <div className="bg-gray-800/50 border border-gray-700/50 hover:border-emerald-500/30 rounded-xl overflow-hidden transition-all group relative">
+    <div className="bg-gray-800/50 border border-gray-700/50 hover:border-emerald-500/30 rounded-xl overflow-hidden transition-all group relative flex flex-col">
       {hasDiscount && (
         <div className="absolute top-3 right-3 z-10">
           <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-2.5 py-1 rounded-lg text-xs font-bold shadow-lg">
             {firm.discount_percent}% OFF
             {firm.discount_code && (
-              <button 
-                onClick={() => onCopyCode(firm.discount_code)} 
-                aria-label={`Copy discount code ${firm.discount_code}`}
-                className="flex items-center gap-1 text-[10px] font-normal opacity-90 hover:opacity-100 mt-0.5"
-              >
+              <button onClick={() => onCopyCode(firm.discount_code)} aria-label={`Copy discount code ${firm.discount_code}`} className="flex items-center gap-1 text-[10px] font-normal opacity-90 hover:opacity-100 mt-0.5">
                 <Copy className="w-2.5 h-2.5" />{firm.discount_code}
               </button>
             )}
@@ -856,40 +1066,39 @@ const PropFirmCard = ({
           <div className="w-14 h-14 rounded-xl bg-white flex items-center justify-center overflow-hidden border border-gray-200 p-1.5 flex-shrink-0">
             {firm.logo_url ? <Image src={firm.logo_url} alt={firm.name} width={56} height={56} className="object-contain" /> : <span className="text-xl font-bold text-emerald-600">{firm.name.charAt(0)}</span>}
           </div>
-          
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
               <h3 className="font-bold text-white truncate">{firm.name}</h3>
               <TrustBadge status={firm.trust_status || 'verified'} />
             </div>
+            {/* Trustpilot rating */}
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="flex items-center gap-1 text-sm"><Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" /><span className="text-white font-medium">{firm.trustpilot_rating?.toFixed(1) || 'N/A'}</span>{firm.trustpilot_reviews && <span className="text-gray-500 text-xs">({formatReviewCount(firm.trustpilot_reviews)})</span>}</span>
+              <span className="flex items-center gap-1 text-sm">
+                <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
+                <span className="text-white font-medium">{firm.trustpilot_rating?.toFixed(1) || 'N/A'}</span>
+                {firm.trustpilot_reviews && <span className="text-gray-500 text-xs">({formatReviewCount(firm.trustpilot_reviews)})</span>}
+              </span>
             </div>
+            {/* Community rating */}
+            {communityRating && communityRating.count > 0 && (
+              <div className="flex items-center gap-1 mt-0.5">
+                <MessageSquare className="w-3 h-3 text-purple-400" />
+                <span className="text-purple-400 text-xs font-medium">{communityRating.avg.toFixed(1)}</span>
+                <span className="text-gray-500 text-xs">{t.communityRating} ({communityRating.count})</span>
+              </div>
+            )}
           </div>
-          
-          <div className="flex gap-1">
-            <button 
-              onClick={onFavorite} 
-              aria-label={isFavorite ? `Remove ${firm.name} from favorites` : `Add ${firm.name} to favorites`}
-              aria-pressed={isFavorite}
-              className={`p-2 rounded-lg transition-all ${isFavorite ? 'text-red-400 bg-red-500/20' : 'text-gray-500 hover:text-red-400 hover:bg-gray-700'}`}
-            >
+          <div className="flex gap-1 flex-shrink-0">
+            <button onClick={onFavorite} aria-label={isFavorite ? `Remove ${firm.name} from favorites` : `Add ${firm.name} to favorites`} aria-pressed={isFavorite} className={`p-2 rounded-lg transition-all ${isFavorite ? 'text-red-400 bg-red-500/20' : 'text-gray-500 hover:text-red-400 hover:bg-gray-700'}`}>
               <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
             </button>
-            <button 
-              onClick={onCompare} 
-              aria-label={isComparing ? `Remove ${firm.name} from comparison` : `Add ${firm.name} to comparison`}
-              aria-pressed={isComparing}
-              className={`p-2 rounded-lg transition-all ${isComparing ? 'text-blue-400 bg-blue-500/20' : 'text-gray-500 hover:text-blue-400 hover:bg-gray-700'}`}
-            >
+            <button onClick={onCompare} aria-label={isComparing ? `Remove ${firm.name} from comparison` : `Add ${firm.name} to comparison`} aria-pressed={isComparing} className={`p-2 rounded-lg transition-all ${isComparing ? 'text-blue-400 bg-blue-500/20' : 'text-gray-500 hover:text-blue-400 hover:bg-gray-700'}`}>
               <GitCompare className="w-4 h-4" />
             </button>
-            <PriceAlertButton 
-              firmId={firm.id}
-              firmName={firm.name}
-              firmSlug={firm.slug}
-              currentPrice={firm.min_price || 0}
-            />
+            <button onClick={onRate} aria-label={hasReviewed ? `Update review for ${firm.name}` : `Rate ${firm.name}`} title={hasReviewed ? 'Update your review' : t.writeReview} className={`p-2 rounded-lg transition-all ${hasReviewed ? 'text-yellow-400 bg-yellow-500/20' : 'text-gray-500 hover:text-yellow-400 hover:bg-gray-700'}`}>
+              <Star className={`w-4 h-4 ${hasReviewed ? 'fill-current' : ''}`} />
+            </button>
+            <PriceAlertButton firmId={firm.id} firmName={firm.name} firmSlug={firm.slug} currentPrice={firm.min_price || 0} />
           </div>
         </div>
       </div>
@@ -905,20 +1114,18 @@ const PropFirmCard = ({
         </div>
       </div>
       
-      <div className="p-4 space-y-3">
+      <div className="p-4 space-y-3 flex-1">
         <div className="flex flex-wrap gap-1">
           {markets.map(m => (
             <span key={m} className="px-1.5 py-0.5 bg-blue-500/20 text-blue-400 text-[10px] rounded">{m}</span>
           ))}
         </div>
-        
         <div className="flex flex-wrap gap-1">
           {firm.allows_scalping && <span className="px-1.5 py-0.5 bg-emerald-500/10 text-emerald-400 text-[10px] rounded flex items-center gap-0.5"><Check className="w-2.5 h-2.5" />Scalping</span>}
           {firm.allows_news_trading && <span className="px-1.5 py-0.5 bg-emerald-500/10 text-emerald-400 text-[10px] rounded flex items-center gap-0.5"><Check className="w-2.5 h-2.5" />News</span>}
           {firm.allows_ea && <span className="px-1.5 py-0.5 bg-emerald-500/10 text-emerald-400 text-[10px] rounded flex items-center gap-0.5"><Check className="w-2.5 h-2.5" />EAs</span>}
           {firm.has_instant_funding && <span className="px-1.5 py-0.5 bg-yellow-500/10 text-yellow-400 text-[10px] rounded flex items-center gap-0.5"><Zap className="w-2.5 h-2.5" />Instant</span>}
         </div>
-        
         {firm.platforms && firm.platforms.length > 0 && (
           <div className="flex flex-wrap gap-1">
             {firm.platforms.slice(0, 3).map(p => (
@@ -930,8 +1137,10 @@ const PropFirmCard = ({
       </div>
       
       <div className="p-4 pt-0 flex gap-2">
-        <Link href={`/prop-firm/${firm.slug}`} className="flex-1 py-2.5 bg-gray-700 hover:bg-gray-600 text-white text-center text-sm font-medium rounded-lg">Details</Link>
-        <a href={getFirmUrl(firm)} target="_blank" rel="noopener noreferrer" className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-center text-sm font-medium rounded-lg flex items-center justify-center gap-1">Visit <ExternalLink className="w-3.5 h-3.5" /></a>
+        <Link href={`/prop-firm/${firm.slug}`} className="flex-1 py-2.5 bg-gray-700 hover:bg-gray-600 text-white text-center text-sm font-medium rounded-lg transition-colors">Details</Link>
+        <a href={getFirmUrl(firm)} target="_blank" rel="noopener noreferrer" className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-center text-sm font-medium rounded-lg flex items-center justify-center gap-1 transition-colors">
+          Visit <ExternalLink className="w-3.5 h-3.5" />
+        </a>
       </div>
     </div>
   )
@@ -939,9 +1148,7 @@ const PropFirmCard = ({
 
 const CompareBar = ({ firms, onRemove, onClear }: { firms: PropFirm[]; onRemove: (id: string) => void; onClear: () => void }) => {
   if (firms.length === 0) return null
-  
   const compareUrl = `/compare/${firms.map(f => f.slug).join('-vs-')}`
-  
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 p-4 z-40">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -965,7 +1172,6 @@ const CompareBar = ({ firms, onRemove, onClear }: { firms: PropFirm[]; onRemove:
   )
 }
 
-// Loading skeleton for better UX
 const CardSkeleton = () => (
   <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl overflow-hidden animate-pulse">
     <div className="p-4">
@@ -1002,11 +1208,9 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
   const searchParams = useSearchParams()
   const pathname = usePathname()
   
-  // Get translations
   const currentLocale = getLocaleFromPath(pathname)
   const t = translations[currentLocale] || translations.en
   
-  // Initialize filters from URL
   const [filters, setFilters] = useState<FilterState>(() => ({
     search: searchParams.get('q') || '',
     markets: searchParams.get('markets')?.split(',').filter(Boolean) || [],
@@ -1026,64 +1230,75 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
   const [compareList, setCompareList] = useState<string[]>([])
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
   
+  // Reviews state
+  const [reviewAggregates, setReviewAggregates] = useState<Map<string, ReviewAggregate>>(new Map())
+  const [userReviewedFirms, setUserReviewedFirms] = useState<Set<string>>(new Set())
+  const [reviewModalFirmId, setReviewModalFirmId] = useState<string | null>(null)
+
   // Favorites — localStorage (optimistic UI) + Supabase sync
   const [favorites, setFavorites] = useLocalStorage<string[]>('pfs_favorites', [])
   const supabase = createClientComponentClient()
 
-  // On mount: load favorites from Supabase and merge with localStorage
+  // On mount: load favorites + reviews from Supabase
   useEffect(() => {
-    const loadFromSupabase = async () => {
+    const loadData = async () => {
+      // Load favorites
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-      const { data } = await supabase
-        .from('user_favorites')
-        .select('prop_firm_id')
-        .eq('user_id', user.id)
-      if (data && data.length > 0) {
-        const dbIds = data.map((r: any) => r.prop_firm_id as string)
-        setFavorites(prev => Array.from(new Set([...prev, ...dbIds])))
+      if (user) {
+        const { data: favData } = await supabase
+          .from('user_favorites')
+          .select('prop_firm_id')
+          .eq('user_id', user.id)
+        if (favData && favData.length > 0) {
+          const dbIds = favData.map((r: any) => r.prop_firm_id as string)
+          setFavorites(prev => Array.from(new Set([...prev, ...dbIds])))
+        }
+        // Load user's own reviews
+        const { data: userReviewData } = await supabase
+          .from('firm_reviews')
+          .select('firm_id')
+          .eq('user_id', user.id)
+        if (userReviewData) {
+          setUserReviewedFirms(new Set(userReviewData.map((r: any) => r.firm_id as string)))
+        }
+      }
+      // Load aggregated community ratings (public)
+      const { data: reviewData } = await supabase
+        .from('firm_reviews')
+        .select('firm_id, rating')
+      if (reviewData && reviewData.length > 0) {
+        const agg = new Map<string, { sum: number; count: number }>()
+        reviewData.forEach((r: any) => {
+          const existing = agg.get(r.firm_id) || { sum: 0, count: 0 }
+          agg.set(r.firm_id, { sum: existing.sum + r.rating, count: existing.count + 1 })
+        })
+        const result = new Map<string, ReviewAggregate>()
+        agg.forEach((val, key) => result.set(key, { avg: val.sum / val.count, count: val.count }))
+        setReviewAggregates(result)
       }
     }
-    loadFromSupabase()
+    loadData()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
-  
+
   const itemsPerPage = 24
-  
-  // Debounced search for performance
   const debouncedSearch = useDebounce(filters.search, 300)
-  
-  // Debounced filters for URL sync
   const debouncedFilters = useDebounce(filters, 500)
   
   const toggleFavorite = useCallback(async (id: string) => {
     const isCurrentlyFavorite = favorites.includes(id)
-
-    // Optimistic update (instant UI feedback)
     setFavorites(prev => {
       const newFavs = prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]
       setToast({ message: prev.includes(id) ? 'Removed from favorites' : 'Added to favorites', type: 'success' })
       return newFavs
     })
-
-    // Sync to Supabase in background
     try {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return // not logged in, localStorage only is fine
+      if (!user) return
       if (isCurrentlyFavorite) {
-        await supabase
-          .from('user_favorites')
-          .delete()
-          .eq('user_id', user.id)
-          .eq('prop_firm_id', id)
+        await supabase.from('user_favorites').delete().eq('user_id', user.id).eq('prop_firm_id', id)
       } else {
-        await supabase
-          .from('user_favorites')
-          .upsert(
-            { user_id: user.id, prop_firm_id: id },
-            { onConflict: 'user_id,prop_firm_id' }
-          )
+        await supabase.from('user_favorites').upsert({ user_id: user.id, prop_firm_id: id }, { onConflict: 'user_id,prop_firm_id' })
       }
     } catch (err) {
       console.error('Failed to sync favorite to Supabase:', err)
@@ -1103,10 +1318,55 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
     setToast({ message: `Code "${code}" copied!`, type: 'success' })
   }, [])
   
-  // Toggle dropdown (only one open at a time)
   const toggleDropdown = useCallback((name: string) => {
     setOpenDropdown(prev => prev === name ? null : name)
   }, [])
+
+  // Submit a review
+  const handleSubmitReview = useCallback(async (firmId: string, rating: number, comment: string, style: string) => {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      setToast({ message: t.signInToReview, type: 'error' })
+      return
+    }
+    try {
+      await supabase
+        .from('firm_reviews')
+        .upsert(
+          {
+            user_id: user.id,
+            firm_id: firmId,
+            rating,
+            comment: comment || null,
+            trading_style: style || null,
+          },
+          { onConflict: 'user_id,firm_id' }
+        )
+      // Optimistic update of community ratings
+      setReviewAggregates(prev => {
+        const newMap = new Map(prev)
+        const existing = newMap.get(firmId)
+        const alreadyReviewed = userReviewedFirms.has(firmId)
+        if (existing) {
+          if (alreadyReviewed) {
+            // Approximation: replace with new rating (can't know old rating without fetching)
+            newMap.set(firmId, { avg: (existing.avg * existing.count - existing.avg + rating) / existing.count, count: existing.count })
+          } else {
+            const newCount = existing.count + 1
+            newMap.set(firmId, { avg: (existing.avg * existing.count + rating) / newCount, count: newCount })
+          }
+        } else {
+          newMap.set(firmId, { avg: rating, count: 1 })
+        }
+        return newMap
+      })
+      setUserReviewedFirms(prev => new Set([...prev, firmId]))
+      setToast({ message: t.reviewSubmitted, type: 'success' })
+    } catch (err) {
+      console.error('Failed to submit review:', err)
+      setToast({ message: 'Error submitting review', type: 'error' })
+    }
+  }, [supabase, t, userReviewedFirms])
   
   // Sync filters to URL (debounced)
   useEffect(() => {
@@ -1122,12 +1382,10 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
     if (debouncedFilters.hasDiscount) params.set('deals', 'true')
     if (!debouncedFilters.verifiedOnly) params.set('verified', 'false')
     if (sortBy !== 'rating') params.set('sort', sortBy)
-    
     const newUrl = params.toString() ? `?${params.toString()}` : '/compare'
     router.replace(newUrl, { scroll: false })
   }, [debouncedFilters, sortBy, router])
   
-  // Process and deduplicate firms
   const processedFirms = useMemo(() => {
     const filtered = firms.filter(f => !isBlocklisted(f.name))
     const seen = new Map<string, PropFirm>()
@@ -1143,111 +1401,69 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
     return Array.from(seen.values())
   }, [firms])
   
-  // Map firm IDs to their markets
   const firmMarkets = useMemo(() => {
     const map = new Map<string, string[]>()
     processedFirms.forEach(f => map.set(f.id, normalizeMarkets(f.assets, f.is_futures)))
     return map
   }, [processedFirms])
   
-  // Map firm IDs to their challenge types
   const firmChallengeTypes = useMemo(() => {
     const map = new Map<string, string[]>()
     processedFirms.forEach(f => map.set(f.id, normalizeChallengeType(f.challenge_types)))
     return map
   }, [processedFirms])
   
-  // Get available platforms from data
   const availablePlatforms = useMemo(() => 
     Array.from(new Set(processedFirms.flatMap(f => f.platforms || []))).filter(Boolean).sort()
   , [processedFirms])
   
-  // Stats
   const stats = useMemo(() => {
     const verified = processedFirms.filter(f => f.trust_status === 'verified' || !f.trust_status)
     const discounts = verified.filter(f => f.discount_percent != null && f.discount_percent > 0)
     return { total: verified.length, withDiscounts: discounts.length }
   }, [processedFirms])
   
-  // Apply filters (use debounced search)
   const filteredFirms = useMemo(() => {
     let result = [...processedFirms]
-    
-    // Verified filter
     if (filters.verifiedOnly) result = result.filter(f => f.trust_status === 'verified' || !f.trust_status)
     else result = result.filter(f => f.trust_status !== 'banned')
-    
-    // Search (use debounced value)
     if (debouncedSearch) {
       const q = debouncedSearch.toLowerCase()
       result = result.filter(f => f.name?.toLowerCase().includes(q) || f.slug?.toLowerCase().includes(q))
     }
-    
-    // Markets (multi-select - OR logic)
     if (filters.markets.length > 0) {
-      result = result.filter(f => {
-        const fMarkets = firmMarkets.get(f.id) || []
-        return filters.markets.some(m => fMarkets.includes(m))
-      })
+      result = result.filter(f => { const fMarkets = firmMarkets.get(f.id) || []; return filters.markets.some(m => fMarkets.includes(m)) })
     }
-    
-    // Platforms (multi-select - OR logic)
     if (filters.platforms.length > 0) {
-      result = result.filter(f => {
-        const fPlatforms = f.platforms || []
-        return filters.platforms.some(p => fPlatforms.includes(p))
-      })
+      result = result.filter(f => { const fPlatforms = f.platforms || []; return filters.platforms.some(p => fPlatforms.includes(p)) })
     }
-    
-    // Trading styles (multi-select - AND logic)
     if (filters.tradingStyles.length > 0) {
-      result = result.filter(f => {
-        return filters.tradingStyles.every(style => {
-          const styleConfig = TRADING_STYLE_OPTIONS.find(s => s.key === style)
-          if (!styleConfig) return true
-          return f[styleConfig.field as keyof PropFirm]
-        })
-      })
+      result = result.filter(f => filters.tradingStyles.every(style => {
+        const styleConfig = TRADING_STYLE_OPTIONS.find(s => s.key === style)
+        if (!styleConfig) return true
+        return f[styleConfig.field as keyof PropFirm]
+      }))
     }
-    
-    // Ratings (multi-select - OR logic, takes minimum of selected)
     if (filters.ratings.length > 0) {
       const minRating = Math.min(...filters.ratings)
       result = result.filter(f => f.trustpilot_rating >= minRating)
     }
-    
-    // Challenge types (multi-select - OR logic)
     if (filters.challengeTypes.length > 0) {
-      result = result.filter(f => {
-        const fChallenges = firmChallengeTypes.get(f.id) || []
-        return filters.challengeTypes.some(c => fChallenges.includes(c))
-      })
+      result = result.filter(f => { const fChallenges = firmChallengeTypes.get(f.id) || []; return filters.challengeTypes.some(c => fChallenges.includes(c)) })
     }
-    
-    // Best for (multi-select - OR logic with scoring)
     if (filters.bestFor.length > 0) {
-      result = result.filter(f => {
-        return filters.bestFor.some(category => getBestForScore(f, category) > 0)
-      })
+      result = result.filter(f => filters.bestFor.some(category => getBestForScore(f, category) > 0))
     }
-    
-    // Price range
     if (filters.priceRange[1] < 1000) {
       result = result.filter(f => f.min_price && f.min_price <= filters.priceRange[1])
     }
-    
-    // Deals only
     if (filters.hasDiscount) {
       result = result.filter(f => f.discount_percent != null && f.discount_percent > 0)
     }
-    
-    // Sort
     result.sort((a, b) => {
-      // Promos first
       const aPromo = (a.discount_percent ?? 0) > 0 ? 1 : 0
       const bPromo = (b.discount_percent ?? 0) > 0 ? 1 : 0
       if (bPromo !== aPromo) return bPromo - aPromo
-      
       switch (sortBy) {
         case 'rating': return (b.trustpilot_rating || 0) - (a.trustpilot_rating || 0)
         case 'price': return (a.min_price || 9999) - (b.min_price || 9999)
@@ -1257,29 +1473,20 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
         default: return 0
       }
     })
-    
     return result
   }, [processedFirms, firmMarkets, firmChallengeTypes, filters.verifiedOnly, filters.markets, filters.platforms, filters.tradingStyles, filters.ratings, filters.challengeTypes, filters.bestFor, filters.priceRange, filters.hasDiscount, debouncedSearch, sortBy])
   
-  // Reset page when filters change + scroll to top
-  useEffect(() => { 
-    setCurrentPage(1)
-  }, [filters, sortBy])
+  useEffect(() => { setCurrentPage(1) }, [filters, sortBy])
+  useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }) }, [currentPage])
   
-  // Scroll to top when page changes
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }, [currentPage])
-  
-  // Pagination
   const paginatedFirms = useMemo(() => filteredFirms.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage), [filteredFirms, currentPage, itemsPerPage])
   const totalPages = Math.ceil(filteredFirms.length / itemsPerPage)
   const compareFirms = useMemo(() => processedFirms.filter(f => compareList.includes(f.id)), [processedFirms, compareList])
+
+  const reviewModalFirm = useMemo(() => reviewModalFirmId ? processedFirms.find(f => f.id === reviewModalFirmId) || null : null, [reviewModalFirmId, processedFirms])
   
-  // Active filter chips
   const activeFilterChips = useMemo(() => {
     const chips: { key: string; label: string; onRemove: () => void }[] = []
-    
     filters.markets.forEach(m => chips.push({ key: `market-${m}`, label: m, onRemove: () => setFilters(f => ({ ...f, markets: f.markets.filter(x => x !== m) })) }))
     filters.platforms.forEach(p => chips.push({ key: `platform-${p}`, label: p, onRemove: () => setFilters(f => ({ ...f, platforms: f.platforms.filter(x => x !== p) })) }))
     filters.tradingStyles.forEach(s => {
@@ -1294,29 +1501,28 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
     })
     if (filters.priceRange[1] < 1000) chips.push({ key: 'price', label: `Max $${filters.priceRange[1]}`, onRemove: () => setFilters(f => ({ ...f, priceRange: [0, 1000] })) })
     if (filters.hasDiscount) chips.push({ key: 'deals', label: 'Deals Only', onRemove: () => setFilters(f => ({ ...f, hasDiscount: false })) })
-    
     return chips
   }, [filters])
   
   const resetFilters = () => {
-    setFilters({
-      search: '',
-      markets: [],
-      platforms: [],
-      tradingStyles: [],
-      ratings: [],
-      challengeTypes: [],
-      bestFor: [],
-      priceRange: [0, 1000],
-      hasDiscount: false,
-      verifiedOnly: true,
-    })
+    setFilters({ search: '', markets: [], platforms: [], tradingStyles: [], ratings: [], challengeTypes: [], bestFor: [], priceRange: [0, 1000], hasDiscount: false, verifiedOnly: true })
     setOpenDropdown(null)
   }
 
   return (
     <div className="min-h-screen bg-gray-900 pb-20">
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+
+      {/* REVIEW MODAL */}
+      {reviewModalFirm && (
+        <ReviewModal
+          firm={reviewModalFirm}
+          t={t}
+          onClose={() => setReviewModalFirmId(null)}
+          onSubmit={handleSubmitReview}
+          alreadyReviewed={userReviewedFirms.has(reviewModalFirm.id)}
+        />
+      )}
       
       {/* HEADER */}
       <section className="pt-20 pb-4 px-4 border-b border-gray-800 sticky top-16 z-30 bg-gray-900/95 backdrop-blur-sm">
@@ -1329,241 +1535,121 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
               </div>
               <p className="text-sm text-gray-500">{stats.total} verified firms • Updated Jan 2026</p>
             </div>
-            
             <div className="flex items-center gap-2">
-              <button 
-                onClick={() => setViewMode('grid')} 
-                aria-label="Grid view"
-                aria-pressed={viewMode === 'grid'}
-                className={`p-2 rounded-lg ${viewMode === 'grid' ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400'}`}
-              >
+              <button onClick={() => setViewMode('grid')} aria-label="Grid view" aria-pressed={viewMode === 'grid'} className={`p-2 rounded-lg ${viewMode === 'grid' ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400'}`}>
                 <Grid3X3 className="w-4 h-4" />
               </button>
-              <button 
-                onClick={() => setViewMode('list')} 
-                aria-label="List view"
-                aria-pressed={viewMode === 'list'}
-                className={`p-2 rounded-lg ${viewMode === 'list' ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400'}`}
-              >
+              <button onClick={() => setViewMode('list')} aria-label="List view" aria-pressed={viewMode === 'list'} className={`p-2 rounded-lg ${viewMode === 'list' ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400'}`}>
                 <List className="w-4 h-4" />
               </button>
             </div>
           </div>
           
-          {/* SEARCH & ALL FILTERS IN BAR */}
           <div className="space-y-3">
-            {/* Main Filter Bar */}
             <div className="flex flex-wrap items-center gap-2">
               {/* Search */}
               <div className="relative min-w-[160px] max-w-[200px]">
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                <input 
-                  type="text" 
-                  value={filters.search} 
-                  onChange={(e) => setFilters(f => ({ ...f, search: e.target.value }))} 
-                  placeholder={t.searchPlaceholder} 
-                  aria-label="Search prop firms"
-                  className="w-full pl-8 pr-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-white text-xs placeholder:text-gray-500 focus:outline-none focus:border-emerald-500" 
-                />
+                <input type="text" value={filters.search} onChange={(e) => setFilters(f => ({ ...f, search: e.target.value }))} placeholder={t.searchPlaceholder} aria-label="Search prop firms" className="w-full pl-8 pr-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-white text-xs placeholder:text-gray-500 focus:outline-none focus:border-emerald-500" />
               </div>
               
-              {/* Markets Dropdown */}
-              <FilterDropdown 
-                label={t.markets} 
-                count={filters.markets.length}
-                isOpen={openDropdown === 'markets'}
-                onToggle={() => toggleDropdown('markets')}
-              >
+              {/* Markets */}
+              <FilterDropdown label={t.markets} count={filters.markets.length} isOpen={openDropdown === 'markets'} onToggle={() => toggleDropdown('markets')}>
                 <div className="flex flex-wrap gap-1.5">
                   {MARKET_OPTIONS.map(market => (
-                    <button 
-                      key={market} 
-                      onClick={() => setFilters(f => ({ 
-                        ...f, 
-                        markets: f.markets.includes(market) ? f.markets.filter(m => m !== market) : [...f.markets, market] 
-                      }))} 
-                      className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.markets.includes(market) ? 'bg-emerald-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}
-                    >
-                      {market}
-                      {filters.markets.includes(market) && <Check className="w-3 h-3" />}
+                    <button key={market} onClick={() => setFilters(f => ({ ...f, markets: f.markets.includes(market) ? f.markets.filter(m => m !== market) : [...f.markets, market] }))} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.markets.includes(market) ? 'bg-emerald-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
+                      {market}{filters.markets.includes(market) && <Check className="w-3 h-3" />}
                     </button>
                   ))}
                 </div>
               </FilterDropdown>
               
-              {/* Platforms Dropdown */}
-              <FilterDropdown 
-                label={t.platform} 
-                count={filters.platforms.length}
-                isOpen={openDropdown === 'platforms'}
-                onToggle={() => toggleDropdown('platforms')}
-              >
+              {/* Platforms */}
+              <FilterDropdown label={t.platform} count={filters.platforms.length} isOpen={openDropdown === 'platforms'} onToggle={() => toggleDropdown('platforms')}>
                 <div className="flex flex-wrap gap-1.5 max-h-[200px] overflow-y-auto">
                   {availablePlatforms.map(platform => (
-                    <button 
-                      key={platform} 
-                      onClick={() => setFilters(f => ({ 
-                        ...f, 
-                        platforms: f.platforms.includes(platform) ? f.platforms.filter(p => p !== platform) : [...f.platforms, platform] 
-                      }))} 
-                      className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.platforms.includes(platform) ? 'bg-emerald-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}
-                    >
-                      {platform}
-                      {filters.platforms.includes(platform) && <Check className="w-3 h-3" />}
+                    <button key={platform} onClick={() => setFilters(f => ({ ...f, platforms: f.platforms.includes(platform) ? f.platforms.filter(p => p !== platform) : [...f.platforms, platform] }))} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.platforms.includes(platform) ? 'bg-emerald-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
+                      {platform}{filters.platforms.includes(platform) && <Check className="w-3 h-3" />}
                     </button>
                   ))}
                 </div>
               </FilterDropdown>
               
-              {/* Challenge Type Dropdown */}
-              <FilterDropdown 
-                label={t.challenge} 
-                count={filters.challengeTypes.length} 
-                colorClass="purple"
-                isOpen={openDropdown === 'challenge'}
-                onToggle={() => toggleDropdown('challenge')}
-              >
+              {/* Challenge Type */}
+              <FilterDropdown label={t.challenge} count={filters.challengeTypes.length} colorClass="purple" isOpen={openDropdown === 'challenge'} onToggle={() => toggleDropdown('challenge')}>
                 <div className="flex flex-wrap gap-1.5">
                   {CHALLENGE_TYPE_OPTIONS.map(type => (
-                    <button 
-                      key={type} 
-                      onClick={() => setFilters(f => ({ 
-                        ...f, 
-                        challengeTypes: f.challengeTypes.includes(type) ? f.challengeTypes.filter(t => t !== type) : [...f.challengeTypes, type] 
-                      }))} 
-                      className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.challengeTypes.includes(type) ? 'bg-purple-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}
-                    >
-                      {type}
-                      {filters.challengeTypes.includes(type) && <Check className="w-3 h-3" />}
+                    <button key={type} onClick={() => setFilters(f => ({ ...f, challengeTypes: f.challengeTypes.includes(type) ? f.challengeTypes.filter(t => t !== type) : [...f.challengeTypes, type] }))} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.challengeTypes.includes(type) ? 'bg-purple-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
+                      {type}{filters.challengeTypes.includes(type) && <Check className="w-3 h-3" />}
                     </button>
                   ))}
                 </div>
               </FilterDropdown>
               
-              {/* Trading Style Dropdown */}
-              <FilterDropdown 
-                label={t.style} 
-                count={filters.tradingStyles.length}
-                isOpen={openDropdown === 'style'}
-                onToggle={() => toggleDropdown('style')}
-              >
+              {/* Trading Style */}
+              <FilterDropdown label={t.style} count={filters.tradingStyles.length} isOpen={openDropdown === 'style'} onToggle={() => toggleDropdown('style')}>
                 <div className="flex flex-wrap gap-1.5">
                   {TRADING_STYLE_OPTIONS.map(style => (
-                    <button 
-                      key={style.key} 
-                      onClick={() => setFilters(f => ({ 
-                        ...f, 
-                        tradingStyles: f.tradingStyles.includes(style.key) ? f.tradingStyles.filter(s => s !== style.key) : [...f.tradingStyles, style.key] 
-                      }))} 
-                      className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.tradingStyles.includes(style.key) ? 'bg-emerald-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}
-                    >
-                      {style.label}
-                      {filters.tradingStyles.includes(style.key) && <Check className="w-3 h-3" />}
+                    <button key={style.key} onClick={() => setFilters(f => ({ ...f, tradingStyles: f.tradingStyles.includes(style.key) ? f.tradingStyles.filter(s => s !== style.key) : [...f.tradingStyles, style.key] }))} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.tradingStyles.includes(style.key) ? 'bg-emerald-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
+                      {style.label}{filters.tradingStyles.includes(style.key) && <Check className="w-3 h-3" />}
                     </button>
                   ))}
                 </div>
               </FilterDropdown>
               
-              {/* Rating Dropdown */}
-              <FilterDropdown 
-                label={t.rating} 
-                count={filters.ratings.length} 
-                colorClass="yellow"
-                isOpen={openDropdown === 'rating'}
-                onToggle={() => toggleDropdown('rating')}
-              >
+              {/* Rating */}
+              <FilterDropdown label={t.rating} count={filters.ratings.length} colorClass="yellow" isOpen={openDropdown === 'rating'} onToggle={() => toggleDropdown('rating')}>
                 <div className="flex flex-wrap gap-1.5">
                   {RATING_OPTIONS.map(rating => (
-                    <button 
-                      key={rating} 
-                      onClick={() => setFilters(f => ({ 
-                        ...f, 
-                        ratings: f.ratings.includes(rating) ? f.ratings.filter(r => r !== rating) : [...f.ratings, rating] 
-                      }))} 
-                      className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.ratings.includes(rating) ? 'bg-yellow-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}
-                    >
-                      <Star className="w-3 h-3" />{rating}+
-                      {filters.ratings.includes(rating) && <Check className="w-3 h-3" />}
+                    <button key={rating} onClick={() => setFilters(f => ({ ...f, ratings: f.ratings.includes(rating) ? f.ratings.filter(r => r !== rating) : [...f.ratings, rating] }))} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.ratings.includes(rating) ? 'bg-yellow-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
+                      <Star className="w-3 h-3" />{rating}+{filters.ratings.includes(rating) && <Check className="w-3 h-3" />}
                     </button>
                   ))}
                 </div>
               </FilterDropdown>
               
-              {/* Best For Dropdown */}
-              <FilterDropdown 
-                label={t.bestFor} 
-                count={filters.bestFor.length} 
-                colorClass="blue"
-                isOpen={openDropdown === 'bestFor'}
-                onToggle={() => toggleDropdown('bestFor')}
-              >
+              {/* Best For */}
+              <FilterDropdown label={t.bestFor} count={filters.bestFor.length} colorClass="blue" isOpen={openDropdown === 'bestFor'} onToggle={() => toggleDropdown('bestFor')}>
                 <div className="flex flex-wrap gap-1.5">
                   {BEST_FOR_OPTIONS.map(opt => {
                     const Icon = opt.icon
                     return (
-                      <button 
-                        key={opt.key} 
-                        onClick={() => setFilters(f => ({ 
-                          ...f, 
-                          bestFor: f.bestFor.includes(opt.key) ? f.bestFor.filter(b => b !== opt.key) : [...f.bestFor, opt.key] 
-                        }))} 
-                        className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.bestFor.includes(opt.key) ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}
-                      >
-                        <Icon className="w-3 h-3" />{opt.label}
-                        {filters.bestFor.includes(opt.key) && <Check className="w-3 h-3" />}
+                      <button key={opt.key} onClick={() => setFilters(f => ({ ...f, bestFor: f.bestFor.includes(opt.key) ? f.bestFor.filter(b => b !== opt.key) : [...f.bestFor, opt.key] }))} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.bestFor.includes(opt.key) ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
+                        <Icon className="w-3 h-3" />{opt.label}{filters.bestFor.includes(opt.key) && <Check className="w-3 h-3" />}
                       </button>
                     )
                   })}
                 </div>
               </FilterDropdown>
               
-              {/* Price Dropdown */}
-              <FilterDropdown 
-                label={filters.priceRange[1] < 1000 ? `≤$${filters.priceRange[1]}` : 'Price'} 
-                count={filters.priceRange[1] < 1000 ? 1 : 0}
-                isOpen={openDropdown === 'price'}
-                onToggle={() => toggleDropdown('price')}
-              >
+              {/* Price */}
+              <FilterDropdown label={filters.priceRange[1] < 1000 ? `≤$${filters.priceRange[1]}` : 'Price'} count={filters.priceRange[1] < 1000 ? 1 : 0} isOpen={openDropdown === 'price'} onToggle={() => toggleDropdown('price')}>
                 <div className="w-[220px]">
                   <PriceSlider value={filters.priceRange} onChange={(v) => setFilters(f => ({ ...f, priceRange: v }))} />
                 </div>
               </FilterDropdown>
               
-              {/* Deals Toggle */}
+              {/* Deals */}
               {stats.withDiscounts > 0 && (
-                <button 
-                  onClick={() => setFilters(f => ({ ...f, hasDiscount: !f.hasDiscount }))} 
-                  aria-pressed={filters.hasDiscount}
-                  aria-label={`Filter by deals only. ${stats.withDiscounts} firms with discounts`}
-                  className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.hasDiscount ? 'bg-orange-500 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}
-                >
+                <button onClick={() => setFilters(f => ({ ...f, hasDiscount: !f.hasDiscount }))} aria-pressed={filters.hasDiscount} aria-label={`Filter by deals only. ${stats.withDiscounts} firms with discounts`} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.hasDiscount ? 'bg-orange-500 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}>
                   <Tag className="w-3 h-3" /> Deals ({stats.withDiscounts})
                 </button>
               )}
               
               {/* Sort */}
-              <select 
-                value={sortBy} 
-                onChange={(e) => setSortBy(e.target.value)} 
-                aria-label="Sort firms by"
-                className="px-2.5 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-gray-400 text-xs focus:outline-none focus:border-emerald-500"
-              >
+              <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} aria-label="Sort firms by" className="px-2.5 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-gray-400 text-xs focus:outline-none focus:border-emerald-500">
                 {SORT_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
               </select>
               
               {/* Reset */}
               {activeFilterChips.length > 0 && (
-                <button 
-                  onClick={resetFilters} 
-                  aria-label="Reset all filters"
-                  className="px-2.5 py-1.5 rounded-lg text-xs font-medium text-gray-500 hover:text-red-400 hover:bg-gray-800 flex items-center gap-1"
-                >
+                <button onClick={resetFilters} aria-label="Reset all filters" className="px-2.5 py-1.5 rounded-lg text-xs font-medium text-gray-500 hover:text-red-400 hover:bg-gray-800 flex items-center gap-1">
                   <RotateCcw className="w-3 h-3" /> Reset
                 </button>
               )}
             </div>
             
-            {/* Active Filter Chips (compact) */}
+            {/* Active Filter Chips */}
             {activeFilterChips.length > 0 && (
               <div className="flex flex-wrap items-center gap-1.5">
                 {activeFilterChips.map(chip => <FilterChip key={chip.key} label={chip.label} onRemove={chip.onRemove} />)}
@@ -1576,7 +1662,6 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
       {/* MAIN CONTENT */}
       <section className="px-4 pt-6">
         <div className="max-w-7xl mx-auto">
-          {/* Results Count */}
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm text-gray-400">
               {t.showing} <span className="text-white font-medium">{filteredFirms.length}</span> {t.propFirms}
@@ -1586,22 +1671,25 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
             )}
           </div>
           
-          {/* FIRMS GRID/LIST */}
           {paginatedFirms.length > 0 ? (
             <>
               <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4' : 'space-y-3'}>
                 {paginatedFirms.map((firm, i) => (
-                  <PropFirmCard 
-                    key={firm.id} 
-                    firm={firm} 
-                    isCompact={viewMode === 'list'} 
-                    rank={(currentPage - 1) * itemsPerPage + i + 1} 
-                    markets={firmMarkets.get(firm.id) || ['Forex']} 
-                    isFavorite={favorites.includes(firm.id)} 
-                    onFavorite={() => toggleFavorite(firm.id)} 
-                    isComparing={compareList.includes(firm.id)} 
-                    onCompare={() => toggleCompare(firm.id)} 
-                    onCopyCode={handleCopyCode} 
+                  <PropFirmCard
+                    key={firm.id}
+                    firm={firm}
+                    isCompact={viewMode === 'list'}
+                    rank={(currentPage - 1) * itemsPerPage + i + 1}
+                    markets={firmMarkets.get(firm.id) || ['Forex']}
+                    isFavorite={favorites.includes(firm.id)}
+                    onFavorite={() => toggleFavorite(firm.id)}
+                    isComparing={compareList.includes(firm.id)}
+                    onCompare={() => toggleCompare(firm.id)}
+                    onCopyCode={handleCopyCode}
+                    communityRating={reviewAggregates.get(firm.id) || null}
+                    onRate={() => setReviewModalFirmId(firm.id)}
+                    hasReviewed={userReviewedFirms.has(firm.id)}
+                    t={t}
                   />
                 ))}
               </div>
@@ -1609,15 +1697,9 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
               {/* PAGINATION */}
               {totalPages > 1 && (
                 <nav aria-label="Pagination" className="flex items-center justify-center gap-2 mt-8">
-                  <button 
-                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))} 
-                    disabled={currentPage === 1}
-                    aria-label="Previous page"
-                    className="p-2 rounded-lg bg-gray-800 text-gray-400 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
+                  <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} aria-label="Previous page" className="p-2 rounded-lg bg-gray-800 text-gray-400 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
                     <ChevronLeft className="w-4 h-4" />
                   </button>
-                  
                   <div className="flex gap-1">
                     {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                       let page: number
@@ -1625,27 +1707,14 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
                       else if (currentPage <= 3) page = i + 1
                       else if (currentPage >= totalPages - 2) page = totalPages - 4 + i
                       else page = currentPage - 2 + i
-                      
                       return (
-                        <button
-                          key={page}
-                          onClick={() => setCurrentPage(page)}
-                          aria-label={`Page ${page}`}
-                          aria-current={currentPage === page ? 'page' : undefined}
-                          className={`w-8 h-8 rounded-lg text-sm font-medium ${currentPage === page ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}
-                        >
+                        <button key={page} onClick={() => setCurrentPage(page)} aria-label={`Page ${page}`} aria-current={currentPage === page ? 'page' : undefined} className={`w-8 h-8 rounded-lg text-sm font-medium ${currentPage === page ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}>
                           {page}
                         </button>
                       )
                     })}
                   </div>
-                  
-                  <button 
-                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} 
-                    disabled={currentPage === totalPages}
-                    aria-label="Next page"
-                    className="p-2 rounded-lg bg-gray-800 text-gray-400 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
+                  <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} aria-label="Next page" className="p-2 rounded-lg bg-gray-800 text-gray-400 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
                     <ChevronRight className="w-4 h-4" />
                   </button>
                 </nav>
