@@ -123,6 +123,9 @@ const translations: Record<Locale, Record<string, string>> = {
     finalCtaSubtitle: 'Stop guessing. Compare all prop firms in one place and find your perfect match.',
     startComparing: 'Start Comparing',
     downloadGuide: 'Download Free Guide',
+    quizTitle: 'Still Undecided? We Can Help.',
+    quizSubtitle: 'Answer 4 quick questions — experience, style, budget, goals — and get your personalized top 3 prop firm matches.',
+    quizCta: 'Find My Perfect Match',
   },
   fr: {
     badge: 'Mis a jour janvier 2026',
@@ -183,6 +186,9 @@ const translations: Record<Locale, Record<string, string>> = {
     finalCtaSubtitle: 'Arretez de deviner. Comparez toutes les prop firms en un seul endroit.',
     startComparing: 'Commencer a Comparer',
     downloadGuide: 'Telecharger le Guide Gratuit',
+    quizTitle: 'Encore indecis ? On peut vous aider.',
+    quizSubtitle: 'Repondez a 4 questions rapides et obtenez vos 3 meilleures prop firms personnalisees.',
+    quizCta: 'Trouver ma Prop Firm',
   },
   de: {
     badge: 'Aktualisiert Januar 2026',
@@ -243,6 +249,9 @@ const translations: Record<Locale, Record<string, string>> = {
     finalCtaSubtitle: 'Horen Sie auf zu raten. Vergleichen Sie alle Prop Firms an einem Ort.',
     startComparing: 'Vergleich Starten',
     downloadGuide: 'Kostenlosen Guide Herunterladen',
+    quizTitle: 'Noch unentschlossen? Wir helfen.',
+    quizSubtitle: 'Beantworte 4 Fragen und erhalte deine personalisierten Top 3 Prop Firm Empfehlungen.',
+    quizCta: 'Meine Firma finden',
   },
   es: {
     badge: 'Actualizado enero 2026',
@@ -303,6 +312,9 @@ const translations: Record<Locale, Record<string, string>> = {
     finalCtaSubtitle: 'Deja de adivinar. Compara todas las prop firms en un solo lugar.',
     startComparing: 'Empezar a Comparar',
     downloadGuide: 'Descargar Guia Gratis',
+    quizTitle: '¿Aun indeciso? Te ayudamos.',
+    quizSubtitle: 'Responde 4 preguntas rapidas y obtén tus 3 mejores matches de prop firms.',
+    quizCta: 'Encontrar mi Prop Firm',
   },
   pt: {
     badge: 'Atualizado janeiro 2026',
@@ -363,6 +375,9 @@ const translations: Record<Locale, Record<string, string>> = {
     finalCtaSubtitle: 'Pare de adivinhar. Compare todas as prop firms em um so lugar.',
     startComparing: 'Comecar a Comparar',
     downloadGuide: 'Baixar Guia Gratis',
+    quizTitle: 'Ainda indeciso? Podemos ajudar.',
+    quizSubtitle: 'Responda 4 perguntas rapidas e obtenha seus 3 melhores matches de prop firms.',
+    quizCta: 'Encontrar minha Prop Firm',
   },
   ar: {
     badge: 'محدث يناير 2026',
@@ -423,6 +438,9 @@ const translations: Record<Locale, Record<string, string>> = {
     finalCtaSubtitle: 'توقف عن التخمين. قارن جميع شركات Prop في مكان واحد.',
     startComparing: 'ابدا المقارنة',
     downloadGuide: 'تحميل الدليل المجاني',
+    quizTitle: 'لا تزال غير متاكد؟ نستطيع المساعدة.',
+    quizSubtitle: 'اجب على 4 اسئلة سريعة واحصل على افضل 3 شركات Prop تناسبك.',
+    quizCta: 'ابحث عن شركتي المثالية',
   },
   hi: {
     badge: 'जनवरी 2026 अपडेट',
@@ -483,6 +501,9 @@ const translations: Record<Locale, Record<string, string>> = {
     finalCtaSubtitle: 'अनुमान लगाना बंद करें। सभी prop firms को एक जगह तुलना करें।',
     startComparing: 'तुलना शुरू करें',
     downloadGuide: 'मुफ्त गाइड डाउनलोड करें',
+    quizTitle: 'अभी भी अनिश्चित? हम मदद कर सकते हैं।',
+    quizSubtitle: '4 त्वरित प्रश्नों के उत्तर दें और अपनी व्यक्तिगत टॉप 3 prop firm matches पाएं।',
+    quizCta: 'मेरी परफेक्ट Prop Firm खोजें',
   },
 };
 
@@ -888,6 +909,44 @@ export default function HomeContent() {
                 <ArrowRight className="w-4 h-4 text-gray-600 group-hover:text-emerald-400 transition-colors" />
               </Link>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ========== QUIZ CTA ========== */}
+      <section className="py-16 px-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="relative bg-gradient-to-br from-gray-900 via-gray-900 to-emerald-950/30 border border-emerald-500/20 rounded-2xl p-8 sm:p-12 overflow-hidden text-center">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent pointer-events-none" />
+            <div className="absolute -top-24 -right-24 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="relative z-10">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-400 text-xs font-medium mb-6">
+                <Sparkles className="w-3.5 h-3.5" />
+                Personalized &bull; Free &bull; No signup
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">{t.quizTitle}</h2>
+              <p className="text-gray-400 text-base sm:text-lg mb-8 max-w-xl mx-auto">{t.quizSubtitle}</p>
+              <div className="flex items-center justify-center gap-8 mb-8">
+                {[
+                  { value: '36', label: 'firms scanned' },
+                  { value: '4', label: 'questions' },
+                  { value: '~60s', label: 'time needed' },
+                ].map(s => (
+                  <div key={s.label} className="text-center">
+                    <p className="text-2xl font-bold text-white">{s.value}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{s.label}</p>
+                  </div>
+                ))}
+              </div>
+              <Link
+                href="/quiz"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-base rounded-xl transition-all shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:-translate-y-0.5"
+              >
+                {t.quizCta}
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+              <p className="text-gray-600 text-xs mt-4">No account required</p>
+            </div>
           </div>
         </div>
       </section>
