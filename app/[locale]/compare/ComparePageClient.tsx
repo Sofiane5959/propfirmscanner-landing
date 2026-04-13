@@ -80,6 +80,21 @@ const translations: Record<Locale, Record<string, string>> = {
     signInToReview: 'Sign in to leave a review',
     thankYouReview: 'Thank you!',
     thankYouSub: 'Your review helps the community.',
+    // Payout Proofs
+    submitPayout: 'Submit Payout Proof',
+    payoutAmount: 'Payout amount',
+    payoutCurrency: 'Currency',
+    payoutDate: 'Payout date',
+    payoutScreenshot: 'Screenshot (optional)',
+    payoutScreenshotHint: 'Upload a proof screenshot',
+    submitPayoutBtn: 'Submit Proof',
+    payoutSubmitted: '💰 Payout proof submitted!',
+    signInToPayout: 'Sign in to submit a payout',
+    thankYouPayout: 'Proof submitted!',
+    thankYouPayoutSub: 'Thank you for helping the community.',
+    payoutBadge: 'payouts',
+    removeScreenshot: 'Remove',
+    payoutAmountPlaceholder: 'e.g. 1500',
   },
   fr: {
     pageTitle: 'Comparer les Prop Firms',
@@ -139,6 +154,20 @@ const translations: Record<Locale, Record<string, string>> = {
     signInToReview: 'Connectez-vous pour noter',
     thankYouReview: 'Merci !',
     thankYouSub: 'Votre avis aide la communaute.',
+    submitPayout: 'Soumettre une preuve de paiement',
+    payoutAmount: 'Montant du paiement',
+    payoutCurrency: 'Devise',
+    payoutDate: 'Date du paiement',
+    payoutScreenshot: 'Capture d\'ecran (optionnel)',
+    payoutScreenshotHint: 'Deposez une preuve en image',
+    submitPayoutBtn: 'Soumettre la preuve',
+    payoutSubmitted: '💰 Preuve soumise !',
+    signInToPayout: 'Connectez-vous pour soumettre',
+    thankYouPayout: 'Preuve soumise !',
+    thankYouPayoutSub: 'Merci pour votre contribution.',
+    payoutBadge: 'paiements',
+    removeScreenshot: 'Supprimer',
+    payoutAmountPlaceholder: 'ex. 1500',
   },
   de: {
     pageTitle: 'Prop Firms Vergleichen',
@@ -198,6 +227,20 @@ const translations: Record<Locale, Record<string, string>> = {
     signInToReview: 'Anmelden um zu bewerten',
     thankYouReview: 'Danke!',
     thankYouSub: 'Deine Bewertung hilft der Community.',
+    submitPayout: 'Auszahlungsnachweis einreichen',
+    payoutAmount: 'Auszahlungsbetrag',
+    payoutCurrency: 'Wahrung',
+    payoutDate: 'Auszahlungsdatum',
+    payoutScreenshot: 'Screenshot (optional)',
+    payoutScreenshotHint: 'Screenshot hochladen',
+    submitPayoutBtn: 'Nachweis einreichen',
+    payoutSubmitted: '💰 Nachweis eingereicht!',
+    signInToPayout: 'Anmelden um einzureichen',
+    thankYouPayout: 'Nachweis eingereicht!',
+    thankYouPayoutSub: 'Danke fur deinen Beitrag.',
+    payoutBadge: 'Auszahlungen',
+    removeScreenshot: 'Entfernen',
+    payoutAmountPlaceholder: 'z.B. 1500',
   },
   es: {
     pageTitle: 'Comparar Prop Firms',
@@ -257,6 +300,20 @@ const translations: Record<Locale, Record<string, string>> = {
     signInToReview: 'Inicia sesion para valorar',
     thankYouReview: 'Gracias!',
     thankYouSub: 'Tu valoracion ayuda a la comunidad.',
+    submitPayout: 'Enviar prueba de pago',
+    payoutAmount: 'Monto del pago',
+    payoutCurrency: 'Moneda',
+    payoutDate: 'Fecha de pago',
+    payoutScreenshot: 'Captura de pantalla (opcional)',
+    payoutScreenshotHint: 'Sube una captura como prueba',
+    submitPayoutBtn: 'Enviar prueba',
+    payoutSubmitted: '💰 Prueba enviada!',
+    signInToPayout: 'Inicia sesion para enviar',
+    thankYouPayout: 'Prueba enviada!',
+    thankYouPayoutSub: 'Gracias por ayudar a la comunidad.',
+    payoutBadge: 'pagos',
+    removeScreenshot: 'Eliminar',
+    payoutAmountPlaceholder: 'ej. 1500',
   },
   pt: {
     pageTitle: 'Comparar Prop Firms',
@@ -316,6 +373,20 @@ const translations: Record<Locale, Record<string, string>> = {
     signInToReview: 'Faca login para avaliar',
     thankYouReview: 'Obrigado!',
     thankYouSub: 'Sua avaliacao ajuda a comunidade.',
+    submitPayout: 'Enviar prova de pagamento',
+    payoutAmount: 'Valor do pagamento',
+    payoutCurrency: 'Moeda',
+    payoutDate: 'Data do pagamento',
+    payoutScreenshot: 'Captura de tela (opcional)',
+    payoutScreenshotHint: 'Envie uma prova em imagem',
+    submitPayoutBtn: 'Enviar prova',
+    payoutSubmitted: '💰 Prova enviada!',
+    signInToPayout: 'Faca login para enviar',
+    thankYouPayout: 'Prova enviada!',
+    thankYouPayoutSub: 'Obrigado por ajudar a comunidade.',
+    payoutBadge: 'pagamentos',
+    removeScreenshot: 'Remover',
+    payoutAmountPlaceholder: 'ex. 1500',
   },
   ar: {
     pageTitle: 'مقارنة شركات Prop',
@@ -375,6 +446,20 @@ const translations: Record<Locale, Record<string, string>> = {
     signInToReview: 'سجل الدخول للتقييم',
     thankYouReview: 'شكرا!',
     thankYouSub: 'تقييمك يساعد المجتمع.',
+    submitPayout: 'ارسال اثبات الدفع',
+    payoutAmount: 'مبلغ الدفع',
+    payoutCurrency: 'العملة',
+    payoutDate: 'تاريخ الدفع',
+    payoutScreenshot: 'لقطة شاشة (اختياري)',
+    payoutScreenshotHint: 'ارفع صورة كاثبات',
+    submitPayoutBtn: 'ارسال الاثبات',
+    payoutSubmitted: '💰 تم ارسال الاثبات!',
+    signInToPayout: 'سجل الدخول للارسال',
+    thankYouPayout: 'تم الارسال!',
+    thankYouPayoutSub: 'شكرا لمساعدة المجتمع.',
+    payoutBadge: 'دفعات',
+    removeScreenshot: 'حذف',
+    payoutAmountPlaceholder: 'مثال 1500',
   },
   hi: {
     pageTitle: 'Prop Firms की तुलना करें',
@@ -434,6 +519,20 @@ const translations: Record<Locale, Record<string, string>> = {
     signInToReview: 'रेट करने के लिए साइन इन करें',
     thankYouReview: 'धन्यवाद!',
     thankYouSub: 'आपका रिव्यू कम्युनिटी की मदद करता है।',
+    submitPayout: 'पेआउट प्रूफ सबमिट करें',
+    payoutAmount: 'पेआउट राशि',
+    payoutCurrency: 'मुद्रा',
+    payoutDate: 'पेआउट तिथि',
+    payoutScreenshot: 'स्क्रीनशॉट (वैकल्पिक)',
+    payoutScreenshotHint: 'प्रूफ स्क्रीनशॉट अपलोड करें',
+    submitPayoutBtn: 'प्रूफ सबमिट करें',
+    payoutSubmitted: '💰 प्रूफ सबमिट हो गया!',
+    signInToPayout: 'सबमिट करने के लिए साइन इन करें',
+    thankYouPayout: 'प्रूफ सबमिट!',
+    thankYouPayoutSub: 'कम्युनिटी की मदद के लिए धन्यवाद।',
+    payoutBadge: 'पेआउट',
+    removeScreenshot: 'हटाएं',
+    payoutAmountPlaceholder: 'जैसे 1500',
   },
 };
 
@@ -443,7 +542,8 @@ import {
   BarChart3, Tag, Trophy, BadgeCheck, Copy, CheckCircle2,
   ChevronLeft, ChevronRight, RotateCcw,
   Heart, GitCompare, Zap, TrendingUp,
-  DollarSign, Users, Flame, MessageSquare
+  DollarSign, Users, Flame, MessageSquare,
+  Banknote, Upload, ImageIcon
 } from 'lucide-react'
 import { PriceAlertButton } from '@/components/PriceAlert'
 
@@ -495,6 +595,11 @@ interface PropFirm {
 interface ReviewAggregate {
   avg: number
   count: number
+}
+
+interface PayoutAggregate {
+  count: number
+  totalAmount: number
 }
 
 interface ComparePageClientProps {
@@ -561,6 +666,8 @@ const CANONICAL_FIRMS: Record<string, { canonical: string; aliases: string[] }> 
 const TRADING_STYLES_REVIEW = ['Scalping', 'Day Trading', 'Swing', 'News Trading', 'EAs/Bots']
 
 const RATING_LABELS = ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent']
+
+const PAYOUT_CURRENCIES = ['USD', 'EUR', 'GBP', 'AUD', 'CAD', 'CHF', 'JPY'] as const
 
 // =====================================================
 // HOOKS
@@ -841,7 +948,6 @@ const ReviewModal = ({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
 
-  // Close on backdrop click
   const handleBackdrop = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) onClose()
   }
@@ -871,7 +977,6 @@ const ReviewModal = ({
           </div>
         ) : (
           <>
-            {/* Header */}
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center p-1 flex-shrink-0">
@@ -890,7 +995,6 @@ const ReviewModal = ({
               </button>
             </div>
 
-            {/* Star selector */}
             <div className="mb-5">
               <p className="text-sm text-gray-400 mb-2">{t.yourRating} *</p>
               <div className="flex gap-2 mb-1">
@@ -912,7 +1016,6 @@ const ReviewModal = ({
               )}
             </div>
 
-            {/* Trading style */}
             <div className="mb-4">
               <p className="text-sm text-gray-400 mb-2">{t.tradingStyleUsed}</p>
               <div className="flex flex-wrap gap-2">
@@ -932,7 +1035,6 @@ const ReviewModal = ({
               </div>
             </div>
 
-            {/* Comment */}
             <div className="mb-5">
               <p className="text-sm text-gray-400 mb-2">Your experience <span className="text-gray-600">(optional)</span></p>
               <textarea
@@ -946,7 +1048,6 @@ const ReviewModal = ({
               <p className="text-[10px] text-gray-600 text-right mt-0.5">{comment.length}/500</p>
             </div>
 
-            {/* Submit */}
             <button
               onClick={handleSubmit}
               disabled={rating === 0 || isSubmitting}
@@ -968,6 +1069,187 @@ const ReviewModal = ({
 }
 
 // =====================================================
+// PAYOUT PROOF MODAL
+// =====================================================
+const PayoutProofModal = ({
+  firm,
+  t,
+  onClose,
+  onSubmit,
+}: {
+  firm: PropFirm
+  t: Record<string, string>
+  onClose: () => void
+  onSubmit: (firmId: string, amount: number, currency: string, date: string, file: File | null) => Promise<void>
+}) => {
+  const [amount, setAmount] = useState('')
+  const [currency, setCurrency] = useState('USD')
+  const [date, setDate] = useState('')
+  const [file, setFile] = useState<File | null>(null)
+  const [preview, setPreview] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleBackdrop = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) onClose()
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = e.target.files?.[0] || null
+    if (!selected) return
+    setFile(selected)
+    const reader = new FileReader()
+    reader.onloadend = () => setPreview(reader.result as string)
+    reader.readAsDataURL(selected)
+  }
+
+  const handleRemoveFile = () => {
+    setFile(null)
+    setPreview(null)
+    if (fileInputRef.current) fileInputRef.current.value = ''
+  }
+
+  const handleSubmit = async () => {
+    const parsedAmount = parseFloat(amount)
+    if (!amount || isNaN(parsedAmount) || parsedAmount <= 0) return
+    setIsSubmitting(true)
+    await onSubmit(firm.id, parsedAmount, currency, date, file)
+    setSubmitted(true)
+    setIsSubmitting(false)
+    setTimeout(onClose, 2400)
+  }
+
+  return (
+    <div
+      className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      onClick={handleBackdrop}
+    >
+      <div className="bg-gray-900 border border-gray-700 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+        {submitted ? (
+          <div className="text-center py-8">
+            <div className="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
+              <Banknote className="w-8 h-8 text-emerald-400" />
+            </div>
+            <h3 className="text-white font-bold text-xl mb-1">{t.thankYouPayout}</h3>
+            <p className="text-gray-400 text-sm">{t.thankYouPayoutSub}</p>
+          </div>
+        ) : (
+          <>
+            {/* Header */}
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center p-1 flex-shrink-0">
+                  {firm.logo_url
+                    ? <Image src={firm.logo_url} alt={firm.name} width={40} height={40} className="object-contain" />
+                    : <span className="font-bold text-emerald-600 text-lg">{firm.name[0]}</span>
+                  }
+                </div>
+                <div>
+                  <h3 className="text-white font-bold text-base">{firm.name}</h3>
+                  <p className="text-gray-400 text-xs">{t.submitPayout}</p>
+                </div>
+              </div>
+              <button onClick={onClose} aria-label="Close" className="text-gray-500 hover:text-white transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Amount + Currency */}
+            <div className="mb-4">
+              <p className="text-sm text-gray-400 mb-2">{t.payoutAmount} *</p>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={amount}
+                  onChange={e => setAmount(e.target.value)}
+                  placeholder={t.payoutAmountPlaceholder}
+                  className="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 transition-colors"
+                />
+                <select
+                  value={currency}
+                  onChange={e => setCurrency(e.target.value)}
+                  aria-label={t.payoutCurrency}
+                  className="w-24 bg-gray-800 border border-gray-700 rounded-xl px-2 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 transition-colors"
+                >
+                  {PAYOUT_CURRENCIES.map(c => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Date */}
+            <div className="mb-4">
+              <p className="text-sm text-gray-400 mb-2">{t.payoutDate} <span className="text-gray-600">(optional)</span></p>
+              <input
+                type="date"
+                value={date}
+                onChange={e => setDate(e.target.value)}
+                className="w-full bg-gray-800 border border-gray-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 transition-colors [color-scheme:dark]"
+              />
+            </div>
+
+            {/* Screenshot upload */}
+            <div className="mb-5">
+              <p className="text-sm text-gray-400 mb-2">{t.payoutScreenshot}</p>
+              {preview ? (
+                <div className="relative rounded-xl overflow-hidden border border-gray-700 bg-gray-800">
+                  <img src={preview} alt="Payout screenshot preview" className="w-full max-h-40 object-contain" />
+                  <button
+                    onClick={handleRemoveFile}
+                    className="absolute top-2 right-2 p-1.5 bg-gray-900/80 hover:bg-red-500/80 rounded-lg text-white transition-colors"
+                    aria-label="Remove screenshot"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                  <div className="absolute bottom-2 left-2 bg-gray-900/80 rounded-lg px-2 py-0.5">
+                    <p className="text-[10px] text-gray-300 truncate max-w-[200px]">{file?.name}</p>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-full border-2 border-dashed border-gray-700 hover:border-emerald-500/50 rounded-xl p-4 flex flex-col items-center gap-2 text-gray-500 hover:text-gray-300 transition-colors group"
+                >
+                  <ImageIcon className="w-7 h-7 group-hover:text-emerald-400 transition-colors" />
+                  <span className="text-xs">{t.payoutScreenshotHint}</span>
+                </button>
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="hidden"
+                aria-label="Upload screenshot"
+              />
+            </div>
+
+            {/* Submit */}
+            <button
+              onClick={handleSubmit}
+              disabled={!amount || parseFloat(amount) <= 0 || isNaN(parseFloat(amount)) || isSubmitting}
+              className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
+            >
+              {isSubmitting ? (
+                <span>{t.submitting}</span>
+              ) : (
+                <>
+                  <Banknote className="w-4 h-4" />
+                  <span>{t.submitPayoutBtn}</span>
+                </>
+              )}
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// =====================================================
 // PROP FIRM CARD
 // =====================================================
 const PropFirmCard = ({ 
@@ -978,6 +1260,8 @@ const PropFirmCard = ({
   communityRating,
   onRate,
   hasReviewed,
+  payoutAggregate,
+  onPayout,
   t,
 }: { 
   firm: PropFirm
@@ -992,6 +1276,8 @@ const PropFirmCard = ({
   communityRating: ReviewAggregate | null
   onRate: () => void
   hasReviewed: boolean
+  payoutAggregate: PayoutAggregate | null
+  onPayout: () => void
   t: Record<string, string>
 }) => {
   const hasDiscount = firm.discount_percent && firm.discount_percent > 0
@@ -1008,11 +1294,16 @@ const PropFirmCard = ({
               <h3 className="font-semibold text-white truncate text-sm">{firm.name}</h3>
               <TrustBadge status={firm.trust_status || 'verified'} />
             </div>
-            <div className="flex items-center gap-3 text-xs text-gray-400 mt-0.5">
+            <div className="flex items-center gap-3 text-xs text-gray-400 mt-0.5 flex-wrap">
               <span className="flex items-center gap-1"><Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />{firm.trustpilot_rating?.toFixed(1) || 'N/A'}</span>
               {communityRating && communityRating.count > 0 && (
                 <span className="flex items-center gap-1 text-purple-400">
                   <MessageSquare className="w-3 h-3" />{communityRating.avg.toFixed(1)} ({communityRating.count})
+                </span>
+              )}
+              {payoutAggregate && payoutAggregate.count > 0 && (
+                <span className="flex items-center gap-1 text-emerald-400">
+                  <Banknote className="w-3 h-3" />{payoutAggregate.count} {t.payoutBadge}
                 </span>
               )}
               <span>${firm.min_price || 'N/A'}</span>
@@ -1028,6 +1319,9 @@ const PropFirmCard = ({
             </button>
             <button onClick={onRate} aria-label={`Rate ${firm.name}`} title={hasReviewed ? 'Update your review' : 'Rate this firm'} className={`p-2 rounded-lg transition-all ${hasReviewed ? 'text-yellow-400 bg-yellow-500/20' : 'text-gray-500 hover:text-yellow-400 hover:bg-gray-700'}`}>
               <Star className={`w-4 h-4 ${hasReviewed ? 'fill-current' : ''}`} />
+            </button>
+            <button onClick={onPayout} aria-label={`Submit payout proof for ${firm.name}`} title="Submit payout proof" className="p-2 rounded-lg transition-all text-gray-500 hover:text-emerald-400 hover:bg-gray-700">
+              <Banknote className="w-4 h-4" />
             </button>
             <PriceAlertButton firmId={firm.id} firmName={firm.name} firmSlug={firm.slug} currentPrice={firm.min_price || 0} />
             <Link href={`/prop-firm/${firm.slug}`} className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-white text-xs font-medium rounded-lg">Details</Link>
@@ -1087,6 +1381,13 @@ const PropFirmCard = ({
                 <span className="text-gray-500 text-xs">{t.communityRating} ({communityRating.count})</span>
               </div>
             )}
+            {/* Payout badge */}
+            {payoutAggregate && payoutAggregate.count > 0 && (
+              <div className="flex items-center gap-1 mt-0.5">
+                <Banknote className="w-3 h-3 text-emerald-400" />
+                <span className="text-emerald-400 text-xs font-medium">{payoutAggregate.count} {t.payoutBadge}</span>
+              </div>
+            )}
           </div>
           <div className="flex gap-1 flex-shrink-0">
             <button onClick={onFavorite} aria-label={isFavorite ? `Remove ${firm.name} from favorites` : `Add ${firm.name} to favorites`} aria-pressed={isFavorite} className={`p-2 rounded-lg transition-all ${isFavorite ? 'text-red-400 bg-red-500/20' : 'text-gray-500 hover:text-red-400 hover:bg-gray-700'}`}>
@@ -1097,6 +1398,9 @@ const PropFirmCard = ({
             </button>
             <button onClick={onRate} aria-label={hasReviewed ? `Update review for ${firm.name}` : `Rate ${firm.name}`} title={hasReviewed ? 'Update your review' : t.writeReview} className={`p-2 rounded-lg transition-all ${hasReviewed ? 'text-yellow-400 bg-yellow-500/20' : 'text-gray-500 hover:text-yellow-400 hover:bg-gray-700'}`}>
               <Star className={`w-4 h-4 ${hasReviewed ? 'fill-current' : ''}`} />
+            </button>
+            <button onClick={onPayout} aria-label={`Submit payout proof for ${firm.name}`} title={t.submitPayout} className="p-2 rounded-lg transition-all text-gray-500 hover:text-emerald-400 hover:bg-gray-700">
+              <Banknote className="w-4 h-4" />
             </button>
             <PriceAlertButton firmId={firm.id} firmName={firm.name} firmSlug={firm.slug} currentPrice={firm.min_price || 0} />
           </div>
@@ -1236,11 +1540,15 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
   const [userReviewedFirms, setUserReviewedFirms] = useState<Set<string>>(new Set())
   const [reviewModalFirmId, setReviewModalFirmId] = useState<string | null>(null)
 
+  // Payout state
+  const [payoutAggregates, setPayoutAggregates] = useState<Map<string, PayoutAggregate>>(new Map())
+  const [payoutModalFirmId, setPayoutModalFirmId] = useState<string | null>(null)
+
   // Favorites — localStorage (optimistic UI) + Supabase sync
   const [favorites, setFavorites] = useLocalStorage<string[]>('pfs_favorites', [])
   const supabase = createClientComponentClient()
 
-  // On mount: load favorites + reviews from Supabase
+  // On mount: load favorites + reviews + payouts from Supabase
   useEffect(() => {
     const loadData = async () => {
       // Load favorites
@@ -1276,6 +1584,19 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
         const result = new Map<string, ReviewAggregate>()
         agg.forEach((val, key) => result.set(key, { avg: val.sum / val.count, count: val.count }))
         setReviewAggregates(result)
+      }
+      // Load payout aggregates (public, approved only)
+      const { data: payoutData } = await supabase
+        .from('payout_proofs')
+        .select('firm_id, amount')
+        .eq('status', 'approved')
+      if (payoutData && payoutData.length > 0) {
+        const pagg = new Map<string, { count: number; totalAmount: number }>()
+        payoutData.forEach((r: any) => {
+          const existing = pagg.get(r.firm_id) || { count: 0, totalAmount: 0 }
+          pagg.set(r.firm_id, { count: existing.count + 1, totalAmount: existing.totalAmount + Number(r.amount) })
+        })
+        setPayoutAggregates(pagg)
       }
     }
     loadData()
@@ -1349,7 +1670,6 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
         const alreadyReviewed = userReviewedFirms.has(firmId)
         if (existing) {
           if (alreadyReviewed) {
-            // Approximation: replace with new rating (can't know old rating without fetching)
             newMap.set(firmId, { avg: (existing.avg * existing.count - existing.avg + rating) / existing.count, count: existing.count })
           } else {
             const newCount = existing.count + 1
@@ -1367,6 +1687,57 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
       setToast({ message: 'Error submitting review', type: 'error' })
     }
   }, [supabase, t, userReviewedFirms])
+
+  // Submit a payout proof
+  const handleSubmitPayout = useCallback(async (
+    firmId: string,
+    amount: number,
+    currency: string,
+    date: string,
+    file: File | null
+  ) => {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      setToast({ message: t.signInToPayout, type: 'error' })
+      return
+    }
+    try {
+      let screenshotUrl: string | null = null
+      if (file) {
+        const fileExt = file.name.split('.').pop()
+        const fileName = `${user.id}/${firmId}/${Date.now()}.${fileExt}`
+        const { error: uploadError } = await supabase.storage
+          .from('payout-proofs')
+          .upload(fileName, file, { contentType: file.type })
+        if (!uploadError) {
+          const { data: urlData } = supabase.storage
+            .from('payout-proofs')
+            .getPublicUrl(fileName)
+          screenshotUrl = urlData.publicUrl
+        }
+      }
+      await supabase.from('payout_proofs').insert({
+        user_id: user.id,
+        firm_id: firmId,
+        amount,
+        currency,
+        screenshot_url: screenshotUrl,
+        payout_date: date || null,
+        status: 'approved',
+      })
+      // Optimistic update
+      setPayoutAggregates(prev => {
+        const newMap = new Map(prev)
+        const existing = newMap.get(firmId) || { count: 0, totalAmount: 0 }
+        newMap.set(firmId, { count: existing.count + 1, totalAmount: existing.totalAmount + amount })
+        return newMap
+      })
+      setToast({ message: t.payoutSubmitted, type: 'success' })
+    } catch (err) {
+      console.error('Failed to submit payout proof:', err)
+      setToast({ message: 'Error submitting payout proof', type: 'error' })
+    }
+  }, [supabase, t])
   
   // Sync filters to URL (debounced)
   useEffect(() => {
@@ -1484,6 +1855,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
   const compareFirms = useMemo(() => processedFirms.filter(f => compareList.includes(f.id)), [processedFirms, compareList])
 
   const reviewModalFirm = useMemo(() => reviewModalFirmId ? processedFirms.find(f => f.id === reviewModalFirmId) || null : null, [reviewModalFirmId, processedFirms])
+  const payoutModalFirm = useMemo(() => payoutModalFirmId ? processedFirms.find(f => f.id === payoutModalFirmId) || null : null, [payoutModalFirmId, processedFirms])
   
   const activeFilterChips = useMemo(() => {
     const chips: { key: string; label: string; onRemove: () => void }[] = []
@@ -1521,6 +1893,16 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
           onClose={() => setReviewModalFirmId(null)}
           onSubmit={handleSubmitReview}
           alreadyReviewed={userReviewedFirms.has(reviewModalFirm.id)}
+        />
+      )}
+
+      {/* PAYOUT PROOF MODAL */}
+      {payoutModalFirm && (
+        <PayoutProofModal
+          firm={payoutModalFirm}
+          t={t}
+          onClose={() => setPayoutModalFirmId(null)}
+          onSubmit={handleSubmitPayout}
         />
       )}
       
@@ -1689,6 +2071,8 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
                     communityRating={reviewAggregates.get(firm.id) || null}
                     onRate={() => setReviewModalFirmId(firm.id)}
                     hasReviewed={userReviewedFirms.has(firm.id)}
+                    payoutAggregate={payoutAggregates.get(firm.id) || null}
+                    onPayout={() => setPayoutModalFirmId(firm.id)}
                     t={t}
                   />
                 ))}
