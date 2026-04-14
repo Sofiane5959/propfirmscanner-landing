@@ -543,7 +543,7 @@ import {
   ChevronLeft, ChevronRight, RotateCcw,
   Heart, GitCompare, Zap, TrendingUp,
   DollarSign, Users, Flame, MessageSquare,
-  Banknote, Upload, ImageIcon
+  Banknote, Upload, ImageIcon, Sparkles
 } from 'lucide-react'
 import { PriceAlertButton } from '@/components/PriceAlert'
 
