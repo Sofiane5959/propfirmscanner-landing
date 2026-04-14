@@ -2041,6 +2041,34 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
         </div>
       </section>
       
+      {/* QUIZ BANNER */}
+      <div className="px-4 pt-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-emerald-950 via-gray-900 to-emerald-950 border border-emerald-500/25">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent" />
+            <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-3 px-5 py-3.5">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="w-4 h-4 text-emerald-400" />
+                </div>
+                <div>
+                  <p className="text-white font-semibold text-sm">Not sure where to start?</p>
+                  <p className="text-gray-400 text-xs">Answer 4 questions → get your personalized top 3 matches</p>
+                </div>
+              </div>
+              <Link
+                href="/en/quiz"
+                className="relative flex-shrink-0 inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-xs rounded-lg transition-all shadow-md shadow-emerald-500/25 whitespace-nowrap"
+              >
+                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-300 rounded-full animate-ping opacity-75" />
+                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full" />
+                Find my perfect firm →
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* MAIN CONTENT */}
       <section className="px-4 pt-6">
         <div className="max-w-7xl mx-auto">
@@ -2117,6 +2145,25 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
         </div>
       </section>
       
+      {/* STILL UNDECIDED */}
+      <section className="px-4 py-12">
+        <div className="max-w-7xl mx-auto">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900 via-gray-900 to-emerald-950/40 border border-emerald-500/20 text-center px-8 py-10">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent" />
+            <div className="relative z-10">
+              <p className="text-emerald-400 text-xs font-semibold uppercase tracking-widest mb-3">Still undecided?</p>
+              <h3 className="text-2xl sm:text-3xl font-bold text-white mb-3">Let us find your perfect match</h3>
+              <p className="text-gray-400 text-sm max-w-md mx-auto mb-7">Answer 4 quick questions about your experience, trading style, budget and goals — get your personalized top 3 prop firms in 60 seconds.</p>
+              <Link href="/en/quiz" className="inline-flex items-center gap-2 px-7 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-sm rounded-xl transition-all shadow-lg shadow-emerald-500/25 hover:-translate-y-0.5">
+                <Sparkles className="w-4 h-4" />
+                Find my perfect firm
+              </Link>
+              <p className="text-gray-600 text-xs mt-3">Free · No signup required</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* COMPARE BAR */}
       <CompareBar firms={compareFirms} onRemove={(id) => setCompareList(prev => prev.filter(f => f !== id))} onClear={() => setCompareList([])} />
     </div>
