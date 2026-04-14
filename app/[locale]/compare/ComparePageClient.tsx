@@ -1534,6 +1534,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
   const [compareList, setCompareList] = useState<string[]>([])
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
+  const [showQuizFloat, setShowQuizFloat] = useState(false)
   
   // Reviews state
   const [reviewAggregates, setReviewAggregates] = useState<Map<string, ReviewAggregate>>(new Map())
@@ -1849,6 +1850,13 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
   
   useEffect(() => { setCurrentPage(1) }, [filters, sortBy])
   useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }) }, [currentPage])
+
+  // Show floating quiz button after scrolling 400px
+  useEffect(() => {
+    const handleScroll = () => setShowQuizFloat(window.scrollY > 400)
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
   
   const paginatedFirms = useMemo(() => filteredFirms.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage), [filteredFirms, currentPage, itemsPerPage])
   const totalPages = Math.ceil(filteredFirms.length / itemsPerPage)
@@ -2044,21 +2052,25 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
       {/* QUIZ BANNER */}
       <div className="px-4 pt-4">
         <div className="max-w-7xl mx-auto">
-          <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-emerald-950 via-gray-900 to-emerald-950 border border-emerald-500/25">
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent" />
-            <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-3 px-5 py-3.5">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                  <Sparkles className="w-4 h-4 text-emerald-400" />
+          <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-emerald-950 via-gray-900 to-emerald-950 border border-emerald-500/30">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-400/60 to-transparent" />
+            <div className="absolute -left-10 top-1/2 -translate-y-1/2 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
+            <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4 px-5 py-4">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="w-5 h-5 text-emerald-400" />
                 </div>
                 <div>
-                  <p className="text-white font-semibold text-sm">Not sure where to start?</p>
-                  <p className="text-gray-400 text-xs">Answer 4 questions → get your personalized top 3 matches</p>
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <p className="text-white font-bold text-sm">Not sure which firm to pick?</p>
+                    <span className="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-400 text-[10px] font-bold rounded border border-emerald-500/30">FREE</span>
+                  </div>
+                  <p className="text-gray-400 text-xs">Answer 4 questions and get your personalized top 3 matches from {processedFirms.length} verified firms</p>
                 </div>
               </div>
               <Link
                 href="/en/quiz"
-                className="relative flex-shrink-0 inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-xs rounded-lg transition-all shadow-md shadow-emerald-500/25 whitespace-nowrap"
+                className="relative flex-shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-sm rounded-xl transition-all shadow-lg shadow-emerald-500/30 hover:-translate-y-0.5 whitespace-nowrap"
               >
                 <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-300 rounded-full animate-ping opacity-75" />
                 <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full" />
@@ -2146,23 +2158,61 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
       </section>
       
       {/* STILL UNDECIDED */}
-      <section className="px-4 py-12">
+      <section className="px-4 py-10">
         <div className="max-w-7xl mx-auto">
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900 via-gray-900 to-emerald-950/40 border border-emerald-500/20 text-center px-8 py-10">
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent" />
+          <div className="relative overflow-hidden rounded-2xl border border-emerald-500/30 text-center px-8 py-10"
+            style={{background: 'linear-gradient(135deg, #052e16 0%, #111827 40%, #111827 60%, #052e16 100%)'}}>
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(16,185,129,0.12)_0%,_transparent_70%)] pointer-events-none" />
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-400/50 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-400/20 to-transparent" />
             <div className="relative z-10">
-              <p className="text-emerald-400 text-xs font-semibold uppercase tracking-widest mb-3">Still undecided?</p>
-              <h3 className="text-2xl sm:text-3xl font-bold text-white mb-3">Let us find your perfect match</h3>
-              <p className="text-gray-400 text-sm max-w-md mx-auto mb-7">Answer 4 quick questions about your experience, trading style, budget and goals — get your personalized top 3 prop firms in 60 seconds.</p>
-              <Link href="/en/quiz" className="inline-flex items-center gap-2 px-7 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-sm rounded-xl transition-all shadow-lg shadow-emerald-500/25 hover:-translate-y-0.5">
-                <Sparkles className="w-4 h-4" />
-                Find my perfect firm
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-500/15 border border-emerald-500/30 rounded-full text-emerald-400 text-xs font-semibold mb-5">
+                <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
+                Personalized matching — free
+              </div>
+              <h3 className="text-2xl sm:text-3xl font-bold text-white mb-3">
+                Still undecided? <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-300">We can help.</span>
+              </h3>
+              <p className="text-gray-400 text-sm max-w-lg mx-auto mb-8">
+                You've browsed the firms — now let us narrow it down for you. Answer 4 quick questions and get your personal top 3 matches in under 60 seconds.
+              </p>
+              <div className="flex items-center justify-center gap-8 mb-8">
+                {([['🧠', 'Experience'], ['⚡', 'Trading Style'], ['💵', 'Budget'], ['🏆', 'Priority']] as [string, string][]).map(([emoji, label]) => (
+                  <div key={label} className="text-center">
+                    <p className="text-2xl mb-1">{emoji}</p>
+                    <p className="text-[10px] text-gray-500 font-medium">{label}</p>
+                  </div>
+                ))}
+              </div>
+              <Link
+                href="/en/quiz"
+                className="relative inline-flex items-center gap-2 px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-base rounded-xl transition-all shadow-xl shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:-translate-y-1"
+              >
+                <span className="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 bg-emerald-300 rounded-full animate-ping opacity-75" />
+                <span className="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 bg-emerald-400 rounded-full" />
+                <Sparkles className="w-5 h-5" />
+                Find my perfect firm — free
               </Link>
-              <p className="text-gray-600 text-xs mt-3">Free · No signup required</p>
+              <p className="text-gray-600 text-xs mt-3">No account required · Takes 60 seconds</p>
             </div>
           </div>
         </div>
       </section>
+
+      {/* FLOATING QUIZ BUTTON */}
+      {showQuizFloat && (
+        <div className="fixed bottom-20 right-4 z-40 animate-in slide-in-from-bottom-4 duration-300">
+          <Link
+            href="/en/quiz"
+            className="relative flex items-center gap-2 px-4 py-3 bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-sm rounded-2xl shadow-2xl shadow-emerald-500/40 transition-all hover:-translate-y-0.5"
+          >
+            <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-300 rounded-full animate-ping opacity-75" />
+            <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full" />
+            <Sparkles className="w-4 h-4" />
+            Find my match
+          </Link>
+        </div>
+      )}
 
       {/* COMPARE BAR */}
       <CompareBar firms={compareFirms} onRemove={(id) => setCompareList(prev => prev.filter(f => f !== id))} onClear={() => setCompareList([])} />
