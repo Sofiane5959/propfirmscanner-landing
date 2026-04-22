@@ -2082,7 +2082,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
                 </div>
               </div>
               <Link
-                href="/en/quiz"
+                href="/en/quiz?start=true"
                 className="relative flex-shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-sm rounded-xl transition-all shadow-lg shadow-emerald-500/30 hover:-translate-y-0.5 whitespace-nowrap"
               >
                 <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-300 rounded-full animate-ping opacity-75" />
@@ -2198,7 +2198,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
                 ))}
               </div>
               <Link
-                href="/en/quiz"
+                href="/en/quiz?start=true"
                 className="relative inline-flex items-center gap-2 px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-base rounded-xl transition-all shadow-xl shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:-translate-y-1"
               >
                 <span className="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 bg-emerald-300 rounded-full animate-ping opacity-75" />
@@ -2216,7 +2216,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
       {showQuizFloat && (
         <div className="fixed bottom-20 right-4 z-40 animate-in slide-in-from-bottom-4 duration-300">
           <Link
-            href="/en/quiz"
+            href="/en/quiz?start=true"
             className="relative flex items-center gap-2 px-4 py-3 bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-sm rounded-2xl shadow-2xl shadow-emerald-500/40 transition-all hover:-translate-y-0.5"
           >
             <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-300 rounded-full animate-ping opacity-75" />

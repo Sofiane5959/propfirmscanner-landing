@@ -246,12 +246,13 @@ const MatchBar = ({ percent }: { percent: number }) => {
 export default function QuizClient() {
   const pathname = usePathname()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const locale = getLocaleFromPath(pathname)
   const supabase = createClientComponentClient()
 
   const [firms, setFirms] = useState<PropFirm[]>([])
   const [loading, setLoading] = useState(true)
-  const [step, setStep] = useState(0) // 0 = intro
+  const [step, setStep] = useState(searchParams.get('start') === 'true' ? 1 : 0) // auto-start if ?start=true
   const [answers, setAnswers] = useState<Partial<Answers>>({})
   const [selected, setSelected] = useState<string | null>(null)
   const [animating, setAnimating] = useState(false)
@@ -372,7 +373,6 @@ export default function QuizClient() {
           {/* Stats strip */}
           <div className="flex items-center justify-center gap-8 mb-10">
             {[
-              { value: '36', label: 'Firms scanned' },
               { value: '4', label: 'Questions' },
               { value: '~60s', label: 'Time needed' },
             ].map(s => (
