@@ -34,7 +34,7 @@ export const metadata: Metadata = {
 // Generate JSON-LD Structured Data
 function generateStructuredData(firms: any[]) {
   const topFirms = firms
-    .filter(f => f.trust_status === 'verified' || !f.trust_status)
+    .filter(f => f.trust_status === 'trusted')
     .sort((a, b) => (b.trustpilot_rating || 0) - (a.trustpilot_rating || 0))
     .slice(0, 10)
 
@@ -106,10 +106,11 @@ const faqStructuredData = {
 export default async function ComparePage() {
   const supabase = getStaticSupabaseClient()
   
-  // Fetch all prop firms (public data - no auth needed)
+  // Fetch only listed & trusted prop firms (public data - no auth needed)
   const { data: firms, error } = await supabase
     .from('prop_firms')
     .select('*')
+    .eq('listing_status', 'listed')
     .order('trustpilot_rating', { ascending: false })
   
   if (error) {

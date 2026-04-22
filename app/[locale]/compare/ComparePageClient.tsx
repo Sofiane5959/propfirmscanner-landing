@@ -824,13 +824,26 @@ const Toast = ({ message, type, onClose }: { message: string; type: 'success' | 
 
 const TrustBadge = ({ status }: { status: string }) => {
   const config: Record<string, { bg: string; text: string; label: string }> = {
-    verified: { bg: 'bg-emerald-500/20', text: 'text-emerald-400', label: 'Verified' },
-    banned: { bg: 'bg-red-500/20', text: 'text-red-400', label: 'Avoid' },
-    under_review: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', label: 'Under Review' },
-    new: { bg: 'bg-blue-500/20', text: 'text-blue-400', label: 'New' },
+    // PropFirmScanner statuses
+    scanned:         { bg: 'bg-emerald-500/20', text: 'text-emerald-400', label: 'Scanned \u2713' },
+    unverified:      { bg: 'bg-yellow-500/20',  text: 'text-yellow-400',  label: 'Unverified' },
+    not_recommended: { bg: 'bg-red-500/20',     text: 'text-red-400',     label: 'Not Recommended' },
+    // Legacy (backward compat)
+    verified:        { bg: 'bg-emerald-500/20', text: 'text-emerald-400', label: 'Scanned \u2713' },
+    trusted:         { bg: 'bg-emerald-500/20', text: 'text-emerald-400', label: 'Scanned \u2713' },
+    banned:          { bg: 'bg-red-500/20',     text: 'text-red-400',     label: 'Not Recommended' },
+    closed:          { bg: 'bg-red-500/20',     text: 'text-red-400',     label: 'Not Recommended' },
+    under_review:    { bg: 'bg-yellow-500/20',  text: 'text-yellow-400',  label: 'Unverified' },
+    unknown:         { bg: 'bg-yellow-500/20',  text: 'text-yellow-400',  label: 'Unverified' },
+    new:             { bg: 'bg-blue-500/20',    text: 'text-blue-400',    label: 'New' },
   }
-  const { bg, text, label } = config[status] || config.verified
-  return <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium ${bg} ${text}`}><BadgeCheck className="w-2.5 h-2.5" />{label}</span>
+  const cfg = config[status] || config.unverified
+  return (
+    <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium ${cfg.bg} ${cfg.text}`}>
+      <BadgeCheck className="w-2.5 h-2.5" />
+      {cfg.label}
+    </span>
+  )
 }
 
 const FilterChip = ({ label, onRemove }: { label: string; onRemove: () => void }) => (
@@ -1790,14 +1803,14 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
   , [processedFirms])
   
   const stats = useMemo(() => {
-    const verified = processedFirms.filter(f => f.trust_status === 'verified' || !f.trust_status)
+    const verified = processedFirms.filter(f => f.trust_status === 'scanned' || f.trust_status === 'verified' || f.trust_status === 'trusted' || !f.trust_status)
     const discounts = verified.filter(f => f.discount_percent != null && f.discount_percent > 0)
     return { total: verified.length, withDiscounts: discounts.length }
   }, [processedFirms])
   
   const filteredFirms = useMemo(() => {
     let result = [...processedFirms]
-    if (filters.verifiedOnly) result = result.filter(f => f.trust_status === 'verified' || !f.trust_status)
+    if (filters.verifiedOnly) result = result.filter(f => f.trust_status === 'scanned' || f.trust_status === 'verified' || f.trust_status === 'trusted' || !f.trust_status)
     else result = result.filter(f => f.trust_status !== 'banned')
     if (debouncedSearch) {
       const q = debouncedSearch.toLowerCase()
