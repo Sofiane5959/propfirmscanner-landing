@@ -34,7 +34,7 @@ export const metadata: Metadata = {
 // Generate JSON-LD Structured Data
 function generateStructuredData(firms: any[]) {
   const topFirms = firms
-    .filter(f => f.trust_status === 'trusted')
+    .filter(f => f.trust_status === 'scanned')
     .sort((a, b) => (b.trustpilot_rating || 0) - (a.trustpilot_rating || 0))
     .slice(0, 10)
 
