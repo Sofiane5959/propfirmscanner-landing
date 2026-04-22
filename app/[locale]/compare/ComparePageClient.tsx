@@ -1304,7 +1304,7 @@ const PropFirmCard = ({
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <h3 className="font-semibold text-white truncate text-sm">{firm.name}</h3>
+              <h3 className="font-semibold text-white truncate text-sm flex-1 min-w-0">{firm.name}</h3>
               <TrustBadge status={firm.trust_status || 'verified'} />
             </div>
             <div className="flex items-center gap-3 text-xs text-gray-400 mt-0.5 flex-wrap">
@@ -1375,7 +1375,7 @@ const PropFirmCard = ({
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <h3 className="font-bold text-white truncate">{firm.name}</h3>
+              <h3 className="font-bold text-white truncate flex-1 min-w-0">{firm.name}</h3>
               <TrustBadge status={firm.trust_status || 'verified'} />
             </div>
             {/* Trustpilot rating */}
