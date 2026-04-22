@@ -1936,7 +1936,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
                 <h1 className="text-xl font-bold text-white">{t.pageTitle}</h1>
                 <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-xs rounded-full flex items-center gap-1"><BadgeCheck className="w-3 h-3" />Scanned & Verified</span>
               </div>
-              <p className="text-sm text-gray-500">{stats.total} verified firms • Updated Jan 2026</p>
+              <p className="text-sm text-gray-500">All prop firms scanned & verified • Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
             </div>
             <div className="flex items-center gap-2">
               <button onClick={() => setViewMode('grid')} aria-label="Grid view" aria-pressed={viewMode === 'grid'} className={`p-2 rounded-lg ${viewMode === 'grid' ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400'}`}>
