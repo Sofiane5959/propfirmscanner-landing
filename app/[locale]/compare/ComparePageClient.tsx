@@ -1936,7 +1936,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
                 <h1 className="text-xl font-bold text-white">{t.pageTitle}</h1>
                 <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-xs rounded-full flex items-center gap-1"><BadgeCheck className="w-3 h-3" />Scanned & Verified</span>
               </div>
-              <p className="text-sm text-gray-500">The most complete prop firm directory • Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
+              <p className="text-sm text-gray-500">Every prop firm. One place. • <span className="text-emerald-400 animate-pulse">Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span></p>
             </div>
             <div className="flex items-center gap-2">
               <button onClick={() => setViewMode('grid')} aria-label="Grid view" aria-pressed={viewMode === 'grid'} className={`p-2 rounded-lg ${viewMode === 'grid' ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400'}`}>
@@ -2078,7 +2078,7 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
                     <p className="text-white font-bold text-sm">Not sure which firm to pick?</p>
                     <span className="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-400 text-[10px] font-bold rounded border border-emerald-500/30">FREE</span>
                   </div>
-                  <p className="text-gray-400 text-xs">Answer 4 questions and get your personalized top 3 matches from every prop firm on the market</p>
+                  <p className="text-gray-400 text-xs">Discover the prop firm that fits your trading style in under 60 seconds</p>
                 </div>
               </div>
               <Link
