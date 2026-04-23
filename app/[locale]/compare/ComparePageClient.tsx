@@ -1369,60 +1369,55 @@ const PropFirmCard = ({
       )}
       
       <div className={`p-4 ${hasDiscount || rank <= 3 ? 'pt-12' : ''}`}>
-        <div className="flex items-start gap-3">
-          <div className="w-14 h-14 rounded-xl bg-white flex items-center justify-center overflow-hidden border border-gray-200 p-1.5 flex-shrink-0">
-            {firm.logo_url ? <Image src={firm.logo_url} alt={firm.name} width={56} height={56} className="object-contain" /> : <span className="text-xl font-bold text-emerald-600">{firm.name.charAt(0)}</span>}
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-1 mb-1">
-              <div className="flex items-center gap-2 min-w-0 flex-1">
-                <h3 className="font-bold text-white truncate">{firm.name}</h3>
-                <TrustBadge status={firm.trust_status || 'verified'} />
-              </div>
-              <div className="flex gap-1 flex-shrink-0">
-                <button onClick={onFavorite} aria-label={isFavorite ? `Remove ${firm.name} from favorites` : `Add ${firm.name} to favorites`} aria-pressed={isFavorite} className={`p-1.5 rounded-lg transition-all ${isFavorite ? 'text-red-400 bg-red-500/20' : 'text-gray-500 hover:text-red-400 hover:bg-gray-700'}`}>
-                  <Heart className={`w-3.5 h-3.5 ${isFavorite ? 'fill-current' : ''}`} />
-                </button>
-                <button onClick={onCompare} aria-label={isComparing ? `Remove ${firm.name} from comparison` : `Add ${firm.name} to comparison`} aria-pressed={isComparing} className={`p-1.5 rounded-lg transition-all ${isComparing ? 'text-blue-400 bg-blue-500/20' : 'text-gray-500 hover:text-blue-400 hover:bg-gray-700'}`}>
-                  <GitCompare className="w-3.5 h-3.5" />
-                </button>
-                <button onClick={onRate} aria-label={hasReviewed ? `Update review for ${firm.name}` : `Rate ${firm.name}`} title={hasReviewed ? 'Update your review' : t.writeReview} className={`p-1.5 rounded-lg transition-all ${hasReviewed ? 'text-yellow-400 bg-yellow-500/20' : 'text-gray-500 hover:text-yellow-400 hover:bg-gray-700'}`}>
-                  <Star className={`w-3.5 h-3.5 ${hasReviewed ? 'fill-current' : ''}`} />
-                </button>
-                <button onClick={onPayout} aria-label={`Submit payout proof for ${firm.name}`} title={t.submitPayout} className="p-1.5 rounded-lg transition-all text-gray-500 hover:text-emerald-400 hover:bg-gray-700">
-                  <Banknote className="w-3.5 h-3.5" />
-                </button>
-                <PriceAlertButton firmId={firm.id} firmName={firm.name} firmSlug={firm.slug} currentPrice={firm.min_price || 0} />
-              </div>
-            </div>
-            <div className="sr-only">{/* buttons moved above */}</div>
-            </div>
-            {/* Trustpilot rating */}
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="flex items-center gap-1 text-sm">
-                <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
-                <span className="text-white font-medium">{firm.trustpilot_rating?.toFixed(1) || 'N/A'}</span>
-                {firm.trustpilot_reviews && <span className="text-gray-500 text-xs">({formatReviewCount(firm.trustpilot_reviews)})</span>}
-              </span>
-            </div>
-            {/* Community rating */}
-            {communityRating && communityRating.count > 0 && (
-              <div className="flex items-center gap-1 mt-0.5">
-                <MessageSquare className="w-3 h-3 text-purple-400" />
-                <span className="text-purple-400 text-xs font-medium">{communityRating.avg.toFixed(1)}</span>
-                <span className="text-gray-500 text-xs">{t.communityRating} ({communityRating.count})</span>
-              </div>
-            )}
-            {/* Payout badge */}
-            {payoutAggregate && payoutAggregate.count > 0 && (
-              <div className="flex items-center gap-1 mt-0.5">
-                <Banknote className="w-3 h-3 text-emerald-400" />
-                <span className="text-emerald-400 text-xs font-medium">{payoutAggregate.count} {t.payoutBadge}</span>
-              </div>
-            )}
-          </div>
-          <div className="hidden">
+        {/* Actions row */}
+        <div className="flex justify-end gap-1 mb-2">
+          <button onClick={onFavorite} aria-label={isFavorite ? `Remove ${firm.name} from favorites` : `Add ${firm.name} to favorites`} aria-pressed={isFavorite} className={`p-1.5 rounded-lg transition-all ${isFavorite ? 'text-red-400 bg-red-500/20' : 'text-gray-500 hover:text-red-400 hover:bg-gray-700'}`}>
+            <Heart className={`w-3.5 h-3.5 ${isFavorite ? 'fill-current' : ''}`} />
+          </button>
+          <button onClick={onCompare} aria-label={isComparing ? `Remove ${firm.name} from comparison` : `Add ${firm.name} to comparison`} aria-pressed={isComparing} className={`p-1.5 rounded-lg transition-all ${isComparing ? 'text-blue-400 bg-blue-500/20' : 'text-gray-500 hover:text-blue-400 hover:bg-gray-700'}`}>
+            <GitCompare className="w-3.5 h-3.5" />
+          </button>
+          <button onClick={onRate} aria-label={hasReviewed ? `Update review for ${firm.name}` : `Rate ${firm.name}`} title={hasReviewed ? 'Update your review' : t.writeReview} className={`p-1.5 rounded-lg transition-all ${hasReviewed ? 'text-yellow-400 bg-yellow-500/20' : 'text-gray-500 hover:text-yellow-400 hover:bg-gray-700'}`}>
+            <Star className={`w-3.5 h-3.5 ${hasReviewed ? 'fill-current' : ''}`} />
+          </button>
+          <button onClick={onPayout} aria-label={`Submit payout proof for ${firm.name}`} title={t.submitPayout} className="p-1.5 rounded-lg transition-all text-gray-500 hover:text-emerald-400 hover:bg-gray-700">
+            <Banknote className="w-3.5 h-3.5" />
+          </button>
+          <PriceAlertButton firmId={firm.id} firmName={firm.name} firmSlug={firm.slug} currentPrice={firm.min_price || 0} />
         </div>
+        {/* Logo + Name */}
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center overflow-hidden border border-gray-200 p-1 flex-shrink-0">
+            {firm.logo_url ? <Image src={firm.logo_url} alt={firm.name} width={48} height={48} className="object-contain" /> : <span className="text-lg font-bold text-emerald-600">{firm.name.charAt(0)}</span>}
+          </div>
+          <div className="min-w-0">
+            <h3 className="font-bold text-white text-sm leading-tight mb-0.5">{firm.name}</h3>
+            <TrustBadge status={firm.trust_status || 'verified'} />
+          </div>
+        </div>
+        {/* Rating */}
+        <div className="flex items-center gap-2 flex-wrap mb-1">
+          <span className="flex items-center gap-1 text-sm">
+            <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
+            <span className="text-white font-medium">{firm.trustpilot_rating?.toFixed(1) || 'N/A'}</span>
+            {firm.trustpilot_reviews && <span className="text-gray-500 text-xs">({formatReviewCount(firm.trustpilot_reviews)})</span>}
+          </span>
+        </div>
+        {/* Community rating */}
+        {communityRating && communityRating.count > 0 && (
+          <div className="flex items-center gap-1 mt-0.5">
+            <MessageSquare className="w-3 h-3 text-purple-400" />
+            <span className="text-purple-400 text-xs font-medium">{communityRating.avg.toFixed(1)}</span>
+            <span className="text-gray-500 text-xs">{t.communityRating} ({communityRating.count})</span>
+          </div>
+        )}
+        {/* Payout badge */}
+        {payoutAggregate && payoutAggregate.count > 0 && (
+          <div className="flex items-center gap-1 mt-0.5">
+            <Banknote className="w-3 h-3 text-emerald-400" />
+            <span className="text-emerald-400 text-xs font-medium">{payoutAggregate.count} {t.payoutBadge}</span>
+          </div>
+        )}
       </div>
       
       <div className="px-4 py-3 bg-gray-900/50 border-y border-gray-700/50 grid grid-cols-2 gap-3">
