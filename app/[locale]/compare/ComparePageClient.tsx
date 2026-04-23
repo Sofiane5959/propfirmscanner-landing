@@ -1374,9 +1374,28 @@ const PropFirmCard = ({
             {firm.logo_url ? <Image src={firm.logo_url} alt={firm.name} width={56} height={56} className="object-contain" /> : <span className="text-xl font-bold text-emerald-600">{firm.name.charAt(0)}</span>}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <h3 className="font-bold text-white truncate flex-1 min-w-0">{firm.name}</h3>
-              <TrustBadge status={firm.trust_status || 'verified'} />
+            <div className="flex items-start justify-between gap-1 mb-1">
+              <div className="flex items-center gap-2 min-w-0 flex-1">
+                <h3 className="font-bold text-white truncate">{firm.name}</h3>
+                <TrustBadge status={firm.trust_status || 'verified'} />
+              </div>
+              <div className="flex gap-1 flex-shrink-0">
+                <button onClick={onFavorite} aria-label={isFavorite ? `Remove ${firm.name} from favorites` : `Add ${firm.name} to favorites`} aria-pressed={isFavorite} className={`p-1.5 rounded-lg transition-all ${isFavorite ? 'text-red-400 bg-red-500/20' : 'text-gray-500 hover:text-red-400 hover:bg-gray-700'}`}>
+                  <Heart className={`w-3.5 h-3.5 ${isFavorite ? 'fill-current' : ''}`} />
+                </button>
+                <button onClick={onCompare} aria-label={isComparing ? `Remove ${firm.name} from comparison` : `Add ${firm.name} to comparison`} aria-pressed={isComparing} className={`p-1.5 rounded-lg transition-all ${isComparing ? 'text-blue-400 bg-blue-500/20' : 'text-gray-500 hover:text-blue-400 hover:bg-gray-700'}`}>
+                  <GitCompare className="w-3.5 h-3.5" />
+                </button>
+                <button onClick={onRate} aria-label={hasReviewed ? `Update review for ${firm.name}` : `Rate ${firm.name}`} title={hasReviewed ? 'Update your review' : t.writeReview} className={`p-1.5 rounded-lg transition-all ${hasReviewed ? 'text-yellow-400 bg-yellow-500/20' : 'text-gray-500 hover:text-yellow-400 hover:bg-gray-700'}`}>
+                  <Star className={`w-3.5 h-3.5 ${hasReviewed ? 'fill-current' : ''}`} />
+                </button>
+                <button onClick={onPayout} aria-label={`Submit payout proof for ${firm.name}`} title={t.submitPayout} className="p-1.5 rounded-lg transition-all text-gray-500 hover:text-emerald-400 hover:bg-gray-700">
+                  <Banknote className="w-3.5 h-3.5" />
+                </button>
+                <PriceAlertButton firmId={firm.id} firmName={firm.name} firmSlug={firm.slug} currentPrice={firm.min_price || 0} />
+              </div>
+            </div>
+            <div className="sr-only">{/* buttons moved above */}</div>
             </div>
             {/* Trustpilot rating */}
             <div className="flex items-center gap-2 flex-wrap">
@@ -1402,21 +1421,7 @@ const PropFirmCard = ({
               </div>
             )}
           </div>
-          <div className="flex gap-1 flex-shrink-0">
-            <button onClick={onFavorite} aria-label={isFavorite ? `Remove ${firm.name} from favorites` : `Add ${firm.name} to favorites`} aria-pressed={isFavorite} className={`p-2 rounded-lg transition-all ${isFavorite ? 'text-red-400 bg-red-500/20' : 'text-gray-500 hover:text-red-400 hover:bg-gray-700'}`}>
-              <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
-            </button>
-            <button onClick={onCompare} aria-label={isComparing ? `Remove ${firm.name} from comparison` : `Add ${firm.name} to comparison`} aria-pressed={isComparing} className={`p-2 rounded-lg transition-all ${isComparing ? 'text-blue-400 bg-blue-500/20' : 'text-gray-500 hover:text-blue-400 hover:bg-gray-700'}`}>
-              <GitCompare className="w-4 h-4" />
-            </button>
-            <button onClick={onRate} aria-label={hasReviewed ? `Update review for ${firm.name}` : `Rate ${firm.name}`} title={hasReviewed ? 'Update your review' : t.writeReview} className={`p-2 rounded-lg transition-all ${hasReviewed ? 'text-yellow-400 bg-yellow-500/20' : 'text-gray-500 hover:text-yellow-400 hover:bg-gray-700'}`}>
-              <Star className={`w-4 h-4 ${hasReviewed ? 'fill-current' : ''}`} />
-            </button>
-            <button onClick={onPayout} aria-label={`Submit payout proof for ${firm.name}`} title={t.submitPayout} className="p-2 rounded-lg transition-all text-gray-500 hover:text-emerald-400 hover:bg-gray-700">
-              <Banknote className="w-4 h-4" />
-            </button>
-            <PriceAlertButton firmId={firm.id} firmName={firm.name} firmSlug={firm.slug} currentPrice={firm.min_price || 0} />
-          </div>
+          <div className="hidden">
         </div>
       </div>
       
