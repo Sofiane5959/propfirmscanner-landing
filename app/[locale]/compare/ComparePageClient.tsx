@@ -590,6 +590,7 @@ interface PropFirm {
   discount_percent: number
   year_founded: number
   headquarters: string
+  priority_tier: number | null
 }
 
 interface ReviewAggregate {
@@ -1310,10 +1311,15 @@ const PropFirmCard = ({
   t: Record<string, string>
 }) => {
   const hasDiscount = firm.discount_percent && firm.discount_percent > 0
+  const isTopPick = firm.priority_tier === 1
   
   if (isCompact) {
     return (
-      <div className="group bg-gray-800/50 hover:bg-gray-800 border border-gray-700/50 hover:border-emerald-500/30 rounded-xl p-3 transition-all">
+      <div className={`group bg-gray-800/50 hover:bg-gray-800 border rounded-xl p-3 transition-all ${
+        isTopPick
+          ? 'border-emerald-500/50 hover:border-emerald-400 shadow-md shadow-emerald-500/10'
+          : 'border-gray-700/50 hover:border-emerald-500/30'
+      }`}>
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center overflow-hidden p-1 flex-shrink-0">
             {firm.logo_url ? <Image src={firm.logo_url} alt={firm.name} width={40} height={40} className="object-contain" /> : <span className="text-lg font-bold text-emerald-600">{firm.name.charAt(0)}</span>}
@@ -1321,6 +1327,12 @@ const PropFirmCard = ({
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
               <h3 className="font-semibold text-white truncate text-sm flex-1 min-w-0">{firm.name}</h3>
+              {isTopPick && (
+                <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-gradient-to-r from-emerald-500 to-emerald-400 text-white text-[9px] font-bold tracking-wide flex-shrink-0">
+                  <Star className="w-2 h-2 fill-white" />
+                  TOP PICK
+                </span>
+              )}
               <TrustBadge status={firm.trust_status || 'verified'} />
             </div>
             <div className="flex items-center gap-3 text-xs text-gray-400 mt-0.5 flex-wrap">
@@ -1364,7 +1376,11 @@ const PropFirmCard = ({
   }
 
   return (
-    <div className="bg-gray-800/50 border border-gray-700/50 hover:border-emerald-500/30 rounded-xl overflow-hidden transition-all group relative flex flex-col">
+    <div className={`bg-gray-800/50 border rounded-xl overflow-hidden transition-all group relative flex flex-col ${
+      isTopPick
+        ? 'border-emerald-500/50 hover:border-emerald-400 shadow-lg shadow-emerald-500/10'
+        : 'border-gray-700/50 hover:border-emerald-500/30'
+    }`}>
       {hasDiscount && (
         <div className="absolute top-3 right-3 z-10">
           <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-2.5 py-1 rounded-lg text-xs font-bold shadow-lg">
@@ -1378,13 +1394,22 @@ const PropFirmCard = ({
         </div>
       )}
       
-      {rank <= 3 && (
+      {/* Top Pick badge (editor's choice — priority_tier = 1) */}
+      {isTopPick && (
+        <div className="absolute top-3 left-3 z-10 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-gradient-to-r from-emerald-500 to-emerald-400 text-white text-[10px] font-bold shadow-lg tracking-wide">
+          <Star className="w-2.5 h-2.5 fill-white" />
+          TOP PICK
+        </div>
+      )}
+      
+      {/* Rank trophy (top-3 by current sort) — only show if not a Top Pick to avoid badge collision */}
+      {!isTopPick && rank <= 3 && (
         <div className={`absolute top-3 left-3 z-10 w-7 h-7 rounded-lg flex items-center justify-center shadow-lg ${rank === 1 ? 'bg-amber-500' : rank === 2 ? 'bg-gray-400' : 'bg-amber-700'}`}>
           <Trophy className="w-3.5 h-3.5 text-white" />
         </div>
       )}
       
-      <div className={`p-4 ${hasDiscount || rank <= 3 ? 'pt-12' : ''}`}>
+      <div className={`p-4 ${hasDiscount || rank <= 3 || isTopPick ? 'pt-12' : ''}`}>
         {/* Actions row */}
         <div className="flex justify-end gap-1 mb-2">
           <button onClick={onFavorite} aria-label={isFavorite ? `Remove ${firm.name} from favorites` : `Add ${firm.name} to favorites`} aria-pressed={isFavorite} className={`p-1.5 rounded-lg transition-all ${isFavorite ? 'text-red-400 bg-red-500/20' : 'text-gray-500 hover:text-red-400 hover:bg-gray-700'}`}>
@@ -1946,9 +1971,18 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
       result = result.filter(f => f.discount_percent != null && f.discount_percent > 0)
     }
     result.sort((a, b) => {
+      // 1. Priority tier first — Tier 1 (editor's picks) always at the top.
+      //    Lower number = higher priority. NULL/undefined treated as Tier 3 (lowest).
+      const aTier = a.priority_tier ?? 3
+      const bTier = b.priority_tier ?? 3
+      if (aTier !== bTier) return aTier - bTier
+
+      // 2. Within the same tier, discounted firms come first (promo boost)
       const aPromo = (a.discount_percent ?? 0) > 0 ? 1 : 0
       const bPromo = (b.discount_percent ?? 0) > 0 ? 1 : 0
       if (bPromo !== aPromo) return bPromo - aPromo
+
+      // 3. Finally, apply the user-selected sort
       switch (sortBy) {
         case 'rating': return (b.trustpilot_rating || 0) - (a.trustpilot_rating || 0)
         case 'price': return (a.min_price || 9999) - (b.min_price || 9999)
