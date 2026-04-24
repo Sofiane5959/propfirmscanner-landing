@@ -106,18 +106,32 @@ const faqStructuredData = {
 export default async function ComparePage() {
   const supabase = getStaticSupabaseClient()
   
-  // Fetch only listed & trusted prop firms (public data - no auth needed)
-  const { data: firms, error } = await supabase
-    .from('prop_firms')
-    .select('*')
-    .eq('listing_status', 'listed')
-    .order('trustpilot_rating', { ascending: false })
+  // Fetch listed & trusted prop firms (public data - no auth needed)
+  // + unlisted firms (shadow search) in parallel for perf
+  const [listedResult, shadowResult] = await Promise.all([
+    supabase
+      .from('prop_firms')
+      .select('*')
+      .eq('listing_status', 'listed')
+      .order('trustpilot_rating', { ascending: false }),
+    // Shadow firms: unlisted firms accessible only via direct name search
+    // Minimal payload — only fields needed for the shadow card display
+    supabase
+      .from('prop_firms')
+      .select('id, name, slug, logo_url, website_url, trust_status, min_price, max_profit_split, trustpilot_rating, trustpilot_reviews')
+      .eq('listing_status', 'unlisted')
+      .in('trust_status', ['unverified', 'not_recommended']),
+  ])
   
-  if (error) {
-    console.error('Error fetching firms:', error)
+  if (listedResult.error) {
+    console.error('Error fetching listed firms:', listedResult.error)
+  }
+  if (shadowResult.error) {
+    console.error('Error fetching shadow firms:', shadowResult.error)
   }
   
-  const firmsList = firms || []
+  const firmsList = listedResult.data || []
+  const shadowFirmsList = shadowResult.data || []
   const structuredData = generateStructuredData(firmsList)
 
   return (
@@ -134,7 +148,7 @@ export default async function ComparePage() {
       
       {/* Main Content */}
       <Suspense fallback={<CompareSkeleton />}>
-        <ComparePageClient firms={firmsList} />
+        <ComparePageClient firms={firmsList} shadowFirms={shadowFirmsList} />
       </Suspense>
     </>
   )

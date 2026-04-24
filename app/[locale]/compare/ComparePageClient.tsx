@@ -602,8 +602,24 @@ interface PayoutAggregate {
   totalAmount: number
 }
 
+// Shadow firms: unlisted firms visible only when user searches by name.
+// Minimal shape — only fields needed for the shadow card display.
+interface ShadowFirm {
+  id: string
+  name: string
+  slug: string
+  logo_url: string | null
+  website_url: string | null
+  trust_status: string
+  min_price: number | null
+  max_profit_split: number | null
+  trustpilot_rating: number | null
+  trustpilot_reviews: number | null
+}
+
 interface ComparePageClientProps {
   firms: PropFirm[]
+  shadowFirms?: ShadowFirm[]
 }
 
 interface FilterState {
@@ -1518,9 +1534,93 @@ const CardSkeleton = () => (
 )
 
 // =====================================================
+// SHADOW CARD — for unlisted firms shown via direct search
+// Cards are dimmed, never link to affiliate URLs, and display
+// a warning banner when the firm is not_recommended.
+// =====================================================
+const ShadowPropFirmCard = ({ firm }: { firm: ShadowFirm }) => {
+  const isNotRecommended = firm.trust_status === 'not_recommended'
+  // SAFETY: shadow cards never use affiliate links — only website_url, or nothing
+  const visitUrl = firm.website_url && firm.website_url !== '#' ? firm.website_url : null
+
+  return (
+    <div
+      className={`bg-gray-800/30 border rounded-xl overflow-hidden transition-all flex flex-col opacity-60 hover:opacity-90 ${
+        isNotRecommended
+          ? 'border-red-500/40 hover:border-red-500/60'
+          : 'border-yellow-500/30 hover:border-yellow-500/50'
+      }`}
+    >
+      {/* Warning banner for not_recommended firms */}
+      {isNotRecommended && (
+        <div className="bg-red-500/15 border-b border-red-500/30 px-3 py-1.5 flex items-center gap-1.5">
+          <X className="w-3.5 h-3.5 text-red-400 flex-shrink-0" />
+          <span className="text-red-400 text-[10px] font-semibold uppercase tracking-wide">
+            Not recommended by PropFirmScanner
+          </span>
+        </div>
+      )}
+
+      <div className="p-4">
+        {/* Logo + Name */}
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center overflow-hidden border border-gray-200 p-1 flex-shrink-0">
+            {firm.logo_url ? (
+              <Image src={firm.logo_url} alt={firm.name} width={48} height={48} className="object-contain" />
+            ) : (
+              <span className="text-lg font-bold text-gray-500">{firm.name.charAt(0)}</span>
+            )}
+          </div>
+          <div className="min-w-0 flex-1">
+            <h3 className="font-bold text-gray-300 text-sm leading-tight mb-0.5 truncate">{firm.name}</h3>
+            <TrustBadge status={firm.trust_status || 'unverified'} />
+          </div>
+        </div>
+
+        {/* Minimal data */}
+        <div className="flex items-center gap-3 text-xs text-gray-500 mb-3">
+          {firm.trustpilot_rating && (
+            <span className="flex items-center gap-1">
+              <Star className="w-3 h-3 text-gray-500" />
+              {firm.trustpilot_rating.toFixed(1)}
+              {firm.trustpilot_reviews ? (
+                <span className="text-gray-600">({formatReviewCount(firm.trustpilot_reviews)})</span>
+              ) : null}
+            </span>
+          )}
+          {firm.min_price != null && <span>${firm.min_price}</span>}
+          {firm.max_profit_split != null && <span>{firm.max_profit_split}% split</span>}
+        </div>
+
+        {/* Single Visit button — website_url only, no affiliate */}
+        {visitUrl ? (
+          <a
+            href={visitUrl}
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            title={isNotRecommended ? 'Proceed with caution — this firm is not recommended' : 'Visit firm website'}
+            className={`w-full py-2 text-center text-xs font-medium rounded-lg flex items-center justify-center gap-1 transition-colors ${
+              isNotRecommended
+                ? 'bg-red-500/15 hover:bg-red-500/25 text-red-300 border border-red-500/30'
+                : 'bg-gray-700/60 hover:bg-gray-700 text-gray-300'
+            }`}
+          >
+            Visit site <ExternalLink className="w-3 h-3" />
+          </a>
+        ) : (
+          <div className="w-full py-2 text-center text-xs text-gray-500 bg-gray-700/30 rounded-lg">
+            No website available
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// =====================================================
 // MAIN COMPONENT
 // =====================================================
-export default function ComparePageClient({ firms }: ComparePageClientProps) {
+export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePageClientProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const pathname = usePathname()
@@ -1860,6 +1960,46 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
     })
     return result
   }, [processedFirms, firmMarkets, firmChallengeTypes, filters.verifiedOnly, filters.markets, filters.platforms, filters.tradingStyles, filters.ratings, filters.challengeTypes, filters.bestFor, filters.priceRange, filters.hasDiscount, debouncedSearch, sortBy])
+
+  // ============================================================
+  // SHADOW SEARCH
+  // Match unlisted firms (unverified + not_recommended) ONLY when
+  // the user is actively searching (>= 2 chars). Other filters are
+  // intentionally ignored — the intent is "did you list this firm I
+  // already know by name?", not "filter my way to it".
+  // ============================================================
+  const SHADOW_SEARCH_MIN_CHARS = 2
+  const shadowMatches = useMemo<ShadowFirm[]>(() => {
+    const q = (debouncedSearch || '').trim().toLowerCase()
+    if (q.length < SHADOW_SEARCH_MIN_CHARS) return []
+    if (!shadowFirms || shadowFirms.length === 0) return []
+
+    // Exclude any shadow firm whose name/slug collides with a canonical
+    // listed firm — the canonical version is already in the main results.
+    const listedCanonicals = new Set(
+      processedFirms.map(f => getCanonicalName(f.name).toLowerCase().replace(/\s+/g, ''))
+    )
+
+    const matches = shadowFirms.filter(f => {
+      if (!f.name) return false
+      if (isBlocklisted(f.name)) return false
+      const nameHit = f.name.toLowerCase().includes(q)
+      const slugHit = (f.slug || '').toLowerCase().includes(q)
+      if (!nameHit && !slugHit) return false
+      // Skip firms that would duplicate a listed canonical firm
+      const canonical = getCanonicalName(f.name).toLowerCase().replace(/\s+/g, '')
+      if (listedCanonicals.has(canonical)) return false
+      return true
+    })
+
+    // Sort: not_recommended first (most important to warn about), then by rating
+    return matches.sort((a, b) => {
+      const aNR = a.trust_status === 'not_recommended' ? 1 : 0
+      const bNR = b.trust_status === 'not_recommended' ? 1 : 0
+      if (aNR !== bNR) return bNR - aNR
+      return (b.trustpilot_rating || 0) - (a.trustpilot_rating || 0)
+    })
+  }, [debouncedSearch, shadowFirms, processedFirms])
   
   useEffect(() => { setCurrentPage(1) }, [filters, sortBy])
   useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }) }, [currentPage])
@@ -2106,7 +2246,8 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
             )}
           </div>
           
-          {paginatedFirms.length > 0 ? (
+          {/* LISTED RESULTS */}
+          {paginatedFirms.length > 0 && (
             <>
               <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4' : 'space-y-3'}>
                 {paginatedFirms.map((firm, i) => (
@@ -2157,7 +2298,33 @@ export default function ComparePageClient({ firms }: ComparePageClientProps) {
                 </nav>
               )}
             </>
-          ) : (
+          )}
+
+          {/* SHADOW RESULTS — unlisted firms matching the search */}
+          {shadowMatches.length > 0 && (
+            <div className={paginatedFirms.length > 0 ? 'mt-10 pt-8 border-t border-gray-800' : ''}>
+              <div className="mb-4">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="w-1 h-5 bg-yellow-500/60 rounded-full" />
+                  <h2 className="text-sm font-semibold text-gray-300">
+                    Other results <span className="text-gray-500 font-normal">— unverified or not recommended</span>
+                    <span className="ml-2 px-1.5 py-0.5 bg-gray-800 text-gray-400 text-[10px] rounded">{shadowMatches.length}</span>
+                  </h2>
+                </div>
+                <p className="text-xs text-gray-500 ml-3">
+                  These firms aren&apos;t currently listed on PropFirmScanner. We haven&apos;t verified their claims, or we don&apos;t recommend them. Proceed with caution.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {shadowMatches.map(sFirm => (
+                  <ShadowPropFirmCard key={sFirm.id} firm={sFirm} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* EMPTY STATE — only when BOTH listed and shadow are empty */}
+          {paginatedFirms.length === 0 && shadowMatches.length === 0 && (
             <div className="text-center py-16">
               <div className="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center mx-auto mb-4">
                 <Search className="w-8 h-8 text-gray-600" />
