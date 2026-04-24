@@ -1,12 +1,11 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { createClient } from '@supabase/supabase-js'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+const ADMIN_USER_ID = '6d573ff4-b6ac-481e-b024-d54e7977f96f'
+
+const supabase = createClientComponentClient()
 
 interface PropFirm {
   slug: string
@@ -40,6 +39,8 @@ const STATUS_COLORS: Record<string, string> = {
 export default function AdminFirmsPage() {
   const [firms, setFirms] = useState<PropFirm[]>([])
   const [loading, setLoading] = useState(true)
+  const [authorized, setAuthorized] = useState(false)
+  const [checkingAuth, setCheckingAuth] = useState(true)
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState<'all' | 'listed' | 'unlisted' | 'no_affiliate' | 'no_logo'>('all')
   const [editingSlug, setEditingSlug] = useState<string | null>(null)
@@ -57,7 +58,18 @@ export default function AdminFirmsPage() {
     setLoading(false)
   }, [])
 
-  useEffect(() => { fetchFirms() }, [fetchFirms])
+  // Check auth first
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user?.id === ADMIN_USER_ID) {
+        setAuthorized(true)
+        fetchFirms()
+      }
+      setCheckingAuth(false)
+    }
+    checkAuth()
+  }, [fetchFirms])
 
   const filtered = firms.filter(f => {
     const matchSearch = f.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -115,6 +127,26 @@ export default function AdminFirmsPage() {
     listed: firms.filter(f => f.listing_status === 'listed').length,
     withAffiliate: firms.filter(f => f.affiliate_url).length,
     withLogo: firms.filter(f => f.logo_url).length,
+  }
+
+  if (checkingAuth) {
+    return (
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+        <div className="text-gray-500 text-sm">Checking access...</div>
+      </div>
+    )
+  }
+
+  if (!authorized) {
+    return (
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl mb-4">🔒</div>
+          <h1 className="text-white font-bold text-xl mb-2">Access Denied</h1>
+          <p className="text-gray-500 text-sm">You must be signed in as an admin to access this page.</p>
+        </div>
+      </div>
+    )
   }
 
   return (
