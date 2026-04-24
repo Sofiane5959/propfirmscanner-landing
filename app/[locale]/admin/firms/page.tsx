@@ -95,31 +95,61 @@ export default function AdminFirmsPage() {
   const saveEdit = async () => {
     if (!editingSlug) return
     setSaving(true)
-    const { error } = await supabase
+
+    // Strip fields we never want to update:
+    // - slug (PK, must stay stable — used by URLs and foreign keys)
+    // Any other field is fine to pass through.
+    const { slug: _droppedSlug, ...updatePayload } = editData
+
+    const { data, error } = await supabase
       .from('prop_firms')
-      .update(editData)
+      .update(updatePayload)
       .eq('slug', editingSlug)
+      .select() // CRITICAL: forces Supabase to return affected rows.
+                // Without this, RLS blocks silently and no error is raised.
+
     if (error) {
       setMessage({ type: 'error', text: `Error: ${error.message}` })
+    } else if (!data || data.length === 0) {
+      // RLS policy blocked the write silently — 0 rows affected, no error.
+      // This usually means: missing UPDATE policy, or user is not logged in
+      // as the admin account.
+      setMessage({
+        type: 'error',
+        text: '⚠ Nothing was saved — RLS blocked the update. Check you are logged in as admin.',
+      })
     } else {
       setMessage({ type: 'success', text: `✓ ${editData.name} saved!` })
       await fetchFirms()
       setEditingSlug(null)
     }
     setSaving(false)
-    setTimeout(() => setMessage(null), 3000)
+    setTimeout(() => setMessage(null), 4000)
   }
 
   const quickToggle = async (slug: string, field: keyof PropFirm, value: boolean | string) => {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('prop_firms')
       .update({ [field]: value })
       .eq('slug', slug)
-    if (!error) {
-      setFirms(prev => prev.map(f => f.slug === slug ? { ...f, [field]: value } : f))
-      setMessage({ type: 'success', text: '✓ Updated' })
-      setTimeout(() => setMessage(null), 2000)
+      .select() // CRITICAL: same reason as saveEdit — detect silent RLS blocks.
+
+    if (error) {
+      setMessage({ type: 'error', text: `Error: ${error.message}` })
+      setTimeout(() => setMessage(null), 4000)
+      return
     }
+    if (!data || data.length === 0) {
+      setMessage({
+        type: 'error',
+        text: '⚠ Update blocked by RLS — no rows changed.',
+      })
+      setTimeout(() => setMessage(null), 4000)
+      return
+    }
+    setFirms(prev => prev.map(f => f.slug === slug ? { ...f, [field]: value } : f))
+    setMessage({ type: 'success', text: '✓ Updated' })
+    setTimeout(() => setMessage(null), 2000)
   }
 
   const stats = {
