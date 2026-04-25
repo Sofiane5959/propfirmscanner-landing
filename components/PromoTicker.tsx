@@ -15,10 +15,11 @@ interface PromoDeal {
   slug: string
   logo_url?: string
   discount_percent: number
-  discount_code: string
+  discount_code?: string | null  // optional — some firms only have an affiliate link with auto-discount, no code
   affiliate_url?: string
   website_url?: string
   trust_status?: string
+  priority_tier?: number | null
 }
 
 interface PromoTickerProps {
@@ -59,6 +60,10 @@ const CopyButton = ({ code }: { code: string }) => {
 // =====================================================
 const DealPill = ({ deal }: { deal: PromoDeal }) => {
   const url = deal.affiliate_url || deal.website_url || `/prop-firm/${deal.slug}`
+  // A code is "real" only if it's a non-empty, non-null string.
+  // Some firms (FTMO, FundedNext) apply discounts automatically via the
+  // affiliate link — no code to copy.
+  const hasCode = !!(deal.discount_code && deal.discount_code.trim().length > 0)
   
   return (
     <Link
@@ -91,13 +96,23 @@ const DealPill = ({ deal }: { deal: PromoDeal }) => {
         {deal.discount_percent}% OFF
       </span>
       
-      {/* Code */}
-      <code className="px-1.5 py-0.5 bg-gray-900 text-emerald-400 text-[10px] font-mono rounded">
-        {deal.discount_code}
-      </code>
-      
-      {/* Copy Button */}
-      <CopyButton code={deal.discount_code} />
+      {hasCode ? (
+        <>
+          {/* Code */}
+          <code className="px-1.5 py-0.5 bg-gray-900 text-emerald-400 text-[10px] font-mono rounded">
+            {deal.discount_code}
+          </code>
+          
+          {/* Copy Button */}
+          <CopyButton code={deal.discount_code as string} />
+        </>
+      ) : (
+        // No code needed — discount applied automatically via the affiliate link
+        <span className="px-1.5 py-0.5 bg-gray-900 text-gray-400 text-[10px] font-medium rounded inline-flex items-center gap-1">
+          <ExternalLink className="w-2.5 h-2.5" />
+          via link
+        </span>
+      )}
     </Link>
   )
 }
@@ -127,13 +142,18 @@ export default function PromoTicker({ deals: initialDeals = [] }: PromoTickerPro
       try {
         const supabase = createClientComponentClient()
         
+        // Show every firm with an active discount, regardless of whether
+        // a code is set — many firms (FTMO, FundedNext, Topstep) apply
+        // discounts automatically via the affiliate link instead of a code.
+        // Order: priority_tier ASC (Top 10 first), then discount % desc.
         const { data, error } = await supabase
           .from('prop_firms')
-          .select('id, name, slug, logo_url, discount_percent, discount_code, affiliate_url, website_url, trust_status')
+          .select('id, name, slug, logo_url, discount_percent, discount_code, affiliate_url, website_url, trust_status, priority_tier')
           .gt('discount_percent', 0)
-          .not('discount_code', 'is', null)
+          .eq('listing_status', 'listed')
+          .order('priority_tier', { ascending: true, nullsFirst: false })
           .order('discount_percent', { ascending: false })
-          .limit(10)
+          .limit(15)
         
         if (error) {
           console.error('Error fetching promo deals:', error)
