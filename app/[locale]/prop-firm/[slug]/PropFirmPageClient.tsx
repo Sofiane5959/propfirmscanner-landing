@@ -517,7 +517,7 @@ export default function PropFirmPageClient({ firm, similarFirms }: Props) {
                     )}
                     {firm.website_url && (
                       <a
-                        href={firm.website_url}
+                        href={`/api/go/${firm.slug}?source=prop-firm-header`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-1 hover:text-emerald-400 transition-colors"
@@ -587,9 +587,9 @@ export default function PropFirmPageClient({ firm, similarFirms }: Props) {
                   </div>
                 )}
 
-                {/* Main CTA */}
+                {/* Main CTA — routes through tracker for click analytics */}
                 <a
-                  href={firm.affiliate_url || firm.website_url}
+                  href={`/api/go/${firm.slug}?source=prop-firm-cta`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white text-center font-semibold rounded-xl transition-colors mb-3"

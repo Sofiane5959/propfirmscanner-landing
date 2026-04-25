@@ -490,7 +490,7 @@ function DealCard({ firm, affiliate, onCopyCode, copiedCode, featured, t }: Deal
             Details
           </Link>
           <Link
-            href={affiliate.affiliateLink}
+            href={`/api/go/${firm.slug}?source=deals-grid`}
             target="_blank"
             rel="noopener noreferrer"
             className={`flex items-center justify-center gap-2 py-3 rounded-xl font-medium transition-all ${

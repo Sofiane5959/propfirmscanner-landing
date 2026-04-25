@@ -3,15 +3,21 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { TrendingUp, TrendingDown, ExternalLink, RefreshCw, ArrowLeft } from 'lucide-react'
+import { TrendingUp, ExternalLink, RefreshCw, ArrowLeft } from 'lucide-react'
 
 // ============================================================
-// AUTH GUARD — admin user only
+// AUTH NOTE
 // ============================================================
-const ADMIN_USER_ID = '6d573ff4-b6ac-481e-b024-d54e7977f96f'
+// Server-side auth is enforced by middleware.ts at the project root.
+// Non-admin requests are redirected before this page even loads,
+// so we don't repeat the check here. Supabase RLS on affiliate_clicks
+// is the second line of defense — even if a malicious user reached
+// this page, the query would return zero rows.
 
+// ============================================================
+// TYPES
+// ============================================================
 interface ClickRow {
   firm_slug: string
   firm_name: string | null
@@ -59,7 +65,6 @@ const formatRelative = (iso: string | null): string => {
 
 const flagFor = (country: string | null): string => {
   if (!country || country.length !== 2) return '🌐'
-  // Convert ISO country code to regional indicator emoji
   const codePoints = country
     .toUpperCase()
     .split('')
@@ -71,11 +76,8 @@ const flagFor = (country: string | null): string => {
 // MAIN COMPONENT
 // ============================================================
 export default function AnalyticsPage() {
-  const router = useRouter()
   const supabase = createClientComponentClient()
-  
-  const [authChecked, setAuthChecked] = useState(false)
-  const [authorized, setAuthorized] = useState(false)
+
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   const [byFirm, setByFirm] = useState<ClickRow[]>([])
@@ -83,52 +85,29 @@ export default function AnalyticsPage() {
   const [bySource, setBySource] = useState<SourceRow[]>([])
   const [includeBots, setIncludeBots] = useState(false)
   const [sortKey, setSortKey] = useState<keyof ClickRow>('clicks_30d')
-  
-  // -----------------------------------------------------------
-  // Auth check
-  // -----------------------------------------------------------
-  useEffect(() => {
-    const check = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      const ok = !!user && user.id === ADMIN_USER_ID
-      setAuthorized(ok)
-      setAuthChecked(true)
-      if (!ok) {
-        // Redirect non-admins to the home page after a short delay
-        setTimeout(() => router.push('/'), 1500)
-      }
-    }
-    check()
-  }, [supabase, router])
-  
-  // -----------------------------------------------------------
-  // Data fetch
-  // -----------------------------------------------------------
+
   const fetchData = async () => {
     setRefreshing(true)
-    
-    // 1. Aggregate by firm — query the underlying table directly
-    //    (we can't query the view from the client easily without typing)
+
     const { data: clicksData, error: clicksError } = await supabase
       .from('affiliate_clicks')
       .select('firm_slug, firm_name, destination_type, is_bot, created_at')
       .order('created_at', { ascending: false })
-      .limit(10000) // cap to keep things fast; adjust if you have more volume
-    
+      .limit(10000)
+
     if (clicksError) {
       console.error('Failed to load clicks:', clicksError)
       setLoading(false)
       setRefreshing(false)
       return
     }
-    
+
     const filtered = (clicksData || []).filter(c => includeBots || !c.is_bot)
-    
-    // Aggregate by firm
+
     const now = Date.now()
     const day = 24 * 60 * 60 * 1000
     const aggMap = new Map<string, ClickRow>()
-    
+
     for (const c of filtered) {
       const key = c.firm_slug
       const existing = aggMap.get(key) || {
@@ -142,7 +121,7 @@ export default function AnalyticsPage() {
         website_clicks: 0,
         last_click_at: null as string | null,
       }
-      
+
       const ageMs = now - new Date(c.created_at).getTime()
       existing.total_clicks++
       if (ageMs <= day) existing.clicks_24h++
@@ -153,26 +132,19 @@ export default function AnalyticsPage() {
       if (!existing.last_click_at || c.created_at > existing.last_click_at) {
         existing.last_click_at = c.created_at
       }
-      
+
       aggMap.set(key, existing)
     }
-    
+
     setByFirm(Array.from(aggMap.values()))
-    
-    // 2. Recent activity (last 30 clicks)
+
     const { data: recentData } = await supabase
       .from('affiliate_clicks')
       .select('id, firm_slug, firm_name, destination_type, source, locale, country, is_bot, created_at')
       .order('created_at', { ascending: false })
       .limit(30)
     setRecent(recentData || [])
-    
-    // 3. By source
-    const sourceMap = new Map<string, number>()
-    for (const c of filtered) {
-      // We don't have source on this query; let's separately query
-    }
-    // Lighter: query sources separately
+
     const { data: sourceData } = await supabase
       .from('affiliate_clicks')
       .select('source, is_bot')
@@ -190,19 +162,16 @@ export default function AnalyticsPage() {
           .sort((a, b) => b.count - a.count)
       )
     }
-    
+
     setLoading(false)
     setRefreshing(false)
   }
-  
+
   useEffect(() => {
-    if (authorized) fetchData()
+    fetchData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authorized, includeBots])
-  
-  // -----------------------------------------------------------
-  // Sorted firm rows
-  // -----------------------------------------------------------
+  }, [includeBots])
+
   const sortedRows = useMemo(() => {
     return [...byFirm].sort((a, b) => {
       const av = a[sortKey] as number | string | null
@@ -213,39 +182,16 @@ export default function AnalyticsPage() {
       return String(bv).localeCompare(String(av))
     })
   }, [byFirm, sortKey])
-  
+
   const totalClicks = byFirm.reduce((s, r) => s + r.total_clicks, 0)
   const totalAffiliate = byFirm.reduce((s, r) => s + r.affiliate_clicks, 0)
   const totalWebsite = byFirm.reduce((s, r) => s + r.website_clicks, 0)
   const total24h = byFirm.reduce((s, r) => s + r.clicks_24h, 0)
   const total7d = byFirm.reduce((s, r) => s + r.clicks_7d, 0)
-  
-  // -----------------------------------------------------------
-  // RENDER
-  // -----------------------------------------------------------
-  if (!authChecked) {
-    return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-gray-400">Checking authorization…</div>
-      </div>
-    )
-  }
-  
-  if (!authorized) {
-    return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-400 mb-2">Access denied</p>
-          <p className="text-gray-500 text-sm">Redirecting…</p>
-        </div>
-      </div>
-    )
-  }
-  
+
   return (
     <div className="min-h-screen bg-gray-900 pt-20 pb-12 px-4">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
             <Link href="/en/admin/firms" className="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-white mb-2">
@@ -275,8 +221,7 @@ export default function AnalyticsPage() {
             </button>
           </div>
         </div>
-        
-        {/* Stats cards */}
+
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
           <StatCard label="Total clicks" value={totalClicks} />
           <StatCard label="Last 24h" value={total24h} highlight={total24h > 0} />
@@ -284,7 +229,7 @@ export default function AnalyticsPage() {
           <StatCard label="Affiliate clicks" value={totalAffiliate} sub={`${totalClicks > 0 ? Math.round((totalAffiliate / totalClicks) * 100) : 0}%`} />
           <StatCard label="Website clicks" value={totalWebsite} sub={`${totalClicks > 0 ? Math.round((totalWebsite / totalClicks) * 100) : 0}%`} />
         </div>
-        
+
         {loading ? (
           <div className="text-center text-gray-500 py-12">Loading analytics…</div>
         ) : byFirm.length === 0 ? (
@@ -297,7 +242,6 @@ export default function AnalyticsPage() {
           </div>
         ) : (
           <>
-            {/* Firms table */}
             <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl overflow-hidden mb-6">
               <div className="px-4 py-3 border-b border-gray-700/50 flex items-center justify-between">
                 <h2 className="text-sm font-semibold text-white">Clicks by firm</h2>
@@ -343,10 +287,8 @@ export default function AnalyticsPage() {
                 </table>
               </div>
             </div>
-            
-            {/* Two columns: by source + recent activity */}
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              {/* By source */}
               <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl overflow-hidden">
                 <div className="px-4 py-3 border-b border-gray-700/50">
                   <h2 className="text-sm font-semibold text-white">Clicks by source (last 30d)</h2>
@@ -373,8 +315,7 @@ export default function AnalyticsPage() {
                   )}
                 </div>
               </div>
-              
-              {/* Recent activity */}
+
               <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl overflow-hidden">
                 <div className="px-4 py-3 border-b border-gray-700/50">
                   <h2 className="text-sm font-semibold text-white">Recent activity</h2>
@@ -408,9 +349,6 @@ export default function AnalyticsPage() {
   )
 }
 
-// ============================================================
-// SMALL COMPONENTS
-// ============================================================
 function StatCard({ label, value, sub, highlight }: { label: string; value: number; sub?: string; highlight?: boolean }) {
   return (
     <div className={`bg-gray-800/50 border ${highlight ? 'border-emerald-500/40' : 'border-gray-700/50'} rounded-xl p-4`}>
