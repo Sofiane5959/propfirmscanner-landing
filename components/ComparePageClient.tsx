@@ -1,16 +1,555 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { 
-  Search, Filter, ChevronDown, ChevronUp, Star, Check, X, 
-  Clock, DollarSign, TrendingUp, Shield, Zap, Award,
-  ArrowUpDown, Grid3X3, List, ExternalLink, Sparkles,
-  AlertTriangle, Calendar, Percent, Users, BarChart3
-} from 'lucide-react'
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
-// Types
+// =============================================================================
+// LOCALE DETECTION & TRANSLATIONS
+// =============================================================================
+
+const locales = ['en', 'fr', 'de', 'es', 'pt', 'ar', 'hi'] as const;
+type Locale = (typeof locales)[number];
+
+function getLocaleFromPath(pathname: string): Locale {
+  const firstSegment = pathname.split('/')[1];
+  if (firstSegment && locales.includes(firstSegment as Locale)) {
+    return firstSegment as Locale;
+  }
+  return 'en';
+}
+
+const translations: Record<Locale, Record<string, string>> = {
+  en: {
+    pageTitle: 'Compare Prop Firms',
+    pageSubtitle: 'Find your perfect match with smart filters',
+    searchPlaceholder: 'Search firms...',
+    markets: 'Markets',
+    platform: 'Platform',
+    challenge: 'Challenge',
+    style: 'Style',
+    rating: 'Rating',
+    bestFor: 'Best For',
+    price: 'Price',
+    deals: 'Deals',
+    reset: 'Reset',
+    showing: 'Showing',
+    propFirms: 'prop firms',
+    favorites: 'favorites',
+    noFirmsFound: 'No firms found',
+    tryAdjusting: 'Try adjusting your filters or search terms',
+    resetFilters: 'Reset Filters',
+    details: 'Details',
+    visit: 'Visit',
+    compare: 'Compare',
+    compareNow: 'Compare Now',
+    clear: 'Clear',
+    verified: 'Verified',
+    avoid: 'Avoid',
+    underReview: 'Under Review',
+    new: 'New',
+    split: 'Split',
+    scalping: 'Scalping',
+    newsTrading: 'News Trading',
+    easBots: 'EAs/Bots',
+    swingWeekend: 'Swing/Weekend',
+    beginners: 'Beginners',
+    bestValue: 'Best Value',
+    highSplit: 'High Split',
+    scalpers: 'Scalpers',
+    instantFunding: 'Instant Funding',
+    highestRating: 'Highest Rating',
+    lowestPrice: 'Lowest Price',
+    highestSplit: 'Highest Split',
+    bestDeals: 'Best Deals',
+    mostReviews: 'Most Reviews',
+    copied: 'Copied!',
+    rateBtn: 'Rate',
+    communityRating: 'Community',
+    writeReview: 'Rate this firm',
+    shareExperience: 'Share your experience',
+    yourRating: 'Your rating',
+    tradingStyleUsed: 'Your trading style',
+    commentPlaceholder: 'How was your experience? Payouts, support, rules...',
+    submitReview: 'Submit Review',
+    submitting: 'Submitting...',
+    reviewSubmitted: 'Review submitted! Thank you 🙏',
+    alreadyReviewedNote: 'You already reviewed this firm — submitting will update your review.',
+    signInToReview: 'Sign in to leave a review',
+    thankYouReview: 'Thank you!',
+    thankYouSub: 'Your review helps the community.',
+    // Payout Proofs
+    submitPayout: 'Submit Payout Proof',
+    payoutAmount: 'Payout amount',
+    payoutCurrency: 'Currency',
+    payoutDate: 'Payout date',
+    payoutScreenshot: 'Screenshot (optional)',
+    payoutScreenshotHint: 'Upload a proof screenshot',
+    submitPayoutBtn: 'Submit Proof',
+    payoutSubmitted: '💰 Payout proof submitted!',
+    signInToPayout: 'Sign in to submit a payout',
+    thankYouPayout: 'Proof submitted!',
+    thankYouPayoutSub: 'Thank you for helping the community.',
+    payoutBadge: 'payouts',
+    removeScreenshot: 'Remove',
+    payoutAmountPlaceholder: 'e.g. 1500',
+  },
+  fr: {
+    pageTitle: 'Comparer les Prop Firms',
+    pageSubtitle: 'Trouvez votre match parfait avec des filtres intelligents',
+    searchPlaceholder: 'Rechercher...',
+    markets: 'Marches',
+    platform: 'Plateforme',
+    challenge: 'Challenge',
+    style: 'Style',
+    rating: 'Note',
+    bestFor: 'Ideal pour',
+    price: 'Prix',
+    deals: 'Promos',
+    reset: 'Reset',
+    showing: 'Affichage de',
+    propFirms: 'prop firms',
+    favorites: 'favoris',
+    noFirmsFound: 'Aucune firm trouvee',
+    tryAdjusting: 'Essayez d\'ajuster vos filtres ou termes de recherche',
+    resetFilters: 'Reinitialiser',
+    details: 'Details',
+    visit: 'Visiter',
+    compare: 'Comparer',
+    compareNow: 'Comparer',
+    clear: 'Effacer',
+    verified: 'Verifie',
+    avoid: 'A eviter',
+    underReview: 'En revision',
+    new: 'Nouveau',
+    split: 'Split',
+    scalping: 'Scalping',
+    newsTrading: 'Trading News',
+    easBots: 'EAs/Bots',
+    swingWeekend: 'Swing/Weekend',
+    beginners: 'Debutants',
+    bestValue: 'Meilleur Rapport',
+    highSplit: 'Haut Split',
+    scalpers: 'Scalpers',
+    instantFunding: 'Financement Instant',
+    highestRating: 'Meilleure Note',
+    lowestPrice: 'Prix le Plus Bas',
+    highestSplit: 'Meilleur Split',
+    bestDeals: 'Meilleures Offres',
+    mostReviews: 'Plus d\'Avis',
+    copied: 'Copie !',
+    rateBtn: 'Noter',
+    communityRating: 'Communaute',
+    writeReview: 'Noter cette firm',
+    shareExperience: 'Partagez votre experience',
+    yourRating: 'Votre note',
+    tradingStyleUsed: 'Votre style de trading',
+    commentPlaceholder: 'Comment s\'est passee votre experience ? Paiements, support, regles...',
+    submitReview: 'Soumettre',
+    submitting: 'Envoi...',
+    reviewSubmitted: 'Avis soumis ! Merci 🙏',
+    alreadyReviewedNote: 'Vous avez deja note cette firm — soumettre mettra a jour votre avis.',
+    signInToReview: 'Connectez-vous pour noter',
+    thankYouReview: 'Merci !',
+    thankYouSub: 'Votre avis aide la communaute.',
+    submitPayout: 'Soumettre une preuve de paiement',
+    payoutAmount: 'Montant du paiement',
+    payoutCurrency: 'Devise',
+    payoutDate: 'Date du paiement',
+    payoutScreenshot: 'Capture d\'ecran (optionnel)',
+    payoutScreenshotHint: 'Deposez une preuve en image',
+    submitPayoutBtn: 'Soumettre la preuve',
+    payoutSubmitted: '💰 Preuve soumise !',
+    signInToPayout: 'Connectez-vous pour soumettre',
+    thankYouPayout: 'Preuve soumise !',
+    thankYouPayoutSub: 'Merci pour votre contribution.',
+    payoutBadge: 'paiements',
+    removeScreenshot: 'Supprimer',
+    payoutAmountPlaceholder: 'ex. 1500',
+  },
+  de: {
+    pageTitle: 'Prop Firms Vergleichen',
+    pageSubtitle: 'Finden Sie Ihr perfektes Match mit smarten Filtern',
+    searchPlaceholder: 'Suchen...',
+    markets: 'Markte',
+    platform: 'Plattform',
+    challenge: 'Challenge',
+    style: 'Stil',
+    rating: 'Bewertung',
+    bestFor: 'Ideal fur',
+    price: 'Preis',
+    deals: 'Angebote',
+    reset: 'Reset',
+    showing: 'Zeige',
+    propFirms: 'Prop Firms',
+    favorites: 'Favoriten',
+    noFirmsFound: 'Keine Firms gefunden',
+    tryAdjusting: 'Versuchen Sie Ihre Filter anzupassen',
+    resetFilters: 'Filter zurucksetzen',
+    details: 'Details',
+    visit: 'Besuchen',
+    compare: 'Vergleichen',
+    compareNow: 'Jetzt Vergleichen',
+    clear: 'Loschen',
+    verified: 'Verifiziert',
+    avoid: 'Vermeiden',
+    underReview: 'In Prufung',
+    new: 'Neu',
+    split: 'Split',
+    scalping: 'Scalping',
+    newsTrading: 'News Trading',
+    easBots: 'EAs/Bots',
+    swingWeekend: 'Swing/Weekend',
+    beginners: 'Anfanger',
+    bestValue: 'Bestes Preis-Leistung',
+    highSplit: 'Hoher Split',
+    scalpers: 'Scalper',
+    instantFunding: 'Sofort-Finanzierung',
+    highestRating: 'Beste Bewertung',
+    lowestPrice: 'Niedrigster Preis',
+    highestSplit: 'Hochster Split',
+    bestDeals: 'Beste Angebote',
+    mostReviews: 'Meiste Bewertungen',
+    copied: 'Kopiert!',
+    rateBtn: 'Bewerten',
+    communityRating: 'Community',
+    writeReview: 'Bewerten',
+    shareExperience: 'Teile deine Erfahrung',
+    yourRating: 'Deine Bewertung',
+    tradingStyleUsed: 'Dein Trading-Stil',
+    commentPlaceholder: 'Wie war deine Erfahrung? Auszahlungen, Support, Regeln...',
+    submitReview: 'Bewertung senden',
+    submitting: 'Senden...',
+    reviewSubmitted: 'Bewertung eingereicht! Danke 🙏',
+    alreadyReviewedNote: 'Du hast diese Firma bereits bewertet — deine Bewertung wird aktualisiert.',
+    signInToReview: 'Anmelden um zu bewerten',
+    thankYouReview: 'Danke!',
+    thankYouSub: 'Deine Bewertung hilft der Community.',
+    submitPayout: 'Auszahlungsnachweis einreichen',
+    payoutAmount: 'Auszahlungsbetrag',
+    payoutCurrency: 'Wahrung',
+    payoutDate: 'Auszahlungsdatum',
+    payoutScreenshot: 'Screenshot (optional)',
+    payoutScreenshotHint: 'Screenshot hochladen',
+    submitPayoutBtn: 'Nachweis einreichen',
+    payoutSubmitted: '💰 Nachweis eingereicht!',
+    signInToPayout: 'Anmelden um einzureichen',
+    thankYouPayout: 'Nachweis eingereicht!',
+    thankYouPayoutSub: 'Danke fur deinen Beitrag.',
+    payoutBadge: 'Auszahlungen',
+    removeScreenshot: 'Entfernen',
+    payoutAmountPlaceholder: 'z.B. 1500',
+  },
+  es: {
+    pageTitle: 'Comparar Prop Firms',
+    pageSubtitle: 'Encuentra tu match perfecto con filtros inteligentes',
+    searchPlaceholder: 'Buscar...',
+    markets: 'Mercados',
+    platform: 'Plataforma',
+    challenge: 'Challenge',
+    style: 'Estilo',
+    rating: 'Valoracion',
+    bestFor: 'Ideal para',
+    price: 'Precio',
+    deals: 'Ofertas',
+    reset: 'Reset',
+    showing: 'Mostrando',
+    propFirms: 'prop firms',
+    favorites: 'favoritos',
+    noFirmsFound: 'No se encontraron firms',
+    tryAdjusting: 'Intenta ajustar tus filtros o terminos de busqueda',
+    resetFilters: 'Restablecer filtros',
+    details: 'Detalles',
+    visit: 'Visitar',
+    compare: 'Comparar',
+    compareNow: 'Comparar Ahora',
+    clear: 'Limpiar',
+    verified: 'Verificado',
+    avoid: 'Evitar',
+    underReview: 'En revision',
+    new: 'Nuevo',
+    split: 'Split',
+    scalping: 'Scalping',
+    newsTrading: 'Trading Noticias',
+    easBots: 'EAs/Bots',
+    swingWeekend: 'Swing/Weekend',
+    beginners: 'Principiantes',
+    bestValue: 'Mejor Valor',
+    highSplit: 'Alto Split',
+    scalpers: 'Scalpers',
+    instantFunding: 'Financiacion Instantanea',
+    highestRating: 'Mayor Valoracion',
+    lowestPrice: 'Precio Mas Bajo',
+    highestSplit: 'Mayor Split',
+    bestDeals: 'Mejores Ofertas',
+    mostReviews: 'Mas Resenas',
+    copied: 'Copiado!',
+    rateBtn: 'Valorar',
+    communityRating: 'Comunidad',
+    writeReview: 'Valorar firma',
+    shareExperience: 'Comparte tu experiencia',
+    yourRating: 'Tu valoracion',
+    tradingStyleUsed: 'Tu estilo de trading',
+    commentPlaceholder: 'Como fue tu experiencia? Pagos, soporte, reglas...',
+    submitReview: 'Enviar valoracion',
+    submitting: 'Enviando...',
+    reviewSubmitted: 'Valoracion enviada! Gracias 🙏',
+    alreadyReviewedNote: 'Ya valoraste esta firma — enviar actualizara tu valoracion.',
+    signInToReview: 'Inicia sesion para valorar',
+    thankYouReview: 'Gracias!',
+    thankYouSub: 'Tu valoracion ayuda a la comunidad.',
+    submitPayout: 'Enviar prueba de pago',
+    payoutAmount: 'Monto del pago',
+    payoutCurrency: 'Moneda',
+    payoutDate: 'Fecha de pago',
+    payoutScreenshot: 'Captura de pantalla (opcional)',
+    payoutScreenshotHint: 'Sube una captura como prueba',
+    submitPayoutBtn: 'Enviar prueba',
+    payoutSubmitted: '💰 Prueba enviada!',
+    signInToPayout: 'Inicia sesion para enviar',
+    thankYouPayout: 'Prueba enviada!',
+    thankYouPayoutSub: 'Gracias por ayudar a la comunidad.',
+    payoutBadge: 'pagos',
+    removeScreenshot: 'Eliminar',
+    payoutAmountPlaceholder: 'ej. 1500',
+  },
+  pt: {
+    pageTitle: 'Comparar Prop Firms',
+    pageSubtitle: 'Encontre seu match perfeito com filtros inteligentes',
+    searchPlaceholder: 'Pesquisar...',
+    markets: 'Mercados',
+    platform: 'Plataforma',
+    challenge: 'Challenge',
+    style: 'Estilo',
+    rating: 'Avaliacao',
+    bestFor: 'Ideal para',
+    price: 'Preco',
+    deals: 'Ofertas',
+    reset: 'Reset',
+    showing: 'Mostrando',
+    propFirms: 'prop firms',
+    favorites: 'favoritos',
+    noFirmsFound: 'Nenhuma firm encontrada',
+    tryAdjusting: 'Tente ajustar seus filtros ou termos de pesquisa',
+    resetFilters: 'Redefinir filtros',
+    details: 'Detalhes',
+    visit: 'Visitar',
+    compare: 'Comparar',
+    compareNow: 'Comparar Agora',
+    clear: 'Limpar',
+    verified: 'Verificado',
+    avoid: 'Evitar',
+    underReview: 'Em revisao',
+    new: 'Novo',
+    split: 'Split',
+    scalping: 'Scalping',
+    newsTrading: 'Trading Noticias',
+    easBots: 'EAs/Bots',
+    swingWeekend: 'Swing/Weekend',
+    beginners: 'Iniciantes',
+    bestValue: 'Melhor Valor',
+    highSplit: 'Alto Split',
+    scalpers: 'Scalpers',
+    instantFunding: 'Financiamento Instantaneo',
+    highestRating: 'Maior Avaliacao',
+    lowestPrice: 'Menor Preco',
+    highestSplit: 'Maior Split',
+    bestDeals: 'Melhores Ofertas',
+    mostReviews: 'Mais Avaliacoes',
+    copied: 'Copiado!',
+    rateBtn: 'Avaliar',
+    communityRating: 'Comunidade',
+    writeReview: 'Avaliar firma',
+    shareExperience: 'Compartilhe sua experiencia',
+    yourRating: 'Sua avaliacao',
+    tradingStyleUsed: 'Seu estilo de trading',
+    commentPlaceholder: 'Como foi sua experiencia? Pagamentos, suporte, regras...',
+    submitReview: 'Enviar avaliacao',
+    submitting: 'Enviando...',
+    reviewSubmitted: 'Avaliacao enviada! Obrigado 🙏',
+    alreadyReviewedNote: 'Voce ja avaliou esta firma — enviar ira atualizar sua avaliacao.',
+    signInToReview: 'Faca login para avaliar',
+    thankYouReview: 'Obrigado!',
+    thankYouSub: 'Sua avaliacao ajuda a comunidade.',
+    submitPayout: 'Enviar prova de pagamento',
+    payoutAmount: 'Valor do pagamento',
+    payoutCurrency: 'Moeda',
+    payoutDate: 'Data do pagamento',
+    payoutScreenshot: 'Captura de tela (opcional)',
+    payoutScreenshotHint: 'Envie uma prova em imagem',
+    submitPayoutBtn: 'Enviar prova',
+    payoutSubmitted: '💰 Prova enviada!',
+    signInToPayout: 'Faca login para enviar',
+    thankYouPayout: 'Prova enviada!',
+    thankYouPayoutSub: 'Obrigado por ajudar a comunidade.',
+    payoutBadge: 'pagamentos',
+    removeScreenshot: 'Remover',
+    payoutAmountPlaceholder: 'ex. 1500',
+  },
+  ar: {
+    pageTitle: 'مقارنة شركات Prop',
+    pageSubtitle: 'اعثر على تطابقك المثالي مع فلاتر ذكية',
+    searchPlaceholder: 'بحث...',
+    markets: 'الاسواق',
+    platform: 'المنصة',
+    challenge: 'التحدي',
+    style: 'الاسلوب',
+    rating: 'التقييم',
+    bestFor: 'الافضل لـ',
+    price: 'السعر',
+    deals: 'العروض',
+    reset: 'اعادة',
+    showing: 'عرض',
+    propFirms: 'شركات prop',
+    favorites: 'المفضلة',
+    noFirmsFound: 'لم يتم العثور على شركات',
+    tryAdjusting: 'حاول تعديل الفلاتر او مصطلحات البحث',
+    resetFilters: 'اعادة تعيين الفلاتر',
+    details: 'التفاصيل',
+    visit: 'زيارة',
+    compare: 'مقارنة',
+    compareNow: 'قارن الان',
+    clear: 'مسح',
+    verified: 'موثق',
+    avoid: 'تجنب',
+    underReview: 'قيد المراجعة',
+    new: 'جديد',
+    split: 'التقسيم',
+    scalping: 'سكالبينج',
+    newsTrading: 'تداول الاخبار',
+    easBots: 'EAs/روبوتات',
+    swingWeekend: 'سوينج/ويكند',
+    beginners: 'مبتدئين',
+    bestValue: 'افضل قيمة',
+    highSplit: 'تقسيم عالي',
+    scalpers: 'سكالبرز',
+    instantFunding: 'تمويل فوري',
+    highestRating: 'اعلى تقييم',
+    lowestPrice: 'اقل سعر',
+    highestSplit: 'اعلى تقسيم',
+    bestDeals: 'افضل العروض',
+    mostReviews: 'اكثر التقييمات',
+    copied: 'تم النسخ!',
+    rateBtn: 'تقييم',
+    communityRating: 'المجتمع',
+    writeReview: 'تقييم الشركة',
+    shareExperience: 'شارك تجربتك',
+    yourRating: 'تقييمك',
+    tradingStyleUsed: 'اسلوب تداولك',
+    commentPlaceholder: 'كيف كانت تجربتك؟ الدفعات، الدعم، القواعد...',
+    submitReview: 'ارسال التقييم',
+    submitting: 'جاري الارسال...',
+    reviewSubmitted: 'تم ارسال التقييم! شكرا 🙏',
+    alreadyReviewedNote: 'لقد قيّمت هذه الشركة بالفعل — الارسال سيحدث تقييمك.',
+    signInToReview: 'سجل الدخول للتقييم',
+    thankYouReview: 'شكرا!',
+    thankYouSub: 'تقييمك يساعد المجتمع.',
+    submitPayout: 'ارسال اثبات الدفع',
+    payoutAmount: 'مبلغ الدفع',
+    payoutCurrency: 'العملة',
+    payoutDate: 'تاريخ الدفع',
+    payoutScreenshot: 'لقطة شاشة (اختياري)',
+    payoutScreenshotHint: 'ارفع صورة كاثبات',
+    submitPayoutBtn: 'ارسال الاثبات',
+    payoutSubmitted: '💰 تم ارسال الاثبات!',
+    signInToPayout: 'سجل الدخول للارسال',
+    thankYouPayout: 'تم الارسال!',
+    thankYouPayoutSub: 'شكرا لمساعدة المجتمع.',
+    payoutBadge: 'دفعات',
+    removeScreenshot: 'حذف',
+    payoutAmountPlaceholder: 'مثال 1500',
+  },
+  hi: {
+    pageTitle: 'Prop Firms की तुलना करें',
+    pageSubtitle: 'स्मार्ट फ़िल्टर के साथ अपना परफेक्ट मैच खोजें',
+    searchPlaceholder: 'खोजें...',
+    markets: 'बाज़ार',
+    platform: 'प्लेटफ़ॉर्म',
+    challenge: 'चैलेंज',
+    style: 'स्टाइल',
+    rating: 'रेटिंग',
+    bestFor: 'के लिए बेस्ट',
+    price: 'कीमत',
+    deals: 'डील्स',
+    reset: 'रीसेट',
+    showing: 'दिखा रहे हैं',
+    propFirms: 'prop firms',
+    favorites: 'पसंदीदा',
+    noFirmsFound: 'कोई firm नहीं मिली',
+    tryAdjusting: 'अपने फ़िल्टर या खोज शब्दों को समायोजित करने का प्रयास करें',
+    resetFilters: 'फ़िल्टर रीसेट करें',
+    details: 'विवरण',
+    visit: 'विज़िट',
+    compare: 'तुलना',
+    compareNow: 'अभी तुलना करें',
+    clear: 'साफ़ करें',
+    verified: 'सत्यापित',
+    avoid: 'बचें',
+    underReview: 'समीक्षाधीन',
+    new: 'नया',
+    split: 'स्प्लिट',
+    scalping: 'स्कैल्पिंग',
+    newsTrading: 'न्यूज़ ट्रेडिंग',
+    easBots: 'EAs/बॉट्स',
+    swingWeekend: 'स्विंग/वीकेंड',
+    beginners: 'शुरुआती',
+    bestValue: 'बेस्ट वैल्यू',
+    highSplit: 'हाई स्प्लिट',
+    scalpers: 'स्कैल्पर्स',
+    instantFunding: 'इंस्टेंट फंडिंग',
+    highestRating: 'सबसे ऊंची रेटिंग',
+    lowestPrice: 'सबसे कम कीमत',
+    highestSplit: 'सबसे ऊंचा स्प्लिट',
+    bestDeals: 'बेस्ट डील्स',
+    mostReviews: 'सबसे ज़्यादा रिव्यू',
+    copied: 'कॉपी हो गया!',
+    rateBtn: 'रेट करें',
+    communityRating: 'कम्युनिटी',
+    writeReview: 'रेट करें',
+    shareExperience: 'अपना अनुभव साझा करें',
+    yourRating: 'आपकी रेटिंग',
+    tradingStyleUsed: 'आपका ट्रेडिंग स्टाइल',
+    commentPlaceholder: 'आपका अनुभव कैसा था? पेआउट, सपोर्ट, नियम...',
+    submitReview: 'रिव्यू सबमिट करें',
+    submitting: 'सबमिट हो रहा है...',
+    reviewSubmitted: 'रिव्यू सबमिट हो गया! धन्यवाद 🙏',
+    alreadyReviewedNote: 'आपने इस firm को पहले ही रेट किया है — सबमिट करने से आपका रिव्यू अपडेट होगा।',
+    signInToReview: 'रेट करने के लिए साइन इन करें',
+    thankYouReview: 'धन्यवाद!',
+    thankYouSub: 'आपका रिव्यू कम्युनिटी की मदद करता है।',
+    submitPayout: 'पेआउट प्रूफ सबमिट करें',
+    payoutAmount: 'पेआउट राशि',
+    payoutCurrency: 'मुद्रा',
+    payoutDate: 'पेआउट तिथि',
+    payoutScreenshot: 'स्क्रीनशॉट (वैकल्पिक)',
+    payoutScreenshotHint: 'प्रूफ स्क्रीनशॉट अपलोड करें',
+    submitPayoutBtn: 'प्रूफ सबमिट करें',
+    payoutSubmitted: '💰 प्रूफ सबमिट हो गया!',
+    signInToPayout: 'सबमिट करने के लिए साइन इन करें',
+    thankYouPayout: 'प्रूफ सबमिट!',
+    thankYouPayoutSub: 'कम्युनिटी की मदद के लिए धन्यवाद।',
+    payoutBadge: 'पेआउट',
+    removeScreenshot: 'हटाएं',
+    payoutAmountPlaceholder: 'जैसे 1500',
+  },
+};
+
+import { 
+  Search, ChevronDown, Star, Check, X, 
+  Grid3X3, List, ExternalLink,
+  BarChart3, Tag, Trophy, BadgeCheck, Copy, CheckCircle2,
+  ChevronLeft, ChevronRight, RotateCcw,
+  Heart, GitCompare, Zap, TrendingUp,
+  DollarSign, Users, Flame, MessageSquare,
+  Banknote, Upload, ImageIcon, Sparkles
+} from 'lucide-react'
+import { PriceAlertButton } from '@/components/PriceAlert'
+
+// =====================================================
+// TYPES
+// =====================================================
 interface PropFirm {
   id: string
   name: string
@@ -51,775 +590,1856 @@ interface PropFirm {
   discount_percent: number
   year_founded: number
   headquarters: string
+  priority_tier: number | null
+}
+
+interface ReviewAggregate {
+  avg: number
+  count: number
+}
+
+interface PayoutAggregate {
+  count: number
+  totalAmount: number
+}
+
+// Shadow firms: unlisted firms visible only when user searches by name.
+// Minimal shape — only fields needed for the shadow card display.
+interface ShadowFirm {
+  id: string
+  name: string
+  slug: string
+  logo_url: string | null
+  website_url: string | null
+  trust_status: string
+  min_price: number | null
+  max_profit_split: number | null
+  trustpilot_rating: number | null
+  trustpilot_reviews: number | null
 }
 
 interface ComparePageClientProps {
-  initialFirms: PropFirm[]
+  firms: PropFirm[]
+  shadowFirms?: ShadowFirm[]
 }
 
-// Quick Stats Component
-const QuickStat = ({ icon: Icon, label, value, color }: { 
-  icon: any, label: string, value: string | number, color: string 
-}) => (
-  <div className="flex items-center gap-2">
-    <div className={`w-8 h-8 rounded-lg ${color} flex items-center justify-center`}>
-      <Icon className="w-4 h-4 text-white" />
-    </div>
-    <div>
-      <p className="text-xs text-gray-500">{label}</p>
-      <p className="text-sm font-semibold text-white">{value}</p>
-    </div>
-  </div>
-)
+interface FilterState {
+  search: string
+  markets: string[]
+  platforms: string[]
+  tradingStyles: string[]
+  ratings: number[]
+  challengeTypes: string[]
+  bestFor: string[]
+  priceRange: [number, number]
+  hasDiscount: boolean
+  verifiedOnly: boolean
+}
 
-// Trust Badge Component
-const TrustBadge = ({ status }: { status: string }) => {
-  const config = {
-    verified: { bg: 'bg-emerald-500/20', text: 'text-emerald-400', label: 'Verified', icon: Check },
-    banned: { bg: 'bg-red-500/20', text: 'text-red-400', label: 'Avoid', icon: X },
-    under_review: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', label: 'Under Review', icon: AlertTriangle },
-    new: { bg: 'bg-blue-500/20', text: 'text-blue-400', label: 'New', icon: Sparkles },
-  }
-  const { bg, text, label, icon: Icon } = config[status as keyof typeof config] || config.new
+// =====================================================
+// CONSTANTS
+// =====================================================
+const MARKET_OPTIONS = ['Forex', 'Futures', 'Crypto', 'Indices', 'Metals', 'Stocks'] as const
+
+const PLATFORM_OPTIONS = ['MT4', 'MT5', 'cTrader', 'DXtrade', 'TradeLocker', 'Match-Trader', 'NinjaTrader', 'Tradovate'] as const
+
+const TRADING_STYLE_OPTIONS = [
+  { key: 'scalping', label: 'Scalping', field: 'allows_scalping' },
+  { key: 'news', label: 'News Trading', field: 'allows_news_trading' },
+  { key: 'ea', label: 'EAs/Bots', field: 'allows_ea' },
+  { key: 'swing', label: 'Swing/Weekend', field: 'allows_weekend_holding' },
+] as const
+
+const RATING_OPTIONS = [4.0, 4.3, 4.5, 4.7] as const
+
+const CHALLENGE_TYPE_OPTIONS = ['Instant', '1-Step', '2-Step', '3-Step'] as const
+
+const BEST_FOR_OPTIONS = [
+  { key: 'beginners', label: 'Beginners', icon: Users },
+  { key: 'value', label: 'Best Value', icon: DollarSign },
+  { key: 'highsplit', label: 'High Split', icon: TrendingUp },
+  { key: 'scalpers', label: 'Scalpers', icon: Flame },
+  { key: 'instant', label: 'Instant Funding', icon: Zap },
+] as const
+
+const SORT_OPTIONS = [
+  { value: 'rating', label: 'Highest Rating' },
+  { value: 'price', label: 'Lowest Price' },
+  { value: 'split', label: 'Highest Split' },
+  { value: 'discount', label: 'Best Deals' },
+  { value: 'reviews', label: 'Most Reviews' },
+]
+
+const BLOCKLIST_FIRMS = ['fundedtech', 'fake prop firm', 'test firm']
+
+const CANONICAL_FIRMS: Record<string, { canonical: string; aliases: string[] }> = {
+  'fundednext': { canonical: 'FundedNext', aliases: ['funded next', 'fundednext futures'] },
+  'the5ers': { canonical: 'The5ers', aliases: ['the 5ers', 'the5%ers'] },
+  'ftmo': { canonical: 'FTMO', aliases: ['ftmo.com'] },
+  'myfundedfx': { canonical: 'MyFundedFX', aliases: ['my funded fx'] },
+  'topstep': { canonical: 'Topstep', aliases: ['topstep trader'] },
+}
+
+const TRADING_STYLES_REVIEW = ['Scalping', 'Day Trading', 'Swing', 'News Trading', 'EAs/Bots']
+
+const RATING_LABELS = ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent']
+
+const PAYOUT_CURRENCIES = ['USD', 'EUR', 'GBP', 'AUD', 'CAD', 'CHF', 'JPY'] as const
+
+// =====================================================
+// HOOKS
+// =====================================================
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value)
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedValue(value), delay)
+    return () => clearTimeout(timer)
+  }, [value, delay])
+  return debouncedValue
+}
+
+function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T | ((prev: T) => T)) => void] {
+  const [storedValue, setStoredValue] = useState<T>(initialValue)
   
+  useEffect(() => {
+    try {
+      const item = window.localStorage.getItem(key)
+      if (item) setStoredValue(JSON.parse(item))
+    } catch (error) {
+      console.warn(`Error reading localStorage key "${key}":`, error)
+    }
+  }, [key])
+  
+  const setValue = useCallback((value: T | ((prev: T) => T)) => {
+    setStoredValue(prev => {
+      const valueToStore = value instanceof Function ? value(prev) : value
+      if (typeof window !== 'undefined') {
+        try {
+          window.localStorage.setItem(key, JSON.stringify(valueToStore))
+        } catch (error) {
+          console.warn(`Error setting localStorage key "${key}":`, error)
+        }
+      }
+      return valueToStore
+    })
+  }, [key])
+  
+  return [storedValue, setValue]
+}
+
+// =====================================================
+// HELPERS
+// =====================================================
+const normalizeMarkets = (assets: string[] | undefined, isFutures: boolean): string[] => {
+  const markets: string[] = []
+  if (isFutures) markets.push('Futures')
+  if (!assets || assets.length === 0) return isFutures ? ['Futures'] : ['Forex']
+  assets.forEach(asset => {
+    const lower = asset.toLowerCase()
+    if (lower.includes('forex') || lower.includes('fx') || lower.includes('eur') || lower.includes('usd')) { if (!markets.includes('Forex')) markets.push('Forex') }
+    if (lower.includes('crypto') || lower.includes('bitcoin') || lower.includes('btc')) { if (!markets.includes('Crypto')) markets.push('Crypto') }
+    if (lower.includes('indices') || lower.includes('index') || lower.includes('nas') || lower.includes('dow')) { if (!markets.includes('Indices')) markets.push('Indices') }
+    if (lower.includes('metal') || lower.includes('gold') || lower.includes('xau')) { if (!markets.includes('Metals')) markets.push('Metals') }
+    if (lower.includes('stock') || lower.includes('equity')) { if (!markets.includes('Stocks')) markets.push('Stocks') }
+    if (lower.includes('futures') || lower.includes('future')) { if (!markets.includes('Futures')) markets.push('Futures') }
+  })
+  if (markets.length === 0) markets.push('Forex')
+  return markets
+}
+
+const formatReviewCount = (count: number | null | undefined): string => {
+  if (!count) return ''
+  if (count >= 1000) return `${(count / 1000).toFixed(count >= 10000 ? 0 : 1)}K`
+  return count.toString()
+}
+
+const formatProfitSplit = (start: number | null | undefined, max: number | null | undefined): string => {
+  if (!start && !max) return 'N/A'
+  if (!start) return `${max}%`
+  if (!max) return `${start}%`
+  const minVal = Math.min(start, max), maxVal = Math.max(start, max)
+  if (minVal === maxVal) return `${minVal}%`
+  return `${minVal}→${maxVal}%`
+}
+
+const isBlocklisted = (name: string): boolean => BLOCKLIST_FIRMS.some(b => name.toLowerCase().includes(b))
+
+const getCanonicalName = (name: string): string => {
+  const lower = name.toLowerCase().replace(/\s+/g, '').replace(/-/g, '')
+  for (const [key, value] of Object.entries(CANONICAL_FIRMS)) {
+    if (lower.includes(key) || value.aliases.some(a => lower.includes(a.replace(/\s+/g, '')))) return value.canonical
+  }
+  return name
+}
+
+// CLICK TRACKING: outbound clicks go through /api/go/{slug} which logs
+// the click server-side, then redirects to the firm's affiliate or
+// website URL. The Google fallback stays direct (it's an external search,
+// not a firm we want to track).
+const getFirmUrl = (firm: PropFirm, source = 'compare-card'): string => {
+  const hasOutbound = (firm.affiliate_url && firm.affiliate_url !== '#')
+    || (firm.website_url && firm.website_url !== '#')
+  if (hasOutbound) return `/api/go/${firm.slug}?source=${source}`
+  return `https://www.google.com/search?q=${encodeURIComponent(firm.name + ' prop firm')}`
+}
+
+const isOutboundFirmUrl = (firm: PropFirm): boolean => {
+  return !!((firm.affiliate_url && firm.affiliate_url !== '#')
+    || (firm.website_url && firm.website_url !== '#'))
+}
+
+const getBestForScore = (firm: PropFirm, category: string): number => {
+  switch (category) {
+    case 'beginners': {
+      let score = 0
+      if (firm.min_price && firm.min_price <= 100) score += 30
+      if (firm.trustpilot_rating >= 4.3) score += 25
+      if (firm.max_daily_drawdown === 0 || firm.max_daily_drawdown >= 5) score += 20
+      if (firm.min_trading_days === 0) score += 15
+      if (firm.fee_refund) score += 10
+      return score
+    }
+    case 'value': {
+      let vScore = 0
+      if (firm.min_price && firm.min_price <= 50) vScore += 35
+      if (firm.max_profit_split >= 90) vScore += 25
+      if (firm.discount_percent > 0) vScore += 20
+      if (firm.fee_refund) vScore += 20
+      return vScore
+    }
+    case 'highsplit':
+      return firm.max_profit_split >= 90 ? 100 : firm.max_profit_split >= 80 ? 50 : 0
+    case 'scalpers': {
+      let sScore = 0
+      if (firm.allows_scalping) sScore += 50
+      if (firm.max_daily_drawdown >= 5) sScore += 25
+      if (firm.trustpilot_rating >= 4) sScore += 25
+      return sScore
+    }
+    case 'instant':
+      return firm.has_instant_funding ? 100 : 0
+    default:
+      return 0
+  }
+}
+
+const normalizeChallengeType = (types: string[] | undefined): string[] => {
+  if (!types || types.length === 0) return []
+  const normalized: string[] = []
+  types.forEach(t => {
+    const lower = t.toLowerCase()
+    if (lower.includes('instant') || lower.includes('direct') || lower.includes('express')) normalized.push('Instant')
+    if (lower.includes('1') || lower.includes('one') || lower.includes('single')) normalized.push('1-Step')
+    if (lower.includes('2') || lower.includes('two') || lower.includes('standard')) normalized.push('2-Step')
+    if (lower.includes('3') || lower.includes('three')) normalized.push('3-Step')
+  })
+  return Array.from(new Set(normalized))
+}
+
+// =====================================================
+// COMPONENTS
+// =====================================================
+const Toast = ({ message, type, onClose }: { message: string; type: 'success' | 'error'; onClose: () => void }) => {
+  useEffect(() => { const timer = setTimeout(onClose, 3000); return () => clearTimeout(timer) }, [onClose])
   return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${bg} ${text}`}>
-      <Icon className="w-3 h-3" />
-      {label}
+    <div role="alert" aria-live="polite" className={`fixed bottom-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-in slide-in-from-bottom-2 ${type === 'success' ? 'bg-emerald-500' : 'bg-red-500'} text-white`}>
+      {type === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <X className="w-4 h-4" />}
+      <span className="text-sm font-medium">{message}</span>
+    </div>
+  )
+}
+
+const TrustBadge = ({ status }: { status: string }) => {
+  const config: Record<string, { bg: string; text: string; label: string }> = {
+    // PropFirmScanner statuses
+    scanned:         { bg: 'bg-emerald-500/20', text: 'text-emerald-400', label: 'Scanned \u2713' },
+    unverified:      { bg: 'bg-yellow-500/20',  text: 'text-yellow-400',  label: 'Unverified' },
+    not_recommended: { bg: 'bg-red-500/20',     text: 'text-red-400',     label: 'Not Recommended' },
+    // Legacy (backward compat)
+    verified:        { bg: 'bg-emerald-500/20', text: 'text-emerald-400', label: 'Scanned \u2713' },
+    trusted:         { bg: 'bg-emerald-500/20', text: 'text-emerald-400', label: 'Scanned \u2713' },
+    banned:          { bg: 'bg-red-500/20',     text: 'text-red-400',     label: 'Not Recommended' },
+    closed:          { bg: 'bg-red-500/20',     text: 'text-red-400',     label: 'Not Recommended' },
+    under_review:    { bg: 'bg-yellow-500/20',  text: 'text-yellow-400',  label: 'Unverified' },
+    unknown:         { bg: 'bg-yellow-500/20',  text: 'text-yellow-400',  label: 'Unverified' },
+    new:             { bg: 'bg-blue-500/20',    text: 'text-blue-400',    label: 'New' },
+  }
+  const cfg = config[status] || config.unverified
+  return (
+    <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium ${cfg.bg} ${cfg.text}`}>
+      <BadgeCheck className="w-2.5 h-2.5" />
+      {cfg.label}
     </span>
   )
 }
 
-// Improved Prop Firm Card Component
-const PropFirmCard = ({ firm, isCompact }: { firm: PropFirm, isCompact: boolean }) => {
-  const [isExpanded, setIsExpanded] = useState(false)
-  
-  if (isCompact) {
-    return (
-      <Link href={`/prop-firm/${firm.slug}`}>
-        <div className="group bg-gray-800/50 hover:bg-gray-800 border border-gray-700/50 hover:border-emerald-500/30 rounded-xl p-4 transition-all duration-300">
-          <div className="flex items-center gap-4">
-            {/* Logo */}
-            <div className="w-12 h-12 rounded-lg bg-gray-900 flex items-center justify-center overflow-hidden flex-shrink-0">
-              {firm.logo_url ? (
-                <Image src={firm.logo_url} alt={firm.name} width={48} height={48} className="object-contain" />
-              ) : (
-                <span className="text-lg font-bold text-emerald-400">{firm.name.charAt(0)}</span>
-              )}
-            </div>
-            
-            {/* Info */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <h3 className="font-semibold text-white truncate">{firm.name}</h3>
-                <TrustBadge status={firm.trust_status} />
-              </div>
-              <div className="flex items-center gap-4 mt-1 text-sm text-gray-400">
-                <span className="flex items-center gap-1">
-                  <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
-                  {firm.trustpilot_rating?.toFixed(1) || 'N/A'}
-                </span>
-                <span>From ${firm.min_price}</span>
-                <span className="text-emerald-400">{firm.profit_split}-{firm.max_profit_split}% split</span>
-              </div>
-            </div>
-            
-            {/* Quick Actions */}
-            <div className="flex items-center gap-2">
-              {firm.discount_percent && (
-                <span className="px-2 py-1 bg-red-500/20 text-red-400 text-xs font-bold rounded">
-                  -{firm.discount_percent}%
-                </span>
-              )}
-              <ExternalLink className="w-5 h-5 text-gray-500 group-hover:text-emerald-400 transition-colors" />
-            </div>
-          </div>
-        </div>
-      </Link>
-    )
-  }
-  
-  return (
-    <div className="bg-gray-800/50 border border-gray-700/50 hover:border-emerald-500/30 rounded-2xl overflow-hidden transition-all duration-300 group">
-      {/* Header */}
-      <div className="p-5 pb-4">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-4">
-            {/* Logo */}
-            <div className="w-16 h-16 rounded-xl bg-gray-900 flex items-center justify-center overflow-hidden border border-gray-700">
-              {firm.logo_url ? (
-                <Image src={firm.logo_url} alt={firm.name} width={64} height={64} className="object-contain" />
-              ) : (
-                <span className="text-2xl font-bold text-emerald-400">{firm.name.charAt(0)}</span>
-              )}
-            </div>
-            
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <h3 className="text-xl font-bold text-white">{firm.name}</h3>
-                <TrustBadge status={firm.trust_status} />
-              </div>
-              
-              {/* Rating & Reviews */}
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1">
-                  <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                  <span className="font-semibold text-white">{firm.trustpilot_rating?.toFixed(1) || 'N/A'}</span>
-                  <span className="text-gray-500 text-sm">({firm.trustpilot_reviews || 0})</span>
-                </div>
-                {firm.year_founded && (
-                  <span className="text-gray-500 text-sm flex items-center gap-1">
-                    <Calendar className="w-3.5 h-3.5" />
-                    Since {firm.year_founded}
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-          
-          {/* Discount Badge */}
-          {firm.discount_percent && (
-            <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-3 py-1.5 rounded-lg text-sm font-bold">
-              {firm.discount_percent}% OFF
-              {firm.discount_code && (
-                <span className="block text-xs font-normal opacity-80">Code: {firm.discount_code}</span>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-      
-      {/* Key Stats Grid */}
-      <div className="px-5 py-4 bg-gray-900/50 border-y border-gray-700/50">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <QuickStat 
-            icon={DollarSign} 
-            label="Starting Price" 
-            value={`$${firm.min_price}`} 
-            color="bg-blue-500" 
-          />
-          <QuickStat 
-            icon={Percent} 
-            label="Profit Split" 
-            value={`${firm.profit_split}-${firm.max_profit_split}%`} 
-            color="bg-emerald-500" 
-          />
-          <QuickStat 
-            icon={Shield} 
-            label="Max Drawdown" 
-            value={`${firm.max_total_drawdown}%`} 
-            color="bg-purple-500" 
-          />
-          <QuickStat 
-            icon={TrendingUp} 
-            label="Profit Target" 
-            value={`${firm.profit_target_phase1}%`} 
-            color="bg-orange-500" 
-          />
-        </div>
-      </div>
-      
-      {/* Trading Rules Quick View */}
-      <div className="p-5">
-        <div className="flex flex-wrap gap-2 mb-4">
-          {firm.allows_scalping && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs rounded-lg">
-              <Check className="w-3 h-3" /> Scalping
-            </span>
-          )}
-          {firm.allows_news_trading && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs rounded-lg">
-              <Check className="w-3 h-3" /> News Trading
-            </span>
-          )}
-          {firm.allows_ea && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs rounded-lg">
-              <Check className="w-3 h-3" /> EAs Allowed
-            </span>
-          )}
-          {firm.has_instant_funding && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-yellow-500/10 text-yellow-400 text-xs rounded-lg">
-              <Zap className="w-3 h-3" /> Instant Funding
-            </span>
-          )}
-          {!firm.allows_news_trading && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-red-500/10 text-red-400 text-xs rounded-lg">
-              <X className="w-3 h-3" /> No News Trading
-            </span>
-          )}
-        </div>
-        
-        {/* Expandable Details */}
-        <button 
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="w-full flex items-center justify-center gap-2 py-2 text-sm text-gray-400 hover:text-white transition-colors"
-        >
-          {isExpanded ? 'Show Less' : 'Show More Details'}
-          {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-        </button>
-        
-        {isExpanded && (
-          <div className="mt-4 pt-4 border-t border-gray-700/50 space-y-4 animate-in slide-in-from-top-2 duration-200">
-            {/* Challenge Types */}
-            <div>
-              <h4 className="text-sm font-medium text-gray-400 mb-2">Challenge Types</h4>
-              <div className="flex flex-wrap gap-1.5">
-                {firm.challenge_types?.map((type, i) => (
-                  <span key={i} className="px-2 py-0.5 bg-gray-700 text-gray-300 text-xs rounded">
-                    {type}
-                  </span>
-                ))}
-              </div>
-            </div>
-            
-            {/* Platforms */}
-            <div>
-              <h4 className="text-sm font-medium text-gray-400 mb-2">Platforms</h4>
-              <div className="flex flex-wrap gap-1.5">
-                {firm.platforms?.map((platform, i) => (
-                  <span key={i} className="px-2 py-0.5 bg-blue-500/10 text-blue-400 text-xs rounded">
-                    {platform}
-                  </span>
-                ))}
-              </div>
-            </div>
-            
-            {/* Key Details */}
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-500">Min Days:</span>
-                <span className="text-white">{firm.min_trading_days || 'None'}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Time Limit:</span>
-                <span className="text-white">{firm.time_limit || 'Unlimited'}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Drawdown Type:</span>
-                <span className="text-white">{firm.drawdown_type || 'Static'}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Payout:</span>
-                <span className="text-white">{firm.payout_frequency || 'Bi-weekly'}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Max Scaling:</span>
-                <span className="text-emerald-400">{firm.scaling_max || 'N/A'}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Fee Refund:</span>
-                <span className={firm.fee_refund ? 'text-emerald-400' : 'text-gray-500'}>
-                  {firm.fee_refund ? 'Yes' : 'No'}
-                </span>
-              </div>
-            </div>
-            
-            {/* Special Features */}
-            {firm.special_features && firm.special_features.length > 0 && (
-              <div>
-                <h4 className="text-sm font-medium text-gray-400 mb-2">Special Features</h4>
-                <ul className="space-y-1">
-                  {firm.special_features.map((feature, i) => (
-                    <li key={i} className="flex items-center gap-2 text-sm text-gray-300">
-                      <Sparkles className="w-3 h-3 text-yellow-400" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-      
-      {/* Action Buttons */}
-      <div className="p-5 pt-0 flex gap-3">
-        <Link 
-          href={`/prop-firm/${firm.slug}`}
-          className="flex-1 py-3 bg-gray-700 hover:bg-gray-600 text-white text-center font-medium rounded-xl transition-colors"
-        >
-          View Details
-        </Link>
-        <a 
-          href={firm.affiliate_url || firm.website_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex-1 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white text-center font-medium rounded-xl transition-all flex items-center justify-center gap-2"
-        >
-          Visit Site
-          <ExternalLink className="w-4 h-4" />
-        </a>
-      </div>
-    </div>
-  )
-}
+const FilterChip = ({ label, onRemove }: { label: string; onRemove: () => void }) => (
+  <span className="inline-flex items-center gap-1 px-2 py-1 bg-emerald-500/20 text-emerald-400 text-xs rounded-lg border border-emerald-500/30">
+    {label}
+    <button onClick={onRemove} className="hover:text-white" aria-label={`Remove ${label} filter`}><X className="w-3 h-3" /></button>
+  </span>
+)
 
-// Filter Section Component
-const FilterSection = ({ 
-  filters, 
-  setFilters,
-  firms 
+const FilterDropdown = ({ 
+  label, count, children, colorClass = 'emerald', isOpen, onToggle
 }: { 
-  filters: any, 
-  setFilters: (f: any) => void,
-  firms: PropFirm[]
+  label: string; count: number; children: React.ReactNode
+  colorClass?: 'emerald' | 'purple' | 'yellow' | 'blue' | 'orange'
+  isOpen: boolean; onToggle: () => void
 }) => {
-  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
   
-  // Calculate available options from data
-  const platforms = useMemo(() => {
-    const all = firms.flatMap(f => f.platforms || [])
-    return Array.from(new Set(all)).sort()
-  }, [firms])
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        if (isOpen) onToggle()
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isOpen, onToggle])
+  
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isOpen) onToggle()
+    }
+    document.addEventListener('keydown', handleEscape)
+    return () => document.removeEventListener('keydown', handleEscape)
+  }, [isOpen, onToggle])
+  
+  const hasSelection = count > 0
+  const colorStyles = {
+    emerald: { bg: 'bg-emerald-500/20', text: 'text-emerald-400', ring: 'ring-emerald-500/50', badge: 'bg-emerald-500' },
+    purple: { bg: 'bg-purple-500/20', text: 'text-purple-400', ring: 'ring-purple-500/50', badge: 'bg-purple-500' },
+    yellow: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', ring: 'ring-yellow-500/50', badge: 'bg-yellow-500' },
+    blue: { bg: 'bg-blue-500/20', text: 'text-blue-400', ring: 'ring-blue-500/50', badge: 'bg-blue-500' },
+    orange: { bg: 'bg-orange-500/20', text: 'text-orange-400', ring: 'ring-orange-500/50', badge: 'bg-orange-500' },
+  }
+  const colors = colorStyles[colorClass]
   
   return (
-    <div className="bg-gray-800/50 border border-gray-700/50 rounded-2xl overflow-hidden">
-      {/* Filter Header */}
-      <button 
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full p-4 flex items-center justify-between hover:bg-gray-800/50 transition-colors"
+    <div className="relative" ref={dropdownRef}>
+      <button
+        onClick={onToggle}
+        aria-expanded={isOpen}
+        aria-haspopup="listbox"
+        aria-label={`${label} filter${hasSelection ? `, ${count} selected` : ''}`}
+        className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 whitespace-nowrap ${
+          hasSelection ? `${colors.bg} ${colors.text} ring-1 ${colors.ring}` : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+        }`}
       >
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
-            <Filter className="w-5 h-5 text-emerald-400" />
-          </div>
-          <div className="text-left">
-            <h3 className="font-semibold text-white">Filters</h3>
-            <p className="text-sm text-gray-500">Refine your search</p>
-          </div>
-        </div>
-        <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        {label}
+        {hasSelection && <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${colors.badge} text-white`}>{count}</span>}
+        <ChevronDown className={`w-3 h-3 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
-      
-      {/* Filter Content */}
       {isOpen && (
-        <div className="p-4 pt-0 border-t border-gray-700/50 space-y-6 animate-in slide-in-from-top-2 duration-200">
-          {/* Asset Type */}
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-3">Asset Type</label>
-            <div className="flex flex-wrap gap-2">
-              {['All', 'Forex', 'Futures'].map(type => (
-                <button
-                  key={type}
-                  onClick={() => setFilters({ ...filters, assetType: type === 'All' ? null : type })}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    (type === 'All' && !filters.assetType) || filters.assetType === type
-                      ? 'bg-emerald-500 text-white'
-                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                  }`}
-                >
-                  {type}
-                </button>
-              ))}
-            </div>
-          </div>
-          
-          {/* Price Range */}
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-3">
-              Max Price: ${filters.maxPrice || 'Any'}
-            </label>
-            <input
-              type="range"
-              min="0"
-              max="1000"
-              step="50"
-              value={filters.maxPrice || 1000}
-              onChange={(e) => setFilters({ ...filters, maxPrice: parseInt(e.target.value) || null })}
-              className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
-            />
-            <div className="flex justify-between text-xs text-gray-500 mt-1">
-              <span>$0</span>
-              <span>$500</span>
-              <span>$1000+</span>
-            </div>
-          </div>
-          
-          {/* Profit Split */}
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-3">Min Profit Split</label>
-            <div className="flex flex-wrap gap-2">
-              {[70, 80, 90, 100].map(split => (
-                <button
-                  key={split}
-                  onClick={() => setFilters({ ...filters, minProfitSplit: split === 70 ? null : split })}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    (split === 70 && !filters.minProfitSplit) || filters.minProfitSplit === split
-                      ? 'bg-emerald-500 text-white'
-                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                  }`}
-                >
-                  {split}%+
-                </button>
-              ))}
-            </div>
-          </div>
-          
-          {/* Trading Style Toggles */}
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-3">Trading Style</label>
-            <div className="grid grid-cols-2 gap-2">
-              {[
-                { key: 'allowsScalping', label: 'Scalping Allowed' },
-                { key: 'allowsNewsTrading', label: 'News Trading' },
-                { key: 'allowsEA', label: 'EAs Allowed' },
-                { key: 'hasInstantFunding', label: 'Instant Funding' },
-              ].map(({ key, label }) => (
-                <button
-                  key={key}
-                  onClick={() => setFilters({ ...filters, [key]: !filters[key] })}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
-                    filters[key]
-                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                      : 'bg-gray-700 text-gray-400 border border-transparent hover:bg-gray-600'
-                  }`}
-                >
-                  {filters[key] ? <Check className="w-4 h-4" /> : <div className="w-4 h-4" />}
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
-          
-          {/* Platform Filter */}
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-3">Platform</label>
-            <select
-              value={filters.platform || ''}
-              onChange={(e) => setFilters({ ...filters, platform: e.target.value || null })}
-              className="w-full px-4 py-2.5 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:border-emerald-500"
-            >
-              <option value="">All Platforms</option>
-              {platforms.map(platform => (
-                <option key={platform} value={platform}>{platform}</option>
-              ))}
-            </select>
-          </div>
-          
-          {/* Reset Button */}
-          <button
-            onClick={() => setFilters({})}
-            className="w-full py-2.5 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-lg text-sm font-medium transition-colors"
-          >
-            Reset All Filters
-          </button>
+        <div role="listbox" className="absolute top-full left-0 mt-1 p-3 bg-gray-800 border border-gray-700 rounded-xl shadow-xl z-50 min-w-[200px] max-w-[280px] animate-in fade-in-0 zoom-in-95 duration-150">
+          {children}
         </div>
       )}
     </div>
   )
 }
 
-// Quick Comparison Table
-const QuickComparisonTable = ({ firms }: { firms: PropFirm[] }) => {
-  const topFirms = firms.slice(0, 10)
-  
+const PriceSlider = ({ value, onChange }: { value: [number, number]; onChange: (v: [number, number]) => void }) => {
+  const [localMax, setLocalMax] = useState(value[1])
+  useEffect(() => { setLocalMax(value[1]) }, [value])
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="border-b border-gray-700">
-            <th className="text-left py-3 px-4 text-gray-400 font-medium">Prop Firm</th>
-            <th className="text-center py-3 px-2 text-gray-400 font-medium">Rating</th>
-            <th className="text-center py-3 px-2 text-gray-400 font-medium">Price</th>
-            <th className="text-center py-3 px-2 text-gray-400 font-medium">Split</th>
-            <th className="text-center py-3 px-2 text-gray-400 font-medium">Drawdown</th>
-            <th className="text-center py-3 px-2 text-gray-400 font-medium">Target</th>
-            <th className="text-center py-3 px-2 text-gray-400 font-medium hidden md:table-cell">Min Days</th>
-            <th className="text-center py-3 px-2 text-gray-400 font-medium hidden lg:table-cell">Payout</th>
-          </tr>
-        </thead>
-        <tbody>
-          {topFirms.map((firm, i) => (
-            <tr 
-              key={firm.id} 
-              className="border-b border-gray-800 hover:bg-gray-800/50 transition-colors"
-            >
-              <td className="py-3 px-4">
-                <Link href={`/prop-firm/${firm.slug}`} className="flex items-center gap-3 group">
-                  <span className="text-gray-500 text-xs w-5">{i + 1}</span>
-                  <div className="w-8 h-8 rounded-lg bg-gray-900 flex items-center justify-center overflow-hidden">
-                    {firm.logo_url ? (
-                      <Image src={firm.logo_url} alt="" width={32} height={32} className="object-contain" />
-                    ) : (
-                      <span className="text-emerald-400 font-bold">{firm.name.charAt(0)}</span>
-                    )}
-                  </div>
-                  <span className="font-medium text-white group-hover:text-emerald-400 transition-colors">
-                    {firm.name}
-                  </span>
-                  {firm.discount_percent && (
-                    <span className="px-1.5 py-0.5 bg-red-500/20 text-red-400 text-xs rounded">
-                      -{firm.discount_percent}%
-                    </span>
-                  )}
-                </Link>
-              </td>
-              <td className="text-center py-3 px-2">
-                <span className="inline-flex items-center gap-1 text-yellow-400">
-                  <Star className="w-3 h-3 fill-yellow-400" />
-                  {firm.trustpilot_rating?.toFixed(1) || '-'}
-                </span>
-              </td>
-              <td className="text-center py-3 px-2 text-white font-medium">${firm.min_price}</td>
-              <td className="text-center py-3 px-2 text-emerald-400 font-medium">{firm.max_profit_split}%</td>
-              <td className="text-center py-3 px-2 text-gray-300">{firm.max_total_drawdown}%</td>
-              <td className="text-center py-3 px-2 text-gray-300">{firm.profit_target_phase1}%</td>
-              <td className="text-center py-3 px-2 text-gray-300 hidden md:table-cell">{firm.min_trading_days || '-'}</td>
-              <td className="text-center py-3 px-2 text-gray-300 hidden lg:table-cell">{firm.payout_frequency || 'Bi-weekly'}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="space-y-2">
+      <div className="flex justify-between text-xs text-gray-400">
+        <span>$0</span>
+        <span className="text-emerald-400 font-medium">{localMax >= 1000 ? 'Any' : `$${localMax}`}</span>
+      </div>
+      <input
+        type="range" min={0} max={1000} step={25} value={localMax}
+        onChange={(e) => setLocalMax(parseInt(e.target.value))}
+        onMouseUp={() => onChange([0, localMax])}
+        onTouchEnd={() => onChange([0, localMax])}
+        aria-label="Maximum price filter"
+        className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+      />
+      <div className="flex justify-between text-[10px] text-gray-500">
+        <span>$0</span><span>$250</span><span>$500</span><span>$750</span><span>$1000+</span>
+      </div>
     </div>
   )
 }
 
-// Main Component
-export default function ComparePageClient({ initialFirms }: ComparePageClientProps) {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [filters, setFilters] = useState<any>({})
-  const [sortBy, setSortBy] = useState<'rating' | 'price' | 'split'>('rating')
-  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'table'>('grid')
-  const [showOnlyVerified, setShowOnlyVerified] = useState(true)
-  
-  // Filter and sort firms
-  const filteredFirms = useMemo(() => {
-    let result = [...initialFirms]
-    
-    // Trust status filter
-    if (showOnlyVerified) {
-      result = result.filter(f => f.trust_status === 'verified')
-    } else {
-      result = result.filter(f => f.trust_status !== 'banned')
-    }
-    
-    // Search
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase()
-      result = result.filter(f => 
-        f.name.toLowerCase().includes(q) ||
-        f.slug.toLowerCase().includes(q)
-      )
-    }
-    
-    // Asset type filter
-    if (filters.assetType === 'Futures') {
-      result = result.filter(f => f.is_futures)
-    } else if (filters.assetType === 'Forex') {
-      result = result.filter(f => !f.is_futures)
-    }
-    
-    // Price filter
-    if (filters.maxPrice && filters.maxPrice < 1000) {
-      result = result.filter(f => f.min_price <= filters.maxPrice)
-    }
-    
-    // Profit split filter
-    if (filters.minProfitSplit) {
-      result = result.filter(f => f.max_profit_split >= filters.minProfitSplit)
-    }
-    
-    // Trading style filters
-    if (filters.allowsScalping) result = result.filter(f => f.allows_scalping)
-    if (filters.allowsNewsTrading) result = result.filter(f => f.allows_news_trading)
-    if (filters.allowsEA) result = result.filter(f => f.allows_ea)
-    if (filters.hasInstantFunding) result = result.filter(f => f.has_instant_funding)
-    
-    // Platform filter
-    if (filters.platform) {
-      result = result.filter(f => f.platforms?.includes(filters.platform))
-    }
-    
-    // Sort
-    result.sort((a, b) => {
-      switch (sortBy) {
-        case 'rating':
-          return (b.trustpilot_rating || 0) - (a.trustpilot_rating || 0)
-        case 'price':
-          return (a.min_price || 0) - (b.min_price || 0)
-        case 'split':
-          return (b.max_profit_split || 0) - (a.max_profit_split || 0)
-        default:
-          return 0
-      }
-    })
-    
-    return result
-  }, [initialFirms, searchQuery, filters, sortBy, showOnlyVerified])
-  
-  // Stats
-  const stats = useMemo(() => ({
-    total: filteredFirms.length,
-    avgRating: (filteredFirms.reduce((sum, f) => sum + (f.trustpilot_rating || 0), 0) / filteredFirms.length).toFixed(1),
-    avgSplit: Math.round(filteredFirms.reduce((sum, f) => sum + (f.max_profit_split || 0), 0) / filteredFirms.length),
-    withDiscounts: filteredFirms.filter(f => f.discount_percent).length
-  }), [filteredFirms])
+// =====================================================
+// REVIEW MODAL
+// =====================================================
+const ReviewModal = ({
+  firm,
+  t,
+  onClose,
+  onSubmit,
+  alreadyReviewed,
+}: {
+  firm: PropFirm
+  t: Record<string, string>
+  onClose: () => void
+  onSubmit: (firmId: string, rating: number, comment: string, style: string) => Promise<void>
+  alreadyReviewed: boolean
+}) => {
+  const [rating, setRating] = useState(0)
+  const [hoverRating, setHoverRating] = useState(0)
+  const [comment, setComment] = useState('')
+  const [tradingStyle, setTradingStyle] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+
+  const handleBackdrop = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) onClose()
+  }
+
+  const handleSubmit = async () => {
+    if (rating === 0) return
+    setIsSubmitting(true)
+    await onSubmit(firm.id, rating, comment, tradingStyle)
+    setSubmitted(true)
+    setIsSubmitting(false)
+    setTimeout(onClose, 2200)
+  }
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      {/* Hero Section */}
-      <section className="pt-24 pb-12 px-4">
+    <div
+      className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      onClick={handleBackdrop}
+    >
+      <div className="bg-gray-900 border border-gray-700 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+        {submitted ? (
+          <div className="text-center py-8">
+            <div className="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
+              <CheckCircle2 className="w-8 h-8 text-emerald-400" />
+            </div>
+            <h3 className="text-white font-bold text-xl mb-1">{t.thankYouReview}</h3>
+            <p className="text-gray-400 text-sm">{t.thankYouSub}</p>
+          </div>
+        ) : (
+          <>
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center p-1 flex-shrink-0">
+                  {firm.logo_url
+                    ? <Image src={firm.logo_url} alt={firm.name} width={40} height={40} className="object-contain" />
+                    : <span className="font-bold text-emerald-600 text-lg">{firm.name[0]}</span>
+                  }
+                </div>
+                <div>
+                  <h3 className="text-white font-bold text-base">{firm.name}</h3>
+                  <p className="text-gray-400 text-xs">{t.shareExperience}</p>
+                </div>
+              </div>
+              <button onClick={onClose} aria-label="Close" className="text-gray-500 hover:text-white transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="mb-5">
+              <p className="text-sm text-gray-400 mb-2">{t.yourRating} *</p>
+              <div className="flex gap-2 mb-1">
+                {[1, 2, 3, 4, 5].map(s => (
+                  <button
+                    key={s}
+                    onMouseEnter={() => setHoverRating(s)}
+                    onMouseLeave={() => setHoverRating(0)}
+                    onClick={() => setRating(s)}
+                    aria-label={`Rate ${s} star${s > 1 ? 's' : ''}`}
+                    className="transition-transform hover:scale-110 focus:outline-none"
+                  >
+                    <Star className={`w-9 h-9 transition-colors ${(hoverRating || rating) >= s ? 'text-yellow-400 fill-yellow-400' : 'text-gray-600'}`} />
+                  </button>
+                ))}
+              </div>
+              {rating > 0 && (
+                <p className="text-xs text-yellow-400 font-medium">{RATING_LABELS[rating]}</p>
+              )}
+            </div>
+
+            <div className="mb-4">
+              <p className="text-sm text-gray-400 mb-2">{t.tradingStyleUsed}</p>
+              <div className="flex flex-wrap gap-2">
+                {TRADING_STYLES_REVIEW.map(style => (
+                  <button
+                    key={style}
+                    onClick={() => setTradingStyle(prev => prev === style ? '' : style)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                      tradingStyle === style
+                        ? 'bg-emerald-500 text-white'
+                        : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                    }`}
+                  >
+                    {style}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mb-5">
+              <p className="text-sm text-gray-400 mb-2">Your experience <span className="text-gray-600">(optional)</span></p>
+              <textarea
+                value={comment}
+                onChange={e => setComment(e.target.value)}
+                placeholder={t.commentPlaceholder}
+                className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-sm text-white placeholder-gray-500 resize-none focus:outline-none focus:border-emerald-500 transition-colors"
+                rows={3}
+                maxLength={500}
+              />
+              <p className="text-[10px] text-gray-600 text-right mt-0.5">{comment.length}/500</p>
+            </div>
+
+            <button
+              onClick={handleSubmit}
+              disabled={rating === 0 || isSubmitting}
+              className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors"
+            >
+              {isSubmitting ? t.submitting : t.submitReview}
+            </button>
+
+            {alreadyReviewed && (
+              <p className="text-center text-xs text-yellow-400 mt-3">
+                ⚠️ {t.alreadyReviewedNote}
+              </p>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// =====================================================
+// PAYOUT PROOF MODAL
+// =====================================================
+const PayoutProofModal = ({
+  firm,
+  t,
+  onClose,
+  onSubmit,
+}: {
+  firm: PropFirm
+  t: Record<string, string>
+  onClose: () => void
+  onSubmit: (firmId: string, amount: number, currency: string, date: string, file: File | null) => Promise<void>
+}) => {
+  const [amount, setAmount] = useState('')
+  const [currency, setCurrency] = useState('USD')
+  const [date, setDate] = useState('')
+  const [file, setFile] = useState<File | null>(null)
+  const [preview, setPreview] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleBackdrop = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) onClose()
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = e.target.files?.[0] || null
+    if (!selected) return
+    setFile(selected)
+    const reader = new FileReader()
+    reader.onloadend = () => setPreview(reader.result as string)
+    reader.readAsDataURL(selected)
+  }
+
+  const handleRemoveFile = () => {
+    setFile(null)
+    setPreview(null)
+    if (fileInputRef.current) fileInputRef.current.value = ''
+  }
+
+  const handleSubmit = async () => {
+    const parsedAmount = parseFloat(amount)
+    if (!amount || isNaN(parsedAmount) || parsedAmount <= 0) return
+    setIsSubmitting(true)
+    await onSubmit(firm.id, parsedAmount, currency, date, file)
+    setSubmitted(true)
+    setIsSubmitting(false)
+    setTimeout(onClose, 2400)
+  }
+
+  return (
+    <div
+      className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      onClick={handleBackdrop}
+    >
+      <div className="bg-gray-900 border border-gray-700 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+        {submitted ? (
+          <div className="text-center py-8">
+            <div className="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
+              <Banknote className="w-8 h-8 text-emerald-400" />
+            </div>
+            <h3 className="text-white font-bold text-xl mb-1">{t.thankYouPayout}</h3>
+            <p className="text-gray-400 text-sm">{t.thankYouPayoutSub}</p>
+          </div>
+        ) : (
+          <>
+            {/* Header */}
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center p-1 flex-shrink-0">
+                  {firm.logo_url
+                    ? <Image src={firm.logo_url} alt={firm.name} width={40} height={40} className="object-contain" />
+                    : <span className="font-bold text-emerald-600 text-lg">{firm.name[0]}</span>
+                  }
+                </div>
+                <div>
+                  <h3 className="text-white font-bold text-base">{firm.name}</h3>
+                  <p className="text-gray-400 text-xs">{t.submitPayout}</p>
+                </div>
+              </div>
+              <button onClick={onClose} aria-label="Close" className="text-gray-500 hover:text-white transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Amount + Currency */}
+            <div className="mb-4">
+              <p className="text-sm text-gray-400 mb-2">{t.payoutAmount} *</p>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={amount}
+                  onChange={e => setAmount(e.target.value)}
+                  placeholder={t.payoutAmountPlaceholder}
+                  className="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 transition-colors"
+                />
+                <select
+                  value={currency}
+                  onChange={e => setCurrency(e.target.value)}
+                  aria-label={t.payoutCurrency}
+                  className="w-24 bg-gray-800 border border-gray-700 rounded-xl px-2 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 transition-colors"
+                >
+                  {PAYOUT_CURRENCIES.map(c => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Date */}
+            <div className="mb-4">
+              <p className="text-sm text-gray-400 mb-2">{t.payoutDate} <span className="text-gray-600">(optional)</span></p>
+              <input
+                type="date"
+                value={date}
+                onChange={e => setDate(e.target.value)}
+                className="w-full bg-gray-800 border border-gray-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 transition-colors [color-scheme:dark]"
+              />
+            </div>
+
+            {/* Screenshot upload */}
+            <div className="mb-5">
+              <p className="text-sm text-gray-400 mb-2">{t.payoutScreenshot}</p>
+              {preview ? (
+                <div className="relative rounded-xl overflow-hidden border border-gray-700 bg-gray-800">
+                  <img src={preview} alt="Payout screenshot preview" className="w-full max-h-40 object-contain" />
+                  <button
+                    onClick={handleRemoveFile}
+                    className="absolute top-2 right-2 p-1.5 bg-gray-900/80 hover:bg-red-500/80 rounded-lg text-white transition-colors"
+                    aria-label="Remove screenshot"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                  <div className="absolute bottom-2 left-2 bg-gray-900/80 rounded-lg px-2 py-0.5">
+                    <p className="text-[10px] text-gray-300 truncate max-w-[200px]">{file?.name}</p>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-full border-2 border-dashed border-gray-700 hover:border-emerald-500/50 rounded-xl p-4 flex flex-col items-center gap-2 text-gray-500 hover:text-gray-300 transition-colors group"
+                >
+                  <ImageIcon className="w-7 h-7 group-hover:text-emerald-400 transition-colors" />
+                  <span className="text-xs">{t.payoutScreenshotHint}</span>
+                </button>
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="hidden"
+                aria-label="Upload screenshot"
+              />
+            </div>
+
+            {/* Submit */}
+            <button
+              onClick={handleSubmit}
+              disabled={!amount || parseFloat(amount) <= 0 || isNaN(parseFloat(amount)) || isSubmitting}
+              className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
+            >
+              {isSubmitting ? (
+                <span>{t.submitting}</span>
+              ) : (
+                <>
+                  <Banknote className="w-4 h-4" />
+                  <span>{t.submitPayoutBtn}</span>
+                </>
+              )}
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// =====================================================
+// PROP FIRM CARD
+// =====================================================
+const PropFirmCard = ({ 
+  firm, isCompact, rank, markets,
+  isFavorite, onFavorite,
+  isComparing, onCompare,
+  onCopyCode,
+  communityRating,
+  onRate,
+  hasReviewed,
+  payoutAggregate,
+  onPayout,
+  t,
+}: { 
+  firm: PropFirm
+  isCompact: boolean
+  rank: number
+  markets: string[]
+  isFavorite: boolean
+  onFavorite: () => void
+  isComparing: boolean
+  onCompare: () => void
+  onCopyCode: (code: string) => void
+  communityRating: ReviewAggregate | null
+  onRate: () => void
+  hasReviewed: boolean
+  payoutAggregate: PayoutAggregate | null
+  onPayout: () => void
+  t: Record<string, string>
+}) => {
+  const hasDiscount = firm.discount_percent && firm.discount_percent > 0
+  const isTopPick = firm.priority_tier === 1
+  
+  if (isCompact) {
+    return (
+      <div className={`group bg-gray-800/50 hover:bg-gray-800 border rounded-xl p-3 transition-all ${
+        isTopPick
+          ? 'border-emerald-500/50 hover:border-emerald-400 shadow-md shadow-emerald-500/10'
+          : 'border-gray-700/50 hover:border-emerald-500/30'
+      }`}>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center overflow-hidden p-1 flex-shrink-0">
+            {firm.logo_url ? <Image src={firm.logo_url} alt={firm.name} width={40} height={40} className="object-contain" /> : <span className="text-lg font-bold text-emerald-600">{firm.name.charAt(0)}</span>}
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <h3 className="font-semibold text-white truncate text-sm flex-1 min-w-0">{firm.name}</h3>
+              {isTopPick && (
+                <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-gradient-to-r from-emerald-500 to-emerald-400 text-white text-[9px] font-bold tracking-wide flex-shrink-0">
+                  <Star className="w-2 h-2 fill-white" />
+                  TOP PICK
+                </span>
+              )}
+              <TrustBadge status={firm.trust_status || 'verified'} />
+            </div>
+            <div className="flex items-center gap-3 text-xs text-gray-400 mt-0.5 flex-wrap">
+              <span className="flex items-center gap-1"><Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />{firm.trustpilot_rating?.toFixed(1) || 'N/A'}</span>
+              {communityRating && communityRating.count > 0 && (
+                <span className="flex items-center gap-1 text-purple-400">
+                  <MessageSquare className="w-3 h-3" />{communityRating.avg.toFixed(1)} ({communityRating.count})
+                </span>
+              )}
+              {payoutAggregate && payoutAggregate.count > 0 && (
+                <span className="flex items-center gap-1 text-emerald-400">
+                  <Banknote className="w-3 h-3" />{payoutAggregate.count} {t.payoutBadge}
+                </span>
+              )}
+              <span>${firm.min_price || 'N/A'}</span>
+              <span className="text-emerald-400">{formatProfitSplit(firm.profit_split, firm.max_profit_split)}</span>
+            </div>
+          </div>
+          {hasDiscount && (
+            <span className="px-2 py-1 bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs font-bold rounded-lg">{firm.discount_percent}% OFF</span>
+          )}
+          <div className="flex items-center gap-1">
+            <button onClick={onFavorite} aria-label={isFavorite ? `Remove ${firm.name} from favorites` : `Add ${firm.name} to favorites`} aria-pressed={isFavorite} className={`p-2 rounded-lg transition-all ${isFavorite ? 'text-red-400 bg-red-500/20' : 'text-gray-500 hover:text-red-400 hover:bg-gray-700'}`}>
+              <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
+            </button>
+            <button onClick={onRate} aria-label={`Rate ${firm.name}`} title={hasReviewed ? 'Update your review' : 'Rate this firm'} className={`p-2 rounded-lg transition-all ${hasReviewed ? 'text-yellow-400 bg-yellow-500/20' : 'text-gray-500 hover:text-yellow-400 hover:bg-gray-700'}`}>
+              <Star className={`w-4 h-4 ${hasReviewed ? 'fill-current' : ''}`} />
+            </button>
+            <button onClick={onPayout} aria-label={`Submit payout proof for ${firm.name}`} title="Submit payout proof" className="p-2 rounded-lg transition-all text-gray-500 hover:text-emerald-400 hover:bg-gray-700">
+              <Banknote className="w-4 h-4" />
+            </button>
+            <PriceAlertButton firmId={firm.id} firmName={firm.name} firmSlug={firm.slug} currentPrice={firm.min_price || 0} />
+            <Link href={`/prop-firm/${firm.slug}`} className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-white text-xs font-medium rounded-lg">Details</Link>
+            <a href={getFirmUrl(firm, 'compare-list')} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg flex items-center gap-1">
+              Visit <ExternalLink className="w-3 h-3" />
+            </a>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className={`bg-gray-800/50 border rounded-xl overflow-hidden transition-all group relative flex flex-col ${
+      isTopPick
+        ? 'border-emerald-500/50 hover:border-emerald-400 shadow-lg shadow-emerald-500/10'
+        : 'border-gray-700/50 hover:border-emerald-500/30'
+    }`}>
+      {hasDiscount && (
+        <div className="absolute top-3 right-3 z-10">
+          <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-2.5 py-1 rounded-lg text-xs font-bold shadow-lg">
+            {firm.discount_percent}% OFF
+            {firm.discount_code && (
+              <button onClick={() => onCopyCode(firm.discount_code)} aria-label={`Copy discount code ${firm.discount_code}`} className="flex items-center gap-1 text-[10px] font-normal opacity-90 hover:opacity-100 mt-0.5">
+                <Copy className="w-2.5 h-2.5" />{firm.discount_code}
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+      
+      {/* Top Pick badge (editor's choice — priority_tier = 1) */}
+      {isTopPick && (
+        <div className="absolute top-3 left-3 z-10 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-gradient-to-r from-emerald-500 to-emerald-400 text-white text-[10px] font-bold shadow-lg tracking-wide">
+          <Star className="w-2.5 h-2.5 fill-white" />
+          TOP PICK
+        </div>
+      )}
+      
+      {/* Rank trophy (top-3 by current sort) — only show if not a Top Pick to avoid badge collision */}
+      {!isTopPick && rank <= 3 && (
+        <div className={`absolute top-3 left-3 z-10 w-7 h-7 rounded-lg flex items-center justify-center shadow-lg ${rank === 1 ? 'bg-amber-500' : rank === 2 ? 'bg-gray-400' : 'bg-amber-700'}`}>
+          <Trophy className="w-3.5 h-3.5 text-white" />
+        </div>
+      )}
+      
+      <div className={`p-4 ${hasDiscount || rank <= 3 || isTopPick ? 'pt-12' : ''}`}>
+        {/* Actions row */}
+        <div className="flex justify-end gap-1 mb-2">
+          <button onClick={onFavorite} aria-label={isFavorite ? `Remove ${firm.name} from favorites` : `Add ${firm.name} to favorites`} aria-pressed={isFavorite} className={`p-1.5 rounded-lg transition-all ${isFavorite ? 'text-red-400 bg-red-500/20' : 'text-gray-500 hover:text-red-400 hover:bg-gray-700'}`}>
+            <Heart className={`w-3.5 h-3.5 ${isFavorite ? 'fill-current' : ''}`} />
+          </button>
+          <button onClick={onCompare} aria-label={isComparing ? `Remove ${firm.name} from comparison` : `Add ${firm.name} to comparison`} aria-pressed={isComparing} className={`p-1.5 rounded-lg transition-all ${isComparing ? 'text-blue-400 bg-blue-500/20' : 'text-gray-500 hover:text-blue-400 hover:bg-gray-700'}`}>
+            <GitCompare className="w-3.5 h-3.5" />
+          </button>
+          <button onClick={onRate} aria-label={hasReviewed ? `Update review for ${firm.name}` : `Rate ${firm.name}`} title={hasReviewed ? 'Update your review' : t.writeReview} className={`p-1.5 rounded-lg transition-all ${hasReviewed ? 'text-yellow-400 bg-yellow-500/20' : 'text-gray-500 hover:text-yellow-400 hover:bg-gray-700'}`}>
+            <Star className={`w-3.5 h-3.5 ${hasReviewed ? 'fill-current' : ''}`} />
+          </button>
+          <button onClick={onPayout} aria-label={`Submit payout proof for ${firm.name}`} title={t.submitPayout} className="p-1.5 rounded-lg transition-all text-gray-500 hover:text-emerald-400 hover:bg-gray-700">
+            <Banknote className="w-3.5 h-3.5" />
+          </button>
+          <PriceAlertButton firmId={firm.id} firmName={firm.name} firmSlug={firm.slug} currentPrice={firm.min_price || 0} />
+        </div>
+        {/* Logo + Name */}
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center overflow-hidden border border-gray-200 p-1 flex-shrink-0">
+            {firm.logo_url ? <Image src={firm.logo_url} alt={firm.name} width={48} height={48} className="object-contain" /> : <span className="text-lg font-bold text-emerald-600">{firm.name.charAt(0)}</span>}
+          </div>
+          <div className="min-w-0">
+            <h3 className="font-bold text-white text-sm leading-tight mb-0.5">{firm.name}</h3>
+            <TrustBadge status={firm.trust_status || 'verified'} />
+          </div>
+        </div>
+        {/* Rating */}
+        <div className="flex items-center gap-2 flex-wrap mb-1">
+          <span className="flex items-center gap-1 text-sm">
+            <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
+            <span className="text-white font-medium">{firm.trustpilot_rating?.toFixed(1) || 'N/A'}</span>
+            {firm.trustpilot_reviews && <span className="text-gray-500 text-xs">({formatReviewCount(firm.trustpilot_reviews)})</span>}
+          </span>
+        </div>
+        {/* Community rating */}
+        {communityRating && communityRating.count > 0 && (
+          <div className="flex items-center gap-1 mt-0.5">
+            <MessageSquare className="w-3 h-3 text-purple-400" />
+            <span className="text-purple-400 text-xs font-medium">{communityRating.avg.toFixed(1)}</span>
+            <span className="text-gray-500 text-xs">{t.communityRating} ({communityRating.count})</span>
+          </div>
+        )}
+        {/* Payout badge */}
+        {payoutAggregate && payoutAggregate.count > 0 && (
+          <div className="flex items-center gap-1 mt-0.5">
+            <Banknote className="w-3 h-3 text-emerald-400" />
+            <span className="text-emerald-400 text-xs font-medium">{payoutAggregate.count} {t.payoutBadge}</span>
+          </div>
+        )}
+      </div>
+      
+      <div className="px-4 py-3 bg-gray-900/50 border-y border-gray-700/50 grid grid-cols-2 gap-3">
+        <div>
+          <p className="text-[10px] text-gray-500 uppercase">Price</p>
+          <p className="text-base font-bold text-white">${firm.min_price || 'N/A'}</p>
+        </div>
+        <div>
+          <p className="text-[10px] text-gray-500 uppercase">Split</p>
+          <p className="text-base font-bold text-emerald-400">{formatProfitSplit(firm.profit_split, firm.max_profit_split)}</p>
+        </div>
+      </div>
+      
+      <div className="p-4 space-y-3 flex-1">
+        <div className="flex flex-wrap gap-1">
+          {markets.map(m => (
+            <span key={m} className="px-1.5 py-0.5 bg-blue-500/20 text-blue-400 text-[10px] rounded">{m}</span>
+          ))}
+        </div>
+        <div className="flex flex-wrap gap-1">
+          {firm.allows_scalping && <span className="px-1.5 py-0.5 bg-emerald-500/10 text-emerald-400 text-[10px] rounded flex items-center gap-0.5"><Check className="w-2.5 h-2.5" />Scalping</span>}
+          {firm.allows_news_trading && <span className="px-1.5 py-0.5 bg-emerald-500/10 text-emerald-400 text-[10px] rounded flex items-center gap-0.5"><Check className="w-2.5 h-2.5" />News</span>}
+          {firm.allows_ea && <span className="px-1.5 py-0.5 bg-emerald-500/10 text-emerald-400 text-[10px] rounded flex items-center gap-0.5"><Check className="w-2.5 h-2.5" />EAs</span>}
+          {firm.has_instant_funding && <span className="px-1.5 py-0.5 bg-yellow-500/10 text-yellow-400 text-[10px] rounded flex items-center gap-0.5"><Zap className="w-2.5 h-2.5" />Instant</span>}
+        </div>
+        {firm.platforms && firm.platforms.length > 0 && (
+          <div className="flex flex-wrap gap-1">
+            {firm.platforms.slice(0, 3).map(p => (
+              <span key={p} className="px-1.5 py-0.5 bg-gray-700 text-gray-300 text-[10px] rounded">{p}</span>
+            ))}
+            {firm.platforms.length > 3 && <span className="text-[10px] text-gray-500">+{firm.platforms.length - 3}</span>}
+          </div>
+        )}
+      </div>
+      
+      <div className="p-4 pt-0 flex gap-2">
+        <Link href={`/prop-firm/${firm.slug}`} className="flex-1 py-2.5 bg-gray-700 hover:bg-gray-600 text-white text-center text-sm font-medium rounded-lg transition-colors">Details</Link>
+        <a href={getFirmUrl(firm, 'compare-grid')} target="_blank" rel="noopener noreferrer" className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-center text-sm font-medium rounded-lg flex items-center justify-center gap-1 transition-colors">
+          Visit <ExternalLink className="w-3.5 h-3.5" />
+        </a>
+      </div>
+    </div>
+  )
+}
+
+const CompareBar = ({ firms, onRemove, onClear }: { firms: PropFirm[]; onRemove: (id: string) => void; onClear: () => void }) => {
+  if (firms.length === 0) return null
+  const compareUrl = `/compare/${firms.map(f => f.slug).join('-vs-')}`
+  return (
+    <div className="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 p-4 z-40">
+      <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-gray-400">Compare ({firms.length}/4):</span>
+          <div className="flex gap-2">
+            {firms.map(f => (
+              <div key={f.id} className="flex items-center gap-1 px-2 py-1 bg-gray-700 rounded-lg">
+                <span className="text-xs text-white">{f.name}</span>
+                <button onClick={() => onRemove(f.id)} aria-label={`Remove ${f.name} from comparison`} className="text-gray-400 hover:text-red-400"><X className="w-3 h-3" /></button>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <button onClick={onClear} className="px-3 py-1.5 text-gray-400 hover:text-white text-sm">Clear</button>
+          <Link href={compareUrl} className="px-4 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg">Compare Now</Link>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const CardSkeleton = () => (
+  <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl overflow-hidden animate-pulse">
+    <div className="p-4">
+      <div className="flex items-start gap-3">
+        <div className="w-14 h-14 rounded-xl bg-gray-700" />
+        <div className="flex-1">
+          <div className="h-5 bg-gray-700 rounded w-2/3 mb-2" />
+          <div className="h-4 bg-gray-700 rounded w-1/3" />
+        </div>
+      </div>
+    </div>
+    <div className="px-4 py-3 bg-gray-900/50 border-y border-gray-700/50 grid grid-cols-2 gap-3">
+      <div className="h-10 bg-gray-700 rounded" />
+      <div className="h-10 bg-gray-700 rounded" />
+    </div>
+    <div className="p-4 space-y-3">
+      <div className="flex gap-1">
+        <div className="h-5 w-12 bg-gray-700 rounded" />
+        <div className="h-5 w-12 bg-gray-700 rounded" />
+      </div>
+      <div className="flex gap-2">
+        <div className="h-8 flex-1 bg-gray-700 rounded-lg" />
+        <div className="h-8 flex-1 bg-gray-700 rounded-lg" />
+      </div>
+    </div>
+  </div>
+)
+
+// =====================================================
+// SHADOW CARD — for unlisted firms shown via direct search
+// Cards are dimmed, never link to affiliate URLs, and display
+// a warning banner when the firm is not_recommended.
+// =====================================================
+const ShadowPropFirmCard = ({ firm }: { firm: ShadowFirm }) => {
+  const isNotRecommended = firm.trust_status === 'not_recommended'
+  // SAFETY: shadow cards never use affiliate links — only website_url, or nothing
+  const visitUrl = firm.website_url && firm.website_url !== '#' ? firm.website_url : null
+
+  return (
+    <div
+      className={`bg-gray-800/30 border rounded-xl overflow-hidden transition-all flex flex-col opacity-60 hover:opacity-90 ${
+        isNotRecommended
+          ? 'border-red-500/40 hover:border-red-500/60'
+          : 'border-yellow-500/30 hover:border-yellow-500/50'
+      }`}
+    >
+      {/* Warning banner for not_recommended firms */}
+      {isNotRecommended && (
+        <div className="bg-red-500/15 border-b border-red-500/30 px-3 py-1.5 flex items-center gap-1.5">
+          <X className="w-3.5 h-3.5 text-red-400 flex-shrink-0" />
+          <span className="text-red-400 text-[10px] font-semibold uppercase tracking-wide">
+            Not recommended by PropFirmScanner
+          </span>
+        </div>
+      )}
+
+      <div className="p-4">
+        {/* Logo + Name */}
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center overflow-hidden border border-gray-200 p-1 flex-shrink-0">
+            {firm.logo_url ? (
+              <Image src={firm.logo_url} alt={firm.name} width={48} height={48} className="object-contain" />
+            ) : (
+              <span className="text-lg font-bold text-gray-500">{firm.name.charAt(0)}</span>
+            )}
+          </div>
+          <div className="min-w-0 flex-1">
+            <h3 className="font-bold text-gray-300 text-sm leading-tight mb-0.5 truncate">{firm.name}</h3>
+            <TrustBadge status={firm.trust_status || 'unverified'} />
+          </div>
+        </div>
+
+        {/* Minimal data */}
+        <div className="flex items-center gap-3 text-xs text-gray-500 mb-3">
+          {firm.trustpilot_rating && (
+            <span className="flex items-center gap-1">
+              <Star className="w-3 h-3 text-gray-500" />
+              {firm.trustpilot_rating.toFixed(1)}
+              {firm.trustpilot_reviews ? (
+                <span className="text-gray-600">({formatReviewCount(firm.trustpilot_reviews)})</span>
+              ) : null}
+            </span>
+          )}
+          {firm.min_price != null && <span>${firm.min_price}</span>}
+          {firm.max_profit_split != null && <span>{firm.max_profit_split}% split</span>}
+        </div>
+
+        {/* Single Visit button — website_url only, no affiliate */}
+        {visitUrl ? (
+          <a
+            href={visitUrl}
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            title={isNotRecommended ? 'Proceed with caution — this firm is not recommended' : 'Visit firm website'}
+            className={`w-full py-2 text-center text-xs font-medium rounded-lg flex items-center justify-center gap-1 transition-colors ${
+              isNotRecommended
+                ? 'bg-red-500/15 hover:bg-red-500/25 text-red-300 border border-red-500/30'
+                : 'bg-gray-700/60 hover:bg-gray-700 text-gray-300'
+            }`}
+          >
+            Visit site <ExternalLink className="w-3 h-3" />
+          </a>
+        ) : (
+          <div className="w-full py-2 text-center text-xs text-gray-500 bg-gray-700/30 rounded-lg">
+            No website available
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// =====================================================
+// MAIN COMPONENT
+// =====================================================
+export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePageClientProps) {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const pathname = usePathname()
+  
+  const currentLocale = getLocaleFromPath(pathname)
+  const t = translations[currentLocale] || translations.en
+  
+  const [filters, setFilters] = useState<FilterState>(() => ({
+    search: searchParams.get('q') || '',
+    markets: searchParams.get('markets')?.split(',').filter(Boolean) || [],
+    platforms: searchParams.get('platforms')?.split(',').filter(Boolean) || [],
+    tradingStyles: searchParams.get('styles')?.split(',').filter(Boolean) || [],
+    ratings: searchParams.get('ratings')?.split(',').map(Number).filter(Boolean) || [],
+    challengeTypes: searchParams.get('challenges')?.split(',').filter(Boolean) || [],
+    bestFor: searchParams.get('bestFor')?.split(',').filter(Boolean) || [],
+    priceRange: [0, parseInt(searchParams.get('maxPrice') || '1000') || 1000],
+    hasDiscount: searchParams.get('deals') === 'true',
+    verifiedOnly: searchParams.get('verified') !== 'false',
+  }))
+  
+  const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'rating')
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [compareList, setCompareList] = useState<string[]>([])
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null)
+  const [showQuizFloat, setShowQuizFloat] = useState(false)
+  
+  // Reviews state
+  const [reviewAggregates, setReviewAggregates] = useState<Map<string, ReviewAggregate>>(new Map())
+  const [userReviewedFirms, setUserReviewedFirms] = useState<Set<string>>(new Set())
+  const [reviewModalFirmId, setReviewModalFirmId] = useState<string | null>(null)
+
+  // Payout state
+  const [payoutAggregates, setPayoutAggregates] = useState<Map<string, PayoutAggregate>>(new Map())
+  const [payoutModalFirmId, setPayoutModalFirmId] = useState<string | null>(null)
+
+  // Favorites — localStorage (optimistic UI) + Supabase sync
+  const [favorites, setFavorites] = useLocalStorage<string[]>('pfs_favorites', [])
+  const supabase = createClientComponentClient()
+
+  // On mount: load favorites + reviews + payouts from Supabase
+  useEffect(() => {
+    const loadData = async () => {
+      // Load favorites
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { data: favData } = await supabase
+          .from('user_favorites')
+          .select('prop_firm_id')
+          .eq('user_id', user.id)
+        if (favData && favData.length > 0) {
+          const dbIds = favData.map((r: any) => r.prop_firm_id as string)
+          setFavorites(prev => Array.from(new Set(prev.concat(dbIds))))
+        }
+        // Load user's own reviews
+        const { data: userReviewData } = await supabase
+          .from('firm_reviews')
+          .select('firm_id')
+          .eq('user_id', user.id)
+        if (userReviewData) {
+          setUserReviewedFirms(new Set(userReviewData.map((r: any) => r.firm_id as string)))
+        }
+      }
+      // Load aggregated community ratings (public)
+      const { data: reviewData } = await supabase
+        .from('firm_reviews')
+        .select('firm_id, rating')
+      if (reviewData && reviewData.length > 0) {
+        const agg = new Map<string, { sum: number; count: number }>()
+        reviewData.forEach((r: any) => {
+          const existing = agg.get(r.firm_id) || { sum: 0, count: 0 }
+          agg.set(r.firm_id, { sum: existing.sum + r.rating, count: existing.count + 1 })
+        })
+        const result = new Map<string, ReviewAggregate>()
+        agg.forEach((val, key) => result.set(key, { avg: val.sum / val.count, count: val.count }))
+        setReviewAggregates(result)
+      }
+      // Load payout aggregates (public, approved only)
+      const { data: payoutData } = await supabase
+        .from('payout_proofs')
+        .select('firm_id, amount')
+        .eq('status', 'approved')
+      if (payoutData && payoutData.length > 0) {
+        const pagg = new Map<string, { count: number; totalAmount: number }>()
+        payoutData.forEach((r: any) => {
+          const existing = pagg.get(r.firm_id) || { count: 0, totalAmount: 0 }
+          pagg.set(r.firm_id, { count: existing.count + 1, totalAmount: existing.totalAmount + Number(r.amount) })
+        })
+        setPayoutAggregates(pagg)
+      }
+    }
+    loadData()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const itemsPerPage = 24
+  const debouncedSearch = useDebounce(filters.search, 300)
+  const debouncedFilters = useDebounce(filters, 500)
+  
+  const toggleFavorite = useCallback(async (id: string) => {
+    const isCurrentlyFavorite = favorites.includes(id)
+    setFavorites(prev => {
+      const newFavs = prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]
+      setToast({ message: prev.includes(id) ? 'Removed from favorites' : 'Added to favorites', type: 'success' })
+      return newFavs
+    })
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      if (isCurrentlyFavorite) {
+        await supabase.from('user_favorites').delete().eq('user_id', user.id).eq('prop_firm_id', id)
+      } else {
+        await supabase.from('user_favorites').upsert({ user_id: user.id, prop_firm_id: id }, { onConflict: 'user_id,prop_firm_id' })
+      }
+    } catch (err) {
+      console.error('Failed to sync favorite to Supabase:', err)
+    }
+  }, [favorites, setFavorites, supabase])
+  
+  const toggleCompare = useCallback((id: string) => {
+    setCompareList(prev => {
+      if (prev.includes(id)) return prev.filter(f => f !== id)
+      if (prev.length >= 4) { setToast({ message: 'Maximum 4 firms to compare', type: 'error' }); return prev }
+      return [...prev, id]
+    })
+  }, [])
+  
+  const handleCopyCode = useCallback((code: string) => {
+    navigator.clipboard.writeText(code)
+    setToast({ message: `Code "${code}" copied!`, type: 'success' })
+  }, [])
+  
+  const toggleDropdown = useCallback((name: string) => {
+    setOpenDropdown(prev => prev === name ? null : name)
+  }, [])
+
+  // Submit a review
+  const handleSubmitReview = useCallback(async (firmId: string, rating: number, comment: string, style: string) => {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      setToast({ message: t.signInToReview, type: 'error' })
+      return
+    }
+    try {
+      await supabase
+        .from('firm_reviews')
+        .upsert(
+          {
+            user_id: user.id,
+            firm_id: firmId,
+            rating,
+            comment: comment || null,
+            trading_style: style || null,
+          },
+          { onConflict: 'user_id,firm_id' }
+        )
+      // Optimistic update of community ratings
+      setReviewAggregates(prev => {
+        const newMap = new Map(prev)
+        const existing = newMap.get(firmId)
+        const alreadyReviewed = userReviewedFirms.has(firmId)
+        if (existing) {
+          if (alreadyReviewed) {
+            newMap.set(firmId, { avg: (existing.avg * existing.count - existing.avg + rating) / existing.count, count: existing.count })
+          } else {
+            const newCount = existing.count + 1
+            newMap.set(firmId, { avg: (existing.avg * existing.count + rating) / newCount, count: newCount })
+          }
+        } else {
+          newMap.set(firmId, { avg: rating, count: 1 })
+        }
+        return newMap
+      })
+      setUserReviewedFirms(prev => new Set(Array.from(prev).concat(firmId)))
+      setToast({ message: t.reviewSubmitted, type: 'success' })
+    } catch (err) {
+      console.error('Failed to submit review:', err)
+      setToast({ message: 'Error submitting review', type: 'error' })
+    }
+  }, [supabase, t, userReviewedFirms])
+
+  // Submit a payout proof
+  const handleSubmitPayout = useCallback(async (
+    firmId: string,
+    amount: number,
+    currency: string,
+    date: string,
+    file: File | null
+  ) => {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      setToast({ message: t.signInToPayout, type: 'error' })
+      return
+    }
+    try {
+      let screenshotUrl: string | null = null
+      if (file) {
+        const fileExt = file.name.split('.').pop()
+        const fileName = `${user.id}/${firmId}/${Date.now()}.${fileExt}`
+        const { error: uploadError } = await supabase.storage
+          .from('payout-proofs')
+          .upload(fileName, file, { contentType: file.type })
+        if (!uploadError) {
+          const { data: urlData } = supabase.storage
+            .from('payout-proofs')
+            .getPublicUrl(fileName)
+          screenshotUrl = urlData.publicUrl
+        }
+      }
+      await supabase.from('payout_proofs').insert({
+        user_id: user.id,
+        firm_id: firmId,
+        amount,
+        currency,
+        screenshot_url: screenshotUrl,
+        payout_date: date || null,
+        status: 'approved',
+      })
+      // Optimistic update
+      setPayoutAggregates(prev => {
+        const newMap = new Map(prev)
+        const existing = newMap.get(firmId) || { count: 0, totalAmount: 0 }
+        newMap.set(firmId, { count: existing.count + 1, totalAmount: existing.totalAmount + amount })
+        return newMap
+      })
+      setToast({ message: t.payoutSubmitted, type: 'success' })
+    } catch (err) {
+      console.error('Failed to submit payout proof:', err)
+      setToast({ message: 'Error submitting payout proof', type: 'error' })
+    }
+  }, [supabase, t])
+  
+  // Sync filters to URL (debounced)
+  useEffect(() => {
+    const params = new URLSearchParams()
+    if (debouncedFilters.search) params.set('q', debouncedFilters.search)
+    if (debouncedFilters.markets.length) params.set('markets', debouncedFilters.markets.join(','))
+    if (debouncedFilters.platforms.length) params.set('platforms', debouncedFilters.platforms.join(','))
+    if (debouncedFilters.tradingStyles.length) params.set('styles', debouncedFilters.tradingStyles.join(','))
+    if (debouncedFilters.ratings.length) params.set('ratings', debouncedFilters.ratings.join(','))
+    if (debouncedFilters.challengeTypes.length) params.set('challenges', debouncedFilters.challengeTypes.join(','))
+    if (debouncedFilters.bestFor.length) params.set('bestFor', debouncedFilters.bestFor.join(','))
+    if (debouncedFilters.priceRange[1] < 1000) params.set('maxPrice', String(debouncedFilters.priceRange[1]))
+    if (debouncedFilters.hasDiscount) params.set('deals', 'true')
+    if (!debouncedFilters.verifiedOnly) params.set('verified', 'false')
+    if (sortBy !== 'rating') params.set('sort', sortBy)
+    const newUrl = params.toString() ? `?${params.toString()}` : '/compare'
+    router.replace(newUrl, { scroll: false })
+  }, [debouncedFilters, sortBy, router])
+  
+  const processedFirms = useMemo(() => {
+    const filtered = firms.filter(f => !isBlocklisted(f.name))
+    const seen = new Map<string, PropFirm>()
+    filtered.forEach(firm => {
+      const canonical = getCanonicalName(firm.name).toLowerCase().replace(/\s+/g, '')
+      const existing = seen.get(canonical)
+      if (!existing) { seen.set(canonical, firm) }
+      else {
+        const score = (f: PropFirm) => (f.website_url && f.website_url !== '#' ? 10 : 0) + (f.affiliate_url ? 5 : 0) + (f.discount_code ? 3 : 0) + (f.trustpilot_rating ? 2 : 0) + (f.min_price ? 1 : 0)
+        if (score(firm) > score(existing)) seen.set(canonical, firm)
+      }
+    })
+    return Array.from(seen.values())
+  }, [firms])
+  
+  const firmMarkets = useMemo(() => {
+    const map = new Map<string, string[]>()
+    processedFirms.forEach(f => map.set(f.id, normalizeMarkets(f.assets, f.is_futures)))
+    return map
+  }, [processedFirms])
+  
+  const firmChallengeTypes = useMemo(() => {
+    const map = new Map<string, string[]>()
+    processedFirms.forEach(f => map.set(f.id, normalizeChallengeType(f.challenge_types)))
+    return map
+  }, [processedFirms])
+  
+  const availablePlatforms = useMemo(() => 
+    Array.from(new Set(processedFirms.flatMap(f => f.platforms || []))).filter(Boolean).sort()
+  , [processedFirms])
+  
+  const stats = useMemo(() => {
+    const verified = processedFirms.filter(f => f.trust_status === 'scanned' || f.trust_status === 'verified' || f.trust_status === 'trusted' || !f.trust_status)
+    const discounts = verified.filter(f => f.discount_percent != null && f.discount_percent > 0)
+    return { total: verified.length, withDiscounts: discounts.length }
+  }, [processedFirms])
+  
+  const filteredFirms = useMemo(() => {
+    let result = [...processedFirms]
+    if (filters.verifiedOnly) result = result.filter(f => f.trust_status === 'scanned' || f.trust_status === 'verified' || f.trust_status === 'trusted' || !f.trust_status)
+    else result = result.filter(f => f.trust_status !== 'banned')
+    if (debouncedSearch) {
+      const q = debouncedSearch.toLowerCase()
+      result = result.filter(f => f.name?.toLowerCase().includes(q) || f.slug?.toLowerCase().includes(q))
+    }
+    if (filters.markets.length > 0) {
+      result = result.filter(f => { const fMarkets = firmMarkets.get(f.id) || []; return filters.markets.some(m => fMarkets.includes(m)) })
+    }
+    if (filters.platforms.length > 0) {
+      result = result.filter(f => { const fPlatforms = f.platforms || []; return filters.platforms.some(p => fPlatforms.includes(p)) })
+    }
+    if (filters.tradingStyles.length > 0) {
+      result = result.filter(f => filters.tradingStyles.every(style => {
+        const styleConfig = TRADING_STYLE_OPTIONS.find(s => s.key === style)
+        if (!styleConfig) return true
+        return f[styleConfig.field as keyof PropFirm]
+      }))
+    }
+    if (filters.ratings.length > 0) {
+      const minRating = Math.min(...filters.ratings)
+      result = result.filter(f => f.trustpilot_rating >= minRating)
+    }
+    if (filters.challengeTypes.length > 0) {
+      result = result.filter(f => { const fChallenges = firmChallengeTypes.get(f.id) || []; return filters.challengeTypes.some(c => fChallenges.includes(c)) })
+    }
+    if (filters.bestFor.length > 0) {
+      result = result.filter(f => filters.bestFor.some(category => getBestForScore(f, category) > 0))
+    }
+    if (filters.priceRange[1] < 1000) {
+      result = result.filter(f => f.min_price && f.min_price <= filters.priceRange[1])
+    }
+    if (filters.hasDiscount) {
+      result = result.filter(f => f.discount_percent != null && f.discount_percent > 0)
+    }
+    result.sort((a, b) => {
+      // 1. Priority tier first — Tier 1 (editor's picks) always at the top.
+      //    Lower number = higher priority. NULL/undefined treated as Tier 3 (lowest).
+      const aTier = a.priority_tier ?? 3
+      const bTier = b.priority_tier ?? 3
+      if (aTier !== bTier) return aTier - bTier
+
+      // 2. Within the same tier, discounted firms come first (promo boost)
+      const aPromo = (a.discount_percent ?? 0) > 0 ? 1 : 0
+      const bPromo = (b.discount_percent ?? 0) > 0 ? 1 : 0
+      if (bPromo !== aPromo) return bPromo - aPromo
+
+      // 3. Finally, apply the user-selected sort
+      switch (sortBy) {
+        case 'rating': return (b.trustpilot_rating || 0) - (a.trustpilot_rating || 0)
+        case 'price': return (a.min_price || 9999) - (b.min_price || 9999)
+        case 'split': return (b.max_profit_split || 0) - (a.max_profit_split || 0)
+        case 'discount': return (b.discount_percent || 0) - (a.discount_percent || 0)
+        case 'reviews': return (b.trustpilot_reviews || 0) - (a.trustpilot_reviews || 0)
+        default: return 0
+      }
+    })
+    return result
+  }, [processedFirms, firmMarkets, firmChallengeTypes, filters.verifiedOnly, filters.markets, filters.platforms, filters.tradingStyles, filters.ratings, filters.challengeTypes, filters.bestFor, filters.priceRange, filters.hasDiscount, debouncedSearch, sortBy])
+
+  // ============================================================
+  // SHADOW SEARCH
+  // Match unlisted firms (unverified + not_recommended) ONLY when
+  // the user is actively searching (>= 2 chars). Other filters are
+  // intentionally ignored — the intent is "did you list this firm I
+  // already know by name?", not "filter my way to it".
+  // ============================================================
+  const SHADOW_SEARCH_MIN_CHARS = 2
+  const shadowMatches = useMemo<ShadowFirm[]>(() => {
+    const q = (debouncedSearch || '').trim().toLowerCase()
+    if (q.length < SHADOW_SEARCH_MIN_CHARS) return []
+    if (!shadowFirms || shadowFirms.length === 0) return []
+
+    // Exclude any shadow firm whose name/slug collides with a canonical
+    // listed firm — the canonical version is already in the main results.
+    const listedCanonicals = new Set(
+      processedFirms.map(f => getCanonicalName(f.name).toLowerCase().replace(/\s+/g, ''))
+    )
+
+    const matches = shadowFirms.filter(f => {
+      if (!f.name) return false
+      if (isBlocklisted(f.name)) return false
+      const nameHit = f.name.toLowerCase().includes(q)
+      const slugHit = (f.slug || '').toLowerCase().includes(q)
+      if (!nameHit && !slugHit) return false
+      // Skip firms that would duplicate a listed canonical firm
+      const canonical = getCanonicalName(f.name).toLowerCase().replace(/\s+/g, '')
+      if (listedCanonicals.has(canonical)) return false
+      return true
+    })
+
+    // Sort: not_recommended first (most important to warn about), then by rating
+    return matches.sort((a, b) => {
+      const aNR = a.trust_status === 'not_recommended' ? 1 : 0
+      const bNR = b.trust_status === 'not_recommended' ? 1 : 0
+      if (aNR !== bNR) return bNR - aNR
+      return (b.trustpilot_rating || 0) - (a.trustpilot_rating || 0)
+    })
+  }, [debouncedSearch, shadowFirms, processedFirms])
+  
+  useEffect(() => { setCurrentPage(1) }, [filters, sortBy])
+  useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }) }, [currentPage])
+
+  // Show floating quiz button after scrolling 400px
+  useEffect(() => {
+    const handleScroll = () => setShowQuizFloat(window.scrollY > 400)
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+  
+  const paginatedFirms = useMemo(() => filteredFirms.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage), [filteredFirms, currentPage, itemsPerPage])
+  const totalPages = Math.ceil(filteredFirms.length / itemsPerPage)
+  const compareFirms = useMemo(() => processedFirms.filter(f => compareList.includes(f.id)), [processedFirms, compareList])
+
+  const reviewModalFirm = useMemo(() => reviewModalFirmId ? processedFirms.find(f => f.id === reviewModalFirmId) || null : null, [reviewModalFirmId, processedFirms])
+  const payoutModalFirm = useMemo(() => payoutModalFirmId ? processedFirms.find(f => f.id === payoutModalFirmId) || null : null, [payoutModalFirmId, processedFirms])
+  
+  const activeFilterChips = useMemo(() => {
+    const chips: { key: string; label: string; onRemove: () => void }[] = []
+    filters.markets.forEach(m => chips.push({ key: `market-${m}`, label: m, onRemove: () => setFilters(f => ({ ...f, markets: f.markets.filter(x => x !== m) })) }))
+    filters.platforms.forEach(p => chips.push({ key: `platform-${p}`, label: p, onRemove: () => setFilters(f => ({ ...f, platforms: f.platforms.filter(x => x !== p) })) }))
+    filters.tradingStyles.forEach(s => {
+      const style = TRADING_STYLE_OPTIONS.find(x => x.key === s)
+      if (style) chips.push({ key: `style-${s}`, label: style.label, onRemove: () => setFilters(f => ({ ...f, tradingStyles: f.tradingStyles.filter(x => x !== s) })) })
+    })
+    filters.ratings.forEach(r => chips.push({ key: `rating-${r}`, label: `${r}+ Rating`, onRemove: () => setFilters(f => ({ ...f, ratings: f.ratings.filter(x => x !== r) })) }))
+    filters.challengeTypes.forEach(c => chips.push({ key: `challenge-${c}`, label: c, onRemove: () => setFilters(f => ({ ...f, challengeTypes: f.challengeTypes.filter(x => x !== c) })) }))
+    filters.bestFor.forEach(b => {
+      const bf = BEST_FOR_OPTIONS.find(x => x.key === b)
+      if (bf) chips.push({ key: `bestfor-${b}`, label: bf.label, onRemove: () => setFilters(f => ({ ...f, bestFor: f.bestFor.filter(x => x !== b) })) })
+    })
+    if (filters.priceRange[1] < 1000) chips.push({ key: 'price', label: `Max $${filters.priceRange[1]}`, onRemove: () => setFilters(f => ({ ...f, priceRange: [0, 1000] })) })
+    if (filters.hasDiscount) chips.push({ key: 'deals', label: 'Deals Only', onRemove: () => setFilters(f => ({ ...f, hasDiscount: false })) })
+    return chips
+  }, [filters])
+  
+  const resetFilters = () => {
+    setFilters({ search: '', markets: [], platforms: [], tradingStyles: [], ratings: [], challengeTypes: [], bestFor: [], priceRange: [0, 1000], hasDiscount: false, verifiedOnly: true })
+    setOpenDropdown(null)
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-900 pb-20">
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+
+      {/* REVIEW MODAL */}
+      {reviewModalFirm && (
+        <ReviewModal
+          firm={reviewModalFirm}
+          t={t}
+          onClose={() => setReviewModalFirmId(null)}
+          onSubmit={handleSubmitReview}
+          alreadyReviewed={userReviewedFirms.has(reviewModalFirm.id)}
+        />
+      )}
+
+      {/* PAYOUT PROOF MODAL */}
+      {payoutModalFirm && (
+        <PayoutProofModal
+          firm={payoutModalFirm}
+          t={t}
+          onClose={() => setPayoutModalFirmId(null)}
+          onSubmit={handleSubmitPayout}
+        />
+      )}
+      
+      {/* HEADER */}
+      <section className="pt-20 pb-4 px-4 border-b border-gray-800 sticky top-16 z-30 bg-gray-900/95 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Compare <span className="text-emerald-400">{filteredFirms.length}+</span> Prop Firms
-            </h1>
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-              Find the perfect prop firm for your trading style. Updated December 2025.
-            </p>
-          </div>
-          
-          {/* Quick Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4 text-center">
-              <p className="text-3xl font-bold text-white">{stats.total}</p>
-              <p className="text-sm text-gray-500">Verified Firms</p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+            <div>
+              <div className="flex items-center gap-3 mb-1">
+                <h1 className="text-xl font-bold text-white">{t.pageTitle}</h1>
+                <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-xs rounded-full flex items-center gap-1"><BadgeCheck className="w-3 h-3" />Scanned & Verified</span>
+              </div>
+              <p className="text-sm text-gray-500">Every prop firm. One place. • <span className="text-emerald-400 animate-pulse">Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span></p>
             </div>
-            <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4 text-center">
-              <p className="text-3xl font-bold text-yellow-400">{stats.avgRating}</p>
-              <p className="text-sm text-gray-500">Avg. Rating</p>
-            </div>
-            <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4 text-center">
-              <p className="text-3xl font-bold text-emerald-400">{stats.avgSplit}%</p>
-              <p className="text-sm text-gray-500">Avg. Max Split</p>
-            </div>
-            <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4 text-center">
-              <p className="text-3xl font-bold text-red-400">{stats.withDiscounts}</p>
-              <p className="text-sm text-gray-500">With Discounts</p>
+            <div className="flex items-center gap-2">
+              <button onClick={() => setViewMode('grid')} aria-label="Grid view" aria-pressed={viewMode === 'grid'} className={`p-2 rounded-lg ${viewMode === 'grid' ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400'}`}>
+                <Grid3X3 className="w-4 h-4" />
+              </button>
+              <button onClick={() => setViewMode('list')} aria-label="List view" aria-pressed={viewMode === 'list'} className={`p-2 rounded-lg ${viewMode === 'list' ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400'}`}>
+                <List className="w-4 h-4" />
+              </button>
             </div>
           </div>
           
-          {/* Search Bar */}
-          <div className="relative max-w-2xl mx-auto mb-8">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search prop firms by name..."
-              className="w-full pl-12 pr-4 py-4 bg-gray-800 border border-gray-700 rounded-2xl text-white placeholder:text-gray-500 focus:outline-none focus:border-emerald-500 transition-colors"
-            />
+          <div className="space-y-3">
+            <div className="flex flex-wrap items-center gap-2">
+              {/* Search */}
+              <div className="relative min-w-[160px] max-w-[200px]">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                <input type="text" value={filters.search} onChange={(e) => setFilters(f => ({ ...f, search: e.target.value }))} placeholder={t.searchPlaceholder} aria-label="Search prop firms" className="w-full pl-8 pr-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-white text-xs placeholder:text-gray-500 focus:outline-none focus:border-emerald-500" />
+              </div>
+              
+              {/* Markets */}
+              <FilterDropdown label={t.markets} count={filters.markets.length} isOpen={openDropdown === 'markets'} onToggle={() => toggleDropdown('markets')}>
+                <div className="flex flex-wrap gap-1.5">
+                  {MARKET_OPTIONS.map(market => (
+                    <button key={market} onClick={() => setFilters(f => ({ ...f, markets: f.markets.includes(market) ? f.markets.filter(m => m !== market) : [...f.markets, market] }))} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.markets.includes(market) ? 'bg-emerald-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
+                      {market}{filters.markets.includes(market) && <Check className="w-3 h-3" />}
+                    </button>
+                  ))}
+                </div>
+              </FilterDropdown>
+              
+              {/* Platforms */}
+              <FilterDropdown label={t.platform} count={filters.platforms.length} isOpen={openDropdown === 'platforms'} onToggle={() => toggleDropdown('platforms')}>
+                <div className="flex flex-wrap gap-1.5 max-h-[200px] overflow-y-auto">
+                  {availablePlatforms.map(platform => (
+                    <button key={platform} onClick={() => setFilters(f => ({ ...f, platforms: f.platforms.includes(platform) ? f.platforms.filter(p => p !== platform) : [...f.platforms, platform] }))} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.platforms.includes(platform) ? 'bg-emerald-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
+                      {platform}{filters.platforms.includes(platform) && <Check className="w-3 h-3" />}
+                    </button>
+                  ))}
+                </div>
+              </FilterDropdown>
+              
+              {/* Challenge Type */}
+              <FilterDropdown label={t.challenge} count={filters.challengeTypes.length} colorClass="purple" isOpen={openDropdown === 'challenge'} onToggle={() => toggleDropdown('challenge')}>
+                <div className="flex flex-wrap gap-1.5">
+                  {CHALLENGE_TYPE_OPTIONS.map(type => (
+                    <button key={type} onClick={() => setFilters(f => ({ ...f, challengeTypes: f.challengeTypes.includes(type) ? f.challengeTypes.filter(t => t !== type) : [...f.challengeTypes, type] }))} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.challengeTypes.includes(type) ? 'bg-purple-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
+                      {type}{filters.challengeTypes.includes(type) && <Check className="w-3 h-3" />}
+                    </button>
+                  ))}
+                </div>
+              </FilterDropdown>
+              
+              {/* Trading Style */}
+              <FilterDropdown label={t.style} count={filters.tradingStyles.length} isOpen={openDropdown === 'style'} onToggle={() => toggleDropdown('style')}>
+                <div className="flex flex-wrap gap-1.5">
+                  {TRADING_STYLE_OPTIONS.map(style => (
+                    <button key={style.key} onClick={() => setFilters(f => ({ ...f, tradingStyles: f.tradingStyles.includes(style.key) ? f.tradingStyles.filter(s => s !== style.key) : [...f.tradingStyles, style.key] }))} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.tradingStyles.includes(style.key) ? 'bg-emerald-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
+                      {style.label}{filters.tradingStyles.includes(style.key) && <Check className="w-3 h-3" />}
+                    </button>
+                  ))}
+                </div>
+              </FilterDropdown>
+              
+              {/* Rating */}
+              <FilterDropdown label={t.rating} count={filters.ratings.length} colorClass="yellow" isOpen={openDropdown === 'rating'} onToggle={() => toggleDropdown('rating')}>
+                <div className="flex flex-wrap gap-1.5">
+                  {RATING_OPTIONS.map(rating => (
+                    <button key={rating} onClick={() => setFilters(f => ({ ...f, ratings: f.ratings.includes(rating) ? f.ratings.filter(r => r !== rating) : [...f.ratings, rating] }))} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.ratings.includes(rating) ? 'bg-yellow-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
+                      <Star className="w-3 h-3" />{rating}+{filters.ratings.includes(rating) && <Check className="w-3 h-3" />}
+                    </button>
+                  ))}
+                </div>
+              </FilterDropdown>
+              
+              {/* Best For */}
+              <FilterDropdown label={t.bestFor} count={filters.bestFor.length} colorClass="blue" isOpen={openDropdown === 'bestFor'} onToggle={() => toggleDropdown('bestFor')}>
+                <div className="flex flex-wrap gap-1.5">
+                  {BEST_FOR_OPTIONS.map(opt => {
+                    const Icon = opt.icon
+                    return (
+                      <button key={opt.key} onClick={() => setFilters(f => ({ ...f, bestFor: f.bestFor.includes(opt.key) ? f.bestFor.filter(b => b !== opt.key) : [...f.bestFor, opt.key] }))} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.bestFor.includes(opt.key) ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
+                        <Icon className="w-3 h-3" />{opt.label}{filters.bestFor.includes(opt.key) && <Check className="w-3 h-3" />}
+                      </button>
+                    )
+                  })}
+                </div>
+              </FilterDropdown>
+              
+              {/* Price */}
+              <FilterDropdown label={filters.priceRange[1] < 1000 ? `≤$${filters.priceRange[1]}` : 'Price'} count={filters.priceRange[1] < 1000 ? 1 : 0} isOpen={openDropdown === 'price'} onToggle={() => toggleDropdown('price')}>
+                <div className="w-[220px]">
+                  <PriceSlider value={filters.priceRange} onChange={(v) => setFilters(f => ({ ...f, priceRange: v }))} />
+                </div>
+              </FilterDropdown>
+              
+              {/* Deals */}
+              {stats.withDiscounts > 0 && (
+                <button onClick={() => setFilters(f => ({ ...f, hasDiscount: !f.hasDiscount }))} aria-pressed={filters.hasDiscount} aria-label={`Filter by deals only. ${stats.withDiscounts} firms with discounts`} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.hasDiscount ? 'bg-orange-500 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}>
+                  <Tag className="w-3 h-3" /> Deals ({stats.withDiscounts})
+                </button>
+              )}
+              
+              {/* Sort */}
+              <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} aria-label="Sort firms by" className="px-2.5 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-gray-400 text-xs focus:outline-none focus:border-emerald-500">
+                {SORT_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+              </select>
+              
+              {/* Reset */}
+              {activeFilterChips.length > 0 && (
+                <button onClick={resetFilters} aria-label="Reset all filters" className="px-2.5 py-1.5 rounded-lg text-xs font-medium text-gray-500 hover:text-red-400 hover:bg-gray-800 flex items-center gap-1">
+                  <RotateCcw className="w-3 h-3" /> Reset
+                </button>
+              )}
+            </div>
+            
+            {/* Active Filter Chips */}
+            {activeFilterChips.length > 0 && (
+              <div className="flex flex-wrap items-center gap-1.5">
+                {activeFilterChips.map(chip => <FilterChip key={chip.key} label={chip.label} onRemove={chip.onRemove} />)}
+              </div>
+            )}
           </div>
         </div>
       </section>
       
-      {/* Main Content */}
-      <section className="pb-20 px-4">
+      {/* QUIZ BANNER */}
+      <div className="px-4 pt-4">
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-4 gap-8">
-            {/* Sidebar - Filters */}
-            <div className="lg:col-span-1 space-y-6">
-              <FilterSection filters={filters} setFilters={setFilters} firms={initialFirms} />
-              
-              {/* View Options */}
-              <div className="bg-gray-800/50 border border-gray-700/50 rounded-2xl p-4">
-                <h3 className="font-semibold text-white mb-3">View Options</h3>
-                
-                {/* View Mode */}
-                <div className="flex gap-2 mb-4">
-                  {[
-                    { mode: 'grid', icon: Grid3X3 },
-                    { mode: 'list', icon: List },
-                    { mode: 'table', icon: BarChart3 },
-                  ].map(({ mode, icon: Icon }) => (
-                    <button
-                      key={mode}
-                      onClick={() => setViewMode(mode as any)}
-                      className={`flex-1 py-2 rounded-lg flex items-center justify-center gap-2 text-sm transition-all ${
-                        viewMode === mode
-                          ? 'bg-emerald-500 text-white'
-                          : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
-                      }`}
-                    >
-                      <Icon className="w-4 h-4" />
-                    </button>
-                  ))}
+          <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-emerald-950 via-gray-900 to-emerald-950 border border-emerald-500/30">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-400/60 to-transparent" />
+            <div className="absolute -left-10 top-1/2 -translate-y-1/2 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
+            <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4 px-5 py-4">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="w-5 h-5 text-emerald-400" />
                 </div>
-                
-                {/* Sort */}
-                <div className="space-y-2">
-                  <label className="text-sm text-gray-400">Sort by</label>
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as any)}
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:border-emerald-500"
-                  >
-                    <option value="rating">Highest Rating</option>
-                    <option value="price">Lowest Price</option>
-                    <option value="split">Highest Split</option>
-                  </select>
-                </div>
-                
-                {/* Verified Toggle */}
-                <div className="mt-4 flex items-center justify-between">
-                  <span className="text-sm text-gray-400">Verified Only</span>
-                  <button
-                    onClick={() => setShowOnlyVerified(!showOnlyVerified)}
-                    className={`w-12 h-6 rounded-full transition-colors relative ${
-                      showOnlyVerified ? 'bg-emerald-500' : 'bg-gray-600'
-                    }`}
-                  >
-                    <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform ${
-                      showOnlyVerified ? 'translate-x-6' : 'translate-x-0.5'
-                    }`} />
-                  </button>
+                <div>
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <p className="text-white font-bold text-sm">Not sure which firm to pick?</p>
+                    <span className="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-400 text-[10px] font-bold rounded border border-emerald-500/30">FREE</span>
+                  </div>
+                  <p className="text-gray-400 text-xs">Discover the prop firm that fits your trading style in under 60 seconds</p>
                 </div>
               </div>
+              <Link
+                href="/en/quiz?start=true"
+                className="relative flex-shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-sm rounded-xl transition-all shadow-lg shadow-emerald-500/30 hover:-translate-y-0.5 whitespace-nowrap"
+              >
+                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-300 rounded-full animate-ping opacity-75" />
+                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full" />
+                Find my perfect firm →
+              </Link>
             </div>
-            
-            {/* Main Content - Firms List */}
-            <div className="lg:col-span-3">
-              {/* Results Header */}
-              <div className="flex items-center justify-between mb-6">
-                <p className="text-gray-400">
-                  Showing <span className="text-white font-medium">{filteredFirms.length}</span> prop firms
+          </div>
+        </div>
+      </div>
+
+      {/* MAIN CONTENT */}
+      <section className="px-4 pt-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-sm text-gray-400">
+              {t.showing} <span className="text-white font-medium">{filteredFirms.length}</span> {t.propFirms}
+            </p>
+            {favorites.length > 0 && (
+              <span className="text-xs text-gray-500">{favorites.length} favorites</span>
+            )}
+          </div>
+          
+          {/* LISTED RESULTS */}
+          {paginatedFirms.length > 0 && (
+            <>
+              <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4' : 'space-y-3'}>
+                {paginatedFirms.map((firm, i) => (
+                  <PropFirmCard
+                    key={firm.id}
+                    firm={firm}
+                    isCompact={viewMode === 'list'}
+                    rank={(currentPage - 1) * itemsPerPage + i + 1}
+                    markets={firmMarkets.get(firm.id) || ['Forex']}
+                    isFavorite={favorites.includes(firm.id)}
+                    onFavorite={() => toggleFavorite(firm.id)}
+                    isComparing={compareList.includes(firm.id)}
+                    onCompare={() => toggleCompare(firm.id)}
+                    onCopyCode={handleCopyCode}
+                    communityRating={reviewAggregates.get(firm.id) || null}
+                    onRate={() => setReviewModalFirmId(firm.id)}
+                    hasReviewed={userReviewedFirms.has(firm.id)}
+                    payoutAggregate={payoutAggregates.get(firm.id) || null}
+                    onPayout={() => setPayoutModalFirmId(firm.id)}
+                    t={t}
+                  />
+                ))}
+              </div>
+              
+              {/* PAGINATION */}
+              {totalPages > 1 && (
+                <nav aria-label="Pagination" className="flex items-center justify-center gap-2 mt-8">
+                  <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} aria-label="Previous page" className="p-2 rounded-lg bg-gray-800 text-gray-400 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  <div className="flex gap-1">
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                      let page: number
+                      if (totalPages <= 5) page = i + 1
+                      else if (currentPage <= 3) page = i + 1
+                      else if (currentPage >= totalPages - 2) page = totalPages - 4 + i
+                      else page = currentPage - 2 + i
+                      return (
+                        <button key={page} onClick={() => setCurrentPage(page)} aria-label={`Page ${page}`} aria-current={currentPage === page ? 'page' : undefined} className={`w-8 h-8 rounded-lg text-sm font-medium ${currentPage === page ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}>
+                          {page}
+                        </button>
+                      )
+                    })}
+                  </div>
+                  <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} aria-label="Next page" className="p-2 rounded-lg bg-gray-800 text-gray-400 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </nav>
+              )}
+            </>
+          )}
+
+          {/* SHADOW RESULTS — unlisted firms matching the search */}
+          {shadowMatches.length > 0 && (
+            <div className={paginatedFirms.length > 0 ? 'mt-10 pt-8 border-t border-gray-800' : ''}>
+              <div className="mb-4">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="w-1 h-5 bg-yellow-500/60 rounded-full" />
+                  <h2 className="text-sm font-semibold text-gray-300">
+                    Other results <span className="text-gray-500 font-normal">— unverified or not recommended</span>
+                    <span className="ml-2 px-1.5 py-0.5 bg-gray-800 text-gray-400 text-[10px] rounded">{shadowMatches.length}</span>
+                  </h2>
+                </div>
+                <p className="text-xs text-gray-500 ml-3">
+                  These firms aren&apos;t currently listed on PropFirmScanner. We haven&apos;t verified their claims, or we don&apos;t recommend them. Proceed with caution.
                 </p>
               </div>
-              
-              {/* Table View */}
-              {viewMode === 'table' && (
-                <div className="bg-gray-800/50 border border-gray-700/50 rounded-2xl overflow-hidden mb-8">
-                  <QuickComparisonTable firms={filteredFirms} />
-                </div>
-              )}
-              
-              {/* Grid/List View */}
-              {viewMode !== 'table' && (
-                <div className={
-                  viewMode === 'grid'
-                    ? 'grid md:grid-cols-2 gap-6'
-                    : 'space-y-4'
-                }>
-                  {filteredFirms.map(firm => (
-                    <PropFirmCard 
-                      key={firm.id} 
-                      firm={firm} 
-                      isCompact={viewMode === 'list'} 
-                    />
-                  ))}
-                </div>
-              )}
-              
-              {/* Empty State */}
-              {filteredFirms.length === 0 && (
-                <div className="text-center py-16">
-                  <div className="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center mx-auto mb-4">
-                    <Search className="w-8 h-8 text-gray-600" />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {shadowMatches.map(sFirm => (
+                  <ShadowPropFirmCard key={sFirm.id} firm={sFirm} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* EMPTY STATE — only when BOTH listed and shadow are empty */}
+          {paginatedFirms.length === 0 && shadowMatches.length === 0 && (
+            <div className="text-center py-16">
+              <div className="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center mx-auto mb-4">
+                <Search className="w-8 h-8 text-gray-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-white mb-2">{t.noFirmsFound}</h3>
+              <p className="text-gray-500 mb-4">{t.tryAdjusting}</p>
+              <button onClick={resetFilters} className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm rounded-lg transition-colors">{t.resetFilters}</button>
+            </div>
+          )}
+        </div>
+      </section>
+      
+      {/* STILL UNDECIDED */}
+      <section className="px-4 py-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="relative overflow-hidden rounded-2xl border border-emerald-500/30 text-center px-8 py-10"
+            style={{background: 'linear-gradient(135deg, #052e16 0%, #111827 40%, #111827 60%, #052e16 100%)'}}>
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(16,185,129,0.12)_0%,_transparent_70%)] pointer-events-none" />
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-400/50 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-400/20 to-transparent" />
+            <div className="relative z-10">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-500/15 border border-emerald-500/30 rounded-full text-emerald-400 text-xs font-semibold mb-5">
+                <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
+                Personalized matching — free
+              </div>
+              <h3 className="text-2xl sm:text-3xl font-bold text-white mb-3">
+                Still undecided? <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-300">We can help.</span>
+              </h3>
+              <p className="text-gray-400 text-sm max-w-lg mx-auto mb-8">
+                You've browsed the firms — now let us narrow it down for you. Answer 4 quick questions and get your personal top 3 matches in under 60 seconds.
+              </p>
+              <div className="flex items-center justify-center gap-8 mb-8">
+                {([['🧠', 'Experience'], ['⚡', 'Trading Style'], ['💵', 'Budget'], ['🏆', 'Priority']] as [string, string][]).map(([emoji, label]) => (
+                  <div key={label} className="text-center">
+                    <p className="text-2xl mb-1">{emoji}</p>
+                    <p className="text-[10px] text-gray-500 font-medium">{label}</p>
                   </div>
-                  <h3 className="text-xl font-semibold text-white mb-2">No firms found</h3>
-                  <p className="text-gray-500 mb-4">Try adjusting your filters or search query</p>
-                  <button
-                    onClick={() => { setFilters({}); setSearchQuery(''); }}
-                    className="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors"
-                  >
-                    Reset Filters
-                  </button>
-                </div>
-              )}
+                ))}
+              </div>
+              <Link
+                href="/en/quiz?start=true"
+                className="relative inline-flex items-center gap-2 px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-base rounded-xl transition-all shadow-xl shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:-translate-y-1"
+              >
+                <span className="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 bg-emerald-300 rounded-full animate-ping opacity-75" />
+                <span className="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 bg-emerald-400 rounded-full" />
+                <Sparkles className="w-5 h-5" />
+                Find my perfect firm — free
+              </Link>
+              <p className="text-gray-600 text-xs mt-3">No account required · Takes 60 seconds</p>
             </div>
           </div>
         </div>
       </section>
+
+      {/* FLOATING QUIZ BUTTON */}
+      {showQuizFloat && (
+        <div className="fixed bottom-20 right-4 z-40 animate-in slide-in-from-bottom-4 duration-300">
+          <Link
+            href="/en/quiz?start=true"
+            className="relative flex items-center gap-2 px-4 py-3 bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-sm rounded-2xl shadow-2xl shadow-emerald-500/40 transition-all hover:-translate-y-0.5"
+          >
+            <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-300 rounded-full animate-ping opacity-75" />
+            <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full" />
+            <Sparkles className="w-4 h-4" />
+            Find my match
+          </Link>
+        </div>
+      )}
+
+      {/* COMPARE BAR */}
+      <CompareBar firms={compareFirms} onRemove={(id) => setCompareList(prev => prev.filter(f => f !== id))} onClear={() => setCompareList([])} />
     </div>
   )
 }

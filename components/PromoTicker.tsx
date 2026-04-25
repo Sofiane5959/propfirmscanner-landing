@@ -59,7 +59,13 @@ const CopyButton = ({ code }: { code: string }) => {
 // DEAL PILL
 // =====================================================
 const DealPill = ({ deal }: { deal: PromoDeal }) => {
-  const url = deal.affiliate_url || deal.website_url || `/prop-firm/${deal.slug}`
+  // CLICK TRACKING: route through /api/go/{slug} which logs the click
+  // server-side and redirects to the affiliate (or website) URL.
+  // The fallback to /prop-firm/{slug} is for firms with no link at all.
+  const hasOutbound = !!(deal.affiliate_url || deal.website_url)
+  const url = hasOutbound
+    ? `/api/go/${deal.slug}?source=banner`
+    : `/prop-firm/${deal.slug}`
   // A code is "real" only if it's a non-empty, non-null string.
   // Some firms (FTMO, FundedNext) apply discounts automatically via the
   // affiliate link — no code to copy.
@@ -68,8 +74,8 @@ const DealPill = ({ deal }: { deal: PromoDeal }) => {
   return (
     <Link
       href={url}
-      target={deal.affiliate_url || deal.website_url ? '_blank' : undefined}
-      rel={deal.affiliate_url || deal.website_url ? 'noopener noreferrer' : undefined}
+      target={hasOutbound ? '_blank' : undefined}
+      rel={hasOutbound ? 'noopener noreferrer' : undefined}
       className="flex-shrink-0 flex items-center gap-2 px-3 py-1.5 bg-gray-800/80 hover:bg-gray-700/80 border border-gray-700/50 hover:border-emerald-500/30 rounded-full transition-all group"
     >
       {/* Logo */}
