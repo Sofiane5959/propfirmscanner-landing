@@ -772,10 +772,20 @@ const getCanonicalName = (name: string): string => {
   return name
 }
 
-const getFirmUrl = (firm: PropFirm): string => {
-  if (firm.affiliate_url && firm.affiliate_url !== '#') return firm.affiliate_url
-  if (firm.website_url && firm.website_url !== '#') return firm.website_url
+// CLICK TRACKING: outbound clicks go through /api/go/{slug} which logs
+// the click server-side, then redirects to the firm's affiliate or
+// website URL. The Google fallback stays direct (it's an external search,
+// not a firm we want to track).
+const getFirmUrl = (firm: PropFirm, source = 'compare-card'): string => {
+  const hasOutbound = (firm.affiliate_url && firm.affiliate_url !== '#')
+    || (firm.website_url && firm.website_url !== '#')
+  if (hasOutbound) return `/api/go/${firm.slug}?source=${source}`
   return `https://www.google.com/search?q=${encodeURIComponent(firm.name + ' prop firm')}`
+}
+
+const isOutboundFirmUrl = (firm: PropFirm): boolean => {
+  return !!((firm.affiliate_url && firm.affiliate_url !== '#')
+    || (firm.website_url && firm.website_url !== '#'))
 }
 
 const getBestForScore = (firm: PropFirm, category: string): number => {
@@ -1321,12 +1331,14 @@ const PropFirmCard = ({
           : 'border-gray-700/50 hover:border-emerald-500/30'
       }`}>
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center overflow-hidden p-1 flex-shrink-0">
+          {/* Logo links to the internal firm page (SEO + detail content).
+              The Visit button to the right handles the outbound affiliate link. */}
+          <Link href={`/prop-firm/${firm.slug}`} className="w-10 h-10 rounded-lg bg-white flex items-center justify-center overflow-hidden p-1 flex-shrink-0 hover:ring-2 hover:ring-emerald-500/40 transition-all">
             {firm.logo_url ? <Image src={firm.logo_url} alt={firm.name} width={40} height={40} className="object-contain" /> : <span className="text-lg font-bold text-emerald-600">{firm.name.charAt(0)}</span>}
-          </div>
+          </Link>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <h3 className="font-semibold text-white truncate text-sm flex-1 min-w-0">{firm.name}</h3>
+              <Link href={`/prop-firm/${firm.slug}`} className="font-semibold text-white hover:text-emerald-400 truncate text-sm flex-1 min-w-0 transition-colors">{firm.name}</Link>
               {isTopPick && (
                 <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-gradient-to-r from-emerald-500 to-emerald-400 text-white text-[9px] font-bold tracking-wide flex-shrink-0">
                   <Star className="w-2 h-2 fill-white" />
@@ -1365,9 +1377,10 @@ const PropFirmCard = ({
               <Banknote className="w-4 h-4" />
             </button>
             <PriceAlertButton firmId={firm.id} firmName={firm.name} firmSlug={firm.slug} currentPrice={firm.min_price || 0} />
-            <Link href={`/prop-firm/${firm.slug}`} className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-white text-xs font-medium rounded-lg">Details</Link>
-            <a href={getFirmUrl(firm)} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg flex items-center gap-1">
-              Visit <ExternalLink className="w-3 h-3" />
+            {/* "Details" removed — clicking the logo / firm name reaches the
+                same internal page. Only outbound CTA remains: the affiliate. */}
+            <a href={getFirmUrl(firm, 'compare-list')} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg flex items-center gap-1">
+              {t.visit} <ExternalLink className="w-3 h-3" />
             </a>
           </div>
         </div>
@@ -1426,16 +1439,19 @@ const PropFirmCard = ({
           </button>
           <PriceAlertButton firmId={firm.id} firmName={firm.name} firmSlug={firm.slug} currentPrice={firm.min_price || 0} />
         </div>
-        {/* Logo + Name */}
-        <div className="flex items-center gap-3 mb-2">
+        {/* Logo + Name — wrapped in Link to the firm's internal page.
+            Internal page = SEO + detail content. The "Visit" button below
+            handles the affiliate redirect, so the two roles are separated
+            cleanly: discover here, click out there. */}
+        <Link href={`/prop-firm/${firm.slug}`} className="flex items-center gap-3 mb-2 group/title">
           <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center overflow-hidden border border-gray-200 p-1 flex-shrink-0">
             {firm.logo_url ? <Image src={firm.logo_url} alt={firm.name} width={48} height={48} className="object-contain" /> : <span className="text-lg font-bold text-emerald-600">{firm.name.charAt(0)}</span>}
           </div>
           <div className="min-w-0">
-            <h3 className="font-bold text-white text-sm leading-tight mb-0.5">{firm.name}</h3>
+            <h3 className="font-bold text-white text-sm leading-tight mb-0.5 group-hover/title:text-emerald-400 transition-colors">{firm.name}</h3>
             <TrustBadge status={firm.trust_status || 'verified'} />
           </div>
-        </div>
+        </Link>
         {/* Rating */}
         <div className="flex items-center gap-2 flex-wrap mb-1">
           <span className="flex items-center gap-1 text-sm">
@@ -1494,10 +1510,13 @@ const PropFirmCard = ({
         )}
       </div>
       
-      <div className="p-4 pt-0 flex gap-2">
-        <Link href={`/prop-firm/${firm.slug}`} className="flex-1 py-2.5 bg-gray-700 hover:bg-gray-600 text-white text-center text-sm font-medium rounded-lg transition-colors">Details</Link>
-        <a href={getFirmUrl(firm)} target="_blank" rel="noopener noreferrer" className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-center text-sm font-medium rounded-lg flex items-center justify-center gap-1 transition-colors">
-          Visit <ExternalLink className="w-3.5 h-3.5" />
+      <div className="p-4 pt-0">
+        {/* Single CTA: "Visit" goes to the affiliate (tracked via /api/go/{slug}).
+            The "Details" button was removed to follow the principle "one link
+            per card = the affiliate link". The internal /prop-firm/{slug} page
+            is still reachable by clicking the logo or firm name above. */}
+        <a href={getFirmUrl(firm, 'compare-grid')} target="_blank" rel="noopener noreferrer" className="block w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-center text-sm font-medium rounded-lg flex items-center justify-center gap-1 transition-colors">
+          {t.visit} <ExternalLink className="w-3.5 h-3.5" />
         </a>
       </div>
     </div>
@@ -1972,17 +1991,26 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
     }
     result.sort((a, b) => {
       // 1. Priority tier first — Tier 1 (editor's picks) always at the top.
+      // 1. Firms with an affiliate partnership ALWAYS come first.
+      //    Rationale: these are the firms generating revenue for us, and the
+      //    user is best served by seeing partnered firms with verified deals
+      //    upfront. Unpartnered firms are still visible — just not at the top.
+      const aHasAff = a.affiliate_url && a.affiliate_url !== '#' ? 1 : 0
+      const bHasAff = b.affiliate_url && b.affiliate_url !== '#' ? 1 : 0
+      if (aHasAff !== bHasAff) return bHasAff - aHasAff
+
+      // 2. Then priority tier (Top 10 editor's picks)
       //    Lower number = higher priority. NULL/undefined treated as Tier 3 (lowest).
       const aTier = a.priority_tier ?? 3
       const bTier = b.priority_tier ?? 3
       if (aTier !== bTier) return aTier - bTier
 
-      // 2. Within the same tier, discounted firms come first (promo boost)
+      // 3. Within the same tier, discounted firms come first (promo boost)
       const aPromo = (a.discount_percent ?? 0) > 0 ? 1 : 0
       const bPromo = (b.discount_percent ?? 0) > 0 ? 1 : 0
       if (bPromo !== aPromo) return bPromo - aPromo
 
-      // 3. Finally, apply the user-selected sort
+      // 4. Finally, apply the user-selected sort
       switch (sortBy) {
         case 'rating': return (b.trustpilot_rating || 0) - (a.trustpilot_rating || 0)
         case 'price': return (a.min_price || 9999) - (b.min_price || 9999)
@@ -2102,7 +2130,7 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
       )}
       
       {/* HEADER */}
-      <section className="pt-20 pb-4 px-4 border-b border-gray-800 sticky top-16 z-30 bg-gray-900/95 backdrop-blur-sm">
+      <section className="pt-6 pb-4 px-4 border-b border-gray-800 sticky top-16 z-30 bg-gray-900/95 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
             <div>
@@ -2271,10 +2299,10 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
       {/* MAIN CONTENT */}
       <section className="px-4 pt-6">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-sm text-gray-400">
-              {t.showing} <span className="text-white font-medium">{filteredFirms.length}</span> {t.propFirms}
-            </p>
+          <div className="flex items-center justify-end mb-4">
+            {/* Counter "Showing X prop firms" intentionally hidden per design — 
+                displaying it implies a number we'd need to keep accurate, and the
+                grid below already conveys the count visually. */}
             {favorites.length > 0 && (
               <span className="text-xs text-gray-500">{favorites.length} favorites</span>
             )}

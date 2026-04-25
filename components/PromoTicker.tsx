@@ -294,7 +294,7 @@ export default function PromoTicker({ deals: initialDeals = [] }: PromoTickerPro
           }
         }
         .animate-ticker {
-          animation: ticker 25s linear infinite;
+          animation: ticker 60s linear infinite;
           width: max-content;
           will-change: transform;
         }
