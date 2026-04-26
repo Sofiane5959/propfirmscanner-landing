@@ -4,9 +4,9 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { 
-  ExternalLink, Tag, CheckCircle, Star, Copy, Check,
-  Percent, Sparkles, ArrowRight, Zap, Gift
+import {
+  ExternalLink, Tag, Star, Copy, Check,
+  Sparkles, Gift, ShieldCheck,
 } from 'lucide-react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
@@ -26,149 +26,156 @@ function getLocaleFromPath(pathname: string): Locale {
 }
 
 // =============================================================================
-// TRANSLATIONS
+// TRANSLATIONS (subset — full set kept short for maintainability)
 // =============================================================================
 
 const translations: Record<Locale, Record<string, string>> = {
   en: {
     quickCopy: 'Quick Copy Promo Codes',
     clickToCopy: 'Click any code to copy instantly',
-    exclusiveCodes: 'Exclusive Promo Codes',
-    verifiedDiscounts: 'verified discounts available',
-    verifiedDiscount: 'verified discount available',
-    partnerLinks: 'Partner Links',
-    trustedFirms: 'Trusted prop firms with exclusive access',
-    noPromos: 'No promo codes available at the moment.',
-    lookingMore: 'Looking for more prop firms?',
-    browseAll: 'Browse All 70+ Prop Firms',
-    activeCodes: 'Active Promo Codes',
-    visitSite: 'Visit Site',
-    copyCode: 'Copy Code',
+    activeDeals: 'Active Deals',
+    verifiedDiscounts: 'Verified discounts you can use right now',
+    allFirms: 'All Prop Firms',
+    allFirmsSubtitle: 'Every firm we track. Best deals first, then the rest.',
+    visit: 'Visit',
+    details: 'Details',
+    viaLink: 'via link',
+    noCode: 'No code needed — discount applied via our link',
     copied: 'Copied!',
+    copy: 'Copy code',
     off: 'OFF',
-    from: 'From',
-    split: 'Split',
-    reviews: 'reviews',
+    noDealsYet: 'New deals coming soon',
+    noDealsBody: 'No active codes right now. Browse all firms below.',
+    loading: 'Loading deals…',
+    affiliateNotice:
+      'We may earn a commission when you use our links — at no extra cost to you. This is what keeps the comparison free.',
+    readMore: 'Read more',
   },
   fr: {
-    quickCopy: 'Codes Promo a Copier',
+    quickCopy: 'Copie rapide des codes promo',
     clickToCopy: 'Cliquez sur un code pour le copier',
-    exclusiveCodes: 'Codes Promo Exclusifs',
-    verifiedDiscounts: 'reductions verifiees disponibles',
-    verifiedDiscount: 'reduction verifiee disponible',
-    partnerLinks: 'Liens Partenaires',
-    trustedFirms: 'Prop firms de confiance avec acces exclusif',
-    noPromos: 'Aucun code promo disponible pour le moment.',
-    lookingMore: 'Vous cherchez plus de prop firms ?',
-    browseAll: 'Voir les 70+ Prop Firms',
-    activeCodes: 'Codes Promo Actifs',
-    visitSite: 'Visiter',
-    copyCode: 'Copier',
-    copied: 'Copie !',
-    off: 'DE REDUC',
-    from: 'A partir de',
-    split: 'Split',
-    reviews: 'avis',
+    activeDeals: 'Offres actives',
+    verifiedDiscounts: 'Réductions vérifiées utilisables tout de suite',
+    allFirms: 'Toutes les Prop Firms',
+    allFirmsSubtitle: 'Toutes les firms que nous suivons. Les meilleures offres en haut.',
+    visit: 'Visiter',
+    details: 'Détails',
+    viaLink: 'via lien',
+    noCode: 'Pas de code — la réduction est appliquée via notre lien',
+    copied: 'Copié !',
+    copy: 'Copier',
+    off: 'DE RÉDUC.',
+    noDealsYet: 'Nouvelles offres bientôt',
+    noDealsBody: 'Aucun code actif pour l’instant. Parcourez les firms ci-dessous.',
+    loading: 'Chargement des offres…',
+    affiliateNotice:
+      'Nous pouvons toucher une commission via nos liens — sans coût supplémentaire pour vous.',
+    readMore: 'En savoir plus',
   },
   de: {
-    quickCopy: 'Promo-Codes Kopieren',
-    clickToCopy: 'Klicken Sie auf einen Code zum Kopieren',
-    exclusiveCodes: 'Exklusive Promo-Codes',
-    verifiedDiscounts: 'verifizierte Rabatte verfugbar',
-    verifiedDiscount: 'verifizierter Rabatt verfugbar',
-    partnerLinks: 'Partner-Links',
-    trustedFirms: 'Vertrauenswurdige Prop Firms mit exklusivem Zugang',
-    noPromos: 'Keine Promo-Codes verfugbar.',
-    lookingMore: 'Suchen Sie mehr Prop Firms?',
-    browseAll: 'Alle 70+ Prop Firms ansehen',
-    activeCodes: 'Aktive Promo-Codes',
-    visitSite: 'Besuchen',
-    copyCode: 'Kopieren',
+    quickCopy: 'Promo-Codes schnell kopieren',
+    clickToCopy: 'Klicke einen Code, um ihn zu kopieren',
+    activeDeals: 'Aktive Angebote',
+    verifiedDiscounts: 'Geprüfte Rabatte, sofort nutzbar',
+    allFirms: 'Alle Prop Firms',
+    allFirmsSubtitle: 'Alle Firmen. Beste Angebote zuerst.',
+    visit: 'Besuchen',
+    details: 'Details',
+    viaLink: 'via Link',
+    noCode: 'Kein Code nötig — Rabatt wird über unseren Link angewendet',
     copied: 'Kopiert!',
+    copy: 'Kopieren',
     off: 'RABATT',
-    from: 'Ab',
-    split: 'Split',
-    reviews: 'Bewertungen',
+    noDealsYet: 'Bald neue Angebote',
+    noDealsBody: 'Aktuell keine aktiven Codes. Durchsuche alle Firmen unten.',
+    loading: 'Angebote werden geladen…',
+    affiliateNotice:
+      'Über unsere Links erhalten wir ggf. eine Provision — ohne Mehrkosten für dich.',
+    readMore: 'Mehr lesen',
   },
   es: {
-    quickCopy: 'Copiar Codigos Promo',
-    clickToCopy: 'Haz clic en cualquier codigo para copiar',
-    exclusiveCodes: 'Codigos Promo Exclusivos',
-    verifiedDiscounts: 'descuentos verificados disponibles',
-    verifiedDiscount: 'descuento verificado disponible',
-    partnerLinks: 'Enlaces de Socios',
-    trustedFirms: 'Prop firms de confianza con acceso exclusivo',
-    noPromos: 'No hay codigos promo disponibles.',
-    lookingMore: 'Buscas mas prop firms?',
-    browseAll: 'Ver las 70+ Prop Firms',
-    activeCodes: 'Codigos Promo Activos',
-    visitSite: 'Visitar',
-    copyCode: 'Copiar',
-    copied: 'Copiado!',
-    off: 'DESC.',
-    from: 'Desde',
-    split: 'Split',
-    reviews: 'resenas',
+    quickCopy: 'Copia rápida de códigos',
+    clickToCopy: 'Haz clic en un código para copiarlo',
+    activeDeals: 'Ofertas activas',
+    verifiedDiscounts: 'Descuentos verificados disponibles ahora',
+    allFirms: 'Todas las Prop Firms',
+    allFirmsSubtitle: 'Todas las firmas. Mejores ofertas primero.',
+    visit: 'Visitar',
+    details: 'Detalles',
+    viaLink: 'vía enlace',
+    noCode: 'Sin código — el descuento se aplica vía nuestro enlace',
+    copied: '¡Copiado!',
+    copy: 'Copiar',
+    off: 'DESCUENTO',
+    noDealsYet: 'Nuevas ofertas próximamente',
+    noDealsBody: 'Sin códigos activos. Navega por todas las firmas abajo.',
+    loading: 'Cargando ofertas…',
+    affiliateNotice:
+      'Podemos recibir una comisión por nuestros enlaces — sin coste adicional para ti.',
+    readMore: 'Saber más',
   },
   pt: {
-    quickCopy: 'Copiar Codigos Promo',
-    clickToCopy: 'Clique em qualquer codigo para copiar',
-    exclusiveCodes: 'Codigos Promo Exclusivos',
-    verifiedDiscounts: 'descontos verificados disponiveis',
-    verifiedDiscount: 'desconto verificado disponivel',
-    partnerLinks: 'Links de Parceiros',
-    trustedFirms: 'Prop firms confiaveis com acesso exclusivo',
-    noPromos: 'Nenhum codigo promo disponivel no momento.',
-    lookingMore: 'Procurando mais prop firms?',
-    browseAll: 'Ver todas as 70+ Prop Firms',
-    activeCodes: 'Codigos Promo Ativos',
-    visitSite: 'Visitar',
-    copyCode: 'Copiar',
+    quickCopy: 'Cópia rápida de códigos',
+    clickToCopy: 'Clique em qualquer código para copiar',
+    activeDeals: 'Ofertas ativas',
+    verifiedDiscounts: 'Descontos verificados disponíveis agora',
+    allFirms: 'Todas as Prop Firms',
+    allFirmsSubtitle: 'Todas as firmas. Melhores ofertas primeiro.',
+    visit: 'Visitar',
+    details: 'Detalhes',
+    viaLink: 'via link',
+    noCode: 'Sem código — desconto aplicado via nosso link',
     copied: 'Copiado!',
-    off: 'DESC.',
-    from: 'A partir de',
-    split: 'Split',
-    reviews: 'avaliacoes',
+    copy: 'Copiar',
+    off: 'DESCONTO',
+    noDealsYet: 'Novas ofertas em breve',
+    noDealsBody: 'Sem códigos ativos. Explore todas as firmas abaixo.',
+    loading: 'Carregando ofertas…',
+    affiliateNotice:
+      'Podemos receber uma comissão dos nossos links — sem custo extra para você.',
+    readMore: 'Saiba mais',
   },
   ar: {
-    quickCopy: 'نسخ اكواد الخصم',
-    clickToCopy: 'انقر على اي كود للنسخ',
-    exclusiveCodes: 'اكواد خصم حصرية',
-    verifiedDiscounts: 'خصومات موثقة متاحة',
-    verifiedDiscount: 'خصم موثق متاح',
-    partnerLinks: 'روابط الشركاء',
-    trustedFirms: 'شركات prop موثوقة مع وصول حصري',
-    noPromos: 'لا توجد اكواد خصم متاحة حاليا.',
-    lookingMore: 'تبحث عن المزيد من شركات prop؟',
-    browseAll: 'تصفح جميع الشركات 70+',
-    activeCodes: 'اكواد الخصم النشطة',
-    visitSite: 'زيارة',
-    copyCode: 'نسخ',
+    quickCopy: 'نسخ سريع لرموز الخصم',
+    clickToCopy: 'انقر على أي رمز للنسخ فوراً',
+    activeDeals: 'العروض النشطة',
+    verifiedDiscounts: 'خصومات موثقة متاحة الآن',
+    allFirms: 'جميع شركات التداول',
+    allFirmsSubtitle: 'جميع الشركات. أفضل العروض أولاً.',
+    visit: 'زيارة',
+    details: 'التفاصيل',
+    viaLink: 'عبر الرابط',
+    noCode: 'لا حاجة لرمز — الخصم يُطبَّق عبر رابطنا',
     copied: 'تم النسخ!',
+    copy: 'نسخ',
     off: 'خصم',
-    from: 'من',
-    split: 'تقسيم',
-    reviews: 'تقييمات',
+    noDealsYet: 'عروض جديدة قريباً',
+    noDealsBody: 'لا توجد رموز نشطة. تصفح الشركات أدناه.',
+    loading: 'جاري تحميل العروض…',
+    affiliateNotice:
+      'قد نحصل على عمولة عبر روابطنا — دون تكلفة إضافية عليك.',
+    readMore: 'المزيد',
   },
   hi: {
-    quickCopy: 'प्रोमो कोड कॉपी करें',
-    clickToCopy: 'कॉपी करने के लिए किसी भी कोड पर क्लिक करें',
-    exclusiveCodes: 'विशेष प्रोमो कोड',
-    verifiedDiscounts: 'सत्यापित छूट उपलब्ध',
-    verifiedDiscount: 'सत्यापित छूट उपलब्ध',
-    partnerLinks: 'पार्टनर लिंक',
-    trustedFirms: 'विशेष पहुंच के साथ विश्वसनीय prop firms',
-    noPromos: 'अभी कोई प्रोमो कोड उपलब्ध नहीं है।',
-    lookingMore: 'और prop firms खोज रहे हैं?',
-    browseAll: 'सभी 70+ Prop Firms देखें',
-    activeCodes: 'सक्रिय प्रोमो कोड',
-    visitSite: 'विज़िट करें',
-    copyCode: 'कॉपी करें',
+    quickCopy: 'त्वरित कॉपी प्रोमो कोड',
+    clickToCopy: 'किसी भी कोड को तुरंत कॉपी करने के लिए क्लिक करें',
+    activeDeals: 'सक्रिय डील्स',
+    verifiedDiscounts: 'सत्यापित डिस्काउंट जो आप अभी उपयोग कर सकते हैं',
+    allFirms: 'सभी प्रॉप फर्म्स',
+    allFirmsSubtitle: 'हमारी ट्रैक की गई सभी फर्म्स। सबसे अच्छी डील्स पहले।',
+    visit: 'विज़िट',
+    details: 'विवरण',
+    viaLink: 'लिंक के माध्यम से',
+    noCode: 'कोड की आवश्यकता नहीं — डिस्काउंट हमारे लिंक के माध्यम से',
     copied: 'कॉपी हो गया!',
+    copy: 'कॉपी',
     off: 'छूट',
-    from: 'से',
-    split: 'स्प्लिट',
-    reviews: 'समीक्षाएं',
+    noDealsYet: 'जल्द ही नई डील्स',
+    noDealsBody: 'अभी कोई सक्रिय कोड नहीं। नीचे सभी फर्म्स देखें।',
+    loading: 'डील्स लोड हो रहे हैं…',
+    affiliateNotice:
+      'हमारे लिंक के माध्यम से हमें कमीशन मिल सकता है — आपके लिए अतिरिक्त लागत के बिना।',
+    readMore: 'और पढ़ें',
   },
 };
 
@@ -178,558 +185,391 @@ const translations: Record<Locale, Record<string, string>> = {
 
 interface PropFirm {
   id: string;
+  slug: string;
   name: string;
-  slug: string;
-  logo_url: string;
-  website_url: string;
-  trustpilot_rating: number;
-  trustpilot_reviews: number;
-  min_price: number;
-  profit_split: number;
-  discount_code: string;
-  discount_percent: number;
-}
-
-interface AffiliateData {
-  slug: string;
-  affiliateLink: string;
-  promoCode: string | null;
-  discountPercent: number | null;
+  logo_url: string | null;
+  trustpilot_rating: number | null;
+  trustpilot_reviews: number | null;
+  min_price: number | null;
+  max_profit_split: number | null;
+  discount_code: string | null;
+  discount_percent: number | null;
+  affiliate_url: string | null;
+  website_url: string | null;
+  priority_tier: number | null;
+  trust_status: string | null;
+  listing_status: string | null;
 }
 
 // =============================================================================
-// REAL PROMO CODES & AFFILIATE LINKS
+// SORT — best deals first, every firm visible
 // =============================================================================
 
-const AFFILIATE_DATA: AffiliateData[] = [
-  {
-    slug: 'earn2trade',
-    affiliateLink: 'https://www.earn2trade.com/trader-career-path?a_pid=scanner-40&a_bid=8d7b4b9e',
-    promoCode: 'SCANNER-40',
-    discountPercent: 50,
-  },
-  {
-    slug: 'top-one-futures',
-    affiliateLink: 'https://toponefutures.com/?linkId=lp_707970&sourceId=scanner-30&tenantId=toponefutures',
-    promoCode: 'pfs',
-    discountPercent: 40,
-  },
-  {
-    slug: 'forfx',
-    affiliateLink: 'https://forfx.com/?campaign=propfirmscanner&ref=286341',
-    promoCode: 'SCANNER10',
-    discountPercent: 10,
-  },
-  {
-    slug: 'funderpro',
-    affiliateLink: 'https://funderpro.cxclick.com/visit/?bta=47056&brand=funderpro',
-    promoCode: 'pfs40',
-    discountPercent: 10,
-  },
-  {
-    slug: 'the5ers',
-    affiliateLink: 'https://www.the5ers.com/?afmc=13z1',
-    promoCode: null,
-    discountPercent: null,
-  },
-  {
-    slug: 'maven-trading',
-    affiliateLink: 'https://maventrading.com?ref=zme1m2j',
-    promoCode: null,
-    discountPercent: null,
-  },
-  {
-    slug: 'blue-guardian',
-    affiliateLink: 'https://blueguardian.com/?afmc=1tpr',
-    promoCode: null,
-    discountPercent: null,
-  },
-  {
-    slug: 'funded-trading-plus',
-    affiliateLink: 'https://www.fundedtradingplus.com?ref=propfirmscanner',
-    promoCode: null,
-    discountPercent: null,
-  },
-  {
-    slug: 'instant-funding',
-    affiliateLink: 'https://instantfunding.com/?partner=7543',
-    promoCode: null,
-    discountPercent: null,
-  },
-  {
-    slug: 'alpha-capital-group',
-    affiliateLink: 'https://app.alphacapitalgroup.uk/signup/XYINW',
-    promoCode: null,
-    discountPercent: null,
-  },
-  {
-    slug: 'funding-pips',
-    affiliateLink: 'https://app.fundingpips.com/register?ref=10BE678C',
-    promoCode: null,
-    discountPercent: null,
-  },
-  {
-    slug: 'prime-funding',
-    affiliateLink: 'https://prime-funding.com?ref=scanner-20',
-    promoCode: null,
-    discountPercent: null,
-  },
-  {
-    slug: 'dna-funded',
-    affiliateLink: 'https://partners.dnafunded.com/click?campaign_id=1&ref_id=675',
-    promoCode: null,
-    discountPercent: null,
-  },
-  {
-    slug: 'seacrest-markets',
-    affiliateLink: 'https://fundedtech.seacrestmarkets.io/purchasechallenge?sl=11739',
-    promoCode: null,
-    discountPercent: null,
-  },
-  {
-    slug: 'funded-trader-markets',
-    affiliateLink: 'https://fundedtradermarkets.com/ref/Sofiane',
-    promoCode: null,
-    discountPercent: null,
-  },
-  {
-    slug: 'qt-funded',
-    affiliateLink: 'https://qtfunded.quanttekel.com/ref/5508/',
-    promoCode: null,
-    discountPercent: null,
-  },
-  {
-    slug: 'fundingticks',
-    affiliateLink: 'https://app.fundingticks.com/register?ref=C1182EEE',
-    promoCode: null,
-    discountPercent: null,
-  },
-  {
-    slug: 'funded-elite',
-    affiliateLink: 'https://app.fundedelite.com?aff=AFF4544253',
-    promoCode: null,
-    discountPercent: null,
-  },
-  {
-    slug: 'goat-funded-trader',
-    affiliateLink: 'https://www.propfirmscanner.org/aff/Sofiane/',
-    promoCode: null,
-    discountPercent: null,
-  },
-];
+/**
+ * Sort priority for the deals page:
+ *   Tier 1: affiliate URL + discount   (real partners — FTMO, Funding Pips, …)
+ *   Tier 2: discount only              (still useful info)
+ *   Tier 3: no deal                    (still browseable below)
+ *
+ * Within each tier we sort by priority_tier (Top 10 first), then discount %,
+ * then trustpilot rating. FTMO 19% naturally lands at the very top.
+ */
+function dealsSort(a: PropFirm, b: PropFirm): number {
+  const score = (f: PropFirm) => {
+    const hasAff = f.affiliate_url && f.affiliate_url !== '#' ? 1 : 0;
+    const hasDiscount = (f.discount_percent ?? 0) > 0 ? 1 : 0;
+    if (hasAff && hasDiscount) return 0;
+    if (hasDiscount) return 1;
+    return 2;
+  };
+
+  const sa = score(a);
+  const sb = score(b);
+  if (sa !== sb) return sa - sb;
+
+  const ta = a.priority_tier ?? 99;
+  const tb = b.priority_tier ?? 99;
+  if (ta !== tb) return ta - tb;
+
+  const da = a.discount_percent ?? 0;
+  const db = b.discount_percent ?? 0;
+  if (da !== db) return db - da;
+
+  const ra = a.trustpilot_rating ?? 0;
+  const rb = b.trustpilot_rating ?? 0;
+  return rb - ra;
+}
 
 // =============================================================================
-// PROMO CODES BANNER
+// COPY BUTTON
+// =============================================================================
+
+function CopyCodeButton({ code, label }: { code: string; label: { copy: string; copied: string } }) {
+  const [copied, setCopied] = useState(false);
+  const handle = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      /* clipboard blocked — silent fail */
+    }
+  };
+  return (
+    <button
+      onClick={handle}
+      className={`p-2 rounded-lg transition-colors ${
+        copied ? 'bg-emerald-500/20 text-emerald-400' : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+      }`}
+      title={copied ? label.copied : label.copy}
+      aria-label={copied ? label.copied : label.copy}
+    >
+      {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+    </button>
+  );
+}
+
+// =============================================================================
+// PROMO CODES BANNER — quick-copy strip (only firms with codes)
 // =============================================================================
 
 export function PromoCodesBanner() {
   const pathname = usePathname();
-  const currentLocale = getLocaleFromPath(pathname);
-  const t = translations[currentLocale] || translations.en;
-  
-  const [copiedCode, setCopiedCode] = useState<string | null>(null);
-  const promoCodes = AFFILIATE_DATA.filter(a => a.promoCode && a.discountPercent);
+  const t = translations[getLocaleFromPath(pathname)];
+  const [firms, setFirms] = useState<PropFirm[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleCopy = useCallback((code: string) => {
-    navigator.clipboard.writeText(code);
-    setCopiedCode(code);
-    setTimeout(() => setCopiedCode(null), 2000);
+  useEffect(() => {
+    const fetchFirms = async () => {
+      const supabase = createClientComponentClient();
+      const { data } = await supabase
+        .from('prop_firms')
+        .select(
+          'id, slug, name, logo_url, trustpilot_rating, trustpilot_reviews, min_price, max_profit_split, discount_code, discount_percent, affiliate_url, website_url, priority_tier, trust_status, listing_status'
+        )
+        .eq('listing_status', 'listed')
+        .gt('discount_percent', 0)
+        .not('discount_code', 'is', null)
+        .order('discount_percent', { ascending: false })
+        .limit(8);
+      setFirms(data || []);
+      setLoading(false);
+    };
+    fetchFirms();
   }, []);
 
-  if (promoCodes.length === 0) return null;
+  if (loading || firms.length === 0) return null;
 
   return (
-    <div className="mb-10 p-6 bg-gradient-to-r from-emerald-500/10 via-yellow-500/5 to-orange-500/10 border border-emerald-500/20 rounded-2xl">
+    <section className="mb-8 bg-gradient-to-br from-yellow-500/10 via-amber-500/5 to-transparent border border-yellow-500/20 rounded-2xl p-6">
       <div className="flex items-center gap-3 mb-4">
-        <div className="p-2 bg-yellow-500/20 rounded-lg">
+        <div className="w-10 h-10 rounded-xl bg-yellow-500/20 flex items-center justify-center">
           <Gift className="w-5 h-5 text-yellow-400" />
         </div>
         <div>
-          <h3 className="font-semibold text-white">{t.quickCopy}</h3>
-          <p className="text-sm text-gray-400">{t.clickToCopy}</p>
+          <h2 className="text-lg font-bold text-white">{t.quickCopy}</h2>
+          <p className="text-gray-400 text-sm">{t.clickToCopy}</p>
         </div>
       </div>
-      
-      <div className="flex flex-wrap gap-3">
-        {promoCodes.map((promo) => (
-          <button
-            key={promo.slug}
-            onClick={() => handleCopy(promo.promoCode!)}
-            className={`group flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all ${
-              copiedCode === promo.promoCode
-                ? 'bg-emerald-500/20 border border-emerald-500/50'
-                : 'bg-gray-800/80 border border-gray-700 hover:border-gray-600 hover:bg-gray-800'
-            }`}
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        {firms.map(f => (
+          <div
+            key={f.id}
+            className="flex items-center justify-between gap-3 px-4 py-3 bg-gray-800/60 border border-gray-700 rounded-xl"
           >
-            <div className="text-left">
-              <span className="block text-white text-sm font-medium">
-                {promo.slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-              </span>
-              <span className="block text-emerald-400 text-xs font-semibold">
-                {promo.discountPercent}% {t.off}
-              </span>
+            <div className="min-w-0">
+              <p className="text-white font-medium text-sm truncate">{f.name}</p>
+              <p className="text-yellow-400 text-xs font-semibold">
+                {f.discount_percent}% {t.off}
+              </p>
             </div>
-            <code className={`px-3 py-1.5 text-sm font-mono rounded-lg transition-all ${
-              copiedCode === promo.promoCode
-                ? 'bg-emerald-500 text-white'
-                : 'bg-yellow-500/20 text-yellow-400 group-hover:bg-yellow-500/30'
-            }`}>
-              {copiedCode === promo.promoCode ? (
-                <span className="flex items-center gap-1">
-                  <Check className="w-3.5 h-3.5" /> {t.copied}
-                </span>
-              ) : (
-                promo.promoCode
-              )}
-            </code>
-          </button>
+            <div className="flex items-center gap-1.5 flex-shrink-0">
+              <code className="px-2 py-1 bg-gray-900 border border-dashed border-gray-600 rounded text-emerald-400 text-xs font-mono">
+                {f.discount_code}
+              </code>
+              <CopyCodeButton code={f.discount_code as string} label={{ copy: t.copy, copied: t.copied }} />
+            </div>
+          </div>
         ))}
       </div>
-    </div>
+    </section>
   );
 }
 
 // =============================================================================
-// DEAL CARD COMPONENT
+// DEAL CARD
 // =============================================================================
 
-interface DealCardProps {
-  firm: PropFirm;
-  affiliate: AffiliateData;
-  onCopyCode: (code: string) => void;
-  copiedCode: string | null;
-  featured?: boolean;
-  t: Record<string, string>;
-}
+function DealCard({ firm, t }: { firm: PropFirm; t: Record<string, string> }) {
+  const hasOutbound = !!(firm.affiliate_url || firm.website_url);
+  const visitUrl = hasOutbound ? `/api/go/${firm.slug}?source=deals-grid` : null;
+  const internalUrl = `/prop-firm/${firm.slug}`;
+  const hasCode = !!(firm.discount_code && firm.discount_code.trim().length > 0);
+  const hasDiscount = (firm.discount_percent ?? 0) > 0;
+  const hasAff = !!firm.affiliate_url;
 
-function DealCard({ firm, affiliate, onCopyCode, copiedCode, featured, t }: DealCardProps) {
-  const hasPromoCode = affiliate.promoCode && affiliate.discountPercent;
-  
   return (
-    <div className={`relative bg-gray-900 rounded-2xl border overflow-hidden transition-all hover:border-emerald-500/50 ${
-      featured ? 'border-emerald-500/30' : 'border-gray-800'
-    }`}>
-      {/* Discount Badge */}
-      {hasPromoCode && (
-        <div className="absolute top-0 right-0">
-          <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-4 py-1.5 rounded-bl-xl font-bold text-sm">
-            {affiliate.discountPercent}% {t.off}
+    <div
+      className={`bg-gray-800/50 border rounded-2xl overflow-hidden flex flex-col ${
+        hasAff && hasDiscount ? 'border-emerald-500/40' : 'border-gray-700/50'
+      }`}
+    >
+      {hasDiscount && (
+        <div className="relative">
+          <div className="absolute top-3 right-3 z-10 px-2 py-1 rounded-md bg-gradient-to-r from-red-500 to-orange-500 text-white text-[11px] font-bold">
+            {firm.discount_percent}% {t.off}
           </div>
         </div>
       )}
 
-      <div className="p-5">
-        {/* Logo & Name */}
-        <div className="flex items-start gap-4 mb-4 pt-4">
-          <div className="w-14 h-14 rounded-xl bg-white flex items-center justify-center overflow-hidden p-2 flex-shrink-0">
-            {firm.logo_url ? (
-              <Image src={firm.logo_url} alt={firm.name} width={48} height={48} className="object-contain" />
-            ) : (
-              <span className="text-2xl font-bold text-emerald-600">{firm.name.charAt(0)}</span>
-            )}
-          </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-white text-lg truncate">{firm.name}</h3>
-            {firm.trustpilot_rating && (
-              <div className="flex items-center gap-2 mt-1">
-                <div className="flex items-center gap-1">
-                  <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                  <span className="text-white font-medium">{firm.trustpilot_rating.toFixed(1)}</span>
-                </div>
-                {firm.trustpilot_reviews && (
-                  <span className="text-gray-500 text-sm">({firm.trustpilot_reviews.toLocaleString()} {t.reviews})</span>
-                )}
-              </div>
-            )}
-          </div>
+      <Link href={internalUrl} className="flex items-center gap-3 px-5 pt-5 group/title">
+        <div className="w-12 h-12 rounded-xl bg-white border border-gray-200 p-1 flex items-center justify-center overflow-hidden flex-shrink-0">
+          {firm.logo_url ? (
+            <Image src={firm.logo_url} alt={firm.name} width={48} height={48} className="object-contain" />
+          ) : (
+            <span className="text-lg font-bold text-emerald-600">{firm.name.charAt(0)}</span>
+          )}
         </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          <div className="bg-gray-800/50 rounded-lg p-3 text-center">
-            <span className="text-gray-400 text-xs block mb-1">{t.from}</span>
-            <span className="text-white font-semibold">${firm.min_price || 'N/A'}</span>
-          </div>
-          <div className="bg-gray-800/50 rounded-lg p-3 text-center">
-            <span className="text-gray-400 text-xs block mb-1">{t.split}</span>
-            <span className="text-emerald-400 font-semibold">{firm.profit_split || 80}%</span>
-          </div>
-        </div>
-
-        {/* Promo Code */}
-        {hasPromoCode && (
-          <button
-            onClick={() => onCopyCode(affiliate.promoCode!)}
-            className={`w-full mb-4 p-3 rounded-xl border-2 border-dashed transition-all ${
-              copiedCode === affiliate.promoCode
-                ? 'border-emerald-500 bg-emerald-500/10'
-                : 'border-yellow-500/50 bg-yellow-500/5 hover:bg-yellow-500/10'
-            }`}
-          >
-            <div className="flex items-center justify-between">
-              <code className="text-yellow-400 font-mono font-bold">{affiliate.promoCode}</code>
-              {copiedCode === affiliate.promoCode ? (
-                <span className="flex items-center gap-1 text-emerald-400 text-sm">
-                  <CheckCircle className="w-4 h-4" /> {t.copied}
-                </span>
-              ) : (
-                <span className="flex items-center gap-1 text-gray-400 text-sm">
-                  <Copy className="w-4 h-4" /> {t.copyCode}
+        <div className="min-w-0 flex-1">
+          <h3 className="font-semibold text-white text-base group-hover/title:text-emerald-400 transition-colors truncate">
+            {firm.name}
+          </h3>
+          {firm.trustpilot_rating && (
+            <div className="flex items-center gap-1 text-xs text-gray-400 mt-0.5">
+              <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+              <span className="text-white font-medium">{firm.trustpilot_rating.toFixed(1)}</span>
+              {firm.trustpilot_reviews != null && (
+                <span>
+                  (
+                  {firm.trustpilot_reviews >= 1000
+                    ? `${(firm.trustpilot_reviews / 1000).toFixed(1)}K`
+                    : firm.trustpilot_reviews}
+                  )
                 </span>
               )}
             </div>
-          </button>
-        )}
+          )}
+        </div>
+      </Link>
 
-        {/* Actions */}
-        <div className="flex gap-2">
-          <Link
-            href={`/prop-firm/${firm.slug}`}
-            className="flex-1 flex items-center justify-center gap-2 py-3 bg-gray-800 hover:bg-gray-700 text-white rounded-xl font-medium transition-colors"
-          >
-            Details
-          </Link>
-          <Link
-            href={`/api/go/${firm.slug}?source=deals-grid`}
+      <div className="grid grid-cols-2 gap-3 px-5 mt-4">
+        <div>
+          <p className="text-[10px] text-gray-500 uppercase tracking-wider">Price</p>
+          <p className="text-white font-bold">{firm.min_price ? `$${firm.min_price}` : '—'}</p>
+        </div>
+        <div>
+          <p className="text-[10px] text-gray-500 uppercase tracking-wider">Split</p>
+          <p className="text-emerald-400 font-bold">
+            {firm.max_profit_split ? `${firm.max_profit_split}%` : '—'}
+          </p>
+        </div>
+      </div>
+
+      {hasDiscount && (
+        <div className="px-5 mt-4">
+          {hasCode ? (
+            <div className="flex items-center gap-2">
+              <code className="flex-1 px-3 py-2 bg-gray-900 border border-dashed border-gray-600 rounded-lg text-emerald-400 font-mono text-sm text-center truncate">
+                {firm.discount_code}
+              </code>
+              <CopyCodeButton code={firm.discount_code as string} label={{ copy: t.copy, copied: t.copied }} />
+            </div>
+          ) : (
+            <div className="flex items-center justify-center gap-2 px-3 py-2 bg-gray-900/60 border border-gray-700 rounded-lg">
+              <ExternalLink className="w-3.5 h-3.5 text-gray-400" />
+              <span className="text-gray-300 text-xs">{t.noCode}</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="p-5 mt-auto">
+        {hasOutbound ? (
+          <a
+            href={visitUrl as string}
             target="_blank"
             rel="noopener noreferrer"
-            className={`flex items-center justify-center gap-2 py-3 rounded-xl font-medium transition-all ${
-              hasPromoCode 
-                ? 'flex-1 bg-emerald-500 hover:bg-emerald-600 text-white' 
-                : 'flex-1 bg-gray-700 hover:bg-gray-600 text-white'
+            className={`flex items-center justify-center gap-2 w-full py-3 rounded-xl font-medium transition-colors ${
+              hasAff && hasDiscount
+                ? 'bg-emerald-500 hover:bg-emerald-600 text-white'
+                : 'bg-gray-700 hover:bg-gray-600 text-white'
             }`}
           >
-            {t.visitSite}
-            <ExternalLink className="w-4 h-4" />
+            {t.visit} <ExternalLink className="w-4 h-4" />
+          </a>
+        ) : (
+          <Link
+            href={internalUrl}
+            className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-medium bg-gray-700 hover:bg-gray-600 text-white transition-colors"
+          >
+            {t.details}
           </Link>
-        </div>
+        )}
       </div>
     </div>
   );
 }
 
 // =============================================================================
-// LOADING SKELETON
-// =============================================================================
-
-function DealCardSkeleton() {
-  return (
-    <div className="bg-gray-900 rounded-2xl border border-gray-800 p-5 animate-pulse">
-      <div className="flex items-start gap-4 mb-4 pt-8">
-        <div className="w-14 h-14 bg-gray-800 rounded-xl" />
-        <div className="flex-1">
-          <div className="h-5 bg-gray-800 rounded w-3/4 mb-2" />
-          <div className="h-4 bg-gray-800 rounded w-1/2" />
-        </div>
-      </div>
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        <div className="h-16 bg-gray-800 rounded-lg" />
-        <div className="h-16 bg-gray-800 rounded-lg" />
-      </div>
-      <div className="flex gap-2">
-        <div className="flex-1 h-12 bg-gray-800 rounded-xl" />
-        <div className="flex-1 h-12 bg-gray-800 rounded-xl" />
-      </div>
-    </div>
-  );
-}
-
-// =============================================================================
-// MAIN DEALS GRID COMPONENT
+// DEALS GRID — every listed firm, deals first, no firm hidden
 // =============================================================================
 
 export function DealsGrid() {
   const pathname = usePathname();
-  const currentLocale = getLocaleFromPath(pathname);
-  const t = translations[currentLocale] || translations.en;
-  
+  const t = translations[getLocaleFromPath(pathname)];
+
   const [firms, setFirms] = useState<PropFirm[]>([]);
   const [loading, setLoading] = useState(true);
-  const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchFirms = useCallback(async () => {
+    setLoading(true);
+    try {
+      const supabase = createClientComponentClient();
+      const { data, error: err } = await supabase
+        .from('prop_firms')
+        .select(
+          'id, slug, name, logo_url, trustpilot_rating, trustpilot_reviews, min_price, max_profit_split, discount_code, discount_percent, affiliate_url, website_url, priority_tier, trust_status, listing_status'
+        )
+        .eq('listing_status', 'listed');
+
+      if (err) {
+        setError(err.message);
+        return;
+      }
+      setFirms((data || []).sort(dealsSort));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to load deals');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    async function fetchFirms() {
-      try {
-        const supabase = createClientComponentClient();
-        const slugs = AFFILIATE_DATA.map(a => a.slug);
-        
-        const { data, error } = await supabase
-          .from('prop_firms')
-          .select('id, name, slug, logo_url, website_url, trustpilot_rating, trustpilot_reviews, min_price, profit_split, discount_code, discount_percent')
-          .in('slug', slugs);
-
-        if (error) throw error;
-        setFirms(data || []);
-      } catch (error) {
-        console.error('Error fetching firms:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
     fetchFirms();
-  }, []);
+  }, [fetchFirms]);
 
-  const handleCopyCode = useCallback((code: string) => {
-    navigator.clipboard.writeText(code);
-    setCopiedCode(code);
-    setTimeout(() => setCopiedCode(null), 2000);
-  }, []);
+  const dealFirms = firms.filter(f => (f.discount_percent ?? 0) > 0);
+  const remainingFirms = firms.filter(f => (f.discount_percent ?? 0) === 0 || f.discount_percent == null);
 
-  const firmsWithDeals = AFFILIATE_DATA.map(affiliate => {
-    const firm = firms.find(f => f.slug === affiliate.slug);
-    return { affiliate, firm };
-  }).filter(({ firm }) => firm);
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-16">
+        <Sparkles className="w-5 h-5 text-emerald-400 animate-pulse mr-2" />
+        <span className="text-gray-400">{t.loading}</span>
+      </div>
+    );
+  }
 
-  const firmsWithCodes = firmsWithDeals.filter(({ affiliate }) => affiliate.promoCode && affiliate.discountPercent);
-  const firmsWithoutCodes = firmsWithDeals.filter(({ affiliate }) => !affiliate.promoCode);
-
-  firmsWithCodes.sort((a, b) => (b.affiliate.discountPercent || 0) - (a.affiliate.discountPercent || 0));
+  if (error) {
+    return (
+      <div className="text-center py-12 text-gray-400">
+        Couldn’t load deals right now. Refresh the page or come back in a minute.
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-12">
-      {/* Featured Deals Section */}
-      <section>
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-2.5 bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 rounded-xl">
-            <Sparkles className="w-5 h-5 text-emerald-400" />
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-white">{t.exclusiveCodes}</h2>
-            <p className="text-sm text-gray-400">
-              {firmsWithCodes.length} {firmsWithCodes.length > 1 ? t.verifiedDiscounts : t.verifiedDiscount}
-            </p>
-          </div>
-        </div>
-
-        {loading ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[...Array(4)].map((_, i) => <DealCardSkeleton key={i} />)}
-          </div>
-        ) : firmsWithCodes.length > 0 ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {firmsWithCodes.map(({ firm, affiliate }) => (
-              <DealCard
-                key={firm!.slug}
-                firm={firm!}
-                affiliate={affiliate}
-                onCopyCode={handleCopyCode}
-                copiedCode={copiedCode}
-                featured
-                t={t}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12 text-gray-500">
-            {t.noPromos}
-          </div>
-        )}
-      </section>
-
-      {/* Partner Links Section */}
-      {firmsWithoutCodes.length > 0 && (
-        <section>
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2.5 bg-gray-800 rounded-xl">
-              <Zap className="w-5 h-5 text-gray-400" />
+    <>
+      {dealFirms.length > 0 ? (
+        <section className="mb-12">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
+              <Tag className="w-5 h-5 text-emerald-400" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-white">{t.partnerLinks}</h2>
-              <p className="text-sm text-gray-400">{t.trustedFirms}</p>
+              <h2 className="text-xl font-bold text-white">{t.activeDeals}</h2>
+              <p className="text-gray-400 text-sm">{t.verifiedDiscounts}</p>
             </div>
           </div>
-
-          {loading ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {[...Array(8)].map((_, i) => <DealCardSkeleton key={i} />)}
-            </div>
-          ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {firmsWithoutCodes.map(({ firm, affiliate }) => (
-                <DealCard
-                  key={firm!.slug}
-                  firm={firm!}
-                  affiliate={affiliate}
-                  onCopyCode={handleCopyCode}
-                  copiedCode={copiedCode}
-                  t={t}
-                />
-              ))}
-            </div>
-          )}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {dealFirms.map(f => (
+              <DealCard key={f.id} firm={f} t={t} />
+            ))}
+          </div>
+        </section>
+      ) : (
+        <section className="mb-12 bg-gray-800/30 border border-gray-700/50 rounded-2xl p-8 text-center">
+          <Gift className="w-10 h-10 text-gray-600 mx-auto mb-3" />
+          <h3 className="text-white font-semibold mb-2">{t.noDealsYet}</h3>
+          <p className="text-gray-400 text-sm">{t.noDealsBody}</p>
         </section>
       )}
 
-      {/* CTA */}
-      <section className="text-center py-8">
-        <div className="inline-flex flex-col items-center gap-4 p-8 bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700 rounded-2xl">
-          <p className="text-gray-400">{t.lookingMore}</p>
-          <Link
-            href="/compare"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-xl transition-colors"
-          >
-            {t.browseAll}
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-      </section>
-    </div>
+      {remainingFirms.length > 0 && (
+        <section className="mb-8">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-gray-700/50 flex items-center justify-center">
+              <ShieldCheck className="w-5 h-5 text-gray-400" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-white">{t.allFirms}</h2>
+              <p className="text-gray-400 text-sm">{t.allFirmsSubtitle}</p>
+            </div>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {remainingFirms.map(f => (
+              <DealCard key={f.id} firm={f} t={t} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      <p className="text-center text-gray-500 text-xs max-w-2xl mx-auto mt-12">
+        {t.affiliateNotice}{' '}
+        <Link href="/how-we-make-money" className="text-emerald-400 hover:underline">
+          {t.readMore}
+        </Link>
+        .
+      </p>
+    </>
   );
 }
 
-// =============================================================================
-// FEATURED FIRMS SIDEBAR
-// =============================================================================
-
+// Backwards-compatible export. The old hardcoded sidebar list is gone —
+// keeping the symbol prevents broken imports anywhere else in the codebase.
 export function FeaturedFirmsSidebar() {
-  const pathname = usePathname();
-  const currentLocale = getLocaleFromPath(pathname);
-  const t = translations[currentLocale] || translations.en;
-  
-  const [copiedCode, setCopiedCode] = useState<string | null>(null);
-  const promoCodes = AFFILIATE_DATA.filter(a => a.promoCode && a.discountPercent).slice(0, 4);
-
-  const handleCopy = useCallback((code: string) => {
-    navigator.clipboard.writeText(code);
-    setCopiedCode(code);
-    setTimeout(() => setCopiedCode(null), 2000);
-  }, []);
-
-  return (
-    <div className="bg-gray-900 rounded-xl border border-gray-800 p-5">
-      <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
-        <Tag className="w-4 h-4 text-yellow-400" />
-        {t.activeCodes}
-      </h3>
-
-      <div className="space-y-3">
-        {promoCodes.map((promo) => (
-          <button
-            key={promo.slug}
-            onClick={() => handleCopy(promo.promoCode!)}
-            className={`w-full flex items-center justify-between p-3 rounded-lg transition-colors ${
-              copiedCode === promo.promoCode
-                ? 'bg-emerald-500/20'
-                : 'bg-gray-800 hover:bg-gray-700'
-            }`}
-          >
-            <div className="flex flex-col items-start">
-              <span className="text-white text-sm">
-                {promo.slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-              </span>
-              <span className="text-emerald-400 text-xs">{promo.discountPercent}% {t.off}</span>
-            </div>
-            <code className={`px-2 py-1 text-xs font-mono rounded ${
-              copiedCode === promo.promoCode
-                ? 'bg-emerald-500/30 text-emerald-400'
-                : 'bg-yellow-500/20 text-yellow-400'
-            }`}>
-              {copiedCode === promo.promoCode ? `✓ ${t.copied}` : promo.promoCode}
-            </code>
-          </button>
-        ))}
-      </div>
-    </div>
-  );
+  return null;
 }
