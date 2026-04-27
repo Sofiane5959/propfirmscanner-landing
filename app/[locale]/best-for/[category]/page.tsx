@@ -229,7 +229,7 @@ export default async function CategoryPage({ params }: Props) {
                       Details
                     </Link>
                     <a
-                      href={firm.affiliate_url || firm.website_url || '#'}
+                      href={(firm.affiliate_url || firm.website_url) ? `/api/go/${firm.slug}?source=best-for-category` : '#'}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex-1 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg text-center transition-all flex items-center justify-center gap-1"

@@ -213,7 +213,7 @@ export default function FavoritesPage() {
                   className="bg-gray-900/60 rounded-xl border border-gray-800 hover:border-gray-700 transition-colors p-4">
                   <div className="flex items-center gap-4">
                     <a
-                      href={firmUrl || '#'}
+                      href={firmUrl ? `/api/go/${firm.slug}?source=dashboard-favorites-logo` : '#'}
                       target={firmUrl ? '_blank' : undefined}
                       rel="noopener noreferrer"
                       onClick={firmUrl ? undefined : (e) => e.preventDefault()}
@@ -229,7 +229,7 @@ export default function FavoritesPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         {firmUrl ? (
-                          <a href={firmUrl} target="_blank" rel="noopener noreferrer"
+                          <a href={`/api/go/${firm.slug}?source=dashboard-favorites-name`} target="_blank" rel="noopener noreferrer"
                             className="font-semibold text-white hover:text-emerald-400 transition-colors">
                             {firm.name}
                           </a>
@@ -267,7 +267,7 @@ export default function FavoritesPage() {
 
                     <div className="flex items-center gap-1 shrink-0">
                       {firm.affiliate_url && (
-                        <a href={firm.affiliate_url} target="_blank" rel="noopener noreferrer"
+                        <a href={`/api/go/${firm.slug}?source=dashboard-favorites-button`} target="_blank" rel="noopener noreferrer"
                           className="p-2 text-gray-400 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition-colors"
                           title="Visit firm">
                           <ExternalLink className="w-4 h-4" />

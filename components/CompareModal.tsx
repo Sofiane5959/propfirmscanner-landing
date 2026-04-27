@@ -289,7 +289,7 @@ export default function CompareModal({ firms, onClose, onRemove, onPriceAlert }:
                       </Link>
                       
                       <a
-                        href={firm.affiliate_url || firm.website_url}
+                        href={(firm.affiliate_url || firm.website_url) ? `/api/go/${firm.slug}?source=compare-modal` : '#'}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold rounded-lg transition-colors flex items-center justify-center gap-1.5"
