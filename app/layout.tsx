@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter } from 'next/font/google';
+import { fontSans, fontDisplay, fontMono } from '@/lib/fonts';
 import './globals.css';
 
 import { AuthProvider } from '@/providers/AuthProvider';
@@ -7,8 +7,6 @@ import { Navbar } from '@/components/Navbar';
 import PromoTicker from '@/components/PromoTicker';
 import Footer from '@/components/Footer';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
-
-const inter = Inter({ subsets: ['latin'] });
 
 export const viewport: Viewport = {
   themeColor: '#10B981',
@@ -65,14 +63,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
+    <html
+      lang="en"
+      className={`${fontSans.variable} ${fontDisplay.variable} ${fontMono.variable} dark`}
+    >
       <head>
         <GoogleAnalytics />
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
-      <body className={`${inter.className} bg-gray-950 text-white antialiased`}>
+      <body className="font-sans bg-bg-base text-text-primary antialiased">
         <AuthProvider>
           <Navbar />
           <PromoTicker deals={[]} />
