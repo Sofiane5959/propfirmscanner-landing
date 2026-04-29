@@ -2,77 +2,74 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+/**
+ * PropFirmScanner — Global styles
+ *
+ * Sprint 2: dark mode is default. The `dark` class on <html> in layout.tsx
+ * activates Tailwind's dark variants but our color tokens are already
+ * dark-first (we don't need both light + dark — single dark theme).
+ */
 
-:root {
-  --foreground-rgb: 255, 255, 255;
-  --background-start-rgb: 15, 23, 42;
-  --background-end-rgb: 2, 6, 23;
-}
-
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      rgb(var(--background-start-rgb)),
-      rgb(var(--background-end-rgb))
-    );
-  min-height: 100vh;
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+/* ----------------------------------------------------------------------------
+   BASE
+---------------------------------------------------------------------------- */
+@layer base {
+  html {
+    color-scheme: dark;
   }
-  
-  .gradient-text {
-    @apply bg-gradient-to-r from-brand-400 to-emerald-400 bg-clip-text text-transparent;
+
+  body {
+    background-color: #0A0A0B; /* bg-base */
+    color: #FAFAFA;            /* text-primary */
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11'; /* Inter humanist alternates */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
-  
-  .glass {
-    @apply bg-white/5 backdrop-blur-xl border border-white/10;
+
+  /* Heading defaults — use display font automatically */
+  h1, h2, h3 {
+    font-family: var(--font-display), var(--font-sans), sans-serif;
   }
-  
-  .glass-hover {
-    @apply hover:bg-white/10 hover:border-white/20 transition-all duration-300;
+
+  /* Tabular numbers everywhere (cleaner data alignment in tables/stats) */
+  table, .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Selection */
+  ::selection {
+    background-color: rgba(16, 185, 129, 0.25);
+    color: #FAFAFA;
+  }
+
+  /* Scrollbar — subtle */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #27272A;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #3F3F46;
   }
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
+/* ----------------------------------------------------------------------------
+   COMPONENT UTILITIES
+---------------------------------------------------------------------------- */
+@layer components {
+  /* Container — used in <Container> component but also as raw class if needed */
+  .container-page {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
 
-::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
-}
-
-/* Animations */
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
-/* Glow effects */
-.glow-green {
-  box-shadow: 0 0 40px rgba(34, 197, 94, 0.3);
-}
-
-.glow-green-sm {
-  box-shadow: 0 0 20px rgba(34, 197, 94, 0.2);
+  /* "Eyebrow" label — small uppercase accent text above headings */
+  .eyebrow {
+    @apply text-tiny text-accent uppercase tracking-wider font-medium;
+  }
 }
