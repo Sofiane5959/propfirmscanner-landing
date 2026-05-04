@@ -539,7 +539,7 @@ const translations: Record<Locale, Record<string, string>> = {
 import { 
   Search, ChevronDown, Star, Check, X, 
   Grid3X3, List, ExternalLink,
-  BarChart3, Tag, Trophy, BadgeCheck, Copy, CheckCircle2,
+  BarChart3, Tag, BadgeCheck, Copy, CheckCircle2,
   ChevronLeft, ChevronRight, RotateCcw,
   Heart, GitCompare, Zap, TrendingUp,
   DollarSign, Users, Flame, MessageSquare,
@@ -1325,10 +1325,10 @@ const PropFirmCard = ({
   
   if (isCompact) {
     return (
-      <div className={`group bg-gray-800/50 hover:bg-gray-800 border rounded-xl p-3 transition-all ${
+      <div className={`group bg-gray-800/50 hover:bg-gray-800 border rounded-lg p-3 transition-colors ${
         isTopPick
-          ? 'border-emerald-500/50 hover:border-emerald-400 shadow-md shadow-emerald-500/10'
-          : 'border-gray-700/50 hover:border-emerald-500/30'
+          ? 'border-emerald-500/40 hover:border-emerald-500/70'
+          : 'border-gray-700/50 hover:border-gray-600'
       }`}>
         <div className="flex items-center gap-3">
           {/* Logo links to the internal firm page (SEO + detail content).
@@ -1340,9 +1340,9 @@ const PropFirmCard = ({
             <div className="flex items-center gap-2">
               <Link href={`/prop-firm/${firm.slug}`} className="font-semibold text-white hover:text-emerald-400 truncate text-sm flex-1 min-w-0 transition-colors">{firm.name}</Link>
               {isTopPick && (
-                <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-gradient-to-r from-emerald-500 to-emerald-400 text-white text-[9px] font-bold tracking-wide flex-shrink-0">
-                  <Star className="w-2 h-2 fill-white" />
-                  TOP PICK
+                <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[9px] font-semibold tracking-wider uppercase flex-shrink-0">
+                  <Star className="w-2 h-2 fill-emerald-400" />
+                  Top
                 </span>
               )}
               <TrustBadge status={firm.trust_status || 'verified'} />
@@ -1350,7 +1350,7 @@ const PropFirmCard = ({
             <div className="flex items-center gap-3 text-xs text-gray-400 mt-0.5 flex-wrap">
               <span className="flex items-center gap-1"><Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />{firm.trustpilot_rating?.toFixed(1) || 'N/A'}</span>
               {communityRating && communityRating.count > 0 && (
-                <span className="flex items-center gap-1 text-purple-400">
+                <span className="flex items-center gap-1 text-gray-300">
                   <MessageSquare className="w-3 h-3" />{communityRating.avg.toFixed(1)} ({communityRating.count})
                 </span>
               )}
@@ -1364,7 +1364,7 @@ const PropFirmCard = ({
             </div>
           </div>
           {hasDiscount && (
-            <span className="px-2 py-1 bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs font-bold rounded-lg">{firm.discount_percent}% OFF</span>
+            <span className="px-2 py-1 bg-amber-500/15 text-amber-400 border border-amber-500/30 text-[11px] font-semibold rounded-md uppercase tracking-wider">-{firm.discount_percent}%</span>
           )}
           <div className="flex items-center gap-1">
             <button onClick={onFavorite} aria-label={isFavorite ? `Remove ${firm.name} from favorites` : `Add ${firm.name} to favorites`} aria-pressed={isFavorite} className={`p-2 rounded-lg transition-all ${isFavorite ? 'text-red-400 bg-red-500/20' : 'text-gray-500 hover:text-red-400 hover:bg-gray-700'}`}>
@@ -1379,8 +1379,14 @@ const PropFirmCard = ({
             <PriceAlertButton firmId={firm.id} firmName={firm.name} firmSlug={firm.slug} currentPrice={firm.min_price || 0} />
             {/* "Details" removed — clicking the logo / firm name reaches the
                 same internal page. Only outbound CTA remains: the affiliate. */}
-            <a href={getFirmUrl(firm, 'compare-list')} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg flex items-center gap-1">
-              {t.visit} <ExternalLink className="w-3 h-3" />
+            <a href={getFirmUrl(firm, 'compare-list')} target="_blank" rel="noopener noreferrer" className={`px-3 py-1.5 text-xs font-medium rounded-md flex items-center gap-1 transition-colors ${
+              hasDiscount
+                ? 'bg-emerald-500 hover:bg-emerald-600 text-white'
+                : firm.affiliate_url
+                ? 'bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border border-emerald-500/30'
+                : 'bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700'
+            }`}>
+              {hasDiscount ? `Get -${firm.discount_percent}%` : t.visit} <ExternalLink className="w-3 h-3" />
             </a>
           </div>
         </div>
@@ -1389,17 +1395,17 @@ const PropFirmCard = ({
   }
 
   return (
-    <div className={`bg-gray-800/50 border rounded-xl overflow-hidden transition-all group relative flex flex-col ${
+    <div className={`bg-gray-800/50 border rounded-lg overflow-hidden transition-colors group relative flex flex-col ${
       isTopPick
-        ? 'border-emerald-500/50 hover:border-emerald-400 shadow-lg shadow-emerald-500/10'
-        : 'border-gray-700/50 hover:border-emerald-500/30'
+        ? 'border-emerald-500/40 hover:border-emerald-500/70'
+        : 'border-gray-700/50 hover:border-gray-600'
     }`}>
       {hasDiscount && (
         <div className="absolute top-3 right-3 z-10">
-          <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-2.5 py-1 rounded-lg text-xs font-bold shadow-lg">
-            {firm.discount_percent}% OFF
+          <div className="bg-amber-500/15 text-amber-400 border border-amber-500/30 px-2 py-1 rounded-md text-[11px] font-semibold uppercase tracking-wider">
+            -{firm.discount_percent}%
             {firm.discount_code && (
-              <button onClick={() => onCopyCode(firm.discount_code)} aria-label={`Copy discount code ${firm.discount_code}`} className="flex items-center gap-1 text-[10px] font-normal opacity-90 hover:opacity-100 mt-0.5">
+              <button onClick={() => onCopyCode(firm.discount_code)} aria-label={`Copy discount code ${firm.discount_code}`} className="flex items-center gap-1 text-[10px] font-mono normal-case tracking-normal opacity-90 hover:opacity-100 mt-0.5">
                 <Copy className="w-2.5 h-2.5" />{firm.discount_code}
               </button>
             )}
@@ -1409,16 +1415,16 @@ const PropFirmCard = ({
       
       {/* Top Pick badge (editor's choice — priority_tier = 1) */}
       {isTopPick && (
-        <div className="absolute top-3 left-3 z-10 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-gradient-to-r from-emerald-500 to-emerald-400 text-white text-[10px] font-bold shadow-lg tracking-wide">
-          <Star className="w-2.5 h-2.5 fill-white" />
-          TOP PICK
+        <div className="absolute top-3 left-3 z-10 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[10px] font-semibold tracking-wider uppercase">
+          <Star className="w-2.5 h-2.5 fill-emerald-400" />
+          Top Pick
         </div>
       )}
       
-      {/* Rank trophy (top-3 by current sort) — only show if not a Top Pick to avoid badge collision */}
+      {/* Rank number (top-3 by current sort) — only show if not a Top Pick to avoid badge collision */}
       {!isTopPick && rank <= 3 && (
-        <div className={`absolute top-3 left-3 z-10 w-7 h-7 rounded-lg flex items-center justify-center shadow-lg ${rank === 1 ? 'bg-amber-500' : rank === 2 ? 'bg-gray-400' : 'bg-amber-700'}`}>
-          <Trophy className="w-3.5 h-3.5 text-white" />
+        <div className="absolute top-3 left-3 z-10 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-gray-800 text-gray-300 border border-gray-700 text-[10px] font-semibold tracking-wider uppercase font-mono">
+          #{rank}
         </div>
       )}
       
@@ -1463,8 +1469,8 @@ const PropFirmCard = ({
         {/* Community rating */}
         {communityRating && communityRating.count > 0 && (
           <div className="flex items-center gap-1 mt-0.5">
-            <MessageSquare className="w-3 h-3 text-purple-400" />
-            <span className="text-purple-400 text-xs font-medium">{communityRating.avg.toFixed(1)}</span>
+            <MessageSquare className="w-3 h-3 text-gray-400" />
+            <span className="text-gray-300 text-xs font-medium">{communityRating.avg.toFixed(1)}</span>
             <span className="text-gray-500 text-xs">{t.communityRating} ({communityRating.count})</span>
           </div>
         )}
@@ -1491,19 +1497,19 @@ const PropFirmCard = ({
       <div className="p-4 space-y-3 flex-1">
         <div className="flex flex-wrap gap-1">
           {markets.map(m => (
-            <span key={m} className="px-1.5 py-0.5 bg-blue-500/20 text-blue-400 text-[10px] rounded">{m}</span>
+            <span key={m} className="px-1.5 py-0.5 bg-gray-800 text-gray-400 border border-gray-700 text-[10px] rounded-md">{m}</span>
           ))}
         </div>
         <div className="flex flex-wrap gap-1">
-          {firm.allows_scalping && <span className="px-1.5 py-0.5 bg-emerald-500/10 text-emerald-400 text-[10px] rounded flex items-center gap-0.5"><Check className="w-2.5 h-2.5" />Scalping</span>}
-          {firm.allows_news_trading && <span className="px-1.5 py-0.5 bg-emerald-500/10 text-emerald-400 text-[10px] rounded flex items-center gap-0.5"><Check className="w-2.5 h-2.5" />News</span>}
-          {firm.allows_ea && <span className="px-1.5 py-0.5 bg-emerald-500/10 text-emerald-400 text-[10px] rounded flex items-center gap-0.5"><Check className="w-2.5 h-2.5" />EAs</span>}
-          {firm.has_instant_funding && <span className="px-1.5 py-0.5 bg-yellow-500/10 text-yellow-400 text-[10px] rounded flex items-center gap-0.5"><Zap className="w-2.5 h-2.5" />Instant</span>}
+          {firm.allows_scalping && <span className="px-1.5 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] rounded-md flex items-center gap-0.5"><Check className="w-2.5 h-2.5" />Scalping</span>}
+          {firm.allows_news_trading && <span className="px-1.5 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] rounded-md flex items-center gap-0.5"><Check className="w-2.5 h-2.5" />News</span>}
+          {firm.allows_ea && <span className="px-1.5 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] rounded-md flex items-center gap-0.5"><Check className="w-2.5 h-2.5" />EAs</span>}
+          {firm.has_instant_funding && <span className="px-1.5 py-0.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] rounded-md flex items-center gap-0.5"><Zap className="w-2.5 h-2.5" />Instant</span>}
         </div>
         {firm.platforms && firm.platforms.length > 0 && (
           <div className="flex flex-wrap gap-1">
             {firm.platforms.slice(0, 3).map(p => (
-              <span key={p} className="px-1.5 py-0.5 bg-gray-700 text-gray-300 text-[10px] rounded">{p}</span>
+              <span key={p} className="px-1.5 py-0.5 bg-gray-800 text-gray-400 border border-gray-700 text-[10px] rounded-md">{p}</span>
             ))}
             {firm.platforms.length > 3 && <span className="text-[10px] text-gray-500">+{firm.platforms.length - 3}</span>}
           </div>
@@ -1511,12 +1517,26 @@ const PropFirmCard = ({
       </div>
       
       <div className="p-4 pt-0">
-        {/* Single CTA: "Visit" goes to the affiliate (tracked via /api/go/{slug}).
-            The "Details" button was removed to follow the principle "one link
-            per card = the affiliate link". The internal /prop-firm/{slug} page
-            is still reachable by clicking the logo or firm name above. */}
-        <a href={getFirmUrl(firm, 'compare-grid')} target="_blank" rel="noopener noreferrer" className="block w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-center text-sm font-medium rounded-lg flex items-center justify-center gap-1 transition-colors">
-          {t.visit} <ExternalLink className="w-3.5 h-3.5" />
+        {/* Single CTA with 3-tier differentiation:
+            - With discount  → solid emerald "Get -X%" (highest intent)
+            - Affiliate only → outline emerald "Visit Firm" (clear we earn commission)
+            - No affiliate   → neutral gray "Visit Site" (neutral, no incentive bias)
+            "Details" was removed earlier — clicking the logo / firm name reaches
+            the internal page. */}
+        <a
+          href={getFirmUrl(firm, 'compare-grid')}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`block w-full py-2.5 text-center text-sm font-medium rounded-md flex items-center justify-center gap-1.5 transition-colors ${
+            hasDiscount
+              ? 'bg-emerald-500 hover:bg-emerald-600 text-white'
+              : firm.affiliate_url
+              ? 'bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border border-emerald-500/30'
+              : 'bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700'
+          }`}
+        >
+          {hasDiscount ? `Get -${firm.discount_percent}%` : firm.affiliate_url ? `Visit ${firm.name}` : 'Visit Site'}
+          <ExternalLink className="w-3.5 h-3.5" />
         </a>
       </div>
     </div>
@@ -2135,16 +2155,16 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
             <div>
               <div className="flex items-center gap-3 mb-1">
-                <h1 className="text-xl font-bold text-white">{t.pageTitle}</h1>
-                <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-xs rounded-full flex items-center gap-1"><BadgeCheck className="w-3 h-3" />Scanned & Verified</span>
+                <h1 className="text-h3 sm:text-h2 text-white font-display">{t.pageTitle}</h1>
+                <span className="px-2 py-0.5 bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[11px] font-medium uppercase tracking-wider rounded-md flex items-center gap-1"><BadgeCheck className="w-3 h-3" />Verified</span>
               </div>
-              <p className="text-sm text-gray-500">Every prop firm. One place. • <span className="text-emerald-400 animate-pulse">Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span></p>
+              <p className="text-small text-gray-500">Every prop firm. One place. <span className="text-gray-600">·</span> <span className="text-gray-400">Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span></p>
             </div>
             <div className="flex items-center gap-2">
-              <button onClick={() => setViewMode('grid')} aria-label="Grid view" aria-pressed={viewMode === 'grid'} className={`p-2 rounded-lg ${viewMode === 'grid' ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400'}`}>
+              <button onClick={() => setViewMode('grid')} aria-label="Grid view" aria-pressed={viewMode === 'grid'} className={`p-2 rounded-md border transition-colors ${viewMode === 'grid' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-gray-800 text-gray-400 border-gray-700 hover:border-gray-600'}`}>
                 <Grid3X3 className="w-4 h-4" />
               </button>
-              <button onClick={() => setViewMode('list')} aria-label="List view" aria-pressed={viewMode === 'list'} className={`p-2 rounded-lg ${viewMode === 'list' ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400'}`}>
+              <button onClick={() => setViewMode('list')} aria-label="List view" aria-pressed={viewMode === 'list'} className={`p-2 rounded-md border transition-colors ${viewMode === 'list' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-gray-800 text-gray-400 border-gray-700 hover:border-gray-600'}`}>
                 <List className="w-4 h-4" />
               </button>
             </div>
@@ -2181,10 +2201,10 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
               </FilterDropdown>
               
               {/* Challenge Type */}
-              <FilterDropdown label={t.challenge} count={filters.challengeTypes.length} colorClass="purple" isOpen={openDropdown === 'challenge'} onToggle={() => toggleDropdown('challenge')}>
+              <FilterDropdown label={t.challenge} count={filters.challengeTypes.length} isOpen={openDropdown === 'challenge'} onToggle={() => toggleDropdown('challenge')}>
                 <div className="flex flex-wrap gap-1.5">
                   {CHALLENGE_TYPE_OPTIONS.map(type => (
-                    <button key={type} onClick={() => setFilters(f => ({ ...f, challengeTypes: f.challengeTypes.includes(type) ? f.challengeTypes.filter(t => t !== type) : [...f.challengeTypes, type] }))} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.challengeTypes.includes(type) ? 'bg-purple-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
+                    <button key={type} onClick={() => setFilters(f => ({ ...f, challengeTypes: f.challengeTypes.includes(type) ? f.challengeTypes.filter(t => t !== type) : [...f.challengeTypes, type] }))} className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1 ${filters.challengeTypes.includes(type) ? 'bg-emerald-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
                       {type}{filters.challengeTypes.includes(type) && <Check className="w-3 h-3" />}
                     </button>
                   ))}
@@ -2203,10 +2223,10 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
               </FilterDropdown>
               
               {/* Rating */}
-              <FilterDropdown label={t.rating} count={filters.ratings.length} colorClass="yellow" isOpen={openDropdown === 'rating'} onToggle={() => toggleDropdown('rating')}>
+              <FilterDropdown label={t.rating} count={filters.ratings.length} isOpen={openDropdown === 'rating'} onToggle={() => toggleDropdown('rating')}>
                 <div className="flex flex-wrap gap-1.5">
                   {RATING_OPTIONS.map(rating => (
-                    <button key={rating} onClick={() => setFilters(f => ({ ...f, ratings: f.ratings.includes(rating) ? f.ratings.filter(r => r !== rating) : [...f.ratings, rating] }))} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.ratings.includes(rating) ? 'bg-yellow-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
+                    <button key={rating} onClick={() => setFilters(f => ({ ...f, ratings: f.ratings.includes(rating) ? f.ratings.filter(r => r !== rating) : [...f.ratings, rating] }))} className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1 ${filters.ratings.includes(rating) ? 'bg-emerald-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
                       <Star className="w-3 h-3" />{rating}+{filters.ratings.includes(rating) && <Check className="w-3 h-3" />}
                     </button>
                   ))}
@@ -2214,12 +2234,12 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
               </FilterDropdown>
               
               {/* Best For */}
-              <FilterDropdown label={t.bestFor} count={filters.bestFor.length} colorClass="blue" isOpen={openDropdown === 'bestFor'} onToggle={() => toggleDropdown('bestFor')}>
+              <FilterDropdown label={t.bestFor} count={filters.bestFor.length} isOpen={openDropdown === 'bestFor'} onToggle={() => toggleDropdown('bestFor')}>
                 <div className="flex flex-wrap gap-1.5">
                   {BEST_FOR_OPTIONS.map(opt => {
                     const Icon = opt.icon
                     return (
-                      <button key={opt.key} onClick={() => setFilters(f => ({ ...f, bestFor: f.bestFor.includes(opt.key) ? f.bestFor.filter(b => b !== opt.key) : [...f.bestFor, opt.key] }))} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.bestFor.includes(opt.key) ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
+                      <button key={opt.key} onClick={() => setFilters(f => ({ ...f, bestFor: f.bestFor.includes(opt.key) ? f.bestFor.filter(b => b !== opt.key) : [...f.bestFor, opt.key] }))} className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1 ${filters.bestFor.includes(opt.key) ? 'bg-emerald-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
                         <Icon className="w-3 h-3" />{opt.label}{filters.bestFor.includes(opt.key) && <Check className="w-3 h-3" />}
                       </button>
                     )
@@ -2236,7 +2256,7 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
               
               {/* Deals */}
               {stats.withDiscounts > 0 && (
-                <button onClick={() => setFilters(f => ({ ...f, hasDiscount: !f.hasDiscount }))} aria-pressed={filters.hasDiscount} aria-label={`Filter by deals only. ${stats.withDiscounts} firms with discounts`} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.hasDiscount ? 'bg-orange-500 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}>
+                <button onClick={() => setFilters(f => ({ ...f, hasDiscount: !f.hasDiscount }))} aria-pressed={filters.hasDiscount} aria-label={`Filter by deals only. ${stats.withDiscounts} firms with discounts`} className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1 ${filters.hasDiscount ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30' : 'bg-gray-800 text-gray-400 border border-gray-700 hover:border-gray-600'}`}>
                   <Tag className="w-3 h-3" /> Deals ({stats.withDiscounts})
                 </button>
               )}
@@ -2267,29 +2287,26 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
       {/* QUIZ BANNER */}
       <div className="px-4 pt-4">
         <div className="max-w-7xl mx-auto">
-          <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-emerald-950 via-gray-900 to-emerald-950 border border-emerald-500/30">
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-400/60 to-transparent" />
-            <div className="absolute -left-10 top-1/2 -translate-y-1/2 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
-            <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4 px-5 py-4">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center flex-shrink-0">
+          <div className="rounded-lg bg-gray-800/50 border border-gray-700 hover:border-gray-600 transition-colors">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 px-5 py-4">
+              <div className="flex items-center gap-4 min-w-0">
+                <div className="w-10 h-10 rounded-md bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center flex-shrink-0">
                   <Sparkles className="w-5 h-5 text-emerald-400" />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <p className="text-white font-bold text-sm">Not sure which firm to pick?</p>
-                    <span className="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-400 text-[10px] font-bold rounded border border-emerald-500/30">FREE</span>
+                    <p className="text-white font-medium text-sm">Not sure which firm to pick?</p>
+                    <span className="px-1.5 py-0.5 bg-emerald-500/15 text-emerald-400 text-[10px] font-medium rounded border border-emerald-500/30 uppercase tracking-wider">Free</span>
                   </div>
                   <p className="text-gray-400 text-xs">Discover the prop firm that fits your trading style in under 60 seconds</p>
                 </div>
               </div>
               <Link
                 href="/en/quiz?start=true"
-                className="relative flex-shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-sm rounded-xl transition-all shadow-lg shadow-emerald-500/30 hover:-translate-y-0.5 whitespace-nowrap"
+                className="flex-shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-medium text-sm rounded-md transition-colors whitespace-nowrap"
               >
-                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-300 rounded-full animate-ping opacity-75" />
-                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full" />
-                Find my perfect firm →
+                Find my perfect firm
+                <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
           </div>
@@ -2399,43 +2416,29 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
         </div>
       </section>
       
-      {/* STILL UNDECIDED */}
-      <section className="px-4 py-10">
-        <div className="max-w-7xl mx-auto">
-          <div className="relative overflow-hidden rounded-2xl border border-emerald-500/30 text-center px-8 py-10"
-            style={{background: 'linear-gradient(135deg, #052e16 0%, #111827 40%, #111827 60%, #052e16 100%)'}}>
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(16,185,129,0.12)_0%,_transparent_70%)] pointer-events-none" />
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-400/50 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-400/20 to-transparent" />
-            <div className="relative z-10">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-500/15 border border-emerald-500/30 rounded-full text-emerald-400 text-xs font-semibold mb-5">
-                <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
-                Personalized matching — free
-              </div>
-              <h3 className="text-2xl sm:text-3xl font-bold text-white mb-3">
-                Still undecided? <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-300">We can help.</span>
-              </h3>
-              <p className="text-gray-400 text-sm max-w-lg mx-auto mb-8">
-                You've browsed the firms — now let us narrow it down for you. Answer 4 quick questions and get your personal top 3 matches in under 60 seconds.
-              </p>
-              <div className="flex items-center justify-center gap-8 mb-8">
-                {([['🧠', 'Experience'], ['⚡', 'Trading Style'], ['💵', 'Budget'], ['🏆', 'Priority']] as [string, string][]).map(([emoji, label]) => (
-                  <div key={label} className="text-center">
-                    <p className="text-2xl mb-1">{emoji}</p>
-                    <p className="text-[10px] text-gray-500 font-medium">{label}</p>
-                  </div>
-                ))}
+      {/* STILL UNDECIDED — sober redirect to quiz */}
+      <section className="px-4 py-section-default">
+        <div className="max-w-4xl mx-auto">
+          <div className="border border-gray-800 rounded-lg p-8 sm:p-10">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+              <div className="max-w-xl">
+                <p className="text-tiny text-emerald-400 uppercase tracking-wider font-medium mb-2">
+                  Personalized matching
+                </p>
+                <h3 className="text-h2 text-white mb-2">
+                  Still undecided?
+                </h3>
+                <p className="text-small text-gray-400">
+                  Answer 4 quick questions and get your top 3 matches in under 60 seconds. No account required.
+                </p>
               </div>
               <Link
                 href="/en/quiz?start=true"
-                className="relative inline-flex items-center gap-2 px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-base rounded-xl transition-all shadow-xl shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:-translate-y-1"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-medium text-sm rounded-md transition-colors whitespace-nowrap"
               >
-                <span className="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 bg-emerald-300 rounded-full animate-ping opacity-75" />
-                <span className="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 bg-emerald-400 rounded-full" />
-                <Sparkles className="w-5 h-5" />
-                Find my perfect firm — free
+                Take the quiz
+                <ChevronRight className="w-4 h-4" />
               </Link>
-              <p className="text-gray-600 text-xs mt-3">No account required · Takes 60 seconds</p>
             </div>
           </div>
         </div>
@@ -2443,15 +2446,13 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
 
       {/* FLOATING QUIZ BUTTON */}
       {showQuizFloat && (
-        <div className="fixed bottom-20 right-4 z-40 animate-in slide-in-from-bottom-4 duration-300">
+        <div className="fixed bottom-20 right-4 z-40 animate-fade-in">
           <Link
             href="/en/quiz?start=true"
-            className="relative flex items-center gap-2 px-4 py-3 bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-sm rounded-2xl shadow-2xl shadow-emerald-500/40 transition-all hover:-translate-y-0.5"
+            className="inline-flex items-center gap-2 px-4 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-medium text-sm rounded-md shadow-lg transition-colors"
           >
-            <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-300 rounded-full animate-ping opacity-75" />
-            <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full" />
-            <Sparkles className="w-4 h-4" />
             Find my match
+            <ChevronRight className="w-4 h-4" />
           </Link>
         </div>
       )}
