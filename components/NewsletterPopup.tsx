@@ -11,10 +11,14 @@ import { useNewsletterPopup } from '@/hooks/useNewsletterPopup'
  * Behavior:
  *   - Auto-shows after 30 seconds on the page (see useNewsletterPopup hook)
  *   - Hidden on excluded routes (dashboard, quiz, admin, legal pages)
- *   - On submit: POST /api/newsletter, show success state, close after 3s
+ *   - On submit: POST /api/newsletter, show success state, close after 4s
  *   - User must check the email to confirm subscription (Mailchimp double opt-in)
  *
  * Design system v1.0 — see DESIGN_SYSTEM.md.
+ *
+ * Exports both `NewsletterPopup` (named) and `default` for maximum compat
+ * with both `import { NewsletterPopup } from '...'` and
+ *      `import NewsletterPopup from '...'` styles.
  */
 
 // Routes where the popup should NOT appear.
@@ -284,8 +288,12 @@ function SuccessState({ email }: { email: string }) {
       </p>
       <p className="text-small text-text-primary font-medium mb-4 break-all">{email}</p>
       <p className="text-tiny text-text-muted">
-        Click the link in your inbox to confirm your subscription. Check your spam folder if you don't see it within a minute.
+        Click the link in your inbox to confirm your subscription. Check your spam folder if you don&apos;t see it within a minute.
       </p>
     </div>
   )
 }
+
+// Default export for compatibility with PopupsWrapper or any code that
+// imports it as `import NewsletterPopup from './NewsletterPopup'`
+export default NewsletterPopup
