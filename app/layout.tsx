@@ -7,6 +7,7 @@ import { Navbar } from '@/components/Navbar';
 import PromoTicker from '@/components/PromoTicker';
 import Footer from '@/components/Footer';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
+import { NewsletterPopup } from '@/components/NewsletterPopup';
 
 export const viewport: Viewport = {
   themeColor: '#10B981',
@@ -81,6 +82,10 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
+          {/* Newsletter popup — auto-shows after 30s on eligible pages.
+              Excluded routes (dashboard, quiz, admin, legal) are handled
+              inside the component via usePathname(). */}
+          <NewsletterPopup />
         </AuthProvider>
       </body>
     </html>

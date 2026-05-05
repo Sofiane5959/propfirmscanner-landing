@@ -1,202 +1,291 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { X, Mail, Gift, Check, Loader2 } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { usePathname } from 'next/navigation'
+import { X, Mail, Check, Loader2 } from 'lucide-react'
+import { useNewsletterPopup } from '@/hooks/useNewsletterPopup'
 
-interface NewsletterPopupProps {
-  delay?: number // Delay in ms before showing popup
-  showOnExitIntent?: boolean
+/**
+ * NewsletterPopup — centered modal that captures email + name + trader level.
+ *
+ * Behavior:
+ *   - Auto-shows after 30 seconds on the page (see useNewsletterPopup hook)
+ *   - Hidden on excluded routes (dashboard, quiz, admin, legal pages)
+ *   - On submit: POST /api/newsletter, show success state, close after 3s
+ *   - User must check the email to confirm subscription (Mailchimp double opt-in)
+ *
+ * Design system v1.0 — see DESIGN_SYSTEM.md.
+ */
+
+// Routes where the popup should NOT appear.
+// Match by prefix — /dashboard catches /dashboard, /dashboard/favorites, etc.
+const EXCLUDED_PATH_PREFIXES = [
+  '/dashboard',
+  '/quiz',
+  '/admin',
+  '/contact',
+  '/privacy-policy',
+  '/terms-of-service',
+  '/how-we-make-money',
+  '/api',
+]
+
+function isExcluded(pathname: string): boolean {
+  // Strip the locale prefix (e.g. "/en/dashboard" → "/dashboard")
+  const stripped = pathname.replace(/^\/[a-z]{2}(?=\/|$)/, '')
+  return EXCLUDED_PATH_PREFIXES.some(
+    prefix => stripped === prefix || stripped.startsWith(`${prefix}/`)
+  )
 }
 
-export default function NewsletterPopup({ 
-  delay = 30000, // 30 seconds default
-  showOnExitIntent = true 
-}: NewsletterPopupProps) {
-  const [isOpen, setIsOpen] = useState(false)
+type SubmitState = 'idle' | 'submitting' | 'success' | 'error'
+
+export function NewsletterPopup() {
+  const pathname = usePathname() || '/'
+  const enabled = !isExcluded(pathname)
+  const { isOpen, close, markSubscribed } = useNewsletterPopup({ enabled })
+
   const [email, setEmail] = useState('')
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [name, setName] = useState('')
+  const [traderLevel, setTraderLevel] = useState<'beginner' | 'intermediate' | 'expert' | ''>('')
+  const [submitState, setSubmitState] = useState<SubmitState>('idle')
   const [errorMessage, setErrorMessage] = useState('')
 
+  const emailInputRef = useRef<HTMLInputElement>(null)
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
+
+  // Focus the email input when the popup opens — but defer so the entrance
+  // animation has a chance to run smoothly.
   useEffect(() => {
-    // Check if user has already seen popup or subscribed
-    const hasSeenPopup = localStorage.getItem('newsletter_popup_seen')
-    const hasSubscribed = localStorage.getItem('newsletter_subscribed')
-    
-    if (hasSeenPopup || hasSubscribed) return
-
-    // Timer-based popup
-    const timer = setTimeout(() => {
-      setIsOpen(true)
-      localStorage.setItem('newsletter_popup_seen', 'true')
-    }, delay)
-
-    // Exit intent detection (desktop only)
-    const handleExitIntent = (e: MouseEvent) => {
-      if (showOnExitIntent && e.clientY <= 0 && !hasSeenPopup) {
-        setIsOpen(true)
-        localStorage.setItem('newsletter_popup_seen', 'true')
-      }
+    if (isOpen) {
+      const timer = setTimeout(() => emailInputRef.current?.focus(), 150)
+      return () => clearTimeout(timer)
     }
+  }, [isOpen])
 
-    document.addEventListener('mouseout', handleExitIntent)
+  // ESC closes the popup (accessibility)
+  useEffect(() => {
+    if (!isOpen) return
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') close()
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [isOpen, close])
 
+  // Lock body scroll while open
+  useEffect(() => {
+    if (!isOpen) return
+    const original = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
     return () => {
-      clearTimeout(timer)
-      document.removeEventListener('mouseout', handleExitIntent)
+      document.body.style.overflow = original
     }
-  }, [delay, showOnExitIntent])
+  }, [isOpen])
+
+  if (!enabled) return null
+  if (!isOpen && submitState !== 'success') return null
+
+  const sourcePage = pathname
+  const sourceLocale = pathname.match(/^\/([a-z]{2})(?=\/|$)/)?.[1] || 'en'
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
-    if (!email || !email.includes('@')) {
-      setErrorMessage('Please enter a valid email address')
-      setStatus('error')
+    if (submitState === 'submitting') return
+    if (!email.trim() || !name.trim() || !traderLevel) {
+      setErrorMessage('Please fill in all fields.')
+      setSubmitState('error')
       return
     }
 
-    setStatus('loading')
+    setSubmitState('submitting')
+    setErrorMessage('')
 
     try {
-      const response = await fetch('/api/newsletter', {
+      const res = await fetch('/api/newsletter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, source: 'popup' }),
+        body: JSON.stringify({
+          email: email.trim().toLowerCase(),
+          name: name.trim(),
+          traderLevel,
+          sourcePage,
+          sourceLocale,
+        }),
       })
 
-      if (response.ok) {
-        setStatus('success')
-        localStorage.setItem('newsletter_subscribed', 'true')
-        // Close popup after 3 seconds
-        setTimeout(() => setIsOpen(false), 3000)
-      } else {
-        throw new Error('Subscription failed')
+      const data = await res.json().catch(() => ({}))
+
+      if (!res.ok || !data.ok) {
+        setErrorMessage(
+          data.error === 'invalid_email'
+            ? 'That email looks invalid — try again.'
+            : 'Something went wrong. Please try again in a moment.'
+        )
+        setSubmitState('error')
+        return
       }
+
+      setSubmitState('success')
+      markSubscribed()
+      // Auto-close after 4 seconds so the user sees the success message
+      setTimeout(() => setSubmitState('idle'), 4000)
     } catch {
-      setStatus('error')
-      setErrorMessage('Something went wrong. Please try again.')
+      setErrorMessage('Network error. Please try again.')
+      setSubmitState('error')
     }
   }
 
-  const handleClose = () => {
-    setIsOpen(false)
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) close()
   }
 
-  if (!isOpen) return null
-
   return (
-    <>
-      {/* Overlay */}
-      <div 
-        className="fixed inset-0 bg-black/60 z-[1000]"
-        onClick={handleClose}
-      />
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in"
+      onClick={handleBackdropClick}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="newsletter-popup-title"
+    >
+      <div className="relative w-full max-w-md bg-bg-elevated border border-border rounded-lg shadow-2xl">
+        {/* Close button */}
+        <button
+          ref={closeButtonRef}
+          type="button"
+          onClick={close}
+          className="absolute top-3 right-3 p-2 text-text-muted hover:text-text-primary hover:bg-bg-base rounded-md transition-colors"
+          aria-label="Close newsletter popup"
+        >
+          <X className="w-4 h-4" />
+        </button>
 
-      {/* Modal */}
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md z-[1001]">
-        <div className="bg-gray-800 border border-gray-700 rounded-2xl p-8 mx-4 shadow-2xl relative overflow-hidden">
-          {/* Background decoration */}
-          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl" />
-          
-          {/* Close button */}
-          <button
-            onClick={handleClose}
-            className="absolute top-4 right-4 p-2 text-gray-400 hover:text-white rounded-lg hover:bg-gray-700"
-          >
-            <X className="w-5 h-5" />
-          </button>
-
-          {/* Content */}
-          <div className="relative z-10">
-            {status === 'success' ? (
-              // Success state
-              <div className="text-center py-4">
-                <div className="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
-                  <Check className="w-8 h-8 text-emerald-400" />
+        <div className="p-6 sm:p-8">
+          {submitState === 'success' ? (
+            <SuccessState email={email} />
+          ) : (
+            <>
+              {/* Header */}
+              <div className="mb-6">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-md bg-accent-subtle border border-accent-border mb-4">
+                  <Mail className="w-5 h-5 text-accent" strokeWidth={1.5} />
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-2">You&apos;re In!</h3>
-                <p className="text-gray-400">
-                  Check your inbox for exclusive deals and tips.
+                <p className="eyebrow mb-2">Newsletter — free</p>
+                <h2 id="newsletter-popup-title" className="text-h2 text-text-primary mb-2">
+                  Top 3 picks every Monday
+                </h2>
+                <p className="text-small text-text-secondary">
+                  Get our 3 best prop firms of the week + exclusive deals delivered to your inbox.
+                  No spam, unsubscribe in one click.
                 </p>
               </div>
-            ) : (
-              // Form state
-              <>
-                <div className="text-center mb-6">
-                  <div className="w-14 h-14 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
-                    <Gift className="w-7 h-7 text-emerald-400" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-white mb-2">
-                    Get Exclusive Deals
-                  </h3>
-                  <p className="text-gray-400">
-                    Join 5,000+ traders getting weekly discount codes and prop firm updates.
+
+              {/* Form */}
+              <form onSubmit={handleSubmit} className="space-y-3">
+                <div>
+                  <label htmlFor="newsletter-name" className="sr-only">
+                    Your name
+                  </label>
+                  <input
+                    id="newsletter-name"
+                    type="text"
+                    placeholder="Your name"
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                    required
+                    autoComplete="name"
+                    maxLength={100}
+                    className="w-full px-3 py-2.5 bg-bg-base border border-border rounded-md text-small text-text-primary placeholder-text-muted focus:outline-none focus:border-accent transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="newsletter-email" className="sr-only">
+                    Email address
+                  </label>
+                  <input
+                    ref={emailInputRef}
+                    id="newsletter-email"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    required
+                    autoComplete="email"
+                    maxLength={254}
+                    className="w-full px-3 py-2.5 bg-bg-base border border-border rounded-md text-small text-text-primary placeholder-text-muted focus:outline-none focus:border-accent transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <p className="text-tiny text-text-secondary mb-2 uppercase tracking-wider font-medium">
+                    Your trading level
                   </p>
+                  <div className="grid grid-cols-3 gap-2">
+                    {(['beginner', 'intermediate', 'expert'] as const).map(level => (
+                      <button
+                        key={level}
+                        type="button"
+                        onClick={() => setTraderLevel(level)}
+                        className={`px-3 py-2 text-small font-medium rounded-md border transition-colors capitalize ${
+                          traderLevel === level
+                            ? 'bg-accent text-white border-accent'
+                            : 'bg-bg-base text-text-secondary border-border hover:border-border-hover hover:text-text-primary'
+                        }`}
+                      >
+                        {level}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="relative">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Enter your email"
-                      className="w-full pl-12 pr-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white placeholder:text-gray-500 focus:outline-none focus:border-emerald-500"
-                    />
-                  </div>
+                {submitState === 'error' && errorMessage && (
+                  <p className="text-tiny text-danger" role="alert">
+                    {errorMessage}
+                  </p>
+                )}
 
-                  {status === 'error' && (
-                    <p className="text-red-400 text-sm">{errorMessage}</p>
+                <button
+                  type="submit"
+                  disabled={submitState === 'submitting'}
+                  className="w-full px-4 py-3 bg-accent hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium text-small rounded-md transition-colors flex items-center justify-center gap-2"
+                >
+                  {submitState === 'submitting' ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Subscribing…
+                    </>
+                  ) : (
+                    'Get the newsletter'
                   )}
+                </button>
 
-                  <button
-                    type="submit"
-                    disabled={status === 'loading'}
-                    className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
-                  >
-                    {status === 'loading' ? (
-                      <>
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                        Subscribing...
-                      </>
-                    ) : (
-                      'Get Free Deals'
-                    )}
-                  </button>
-                </form>
-
-                <p className="text-center text-gray-500 text-xs mt-4">
-                  No spam, ever. Unsubscribe anytime.
+                <p className="text-tiny text-text-muted text-center">
+                  By subscribing you agree to receive our weekly newsletter. You can unsubscribe at any time.
                 </p>
-
-                {/* Benefits */}
-                <div className="mt-6 pt-6 border-t border-gray-700">
-                  <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div className="flex items-center gap-2 text-gray-300">
-                      <Check className="w-4 h-4 text-emerald-400" />
-                      Weekly deals
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-300">
-                      <Check className="w-4 h-4 text-emerald-400" />
-                      Price alerts
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-300">
-                      <Check className="w-4 h-4 text-emerald-400" />
-                      New firm alerts
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-300">
-                      <Check className="w-4 h-4 text-emerald-400" />
-                      Trading tips
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
+              </form>
+            </>
+          )}
         </div>
       </div>
-    </>
+    </div>
+  )
+}
+
+function SuccessState({ email }: { email: string }) {
+  return (
+    <div className="text-center py-4">
+      <div className="inline-flex items-center justify-center w-12 h-12 rounded-md bg-accent-subtle border border-accent-border mb-4">
+        <Check className="w-5 h-5 text-accent" strokeWidth={2} />
+      </div>
+      <h2 className="text-h2 text-text-primary mb-3">Almost there!</h2>
+      <p className="text-small text-text-secondary mb-2">
+        We sent a confirmation link to:
+      </p>
+      <p className="text-small text-text-primary font-medium mb-4 break-all">{email}</p>
+      <p className="text-tiny text-text-muted">
+        Click the link in your inbox to confirm your subscription. Check your spam folder if you don't see it within a minute.
+      </p>
+    </div>
   )
 }
