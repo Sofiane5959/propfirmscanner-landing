@@ -92,9 +92,9 @@ export default function ChallengeSelector({
       map.get(program)!.push(c)
     }
     // Sort challenges inside each program by account size
-    for (const [prog, list] of map.entries()) {
+    map.forEach((list) => {
       list.sort((a, b) => sizeToNumber(a.account_size) - sizeToNumber(b.account_size))
-    }
+    })
     return Array.from(map.entries()) // [ [programName, Challenge[]], ... ]
   }, [challenges])
 
