@@ -1,12 +1,26 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
-import { createServerSupabaseClient } from '@/lib/supabase-server'
 import PropFirmPageClient from './PropFirmPageClient'
 
 interface Props {
   params: { slug: string }
 }
+
+// ============================================================================
+// ISR — Incremental Static Regeneration
+// ============================================================================
+// This makes pages self-refresh in the background whenever the DB changes.
+// - `revalidate = 60` → every 60 seconds, the next visitor triggers a fresh rebuild
+// - `dynamicParams = true` → firms NOT in the top 50 (see generateStaticParams
+//   below) are still generated on first visit AND cached with the same 60s TTL
+//
+// Without these two lines, DB updates on non-top-50 firms (like Hola Prime with
+// only 15 reviews) never surface on the live site — the page is generated once
+// on first visit and cached indefinitely.
+// ============================================================================
+export const revalidate = 60
+export const dynamicParams = true
 
 // Create a static Supabase client for build-time (no cookies needed)
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
@@ -40,7 +54,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-// Generate static paths for popular firms (NO cookies - uses static client)
+// Generate static paths for popular firms at build time (top 50 by review count).
+// Other firms (like Hola Prime) will still work — they'll be generated on first
+// visit and then cached with the ISR `revalidate` interval above.
 export async function generateStaticParams() {
   const supabase = getStaticSupabaseClient()
   
@@ -116,4 +132,3 @@ export default async function PropFirmPage({ params }: Props) {
     </>
   )
 }
-
