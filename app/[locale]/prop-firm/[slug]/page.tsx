@@ -74,6 +74,12 @@ export default async function PropFirmPage({ params }: Props) {
     .order('trustpilot_rating', { ascending: false })
     .limit(4)
 
+  // Get all challenges for this firm (for the challenge selector)
+  const { data: challenges } = await supabase
+    .from('prop_firm_challenges')
+    .select('*')
+    .eq('firm_slug', params.slug)
+
   return (
     <>
       {/* JSON-LD for SEO */}
@@ -102,7 +108,11 @@ export default async function PropFirmPage({ params }: Props) {
         }}
       />
       
-      <PropFirmPageClient firm={firm} similarFirms={similarFirms || []} />
+      <PropFirmPageClient
+        firm={firm}
+        similarFirms={similarFirms || []}
+        challenges={challenges || []}
+      />
     </>
   )
 }
