@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { usePathname } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
@@ -21,12 +20,22 @@ import {
   Target,
   AlertTriangle,
   ChevronRight,
+  ChevronDown,
   Heart,
   Share2,
+  Award,
+  Zap,
+  Users,
+  ThumbsUp,
+  ThumbsDown,
 } from 'lucide-react'
 import ChallengeSelector, { type Challenge } from './ChallengeSelector'
 
-// Helper: safely turns a value (string, array, null) into a clean string array.
+// =============================================================================
+// HELPERS
+// =============================================================================
+
+// Safely turn a value (string, array, null) into a clean string array.
 // Handles DB columns stored as TEXT that the UI treats as arrays.
 function toArray(value: unknown): string[] {
   if (Array.isArray(value)) {
@@ -39,333 +48,6 @@ function toArray(value: unknown): string[] {
 }
 
 // =============================================================================
-// LOCALE DETECTION & TRANSLATIONS
-// =============================================================================
-
-const locales = ['en', 'fr', 'de', 'es', 'pt', 'ar', 'hi'] as const;
-type Locale = (typeof locales)[number];
-
-function getLocaleFromPath(pathname: string): Locale {
-  const firstSegment = pathname.split('/')[1];
-  if (firstSegment && locales.includes(firstSegment as Locale)) {
-    return firstSegment as Locale;
-  }
-  return 'en';
-}
-
-const translations: Record<Locale, Record<string, string>> = {
-  en: {
-    // Hero
-    verified: 'Verified',
-    reviews: 'reviews',
-    founded: 'Founded',
-    website: 'Website',
-    // Quick Stats
-    startingFrom: 'Starting From',
-    profitSplit: 'Profit Split',
-    dailyDrawdown: 'Daily Drawdown',
-    totalDrawdown: 'Total Drawdown',
-    // CTA Card
-    off: 'OFF',
-    exclusiveCode: 'Exclusive Code',
-    copied: 'Copied!',
-    visit: 'Visit',
-    saved: 'Saved',
-    save: 'Save',
-    share: 'Share',
-    // Challenge Rules
-    challengeRules: 'Challenge Rules',
-    phase1Target: 'Phase 1 Target',
-    phase2Target: 'Phase 2 Target',
-    minTradingDays: 'Min Trading Days',
-    timeLimit: 'Time Limit',
-    drawdownType: 'Drawdown Type',
-    consistencyRule: 'Consistency Rule',
-    unlimited: 'Unlimited',
-    none: 'None',
-    na: 'N/A',
-    // Trading Permissions
-    tradingPermissions: 'Trading Permissions',
-    scalpingAllowed: 'Scalping Allowed',
-    newsTrading: 'News Trading',
-    easBots: 'EAs / Bots',
-    weekendHolding: 'Weekend Holding',
-    instantFunding: 'Instant Funding',
-    feeRefundable: 'Fee Refundable',
-    // Platforms & Assets
-    platformsAssets: 'Platforms & Assets',
-    tradingPlatforms: 'Trading Platforms',
-    availableAssets: 'Available Assets',
-    // Payout
-    payoutInformation: 'Payout Information',
-    payoutFrequency: 'Payout Frequency',
-    scalingPlan: 'Scaling Plan',
-    // Sidebar
-    similarFirms: 'Similar Firms',
-    tradingRiskWarning: 'Trading Risk Warning',
-    riskDisclaimer: 'Trading involves substantial risk. Only trade with capital you can afford to lose.',
-  },
-  fr: {
-    verified: 'Vérifié',
-    reviews: 'avis',
-    founded: 'Fondé en',
-    website: 'Site Web',
-    startingFrom: 'À partir de',
-    profitSplit: 'Partage des Profits',
-    dailyDrawdown: 'Drawdown Journalier',
-    totalDrawdown: 'Drawdown Total',
-    off: 'DE RÉDUCTION',
-    exclusiveCode: 'Code Exclusif',
-    copied: 'Copié !',
-    visit: 'Visiter',
-    saved: 'Sauvegardé',
-    save: 'Sauvegarder',
-    share: 'Partager',
-    challengeRules: 'Règles du Challenge',
-    phase1Target: 'Objectif Phase 1',
-    phase2Target: 'Objectif Phase 2',
-    minTradingDays: 'Jours de Trading Min',
-    timeLimit: 'Limite de Temps',
-    drawdownType: 'Type de Drawdown',
-    consistencyRule: 'Règle de Consistance',
-    unlimited: 'Illimité',
-    none: 'Aucun',
-    na: 'N/A',
-    tradingPermissions: 'Autorisations de Trading',
-    scalpingAllowed: 'Scalping Autorisé',
-    newsTrading: 'Trading sur Actualités',
-    easBots: 'EAs / Robots',
-    weekendHolding: 'Positions Week-end',
-    instantFunding: 'Financement Instantané',
-    feeRefundable: 'Frais Remboursables',
-    platformsAssets: 'Plateformes & Actifs',
-    tradingPlatforms: 'Plateformes de Trading',
-    availableAssets: 'Actifs Disponibles',
-    payoutInformation: 'Informations de Paiement',
-    payoutFrequency: 'Fréquence des Paiements',
-    scalingPlan: 'Plan de Scaling',
-    similarFirms: 'Firms Similaires',
-    tradingRiskWarning: 'Avertissement sur les Risques',
-    riskDisclaimer: 'Le trading comporte des risques substantiels. Ne tradez qu\'avec un capital que vous pouvez vous permettre de perdre.',
-  },
-  de: {
-    verified: 'Verifiziert',
-    reviews: 'Bewertungen',
-    founded: 'Gegründet',
-    website: 'Webseite',
-    startingFrom: 'Ab',
-    profitSplit: 'Gewinnaufteilung',
-    dailyDrawdown: 'Täglicher Drawdown',
-    totalDrawdown: 'Gesamt Drawdown',
-    off: 'RABATT',
-    exclusiveCode: 'Exklusiver Code',
-    copied: 'Kopiert!',
-    visit: 'Besuchen',
-    saved: 'Gespeichert',
-    save: 'Speichern',
-    share: 'Teilen',
-    challengeRules: 'Challenge-Regeln',
-    phase1Target: 'Phase 1 Ziel',
-    phase2Target: 'Phase 2 Ziel',
-    minTradingDays: 'Min. Handelstage',
-    timeLimit: 'Zeitlimit',
-    drawdownType: 'Drawdown-Typ',
-    consistencyRule: 'Konsistenzregel',
-    unlimited: 'Unbegrenzt',
-    none: 'Keine',
-    na: 'N/A',
-    tradingPermissions: 'Handelsberechtigungen',
-    scalpingAllowed: 'Scalping Erlaubt',
-    newsTrading: 'News Trading',
-    easBots: 'EAs / Bots',
-    weekendHolding: 'Wochenend-Halten',
-    instantFunding: 'Sofort-Finanzierung',
-    feeRefundable: 'Gebühr Erstattbar',
-    platformsAssets: 'Plattformen & Assets',
-    tradingPlatforms: 'Handelsplattformen',
-    availableAssets: 'Verfügbare Assets',
-    payoutInformation: 'Auszahlungsinformationen',
-    payoutFrequency: 'Auszahlungsfrequenz',
-    scalingPlan: 'Scaling-Plan',
-    similarFirms: 'Ähnliche Firmen',
-    tradingRiskWarning: 'Handelsrisiko-Warnung',
-    riskDisclaimer: 'Trading birgt erhebliche Risiken. Handeln Sie nur mit Kapital, dessen Verlust Sie sich leisten können.',
-  },
-  es: {
-    verified: 'Verificado',
-    reviews: 'reseñas',
-    founded: 'Fundado en',
-    website: 'Sitio Web',
-    startingFrom: 'Desde',
-    profitSplit: 'División de Ganancias',
-    dailyDrawdown: 'Drawdown Diario',
-    totalDrawdown: 'Drawdown Total',
-    off: 'DE DESCUENTO',
-    exclusiveCode: 'Código Exclusivo',
-    copied: '¡Copiado!',
-    visit: 'Visitar',
-    saved: 'Guardado',
-    save: 'Guardar',
-    share: 'Compartir',
-    challengeRules: 'Reglas del Desafío',
-    phase1Target: 'Objetivo Fase 1',
-    phase2Target: 'Objetivo Fase 2',
-    minTradingDays: 'Días Mín. de Trading',
-    timeLimit: 'Límite de Tiempo',
-    drawdownType: 'Tipo de Drawdown',
-    consistencyRule: 'Regla de Consistencia',
-    unlimited: 'Ilimitado',
-    none: 'Ninguno',
-    na: 'N/A',
-    tradingPermissions: 'Permisos de Trading',
-    scalpingAllowed: 'Scalping Permitido',
-    newsTrading: 'Trading de Noticias',
-    easBots: 'EAs / Bots',
-    weekendHolding: 'Mantener Fin de Semana',
-    instantFunding: 'Financiamiento Instantáneo',
-    feeRefundable: 'Tarifa Reembolsable',
-    platformsAssets: 'Plataformas y Activos',
-    tradingPlatforms: 'Plataformas de Trading',
-    availableAssets: 'Activos Disponibles',
-    payoutInformation: 'Información de Pago',
-    payoutFrequency: 'Frecuencia de Pago',
-    scalingPlan: 'Plan de Escalado',
-    similarFirms: 'Firmas Similares',
-    tradingRiskWarning: 'Advertencia de Riesgo',
-    riskDisclaimer: 'El trading conlleva un riesgo sustancial. Solo opere con capital que pueda permitirse perder.',
-  },
-  pt: {
-    verified: 'Verificado',
-    reviews: 'avaliações',
-    founded: 'Fundado em',
-    website: 'Website',
-    startingFrom: 'A partir de',
-    profitSplit: 'Divisão de Lucros',
-    dailyDrawdown: 'Drawdown Diário',
-    totalDrawdown: 'Drawdown Total',
-    off: 'DE DESCONTO',
-    exclusiveCode: 'Código Exclusivo',
-    copied: 'Copiado!',
-    visit: 'Visitar',
-    saved: 'Salvo',
-    save: 'Salvar',
-    share: 'Compartilhar',
-    challengeRules: 'Regras do Desafio',
-    phase1Target: 'Meta Fase 1',
-    phase2Target: 'Meta Fase 2',
-    minTradingDays: 'Dias Mín. de Trading',
-    timeLimit: 'Limite de Tempo',
-    drawdownType: 'Tipo de Drawdown',
-    consistencyRule: 'Regra de Consistência',
-    unlimited: 'Ilimitado',
-    none: 'Nenhum',
-    na: 'N/A',
-    tradingPermissions: 'Permissões de Trading',
-    scalpingAllowed: 'Scalping Permitido',
-    newsTrading: 'Trading de Notícias',
-    easBots: 'EAs / Robôs',
-    weekendHolding: 'Manter no Fim de Semana',
-    instantFunding: 'Financiamento Instantâneo',
-    feeRefundable: 'Taxa Reembolsável',
-    platformsAssets: 'Plataformas e Ativos',
-    tradingPlatforms: 'Plataformas de Trading',
-    availableAssets: 'Ativos Disponíveis',
-    payoutInformation: 'Informações de Pagamento',
-    payoutFrequency: 'Frequência de Pagamento',
-    scalingPlan: 'Plano de Escalonamento',
-    similarFirms: 'Firmas Similares',
-    tradingRiskWarning: 'Aviso de Risco',
-    riskDisclaimer: 'Trading envolve risco substancial. Opere apenas com capital que você pode perder.',
-  },
-  ar: {
-    verified: 'موثق',
-    reviews: 'تقييمات',
-    founded: 'تأسست في',
-    website: 'الموقع',
-    startingFrom: 'يبدأ من',
-    profitSplit: 'تقسيم الأرباح',
-    dailyDrawdown: 'السحب اليومي',
-    totalDrawdown: 'السحب الإجمالي',
-    off: 'خصم',
-    exclusiveCode: 'كود حصري',
-    copied: 'تم النسخ!',
-    visit: 'زيارة',
-    saved: 'محفوظ',
-    save: 'حفظ',
-    share: 'مشاركة',
-    challengeRules: 'قواعد التحدي',
-    phase1Target: 'هدف المرحلة 1',
-    phase2Target: 'هدف المرحلة 2',
-    minTradingDays: 'الحد الأدنى لأيام التداول',
-    timeLimit: 'الحد الزمني',
-    drawdownType: 'نوع السحب',
-    consistencyRule: 'قاعدة الاتساق',
-    unlimited: 'غير محدود',
-    none: 'لا يوجد',
-    na: 'غير متاح',
-    tradingPermissions: 'أذونات التداول',
-    scalpingAllowed: 'السكالبينج مسموح',
-    newsTrading: 'تداول الأخبار',
-    easBots: 'الروبوتات / EAs',
-    weekendHolding: 'الاحتفاظ لعطلة نهاية الأسبوع',
-    instantFunding: 'تمويل فوري',
-    feeRefundable: 'الرسوم قابلة للاسترداد',
-    platformsAssets: 'المنصات والأصول',
-    tradingPlatforms: 'منصات التداول',
-    availableAssets: 'الأصول المتاحة',
-    payoutInformation: 'معلومات الدفع',
-    payoutFrequency: 'تكرار الدفع',
-    scalingPlan: 'خطة التوسع',
-    similarFirms: 'شركات مشابهة',
-    tradingRiskWarning: 'تحذير مخاطر التداول',
-    riskDisclaimer: 'التداول ينطوي على مخاطر كبيرة. تداول فقط برأس مال يمكنك تحمل خسارته.',
-  },
-  hi: {
-    verified: 'सत्यापित',
-    reviews: 'रिव्यूज',
-    founded: 'स्थापित',
-    website: 'वेबसाइट',
-    startingFrom: 'शुरू',
-    profitSplit: 'प्रॉफिट स्प्लिट',
-    dailyDrawdown: 'दैनिक ड्रॉडाउन',
-    totalDrawdown: 'कुल ड्रॉडाउन',
-    off: 'छूट',
-    exclusiveCode: 'एक्सक्लूसिव कोड',
-    copied: 'कॉपी हो गया!',
-    visit: 'विजिट करें',
-    saved: 'सेव किया',
-    save: 'सेव करें',
-    share: 'शेयर करें',
-    challengeRules: 'चैलेंज नियम',
-    phase1Target: 'फेज 1 टारगेट',
-    phase2Target: 'फेज 2 टारगेट',
-    minTradingDays: 'न्यूनतम ट्रेडिंग दिन',
-    timeLimit: 'समय सीमा',
-    drawdownType: 'ड्रॉडाउन टाइप',
-    consistencyRule: 'कंसिस्टेंसी नियम',
-    unlimited: 'असीमित',
-    none: 'कोई नहीं',
-    na: 'N/A',
-    tradingPermissions: 'ट्रेडिंग अनुमतियां',
-    scalpingAllowed: 'स्कैल्पिंग अनुमत',
-    newsTrading: 'न्यूज ट्रेडिंग',
-    easBots: 'EAs / बॉट्स',
-    weekendHolding: 'वीकेंड होल्डिंग',
-    instantFunding: 'इंस्टेंट फंडिंग',
-    feeRefundable: 'फीस रिफंडेबल',
-    platformsAssets: 'प्लेटफॉर्म और एसेट्स',
-    tradingPlatforms: 'ट्रेडिंग प्लेटफॉर्म',
-    availableAssets: 'उपलब्ध एसेट्स',
-    payoutInformation: 'पेआउट जानकारी',
-    payoutFrequency: 'पेआउट फ्रीक्वेंसी',
-    scalingPlan: 'स्केलिंग प्लान',
-    similarFirms: 'समान फर्म्स',
-    tradingRiskWarning: 'ट्रेडिंग रिस्क चेतावनी',
-    riskDisclaimer: 'ट्रेडिंग में महत्वपूर्ण जोखिम शामिल है। केवल उस पूंजी से ट्रेड करें जिसे आप खोने का जोखिम उठा सकते हैं।',
-  },
-};
-
-// =============================================================================
 // TYPES
 // =============================================================================
 
@@ -376,9 +58,11 @@ interface PropFirm {
   logo_url: string
   website_url: string
   affiliate_url: string
+  description: string
   trustpilot_rating: number
   trustpilot_reviews: number
   min_price: number
+  max_price: number
   profit_split: number
   max_profit_split: number
   max_daily_drawdown: number
@@ -386,9 +70,13 @@ interface PropFirm {
   profit_target_phase1: number
   profit_target_phase2: number
   min_trading_days: number
+  max_trading_days: number
   time_limit: string
   drawdown_type: string
   payout_frequency: string
+  payout_speed_days: number
+  min_payout: number
+  leverage_forex: string
   allows_scalping: boolean
   allows_news_trading: boolean
   allows_ea: boolean
@@ -398,15 +86,26 @@ interface PropFirm {
   fee_refund: boolean
   scaling_max: string
   consistency_rule: string
-  platforms: string[]
-  assets: string[]
-  challenge_types: string[]
-  special_features: string[]
+  platforms: string[] | string
+  assets: string[] | string
+  challenge_types: string[] | string
+  special_features: string[] | string
+  pros: string[]
+  cons: string[]
   trust_status: string
   discount_code: string
   discount_percent: number
   year_founded: number
+  founded: string
+  founded_year: number
   headquarters: string
+  country: string
+  is_regulated: boolean
+  regulation_details: string
+  license_url: string
+  legal_name: string
+  company_name: string
+  is_featured: boolean
 }
 
 interface SimilarFirm {
@@ -426,37 +125,11 @@ interface Props {
 }
 
 // =============================================================================
-// COMPONENTS
-// =============================================================================
-
-function BooleanBadge({ value, label }: { value: boolean; label: string }) {
-  return (
-    <div className={`flex items-center gap-2 px-3 py-2 rounded-lg ${value ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>
-      {value ? <CheckCircle className="w-4 h-4" /> : <X className="w-4 h-4" />}
-      <span className="text-sm">{label}</span>
-    </div>
-  )
-}
-
-// =============================================================================
 // MAIN COMPONENT
 // =============================================================================
 
 export default function PropFirmPageClient({ firm, similarFirms, challenges = [] }: Props) {
-  const pathname = usePathname()
-  const locale = getLocaleFromPath(pathname)
-  const t = translations[locale]
-  
-  const [copiedCode, setCopiedCode] = useState(false)
   const [isFavorite, setIsFavorite] = useState(false)
-
-  const handleCopyCode = () => {
-    if (firm.discount_code) {
-      navigator.clipboard.writeText(firm.discount_code)
-      setCopiedCode(true)
-      setTimeout(() => setCopiedCode(false), 2000)
-    }
-  }
 
   const handleShare = () => {
     if (navigator.share) {
@@ -469,177 +142,203 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
     }
   }
 
-  const logoUrl = firm.logo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(firm.name)}&background=10b981&color=fff&size=200`
+  const logoUrl =
+    firm.logo_url ||
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(firm.name)}&background=10b981&color=fff&size=200`
+
+  const foundedYear = firm.founded_year || firm.year_founded || null
+  const foundedText = firm.founded || (foundedYear ? String(foundedYear) : null)
+
+  const pros = Array.isArray(firm.pros) ? firm.pros : []
+  const cons = Array.isArray(firm.cons) ? firm.cons : []
+
+  const platforms = toArray(firm.platforms)
+  const assets = toArray(firm.assets)
 
   return (
     <div className="min-h-screen bg-gray-950">
-      {/* Hero Section */}
-      <section className="pt-8 pb-12 px-4 border-b border-gray-800">
+      {/* ================================================================ */}
+      {/* 1. HERO — Logo, name, rating, trust bar, quick stats           */}
+      {/* ================================================================ */}
+      <section className="pt-8 pb-10 px-4 border-b border-gray-800">
         <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col lg:flex-row gap-8">
-            {/* Left - Info */}
-            <div className="flex-1">
-              <div className="flex items-start gap-6 mb-6">
-                {/* Logo */}
-                <div className="relative w-24 h-24 bg-gray-800 rounded-2xl overflow-hidden flex-shrink-0 border border-gray-700">
-                  <Image
-                    src={logoUrl}
-                    alt={firm.name}
-                    fill
-                    className="object-contain p-3"
-                  />
-                </div>
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* Logo */}
+            <div className="relative w-24 h-24 bg-gray-800 rounded-2xl overflow-hidden flex-shrink-0 border border-gray-700 self-start">
+              <Image src={logoUrl} alt={firm.name} fill className="object-contain p-3" />
+            </div>
 
-                {/* Name & Rating */}
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <h1 className="text-3xl font-bold text-white">{firm.name}</h1>
-                    {firm.trust_status === 'verified' && (
-                      <span className="px-2 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-medium rounded-full flex items-center gap-1">
-                        <Shield className="w-3 h-3" /> {t.verified}
+            {/* Info */}
+            <div className="flex-1">
+              <div className="flex items-start justify-between gap-4 flex-wrap mb-3">
+                <div>
+                  <div className="flex items-center gap-3 flex-wrap mb-2">
+                    <h1 className="text-3xl md:text-4xl font-bold text-white">{firm.name}</h1>
+                    {firm.is_featured && (
+                      <span className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-500/10 border border-yellow-500/30 rounded-full text-yellow-400 text-xs font-semibold">
+                        <Award className="w-3 h-3" /> Featured
                       </span>
                     )}
                   </div>
 
-                  {/* Rating */}
                   {firm.trustpilot_rating > 0 && (
-                    <div className="flex items-center gap-2 mb-3">
+                    <div className="flex items-center gap-2 mb-2">
                       <div className="flex">
-                        {[...Array(5)].map((_, i) => (
+                        {[1, 2, 3, 4, 5].map((n) => (
                           <Star
-                            key={i}
-                            className={`w-5 h-5 ${i < Math.floor(firm.trustpilot_rating) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-600'}`}
+                            key={n}
+                            className={`w-4 h-4 ${
+                              n <= Math.round(firm.trustpilot_rating)
+                                ? 'text-yellow-400 fill-yellow-400'
+                                : 'text-gray-600'
+                            }`}
                           />
                         ))}
                       </div>
-                      <span className="text-white font-semibold">{firm.trustpilot_rating.toFixed(1)}</span>
-                      <span className="text-gray-500">({firm.trustpilot_reviews?.toLocaleString()} {t.reviews})</span>
+                      <span className="text-white font-semibold text-sm">{firm.trustpilot_rating.toFixed(1)}</span>
+                      {firm.trustpilot_reviews > 0 && (
+                        <span className="text-gray-500 text-sm">({firm.trustpilot_reviews} reviews)</span>
+                      )}
                     </div>
                   )}
-
-                  {/* Meta */}
-                  <div className="flex flex-wrap gap-4 text-sm text-gray-400">
-                    {firm.year_founded && (
-                      <span className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" /> {t.founded} {firm.year_founded}
-                      </span>
-                    )}
-                    {firm.headquarters && (
-                      <span className="flex items-center gap-1">
-                        <MapPin className="w-4 h-4" /> {firm.headquarters}
-                      </span>
-                    )}
-                    {firm.website_url && (
-                      <a
-                        href={`/api/go/${firm.slug}?source=prop-firm-header`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-1 hover:text-emerald-400 transition-colors"
-                      >
-                        <Globe className="w-4 h-4" /> {t.website}
-                      </a>
-                    )}
-                  </div>
                 </div>
-              </div>
 
-              {/* Quick Stats */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div className="bg-gray-900 rounded-xl p-4 border border-gray-800">
-                  <p className="text-gray-500 text-xs mb-1">{t.startingFrom}</p>
-                  <p className="text-2xl font-bold text-white">${firm.min_price || '—'}</p>
-                </div>
-                <div className="bg-gray-900 rounded-xl p-4 border border-gray-800">
-                  <p className="text-gray-500 text-xs mb-1">{t.profitSplit}</p>
-                  <p className="text-2xl font-bold text-emerald-400">
-                    {firm.profit_split || '—'}
-                    {firm.max_profit_split && firm.max_profit_split > firm.profit_split && (
-                      <span className="text-sm text-gray-500">-{firm.max_profit_split}%</span>
-                    )}
-                    {firm.profit_split && '%'}
-                  </p>
-                </div>
-                <div className="bg-gray-900 rounded-xl p-4 border border-gray-800">
-                  <p className="text-gray-500 text-xs mb-1">{t.dailyDrawdown}</p>
-                  <p className="text-2xl font-bold text-white">{firm.max_daily_drawdown || '—'}%</p>
-                </div>
-                <div className="bg-gray-900 rounded-xl p-4 border border-gray-800">
-                  <p className="text-gray-500 text-xs mb-1">{t.totalDrawdown}</p>
-                  <p className="text-2xl font-bold text-white">{firm.max_total_drawdown || '—'}%</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Right - CTA Card */}
-            <div className="lg:w-80">
-              <div className="bg-gray-900 rounded-2xl border border-gray-800 p-6 sticky top-24">
-                {/* Discount */}
-                {firm.discount_code && firm.discount_percent && (
-                  <div className="mb-4 p-4 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-xl">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-yellow-400 font-semibold">{firm.discount_percent}% {t.off}</span>
-                      <span className="text-gray-500 text-xs">{t.exclusiveCode}</span>
-                    </div>
-                    <button
-                      onClick={handleCopyCode}
-                      className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-mono text-sm transition-all ${
-                        copiedCode
-                          ? 'bg-emerald-500 text-white'
-                          : 'bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30'
-                      }`}
-                    >
-                      {copiedCode ? (
-                        <>
-                          <Check className="w-4 h-4" /> {t.copied}
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-4 h-4" /> {firm.discount_code}
-                        </>
-                      )}
-                    </button>
-                  </div>
-                )}
-
-                {/* Main CTA — routes through tracker for click analytics */}
-                <a
-                  href={`/api/go/${firm.slug}?source=prop-firm-cta`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white text-center font-semibold rounded-xl transition-colors mb-3"
-                >
-                  {t.visit} {firm.name}
-                  <ExternalLink className="w-4 h-4 inline ml-2" />
-                </a>
-
-                {/* Secondary Actions */}
+                {/* Save & Share */}
                 <div className="flex gap-2">
                   <button
-                    onClick={() => setIsFavorite(!isFavorite)}
-                    className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl transition-colors ${
+                    type="button"
+                    onClick={() => setIsFavorite((v) => !v)}
+                    className={`p-2 rounded-lg border transition-colors ${
                       isFavorite
-                        ? 'bg-red-500/20 text-red-400'
-                        : 'bg-gray-800 text-gray-400 hover:text-white'
+                        ? 'bg-red-500/10 border-red-500/30 text-red-400'
+                        : 'bg-gray-800 border-gray-700 text-gray-400 hover:text-white'
                     }`}
+                    aria-label="Save"
                   >
                     <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
-                    {isFavorite ? t.saved : t.save}
                   </button>
                   <button
+                    type="button"
                     onClick={handleShare}
-                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-gray-800 text-gray-400 hover:text-white rounded-xl transition-colors"
+                    className="p-2 bg-gray-800 border border-gray-700 text-gray-400 hover:text-white rounded-lg transition-colors"
+                    aria-label="Share"
                   >
                     <Share2 className="w-4 h-4" />
-                    {t.share}
                   </button>
                 </div>
+              </div>
+
+              {/* Trust bar — founded, HQ, regulation */}
+              <div className="flex items-center gap-4 flex-wrap text-sm text-gray-400 mb-4">
+                {foundedText && (
+                  <span className="inline-flex items-center gap-1.5">
+                    <Calendar className="w-4 h-4" />
+                    Founded {foundedText}
+                  </span>
+                )}
+                {firm.headquarters && (
+                  <span className="inline-flex items-center gap-1.5">
+                    <MapPin className="w-4 h-4" />
+                    {firm.country || firm.headquarters.split(',')[0]}
+                  </span>
+                )}
+                {firm.is_regulated && (
+                  <span className="inline-flex items-center gap-1.5 text-emerald-400">
+                    <Shield className="w-4 h-4" />
+                    Regulated
+                  </span>
+                )}
+                {firm.website_url && (
+                  <a
+                    href={firm.website_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 hover:text-white transition-colors"
+                  >
+                    <Globe className="w-4 h-4" />
+                    Website
+                  </a>
+                )}
+              </div>
+
+              {/* Quick Stats Grid */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <QuickStat
+                  label="Starting From"
+                  value={firm.min_price ? `$${firm.min_price}` : '—'}
+                  icon={<DollarSign className="w-4 h-4" />}
+                />
+                <QuickStat
+                  label="Profit Split"
+                  value={
+                    firm.max_profit_split
+                      ? `up to ${firm.max_profit_split}%`
+                      : firm.profit_split
+                      ? `${firm.profit_split}%`
+                      : '—'
+                  }
+                  icon={<TrendingUp className="w-4 h-4" />}
+                  highlight
+                />
+                <QuickStat
+                  label="Daily Drawdown"
+                  value={firm.max_daily_drawdown ? `${firm.max_daily_drawdown}%` : '—'}
+                  icon={<Shield className="w-4 h-4" />}
+                />
+                <QuickStat
+                  label="Scaling"
+                  value={firm.scaling_max || '—'}
+                  icon={<Award className="w-4 h-4" />}
+                />
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Challenge Selector — interactive picker (program + size + specs + CTA) */}
+      {/* ================================================================ */}
+      {/* 2. QUICK PITCH — Description + killer stats                    */}
+      {/* ================================================================ */}
+      {firm.description && (
+        <section className="py-10 px-4 border-b border-gray-800">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2">
+                <h2 className="text-2xl font-bold text-white mb-4">About {firm.name}</h2>
+                <p className="text-gray-300 leading-relaxed text-lg">{firm.description}</p>
+              </div>
+
+              <div className="space-y-3">
+                {firm.is_regulated && firm.regulation_details && (
+                  <TrustSignal
+                    icon={<Shield className="w-5 h-5" />}
+                    title="Regulated"
+                    description={firm.regulation_details}
+                  />
+                )}
+                {foundedText && (
+                  <TrustSignal
+                    icon={<Calendar className="w-5 h-5" />}
+                    title="Established"
+                    description={`Operating since ${foundedText}`}
+                  />
+                )}
+                {firm.headquarters && (
+                  <TrustSignal
+                    icon={<MapPin className="w-5 h-5" />}
+                    title="Headquarters"
+                    description={firm.headquarters}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ================================================================ */}
+      {/* 3. CHALLENGE SELECTOR — Interactive picker (hidden if no data) */}
+      {/* ================================================================ */}
       <ChallengeSelector
         firmSlug={firm.slug}
         firmName={firm.name}
@@ -648,163 +347,379 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
         discountPercent={firm.discount_percent}
       />
 
-      {/* Content */}
-      <section className="py-12 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* Main Content */}
-            <div className="lg:col-span-2 space-y-8">
-              {/* Challenge Rules */}
-              <div className="bg-gray-900/50 rounded-2xl border border-gray-800 p-6">
-                <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                  <Target className="w-5 h-5 text-emerald-400" />
-                  {t.challengeRules}
-                </h2>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div className="bg-gray-800/50 rounded-xl p-4">
-                    <p className="text-gray-500 text-sm mb-1">{t.phase1Target}</p>
-                    <p className="text-xl font-semibold text-white">{firm.profit_target_phase1 || '—'}%</p>
-                  </div>
-                  <div className="bg-gray-800/50 rounded-xl p-4">
-                    <p className="text-gray-500 text-sm mb-1">{t.phase2Target}</p>
-                    <p className="text-xl font-semibold text-white">{firm.profit_target_phase2 || t.na}%</p>
-                  </div>
-                  <div className="bg-gray-800/50 rounded-xl p-4">
-                    <p className="text-gray-500 text-sm mb-1">{t.minTradingDays}</p>
-                    <p className="text-xl font-semibold text-white">{firm.min_trading_days || t.none}</p>
-                  </div>
-                  <div className="bg-gray-800/50 rounded-xl p-4">
-                    <p className="text-gray-500 text-sm mb-1">{t.timeLimit}</p>
-                    <p className="text-xl font-semibold text-white">{firm.time_limit || t.unlimited}</p>
-                  </div>
-                  <div className="bg-gray-800/50 rounded-xl p-4">
-                    <p className="text-gray-500 text-sm mb-1">{t.drawdownType}</p>
-                    <p className="text-xl font-semibold text-white capitalize">{firm.drawdown_type || '—'}</p>
-                  </div>
-                  <div className="bg-gray-800/50 rounded-xl p-4">
-                    <p className="text-gray-500 text-sm mb-1">{t.consistencyRule}</p>
-                    <p className="text-xl font-semibold text-white">{firm.consistency_rule || t.none}</p>
-                  </div>
-                </div>
-              </div>
+      {/* ================================================================ */}
+      {/* 4. WHY CHOOSE — Pros / Cons                                    */}
+      {/* ================================================================ */}
+      {(pros.length > 0 || cons.length > 0) && (
+        <section className="py-12 px-4 border-b border-gray-800">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Why Choose {firm.name}?</h2>
+            <p className="text-gray-400 mb-8">An honest breakdown from real trader feedback and firm specifications.</p>
 
-              {/* Trading Permissions */}
-              <div className="bg-gray-900/50 rounded-2xl border border-gray-800 p-6">
-                <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-emerald-400" />
-                  {t.tradingPermissions}
-                </h2>
-                <div className="grid sm:grid-cols-2 gap-3">
-                  <BooleanBadge value={firm.allows_scalping} label={t.scalpingAllowed} />
-                  <BooleanBadge value={firm.allows_news_trading} label={t.newsTrading} />
-                  <BooleanBadge value={firm.allows_ea} label={t.easBots} />
-                  <BooleanBadge value={firm.allows_weekend_holding} label={t.weekendHolding} />
-                  <BooleanBadge value={firm.has_instant_funding} label={t.instantFunding} />
-                  <BooleanBadge value={firm.fee_refund} label={t.feeRefundable} />
-                </div>
-              </div>
-
-              {/* Platforms & Assets */}
-              <div className="bg-gray-900/50 rounded-2xl border border-gray-800 p-6">
-                <h2 className="text-xl font-bold text-white mb-6">{t.platformsAssets}</h2>
-                <div className="space-y-4">
-                  {toArray(firm.platforms).length > 0 && (
-                    <div>
-                      <p className="text-gray-500 text-sm mb-2">{t.tradingPlatforms}</p>
-                      <div className="flex flex-wrap gap-2">
-                        {toArray(firm.platforms).map((platform) => (
-                          <span key={platform} className="px-3 py-1.5 bg-gray-800 text-white text-sm rounded-lg">
-                            {platform}
-                          </span>
-                        ))}
-                      </div>
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Pros */}
+              {pros.length > 0 && (
+                <div className="bg-gradient-to-br from-emerald-500/5 to-transparent border border-emerald-500/20 rounded-2xl p-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="p-2 bg-emerald-500/10 rounded-lg">
+                      <ThumbsUp className="w-5 h-5 text-emerald-400" />
                     </div>
-                  )}
-                  {toArray(firm.assets).length > 0 && (
-                    <div>
-                      <p className="text-gray-500 text-sm mb-2">{t.availableAssets}</p>
-                      <div className="flex flex-wrap gap-2">
-                        {toArray(firm.assets).map((asset) => (
-                          <span key={asset} className="px-3 py-1.5 bg-gray-800 text-white text-sm rounded-lg">
-                            {asset}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Payout Info */}
-              <div className="bg-gray-900/50 rounded-2xl border border-gray-800 p-6">
-                <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                  <DollarSign className="w-5 h-5 text-emerald-400" />
-                  {t.payoutInformation}
-                </h2>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div className="bg-gray-800/50 rounded-xl p-4">
-                    <p className="text-gray-500 text-sm mb-1">{t.payoutFrequency}</p>
-                    <p className="text-xl font-semibold text-white capitalize">{firm.payout_frequency || '—'}</p>
+                    <h3 className="text-lg font-semibold text-white">Strengths</h3>
                   </div>
-                  <div className="bg-gray-800/50 rounded-xl p-4">
-                    <p className="text-gray-500 text-sm mb-1">{t.scalingPlan}</p>
-                    <p className="text-xl font-semibold text-white">{firm.scaling_max || t.na}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Sidebar */}
-            <div className="space-y-6">
-              {/* Similar Firms */}
-              {similarFirms.length > 0 && (
-                <div className="bg-gray-900/50 rounded-2xl border border-gray-800 p-6">
-                  <h3 className="text-lg font-bold text-white mb-4">{t.similarFirms}</h3>
-                  <div className="space-y-3">
-                    {similarFirms.map((similar) => (
-                      <Link
-                        key={similar.id}
-                        href={`/${locale}/prop-firm/${similar.slug}`}
-                        className="flex items-center gap-3 p-3 bg-gray-800/50 hover:bg-gray-800 rounded-xl transition-colors group"
-                      >
-                        <div className="relative w-10 h-10 bg-gray-700 rounded-lg overflow-hidden flex-shrink-0">
-                          {similar.logo_url ? (
-                            <Image src={similar.logo_url} alt={similar.name} fill className="object-contain p-1" />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-gray-500 font-bold">
-                              {similar.name.charAt(0)}
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-white font-medium truncate">{similar.name}</p>
-                          <p className="text-sm text-gray-500">
-                            {similar.trustpilot_rating?.toFixed(1)} ★ · ${similar.min_price}
-                          </p>
-                        </div>
-                        <ChevronRight className="w-4 h-4 text-gray-600 group-hover:text-emerald-400 transition-colors" />
-                      </Link>
+                  <ul className="space-y-3">
+                    {pros.map((pro, i) => (
+                      <li key={i} className="flex items-start gap-2 text-gray-300">
+                        <Check className="w-4 h-4 text-emerald-400 mt-1 flex-shrink-0" />
+                        <span>{pro}</span>
+                      </li>
                     ))}
-                  </div>
+                  </ul>
                 </div>
               )}
 
-              {/* Warning */}
-              <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4">
-                <div className="flex gap-3">
-                  <AlertTriangle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-yellow-400 font-medium text-sm mb-1">{t.tradingRiskWarning}</p>
-                    <p className="text-gray-400 text-xs">
-                      {t.riskDisclaimer}
-                    </p>
+              {/* Cons */}
+              {cons.length > 0 && (
+                <div className="bg-gradient-to-br from-red-500/5 to-transparent border border-red-500/20 rounded-2xl p-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="p-2 bg-red-500/10 rounded-lg">
+                      <ThumbsDown className="w-5 h-5 text-red-400" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-white">Limitations</h3>
                   </div>
+                  <ul className="space-y-3">
+                    {cons.map((con, i) => (
+                      <li key={i} className="flex items-start gap-2 text-gray-300">
+                        <X className="w-4 h-4 text-red-400 mt-1 flex-shrink-0" />
+                        <span>{con}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ================================================================ */}
+      {/* 5. TRADING DETAILS — Platforms, Assets, Payouts (compact)      */}
+      {/* ================================================================ */}
+      <section className="py-12 px-4 border-b border-gray-800">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-8">Trading Details</h2>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Platforms */}
+            {platforms.length > 0 && (
+              <DetailCard icon={<Target className="w-5 h-5" />} title="Trading Platforms">
+                <div className="flex flex-wrap gap-2">
+                  {platforms.map((p) => (
+                    <span key={p} className="px-3 py-1.5 bg-gray-800 text-white text-sm rounded-lg">
+                      {p}
+                    </span>
+                  ))}
+                </div>
+              </DetailCard>
+            )}
+
+            {/* Assets */}
+            {assets.length > 0 && (
+              <DetailCard icon={<TrendingUp className="w-5 h-5" />} title="Tradable Assets">
+                <div className="flex flex-wrap gap-2">
+                  {assets.map((a) => (
+                    <span key={a} className="px-3 py-1.5 bg-gray-800 text-white text-sm rounded-lg">
+                      {a}
+                    </span>
+                  ))}
+                </div>
+              </DetailCard>
+            )}
+
+            {/* Leverage */}
+            {firm.leverage_forex && (
+              <DetailCard icon={<TrendingUp className="w-5 h-5" />} title="Leverage (Forex)">
+                <p className="text-2xl font-bold text-white">{firm.leverage_forex}</p>
+              </DetailCard>
+            )}
+
+            {/* Payout Frequency */}
+            {firm.payout_frequency && (
+              <DetailCard icon={<Clock className="w-5 h-5" />} title="Payout Frequency">
+                <p className="text-white">{firm.payout_frequency}</p>
+              </DetailCard>
+            )}
+
+            {/* Payout Speed */}
+            {firm.payout_speed_days !== null && firm.payout_speed_days !== undefined && (
+              <DetailCard icon={<Zap className="w-5 h-5" />} title="Payout Speed">
+                <p className="text-white">
+                  {firm.payout_speed_days === 0
+                    ? 'Same-day'
+                    : `${firm.payout_speed_days} day${firm.payout_speed_days > 1 ? 's' : ''}`}
+                </p>
+              </DetailCard>
+            )}
+
+            {/* Scaling */}
+            {firm.scaling_max && (
+              <DetailCard icon={<Award className="w-5 h-5" />} title="Scaling Plan">
+                <p className="text-2xl font-bold text-emerald-400">Up to {firm.scaling_max}</p>
+              </DetailCard>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* ================================================================ */}
+      {/* 6. FAQ — SEO long-tail                                         */}
+      {/* ================================================================ */}
+      <section className="py-12 px-4 border-b border-gray-800">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Frequently Asked Questions</h2>
+          <p className="text-gray-400 mb-8">Everything traders ask about {firm.name}.</p>
+
+          <div className="space-y-3">
+            {generateFAQs(firm).map((faq, i) => (
+              <FAQItem key={i} question={faq.question} answer={faq.answer} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ================================================================ */}
+      {/* 7. SIMILAR FIRMS                                                */}
+      {/* ================================================================ */}
+      {similarFirms.length > 0 && (
+        <section className="py-12 px-4 border-b border-gray-800">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-8">Similar Firms</h2>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {similarFirms.map((sf) => (
+                <Link
+                  key={sf.id}
+                  href={`/prop-firm/${sf.slug}`}
+                  className="flex items-center gap-3 p-4 bg-gray-900/50 border border-gray-800 rounded-xl hover:border-emerald-500/30 transition-colors"
+                >
+                  <div className="relative w-10 h-10 bg-gray-800 rounded-lg overflow-hidden flex-shrink-0">
+                    {sf.logo_url ? (
+                      <Image src={sf.logo_url} alt={sf.name} fill className="object-contain p-1" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-emerald-400 font-bold">
+                        {sf.name.charAt(0)}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white font-medium truncate">{sf.name}</p>
+                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                      {sf.trustpilot_rating > 0 && (
+                        <>
+                          <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+                          <span>{sf.trustpilot_rating.toFixed(1)}</span>
+                        </>
+                      )}
+                      {sf.min_price && <span>· from ${sf.min_price}</span>}
+                    </div>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-gray-600" />
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ================================================================ */}
+      {/* 8. RISK WARNING                                                 */}
+      {/* ================================================================ */}
+      <section className="py-8 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-start gap-3 p-4 bg-yellow-500/5 border border-yellow-500/20 rounded-xl">
+            <AlertTriangle className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-yellow-500 font-semibold mb-1">Trading Risk Warning</p>
+              <p className="text-gray-400 text-sm">
+                Trading involves substantial risk. Only trade with capital you can afford to lose. Prop firm challenges
+                are simulated trading environments — read all rules carefully before purchasing.
+              </p>
             </div>
           </div>
         </div>
       </section>
     </div>
   )
+}
+
+// =============================================================================
+// SUB-COMPONENTS
+// =============================================================================
+
+function QuickStat({
+  label,
+  value,
+  icon,
+  highlight,
+}: {
+  label: string
+  value: string
+  icon: React.ReactNode
+  highlight?: boolean
+}) {
+  return (
+    <div
+      className={`rounded-xl border p-3 ${
+        highlight ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-gray-900/50 border-gray-800'
+      }`}
+    >
+      <div className="flex items-center gap-1.5 text-gray-500 text-xs mb-1">
+        {icon}
+        <span>{label}</span>
+      </div>
+      <p className={`text-xl font-bold ${highlight ? 'text-emerald-400' : 'text-white'}`}>{value}</p>
+    </div>
+  )
+}
+
+function TrustSignal({
+  icon,
+  title,
+  description,
+}: {
+  icon: React.ReactNode
+  title: string
+  description: string
+}) {
+  return (
+    <div className="flex items-start gap-3 p-4 bg-gray-900/50 border border-gray-800 rounded-xl">
+      <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-400 flex-shrink-0">{icon}</div>
+      <div>
+        <p className="text-white font-semibold text-sm">{title}</p>
+        <p className="text-gray-400 text-xs mt-0.5">{description}</p>
+      </div>
+    </div>
+  )
+}
+
+function DetailCard({
+  icon,
+  title,
+  children,
+}: {
+  icon: React.ReactNode
+  title: string
+  children: React.ReactNode
+}) {
+  return (
+    <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-5">
+      <div className="flex items-center gap-2 mb-3 text-gray-500">
+        {icon}
+        <p className="text-xs uppercase tracking-wider font-semibold">{title}</p>
+      </div>
+      {children}
+    </div>
+  )
+}
+
+function FAQItem({ question, answer }: { question: string; answer: string }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className="bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="w-full flex items-center justify-between gap-4 p-4 text-left hover:bg-gray-800/30 transition-colors"
+      >
+        <span className="text-white font-medium">{question}</span>
+        <ChevronDown
+          className={`w-5 h-5 text-gray-500 flex-shrink-0 transition-transform ${open ? 'rotate-180' : ''}`}
+        />
+      </button>
+      {open && (
+        <div className="px-4 pb-4 text-gray-400 text-sm leading-relaxed border-t border-gray-800 pt-3">{answer}</div>
+      )}
+    </div>
+  )
+}
+
+// =============================================================================
+// FAQ GENERATOR (uses firm data to build contextual questions)
+// =============================================================================
+
+function generateFAQs(firm: PropFirm): { question: string; answer: string }[] {
+  const faqs: { question: string; answer: string }[] = []
+
+  // Q1: Legit / regulated
+  if (firm.is_regulated) {
+    faqs.push({
+      question: `Is ${firm.name} legit?`,
+      answer: `Yes. ${firm.name} is a legitimate prop trading firm ${
+        firm.regulation_details ? firm.regulation_details.toLowerCase().replace(/^regulated by /, 'regulated by ') : 'with an established operating history'
+      }.${firm.founded ? ` The company has been operating since ${firm.founded}.` : ''} As with any prop firm, we recommend reviewing their rules carefully before purchasing a challenge.`,
+    })
+  } else {
+    faqs.push({
+      question: `Is ${firm.name} legit?`,
+      answer: `${firm.name} operates as a proprietary trading firm.${firm.founded ? ` Founded in ${firm.founded},` : ''} it offers simulated trading challenges to select and fund traders. As with any newer prop firm, we recommend reviewing their rules carefully and starting with a small account size.`,
+    })
+  }
+
+  // Q2: Cost
+  if (firm.min_price) {
+    faqs.push({
+      question: `How much does ${firm.name} cost?`,
+      answer: `${firm.name} challenges start at $${firm.min_price}${
+        firm.max_price ? ` and go up to $${firm.max_price} for the largest account sizes` : ''
+      }. Use our challenge selector above to see the exact price for each combination of program and account size.`,
+    })
+  }
+
+  // Q3: Profit split
+  if (firm.max_profit_split || firm.profit_split) {
+    const split = firm.max_profit_split || firm.profit_split
+    faqs.push({
+      question: `What profit split does ${firm.name} offer?`,
+      answer: `${firm.name} offers profit splits up to ${split}%${
+        firm.profit_split && firm.max_profit_split && firm.profit_split !== firm.max_profit_split
+          ? `, starting at ${firm.profit_split}% and reaching ${firm.max_profit_split}% on their premium programs`
+          : ''
+      }. The exact split depends on the program you choose — see the details in the challenge selector above.`,
+    })
+  }
+
+  // Q4: EAs and trading style
+  const permissions: string[] = []
+  if (firm.allows_scalping) permissions.push('scalping')
+  if (firm.allows_news_trading) permissions.push('news trading')
+  if (firm.allows_ea) permissions.push('EAs (Expert Advisors)')
+  if (firm.allows_weekend_holding) permissions.push('weekend holding')
+  if (permissions.length > 0) {
+    faqs.push({
+      question: `Does ${firm.name} allow EAs and scalping?`,
+      answer: `${firm.name} allows ${permissions.join(', ')} on most of their programs. Specific rules may vary by challenge type — always check the exact program details before purchasing.`,
+    })
+  }
+
+  // Q5: Payouts
+  if (firm.payout_frequency) {
+    faqs.push({
+      question: `How does ${firm.name} handle payouts?`,
+      answer: `${firm.name} processes payouts ${firm.payout_frequency.toLowerCase()}${
+        firm.payout_speed_days !== null && firm.payout_speed_days !== undefined
+          ? `, typically within ${
+              firm.payout_speed_days === 0 ? 'the same day' : `${firm.payout_speed_days} business days`
+            } of request`
+          : ''
+      }.${firm.min_payout ? ` Minimum payout amount is $${firm.min_payout}.` : ''}`,
+    })
+  }
+
+  // Q6: Scaling
+  if (firm.scaling_max) {
+    faqs.push({
+      question: `What is the maximum capital I can manage at ${firm.name}?`,
+      answer: `${firm.name} offers a scaling plan that lets qualified traders manage up to ${firm.scaling_max}. Scaling typically requires consistent profitability over several months.`,
+    })
+  }
+
+  return faqs
 }
