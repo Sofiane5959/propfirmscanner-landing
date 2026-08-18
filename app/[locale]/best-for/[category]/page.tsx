@@ -8,6 +8,19 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 const supabase = createClient(supabaseUrl, supabaseKey)
 
+// Helper: accepts string ("MT5, MT4") OR array (["MT5", "MT4"]) OR null,
+// always returns a clean array of trimmed non-empty strings.
+// Used to safely handle DB columns that are stored as TEXT but treated as arrays in the frontend.
+function toArray(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value.filter((v): v is string => typeof v === 'string' && v.trim().length > 0)
+  }
+  if (typeof value === 'string' && value.trim()) {
+    return value.split(/[,;]/).map((s) => s.trim()).filter(Boolean)
+  }
+  return []
+}
+
 interface Props {
   params: { category: string }
 }
@@ -64,7 +77,7 @@ const categories: Record<string, {
   'instant-funding': {
     title: 'Instant Funding Prop Firms',
     description: 'Skip the challenge! Prop firms offering instant funding or one-step evaluation programs.',
-    filter: (firm) => firm.challenge_types?.some((t: string) => t.toLowerCase().includes('instant') || t.toLowerCase().includes('1-step')),
+    filter: (firm) => toArray(firm.challenge_types).some((t) => t.toLowerCase().includes('instant') || t.toLowerCase().includes('1-step') || t.toLowerCase().includes('1 step')),
     keywords: ['instant funding prop firm', 'no challenge prop firm', 'direct funding'],
   },
   'forex': {
@@ -217,7 +230,7 @@ export default async function CategoryPage({ params }: Props) {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-400">Platforms</span>
-                      <span className="text-white text-xs">{firm.platforms?.slice(0, 2).join(', ')}</span>
+                      <span className="text-white text-xs">{toArray(firm.platforms).slice(0, 2).join(', ')}</span>
                     </div>
                   </div>
 
