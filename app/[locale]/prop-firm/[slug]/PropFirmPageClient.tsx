@@ -24,6 +24,19 @@ import {
   Heart,
   Share2,
 } from 'lucide-react'
+import ChallengeSelector, { type Challenge } from './ChallengeSelector'
+
+// Helper: safely turns a value (string, array, null) into a clean string array.
+// Handles DB columns stored as TEXT that the UI treats as arrays.
+function toArray(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value.filter((v): v is string => typeof v === 'string' && v.trim().length > 0)
+  }
+  if (typeof value === 'string' && value.trim()) {
+    return value.split(/[,;]/).map((s) => s.trim()).filter(Boolean)
+  }
+  return []
+}
 
 // =============================================================================
 // LOCALE DETECTION & TRANSLATIONS
@@ -409,6 +422,7 @@ interface SimilarFirm {
 interface Props {
   firm: PropFirm
   similarFirms: SimilarFirm[]
+  challenges?: Challenge[]
 }
 
 // =============================================================================
@@ -428,7 +442,7 @@ function BooleanBadge({ value, label }: { value: boolean; label: string }) {
 // MAIN COMPONENT
 // =============================================================================
 
-export default function PropFirmPageClient({ firm, similarFirms }: Props) {
+export default function PropFirmPageClient({ firm, similarFirms, challenges = [] }: Props) {
   const pathname = usePathname()
   const locale = getLocaleFromPath(pathname)
   const t = translations[locale]
@@ -625,6 +639,15 @@ export default function PropFirmPageClient({ firm, similarFirms }: Props) {
         </div>
       </section>
 
+      {/* Challenge Selector — interactive picker (program + size + specs + CTA) */}
+      <ChallengeSelector
+        firmSlug={firm.slug}
+        firmName={firm.name}
+        challenges={challenges}
+        discountCode={firm.discount_code}
+        discountPercent={firm.discount_percent}
+      />
+
       {/* Content */}
       <section className="py-12 px-4">
         <div className="max-w-6xl mx-auto">
@@ -685,11 +708,11 @@ export default function PropFirmPageClient({ firm, similarFirms }: Props) {
               <div className="bg-gray-900/50 rounded-2xl border border-gray-800 p-6">
                 <h2 className="text-xl font-bold text-white mb-6">{t.platformsAssets}</h2>
                 <div className="space-y-4">
-                  {firm.platforms && firm.platforms.length > 0 && (
+                  {toArray(firm.platforms).length > 0 && (
                     <div>
                       <p className="text-gray-500 text-sm mb-2">{t.tradingPlatforms}</p>
                       <div className="flex flex-wrap gap-2">
-                        {firm.platforms.map((platform) => (
+                        {toArray(firm.platforms).map((platform) => (
                           <span key={platform} className="px-3 py-1.5 bg-gray-800 text-white text-sm rounded-lg">
                             {platform}
                           </span>
@@ -697,11 +720,11 @@ export default function PropFirmPageClient({ firm, similarFirms }: Props) {
                       </div>
                     </div>
                   )}
-                  {firm.assets && firm.assets.length > 0 && (
+                  {toArray(firm.assets).length > 0 && (
                     <div>
                       <p className="text-gray-500 text-sm mb-2">{t.availableAssets}</p>
                       <div className="flex flex-wrap gap-2">
-                        {firm.assets.map((asset) => (
+                        {toArray(firm.assets).map((asset) => (
                           <span key={asset} className="px-3 py-1.5 bg-gray-800 text-white text-sm rounded-lg">
                             {asset}
                           </span>
