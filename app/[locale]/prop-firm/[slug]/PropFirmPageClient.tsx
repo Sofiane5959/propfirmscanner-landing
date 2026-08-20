@@ -6,9 +6,7 @@ import Link from 'next/link'
 import {
   Star,
   ExternalLink,
-  Copy,
   Check,
-  CheckCircle,
   X,
   Globe,
   Calendar,
@@ -25,9 +23,13 @@ import {
   Share2,
   Award,
   Zap,
-  Users,
   ThumbsUp,
   ThumbsDown,
+  Receipt,
+  RotateCcw,
+  Wallet,
+  Layers,
+  List,
 } from 'lucide-react'
 import ChallengeSelector, { type Challenge } from './ChallengeSelector'
 
@@ -45,6 +47,16 @@ function toArray(value: unknown): string[] {
     return value.split(/[,;]/).map((s) => s.trim()).filter(Boolean)
   }
   return []
+}
+
+// Payout speed: prefer an explicit label ("1 hour") when the DB has one,
+// otherwise fall back to the numeric day count.
+function formatPayoutSpeed(firm: PropFirm): string | null {
+  if (firm.payout_speed_label) return firm.payout_speed_label
+  const d = firm.payout_speed_days
+  if (d === null || d === undefined) return null
+  if (d === 0) return 'Same day'
+  return `${d} day${d > 1 ? 's' : ''}`
 }
 
 // =============================================================================
@@ -106,6 +118,16 @@ interface PropFirm {
   legal_name: string
   company_name: string
   is_featured: boolean
+
+  // --- Added: cost & policy detail columns -------------------------------
+  commissions?: string | null
+  reset_fee?: string | null
+  swap_free?: string | null
+  refund_policy?: string | null
+  max_allocation?: string | null
+  payout_methods?: string[] | string | null
+  // Optional override so "1 hour" can beat "1 day". Add the column when ready.
+  payout_speed_label?: string | null
 }
 
 interface SimilarFirm {
@@ -154,11 +176,66 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
 
   const platforms = toArray(firm.platforms)
   const assets = toArray(firm.assets)
+  const payoutMethods = toArray(firm.payout_methods)
+
+  // Only surface a discount when a real code exists. Without one, the visitor
+  // would click through and pay full price with nothing tracked.
+  const hasVerifiedDeal = Boolean(firm.discount_code && firm.discount_percent)
+  const dealUrl = firm.affiliate_url || firm.website_url || '#'
+
+  const payoutSpeed = formatPayoutSpeed(firm)
+
+  // Permission pills shown at firm level (per-challenge rules live in the selector)
+  const permissions: { label: string; allowed: boolean }[] = [
+    { label: 'Scalping', allowed: firm.allows_scalping },
+    { label: 'News trading', allowed: firm.allows_news_trading },
+    { label: 'EAs / bots', allowed: firm.allows_ea },
+    { label: 'Weekend holding', allowed: firm.allows_weekend_holding },
+  ]
+
+  // Dense label/value specs — anything that fits on one line goes here.
+  const specs: { label: string; value: string }[] = []
+  if (firm.leverage_forex) specs.push({ label: 'Leverage (forex)', value: firm.leverage_forex })
+  if (firm.payout_frequency) specs.push({ label: 'Payout frequency', value: firm.payout_frequency })
+  if (payoutSpeed) specs.push({ label: 'Payout speed', value: payoutSpeed })
+  if (firm.min_payout) specs.push({ label: 'Minimum payout', value: `$${firm.min_payout}` })
+  if (firm.scaling_max) specs.push({ label: 'Scaling plan', value: `Up to ${firm.scaling_max}` })
+  if (firm.max_allocation) specs.push({ label: 'Max allocation', value: firm.max_allocation })
+  if (firm.drawdown_type) specs.push({ label: 'Drawdown type', value: firm.drawdown_type })
+  if (firm.consistency_rule) specs.push({ label: 'Consistency rule', value: firm.consistency_rule })
+  if (firm.min_trading_days) specs.push({ label: 'Min trading days', value: String(firm.min_trading_days) })
+  if (firm.time_limit) specs.push({ label: 'Time limit', value: firm.time_limit })
+  if (payoutMethods.length > 0) specs.push({ label: 'Payout methods', value: payoutMethods.join(', ') })
+
+  // Long-form policy cards — only these get a full card.
+  const policies: { icon: React.ReactNode; title: string; body: string }[] = []
+  if (firm.commissions) {
+    policies.push({ icon: <Receipt className="w-5 h-5" />, title: 'Commissions', body: firm.commissions })
+  }
+  if (firm.refund_policy) {
+    policies.push({ icon: <Wallet className="w-5 h-5" />, title: 'Refund policy', body: firm.refund_policy })
+  }
+  if (firm.reset_fee) {
+    policies.push({ icon: <RotateCcw className="w-5 h-5" />, title: 'Reset fee', body: firm.reset_fee })
+  }
+  if (firm.swap_free) {
+    policies.push({ icon: <Layers className="w-5 h-5" />, title: 'Swap-free option', body: firm.swap_free })
+  }
+
+  const hasRulesSection = specs.length > 0 || policies.length > 0 || platforms.length > 0 || assets.length > 0
+
+  // Table of contents — only lists sections that actually render.
+  const toc: { id: string; label: string }[] = []
+  if (challenges.length > 0) toc.push({ id: 'challenges', label: 'Challenges' })
+  if (firm.description) toc.push({ id: 'about', label: `About ${firm.name}` })
+  if (pros.length > 0 || cons.length > 0) toc.push({ id: 'pros-cons', label: 'Strengths & limits' })
+  if (hasRulesSection) toc.push({ id: 'rules', label: 'Rules & costs' })
+  toc.push({ id: 'faq', label: 'FAQ' })
 
   return (
     <div className="min-h-screen bg-gray-950">
       {/* ================================================================ */}
-      {/* 1. HERO — Logo, name, rating, trust bar, quick stats           */}
+      {/* 1. HERO — Logo, name, rating, trust bar, quick stats            */}
       {/* ================================================================ */}
       <section className="pt-8 pb-10 px-4 border-b border-gray-800">
         <div className="max-w-6xl mx-auto">
@@ -197,7 +274,9 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
                       </div>
                       <span className="text-white font-semibold text-sm">{firm.trustpilot_rating.toFixed(1)}</span>
                       {firm.trustpilot_reviews > 0 && (
-                        <span className="text-gray-500 text-sm">({firm.trustpilot_reviews} reviews)</span>
+                        <span className="text-gray-500 text-sm">
+                          ({firm.trustpilot_reviews.toLocaleString()} reviews on Trustpilot)
+                        </span>
                       )}
                     </div>
                   )}
@@ -281,9 +360,9 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
                   highlight
                 />
                 <QuickStat
-                  label="Daily Drawdown"
-                  value={firm.max_daily_drawdown ? `${firm.max_daily_drawdown}%` : '—'}
-                  icon={<Shield className="w-4 h-4" />}
+                  label="Payout Speed"
+                  value={payoutSpeed || '—'}
+                  icon={<Zap className="w-4 h-4" />}
                 />
                 <QuickStat
                   label="Scaling"
@@ -297,202 +376,273 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
       </section>
 
       {/* ================================================================ */}
-      {/* 2. QUICK PITCH — Description + killer stats                    */}
+      {/* 2. CHALLENGE SELECTOR — moved up, full width                    */}
       {/* ================================================================ */}
-      {firm.description && (
-        <section className="py-10 px-4 border-b border-gray-800">
-          <div className="max-w-6xl mx-auto">
-            <div className="grid lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-2">
+      <div id="challenges" className="scroll-mt-24">
+        <ChallengeSelector
+          firmSlug={firm.slug}
+          firmName={firm.name}
+          challenges={challenges}
+          discountCode={firm.discount_code}
+          discountPercent={firm.discount_percent}
+        />
+      </div>
+
+      {/* ================================================================ */}
+      {/* 3. TWO-COLUMN BODY — content + sticky sidebar                   */}
+      {/* ================================================================ */}
+      <div className="max-w-6xl mx-auto px-4 py-12">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_300px]">
+          {/* ---------------------------------------------------------- */}
+          {/* MAIN COLUMN                                                */}
+          {/* ---------------------------------------------------------- */}
+          <main className="min-w-0 space-y-14">
+            {/* --- About ------------------------------------------------ */}
+            {firm.description && (
+              <section id="about" className="scroll-mt-24">
                 <h2 className="text-2xl font-bold text-white mb-4">About {firm.name}</h2>
-                <p className="text-gray-300 leading-relaxed text-lg">{firm.description}</p>
-              </div>
+                <p className="text-gray-300 leading-relaxed">{firm.description}</p>
+              </section>
+            )}
+
+            {/* --- Strengths & limitations ------------------------------ */}
+            {(pros.length > 0 || cons.length > 0) && (
+              <section id="pros-cons" className="scroll-mt-24">
+                <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Why choose {firm.name}?</h2>
+                <p className="text-gray-400 mb-6">
+                  An honest breakdown from trader feedback and firm specifications.
+                </p>
+
+                <div className="grid md:grid-cols-2 gap-5">
+                  {pros.length > 0 && (
+                    <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-5">
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="p-1.5 bg-emerald-500/10 rounded-lg">
+                          <ThumbsUp className="w-4 h-4 text-emerald-400" />
+                        </div>
+                        <h3 className="font-semibold text-white">Strengths</h3>
+                      </div>
+                      <ul className="space-y-2.5">
+                        {pros.map((pro, i) => (
+                          <li key={i} className="flex items-start gap-2 text-gray-300 text-sm">
+                            <Check className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                            <span>{pro}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {cons.length > 0 && (
+                    <div className="bg-red-500/5 border border-red-500/20 rounded-2xl p-5">
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="p-1.5 bg-red-500/10 rounded-lg">
+                          <ThumbsDown className="w-4 h-4 text-red-400" />
+                        </div>
+                        <h3 className="font-semibold text-white">Limitations</h3>
+                      </div>
+                      <ul className="space-y-2.5">
+                        {cons.map((con, i) => (
+                          <li key={i} className="flex items-start gap-2 text-gray-300 text-sm">
+                            <X className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
+                            <span>{con}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </section>
+            )}
+
+            {/* --- Rules & costs ---------------------------------------- */}
+            {hasRulesSection && (
+              <section id="rules" className="scroll-mt-24">
+                <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Rules & costs</h2>
+                <p className="text-gray-400 mb-6">
+                  Firm-wide defaults. Individual programs may differ — check the selector above.
+                </p>
+
+                {/* Permissions */}
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {permissions.map((p) => (
+                    <span
+                      key={p.label}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm border ${
+                        p.allowed
+                          ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-300'
+                          : 'bg-gray-800/60 border-gray-700 text-gray-500'
+                      }`}
+                    >
+                      {p.allowed ? <Check className="w-3.5 h-3.5" /> : <X className="w-3.5 h-3.5" />}
+                      {p.label}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Dense spec grid — one line per fact */}
+                {specs.length > 0 && (
+                  <dl className="grid sm:grid-cols-2 gap-x-8 gap-y-0 border border-gray-800 rounded-xl px-5 py-1 bg-gray-900/40 mb-6">
+                    {specs.map((s) => (
+                      <div
+                        key={s.label}
+                        className="flex items-baseline justify-between gap-4 py-2.5 border-b border-gray-800/70 last:border-0"
+                      >
+                        <dt className="text-gray-500 text-sm flex-shrink-0">{s.label}</dt>
+                        <dd className="text-white text-sm text-right">{s.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                )}
+
+                {/* Assets — pills read better than a spec row */}
+                {assets.length > 0 && (
+                  <div className="mb-6">
+                    <p className="text-xs uppercase tracking-wider font-semibold text-gray-500 mb-2.5">
+                      Tradable assets
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {assets.map((a) => (
+                        <span key={a} className="px-3 py-1.5 bg-gray-800 text-white text-sm rounded-lg">
+                          {a}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Long-form policies get real cards */}
+                {policies.length > 0 && (
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {policies.map((p) => (
+                      <DetailCard key={p.title} icon={p.icon} title={p.title}>
+                        <p className="text-gray-300 text-sm leading-relaxed">{p.body}</p>
+                      </DetailCard>
+                    ))}
+                  </div>
+                )}
+              </section>
+            )}
+
+            {/* --- FAQ -------------------------------------------------- */}
+            <section id="faq" className="scroll-mt-24">
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Frequently asked questions</h2>
+              <p className="text-gray-400 mb-6">Everything traders ask about {firm.name}.</p>
 
               <div className="space-y-3">
-                {firm.is_regulated && firm.regulation_details && (
-                  <TrustSignal
-                    icon={<Shield className="w-5 h-5" />}
-                    title="Regulated"
-                    description={firm.regulation_details}
-                  />
-                )}
-                {foundedText && (
-                  <TrustSignal
-                    icon={<Calendar className="w-5 h-5" />}
-                    title="Established"
-                    description={`Operating since ${foundedText}`}
-                  />
-                )}
-                {firm.headquarters && (
-                  <TrustSignal
-                    icon={<MapPin className="w-5 h-5" />}
-                    title="Headquarters"
-                    description={firm.headquarters}
-                  />
-                )}
+                {generateFAQs(firm).map((faq, i) => (
+                  <FAQItem key={i} question={faq.question} answer={faq.answer} />
+                ))}
               </div>
-            </div>
-          </div>
-        </section>
-      )}
+            </section>
+          </main>
 
-      {/* ================================================================ */}
-      {/* 3. CHALLENGE SELECTOR — Interactive picker (hidden if no data) */}
-      {/* ================================================================ */}
-      <ChallengeSelector
-        firmSlug={firm.slug}
-        firmName={firm.name}
-        challenges={challenges}
-        discountCode={firm.discount_code}
-        discountPercent={firm.discount_percent}
-      />
-
-      {/* ================================================================ */}
-      {/* 4. WHY CHOOSE — Pros / Cons                                    */}
-      {/* ================================================================ */}
-      {(pros.length > 0 || cons.length > 0) && (
-        <section className="py-12 px-4 border-b border-gray-800">
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Why Choose {firm.name}?</h2>
-            <p className="text-gray-400 mb-8">An honest breakdown from real trader feedback and firm specifications.</p>
-
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* Pros */}
-              {pros.length > 0 && (
-                <div className="bg-gradient-to-br from-emerald-500/5 to-transparent border border-emerald-500/20 rounded-2xl p-6">
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="p-2 bg-emerald-500/10 rounded-lg">
-                      <ThumbsUp className="w-5 h-5 text-emerald-400" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-white">Strengths</h3>
-                  </div>
-                  <ul className="space-y-3">
-                    {pros.map((pro, i) => (
-                      <li key={i} className="flex items-start gap-2 text-gray-300">
-                        <Check className="w-4 h-4 text-emerald-400 mt-1 flex-shrink-0" />
-                        <span>{pro}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Cons */}
-              {cons.length > 0 && (
-                <div className="bg-gradient-to-br from-red-500/5 to-transparent border border-red-500/20 rounded-2xl p-6">
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="p-2 bg-red-500/10 rounded-lg">
-                      <ThumbsDown className="w-5 h-5 text-red-400" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-white">Limitations</h3>
-                  </div>
-                  <ul className="space-y-3">
-                    {cons.map((con, i) => (
-                      <li key={i} className="flex items-start gap-2 text-gray-300">
-                        <X className="w-4 h-4 text-red-400 mt-1 flex-shrink-0" />
-                        <span>{con}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ================================================================ */}
-      {/* 5. TRADING DETAILS — Platforms, Assets, Payouts (compact)      */}
-      {/* ================================================================ */}
-      <section className="py-12 px-4 border-b border-gray-800">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-8">Trading Details</h2>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Platforms */}
-            {platforms.length > 0 && (
-              <DetailCard icon={<Target className="w-5 h-5" />} title="Trading Platforms">
-                <div className="flex flex-wrap gap-2">
-                  {platforms.map((p) => (
-                    <span key={p} className="px-3 py-1.5 bg-gray-800 text-white text-sm rounded-lg">
-                      {p}
-                    </span>
-                  ))}
-                </div>
-              </DetailCard>
-            )}
-
-            {/* Assets */}
-            {assets.length > 0 && (
-              <DetailCard icon={<TrendingUp className="w-5 h-5" />} title="Tradable Assets">
-                <div className="flex flex-wrap gap-2">
-                  {assets.map((a) => (
-                    <span key={a} className="px-3 py-1.5 bg-gray-800 text-white text-sm rounded-lg">
-                      {a}
-                    </span>
-                  ))}
-                </div>
-              </DetailCard>
-            )}
-
-            {/* Leverage */}
-            {firm.leverage_forex && (
-              <DetailCard icon={<TrendingUp className="w-5 h-5" />} title="Leverage (Forex)">
-                <p className="text-2xl font-bold text-white">{firm.leverage_forex}</p>
-              </DetailCard>
-            )}
-
-            {/* Payout Frequency */}
-            {firm.payout_frequency && (
-              <DetailCard icon={<Clock className="w-5 h-5" />} title="Payout Frequency">
-                <p className="text-white">{firm.payout_frequency}</p>
-              </DetailCard>
-            )}
-
-            {/* Payout Speed */}
-            {firm.payout_speed_days !== null && firm.payout_speed_days !== undefined && (
-              <DetailCard icon={<Zap className="w-5 h-5" />} title="Payout Speed">
-                <p className="text-white">
-                  {firm.payout_speed_days === 0
-                    ? 'Same-day'
-                    : `${firm.payout_speed_days} day${firm.payout_speed_days > 1 ? 's' : ''}`}
+          {/* ---------------------------------------------------------- */}
+          {/* STICKY SIDEBAR (desktop only)                              */}
+          {/* ---------------------------------------------------------- */}
+          <aside className="hidden lg:block">
+            <div className="sticky top-24 space-y-4">
+              {/* Deal / CTA */}
+              <div className="bg-gray-900/70 border border-emerald-500/25 rounded-xl p-4">
+                <p className="text-xs uppercase tracking-wider font-semibold text-gray-500 mb-2">
+                  Get started
                 </p>
-              </DetailCard>
-            )}
+                {firm.min_price > 0 && (
+                  <p className="text-white mb-3">
+                    <span className="text-gray-500 text-sm">From </span>
+                    <span className="text-2xl font-bold">${firm.min_price}</span>
+                  </p>
+                )}
+                {hasVerifiedDeal && (
+                  <div className="mb-3 px-3 py-2 bg-emerald-500/10 border border-emerald-500/25 rounded-lg">
+                    <p className="text-emerald-300 text-sm font-semibold">
+                      {firm.discount_percent}% off with code {firm.discount_code}
+                    </p>
+                  </div>
+                )}
+                <a
+                  href={dealUrl}
+                  target="_blank"
+                  rel="noopener noreferrer sponsored"
+                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-semibold rounded-lg transition-colors"
+                >
+                  Visit {firm.name}
+                  <ExternalLink className="w-4 h-4" />
+                </a>
+                <p className="text-gray-600 text-[11px] mt-2 text-center">
+                  We may earn a commission on this link.
+                </p>
+              </div>
 
-            {/* Scaling */}
-            {firm.scaling_max && (
-              <DetailCard icon={<Award className="w-5 h-5" />} title="Scaling Plan">
-                <p className="text-2xl font-bold text-emerald-400">Up to {firm.scaling_max}</p>
-              </DetailCard>
-            )}
-          </div>
+              {/* Identity */}
+              <SidebarCard title="Firm details">
+                <dl className="space-y-2.5">
+                  {firm.legal_name && <SidebarFact label="Legal name" value={firm.legal_name} />}
+                  {foundedText && <SidebarFact label="Founded" value={foundedText} />}
+                  {firm.country && <SidebarFact label="Country" value={firm.country} />}
+                  {firm.headquarters && <SidebarFact label="HQ" value={firm.headquarters} />}
+                </dl>
+                {firm.is_regulated && firm.regulation_details && (
+                  <div className="mt-3 pt-3 border-t border-gray-800">
+                    <p className="inline-flex items-center gap-1.5 text-emerald-400 text-sm font-medium mb-1">
+                      <Shield className="w-3.5 h-3.5" /> Regulated
+                    </p>
+                    <p className="text-gray-400 text-xs leading-relaxed">{firm.regulation_details}</p>
+                    {firm.license_url && (
+                      <a
+                        href={firm.license_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-xs text-emerald-400 hover:text-emerald-300 mt-1.5"
+                      >
+                        Verify licence <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
+                  </div>
+                )}
+              </SidebarCard>
+
+              {/* Platforms */}
+              {platforms.length > 0 && (
+                <SidebarCard title="Platforms">
+                  <div className="flex flex-wrap gap-1.5">
+                    {platforms.map((p) => (
+                      <span key={p} className="px-2.5 py-1 bg-gray-800 text-gray-200 text-xs rounded-md">
+                        {p}
+                      </span>
+                    ))}
+                  </div>
+                </SidebarCard>
+              )}
+
+              {/* Table of contents */}
+              {toc.length > 1 && (
+                <SidebarCard title="On this page" icon={<List className="w-3.5 h-3.5" />}>
+                  <nav className="space-y-1">
+                    {toc.map((item) => (
+                      <a
+                        key={item.id}
+                        href={`#${item.id}`}
+                        className="block text-sm text-gray-400 hover:text-emerald-400 transition-colors py-1"
+                      >
+                        {item.label}
+                      </a>
+                    ))}
+                  </nav>
+                </SidebarCard>
+              )}
+            </div>
+          </aside>
         </div>
-      </section>
+      </div>
 
       {/* ================================================================ */}
-      {/* 6. FAQ — SEO long-tail                                         */}
-      {/* ================================================================ */}
-      <section className="py-12 px-4 border-b border-gray-800">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Frequently Asked Questions</h2>
-          <p className="text-gray-400 mb-8">Everything traders ask about {firm.name}.</p>
-
-          <div className="space-y-3">
-            {generateFAQs(firm).map((faq, i) => (
-              <FAQItem key={i} question={faq.question} answer={faq.answer} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ================================================================ */}
-      {/* 7. SIMILAR FIRMS                                                */}
+      {/* 4. SIMILAR FIRMS — full width                                   */}
       {/* ================================================================ */}
       {similarFirms.length > 0 && (
-        <section className="py-12 px-4 border-b border-gray-800">
+        <section className="py-12 px-4 border-t border-gray-800">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-8">Similar Firms</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-8">Similar firms</h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {similarFirms.map((sf) => (
                 <Link
@@ -530,14 +680,14 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
       )}
 
       {/* ================================================================ */}
-      {/* 8. RISK WARNING                                                 */}
+      {/* 5. RISK WARNING                                                 */}
       {/* ================================================================ */}
       <section className="py-8 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-start gap-3 p-4 bg-yellow-500/5 border border-yellow-500/20 rounded-xl">
             <AlertTriangle className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-yellow-500 font-semibold mb-1">Trading Risk Warning</p>
+              <p className="text-yellow-500 font-semibold mb-1">Trading risk warning</p>
               <p className="text-gray-400 text-sm">
                 Trading involves substantial risk. Only trade with capital you can afford to lose. Prop firm challenges
                 are simulated trading environments — read all rules carefully before purchasing.
@@ -580,22 +730,31 @@ function QuickStat({
   )
 }
 
-function TrustSignal({
-  icon,
+function SidebarCard({
   title,
-  description,
+  icon,
+  children,
 }: {
-  icon: React.ReactNode
   title: string
-  description: string
+  icon?: React.ReactNode
+  children: React.ReactNode
 }) {
   return (
-    <div className="flex items-start gap-3 p-4 bg-gray-900/50 border border-gray-800 rounded-xl">
-      <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-400 flex-shrink-0">{icon}</div>
-      <div>
-        <p className="text-white font-semibold text-sm">{title}</p>
-        <p className="text-gray-400 text-xs mt-0.5">{description}</p>
+    <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4">
+      <div className="flex items-center gap-1.5 mb-3 text-gray-500">
+        {icon}
+        <p className="text-xs uppercase tracking-wider font-semibold">{title}</p>
       </div>
+      {children}
+    </div>
+  )
+}
+
+function SidebarFact({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <dt className="text-gray-500 text-xs">{label}</dt>
+      <dd className="text-gray-200 text-sm leading-snug">{value}</dd>
     </div>
   )
 }
@@ -652,9 +811,9 @@ function generateFAQs(firm: PropFirm): { question: string; answer: string }[] {
   if (firm.is_regulated) {
     faqs.push({
       question: `Is ${firm.name} legit?`,
-      answer: `Yes. ${firm.name} is a legitimate prop trading firm ${
-        firm.regulation_details ? firm.regulation_details.toLowerCase().replace(/^regulated by /, 'regulated by ') : 'with an established operating history'
-      }.${firm.founded ? ` The company has been operating since ${firm.founded}.` : ''} As with any prop firm, we recommend reviewing their rules carefully before purchasing a challenge.`,
+      answer: `Yes. ${firm.name} is a legitimate prop trading firm${
+        firm.regulation_details ? `. ${firm.regulation_details}` : ' with an established operating history.'
+      }${firm.founded ? ` The company has been operating since ${firm.founded}.` : ''} As with any prop firm, we recommend reviewing their rules carefully before purchasing a challenge.`,
     })
   } else {
     faqs.push({
@@ -669,7 +828,9 @@ function generateFAQs(firm: PropFirm): { question: string; answer: string }[] {
       question: `How much does ${firm.name} cost?`,
       answer: `${firm.name} challenges start at $${firm.min_price}${
         firm.max_price ? ` and go up to $${firm.max_price} for the largest account sizes` : ''
-      }. Use our challenge selector above to see the exact price for each combination of program and account size.`,
+      }. Use our challenge selector above to see the exact price for each combination of program and account size.${
+        firm.commissions ? ` Trading commissions apply on top of the challenge fee: ${firm.commissions}` : ''
+      }`,
     })
   }
 
@@ -701,23 +862,32 @@ function generateFAQs(firm: PropFirm): { question: string; answer: string }[] {
 
   // Q5: Payouts
   if (firm.payout_frequency) {
+    const speed = formatPayoutSpeed(firm)
     faqs.push({
       question: `How does ${firm.name} handle payouts?`,
       answer: `${firm.name} processes payouts ${firm.payout_frequency.toLowerCase()}${
-        firm.payout_speed_days !== null && firm.payout_speed_days !== undefined
-          ? `, typically within ${
-              firm.payout_speed_days === 0 ? 'the same day' : `${firm.payout_speed_days} business days`
-            } of request`
-          : ''
-      }.${firm.min_payout ? ` Minimum payout amount is $${firm.min_payout}.` : ''}`,
+        speed ? `, typically within ${speed.toLowerCase()} of request` : ''
+      }.${firm.min_payout ? ` Minimum payout amount is $${firm.min_payout}.` : ''}${
+        firm.refund_policy ? ` ${firm.refund_policy}` : ''
+      }`,
     })
   }
 
-  // Q6: Scaling
+  // Q6: Refund of the challenge fee
+  if (firm.refund_policy) {
+    faqs.push({
+      question: `Does ${firm.name} refund the challenge fee?`,
+      answer: firm.refund_policy,
+    })
+  }
+
+  // Q7: Scaling
   if (firm.scaling_max) {
     faqs.push({
       question: `What is the maximum capital I can manage at ${firm.name}?`,
-      answer: `${firm.name} offers a scaling plan that lets qualified traders manage up to ${firm.scaling_max}. Scaling typically requires consistent profitability over several months.`,
+      answer: `${firm.name} offers a scaling plan that lets qualified traders manage up to ${firm.scaling_max}.${
+        firm.max_allocation ? ` ${firm.max_allocation}` : ''
+      } Scaling typically requires consistent profitability over several months.`,
     })
   }
 
