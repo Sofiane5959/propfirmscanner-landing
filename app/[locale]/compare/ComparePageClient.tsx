@@ -730,6 +730,30 @@ function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T | ((pre
 // =====================================================
 // HELPERS
 // =====================================================
+// `platforms` and `challenge_types` are typed TEXT in the database but declared
+// as string[] on the PropFirm interface. A string passes every `.length` guard
+// and then throws on `.forEach` / `.map`, which takes the entire page down and
+// is invisible at build time. Every firm is normalised once in processedFirms.
+const toArray = (value: unknown): string[] => {
+  if (Array.isArray(value)) {
+    return value.filter((v): v is string => typeof v === 'string' && v.trim().length > 0)
+  }
+  if (typeof value === 'string' && value.trim()) {
+    return value.split(/[,;]/).map(x => x.trim()).filter(Boolean)
+  }
+  return []
+}
+
+const normalizeFirmArrays = (firm: PropFirm): PropFirm => {
+  const listCol = toArray((firm as { platforms_list?: unknown }).platforms_list)
+  return {
+    ...firm,
+    platforms: listCol.length > 0 ? listCol : toArray(firm.platforms),
+    assets: toArray(firm.assets),
+    challenge_types: toArray(firm.challenge_types),
+  }
+}
+
 const normalizeMarkets = (assets: string[] | undefined, isFutures: boolean): string[] => {
   const markets: string[] = []
   if (isFutures) markets.push('Futures')
@@ -1936,7 +1960,7 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
   }, [debouncedFilters, sortBy, router])
   
   const processedFirms = useMemo(() => {
-    const filtered = firms.filter(f => !isBlocklisted(f.name))
+    const filtered = firms.filter(f => !isBlocklisted(f.name)).map(normalizeFirmArrays)
     const seen = new Map<string, PropFirm>()
     filtered.forEach(firm => {
       const canonical = getCanonicalName(firm.name).toLowerCase().replace(/\s+/g, '')
