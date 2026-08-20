@@ -121,6 +121,13 @@ interface PropFirm {
 
   // --- Platform availability flags ---------------------------------------
   platforms_list?: string[] | string | null
+  progression_tiers?: {
+    title?: string
+    intro?: string
+    columns?: string[]
+    rows?: string[][]
+    note?: string
+  } | null
   has_mt4?: boolean | null
   has_mt5?: boolean | null
   has_ctrader?: boolean | null
@@ -255,6 +262,9 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
     policies.push({ icon: <Layers className="w-5 h-5" />, title: 'Swap-free option', body: firm.swap_free })
   }
 
+  const tiers = firm.progression_tiers || null
+  const hasTiers = Boolean(tiers && tiers.rows && tiers.rows.length > 0)
+
   const hasRulesSection = specs.length > 0 || policies.length > 0 || platforms.length > 0 || assets.length > 0
 
   // Table of contents — only lists sections that actually render.
@@ -263,6 +273,7 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
   if (firm.description) toc.push({ id: 'about', label: `About ${firm.name}` })
   if (pros.length > 0 || cons.length > 0) toc.push({ id: 'pros-cons', label: 'Strengths & limits' })
   if (hasRulesSection) toc.push({ id: 'rules', label: 'Rules & costs' })
+  if (hasTiers) toc.push({ id: 'progression', label: 'Scaling plan' })
   toc.push({ id: 'faq', label: 'FAQ' })
 
   return (
@@ -339,6 +350,16 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
                   </button>
                 </div>
               </div>
+
+              {/* Live offer — the discount is the reason most visitors are here */}
+              {hasVerifiedDeal && (
+                <div className="inline-flex items-center gap-2 mb-3 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
+                  <Zap className="w-4 h-4 text-emerald-400" />
+                  <span className="text-emerald-300 text-sm font-semibold">
+                    {firm.discount_percent}% off with code {firm.discount_code}
+                  </span>
+                </div>
+              )}
 
               {/* Trust bar — founded, HQ, regulation */}
               <div className="flex items-center gap-4 flex-wrap text-sm text-gray-400 mb-4">
@@ -539,6 +560,67 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
                       </DetailCard>
                     ))}
                   </div>
+                )}
+              </section>
+            )}
+
+            {/* --- Progression ladder ----------------------------------- */}
+            {tiers && tiers.rows && tiers.rows.length > 0 && (
+              <section id="progression" className="scroll-mt-24">
+                <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                  {tiers.title || 'Scaling plan'}
+                </h2>
+                {tiers.intro && <p className="text-gray-400 mb-6">{tiers.intro}</p>}
+
+                <div className="overflow-x-auto rounded-xl border border-gray-800 bg-gray-900/40">
+                  <table className="w-full text-sm">
+                    {tiers.columns && (
+                      <thead>
+                        <tr className="border-b border-gray-800">
+                          {tiers.columns.map((col, i) => (
+                            <th
+                              key={col}
+                              className={`px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider whitespace-nowrap ${
+                                i === 0 ? 'text-left' : 'text-right'
+                              }`}
+                            >
+                              {col}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                    )}
+                    <tbody>
+                      {tiers.rows.map((row, ri) => {
+                        const isTop = ri === tiers.rows!.length - 1
+                        return (
+                          <tr
+                            key={ri}
+                            className={`border-b border-gray-800/60 last:border-0 ${
+                              isTop ? 'bg-emerald-500/5' : ''
+                            }`}
+                          >
+                            {row.map((cell, ci) => (
+                              <td
+                                key={ci}
+                                className={`px-4 py-3 whitespace-nowrap ${
+                                  ci === 0
+                                    ? `text-left font-semibold ${isTop ? 'text-emerald-400' : 'text-white'}`
+                                    : 'text-right text-gray-300'
+                                }`}
+                              >
+                                {cell}
+                              </td>
+                            ))}
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+
+                {tiers.note && (
+                  <p className="text-gray-500 text-xs leading-relaxed mt-3">{tiers.note}</p>
                 )}
               </section>
             )}

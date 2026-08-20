@@ -31,6 +31,10 @@ export interface Challenge {
   allows_ea: boolean | null
   allows_scalping: boolean | null
   allows_news_trading: boolean | null
+  // Futures firms bill monthly and express risk in dollars, not percent.
+  billing_period: string | null       // 'one-time' | 'monthly'
+  risk_unit: string | null            // 'percent'  | 'usd'
+  affiliate_url: string | null
 }
 
 interface Props {
@@ -64,9 +68,27 @@ function sizeToNumber(size: string | null): number {
   return num
 }
 
-function formatPrice(price: number | null): string {
+function formatPrice(price: number | null, suffix = ''): string {
   if (price === null || price === undefined) return '—'
-  return `$${price.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`
+  return `$${price.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}${suffix}`
+}
+
+// Risk figures are percentages on forex firms and dollar amounts on futures
+// firms. Rendering 2000 as "2000%" instead of "$2,000" is not a rounding
+// error, it is a different claim — so the unit travels with the challenge.
+function fmtRisk(value: number | null | undefined, unit?: string | null): string {
+  if (value === null || value === undefined) return '—'
+  if (unit === 'usd') return `$${Number(value).toLocaleString('en-US')}`
+  return `${value}%`
+}
+
+// "1 Step" reads better than a bare "1"; 0 or null means instant funding.
+function fmtSteps(steps: string | number | null | undefined): string {
+  if (steps === null || steps === undefined || steps === '') return '—'
+  const n = Number(steps)
+  if (Number.isNaN(n)) return String(steps)
+  if (n <= 0) return 'Instant Funding'
+  return `${n} Step`
 }
 
 // Contextual recommendation for each program type
@@ -118,6 +140,12 @@ export default function ChallengeSelector({
   }, [challenges])
 
   // Determine which program is the cheapest overall (for the "Cheapest" badge)
+  const isSubscription = useMemo(
+    () => challenges.some((c) => c.billing_period === 'monthly'),
+    [challenges]
+  )
+  const priceSuffix = isSubscription ? '/mo' : ''
+
   const cheapestProgram = useMemo(() => {
     let cheapest: { program: string; price: number } | null = null
     for (const [program, list] of programs) {
@@ -135,10 +163,9 @@ export default function ChallengeSelector({
   // We heuristically pick a "2 Step" one, falling back to the first program.
   const popularProgram = useMemo(() => {
     const twoStep = programs.find(([name]) => /2 ?step (prime|standard)/i.test(name))
-    if (twoStep) return twoStep[0]
-    // fallback: first program with the most sizes offered
-    const byCount = [...programs].sort((a, b) => b[1].length - a[1].length)
-    return byCount[0]?.[0] ?? null
+    return twoStep ? twoStep[0] : null
+    // No fallback on purpose: labelling an arbitrary program "Most Popular"
+    // is a claim we cannot support, and it misleads on firms with no 2-step.
   }, [programs])
 
   // ----- State -----
@@ -162,16 +189,20 @@ export default function ChallengeSelector({
   const displayPrice = useMemo(() => {
     if (!currentChallenge) return { original: null as number | null, final: null as number | null, hasDiscount: false }
     const original = currentChallenge.price
+    // A struck-through price is a promise. Only make it when the visitor
+    // actually has a code to redeem, otherwise they pay full price and we
+    // have advertised a discount that does not exist.
+    const codeIsUsable = Boolean(discountCode) && discountCode !== 'PENDING'
     let final = currentChallenge.discounted_price
-    if (final === null && original !== null && discountPercent && discountPercent > 0) {
+    if (final === null && codeIsUsable && original !== null && discountPercent && discountPercent > 0) {
       final = Math.round(original * (1 - discountPercent / 100) * 100) / 100
     }
     return {
       original,
       final: final ?? original,
-      hasDiscount: final !== null && original !== null && final < original,
+      hasDiscount: codeIsUsable && final !== null && original !== null && final < original,
     }
-  }, [currentChallenge, discountPercent])
+  }, [currentChallenge, discountPercent, discountCode])
 
   // ----- Handlers -----
 
@@ -280,7 +311,7 @@ export default function ChallengeSelector({
                         </p>
                         <p className="text-xs text-gray-500 mb-2">
                           {list.length} {list.length > 1 ? 'sizes' : 'size'}
-                          {cheapest !== null && <> · from {formatPrice(cheapest)}</>}
+                          {cheapest !== null && <> · from {formatPrice(cheapest, priceSuffix)}</>}
                         </p>
                         {reco && (
                           <p className="text-xs text-gray-400 flex items-start gap-1.5 mt-2 pt-2 border-t border-gray-700/50">
@@ -323,7 +354,7 @@ export default function ChallengeSelector({
                           {c.account_size}
                         </p>
                         {c.price !== null && (
-                          <p className="text-xs text-gray-500 mt-0.5">{formatPrice(c.price)}</p>
+                          <p className="text-xs text-gray-500 mt-0.5">{formatPrice(c.price, priceSuffix)}</p>
                         )}
                       </button>
                     )
@@ -345,7 +376,7 @@ export default function ChallengeSelector({
                     <SpecItem
                       icon={<Target className="w-4 h-4" />}
                       label="Evaluation"
-                      value={currentChallenge.steps ?? '—'}
+                      value={fmtSteps(currentChallenge.steps)}
                     />
                     <SpecItem
                       icon={<TrendingUp className="w-4 h-4" />}
@@ -356,19 +387,19 @@ export default function ChallengeSelector({
                     <SpecItem
                       icon={<Shield className="w-4 h-4" />}
                       label="Max Drawdown"
-                      value={currentChallenge.max_drawdown !== null ? `${currentChallenge.max_drawdown}%` : '—'}
+                      value={fmtRisk(currentChallenge.max_drawdown, currentChallenge.risk_unit)}
                     />
                     <SpecItem
                       icon={<TrendingDown className="w-4 h-4" />}
                       label="Daily Loss"
-                      value={currentChallenge.max_daily_loss !== null ? `${currentChallenge.max_daily_loss}%` : '—'}
+                      value={fmtRisk(currentChallenge.max_daily_loss, currentChallenge.risk_unit)}
                     />
                     <SpecItem
                       icon={<Target className="w-4 h-4" />}
                       label="Phase 1 Target"
                       value={
                         currentChallenge.phase1_profit_target !== null
-                          ? `${currentChallenge.phase1_profit_target}%`
+                          ? fmtRisk(currentChallenge.phase1_profit_target, currentChallenge.risk_unit)
                           : 'N/A'
                       }
                     />
@@ -377,7 +408,7 @@ export default function ChallengeSelector({
                       label="Phase 2 Target"
                       value={
                         currentChallenge.phase2_profit_target !== null
-                          ? `${currentChallenge.phase2_profit_target}%`
+                          ? fmtRisk(currentChallenge.phase2_profit_target, currentChallenge.risk_unit)
                           : 'N/A'
                       }
                     />
@@ -424,6 +455,7 @@ export default function ChallengeSelector({
                 selectedProgram={selectedProgram}
                 currentChallenge={currentChallenge}
                 displayPrice={displayPrice}
+                isSubscription={isSubscription}
                 discountCode={discountCode}
                 discountPercent={discountPercent}
                 codeCopied={codeCopied}
@@ -456,6 +488,7 @@ export default function ChallengeSelector({
                   selectedProgram={selectedProgram}
                   currentChallenge={currentChallenge}
                   displayPrice={displayPrice}
+                isSubscription={isSubscription}
                   discountCode={discountCode}
                   discountPercent={discountPercent}
                   codeCopied={codeCopied}
@@ -482,7 +515,7 @@ export default function ChallengeSelector({
                       {formatPrice(displayPrice.original)}
                     </span>
                   )}
-                  <span className="text-xl font-bold text-white">{formatPrice(displayPrice.final)}</span>
+                  <span className="text-xl font-bold text-white">{formatPrice(displayPrice.final, priceSuffix)}</span>
                 </div>
               </button>
               <a
@@ -514,6 +547,7 @@ interface DealSummaryProps {
   selectedProgram: string
   currentChallenge: Challenge | undefined
   displayPrice: { original: number | null; final: number | null; hasDiscount: boolean }
+  isSubscription: boolean
   discountCode: string | null | undefined
   discountPercent: number | null | undefined
   codeCopied: boolean
@@ -528,6 +562,7 @@ function DealSummaryCard(props: DealSummaryProps) {
     selectedProgram,
     currentChallenge,
     displayPrice,
+    isSubscription,
     discountCode,
     discountPercent,
     codeCopied,
@@ -568,12 +603,15 @@ function DealSummaryCard(props: DealSummaryProps) {
 
       <div className="py-4 border-y border-gray-800 mb-4">
         <div className="flex justify-between items-baseline">
-          <span className="text-sm text-gray-400">Total</span>
+          <span className="text-sm text-gray-400">{isSubscription ? 'Billed monthly' : 'Total'}</span>
           <div className="text-right">
             {displayPrice.hasDiscount && displayPrice.original !== null && (
               <p className="text-sm text-gray-500 line-through">{formatPrice(displayPrice.original)}</p>
             )}
-            <p className="text-3xl font-bold text-white">{formatPrice(displayPrice.final)}</p>
+            <p className="text-3xl font-bold text-white">
+              {formatPrice(displayPrice.final)}
+              {isSubscription && <span className="text-base text-gray-500 font-normal"> /month</span>}
+            </p>
             {displayPrice.hasDiscount && discountPercent && (
               <p className="text-xs text-emerald-400 mt-0.5">You save {discountPercent}%</p>
             )}
