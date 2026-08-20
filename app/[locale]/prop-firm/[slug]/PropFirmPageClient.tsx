@@ -119,6 +119,15 @@ interface PropFirm {
   company_name: string
   is_featured: boolean
 
+  // --- Platform availability flags ---------------------------------------
+  has_mt4?: boolean | null
+  has_mt5?: boolean | null
+  has_ctrader?: boolean | null
+  has_dxtrade?: boolean | null
+  has_tradelocker?: boolean | null
+  has_match_trader?: boolean | null
+  has_tradingview?: boolean | null
+
   // --- Added: cost & policy detail columns -------------------------------
   commissions?: string | null
   reset_fee?: string | null
@@ -198,25 +207,17 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
 
   const payoutSpeed = formatPayoutSpeed(firm)
 
-  // Permission pills shown at firm level (per-challenge rules live in the selector)
-  const permissions: { label: string; allowed: boolean }[] = [
-    { label: 'Scalping', allowed: firm.allows_scalping },
-    { label: 'News trading', allowed: firm.allows_news_trading },
-    { label: 'EAs / bots', allowed: firm.allows_ea },
-    { label: 'Weekend holding', allowed: firm.allows_weekend_holding },
-  ]
-
-  // Dense label/value specs — anything that fits on one line goes here.
+  // Dense label/value specs — only genuinely firm-wide facts belong here.
+  // Anything that varies by program (permissions, drawdown, min trading days,
+  // payout frequency) is shown per-challenge in ChallengeSelector instead.
   const specs: { label: string; value: string }[] = []
   if (firm.leverage_forex) specs.push({ label: 'Leverage (forex)', value: firm.leverage_forex })
-  if (firm.payout_frequency) specs.push({ label: 'Payout frequency', value: firm.payout_frequency })
   if (payoutSpeed) specs.push({ label: 'Payout speed', value: payoutSpeed })
   if (firm.min_payout) specs.push({ label: 'Minimum payout', value: `$${firm.min_payout}` })
   if (firm.scaling_max) specs.push({ label: 'Scaling plan', value: `Up to ${firm.scaling_max}` })
   if (firm.max_allocation) specs.push({ label: 'Max allocation', value: firm.max_allocation })
   if (firm.drawdown_type) specs.push({ label: 'Drawdown type', value: firm.drawdown_type })
   if (firm.consistency_rule) specs.push({ label: 'Consistency rule', value: firm.consistency_rule })
-  if (firm.min_trading_days) specs.push({ label: 'Min trading days', value: String(firm.min_trading_days) })
   if (firm.time_limit) specs.push({ label: 'Time limit', value: firm.time_limit })
   if (payoutMethods.length > 0) specs.push({ label: 'Payout methods', value: payoutMethods.join(', ') })
 
@@ -478,25 +479,9 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
               <section id="rules" className="scroll-mt-24">
                 <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Rules & costs</h2>
                 <p className="text-gray-400 mb-6">
-                  Firm-wide defaults. Individual programs may differ — check the selector above.
+                  These apply across the firm. Drawdown, leverage, permissions and payout terms
+                  vary by program — pick one in the configurator above to see its exact rules.
                 </p>
-
-                {/* Permissions */}
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {permissions.map((p) => (
-                    <span
-                      key={p.label}
-                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm border ${
-                        p.allowed
-                          ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-300'
-                          : 'bg-gray-800/60 border-gray-700 text-gray-500'
-                      }`}
-                    >
-                      {p.allowed ? <Check className="w-3.5 h-3.5" /> : <X className="w-3.5 h-3.5" />}
-                      {p.label}
-                    </span>
-                  ))}
-                </div>
 
                 {/* Dense spec grid — two independent columns, each with its own
                     dividers so a wrapping value never misaligns the other side. */}
@@ -876,7 +861,7 @@ function generateFAQs(firm: PropFirm): { question: string; answer: string }[] {
   if (permissions.length > 0) {
     faqs.push({
       question: `Does ${firm.name} allow EAs and scalping?`,
-      answer: `${firm.name} allows ${permissions.join(', ')} on most of their programs. Specific rules may vary by challenge type — always check the exact program details before purchasing.`,
+      answer: `${firm.name} allows ${permissions.join(', ')} on some of their programs, but not all — instant-funding and high-leverage accounts are usually the most restricted. Check the exact program in the configurator above before purchasing, as trading during a restricted window can void profits.`,
     })
   }
 
