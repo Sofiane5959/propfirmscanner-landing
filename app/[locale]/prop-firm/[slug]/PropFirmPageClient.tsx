@@ -181,9 +181,7 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
     }
   }
 
-  const logoUrl =
-    firm.logo_url ||
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(firm.name)}&background=10b981&color=fff&size=200`
+  const logoUrl = firm.logo_url || null
 
   const foundedYear = firm.founded_year || firm.year_founded || null
   const foundedText = firm.founded || (foundedYear ? String(foundedYear) : null)
@@ -286,7 +284,13 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
           <div className="flex flex-col lg:flex-row gap-6">
             {/* Logo */}
             <div className="relative w-20 h-20 bg-gray-800 rounded-2xl overflow-hidden flex-shrink-0 border border-gray-700 self-start">
-              <Image src={logoUrl} alt={firm.name} fill className="object-contain p-3" />
+              {logoUrl ? (
+                <Image src={logoUrl} alt={firm.name} fill className="object-contain p-3" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-emerald-500/10 text-emerald-400 text-3xl font-bold">
+                  {firm.name.charAt(0).toUpperCase()}
+                </div>
+              )}
             </div>
 
             {/* Info */}

@@ -32,6 +32,13 @@ const nextConfig = {
         protocol: 'https',
         hostname: '*.googleusercontent.com',
       },
+      // Fallback avatar service used when a firm has no logo_url.
+      // Missing from remotePatterns, next/image threw at render time —
+      // which passes the build and only fails in the browser.
+      {
+        protocol: 'https',
+        hostname: 'ui-avatars.com',
+      },
     ],
   },
   // Optimizations
