@@ -120,6 +120,7 @@ interface PropFirm {
   is_featured: boolean
 
   // --- Platform availability flags ---------------------------------------
+  platforms_list?: string[] | string | null
   has_mt4?: boolean | null
   has_mt5?: boolean | null
   has_ctrader?: boolean | null
@@ -196,7 +197,20 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
     ['has_tradingview', 'TradingView'],
   ]
   const fromFlags = platformFlags.filter(([k]) => firm[k] === true).map(([, label]) => label)
-  const platforms = fromFlags.length > 0 ? fromFlags : toArray(firm.platforms)
+  // platforms_list is the properly-typed array column and wins when populated —
+  // it covers futures platforms (NinjaTrader, Rithmic…) that have no boolean flag.
+  const platforms =
+    toArray(firm.platforms_list).length > 0
+      ? toArray(firm.platforms_list)
+      : fromFlags.length > 0
+      ? fromFlags
+      : toArray(firm.platforms)
+
+  // Subscription firms (futures evaluations) bill monthly rather than once.
+  const isSubscription = challenges.some(
+    (c) => (c as { billing_period?: string }).billing_period === 'monthly'
+  )
+  const priceSuffix = isSubscription ? '/mo' : ''
   const assets = toArray(firm.assets)
   const payoutMethods = toArray(firm.payout_methods)
 
@@ -363,7 +377,7 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <QuickStat
                   label="Starting From"
-                  value={firm.min_price ? `$${firm.min_price}` : '—'}
+                  value={firm.min_price ? `$${firm.min_price}${priceSuffix}` : '—'}
                   icon={<DollarSign className="w-4 h-4" />}
                 />
                 <QuickStat
@@ -535,7 +549,7 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
               <p className="text-gray-400 mb-6">Everything traders ask about {firm.name}.</p>
 
               <div className="space-y-3">
-                {generateFAQs(firm).map((faq, i) => (
+                {generateFAQs(firm, isSubscription).map((faq, i) => (
                   <FAQItem key={i} question={faq.question} answer={faq.answer} />
                 ))}
               </div>
@@ -556,6 +570,7 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
                   <p className="text-white mb-3">
                     <span className="text-gray-500 text-sm">From </span>
                     <span className="text-2xl font-bold">${firm.min_price}</span>
+                    {isSubscription && <span className="text-gray-500 text-sm"> /month</span>}
                   </p>
                 )}
                 {hasVerifiedDeal && (
@@ -809,7 +824,10 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
 // FAQ GENERATOR (uses firm data to build contextual questions)
 // =============================================================================
 
-function generateFAQs(firm: PropFirm): { question: string; answer: string }[] {
+function generateFAQs(
+  firm: PropFirm,
+  isSubscription = false
+): { question: string; answer: string }[] {
   const faqs: { question: string; answer: string }[] = []
 
   // Q1: Legit / regulated
@@ -831,10 +849,16 @@ function generateFAQs(firm: PropFirm): { question: string; answer: string }[] {
   if (firm.min_price) {
     faqs.push({
       question: `How much does ${firm.name} cost?`,
-      answer: `${firm.name} challenges start at $${firm.min_price}${
-        firm.max_price ? ` and go up to $${firm.max_price} for the largest account sizes` : ''
-      }. Use our challenge selector above to see the exact price for each combination of program and account size.${
-        firm.commissions ? ` Trading commissions apply on top of the challenge fee: ${firm.commissions}` : ''
+      answer: `${firm.name} ${isSubscription ? 'evaluations are billed monthly, starting at' : 'challenges start at'} $${firm.min_price}${
+        isSubscription ? ' per month' : ''
+      }${
+        firm.max_price ? ` and going up to $${firm.max_price}${isSubscription ? ' per month' : ''} for the largest account sizes` : ''
+      }.${
+        isSubscription
+          ? ' The subscription renews every 30 days and keeps running until you pass the evaluation or cancel, so budget for more than one cycle.'
+          : ''
+      } Use our challenge selector above to see the exact price for each combination of program and account size.${
+        firm.commissions ? ` Trading costs apply on top of the evaluation fee: ${firm.commissions}` : ''
       }`,
     })
   }
