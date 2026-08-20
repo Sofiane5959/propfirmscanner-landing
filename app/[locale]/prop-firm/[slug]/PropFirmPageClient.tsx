@@ -174,7 +174,20 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
   const pros = Array.isArray(firm.pros) ? firm.pros : []
   const cons = Array.isArray(firm.cons) ? firm.cons : []
 
-  const platforms = toArray(firm.platforms)
+  // Platforms come from the boolean flags first — the `platforms` TEXT column
+  // is typed as text but consumed as an array elsewhere in the app, so filling
+  // it breaks /compare. The flags are safe and work for every firm.
+  const platformFlags: [keyof PropFirm, string][] = [
+    ['has_mt4', 'MT4'],
+    ['has_mt5', 'MT5'],
+    ['has_ctrader', 'cTrader'],
+    ['has_dxtrade', 'DXTrade'],
+    ['has_tradelocker', 'TradeLocker'],
+    ['has_match_trader', 'Match-Trader'],
+    ['has_tradingview', 'TradingView'],
+  ]
+  const fromFlags = platformFlags.filter(([k]) => firm[k] === true).map(([, label]) => label)
+  const platforms = fromFlags.length > 0 ? fromFlags : toArray(firm.platforms)
   const assets = toArray(firm.assets)
   const payoutMethods = toArray(firm.payout_methods)
 
@@ -207,6 +220,11 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
   if (firm.time_limit) specs.push({ label: 'Time limit', value: firm.time_limit })
   if (payoutMethods.length > 0) specs.push({ label: 'Payout methods', value: payoutMethods.join(', ') })
 
+  // Split into two independent columns so each owns its own dividers. A single
+  // grid with a border per cell goes ragged as soon as one value wraps.
+  const specsLeft = specs.slice(0, Math.ceil(specs.length / 2))
+  const specsRight = specs.slice(Math.ceil(specs.length / 2))
+
   // Long-form policy cards — only these get a full card.
   const policies: { icon: React.ReactNode; title: string; body: string }[] = []
   if (firm.commissions) {
@@ -237,11 +255,11 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
       {/* ================================================================ */}
       {/* 1. HERO — Logo, name, rating, trust bar, quick stats            */}
       {/* ================================================================ */}
-      <section className="pt-8 pb-10 px-4 border-b border-gray-800">
+      <section className="pt-6 pb-7 px-4 border-b border-gray-800">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col lg:flex-row gap-6">
             {/* Logo */}
-            <div className="relative w-24 h-24 bg-gray-800 rounded-2xl overflow-hidden flex-shrink-0 border border-gray-700 self-start">
+            <div className="relative w-20 h-20 bg-gray-800 rounded-2xl overflow-hidden flex-shrink-0 border border-gray-700 self-start">
               <Image src={logoUrl} alt={firm.name} fill className="object-contain p-3" />
             </div>
 
@@ -480,19 +498,21 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
                   ))}
                 </div>
 
-                {/* Dense spec grid — one line per fact */}
+                {/* Dense spec grid — two independent columns, each with its own
+                    dividers so a wrapping value never misaligns the other side. */}
                 {specs.length > 0 && (
-                  <dl className="grid sm:grid-cols-2 gap-x-8 gap-y-0 border border-gray-800 rounded-xl px-5 py-1 bg-gray-900/40 mb-6">
-                    {specs.map((s) => (
-                      <div
-                        key={s.label}
-                        className="flex items-baseline justify-between gap-4 py-2.5 border-b border-gray-800/70 last:border-0"
-                      >
-                        <dt className="text-gray-500 text-sm flex-shrink-0">{s.label}</dt>
-                        <dd className="text-white text-sm text-right">{s.value}</dd>
-                      </div>
+                  <div className="grid sm:grid-cols-2 gap-x-8 border border-gray-800 rounded-xl px-5 py-1 bg-gray-900/40 mb-6">
+                    {[specsLeft, specsRight].map((column, ci) => (
+                      <dl key={ci} className="divide-y divide-gray-800/70">
+                        {column.map((s) => (
+                          <div key={s.label} className="flex items-baseline justify-between gap-4 py-3">
+                            <dt className="text-gray-500 text-sm flex-shrink-0">{s.label}</dt>
+                            <dd className="text-white text-sm text-right">{s.value}</dd>
+                          </div>
+                        ))}
+                      </dl>
                     ))}
-                  </dl>
+                  </div>
                 )}
 
                 {/* Assets — pills read better than a spec row */}
