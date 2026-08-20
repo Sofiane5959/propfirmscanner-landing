@@ -8,6 +8,19 @@ interface PropFirmCardProps {
   viewMode: 'grid' | 'list'
 }
 
+// Several DB columns (platforms, challenge_types) are typed TEXT but consumed
+// here as arrays. Calling .map() on a string throws and takes the whole page
+// down, so every list field goes through this first.
+function toArray(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value.filter((v): v is string => typeof v === 'string' && v.trim().length > 0)
+  }
+  if (typeof value === 'string' && value.trim()) {
+    return value.split(/[,;]/).map((s) => s.trim()).filter(Boolean)
+  }
+  return []
+}
+
 // Platform logos as SVG components with better visuals
 const PlatformLogo = ({ platform, size = 'sm' }: { platform: string; size?: 'sm' | 'md' }) => {
   const sizeClass = size === 'sm' ? 'w-7 h-7 text-[9px]' : 'w-8 h-8 text-[10px]'
@@ -149,18 +162,25 @@ export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
 
   // Render platform badges with icons
   const renderPlatforms = () => {
-    if (!firm.platforms || firm.platforms.length === 0) {
+    // platforms_list is the properly-typed array column; fall back to the
+    // legacy TEXT column when a firm hasn't been migrated yet.
+    const list =
+      toArray((firm as { platforms_list?: unknown }).platforms_list).length > 0
+        ? toArray((firm as { platforms_list?: unknown }).platforms_list)
+        : toArray(firm.platforms)
+
+    if (list.length === 0) {
       return <span className="text-gray-500 text-xs">N/A</span>
     }
 
     return (
       <div className="flex flex-wrap gap-1.5">
-        {firm.platforms.slice(0, 4).map((platform) => (
+        {list.slice(0, 4).map((platform) => (
           <PlatformLogo key={platform} platform={platform} size="sm" />
         ))}
-        {firm.platforms.length > 4 && (
+        {list.length > 4 && (
           <div className="w-7 h-7 rounded-lg bg-gray-700 flex items-center justify-center text-[10px] text-gray-400 font-medium">
-            +{firm.platforms.length - 4}
+            +{list.length - 4}
           </div>
         )}
       </div>
@@ -169,13 +189,19 @@ export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
 
   // Render markets (formerly instruments)
   const renderMarkets = () => {
-    if (!firm.instruments || firm.instruments.length === 0) {
+    // Prefer instruments, fall back to assets — futures firms populate assets.
+    const list =
+      toArray(firm.instruments).length > 0
+        ? toArray(firm.instruments)
+        : toArray((firm as { assets?: unknown }).assets)
+
+    if (list.length === 0) {
       return <span className="text-gray-500 text-xs">N/A</span>
     }
 
     return (
       <div className="flex flex-wrap gap-1.5">
-        {firm.instruments.slice(0, 5).map((market) => {
+        {list.slice(0, 5).map((market) => {
           const colorClass = marketColors[market] || 'bg-gray-500/20 text-gray-400 border-gray-500/30'
           return (
             <span 
@@ -186,8 +212,8 @@ export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
             </span>
           )
         })}
-        {firm.instruments.length > 5 && (
-          <span className="px-2 py-0.5 text-gray-500 text-xs">+{firm.instruments.length - 5}</span>
+        {list.length > 5 && (
+          <span className="px-2 py-0.5 text-gray-500 text-xs">+{list.length - 5}</span>
         )}
       </div>
     )
@@ -277,7 +303,7 @@ export function PropFirmCard({ firm, viewMode }: PropFirmCardProps) {
 
         {/* Challenge Types */}
         <div className="flex flex-wrap gap-2 mt-3">
-          {firm.challenge_types?.slice(0, 3).map((type) => (
+          {toArray(firm.challenge_types).slice(0, 3).map((type) => (
             <span key={type} className="px-2 py-1 bg-gray-700 text-gray-300 text-xs rounded-full">
               {type}
             </span>
