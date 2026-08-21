@@ -225,6 +225,10 @@ export default function ChallengeSelector({
     if (!currentChallenge) return `/api/go/${firmSlug}?source=challenge-selector`
     const params = new URLSearchParams({
       source: 'challenge-selector',
+      // The exact challenge slug lets /api/go resolve a program-specific
+      // affiliate link, so the visitor lands on the plan they configured
+      // rather than the firm's generic page.
+      challenge: currentChallenge.slug ?? '',
       program: extractProgram(currentChallenge.name).toLowerCase().replace(/\s+/g, '-'),
       size: currentChallenge.account_size ?? '',
     })

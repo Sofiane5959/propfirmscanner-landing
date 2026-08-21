@@ -7,7 +7,9 @@
 //   2. Browser hits /api/go/{slug}?source=compare-card&locale=en
 //   3. This route:
 //      - Looks up the firm in Supabase
-//      - Picks affiliate_url if present, else website_url
+//      - If ?challenge={slug} is present, prefers that challenge's own
+//        affiliate_url so the visitor lands on the exact plan they picked
+//      - Otherwise picks the firm's affiliate_url, else website_url
 //      - Logs the click in affiliate_clicks (using service role key, bypasses RLS)
 //      - Redirects (302) to the real destination
 //
@@ -70,6 +72,8 @@ export async function GET(
   const utm_source = url.searchParams.get('utm_source')
   const utm_medium = url.searchParams.get('utm_medium')
   const utm_campaign = url.searchParams.get('utm_campaign')
+  // Set by ChallengeSelector — the slug of the specific plan configured.
+  const challengeSlug = url.searchParams.get('challenge')
   
   // ----------------------------------------------------------
   // 1. Look up the firm
@@ -93,17 +97,44 @@ export async function GET(
     return NextResponse.redirect(new URL('/compare', request.url), 302)
   }
   
-  // Pick the destination: affiliate first, fallback to website
-  const affiliate = firm.affiliate_url && firm.affiliate_url !== '#' ? firm.affiliate_url : null
+  // ----------------------------------------------------------
+  // 1b. Program-specific affiliate link
+  // ----------------------------------------------------------
+  // Some firms hand out one affiliate URL per program (Earn2Trade has a
+  // separate link for Trader Career Path and Gauntlet Mini). Sending every
+  // visitor to the firm-level link means someone who configured a Gauntlet
+  // Mini 150K lands on the Trader Career Path page and has to navigate again.
+  // The lookup is scoped to this firm so a crafted ?challenge= value can
+  // never redirect to another firm's link.
+  let challengeAffiliate: string | null = null
+  if (challengeSlug && challengeSlug.length <= 200) {
+    const { data: challenge } = await supabase
+      .from('prop_firm_challenges')
+      .select('affiliate_url')
+      .eq('firm_slug', firm.slug)
+      .eq('slug', challengeSlug)
+      .maybeSingle()
+
+    if (challenge?.affiliate_url && challenge.affiliate_url !== '#') {
+      challengeAffiliate = challenge.affiliate_url
+    }
+  }
+
+  // Pick the destination: challenge link, then firm affiliate, then website
+  const firmAffiliate = firm.affiliate_url && firm.affiliate_url !== '#' ? firm.affiliate_url : null
   const website = firm.website_url && firm.website_url !== '#' ? firm.website_url : null
-  const destination = affiliate || website
+  const destination = challengeAffiliate || firmAffiliate || website
   
   if (!destination) {
     // Nothing to redirect to — back to the firm's page on our site
     return NextResponse.redirect(new URL(`/${locale}/prop-firm/${slug}`, request.url), 302)
   }
   
-  const destinationType = affiliate ? 'affiliate' : 'website'
+  const destinationType = challengeAffiliate
+    ? 'affiliate_challenge'
+    : firmAffiliate
+    ? 'affiliate'
+    : 'website'
   
   // ----------------------------------------------------------
   // 2. Gather request metadata for the click log
