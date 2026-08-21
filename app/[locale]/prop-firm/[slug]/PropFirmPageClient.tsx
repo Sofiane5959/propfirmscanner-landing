@@ -656,34 +656,50 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
           {/* ---------------------------------------------------------- */}
           <aside className="hidden lg:block">
             <div className="sticky top-24 space-y-4">
-              {/* Deal / CTA */}
+              {/* Deal / CTA — when the configurator is present it already owns
+                  the price, the code and the primary button, so this shrinks to
+                  a persistent shortcut for anyone who has scrolled past it. */}
               <div className="bg-gray-900/70 border border-emerald-500/25 rounded-xl p-4">
-                <p className="text-xs uppercase tracking-wider font-semibold text-gray-500 mb-2">
-                  Get started
-                </p>
-                {firm.min_price > 0 && (
-                  <p className="text-white mb-3">
-                    <span className="text-gray-500 text-sm">From </span>
-                    <span className="text-2xl font-bold">${firm.min_price}</span>
-                    {isSubscription && <span className="text-gray-500 text-sm"> /month</span>}
-                  </p>
-                )}
-                {hasVerifiedDeal && (
-                  <div className="mb-3 px-3 py-2 bg-emerald-500/10 border border-emerald-500/25 rounded-lg">
-                    <p className="text-emerald-300 text-sm font-semibold">
-                      {firm.discount_percent}% off with code {firm.discount_code}
+                {challenges.length === 0 && (
+                  <>
+                    <p className="text-xs uppercase tracking-wider font-semibold text-gray-500 mb-2">
+                      Get started
                     </p>
-                  </div>
+                    {firm.min_price > 0 && (
+                      <p className="text-white mb-3">
+                        <span className="text-gray-500 text-sm">From </span>
+                        <span className="text-2xl font-bold">${firm.min_price}</span>
+                        {isSubscription && <span className="text-gray-500 text-sm"> /month</span>}
+                      </p>
+                    )}
+                    {hasVerifiedDeal && (
+                      <div className="mb-3 px-3 py-2 bg-emerald-500/10 border border-emerald-500/25 rounded-lg">
+                        <p className="text-emerald-300 text-sm font-semibold">
+                          {firm.discount_percent}% off with code {firm.discount_code}
+                        </p>
+                      </div>
+                    )}
+                  </>
                 )}
-                <a
-                  href={dealUrl}
-                  target="_blank"
-                  rel="noopener noreferrer sponsored"
-                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-semibold rounded-lg transition-colors"
-                >
-                  Visit {firm.name}
-                  <ExternalLink className="w-4 h-4" />
-                </a>
+
+                {challenges.length > 0 ? (
+                  <a
+                    href="#challenges"
+                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-semibold rounded-lg transition-colors"
+                  >
+                    Configure your plan
+                  </a>
+                ) : (
+                  <a
+                    href={dealUrl}
+                    target="_blank"
+                    rel="noopener noreferrer sponsored"
+                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-semibold rounded-lg transition-colors"
+                  >
+                    Visit {firm.name}
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                )}
                 <p className="text-gray-600 text-[11px] mt-2 text-center">
                   We may earn a commission on this link.
                 </p>
@@ -717,8 +733,10 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
                 )}
               </SidebarCard>
 
-              {/* Platforms */}
-              {platforms.length > 0 && (
+              {/* Platforms — hidden when the configurator already asks the
+                  visitor to pick a data feed, otherwise the two read as
+                  contradictory lists of the same thing. */}
+              {platforms.length > 0 && !firm.checkout_options?.options?.length && (
                 <SidebarCard title="Platforms">
                   <div className="flex flex-wrap gap-1.5">
                     {platforms.map((p) => (
