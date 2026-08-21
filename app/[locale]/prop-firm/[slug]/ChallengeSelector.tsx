@@ -37,10 +37,22 @@ export interface Challenge {
   affiliate_url: string | null
 }
 
+// Some firms make you pick something at their own checkout before you can pay
+// (Earn2Trade makes you choose a market data feed). Surfacing that choice here
+// means the visitor doesn't hit an unexplained extra step — and an unexplained
+// extra cost — after leaving the site.
+export interface CheckoutOptions {
+  label?: string
+  param?: string
+  help?: string
+  options?: { value: string; name: string; sub?: string }[]
+}
+
 interface Props {
   firmSlug: string
   firmName: string
   challenges: Challenge[]
+  checkoutOptions?: CheckoutOptions | null
   discountCode?: string | null
   discountPercent?: number | null
 }
@@ -121,6 +133,7 @@ export default function ChallengeSelector({
   firmSlug,
   firmName,
   challenges,
+  checkoutOptions,
   discountCode,
   discountPercent,
 }: Props) {
@@ -140,6 +153,10 @@ export default function ChallengeSelector({
   }, [challenges])
 
   // Determine which program is the cheapest overall (for the "Cheapest" badge)
+  const checkoutChoices = checkoutOptions?.options ?? []
+  const hasCheckoutStep = checkoutChoices.length > 0
+  const [selectedCheckoutOption, setSelectedCheckoutOption] = useState<string>('')
+
   const isSubscription = useMemo(
     () => challenges.some((c) => c.billing_period === 'monthly'),
     [challenges]
@@ -232,8 +249,14 @@ export default function ChallengeSelector({
       program: extractProgram(currentChallenge.name).toLowerCase().replace(/\s+/g, '-'),
       size: currentChallenge.account_size ?? '',
     })
+    // Carry the firm's own checkout choice through the redirect so the visitor
+    // lands on a pre-filled checkout instead of an extra unexplained step.
+    if (selectedCheckoutOption && checkoutOptions?.param) {
+      params.set('opt_key', checkoutOptions.param)
+      params.set('opt_value', selectedCheckoutOption)
+    }
     return `/api/go/${firmSlug}?${params.toString()}`
-  }, [currentChallenge, firmSlug])
+  }, [currentChallenge, firmSlug, selectedCheckoutOption, checkoutOptions])
 
   // ----- Empty state -----
 
@@ -366,12 +389,56 @@ export default function ChallengeSelector({
                 </div>
               </div>
 
+              {/* Firm's own checkout choice — shown before the CTA so the
+                  visitor understands the extra step and its cost. */}
+              {hasCheckoutStep && (
+                <div className="bg-gray-900/70 rounded-2xl border border-gray-800 p-5">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-6 h-6 rounded-full bg-emerald-500 text-white text-xs font-bold flex items-center justify-center">
+                      3
+                    </div>
+                    <h3 className="text-sm font-semibold text-white uppercase tracking-wider">
+                      {checkoutOptions?.label || 'Choose an option'}
+                    </h3>
+                  </div>
+
+                  {checkoutOptions?.help && (
+                    <p className="text-gray-400 text-xs leading-relaxed mb-4">{checkoutOptions.help}</p>
+                  )}
+
+                  <div className="grid sm:grid-cols-3 gap-2">
+                    {checkoutChoices.map((opt) => {
+                      const isActive = opt.value === selectedCheckoutOption
+                      return (
+                        <button
+                          key={opt.value}
+                          type="button"
+                          onClick={() =>
+                            setSelectedCheckoutOption(isActive ? '' : opt.value)
+                          }
+                          className={`p-3 rounded-lg border text-left transition-all ${
+                            isActive
+                              ? 'bg-emerald-500/10 border-emerald-500 shadow-md shadow-emerald-500/10'
+                              : 'bg-gray-800/40 border-gray-700 hover:border-gray-600 hover:bg-gray-800/60'
+                          }`}
+                        >
+                          <p className={`font-semibold text-sm ${isActive ? 'text-emerald-400' : 'text-white'}`}>
+                            {opt.name}
+                          </p>
+                          {opt.sub && <p className="text-xs text-gray-500 mt-0.5">{opt.sub}</p>}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+
               {/* Challenge specs */}
               {currentChallenge && (
                 <div className="bg-gray-900/70 rounded-2xl border border-gray-800 p-5">
                   <div className="flex items-center gap-2 mb-4">
                     <div className="w-6 h-6 rounded-full bg-gray-700 text-white text-xs font-bold flex items-center justify-center">
-                      3
+                      {hasCheckoutStep ? 4 : 3}
                     </div>
                     <h3 className="text-sm font-semibold text-white uppercase tracking-wider">Your Deal Details</h3>
                   </div>

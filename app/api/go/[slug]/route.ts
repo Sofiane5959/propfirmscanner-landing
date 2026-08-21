@@ -74,6 +74,14 @@ export async function GET(
   const utm_campaign = url.searchParams.get('utm_campaign')
   // Set by ChallengeSelector — the slug of the specific plan configured.
   const challengeSlug = url.searchParams.get('challenge')
+  // Firm-specific checkout choice (e.g. Earn2Trade's market data feed).
+  // Key and value both come from the DB-driven selector, but we still
+  // sanitise them: they get appended to an outbound URL.
+  const SAFE = /^[a-z0-9_-]{1,40}$/i
+  const rawOptKey = url.searchParams.get('opt_key')
+  const rawOptValue = url.searchParams.get('opt_value')
+  const optKey = rawOptKey && SAFE.test(rawOptKey) ? rawOptKey : null
+  const optValue = rawOptValue && SAFE.test(rawOptValue) ? rawOptValue : null
   
   // ----------------------------------------------------------
   // 1. Look up the firm
@@ -188,9 +196,23 @@ export async function GET(
   // ----------------------------------------------------------
   // 4. Redirect
   // ----------------------------------------------------------
+  // Append the checkout choice without disturbing the affiliate params
+  // already on the destination (a_pid / a_bid must survive intact).
+  let finalDestination = destination
+  if (optKey && optValue) {
+    try {
+      const dest = new URL(destination)
+      dest.searchParams.set(optKey, optValue)
+      finalDestination = dest.toString()
+    } catch {
+      // Malformed destination in the DB — redirect to it unchanged rather
+      // than failing the click.
+    }
+  }
+
   // Status 302 (Found) — temporary redirect, prevents browsers from caching
   // the redirect (which would skip our tracker on subsequent clicks).
-  return NextResponse.redirect(destination, 302)
+  return NextResponse.redirect(finalDestination, 302)
 }
 
 // Disable static caching for this route — must run on every request

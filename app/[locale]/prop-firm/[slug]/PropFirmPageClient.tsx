@@ -121,6 +121,12 @@ interface PropFirm {
 
   // --- Platform availability flags ---------------------------------------
   platforms_list?: string[] | string | null
+  checkout_options?: {
+    label?: string
+    param?: string
+    help?: string
+    options?: { value: string; name: string; sub?: string }[]
+  } | null
   progression_tiers?: {
     title?: string
     intro?: string
@@ -459,6 +465,7 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
                   firmSlug={firm.slug}
                   firmName={firm.name}
                   challenges={challenges}
+                  checkoutOptions={firm.checkout_options}
                   discountCode={firm.discount_code}
                   discountPercent={firm.discount_percent}
                 />
