@@ -267,8 +267,8 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
 
   // Table of contents — only lists sections that actually render.
   const toc: { id: string; label: string }[] = []
-  if (challenges.length > 0) toc.push({ id: 'challenges', label: 'Challenges' })
   if (firm.description) toc.push({ id: 'about', label: `About ${firm.name}` })
+  if (challenges.length > 0) toc.push({ id: 'challenges', label: 'Choose your plan' })
   if (pros.length > 0 || cons.length > 0) toc.push({ id: 'pros-cons', label: 'Strengths & limits' })
   if (hasRulesSection) toc.push({ id: 'rules', label: 'Rules & costs' })
   if (hasTiers) toc.push({ id: 'progression', label: 'Scaling plan' })
@@ -434,22 +434,10 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
       </section>
 
       {/* ================================================================ */}
-      {/* 2. CHALLENGE SELECTOR — moved up, full width                    */}
+      {/* 2. TWO-COLUMN BODY — starts immediately so the offer card and    */}
+      {/*    the buy button are on screen from the first scroll position.  */}
       {/* ================================================================ */}
-      <div id="challenges" className="scroll-mt-24">
-        <ChallengeSelector
-          firmSlug={firm.slug}
-          firmName={firm.name}
-          challenges={challenges}
-          discountCode={firm.discount_code}
-          discountPercent={firm.discount_percent}
-        />
-      </div>
-
-      {/* ================================================================ */}
-      {/* 3. TWO-COLUMN BODY — content + sticky sidebar                   */}
-      {/* ================================================================ */}
-      <div className="max-w-6xl mx-auto px-4 py-12">
+      <div className="max-w-6xl mx-auto px-4 py-10">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_300px]">
           {/* ---------------------------------------------------------- */}
           {/* MAIN COLUMN                                                */}
@@ -461,6 +449,20 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
                 <h2 className="text-2xl font-bold text-white mb-4">About {firm.name}</h2>
                 <p className="text-gray-300 leading-relaxed">{firm.description}</p>
               </section>
+            )}
+
+            {/* --- Configurator — right after the description, so the visitor
+                    knows what the firm is before being asked to choose. --- */}
+            {challenges.length > 0 && (
+              <div id="challenges" className="scroll-mt-24 -mx-4 sm:mx-0">
+                <ChallengeSelector
+                  firmSlug={firm.slug}
+                  firmName={firm.name}
+                  challenges={challenges}
+                  discountCode={firm.discount_code}
+                  discountPercent={firm.discount_percent}
+                />
+              </div>
             )}
 
             {/* --- Strengths & limitations ------------------------------ */}
