@@ -156,6 +156,10 @@ export default function ChallengeSelector({
   const checkoutChoices = checkoutOptions?.options ?? []
   const hasCheckoutStep = checkoutChoices.length > 0
   const [selectedCheckoutOption, setSelectedCheckoutOption] = useState<string>('')
+  // The deep link lands on the firm's payment page, which needs this value.
+  // Without it the visitor gets bounced back to a configuration step, which
+  // is exactly the friction the deep link exists to remove.
+  const checkoutReady = !hasCheckoutStep || Boolean(selectedCheckoutOption)
 
   const isSubscription = useMemo(
     () => challenges.some((c) => c.billing_period === 'monthly'),
@@ -527,6 +531,8 @@ export default function ChallengeSelector({
                 currentChallenge={currentChallenge}
                 displayPrice={displayPrice}
                 isSubscription={isSubscription}
+                checkoutReady={checkoutReady}
+                checkoutLabel={checkoutOptions?.label}
                 discountCode={discountCode}
                 discountPercent={discountPercent}
                 codeCopied={codeCopied}
@@ -560,6 +566,8 @@ export default function ChallengeSelector({
                   currentChallenge={currentChallenge}
                   displayPrice={displayPrice}
                 isSubscription={isSubscription}
+                checkoutReady={checkoutReady}
+                checkoutLabel={checkoutOptions?.label}
                   discountCode={discountCode}
                   discountPercent={discountPercent}
                   codeCopied={codeCopied}
@@ -589,15 +597,24 @@ export default function ChallengeSelector({
                   <span className="text-xl font-bold text-white">{formatPrice(displayPrice.final, priceSuffix)}</span>
                 </div>
               </button>
-              <a
-                href={ctaLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 px-5 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-lg transition-colors"
-              >
-                Get Deal
-                <ExternalLink className="w-4 h-4" />
-              </a>
+              {checkoutReady ? (
+                <a
+                  href={ctaLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 px-5 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-lg transition-colors"
+                >
+                  Get Deal
+                  <ExternalLink className="w-4 h-4" />
+                </a>
+              ) : (
+                <a
+                  href="#challenges"
+                  className="flex items-center gap-1.5 px-5 py-3 bg-gray-700 text-gray-300 font-semibold rounded-lg"
+                >
+                  Pick a data feed
+                </a>
+              )}
             </div>
           </div>
 
@@ -619,6 +636,8 @@ interface DealSummaryProps {
   currentChallenge: Challenge | undefined
   displayPrice: { original: number | null; final: number | null; hasDiscount: boolean }
   isSubscription: boolean
+  checkoutReady: boolean
+  checkoutLabel?: string
   discountCode: string | null | undefined
   discountPercent: number | null | undefined
   codeCopied: boolean
@@ -634,6 +653,8 @@ function DealSummaryCard(props: DealSummaryProps) {
     currentChallenge,
     displayPrice,
     isSubscription,
+    checkoutReady,
+    checkoutLabel,
     discountCode,
     discountPercent,
     codeCopied,
@@ -717,15 +738,23 @@ function DealSummaryCard(props: DealSummaryProps) {
         </div>
       )}
 
-      <a
-        href={ctaLink}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex items-center justify-center gap-2 w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors"
-      >
-        Claim This Deal
-        <ExternalLink className="w-4 h-4" />
-      </a>
+      {checkoutReady ? (
+        <a
+          href={ctaLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center gap-2 w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors"
+        >
+          Claim This Deal
+          <ExternalLink className="w-4 h-4" />
+        </a>
+      ) : (
+        <div className="w-full py-4 bg-gray-800 border border-gray-700 rounded-xl text-center">
+          <p className="text-gray-400 text-sm font-medium">
+            {checkoutLabel || 'One more choice'} to continue
+          </p>
+        </div>
+      )}
 
       {!compact && (
         <p className="text-xs text-gray-500 text-center mt-3">
