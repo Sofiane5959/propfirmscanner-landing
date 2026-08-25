@@ -25,6 +25,112 @@ import {
   GraduationCap,
 } from 'lucide-react'
 import ChallengeSelector, { type Challenge } from './ChallengeSelector'
+import { buildAffiliateUrl, AFFILIATE_LINK_PROPS } from '@/lib/affiliate'
+
+// UI copy. Firm content is translated in the DB via prop_firms.translations;
+// these are the labels the component owns.
+const COPY = {
+  en: {
+    chooseProgram: 'Choose your program',
+    seeRules: 'See the key rules',
+    independent: (d: string) => `Independent analysis · Partner offer · Terms checked ${d}`,
+    onTrustpilot: 'on Trustpilot',
+    from: 'From',
+    perMonth: '/month',
+    codeAuto: (c: string) => `Code ${c} — applied automatically`,
+    runsUntil: (d: string) => `Offer runs until ${d}`,
+    configure: 'Configure my account',
+    visit: (f: string) => `Visit ${f}`,
+    billedMonthly: 'Billed monthly during evaluation only. We may earn a commission.',
+    commission: 'We may earn a commission on this link.',
+    founded: 'Founded',
+    country: 'Country',
+    regulated: 'Regulated',
+    officialSite: 'Official website',
+    choosingProgram: 'Choosing a program',
+    afterPass: 'After you pass',
+    noHidden: 'No hidden fees',
+    includedValue: 'Included value',
+    beforeBuy: 'Before you buy',
+    scaling: 'Scaling',
+    honest: 'Honest view',
+    whyChoose: (f: string) => `Why choose ${f}?`,
+    honestIntro: "From trader feedback and the firm's own specifications.",
+    strengths: 'Strengths',
+    limitations: 'Limitations',
+    seeAll: 'See all permissions and restrictions',
+    fullSpecs: 'Full specifications, costs and platforms',
+    platforms: 'Platforms',
+    assets: 'Tradable assets',
+    about: (f: string) => `About ${f}`,
+    regulation: 'Regulation',
+    verdict: 'PropFirmScanner verdict',
+    goodFit: 'A good fit if you want',
+    faq: 'Frequently asked questions',
+    faqIntro: (f: string) => `Everything traders ask about ${f}.`,
+    readyTitle: 'Ready to pick your program?',
+    readyIntro: 'Configure your account and check the rules one last time before payment.',
+    readyCta: (f: string) => `Configure my ${f} account`,
+    partnerLink: (c: string) => `Partner link · code ${c} applied automatically`,
+    similar: 'Similar firms',
+    riskTitle: 'Trading risk warning',
+    risk:
+      'Trading involves substantial risk. Only trade with capital you can afford to lose. Prop firm evaluations are simulated trading environments — read all rules carefully before purchasing.',
+    freeWith: 'Free with every subscription',
+    freeWithSub: 'No separate purchase, no upsell.',
+  },
+  fr: {
+    chooseProgram: 'Choisir mon programme',
+    seeRules: 'Voir les règles essentielles',
+    independent: (d: string) => `Analyse indépendante · Offre partenaire · Conditions vérifiées le ${d}`,
+    onTrustpilot: 'sur Trustpilot',
+    from: 'À partir de',
+    perMonth: '/mois',
+    codeAuto: (c: string) => `Code ${c} — appliqué automatiquement`,
+    runsUntil: (d: string) => `Offre valable jusqu’au ${d}`,
+    configure: 'Configurer mon compte',
+    visit: (f: string) => `Visiter ${f}`,
+    billedMonthly:
+      'Abonnement mensuel durant l’évaluation seulement. Nous percevons une commission.',
+    commission: 'Nous percevons une commission sur ce lien.',
+    founded: 'Création',
+    country: 'Pays',
+    regulated: 'Régulé',
+    officialSite: 'Site officiel',
+    choosingProgram: 'Choix du programme',
+    afterPass: 'Après la réussite',
+    noHidden: 'Aucun frais caché',
+    includedValue: 'Valeur incluse',
+    beforeBuy: 'À connaître avant d’acheter',
+    scaling: 'Progression',
+    honest: 'Avis honnête',
+    whyChoose: (f: string) => `Pourquoi choisir ${f} ?`,
+    honestIntro: 'D’après les retours de traders et les spécifications officielles.',
+    strengths: 'Points forts',
+    limitations: 'Limites',
+    seeAll: 'Voir toutes les autorisations et restrictions',
+    fullSpecs: 'Spécifications complètes, coûts et plateformes',
+    platforms: 'Plateformes',
+    assets: 'Actifs négociables',
+    about: (f: string) => `À propos de ${f}`,
+    regulation: 'Régulation',
+    verdict: 'Verdict PropFirmScanner',
+    goodFit: 'Bon choix si vous recherchez',
+    faq: 'Questions fréquentes',
+    faqIntro: (f: string) => `Tout ce que les traders demandent sur ${f}.`,
+    readyTitle: 'Prêt à choisir votre programme ?',
+    readyIntro:
+      'Configurez votre compte et vérifiez une dernière fois les règles avant le paiement.',
+    readyCta: (f: string) => `Configurer mon compte ${f}`,
+    partnerLink: (c: string) => `Lien partenaire · code ${c} appliqué automatiquement`,
+    similar: 'Firmes similaires',
+    riskTitle: 'Avertissement sur les risques',
+    risk:
+      'Le trading comporte un risque de perte substantiel. N’engagez que des fonds que vous pouvez vous permettre de perdre. Les évaluations de prop firms sont des environnements simulés — lisez attentivement toutes les règles avant d’acheter.',
+    freeWith: 'Inclus avec chaque abonnement',
+    freeWithSub: 'Aucun achat séparé, aucune option payante.',
+  },
+}
 
 // =============================================================================
 // HELPERS
@@ -121,6 +227,8 @@ interface PropFirm {
   discount_note?: string | null
   category_badge?: string | null
   included_items?: string[] | string | null
+  /** Per-locale overrides: { fr: { headline: "...", verdict: "...", ... } } */
+  translations?: Record<string, Record<string, unknown>> | null
   proof_stats?: { value?: string; label?: string }[] | null
   value_strip?: { title?: string; sub?: string }[] | null
   journey?: {
@@ -176,14 +284,36 @@ interface Props {
   firm: PropFirm
   similarFirms: SimilarFirm[]
   challenges?: Challenge[]
+  locale?: string
 }
 
 // =============================================================================
 // MAIN COMPONENT
 // =============================================================================
 
-export default function PropFirmPageClient({ firm, similarFirms, challenges = [] }: Props) {
+export default function PropFirmPageClient({
+  firm: rawFirm,
+  similarFirms,
+  challenges = [],
+  locale = 'en',
+}: Props) {
   const [isFavorite, setIsFavorite] = useState(false)
+  const t = locale === 'fr' ? COPY.fr : COPY.en
+
+  // Firm content is translated in the DB. Overlaying the locale bundle once
+  // here means every field below reads normally and nothing can silently fall
+  // back to English halfway down the page.
+  const firm: PropFirm = (() => {
+    const overrides = rawFirm.translations?.[locale]
+    if (!overrides) return rawFirm
+    const merged: Record<string, unknown> = { ...rawFirm }
+    for (const [key, value] of Object.entries(overrides)) {
+      if (value !== null && value !== undefined && value !== '') merged[key] = value
+    }
+    return merged as unknown as PropFirm
+  })()
+
+  const dateFmt = locale === 'fr' ? 'fr-FR' : 'en-GB'
 
   const handleShare = () => {
     if (navigator.share) {
@@ -225,7 +355,11 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
   const payoutSpeed = formatPayoutSpeed(firm)
 
   const hasVerifiedDeal = Boolean(firm.discount_code && firm.discount_percent)
-  const dealUrl = firm.affiliate_url || firm.website_url || '#'
+  // Never the partner's public URL: that drops the affiliate params, skips the
+  // automatic coupon and loses the click. Placement distinguishes each button.
+  const heroCtaUrl = buildAffiliateUrl(firm.slug, { placement: 'hero_offer_card', locale })
+  const officialSiteUrl = buildAffiliateUrl(firm.slug, { placement: 'official_website', locale })
+
 
   // Reference specs live in a collapsed block: complete, but not in the way.
   const specs: { label: string; value: string }[] = []
@@ -258,7 +392,7 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
   const hasReference = specs.length > 0 || policies.length > 0 || platforms.length > 0 || assets.length > 0
 
   const expiryText = firm.discount_expires_at
-    ? new Date(firm.discount_expires_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })
+    ? new Date(firm.discount_expires_at).toLocaleDateString(dateFmt, { day: 'numeric', month: 'long' })
     : null
 
   return (
@@ -338,20 +472,25 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
                   href="#challenges"
                   className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-semibold rounded-lg transition-colors"
                 >
-                  Choose your program
+                  {t.chooseProgram}
                 </a>
               )}
               <a
                 href="#rules"
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-white font-medium rounded-lg transition-colors"
               >
-                See the key rules
+                {t.seeRules}
               </a>
             </div>
 
             <p className="text-gray-600 text-xs">
-              Independent analysis · Partner offer · Terms checked{' '}
-              {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+              {t.independent(
+                new Date().toLocaleDateString(dateFmt, {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
+                })
+              )}
             </p>
           </div>
 
@@ -374,7 +513,7 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
                 <span className="text-white font-semibold text-sm">{firm.trustpilot_rating.toFixed(1)}</span>
                 {firm.trustpilot_reviews > 0 && (
                   <span className="text-gray-500 text-xs">
-                    ({firm.trustpilot_reviews.toLocaleString()} on Trustpilot)
+                    ({firm.trustpilot_reviews.toLocaleString()} {t.onTrustpilot})
                   </span>
                 )}
               </div>
@@ -383,7 +522,7 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
             {firm.min_price > 0 && (
               <div className="mb-3">
                 <p className="text-gray-500 text-sm">
-                  From{' '}
+                  {t.from}{' '}
                   {hasVerifiedDeal && <s className="text-gray-600">${firm.min_price}</s>}
                 </p>
                 <p className="text-white">
@@ -392,7 +531,7 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
                       ? Math.round(firm.min_price * (1 - firm.discount_percent / 100) * 100) / 100
                       : firm.min_price}
                   </span>
-                  {isSubscription && <span className="text-gray-500 text-base"> /month</span>}
+                  {isSubscription && <span className="text-gray-500 text-base">{t.perMonth}</span>}
                 </p>
               </div>
             )}
@@ -401,55 +540,50 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
               <div className="mb-4 px-3 py-2.5 bg-emerald-500/10 border border-emerald-500/25 rounded-lg">
                 <p className="text-emerald-300 text-sm font-semibold flex items-center gap-1.5">
                   <Zap className="w-3.5 h-3.5" />
-                  Code {firm.discount_code} — applied automatically
+                  {t.codeAuto(firm.discount_code)}
                 </p>
                 {expiryText && (
-                  <p className="text-gray-500 text-xs mt-1">Offer runs until {expiryText}</p>
+                  <p className="text-gray-500 text-xs mt-1">{t.runsUntil(expiryText)}</p>
                 )}
               </div>
             )}
 
             <a
-              href={challenges.length > 0 ? '#challenges' : dealUrl}
-              {...(challenges.length === 0
-                ? { target: '_blank', rel: 'noopener noreferrer sponsored' }
-                : {})}
+              href={challenges.length > 0 ? '#challenges' : heroCtaUrl}
+              {...(challenges.length === 0 ? AFFILIATE_LINK_PROPS : {})}
               className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-semibold rounded-lg transition-colors"
             >
-              {challenges.length > 0 ? 'Configure my account' : `Visit ${firm.name}`}
+              {challenges.length > 0 ? t.configure : t.visit(firm.name)}
               {challenges.length === 0 && <ExternalLink className="w-4 h-4" />}
             </a>
 
             <p className="text-gray-600 text-[11px] mt-3 text-center leading-relaxed">
-              {isSubscription
-                ? 'Billed monthly during evaluation only. We may earn a commission.'
-                : 'We may earn a commission on this link.'}
+              {isSubscription ? t.billedMonthly : t.commission}
             </p>
 
             <div className="mt-4 pt-4 border-t border-gray-800 space-y-1.5 text-xs">
               {foundedText && (
                 <p className="text-gray-500">
-                  Founded <span className="text-gray-300">{foundedText}</span>
+                  {t.founded} <span className="text-gray-300">{foundedText}</span>
                 </p>
               )}
               {firm.country && (
                 <p className="text-gray-500">
-                  Country <span className="text-gray-300">{firm.country}</span>
+                  {t.country} <span className="text-gray-300">{firm.country}</span>
                 </p>
               )}
               {firm.is_regulated && (
                 <p className="inline-flex items-center gap-1.5 text-emerald-400">
-                  <Shield className="w-3.5 h-3.5" /> Regulated
+                  <Shield className="w-3.5 h-3.5" /> {t.regulated}
                 </p>
               )}
               {firm.website_url && (
                 <a
-                  href={firm.website_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href={officialSiteUrl}
+                  {...AFFILIATE_LINK_PROPS}
                   className="inline-flex items-center gap-1.5 text-gray-500 hover:text-white transition-colors"
                 >
-                  <Globe className="w-3.5 h-3.5" /> Official website
+                  <Globe className="w-3.5 h-3.5" /> {t.officialSite}
                 </a>
               )}
             </div>
@@ -485,6 +619,7 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
             firmSlug={firm.slug}
             firmName={firm.name}
             challenges={challenges}
+            locale={locale}
             checkoutOptions={firm.checkout_options}
             programGuide={firm.program_guide}
             discountCode={firm.discount_code}
@@ -497,59 +632,12 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
 
       <div className="max-w-6xl mx-auto px-4 py-12 space-y-16">
         {/* ============================================================== */}
-        {/* 4. WHICH PROGRAM — the question that blocks the decision      */}
-        {/* ============================================================== */}
-        {programGuide?.options?.length ? (
-          <section id="program-guide" className="scroll-mt-24">
-            <SectionHeading
-              eyebrow="Choosing a program"
-              title={programGuide.title || 'Which program fits you?'}
-              intro={programGuide.intro}
-            />
-            <div className="grid md:grid-cols-2 gap-4">
-              {programGuide.options.map((opt, i) => (
-                <article
-                  key={opt.name || i}
-                  className="bg-gray-900/50 border border-gray-800 rounded-2xl p-5 flex flex-col"
-                >
-                  {opt.badge && (
-                    <span className="self-start px-2.5 py-1 mb-3 bg-emerald-500/10 border border-emerald-500/25 rounded-full text-emerald-400 text-xs font-semibold">
-                      {opt.badge}
-                    </span>
-                  )}
-                  <h3 className="text-lg font-bold text-white mb-2">{opt.name}</h3>
-                  {opt.summary && (
-                    <p className="text-gray-300 text-sm leading-relaxed mb-4">{opt.summary}</p>
-                  )}
-                  {opt.points && opt.points.length > 0 && (
-                    <ul className="space-y-2 mb-5">
-                      {opt.points.map((pt, pi) => (
-                        <li key={pi} className="flex items-start gap-2 text-gray-400 text-sm">
-                          <span className="text-emerald-500 mt-0.5">·</span>
-                          <span>{pt}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                  <a
-                    href="#challenges"
-                    className="mt-auto w-full inline-flex items-center justify-center px-4 py-2.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-white text-sm font-medium rounded-lg transition-colors"
-                  >
-                    Configure {opt.name}
-                  </a>
-                </article>
-              ))}
-            </div>
-          </section>
-        ) : null}
-
-        {/* ============================================================== */}
         {/* 5. JOURNEY — what happens after you pay                       */}
         {/* ============================================================== */}
         {journey?.steps?.length ? (
           <section id="journey" className="scroll-mt-24">
             <SectionHeading
-              eyebrow="After you pass"
+              eyebrow={t.afterPass}
               title={journey.title || 'From evaluation to your first payout'}
               intro={journey.intro}
             />
@@ -595,7 +683,7 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
         {costTimeline?.steps?.length ? (
           <section id="costs" className="scroll-mt-24">
             <SectionHeading
-              eyebrow="No hidden fees"
+              eyebrow={t.noHidden}
               title={costTimeline.title || 'What it actually costs'}
               intro={costTimeline.intro}
             />
@@ -626,7 +714,7 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
         {education?.title ? (
           <section className="grid md:grid-cols-[minmax(0,1fr)_280px] gap-6 items-start">
             <div>
-              <SectionHeading eyebrow="Included value" title={education.title} intro={education.intro} />
+              <SectionHeading eyebrow={t.includedValue} title={education.title} intro={education.intro} />
               {education.items && education.items.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {education.items.map((it, i) => (
@@ -642,8 +730,8 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
             </div>
             <div className="bg-emerald-500/5 border border-emerald-500/25 rounded-xl p-5 text-center">
               <GraduationCap className="w-8 h-8 text-emerald-400 mx-auto mb-3" />
-              <p className="text-white font-semibold mb-1">Free with every subscription</p>
-              <p className="text-gray-400 text-sm">No separate purchase, no upsell.</p>
+              <p className="text-white font-semibold mb-1">{t.freeWith}</p>
+              <p className="text-gray-400 text-sm">{t.freeWithSub}</p>
             </div>
           </section>
         ) : null}
@@ -654,7 +742,7 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
         {keyRules?.rules?.length ? (
           <section id="rules" className="scroll-mt-24">
             <SectionHeading
-              eyebrow="Before you buy"
+              eyebrow={t.beforeBuy}
               title={keyRules.title || 'The rules that actually matter'}
               intro={keyRules.intro}
             />
@@ -668,7 +756,7 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
             </div>
 
             {keyRules.more && keyRules.more.length > 0 && (
-              <Disclosure summary="See all permissions and restrictions">
+              <Disclosure summary={t.seeAll}>
                 <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-2">
                   {keyRules.more.map((m, i) => (
                     <li key={i} className="flex items-start gap-2 text-gray-400 text-sm">
@@ -687,7 +775,7 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
         {/* ============================================================== */}
         {tiers?.rows?.length ? (
           <section id="progression" className="scroll-mt-24">
-            <SectionHeading eyebrow="Scaling" title={tiers.title || 'Scaling plan'} intro={tiers.intro} />
+            <SectionHeading eyebrow={t.scaling} title={tiers.title || 'Scaling plan'} intro={tiers.intro} />
             <div className="overflow-x-auto rounded-xl border border-gray-800 bg-gray-900/40">
               <table className="w-full text-sm">
                 {tiers.columns && (
@@ -742,16 +830,16 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
         {(pros.length > 0 || cons.length > 0) && (
           <section id="pros-cons" className="scroll-mt-24">
             <SectionHeading
-              eyebrow="Honest view"
-              title={`Why choose ${firm.name}?`}
-              intro="From trader feedback and the firm's own specifications."
+              eyebrow={t.honest}
+              title={t.whyChoose(firm.name)}
+              intro={t.honestIntro}
             />
             <div className="grid md:grid-cols-2 gap-5">
               {pros.length > 0 && (
                 <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-5">
                   <div className="flex items-center gap-2 mb-4">
                     <ThumbsUp className="w-4 h-4 text-emerald-400" />
-                    <h3 className="font-semibold text-white">Strengths</h3>
+                    <h3 className="font-semibold text-white">{t.strengths}</h3>
                   </div>
                   <ul className="space-y-2.5">
                     {pros.map((pro, i) => (
@@ -767,7 +855,7 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
                 <div className="bg-red-500/5 border border-red-500/20 rounded-2xl p-5">
                   <div className="flex items-center gap-2 mb-4">
                     <ThumbsDown className="w-4 h-4 text-red-400" />
-                    <h3 className="font-semibold text-white">Limitations</h3>
+                    <h3 className="font-semibold text-white">{t.limitations}</h3>
                   </div>
                   <ul className="space-y-2.5">
                     {cons.map((con, i) => (
@@ -788,7 +876,7 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
         {/* ============================================================== */}
         {hasReference && (
           <section id="reference" className="scroll-mt-24">
-            <Disclosure summary="Full specifications, costs and platforms">
+            <Disclosure summary={t.fullSpecs}>
               <div className="space-y-6">
                 {specs.length > 0 && (
                   <dl className="grid sm:grid-cols-2 gap-x-8">
@@ -810,7 +898,7 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
                 {platforms.length > 0 && (
                   <div>
                     <p className="text-xs uppercase tracking-wider font-semibold text-gray-500 mb-2.5">
-                      Platforms
+                      {t.platforms}
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {platforms.map((p) => (
@@ -825,7 +913,7 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
                 {assets.length > 0 && (
                   <div>
                     <p className="text-xs uppercase tracking-wider font-semibold text-gray-500 mb-2.5">
-                      Tradable assets
+                      {t.assets}
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {assets.map((a) => (
@@ -854,7 +942,7 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
                 {firm.description && (
                   <div>
                     <p className="text-xs uppercase tracking-wider font-semibold text-gray-500 mb-2.5">
-                      About {firm.name}
+                      {t.about(firm.name)}
                     </p>
                     <p className="text-gray-300 text-sm leading-relaxed">{firm.description}</p>
                   </div>
@@ -863,7 +951,7 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
                 {firm.is_regulated && firm.regulation_details && (
                   <div>
                     <p className="text-xs uppercase tracking-wider font-semibold text-gray-500 mb-2.5">
-                      Regulation
+                      {t.regulation}
                     </p>
                     <p className="text-gray-300 text-sm leading-relaxed">{firm.regulation_details}</p>
                   </div>
@@ -880,14 +968,14 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
           <section className="grid md:grid-cols-[minmax(0,1fr)_300px] gap-6 items-start">
             <div>
               <SectionHeading
-                eyebrow="PropFirmScanner verdict"
+                eyebrow={t.verdict}
                 title={verdictCard.title || `Who we recommend ${firm.name} to`}
               />
               <p className="text-gray-300 leading-relaxed">{verdictCard.body}</p>
             </div>
             {verdictCard.points && verdictCard.points.length > 0 && (
               <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-5">
-                <p className="text-white font-semibold text-sm mb-3">A good fit if you want</p>
+                <p className="text-white font-semibold text-sm mb-3">{t.goodFit}</p>
                 <ul className="space-y-2">
                   {verdictCard.points.map((pt, i) => (
                     <li key={i} className="flex items-start gap-2 text-gray-400 text-sm">
@@ -907,8 +995,8 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
         <section id="faq" className="scroll-mt-24">
           <SectionHeading
             eyebrow="FAQ"
-            title="Frequently asked questions"
-            intro={`Everything traders ask about ${firm.name}.`}
+            title={t.faq}
+            intro={t.faqIntro(firm.name)}
           />
           <div className="space-y-3">
             {generateFAQs(firm, isSubscription).map((faq, i) => (
@@ -924,24 +1012,24 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
           <section className="bg-gray-900/70 border border-emerald-500/25 rounded-2xl p-8 text-center">
             {expiryText && (
               <p className="text-emerald-400 text-xs uppercase tracking-wider font-semibold mb-2">
-                Offer runs until {expiryText}
+                {t.runsUntil(expiryText)}
               </p>
             )}
             <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
-              Ready to pick your program?
+              {t.readyTitle}
             </h2>
             <p className="text-gray-400 mb-6 max-w-xl mx-auto">
-              Configure your account and check the rules one last time before payment.
+              {t.readyIntro}
             </p>
             <a
               href="#challenges"
               className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-semibold rounded-lg transition-colors"
             >
-              Configure my {firm.name} account
+              {t.readyCta(firm.name)}
             </a>
             {hasVerifiedDeal && (
               <p className="text-gray-600 text-xs mt-3">
-                Partner link · code {firm.discount_code} applied automatically
+                {t.partnerLink(firm.discount_code)}
               </p>
             )}
           </section>
@@ -954,7 +1042,7 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
       {similarFirms.length > 0 && (
         <section className="py-12 px-4 border-t border-gray-800">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-2xl font-bold text-white mb-6">Similar firms</h2>
+            <h2 className="text-2xl font-bold text-white mb-6">{t.similar}</h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {similarFirms.map((sf) => (
                 <Link
@@ -999,10 +1087,9 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
           <div className="flex items-start gap-3 p-4 bg-yellow-500/5 border border-yellow-500/20 rounded-xl">
             <AlertTriangle className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-yellow-500 font-semibold mb-1">Trading risk warning</p>
+              <p className="text-yellow-500 font-semibold mb-1">{t.riskTitle}</p>
               <p className="text-gray-400 text-sm">
-                Trading involves substantial risk. Only trade with capital you can afford to lose. Prop firm
-                evaluations are simulated trading environments — read all rules carefully before purchasing.
+                {t.risk}
               </p>
             </div>
           </div>

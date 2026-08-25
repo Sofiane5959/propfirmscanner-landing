@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
-import { ExternalLink, Check, Copy, ChevronDown } from 'lucide-react'
+import { useState, useMemo, useEffect, useRef } from 'react'
+import { ExternalLink, Check, Copy } from 'lucide-react'
+import { buildAffiliateUrl, AFFILIATE_LINK_PROPS } from '@/lib/affiliate'
 
 // =============================================================================
 // TYPES
@@ -31,17 +32,12 @@ export interface Challenge {
   allows_ea: boolean | null
   allows_scalping: boolean | null
   allows_news_trading: boolean | null
-  // Futures firms bill monthly and express risk in dollars, not percent.
   billing_period: string | null // 'one-time' | 'monthly'
   risk_unit: string | null // 'percent'  | 'usd'
   affiliate_url: string | null
   max_contracts: number | null
 }
 
-// Some firms make you pick something at their own checkout before you can pay
-// (Earn2Trade makes you choose a market data feed). It is pre-selected and
-// folded away: a real decision with a real cost, but not one that should stand
-// between the visitor and the price.
 export interface CheckoutOptions {
   label?: string
   param?: string
@@ -49,9 +45,9 @@ export interface CheckoutOptions {
   options?: { value: string; name: string; sub?: string }[]
 }
 
-// Lets the page frame programs by goal ("Climb step by step") rather than by
-// product name ("Trader Career Path"), which means nothing to a newcomer.
 export interface ProgramGuide {
+  title?: string
+  intro?: string
   options?: { badge?: string; name?: string; summary?: string; points?: string[] }[]
 }
 
@@ -59,21 +55,81 @@ interface Props {
   firmSlug: string
   firmName: string
   challenges: Challenge[]
+  locale?: string
   checkoutOptions?: CheckoutOptions | null
   programGuide?: ProgramGuide | null
   discountCode?: string | null
   discountPercent?: number | null
-  /** Free-text note under the price, e.g. "for the first 4 billings". */
   discountNote?: string | null
-  /** What the price already covers — removes the "what else will I pay" doubt. */
   includedItems?: string[] | null
+}
+
+// =============================================================================
+// COPY
+// =============================================================================
+
+const COPY = {
+  en: {
+    eyebrow: 'Two-step configurator',
+    title: 'Find the program that fits you',
+    intro: 'Start with your goal. Price and rules update as you choose.',
+    step1: 'How do you want to be funded?',
+    step2: 'Pick your account size',
+    step3: 'Platform and data feed',
+    sizes: (n: number) => `${n} size${n > 1 ? 's' : ''}`,
+    from: 'from',
+    selection: 'Your selection',
+    normally: 'normally',
+    perMonth: '/month',
+    target: 'Profit target',
+    drawdown: 'Max drawdown',
+    dailyLoss: 'Daily loss',
+    contracts: 'Max contracts',
+    split: 'Profit split',
+    included: 'Included at no extra cost',
+    codeAuto: 'Code applied automatically',
+    cta: (firm: string) => `Continue to ${firm}`,
+    ctaShort: 'Continue',
+    disclosure: 'Payment page pre-filled. We may earn a commission.',
+    compareTitle: 'Which one is right for you?',
+    compareIntro: 'A comparison, not a second decision — the configurator above already has your choice.',
+    pick: (p: string) => `Select ${p}`,
+    picked: 'Selected',
+  },
+  fr: {
+    eyebrow: 'Configurateur en 2 étapes',
+    title: 'Trouvez le programme adapté à votre profil',
+    intro: 'Commencez par votre objectif. Le prix et les règles s’actualisent automatiquement.',
+    step1: 'Comment souhaitez-vous être financé ?',
+    step2: 'Choisissez votre taille de compte',
+    step3: 'Plateforme et flux de données',
+    sizes: (n: number) => `${n} taille${n > 1 ? 's' : ''}`,
+    from: 'à partir de',
+    selection: 'Votre sélection',
+    normally: 'prix normal',
+    perMonth: '/mois',
+    target: 'Objectif de profit',
+    drawdown: 'Drawdown maximum',
+    dailyLoss: 'Perte journalière',
+    contracts: 'Contrats maximum',
+    split: 'Partage des profits',
+    included: 'Inclus sans supplément',
+    codeAuto: 'Code appliqué automatiquement',
+    cta: (firm: string) => `Continuer vers ${firm}`,
+    ctaShort: 'Continuer',
+    disclosure: 'Page de paiement préremplie. Nous percevons une commission.',
+    compareTitle: 'Lequel vous convient ?',
+    compareIntro:
+      'Une comparaison, pas un second choix — le configurateur ci-dessus a déjà enregistré votre sélection.',
+    pick: (p: string) => `Sélectionner ${p}`,
+    picked: 'Sélectionné',
+  },
 }
 
 // =============================================================================
 // HELPERS
 // =============================================================================
 
-// "2 Step Prime $10K" -> "2 Step Prime". Also handles "Gauntlet Mini 50K".
 function extractProgram(challengeName: string | null): string {
   if (!challengeName) return 'Program'
   const m = challengeName.match(/^(.+?)\s+\$?[\d,.KMk]+/i)
@@ -98,8 +154,8 @@ function formatPrice(price: number | null, suffix = ''): string {
 }
 
 // Risk figures are percentages on forex firms and dollar amounts on futures
-// firms. Rendering 2000 as "2000%" instead of "$2,000" is not a rounding
-// error, it is a different claim — so the unit travels with the challenge.
+// firms. Rendering 2000 as "2000%" instead of "$2,000" is a different claim,
+// so the unit travels with the challenge.
 function fmtRisk(value: number | null | undefined, unit?: string | null): string {
   if (value === null || value === undefined) return '—'
   if (unit === 'usd') return `$${Number(value).toLocaleString('en-US')}`
@@ -114,6 +170,7 @@ export default function ChallengeSelector({
   firmSlug,
   firmName,
   challenges,
+  locale = 'en',
   checkoutOptions,
   programGuide,
   discountCode,
@@ -121,7 +178,8 @@ export default function ChallengeSelector({
   discountNote,
   includedItems,
 }: Props) {
-  // ---------------------------------------------------------------- derived
+  const t = locale === 'fr' ? COPY.fr : COPY.en
+  const configRef = useRef<HTMLDivElement | null>(null)
 
   const programs = useMemo(() => {
     const map = new Map<string, Challenge[]>()
@@ -136,7 +194,6 @@ export default function ChallengeSelector({
     return Array.from(map.entries())
   }, [challenges])
 
-  // Goal-framed labels, matched to the program guide by name when available.
   const guideFor = useMemo(() => {
     const map = new Map<string, { badge?: string; summary?: string }>()
     programGuide?.options?.forEach((o) => {
@@ -149,17 +206,13 @@ export default function ChallengeSelector({
     () => challenges.some((c) => c.billing_period === 'monthly'),
     [challenges]
   )
-  const priceSuffix = isSubscription ? '/mo' : ''
+  const priceSuffix = isSubscription ? t.perMonth : ''
 
   const checkoutChoices = checkoutOptions?.options ?? []
   const hasCheckoutStep = checkoutChoices.length > 0
 
-  // ------------------------------------------------------------------ state
-
   const [selectedProgram, setSelectedProgram] = useState<string>(programs[0]?.[0] ?? '')
   const [selectedSize, setSelectedSize] = useState<string>(programs[0]?.[1][0]?.account_size ?? '')
-  // Pre-selected on purpose: the deep link needs a value, and a dead button the
-  // visitor cannot explain is worse than a sensible default they can change.
   const [selectedFeed, setSelectedFeed] = useState<string>(checkoutChoices[0]?.value ?? '')
   const [codeCopied, setCodeCopied] = useState(false)
 
@@ -175,14 +228,17 @@ export default function ChallengeSelector({
 
   useEffect(() => {
     if (!codeCopied) return
-    const t = setTimeout(() => setCodeCopied(false), 2000)
-    return () => clearTimeout(t)
+    const timer = setTimeout(() => setCodeCopied(false), 2000)
+    return () => clearTimeout(timer)
   }, [codeCopied])
 
-  const handleSelectProgram = (program: string) => {
+  const handleSelectProgram = (program: string, scrollBack = false) => {
     setSelectedProgram(program)
     const first = programs.find(([name]) => name === program)?.[1][0]
     if (first?.account_size) setSelectedSize(first.account_size)
+    // The comparison lives below the configurator, so picking there has to
+    // carry the visitor back up to the choice it just made for them.
+    if (scrollBack) configRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
   const handleCopyCode = () => {
@@ -190,8 +246,6 @@ export default function ChallengeSelector({
     navigator.clipboard.writeText(discountCode)
     setCodeCopied(true)
   }
-
-  // ------------------------------------------------------------------ price
 
   const displayPrice = useMemo(() => {
     const empty = {
@@ -202,9 +256,8 @@ export default function ChallengeSelector({
     if (!currentChallenge) return empty
 
     const original = currentChallenge.price
-    // A struck-through price is a promise. Only make it when the visitor
-    // actually has a usable code, otherwise they pay full price and we have
-    // advertised a discount that does not exist.
+    // A struck-through price is a promise. Only make it when the visitor has a
+    // usable code, otherwise they pay full price against an advertised discount.
     const codeIsUsable = Boolean(discountCode) && discountCode !== 'PENDING'
     let final = currentChallenge.discounted_price
     if (
@@ -223,69 +276,62 @@ export default function ChallengeSelector({
     }
   }, [currentChallenge, discountPercent, discountCode])
 
-  const ctaLink = useMemo(() => {
-    if (!currentChallenge) return `/api/go/${firmSlug}?source=challenge-selector`
-    const params = new URLSearchParams({
-      source: 'challenge-selector',
-      // The exact challenge slug lets /api/go resolve a program-specific
-      // affiliate link, so the visitor lands on the plan they configured.
-      challenge: currentChallenge.slug ?? '',
-      program: extractProgram(currentChallenge.name).toLowerCase().replace(/\s+/g, '-'),
-      size: currentChallenge.account_size ?? '',
-    })
-    if (selectedFeed && checkoutOptions?.param) {
-      params.set('opt_key', checkoutOptions.param)
-      params.set('opt_value', selectedFeed)
-    }
-    return `/api/go/${firmSlug}?${params.toString()}`
-  }, [currentChallenge, firmSlug, selectedFeed, checkoutOptions])
+  const ctaLink = useMemo(
+    () =>
+      buildAffiliateUrl(firmSlug, {
+        placement: 'challenge-selector',
+        locale,
+        challenge: currentChallenge?.slug,
+        program: currentChallenge
+          ? extractProgram(currentChallenge.name).toLowerCase().replace(/\s+/g, '-')
+          : null,
+        size: currentChallenge?.account_size,
+        optKey: checkoutOptions?.param,
+        optValue: selectedFeed,
+      }),
+    [currentChallenge, firmSlug, selectedFeed, checkoutOptions, locale]
+  )
 
   if (challenges.length === 0) return null
 
   const riskUnit = currentChallenge?.risk_unit
   const keyNumbers = [
-    { label: 'Profit target', value: fmtRisk(currentChallenge?.phase1_profit_target, riskUnit) },
-    { label: 'Max drawdown', value: fmtRisk(currentChallenge?.max_drawdown, riskUnit) },
-    { label: 'Daily loss', value: fmtRisk(currentChallenge?.max_daily_loss, riskUnit) },
+    { label: t.target, value: fmtRisk(currentChallenge?.phase1_profit_target, riskUnit) },
+    { label: t.drawdown, value: fmtRisk(currentChallenge?.max_drawdown, riskUnit) },
+    { label: t.dailyLoss, value: fmtRisk(currentChallenge?.max_daily_loss, riskUnit) },
     currentChallenge?.max_contracts
-      ? { label: 'Max contracts', value: String(currentChallenge.max_contracts) }
-      : { label: 'Profit split', value: fmtRisk(currentChallenge?.profit_split) },
+      ? { label: t.contracts, value: String(currentChallenge.max_contracts) }
+      : { label: t.split, value: fmtRisk(currentChallenge?.profit_split) },
   ]
 
-  const selectedFeedName = checkoutChoices.find((o) => o.value === selectedFeed)?.name
-
-  // --------------------------------------------------------------- rendering
-
   return (
-    <section className="px-4 py-10 border-y border-gray-800 bg-gray-900/20">
+    <section
+      id="challenges"
+      ref={configRef}
+      className="px-4 py-8 border-y border-gray-800 bg-gray-900/20 scroll-mt-20"
+    >
       <div className="max-w-6xl mx-auto">
-        <div className="mb-6">
-          <p className="text-xs uppercase tracking-wider font-semibold text-emerald-400 mb-2">
-            Two-step configurator
+        <div className="mb-5">
+          <p className="text-xs uppercase tracking-wider font-semibold text-emerald-400 mb-1">
+            {t.eyebrow}
           </p>
-          <h2 className="text-2xl md:text-3xl font-bold text-white">
-            Find the program that fits you
-          </h2>
-          <p className="text-gray-400 mt-2">
-            Start with your goal. Price and rules update as you choose.
-          </p>
+          <h2 className="text-2xl md:text-3xl font-bold text-white">{t.title}</h2>
+          <p className="text-gray-400 text-base mt-1">{t.intro}</p>
         </div>
 
-        <div className="grid lg:grid-cols-[minmax(0,1fr)_360px] gap-6 items-start">
-          {/* ---------------------------------------------------- controls */}
-          <div className="space-y-4">
-            {/* Step 1 — framed as a goal, not a product name */}
-            <fieldset className="bg-gray-900/70 rounded-2xl border border-gray-800 p-5">
+        {/* Controls and summary share one screen — no scrolling to see a price */}
+        <div className="grid lg:grid-cols-[minmax(0,1fr)_340px] gap-4 items-start">
+          <div className="space-y-3">
+            {/* Step 1 */}
+            <fieldset className="bg-gray-900/70 rounded-xl border border-gray-800 px-4 pb-4 pt-2">
               <legend className="flex items-center gap-2 px-2">
-                <span className="w-6 h-6 rounded-full bg-emerald-500 text-gray-950 text-xs font-bold flex items-center justify-center">
+                <span className="w-5 h-5 rounded-full bg-emerald-500 text-gray-950 text-[11px] font-bold flex items-center justify-center">
                   1
                 </span>
-                <span className="text-sm font-semibold text-white">
-                  How do you want to be funded?
-                </span>
+                <span className="text-base font-semibold text-white">{t.step1}</span>
               </legend>
 
-              <div className="grid sm:grid-cols-2 gap-3 mt-3">
+              <div className="grid sm:grid-cols-2 gap-2 mt-2">
                 {programs.map(([program, list]) => {
                   const isActive = program === selectedProgram
                   const guide = guideFor.get(program.toLowerCase())
@@ -300,40 +346,44 @@ export default function ChallengeSelector({
                       type="button"
                       aria-pressed={isActive}
                       onClick={() => handleSelectProgram(program)}
-                      className={`text-left p-4 rounded-xl border transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
+                      className={`text-left p-3 rounded-lg border transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
                         isActive
                           ? 'bg-emerald-500/10 border-emerald-500'
                           : 'bg-gray-800/40 border-gray-700 hover:border-gray-600'
                       }`}
                     >
                       {guide?.badge && (
-                        <span className="inline-block mb-2 px-2 py-0.5 bg-gray-900/70 border border-gray-700 rounded-full text-gray-300 text-[11px] font-medium">
+                        <span className="block text-[11px] font-medium text-gray-400 mb-0.5">
                           {guide.badge}
                         </span>
                       )}
-                      <p className={`font-semibold ${isActive ? 'text-emerald-400' : 'text-white'}`}>
+                      <span
+                        className={`block text-base font-semibold ${
+                          isActive ? 'text-emerald-400' : 'text-white'
+                        }`}
+                      >
                         {program}
-                      </p>
-                      <p className="text-gray-500 text-xs mt-1">
-                        {list.length} size{list.length > 1 ? 's' : ''}
-                        {cheapest !== null && <> · from {formatPrice(cheapest, priceSuffix)}</>}
-                      </p>
+                      </span>
+                      <span className="block text-gray-500 text-sm mt-0.5">
+                        {t.sizes(list.length)}
+                        {cheapest !== null && ` · ${t.from} ${formatPrice(cheapest, priceSuffix)}`}
+                      </span>
                     </button>
                   )
                 })}
               </div>
             </fieldset>
 
-            {/* Step 2 — size */}
-            <fieldset className="bg-gray-900/70 rounded-2xl border border-gray-800 p-5">
+            {/* Step 2 */}
+            <fieldset className="bg-gray-900/70 rounded-xl border border-gray-800 px-4 pb-4 pt-2">
               <legend className="flex items-center gap-2 px-2">
-                <span className="w-6 h-6 rounded-full bg-emerald-500 text-gray-950 text-xs font-bold flex items-center justify-center">
+                <span className="w-5 h-5 rounded-full bg-emerald-500 text-gray-950 text-[11px] font-bold flex items-center justify-center">
                   2
                 </span>
-                <span className="text-sm font-semibold text-white">Pick your account size</span>
+                <span className="text-base font-semibold text-white">{t.step2}</span>
               </legend>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2">
                 {availableSizes.map((c) => {
                   const isActive = c.account_size === selectedSize
                   const p = c.discounted_price ?? c.price
@@ -343,126 +393,126 @@ export default function ChallengeSelector({
                       type="button"
                       aria-pressed={isActive}
                       onClick={() => setSelectedSize(c.account_size ?? '')}
-                      className={`p-3 rounded-lg border text-center transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
+                      className={`px-2 py-2.5 rounded-lg border text-center transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
                         isActive
                           ? 'bg-emerald-500/10 border-emerald-500'
                           : 'bg-gray-800/40 border-gray-700 hover:border-gray-600'
                       }`}
                     >
-                      <p className={`font-bold ${isActive ? 'text-emerald-400' : 'text-white'}`}>
+                      <span
+                        className={`block text-base font-bold ${
+                          isActive ? 'text-emerald-400' : 'text-white'
+                        }`}
+                      >
                         {c.account_size}
-                      </p>
-                      <p className="text-gray-500 text-xs mt-0.5">{formatPrice(p, priceSuffix)}</p>
+                      </span>
+                      <span className="block text-gray-500 text-sm">
+                        {formatPrice(p, priceSuffix)}
+                      </span>
                     </button>
                   )
                 })}
               </div>
             </fieldset>
 
-            {/* Advanced — folded, pre-selected, never blocking */}
+            {/* Step 3 — always visible: it is a real cost, not an advanced option */}
             {hasCheckoutStep && (
-              <details className="group bg-gray-900/40 border border-gray-800 rounded-2xl overflow-hidden">
-                <summary className="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer list-none hover:bg-gray-800/30 transition-colors">
-                  <span className="text-sm text-white font-medium">
-                    {checkoutOptions?.label || 'Advanced options'}
-                    {selectedFeedName && (
-                      <span className="text-gray-500 font-normal"> · {selectedFeedName}</span>
-                    )}
+              <fieldset className="bg-gray-900/70 rounded-xl border border-gray-800 px-4 pb-4 pt-2">
+                <legend className="flex items-center gap-2 px-2">
+                  <span className="w-5 h-5 rounded-full bg-emerald-500 text-gray-950 text-[11px] font-bold flex items-center justify-center">
+                    3
                   </span>
-                  <ChevronDown className="w-4 h-4 text-gray-500 flex-shrink-0 transition-transform group-open:rotate-180" />
-                </summary>
-                <div className="px-5 pb-5 pt-1 border-t border-gray-800">
-                  {checkoutOptions?.help && (
-                    <p className="text-gray-400 text-xs leading-relaxed mb-3">
-                      {checkoutOptions.help}
-                    </p>
-                  )}
-                  <div className="grid sm:grid-cols-3 gap-2">
-                    {checkoutChoices.map((opt) => {
-                      const isActive = opt.value === selectedFeed
-                      return (
-                        <button
-                          key={opt.value}
-                          type="button"
-                          aria-pressed={isActive}
-                          onClick={() => setSelectedFeed(opt.value)}
-                          className={`p-3 rounded-lg border text-left transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
-                            isActive
-                              ? 'bg-emerald-500/10 border-emerald-500'
-                              : 'bg-gray-800/40 border-gray-700 hover:border-gray-600'
+                  <span className="text-base font-semibold text-white">
+                    {checkoutOptions?.label || t.step3}
+                  </span>
+                </legend>
+
+                <div className="grid grid-cols-3 gap-2 mt-2">
+                  {checkoutChoices.map((opt) => {
+                    const isActive = opt.value === selectedFeed
+                    return (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        aria-pressed={isActive}
+                        onClick={() => setSelectedFeed(opt.value)}
+                        className={`p-2.5 rounded-lg border text-left transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
+                          isActive
+                            ? 'bg-emerald-500/10 border-emerald-500'
+                            : 'bg-gray-800/40 border-gray-700 hover:border-gray-600'
+                        }`}
+                      >
+                        <span
+                          className={`block text-base font-semibold ${
+                            isActive ? 'text-emerald-400' : 'text-white'
                           }`}
                         >
-                          <p
-                            className={`font-semibold text-sm ${
-                              isActive ? 'text-emerald-400' : 'text-white'
-                            }`}
-                          >
-                            {opt.name}
-                          </p>
-                          {opt.sub && <p className="text-xs text-gray-500 mt-0.5">{opt.sub}</p>}
-                        </button>
-                      )
-                    })}
-                  </div>
+                          {opt.name}
+                        </span>
+                        {opt.sub && (
+                          <span className="block text-sm text-gray-500 leading-tight mt-0.5">
+                            {opt.sub}
+                          </span>
+                        )}
+                      </button>
+                    )
+                  })}
                 </div>
-              </details>
+              </fieldset>
             )}
           </div>
 
-          {/* ---------------------------------------------------- summary */}
-          <aside className="lg:sticky lg:top-6 bg-gray-900/70 border border-emerald-500/25 rounded-2xl p-5">
-            <p className="text-xs uppercase tracking-wider font-semibold text-gray-500 mb-1">
-              Your selection
+          {/* Summary — tight, no filler, price dominant */}
+          <aside className="lg:sticky lg:top-20 bg-gray-900/70 border border-emerald-500/25 rounded-xl p-4">
+            <p className="text-xs uppercase tracking-wider font-semibold text-gray-500">
+              {t.selection}
             </p>
-            <p className="text-white font-bold mb-4">
+            <p className="text-white text-base font-bold mb-3">
               {selectedProgram} {currentChallenge?.account_size}
             </p>
 
-            <div className="mb-4">
-              {displayPrice.hasDiscount && displayPrice.original !== null && (
-                <p className="text-gray-500 text-sm">
-                  <s>{formatPrice(displayPrice.original)}</s> normally
-                </p>
-              )}
-              <p className="text-white">
+            <div className="mb-3">
+              <p className="text-white leading-none">
                 <span className="text-3xl font-bold">{formatPrice(displayPrice.final)}</span>
-                {isSubscription && <span className="text-gray-500 text-base"> /month</span>}
+                {isSubscription && <span className="text-gray-500 text-base">{t.perMonth}</span>}
               </p>
-              {displayPrice.hasDiscount && discountNote && (
-                <p className="text-gray-500 text-xs mt-1">{discountNote}</p>
+              {displayPrice.hasDiscount && displayPrice.original !== null && (
+                <p className="text-gray-500 text-sm mt-1">
+                  {discountNote ? `${discountNote} ` : ''}
+                  <span className="text-gray-400">
+                    {formatPrice(displayPrice.original, priceSuffix)} {t.normally}
+                  </span>
+                </p>
               )}
             </div>
 
-            <dl className="divide-y divide-gray-800/70 mb-4">
+            <dl className="divide-y divide-gray-800/70 mb-3">
               {keyNumbers.map((k) => (
-                <div key={k.label} className="flex items-baseline justify-between gap-4 py-2">
+                <div key={k.label} className="flex items-baseline justify-between gap-3 py-1.5">
                   <dt className="text-gray-500 text-sm">{k.label}</dt>
-                  <dd className="text-white text-sm font-medium text-right">{k.value}</dd>
+                  <dd className="text-white text-base font-medium text-right">{k.value}</dd>
                 </div>
               ))}
             </dl>
 
             {includedItems && includedItems.length > 0 && (
-              <div className="mb-4 pt-4 border-t border-gray-800">
-                <p className="text-white text-sm font-semibold mb-2">Included at no extra cost</p>
-                <ul className="space-y-1.5">
-                  {includedItems.map((item) => (
-                    <li key={item} className="flex items-start gap-2 text-gray-400 text-sm">
-                      <Check className="w-3.5 h-3.5 text-emerald-400 mt-0.5 flex-shrink-0" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              <ul className="mb-3 space-y-1">
+                {includedItems.slice(0, 3).map((item) => (
+                  <li key={item} className="flex items-start gap-2 text-gray-400 text-sm">
+                    <Check className="w-3.5 h-3.5 text-emerald-400 mt-0.5 flex-shrink-0" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
             )}
 
             {discountCode && (
               <button
                 type="button"
                 onClick={handleCopyCode}
-                className="w-full flex items-center justify-between gap-2 px-3 py-2.5 mb-3 bg-gray-800/60 border border-gray-700 rounded-lg hover:border-gray-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+                className="w-full flex items-center justify-between gap-2 px-3 py-2 mb-2 bg-gray-800/60 border border-gray-700 rounded-lg hover:border-gray-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
               >
-                <span className="text-gray-500 text-xs">Code applied automatically</span>
+                <span className="text-gray-500 text-sm">{t.codeAuto}</span>
                 <span className="flex items-center gap-1.5 text-emerald-400 font-mono font-semibold text-sm">
                   {discountCode}
                   {codeCopied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
@@ -472,43 +522,98 @@ export default function ChallengeSelector({
 
             <a
               href={ctaLink}
-              target="_blank"
-              rel="noopener noreferrer sponsored"
-              className="w-full inline-flex items-center justify-center gap-2 px-4 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-semibold rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
+              {...AFFILIATE_LINK_PROPS}
+              className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-emerald-500 hover:bg-emerald-400 text-gray-950 text-base font-semibold rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
             >
-              Continue to {firmName}
+              {t.cta(firmName)}
               <ExternalLink className="w-4 h-4" />
             </a>
-            <p className="text-gray-600 text-[11px] mt-2 text-center">
-              Payment page pre-filled. We may earn a commission.
-            </p>
+            <p className="text-gray-600 text-xs mt-2 text-center leading-snug">{t.disclosure}</p>
           </aside>
         </div>
+
+        {/* Comparison — teaching, not a second decision. Buttons feed the
+            configurator above and take the visitor back to it. */}
+        {programGuide?.options && programGuide.options.length > 0 && (
+          <div id="program-guide" className="mt-8 scroll-mt-20">
+            <h3 className="text-xl md:text-2xl font-bold text-white">
+              {programGuide.title || t.compareTitle}
+            </h3>
+            <p className="text-gray-400 text-base mt-1 mb-4">
+              {programGuide.intro || t.compareIntro}
+            </p>
+
+            <div className="grid md:grid-cols-2 gap-3">
+              {programGuide.options.map((opt, i) => {
+                const isActive = opt.name === selectedProgram
+                return (
+                  <article
+                    key={opt.name || i}
+                    className={`rounded-xl border p-4 flex flex-col ${
+                      isActive
+                        ? 'bg-emerald-500/5 border-emerald-500/40'
+                        : 'bg-gray-900/50 border-gray-800'
+                    }`}
+                  >
+                    {opt.badge && (
+                      <span className="text-sm font-medium text-emerald-400 mb-1">{opt.badge}</span>
+                    )}
+                    <h4 className="text-lg font-bold text-white mb-1.5">{opt.name}</h4>
+                    {opt.summary && (
+                      <p className="text-gray-300 text-base leading-snug mb-3">{opt.summary}</p>
+                    )}
+                    {opt.points && opt.points.length > 0 && (
+                      <ul className="space-y-1.5 mb-4">
+                        {opt.points.slice(0, 3).map((pt, pi) => (
+                          <li key={pi} className="flex items-start gap-2 text-gray-400 text-base">
+                            <span className="text-emerald-500 leading-none mt-1">·</span>
+                            <span>{pt}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => opt.name && handleSelectProgram(opt.name, true)}
+                      disabled={isActive}
+                      className={`mt-auto w-full px-4 py-2.5 rounded-lg text-base font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
+                        isActive
+                          ? 'bg-emerald-500/10 border border-emerald-500/40 text-emerald-400 cursor-default'
+                          : 'bg-gray-800 hover:bg-gray-700 border border-gray-700 text-white'
+                      }`}
+                    >
+                      {isActive ? `✓ ${t.picked}` : t.pick(opt.name || '')}
+                    </button>
+                  </article>
+                )
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* ------------------------------------------------- mobile CTA bar */}
-      <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-gray-950/95 backdrop-blur border-t border-gray-800 px-4 py-3">
+      {/* Mobile CTA bar */}
+      <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-gray-950/95 backdrop-blur border-t border-gray-800 px-4 py-2.5">
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-gray-500 text-[11px] truncate">
+            <p className="text-gray-500 text-xs truncate">
               {selectedProgram} · {currentChallenge?.account_size}
             </p>
-            <p className="text-white font-bold leading-tight">
+            <p className="text-white text-base font-bold leading-tight">
+              {formatPrice(displayPrice.final, priceSuffix)}
               {displayPrice.hasDiscount && displayPrice.original !== null && (
-                <s className="text-gray-600 text-xs font-normal mr-1.5">
+                <s className="text-gray-600 text-sm font-normal ml-1.5">
                   {formatPrice(displayPrice.original)}
                 </s>
               )}
-              {formatPrice(displayPrice.final, priceSuffix)}
             </p>
           </div>
           <a
             href={ctaLink}
-            target="_blank"
-            rel="noopener noreferrer sponsored"
-            className="flex items-center gap-1.5 px-5 py-3 bg-emerald-500 text-gray-950 font-semibold rounded-lg flex-shrink-0"
+            {...AFFILIATE_LINK_PROPS}
+            className="flex items-center gap-1.5 px-5 py-2.5 bg-emerald-500 text-gray-950 text-base font-semibold rounded-lg flex-shrink-0"
           >
-            Continue
+            {t.ctaShort}
             <ExternalLink className="w-4 h-4" />
           </a>
         </div>
