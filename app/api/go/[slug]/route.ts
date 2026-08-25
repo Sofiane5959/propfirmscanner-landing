@@ -10,7 +10,9 @@
 //      - If ?challenge={slug} is present, prefers that challenge's own
 //        affiliate_url so the visitor lands on the exact plan they picked
 //      - Otherwise picks the firm's affiliate_url, else website_url
-//      - Logs the click in affiliate_clicks (using service role key, bypasses RLS)
+//      - Mints a per-click id, logs it in affiliate_clicks (using service role
+//        key, bypasses RLS) and hands it to the partner via the firm's
+//        subid_param so a commission can be traced back to this exact click
 //      - Redirects (302) to the real destination
 //
 // Why server-side (not client-side beacons):
@@ -56,6 +58,35 @@ function hashIp(ip: string): string {
     .slice(0, 32) // 32 chars is plenty
 }
 
+// Length of the per-click id handed to partner networks.
+const CLICK_ID_LENGTH = 16
+
+/**
+ * Mint the id that ties a row in affiliate_clicks to a commission in the
+ * partner's panel.
+ *
+ * Base36 rather than a UUID: this travels in a query string that already
+ * carries plan, discount, a_pid, a_bid and platform, and 36 hyphenated
+ * characters is dead weight there.
+ *
+ * 11 random bytes is 88 bits, which covers the full 16-character base36 range
+ * (36^16 is about 2^82.7). Taking the low 16 digits keeps the length fixed;
+ * padStart only ever fires for an improbably small draw. At this traffic
+ * volume collisions are a non-event, and the partial unique index on
+ * affiliate_clicks.click_id would surface one anyway.
+ *
+ * Returns null instead of throwing: a click that cannot be identified must
+ * still redirect.
+ */
+function generateClickId(): string | null {
+  try {
+    const value = BigInt('0x' + crypto.randomBytes(11).toString('hex'))
+    return value.toString(36).slice(-CLICK_ID_LENGTH).padStart(CLICK_ID_LENGTH, '0')
+  } catch {
+    return null
+  }
+}
+
 // ============================================================
 // MAIN HANDLER
 // ============================================================
@@ -96,7 +127,7 @@ export async function GET(
   
   const { data: firm, error: firmError } = await supabase
     .from('prop_firms')
-    .select('slug, name, affiliate_url, website_url')
+    .select('slug, name, affiliate_url, website_url, subid_param')
     .eq('slug', slug)
     .maybeSingle()
   
@@ -162,6 +193,23 @@ export async function GET(
   const botDetected = isBot(userAgent)
   
   // ----------------------------------------------------------
+  // 2b. Per-click id and the parameter that carries it
+  // ----------------------------------------------------------
+  // Minted before the insert so the id reaches the database whether or not
+  // the outbound URL can be built. A row without a redirect is still worth
+  // something; a redirect with no row is not.
+  const clickId = generateClickId()
+
+  // Which query parameter this partner reads the sub-id from. NULL means the
+  // network has no such field — we add nothing rather than send a parameter it
+  // would drop silently, which would look like attribution we don't have.
+  // The value comes from the database but ends up in an outbound URL, so it
+  // gets the same strict validation as opt_key.
+  const rawSubidParam: unknown = (firm as { subid_param?: string | null }).subid_param
+  const subidParam =
+    typeof rawSubidParam === 'string' && SAFE.test(rawSubidParam) ? rawSubidParam : null
+
+  // ----------------------------------------------------------
   // 3. Fire-and-forget the insert (don't block the redirect)
   // ----------------------------------------------------------
   // We intentionally don't `await` this — if the insert is slow or fails,
@@ -170,6 +218,7 @@ export async function GET(
   supabase
     .from('affiliate_clicks')
     .insert({
+      click_id: clickId,
       firm_slug: firm.slug,
       firm_name: firm.name,
       destination_type: destinationType,
@@ -196,17 +245,24 @@ export async function GET(
   // ----------------------------------------------------------
   // 4. Redirect
   // ----------------------------------------------------------
-  // Append the checkout choice without disturbing the affiliate params
-  // already on the destination (a_pid / a_bid must survive intact).
+  // Append the checkout choice and the sub-id without disturbing the affiliate
+  // params already on the destination (a_pid / a_bid must survive intact).
+  // searchParams.set() rather than string concatenation: deep links already
+  // carry plan, discount, a_pid, a_bid and platform, and hand-joining would
+  // break the encoding.
+  const wantsOpt = Boolean(optKey && optValue)
+  const wantsSubid = Boolean(subidParam && clickId)
   let finalDestination = destination
-  if (optKey && optValue) {
+  if (wantsOpt || wantsSubid) {
     try {
       const dest = new URL(destination)
-      dest.searchParams.set(optKey, optValue)
+      if (optKey && optValue) dest.searchParams.set(optKey, optValue)
+      if (subidParam && clickId) dest.searchParams.set(subidParam, clickId)
       finalDestination = dest.toString()
     } catch {
-      // Malformed destination in the DB — redirect to it unchanged rather
-      // than failing the click.
+      // Malformed destination in the DB — redirect to it unchanged rather than
+      // failing the click. The click id is already on its way to the database,
+      // so the click stays accounted for even without the sub-id.
     }
   }
 
