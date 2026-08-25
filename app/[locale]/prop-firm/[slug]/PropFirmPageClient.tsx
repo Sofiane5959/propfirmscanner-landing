@@ -127,6 +127,9 @@ interface PropFirm {
     help?: string
     options?: { value: string; name: string; sub?: string }[]
   } | null
+  // One-line answer to "is this firm for me?", shown before anything else.
+  verdict?: string | null
+  highlights?: string[] | string | null
   cost_timeline?: {
     title?: string
     intro?: string
@@ -288,9 +291,9 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
 
   // Table of contents — only lists sections that actually render.
   const toc: { id: string; label: string }[] = []
-  if (firm.description) toc.push({ id: 'about', label: `About ${firm.name}` })
-  if (hasProgramGuide) toc.push({ id: 'program-guide', label: 'Which program?' })
   if (challenges.length > 0) toc.push({ id: 'challenges', label: 'Choose your plan' })
+  if (hasProgramGuide) toc.push({ id: 'program-guide', label: 'Which program?' })
+  if (firm.description) toc.push({ id: 'about', label: `About ${firm.name}` })
   if (pros.length > 0 || cons.length > 0) toc.push({ id: 'pros-cons', label: 'Strengths & limits' })
   if (hasRulesSection) toc.push({ id: 'rules', label: 'Rules & costs' })
   if (hasTiers) toc.push({ id: 'progression', label: 'Scaling plan' })
@@ -378,6 +381,25 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
                 </div>
               </div>
 
+              {/* Verdict — the visitor decides in one sentence whether to
+                  keep reading. A 150-word description cannot do that. */}
+              {firm.verdict && (
+                <p className="text-gray-200 text-lg leading-relaxed mb-3 max-w-3xl">{firm.verdict}</p>
+              )}
+
+              {toArray(firm.highlights).length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {toArray(firm.highlights).map((h) => (
+                    <span
+                      key={h}
+                      className="px-2.5 py-1 bg-gray-800 border border-gray-700 rounded-full text-gray-300 text-xs font-medium"
+                    >
+                      {h}
+                    </span>
+                  ))}
+                </div>
+              )}
+
               {/* Live offer — the discount is the reason most visitors are here */}
               {hasVerifiedDeal && (
                 <div className="inline-flex items-center gap-2 mb-3 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
@@ -457,8 +479,26 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
       </section>
 
       {/* ================================================================ */}
-      {/* 2. TWO-COLUMN BODY — starts immediately so the offer card and    */}
-      {/*    the buy button are on screen from the first scroll position.  */}
+      {/* 2. CONFIGURATOR — full width on purpose. It has its own two-column
+             layout with a sticky summary; nesting that inside the page's
+             own two-column body squeezed it into ~700px and produced two
+             competing sidebars.                                            */}
+      {/* ================================================================ */}
+      {challenges.length > 0 && (
+        <div id="challenges" className="scroll-mt-24">
+          <ChallengeSelector
+            firmSlug={firm.slug}
+            firmName={firm.name}
+            challenges={challenges}
+            checkoutOptions={firm.checkout_options}
+            discountCode={firm.discount_code}
+            discountPercent={firm.discount_percent}
+          />
+        </div>
+      )}
+
+      {/* ================================================================ */}
+      {/* 3. TWO-COLUMN BODY — reference content, sticky sidebar          */}
       {/* ================================================================ */}
       <div className="max-w-6xl mx-auto px-4 py-10">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_300px]">
@@ -466,14 +506,6 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
           {/* MAIN COLUMN                                                */}
           {/* ---------------------------------------------------------- */}
           <main className="min-w-0 space-y-14">
-            {/* --- About ------------------------------------------------ */}
-            {firm.description && (
-              <section id="about" className="scroll-mt-24">
-                <h2 className="text-2xl font-bold text-white mb-4">About {firm.name}</h2>
-                <p className="text-gray-300 leading-relaxed">{firm.description}</p>
-              </section>
-            )}
-
             {/* --- Which program? — the question that blocks the choice,
                     answered before the configurator asks them to make it. --- */}
             {hasProgramGuide && (
@@ -518,19 +550,12 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
               </section>
             )}
 
-            {/* --- Configurator — right after the description, so the visitor
-                    knows what the firm is before being asked to choose. --- */}
-            {challenges.length > 0 && (
-              <div id="challenges" className="scroll-mt-24 -mx-4 sm:mx-0">
-                <ChallengeSelector
-                  firmSlug={firm.slug}
-                  firmName={firm.name}
-                  challenges={challenges}
-                  checkoutOptions={firm.checkout_options}
-                  discountCode={firm.discount_code}
-                  discountPercent={firm.discount_percent}
-                />
-              </div>
+            {/* --- About ------------------------------------------------ */}
+            {firm.description && (
+              <section id="about" className="scroll-mt-24">
+                <h2 className="text-2xl font-bold text-white mb-4">About {firm.name}</h2>
+                <p className="text-gray-300 leading-relaxed">{firm.description}</p>
+              </section>
             )}
 
             {/* --- Strengths & limitations ------------------------------ */}
