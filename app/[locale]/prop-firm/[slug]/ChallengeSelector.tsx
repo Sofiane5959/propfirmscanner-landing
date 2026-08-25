@@ -155,7 +155,12 @@ export default function ChallengeSelector({
   // Determine which program is the cheapest overall (for the "Cheapest" badge)
   const checkoutChoices = checkoutOptions?.options ?? []
   const hasCheckoutStep = checkoutChoices.length > 0
-  const [selectedCheckoutOption, setSelectedCheckoutOption] = useState<string>('')
+  // Pre-selected: the deep link needs a value, and leaving the visitor with a
+  // dead button they can't explain is worse than picking a sensible default
+  // they can change. The choice doesn't affect the price.
+  const [selectedCheckoutOption, setSelectedCheckoutOption] = useState<string>(
+    checkoutChoices[0]?.value ?? ''
+  )
   // The deep link lands on the firm's payment page, which needs this value.
   // Without it the visitor gets bounced back to a configuration step, which
   // is exactly the friction the deep link exists to remove.
@@ -396,9 +401,20 @@ export default function ChallengeSelector({
               {/* Firm's own checkout choice — shown before the CTA so the
                   visitor understands the extra step and its cost. */}
               {hasCheckoutStep && (
-                <div className="bg-gray-900/70 rounded-2xl border border-gray-800 p-5">
+                <div
+                  id="checkout-step"
+                  className={`rounded-2xl border p-5 scroll-mt-28 transition-colors ${
+                    checkoutReady
+                      ? 'bg-gray-900/70 border-gray-800'
+                      : 'bg-amber-500/5 border-amber-500/40'
+                  }`}
+                >
                   <div className="flex items-center gap-2 mb-2">
-                    <div className="w-6 h-6 rounded-full bg-emerald-500 text-white text-xs font-bold flex items-center justify-center">
+                    <div
+                      className={`w-6 h-6 rounded-full text-white text-xs font-bold flex items-center justify-center ${
+                        checkoutReady ? 'bg-emerald-500' : 'bg-amber-500'
+                      }`}
+                    >
                       3
                     </div>
                     <h3 className="text-sm font-semibold text-white uppercase tracking-wider">
@@ -417,9 +433,7 @@ export default function ChallengeSelector({
                         <button
                           key={opt.value}
                           type="button"
-                          onClick={() =>
-                            setSelectedCheckoutOption(isActive ? '' : opt.value)
-                          }
+                          onClick={() => setSelectedCheckoutOption(opt.value)}
                           className={`p-3 rounded-lg border text-left transition-all ${
                             isActive
                               ? 'bg-emerald-500/10 border-emerald-500 shadow-md shadow-emerald-500/10'
@@ -609,10 +623,10 @@ export default function ChallengeSelector({
                 </a>
               ) : (
                 <a
-                  href="#challenges"
-                  className="flex items-center gap-1.5 px-5 py-3 bg-gray-700 text-gray-300 font-semibold rounded-lg"
+                  href="#checkout-step"
+                  className="flex items-center gap-1.5 px-5 py-3 bg-amber-500/15 border border-amber-500/40 text-amber-300 font-semibold rounded-lg hover:bg-amber-500/25 transition-colors"
                 >
-                  Pick a data feed
+                  ↑ {checkoutOptions?.label || 'One step left'}
                 </a>
               )}
             </div>
@@ -749,11 +763,14 @@ function DealSummaryCard(props: DealSummaryProps) {
           <ExternalLink className="w-4 h-4" />
         </a>
       ) : (
-        <div className="w-full py-4 bg-gray-800 border border-gray-700 rounded-xl text-center">
-          <p className="text-gray-400 text-sm font-medium">
-            {checkoutLabel || 'One more choice'} to continue
+        <a
+          href="#checkout-step"
+          className="block w-full py-4 bg-amber-500/10 border border-amber-500/40 rounded-xl text-center hover:bg-amber-500/20 transition-colors"
+        >
+          <p className="text-amber-300 text-sm font-semibold">
+            ↑ {checkoutLabel || 'One more choice'} to continue
           </p>
-        </div>
+        </a>
       )}
 
       {!compact && (
