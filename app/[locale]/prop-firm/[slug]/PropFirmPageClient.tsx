@@ -127,6 +127,16 @@ interface PropFirm {
     help?: string
     options?: { value: string; name: string; sub?: string }[]
   } | null
+  cost_timeline?: {
+    title?: string
+    intro?: string
+    steps?: { label?: string; title?: string; detail?: string }[]
+  } | null
+  program_guide?: {
+    title?: string
+    intro?: string
+    options?: { badge?: string; name?: string; summary?: string; points?: string[] }[]
+  } | null
   progression_tiers?: {
     title?: string
     intro?: string
@@ -266,6 +276,11 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
     policies.push({ icon: <Layers className="w-5 h-5" />, title: 'Swap-free option', body: firm.swap_free })
   }
 
+  const costTimeline = firm.cost_timeline || null
+  const hasCostTimeline = Boolean(costTimeline?.steps?.length)
+  const programGuide = firm.program_guide || null
+  const hasProgramGuide = Boolean(programGuide?.options?.length)
+
   const tiers = firm.progression_tiers || null
   const hasTiers = Boolean(tiers && tiers.rows && tiers.rows.length > 0)
 
@@ -274,10 +289,12 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
   // Table of contents — only lists sections that actually render.
   const toc: { id: string; label: string }[] = []
   if (firm.description) toc.push({ id: 'about', label: `About ${firm.name}` })
+  if (hasProgramGuide) toc.push({ id: 'program-guide', label: 'Which program?' })
   if (challenges.length > 0) toc.push({ id: 'challenges', label: 'Choose your plan' })
   if (pros.length > 0 || cons.length > 0) toc.push({ id: 'pros-cons', label: 'Strengths & limits' })
   if (hasRulesSection) toc.push({ id: 'rules', label: 'Rules & costs' })
   if (hasTiers) toc.push({ id: 'progression', label: 'Scaling plan' })
+  if (hasCostTimeline) toc.push({ id: 'costs', label: 'What you will pay' })
   toc.push({ id: 'faq', label: 'FAQ' })
 
   return (
@@ -457,6 +474,50 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
               </section>
             )}
 
+            {/* --- Which program? — the question that blocks the choice,
+                    answered before the configurator asks them to make it. --- */}
+            {hasProgramGuide && (
+              <section id="program-guide" className="scroll-mt-24">
+                <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                  {programGuide!.title || 'Which program fits you?'}
+                </h2>
+                {programGuide!.intro && <p className="text-gray-400 mb-6">{programGuide!.intro}</p>}
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  {programGuide!.options!.map((opt, i) => (
+                    <article
+                      key={opt.name || i}
+                      className="bg-gray-900/50 border border-gray-800 rounded-2xl p-5 flex flex-col"
+                    >
+                      {opt.badge && (
+                        <span className="self-start px-2.5 py-1 mb-3 bg-emerald-500/10 border border-emerald-500/25 rounded-full text-emerald-400 text-xs font-semibold">
+                          {opt.badge}
+                        </span>
+                      )}
+                      <h3 className="text-lg font-bold text-white mb-2">{opt.name}</h3>
+                      {opt.summary && (
+                        <p className="text-gray-300 text-sm leading-relaxed mb-4">{opt.summary}</p>
+                      )}
+                      {opt.points && opt.points.length > 0 && (
+                        <ul className="space-y-2 mt-auto">
+                          {opt.points.map((pt, pi) => (
+                            <li key={pi} className="flex items-start gap-2 text-gray-400 text-sm">
+                              <span className="text-emerald-500 mt-0.5">·</span>
+                              <span>{pt}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </article>
+                  ))}
+                </div>
+
+                <p className="text-gray-500 text-sm mt-4">
+                  Pick either one below — the configurator shows the exact rules and price for each size.
+                </p>
+              </section>
+            )}
+
             {/* --- Configurator — right after the description, so the visitor
                     knows what the firm is before being asked to choose. --- */}
             {challenges.length > 0 && (
@@ -574,6 +635,36 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
                     ))}
                   </div>
                 )}
+              </section>
+            )}
+
+            {/* --- Cost timeline — fees arrive at different stages, and a
+                    visitor who only sees the monthly price is being misled. --- */}
+            {hasCostTimeline && (
+              <section id="costs" className="scroll-mt-24">
+                <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                  {costTimeline!.title || 'What you will actually pay'}
+                </h2>
+                {costTimeline!.intro && <p className="text-gray-400 mb-6">{costTimeline!.intro}</p>}
+
+                <ol className="relative border-l border-gray-800 ml-3 space-y-6">
+                  {costTimeline!.steps!.map((step, i) => (
+                    <li key={i} className="ml-6">
+                      <span className="absolute -left-[11px] flex items-center justify-center w-[22px] h-[22px] rounded-full bg-emerald-500 text-gray-950 text-xs font-bold">
+                        {i + 1}
+                      </span>
+                      {step.label && (
+                        <p className="text-xs uppercase tracking-wider font-semibold text-emerald-400 mb-1">
+                          {step.label}
+                        </p>
+                      )}
+                      {step.title && <p className="text-white font-semibold mb-1">{step.title}</p>}
+                      {step.detail && (
+                        <p className="text-gray-400 text-sm leading-relaxed">{step.detail}</p>
+                      )}
+                    </li>
+                  ))}
+                </ol>
               </section>
             )}
 
