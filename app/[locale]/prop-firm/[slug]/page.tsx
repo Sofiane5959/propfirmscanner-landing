@@ -134,28 +134,45 @@ export default async function PropFirmPage({ params }: Props) {
   // regardless of what they trade — which is how futures firms ended up
   // recommended under a forex firm. Match the asset class first, and only fall
   // back to a generic list if that leaves us short.
+  const SIMILAR_COLUMNS = 'id, name, slug, logo_url, trustpilot_rating, min_price, profit_split'
   const isFutures = firm.is_futures === true
 
+  // Futures and forex firms are not alternatives to each other. Match the
+  // asset class first; only widen the net if that leaves the section short.
   const { data: matched } = await supabase
     .from('prop_firms')
-    .select('id, name, slug, logo_url, trustpilot_rating, min_price, profit_split')
+    .select(SIMILAR_COLUMNS)
     .neq('id', firm.id)
     .eq('is_futures', isFutures)
     .order('trustpilot_rating', { ascending: false })
     .limit(4)
 
-  let similarFirms = matched || []
+  type SimilarRow = {
+    id: string
+    name: string
+    slug: string
+    logo_url: string
+    trustpilot_rating: number
+    min_price: number
+    profit_split: number
+  }
+  let similarFirms = (matched || []) as SimilarRow[]
 
   if (similarFirms.length < 4) {
-    const exclude = [firm.id, ...similarFirms.map((f: { id: string }) => f.id)]
+    // PostgREST needs each UUID quoted inside the in-list. Passing them bare
+    // makes the whole filter fail, which is how this section ended up empty.
+    const exclude = [firm.id, ...similarFirms.map((f) => f.id)]
+      .map((id) => `"${id}"`)
+      .join(',')
+
     const { data: filler } = await supabase
       .from('prop_firms')
-      .select('id, name, slug, logo_url, trustpilot_rating, min_price, profit_split')
-      .not('id', 'in', `(${exclude.join(',')})`)
+      .select(SIMILAR_COLUMNS)
+      .not('id', 'in', `(${exclude})`)
       .order('trustpilot_rating', { ascending: false })
       .limit(4 - similarFirms.length)
 
-    similarFirms = [...similarFirms, ...(filler || [])]
+    similarFirms = [...similarFirms, ...((filler || []) as SimilarRow[])]
   }
 
   // Ordered by price so the configurator's first program is the cheapest entry

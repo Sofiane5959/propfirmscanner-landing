@@ -145,21 +145,26 @@ function sizeToNumber(size: string | null): number {
   return unit === 'M' ? n * 1_000_000 : unit === 'K' ? n * 1_000 : n
 }
 
-function formatPrice(price: number | null, suffix = ''): string {
+// French writes the currency after the amount, with a space: "75 $/mois".
+// Putting the dollar sign in front reads as a translation nobody proofread.
+function formatPrice(price: number | null, suffix = '', locale = 'en'): string {
   if (price === null || price === undefined) return '—'
-  return `$${price.toLocaleString('en-US', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  })}${suffix}`
+  const opts = { minimumFractionDigits: 0, maximumFractionDigits: 2 } as const
+  if (locale === 'fr') return `${price.toLocaleString('fr-FR', opts)}\u00A0$${suffix}`
+  return `$${price.toLocaleString('en-US', opts)}${suffix}`
 }
 
 // Risk figures are percentages on forex firms and dollar amounts on futures
 // firms. Rendering 2000 as "2000%" instead of "$2,000" is a different claim,
 // so the unit travels with the challenge.
-function fmtRisk(value: number | null | undefined, unit?: string | null): string {
+function fmtRisk(value: number | null | undefined, unit?: string | null, locale = 'en'): string {
   if (value === null || value === undefined) return '—'
-  if (unit === 'usd') return `$${Number(value).toLocaleString('en-US')}`
-  return `${value}%`
+  if (unit === 'usd') {
+    return locale === 'fr'
+      ? `${Number(value).toLocaleString('fr-FR')}\u00A0$`
+      : `$${Number(value).toLocaleString('en-US')}`
+  }
+  return locale === 'fr' ? `${value}\u00A0%` : `${value}%`
 }
 
 // =============================================================================
@@ -296,19 +301,19 @@ export default function ChallengeSelector({
 
   const riskUnit = currentChallenge?.risk_unit
   const keyNumbers = [
-    { label: t.target, value: fmtRisk(currentChallenge?.phase1_profit_target, riskUnit) },
-    { label: t.drawdown, value: fmtRisk(currentChallenge?.max_drawdown, riskUnit) },
-    { label: t.dailyLoss, value: fmtRisk(currentChallenge?.max_daily_loss, riskUnit) },
+    { label: t.target, value: fmtRisk(currentChallenge?.phase1_profit_target, riskUnit, locale) },
+    { label: t.drawdown, value: fmtRisk(currentChallenge?.max_drawdown, riskUnit, locale) },
+    { label: t.dailyLoss, value: fmtRisk(currentChallenge?.max_daily_loss, riskUnit, locale) },
     currentChallenge?.max_contracts
       ? { label: t.contracts, value: String(currentChallenge.max_contracts) }
-      : { label: t.split, value: fmtRisk(currentChallenge?.profit_split) },
+      : { label: t.split, value: fmtRisk(currentChallenge?.profit_split, null, locale) },
   ]
 
   return (
     <section
       id="challenges"
       ref={configRef}
-      className="px-4 py-8 border-y border-gray-800 bg-gray-900/20 scroll-mt-20"
+      className="px-4 py-8 border-y border-gray-800 bg-gray-900/20 scroll-mt-28 print:scroll-mt-0"
     >
       <div className="max-w-6xl mx-auto">
         <div className="mb-5">
@@ -366,7 +371,7 @@ export default function ChallengeSelector({
                       </span>
                       <span className="block text-gray-500 text-sm mt-0.5">
                         {t.sizes(list.length)}
-                        {cheapest !== null && ` · ${t.from} ${formatPrice(cheapest, priceSuffix)}`}
+                        {cheapest !== null && ` · ${t.from} ${formatPrice(cheapest, priceSuffix, locale)}`}
                       </span>
                     </button>
                   )
@@ -407,7 +412,7 @@ export default function ChallengeSelector({
                         {c.account_size}
                       </span>
                       <span className="block text-gray-500 text-sm">
-                        {formatPrice(p, priceSuffix)}
+                        {formatPrice(p, priceSuffix, locale)}
                       </span>
                     </button>
                   )
@@ -473,14 +478,14 @@ export default function ChallengeSelector({
 
             <div className="mb-3">
               <p className="text-white leading-none">
-                <span className="text-3xl font-bold">{formatPrice(displayPrice.final)}</span>
+                <span className="text-3xl font-bold">{formatPrice(displayPrice.final, '', locale)}</span>
                 {isSubscription && <span className="text-gray-500 text-base">{t.perMonth}</span>}
               </p>
               {displayPrice.hasDiscount && displayPrice.original !== null && (
                 <p className="text-gray-500 text-sm mt-1">
                   {discountNote ? `${discountNote} ` : ''}
                   <span className="text-gray-400">
-                    {formatPrice(displayPrice.original, priceSuffix)} {t.normally}
+                    {formatPrice(displayPrice.original, priceSuffix, locale)} {t.normally}
                   </span>
                 </p>
               )}
@@ -535,7 +540,7 @@ export default function ChallengeSelector({
         {/* Comparison — teaching, not a second decision. Buttons feed the
             configurator above and take the visitor back to it. */}
         {programGuide?.options && programGuide.options.length > 0 && (
-          <div id="program-guide" className="mt-8 scroll-mt-20">
+          <div id="program-guide" className="mt-8 scroll-mt-28 print:scroll-mt-0">
             <h3 className="text-xl md:text-2xl font-bold text-white">
               {programGuide.title || t.compareTitle}
             </h3>
@@ -593,17 +598,17 @@ export default function ChallengeSelector({
       </div>
 
       {/* Mobile CTA bar */}
-      <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-gray-950/95 backdrop-blur border-t border-gray-800 px-4 py-2.5">
+      <div className="lg:hidden print:hidden fixed bottom-0 inset-x-0 z-40 bg-gray-950/95 backdrop-blur border-t border-gray-800 px-4 py-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))]">
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
             <p className="text-gray-500 text-xs truncate">
               {selectedProgram} · {currentChallenge?.account_size}
             </p>
             <p className="text-white text-base font-bold leading-tight">
-              {formatPrice(displayPrice.final, priceSuffix)}
+              {formatPrice(displayPrice.final, priceSuffix, locale)}
               {displayPrice.hasDiscount && displayPrice.original !== null && (
                 <s className="text-gray-600 text-sm font-normal ml-1.5">
-                  {formatPrice(displayPrice.original)}
+                  {formatPrice(displayPrice.original, '', locale)}
                 </s>
               )}
             </p>

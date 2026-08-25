@@ -48,7 +48,7 @@ const COPY = {
     officialSite: 'Official website',
     choosingProgram: 'Choosing a program',
     afterPass: 'After you pass',
-    noHidden: 'No hidden fees',
+    noHidden: 'All the costs to expect',
     includedValue: 'Included value',
     beforeBuy: 'Before you buy',
     scaling: 'Scaling',
@@ -96,7 +96,7 @@ const COPY = {
     officialSite: 'Site officiel',
     choosingProgram: 'Choix du programme',
     afterPass: 'Après la réussite',
-    noHidden: 'Aucun frais caché',
+    noHidden: 'Tous les coûts à prévoir',
     includedValue: 'Valeur incluse',
     beforeBuy: 'À connaître avant d’acheter',
     scaling: 'Progression',
@@ -312,6 +312,10 @@ export default function PropFirmPageClient({
 
   const dateFmt = locale === 'fr' ? 'fr-FR' : 'en-GB'
 
+  // French writes the currency after the amount: "150 $", not "$150".
+  const money = (v: number) =>
+    locale === 'fr' ? `${v.toLocaleString('fr-FR')}\u00A0$` : `$${v.toLocaleString('en-US')}`
+
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({ title: `${firm.name} - PropFirmScanner`, url: window.location.href })
@@ -393,7 +397,9 @@ export default function PropFirmPageClient({
     : null
 
   return (
-    <div className="min-h-screen bg-gray-950">
+    // Bottom padding on mobile clears the fixed CTA bar; it is removed at lg
+    // where the bar is hidden, and for print.
+    <div className="min-h-screen bg-gray-950 pb-24 lg:pb-0 print:pb-0">
       {/* ================================================================ */}
       {/* 1. HERO — a benefit headline, proof, and the offer side by side  */}
       {/* ================================================================ */}
@@ -511,13 +517,15 @@ export default function PropFirmPageClient({
               <div className="mb-3">
                 <p className="text-gray-500 text-sm">
                   {t.from}{' '}
-                  {hasVerifiedDeal && <s className="text-gray-600">${firm.min_price}</s>}
+                  {hasVerifiedDeal && <s className="text-gray-600">{money(firm.min_price)}</s>}
                 </p>
                 <p className="text-white">
                   <span className="text-3xl font-bold">
-                    ${hasVerifiedDeal
-                      ? Math.round(firm.min_price * (1 - firm.discount_percent / 100) * 100) / 100
-                      : firm.min_price}
+                    {money(
+                      hasVerifiedDeal
+                        ? Math.round(firm.min_price * (1 - firm.discount_percent / 100) * 100) / 100
+                        : firm.min_price
+                    )}
                   </span>
                   {isSubscription && <span className="text-gray-500 text-base">{t.perMonth}</span>}
                 </p>
@@ -604,7 +612,7 @@ export default function PropFirmPageClient({
       {/* 3. CONFIGURATOR — full width, owns its own two-column layout    */}
       {/* ================================================================ */}
       {challenges.length > 0 && (
-        <div id="challenges" className="scroll-mt-24">
+        <div id="challenges" className="scroll-mt-28 print:scroll-mt-0">
           <ChallengeSelector
             firmSlug={firm.slug}
             firmName={firm.name}
@@ -625,7 +633,7 @@ export default function PropFirmPageClient({
         {/* 5. JOURNEY — what happens after you pay                       */}
         {/* ============================================================== */}
         {journey?.steps?.length ? (
-          <section id="journey" className="scroll-mt-24">
+          <section id="journey" className="scroll-mt-28 print:scroll-mt-0">
             <SectionHeading
               eyebrow={t.afterPass}
               title={journey.title || 'From evaluation to your first payout'}
@@ -671,7 +679,7 @@ export default function PropFirmPageClient({
         {/* 6. COSTS                                                       */}
         {/* ============================================================== */}
         {costTimeline?.steps?.length ? (
-          <section id="costs" className="scroll-mt-24">
+          <section id="costs" className="scroll-mt-28 print:scroll-mt-0">
             <SectionHeading
               eyebrow={t.noHidden}
               title={costTimeline.title || 'What it actually costs'}
@@ -730,7 +738,7 @@ export default function PropFirmPageClient({
         {/* 8. KEY RULES — four that matter, the rest folded away          */}
         {/* ============================================================== */}
         {keyRules?.rules?.length ? (
-          <section id="rules" className="scroll-mt-24">
+          <section id="rules" className="scroll-mt-28 print:scroll-mt-0">
             <SectionHeading
               eyebrow={t.beforeBuy}
               title={keyRules.title || 'The rules that actually matter'}
@@ -764,7 +772,7 @@ export default function PropFirmPageClient({
         {/* 9. SCALING LADDER                                              */}
         {/* ============================================================== */}
         {tiers?.rows?.length ? (
-          <section id="progression" className="scroll-mt-24">
+          <section id="progression" className="scroll-mt-28 print:scroll-mt-0">
             <SectionHeading eyebrow={t.scaling} title={tiers.title || 'Scaling plan'} intro={tiers.intro} />
             <div className="overflow-x-auto rounded-xl border border-gray-800 bg-gray-900/40">
               <table className="w-full text-sm">
@@ -818,7 +826,7 @@ export default function PropFirmPageClient({
         {/* 10. STRENGTHS & LIMITS                                         */}
         {/* ============================================================== */}
         {(pros.length > 0 || cons.length > 0) && (
-          <section id="pros-cons" className="scroll-mt-24">
+          <section id="pros-cons" className="scroll-mt-28 print:scroll-mt-0">
             <SectionHeading
               eyebrow={t.honest}
               title={t.whyChoose(firm.name)}
@@ -865,7 +873,7 @@ export default function PropFirmPageClient({
         {/* 11. FULL REFERENCE — complete, but folded away                 */}
         {/* ============================================================== */}
         {hasReference && (
-          <section id="reference" className="scroll-mt-24">
+          <section id="reference" className="scroll-mt-28 print:scroll-mt-0">
             <Disclosure summary={t.fullSpecs}>
               <div className="space-y-6">
                 {specs.length > 0 && (
@@ -982,14 +990,14 @@ export default function PropFirmPageClient({
         {/* ============================================================== */}
         {/* 13. FAQ                                                        */}
         {/* ============================================================== */}
-        <section id="faq" className="scroll-mt-24">
+        <section id="faq" className="scroll-mt-28 print:scroll-mt-0">
           <SectionHeading
             eyebrow="FAQ"
             title={t.faq}
             intro={t.faqIntro(firm.name)}
           />
           <div className="space-y-3">
-            {generateFAQs(firm, isSubscription).map((faq, i) => (
+            {generateFAQs(firm, isSubscription, locale).map((faq, i) => (
               <FAQItem key={i} question={faq.question} answer={faq.answer} />
             ))}
           </div>
@@ -1155,80 +1163,130 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
 
 function generateFAQs(
   firm: PropFirm,
-  isSubscription = false
+  isSubscription = false,
+  locale = 'en'
 ): { question: string; answer: string }[] {
   const faqs: { question: string; answer: string }[] = []
+  const fr = locale === 'fr'
+  const n = firm.name
+  // French convention puts the currency after the amount, with a space.
+  const money = (v: number) => (fr ? `${v.toLocaleString('fr-FR')} $` : `$${v.toLocaleString('en-US')}`)
 
+  // --- Legitimacy ------------------------------------------------------
   faqs.push({
-    question: `Is ${firm.name} legit?`,
+    question: fr ? `${n} est-il fiable ?` : `Is ${n} legit?`,
     answer: firm.is_regulated
-      ? `Yes. ${firm.name} is a legitimate prop trading firm${
-          firm.regulation_details ? `. ${firm.regulation_details}` : '.'
-        }${firm.founded ? ` It has been operating since ${firm.founded}.` : ''} As with any prop firm, review the rules carefully before purchasing.`
-      : `${firm.name} operates as a proprietary trading firm.${
+      ? fr
+        ? `Oui. ${n} est une prop firm établie${
+            firm.regulation_details ? `. ${firm.regulation_details}` : '.'
+          }${firm.founded ? ` L’entreprise opère depuis ${firm.founded}.` : ''} Comme pour toute prop firm, lisez attentivement les règles avant d’acheter.`
+        : `Yes. ${n} is an established prop trading firm${
+            firm.regulation_details ? `. ${firm.regulation_details}` : '.'
+          }${firm.founded ? ` It has been operating since ${firm.founded}.` : ''} As with any prop firm, review the rules carefully before purchasing.`
+      : fr
+      ? `${n} opère comme société de trading pour compte propre.${
+          firm.founded ? ` Fondée en ${firm.founded},` : ''
+        } elle propose des évaluations simulées et finance les traders qui les réussissent. Lisez les règles attentivement et envisagez de commencer sur une petite taille de compte.`
+      : `${n} operates as a proprietary trading firm.${
           firm.founded ? ` Founded in ${firm.founded},` : ''
-        } it offers simulated trading evaluations and funds traders who pass. Review the rules carefully and consider starting with a smaller account.`,
+        } it offers simulated evaluations and funds traders who pass. Review the rules carefully and consider starting with a smaller account.`,
   })
 
+  // --- Cost -------------------------------------------------------------
   if (firm.min_price) {
+    const min = money(firm.min_price)
+    const max = firm.max_price ? money(firm.max_price) : null
     faqs.push({
-      question: `How much does ${firm.name} cost?`,
-      answer: `${firm.name} ${
-        isSubscription ? 'evaluations are billed monthly, starting at' : 'evaluations start at'
-      } $${firm.min_price}${isSubscription ? ' per month' : ''}${
-        firm.max_price
-          ? ` and going up to $${firm.max_price}${isSubscription ? ' per month' : ''} for the largest account sizes`
-          : ''
-      }.${
-        isSubscription
-          ? ' The subscription renews every 30 days and keeps running until you pass or cancel, so budget for more than one cycle.'
-          : ''
-      } Use the configurator above for the exact price of each program and size.`,
+      question: fr ? `Combien coûte ${n} ?` : `How much does ${n} cost?`,
+      answer: fr
+        ? `${
+            isSubscription
+              ? `Les évaluations ${n} sont facturées mensuellement, à partir de ${min} par mois`
+              : `Les évaluations ${n} démarrent à ${min}`
+          }${max ? ` et montent jusqu’à ${max}${isSubscription ? ' par mois' : ''} pour les plus grandes tailles de compte` : ''}.${
+            isSubscription
+              ? ' L’abonnement se renouvelle tous les 30 jours et continue jusqu’à la réussite ou la résiliation : prévoyez plus d’un cycle.'
+              : ''
+          } Le configurateur ci-dessus affiche le prix exact de chaque programme et de chaque taille.`
+        : `${
+            isSubscription
+              ? `${n} evaluations are billed monthly, starting at ${min} per month`
+              : `${n} evaluations start at ${min}`
+          }${max ? ` and going up to ${max}${isSubscription ? ' per month' : ''} for the largest account sizes` : ''}.${
+            isSubscription
+              ? ' The subscription renews every 30 days and keeps running until you pass or cancel, so budget for more than one cycle.'
+              : ''
+          } Use the configurator above for the exact price of each program and size.`,
     })
   }
 
+  // --- Profit split ------------------------------------------------------
   if (firm.max_profit_split || firm.profit_split) {
     const split = firm.max_profit_split || firm.profit_split
     faqs.push({
-      question: `What profit split does ${firm.name} offer?`,
-      answer: `${firm.name} offers profit splits up to ${split}%. The exact split depends on the program and, on some firms, on the size of each withdrawal — the configurator shows the figure for your selection.`,
+      question: fr
+        ? `Quel partage des profits propose ${n} ?`
+        : `What profit split does ${n} offer?`,
+      answer: fr
+        ? `${n} propose un partage des profits allant jusqu’à ${split} %. Le taux exact dépend du programme et, chez certaines firmes, du montant de chaque retrait — le configurateur affiche le chiffre correspondant à votre sélection.`
+        : `${n} offers profit splits up to ${split}%. The exact split depends on the program and, at some firms, on the size of each withdrawal — the configurator shows the figure for your selection.`,
     })
   }
 
+  // --- Permissions -------------------------------------------------------
   const permissions: string[] = []
-  if (firm.allows_scalping) permissions.push('scalping')
-  if (firm.allows_news_trading) permissions.push('news trading')
-  if (firm.allows_ea) permissions.push('automated strategies')
+  if (firm.allows_scalping) permissions.push(fr ? 'le scalping' : 'scalping')
+  if (firm.allows_news_trading) permissions.push(fr ? 'le trading des actualités' : 'news trading')
+  if (firm.allows_ea) permissions.push(fr ? 'les stratégies automatisées' : 'automated strategies')
   if (permissions.length > 0) {
     faqs.push({
-      question: `Does ${firm.name} allow scalping and news trading?`,
-      answer: `${firm.name} allows ${permissions.join(', ')} on some of their programs, but not all — instant-funding and high-leverage accounts are usually the most restricted. Check the exact program in the configurator before purchasing.`,
+      question: fr
+        ? `${n} autorise-t-il le scalping et le trading des actualités ?`
+        : `Does ${n} allow scalping and news trading?`,
+      answer: fr
+        ? `${n} autorise ${permissions.join(', ')} sur certains programmes, mais pas tous — les comptes à financement immédiat et à fort levier sont généralement les plus restreints. Vérifiez le programme exact dans le configurateur avant d’acheter.`
+        : `${n} allows ${permissions.join(', ')} on some of their programs, but not all — instant-funding and high-leverage accounts are usually the most restricted. Check the exact program in the configurator before purchasing.`,
     })
   }
 
+  // --- Payouts -----------------------------------------------------------
   if (firm.payout_frequency) {
     const speed = formatPayoutSpeed(firm)
     faqs.push({
-      question: `How does ${firm.name} handle payouts?`,
-      answer: `${firm.name} processes payouts ${firm.payout_frequency.toLowerCase()}${
-        speed ? `, typically within ${speed.toLowerCase()} of request` : ''
-      }.${firm.min_payout ? ` The minimum payout is $${firm.min_payout}.` : ''}`,
+      question: fr ? `Comment ${n} gère-t-il les retraits ?` : `How does ${n} handle payouts?`,
+      answer: fr
+        ? `${n} traite les retraits ${firm.payout_frequency.toLowerCase()}${
+            speed ? `, généralement sous ${speed.toLowerCase()} après la demande` : ''
+          }.${firm.min_payout ? ` Le retrait minimum est de ${money(firm.min_payout)}.` : ''}`
+        : `${n} processes payouts ${firm.payout_frequency.toLowerCase()}${
+            speed ? `, typically within ${speed.toLowerCase()} of request` : ''
+          }.${firm.min_payout ? ` The minimum payout is ${money(firm.min_payout)}.` : ''}`,
     })
   }
 
+  // --- Fees deducted at the first withdrawal ------------------------------
   if (firm.refund_policy) {
     faqs.push({
-      question: `Does ${firm.name} refund the evaluation fee?`,
+      question: fr
+        ? `Quels frais sont déduits du premier retrait ?`
+        : `What fees are deducted from the first withdrawal?`,
       answer: firm.refund_policy,
     })
   }
 
+  // --- Scaling ------------------------------------------------------------
   if (firm.scaling_max) {
     faqs.push({
-      question: `What is the maximum capital I can manage at ${firm.name}?`,
-      answer: `${firm.name} lets qualified traders manage up to ${firm.scaling_max}.${
-        firm.max_allocation ? ` ${firm.max_allocation}` : ''
-      }`,
+      question: fr
+        ? `Quel capital maximum puis-je gérer chez ${n} ?`
+        : `What is the maximum capital I can manage at ${n}?`,
+      answer: fr
+        ? `${n} permet aux traders qualifiés de gérer jusqu’à ${firm.scaling_max}.${
+            firm.max_allocation ? ` ${firm.max_allocation}` : ''
+          }`
+        : `${n} lets qualified traders manage up to ${firm.scaling_max}.${
+            firm.max_allocation ? ` ${firm.max_allocation}` : ''
+          }`,
     })
   }
 
