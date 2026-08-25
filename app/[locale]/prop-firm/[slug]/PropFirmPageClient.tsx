@@ -118,6 +118,7 @@ interface PropFirm {
   headline?: string | null
   verdict?: string | null
   discount_expires_at?: string | null
+  discount_note?: string | null
   proof_stats?: { value?: string; label?: string }[] | null
   value_strip?: { title?: string; sub?: string }[] | null
   journey?: {
@@ -481,8 +482,10 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
             firmName={firm.name}
             challenges={challenges}
             checkoutOptions={firm.checkout_options}
+            programGuide={firm.program_guide}
             discountCode={firm.discount_code}
             discountPercent={firm.discount_percent}
+            discountNote={firm.discount_note}
           />
         </div>
       )}

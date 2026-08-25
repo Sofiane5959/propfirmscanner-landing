@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo, useEffect } from 'react'
-import { ExternalLink, Check, Copy, TrendingUp, Shield, Target, Zap, Award, TrendingDown } from 'lucide-react'
+import { ExternalLink, Check, Copy, ChevronDown } from 'lucide-react'
 
 // =============================================================================
 // TYPES
@@ -32,15 +32,15 @@ export interface Challenge {
   allows_scalping: boolean | null
   allows_news_trading: boolean | null
   // Futures firms bill monthly and express risk in dollars, not percent.
-  billing_period: string | null       // 'one-time' | 'monthly'
-  risk_unit: string | null            // 'percent'  | 'usd'
+  billing_period: string | null // 'one-time' | 'monthly'
+  risk_unit: string | null // 'percent'  | 'usd'
   affiliate_url: string | null
 }
 
 // Some firms make you pick something at their own checkout before you can pay
-// (Earn2Trade makes you choose a market data feed). Surfacing that choice here
-// means the visitor doesn't hit an unexplained extra step — and an unexplained
-// extra cost — after leaving the site.
+// (Earn2Trade makes you choose a market data feed). It is pre-selected and
+// folded away: a real decision with a real cost, but not one that should stand
+// between the visitor and the price.
 export interface CheckoutOptions {
   label?: string
   param?: string
@@ -48,41 +48,50 @@ export interface CheckoutOptions {
   options?: { value: string; name: string; sub?: string }[]
 }
 
+// Lets the page frame programs by goal ("Climb step by step") rather than by
+// product name ("Trader Career Path"), which means nothing to a newcomer.
+export interface ProgramGuide {
+  options?: { badge?: string; name?: string; summary?: string; points?: string[] }[]
+}
+
 interface Props {
   firmSlug: string
   firmName: string
   challenges: Challenge[]
   checkoutOptions?: CheckoutOptions | null
+  programGuide?: ProgramGuide | null
   discountCode?: string | null
   discountPercent?: number | null
+  /** Free-text note under the price, e.g. "for the first 4 billings". */
+  discountNote?: string | null
 }
 
 // =============================================================================
 // HELPERS
 // =============================================================================
 
-// Extract program name from full challenge name.
-// Convention: "<Program> <Size>" (e.g. "2 Step Prime $10K" -> "2 Step Prime")
+// "2 Step Prime $10K" -> "2 Step Prime". Also handles "Gauntlet Mini 50K".
 function extractProgram(challengeName: string | null): string {
-  if (!challengeName) return 'Other'
-  const match = challengeName.match(/^(.+?)\s+\$?[\d,.KMk]+/i)
-  return match ? match[1].trim() : challengeName
+  if (!challengeName) return 'Program'
+  const m = challengeName.match(/^(.+?)\s+\$?[\d,.KMk]+/i)
+  return (m ? m[1] : challengeName).trim()
 }
 
-// Sort account sizes numerically ($2K < $5K < $10K < ...)
 function sizeToNumber(size: string | null): number {
   if (!size) return 0
-  const clean = size.replace(/[\$,\s]/g, '').toUpperCase()
-  const num = parseFloat(clean)
-  if (isNaN(num)) return 0
-  if (clean.includes('K')) return num * 1000
-  if (clean.includes('M')) return num * 1000000
-  return num
+  const m = size.replace(/[$,\s]/g, '').match(/^([\d.]+)([KMk]?)/)
+  if (!m) return 0
+  const n = parseFloat(m[1])
+  const unit = m[2].toUpperCase()
+  return unit === 'M' ? n * 1_000_000 : unit === 'K' ? n * 1_000 : n
 }
 
 function formatPrice(price: number | null, suffix = ''): string {
   if (price === null || price === undefined) return '—'
-  return `$${price.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}${suffix}`
+  return `$${price.toLocaleString('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  })}${suffix}`
 }
 
 // Risk figures are percentages on forex firms and dollar amounts on futures
@@ -94,37 +103,6 @@ function fmtRisk(value: number | null | undefined, unit?: string | null): string
   return `${value}%`
 }
 
-// "1 Step" reads better than a bare "1"; 0 or null means instant funding.
-function fmtSteps(steps: string | number | null | undefined): string {
-  if (steps === null || steps === undefined || steps === '') return '—'
-  const n = Number(steps)
-  if (Number.isNaN(n)) return String(steps)
-  if (n <= 0) return 'Instant Funding'
-  return `${n} Step`
-}
-
-// Contextual recommendation for each program type
-// (These labels are what makes the UX feel curated vs. generic.)
-function programRecommendation(programName: string): { label: string; icon: React.ReactNode } | null {
-  const p = programName.toLowerCase()
-  if (p.includes('direct') || p.includes('instant')) {
-    return { label: 'Skip the challenge — start trading immediately', icon: <Zap className="w-3.5 h-3.5" /> }
-  }
-  if (p.includes('boost')) {
-    return { label: 'Highest leverage — for aggressive traders', icon: <TrendingUp className="w-3.5 h-3.5" /> }
-  }
-  if (p.includes('pro')) {
-    return { label: 'Advanced traders — more flexibility', icon: <Award className="w-3.5 h-3.5" /> }
-  }
-  if (p.includes('1 step') || p.includes('1-step')) {
-    return { label: 'Simpler evaluation — 1 phase only', icon: <Target className="w-3.5 h-3.5" /> }
-  }
-  if (p.includes('2 step') || p.includes('2-step')) {
-    return { label: 'Most common format — great for beginners', icon: <Shield className="w-3.5 h-3.5" /> }
-  }
-  return null
-}
-
 // =============================================================================
 // COMPONENT
 // =============================================================================
@@ -134,10 +112,12 @@ export default function ChallengeSelector({
   firmName,
   challenges,
   checkoutOptions,
+  programGuide,
   discountCode,
   discountPercent,
+  discountNote,
 }: Props) {
-  // ----- Derived data -----
+  // ---------------------------------------------------------------- derived
 
   const programs = useMemo(() => {
     const map = new Map<string, Challenge[]>()
@@ -152,19 +132,14 @@ export default function ChallengeSelector({
     return Array.from(map.entries())
   }, [challenges])
 
-  // Determine which program is the cheapest overall (for the "Cheapest" badge)
-  const checkoutChoices = checkoutOptions?.options ?? []
-  const hasCheckoutStep = checkoutChoices.length > 0
-  // Pre-selected: the deep link needs a value, and leaving the visitor with a
-  // dead button they can't explain is worse than picking a sensible default
-  // they can change. The choice doesn't affect the price.
-  const [selectedCheckoutOption, setSelectedCheckoutOption] = useState<string>(
-    checkoutChoices[0]?.value ?? ''
-  )
-  // The deep link lands on the firm's payment page, which needs this value.
-  // Without it the visitor gets bounced back to a configuration step, which
-  // is exactly the friction the deep link exists to remove.
-  const checkoutReady = !hasCheckoutStep || Boolean(selectedCheckoutOption)
+  // Goal-framed labels, matched to the program guide by name when available.
+  const guideFor = useMemo(() => {
+    const map = new Map<string, { badge?: string; summary?: string }>()
+    programGuide?.options?.forEach((o) => {
+      if (o.name) map.set(o.name.toLowerCase(), { badge: o.badge, summary: o.summary })
+    })
+    return map
+  }, [programGuide])
 
   const isSubscription = useMemo(
     () => challenges.some((c) => c.billing_period === 'monthly'),
@@ -172,55 +147,69 @@ export default function ChallengeSelector({
   )
   const priceSuffix = isSubscription ? '/mo' : ''
 
-  const cheapestProgram = useMemo(() => {
-    let cheapest: { program: string; price: number } | null = null
-    for (const [program, list] of programs) {
-      for (const c of list) {
-        if (c.price !== null && (cheapest === null || c.price < cheapest.price)) {
-          cheapest = { program, price: c.price }
-        }
-      }
-    }
-    return cheapest?.program ?? null
-  }, [programs])
+  const checkoutChoices = checkoutOptions?.options ?? []
+  const hasCheckoutStep = checkoutChoices.length > 0
 
-  // "Most Popular" = the program that appears the most frequent format across the industry.
-  // For a firm with a "2 Step Prime" program, that's usually it.
-  // We heuristically pick a "2 Step" one, falling back to the first program.
-  const popularProgram = useMemo(() => {
-    const twoStep = programs.find(([name]) => /2 ?step (prime|standard)/i.test(name))
-    return twoStep ? twoStep[0] : null
-    // No fallback on purpose: labelling an arbitrary program "Most Popular"
-    // is a claim we cannot support, and it misleads on firms with no 2-step.
-  }, [programs])
-
-  // ----- State -----
+  // ------------------------------------------------------------------ state
 
   const [selectedProgram, setSelectedProgram] = useState<string>(programs[0]?.[0] ?? '')
   const [selectedSize, setSelectedSize] = useState<string>(programs[0]?.[1][0]?.account_size ?? '')
+  // Pre-selected on purpose: the deep link needs a value, and a dead button the
+  // visitor cannot explain is worse than a sensible default they can change.
+  const [selectedFeed, setSelectedFeed] = useState<string>(checkoutChoices[0]?.value ?? '')
   const [codeCopied, setCodeCopied] = useState(false)
-  const [mobileSummaryOpen, setMobileSummaryOpen] = useState(false)
 
-  // ----- Current selection -----
+  const availableSizes = useMemo(
+    () => programs.find(([name]) => name === selectedProgram)?.[1] ?? [],
+    [programs, selectedProgram]
+  )
 
-  const availableSizes = useMemo(() => {
-    const prog = programs.find(([name]) => name === selectedProgram)
-    return prog ? prog[1] : []
-  }, [programs, selectedProgram])
+  const currentChallenge = useMemo(
+    () => availableSizes.find((c) => c.account_size === selectedSize) ?? availableSizes[0],
+    [availableSizes, selectedSize]
+  )
 
-  const currentChallenge = useMemo(() => {
-    return availableSizes.find((c) => c.account_size === selectedSize) ?? availableSizes[0]
-  }, [availableSizes, selectedSize])
+  useEffect(() => {
+    if (!codeCopied) return
+    const t = setTimeout(() => setCodeCopied(false), 2000)
+    return () => clearTimeout(t)
+  }, [codeCopied])
+
+  const handleSelectProgram = (program: string) => {
+    setSelectedProgram(program)
+    const first = programs.find(([name]) => name === program)?.[1][0]
+    if (first?.account_size) setSelectedSize(first.account_size)
+  }
+
+  const handleCopyCode = () => {
+    if (!discountCode) return
+    navigator.clipboard.writeText(discountCode)
+    setCodeCopied(true)
+  }
+
+  // ------------------------------------------------------------------ price
 
   const displayPrice = useMemo(() => {
-    if (!currentChallenge) return { original: null as number | null, final: null as number | null, hasDiscount: false }
+    const empty = {
+      original: null as number | null,
+      final: null as number | null,
+      hasDiscount: false,
+    }
+    if (!currentChallenge) return empty
+
     const original = currentChallenge.price
     // A struck-through price is a promise. Only make it when the visitor
-    // actually has a code to redeem, otherwise they pay full price and we
-    // have advertised a discount that does not exist.
+    // actually has a usable code, otherwise they pay full price and we have
+    // advertised a discount that does not exist.
     const codeIsUsable = Boolean(discountCode) && discountCode !== 'PENDING'
     let final = currentChallenge.discounted_price
-    if (final === null && codeIsUsable && original !== null && discountPercent && discountPercent > 0) {
+    if (
+      final === null &&
+      codeIsUsable &&
+      original !== null &&
+      discountPercent &&
+      discountPercent > 0
+    ) {
       final = Math.round(original * (1 - discountPercent / 100) * 100) / 100
     }
     return {
@@ -230,217 +219,178 @@ export default function ChallengeSelector({
     }
   }, [currentChallenge, discountPercent, discountCode])
 
-  // ----- Handlers -----
-
-  const handleSelectProgram = (program: string) => {
-    setSelectedProgram(program)
-    const prog = programs.find(([name]) => name === program)
-    if (prog && prog[1].length > 0) {
-      setSelectedSize(prog[1][0].account_size ?? '')
-    }
-  }
-
-  const handleCopyCode = () => {
-    if (!discountCode || discountCode === 'PENDING') return
-    navigator.clipboard.writeText(discountCode)
-    setCodeCopied(true)
-    setTimeout(() => setCodeCopied(false), 2000)
-  }
-
   const ctaLink = useMemo(() => {
     if (!currentChallenge) return `/api/go/${firmSlug}?source=challenge-selector`
     const params = new URLSearchParams({
       source: 'challenge-selector',
       // The exact challenge slug lets /api/go resolve a program-specific
-      // affiliate link, so the visitor lands on the plan they configured
-      // rather than the firm's generic page.
+      // affiliate link, so the visitor lands on the plan they configured.
       challenge: currentChallenge.slug ?? '',
       program: extractProgram(currentChallenge.name).toLowerCase().replace(/\s+/g, '-'),
       size: currentChallenge.account_size ?? '',
     })
-    // Carry the firm's own checkout choice through the redirect so the visitor
-    // lands on a pre-filled checkout instead of an extra unexplained step.
-    if (selectedCheckoutOption && checkoutOptions?.param) {
+    if (selectedFeed && checkoutOptions?.param) {
       params.set('opt_key', checkoutOptions.param)
-      params.set('opt_value', selectedCheckoutOption)
+      params.set('opt_value', selectedFeed)
     }
     return `/api/go/${firmSlug}?${params.toString()}`
-  }, [currentChallenge, firmSlug, selectedCheckoutOption, checkoutOptions])
+  }, [currentChallenge, firmSlug, selectedFeed, checkoutOptions])
 
-  // ----- Empty state -----
+  if (challenges.length === 0) return null
 
-  if (challenges.length === 0 || programs.length === 0) {
-    return null
-  }
+  const riskUnit = currentChallenge?.risk_unit
+  const keyNumbers = [
+    { label: 'Profit target', value: fmtRisk(currentChallenge?.phase1_profit_target, riskUnit) },
+    { label: 'Max drawdown', value: fmtRisk(currentChallenge?.max_drawdown, riskUnit) },
+    { label: 'Daily loss', value: fmtRisk(currentChallenge?.max_daily_loss, riskUnit) },
+    { label: 'Profit split', value: fmtRisk(currentChallenge?.profit_split) },
+  ]
 
-  // ----- Render -----
+  const selectedFeedName = checkoutChoices.find((o) => o.value === selectedFeed)?.name
+
+  // --------------------------------------------------------------- rendering
 
   return (
-    <>
-      <section className="py-10 px-4 border-b border-gray-800 bg-gradient-to-b from-gray-900/50 to-transparent">
-        <div className="max-w-6xl mx-auto">
-          {/* Section header */}
-          <div className="mb-8 text-center sm:text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 mb-3 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
-              <Zap className="w-3.5 h-3.5 text-emerald-400" />
-              <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">Instant Configurator</span>
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
-              Configure Your {firmName} Challenge
-            </h2>
-            <p className="text-gray-400 text-lg">
-              Pick a program, choose your account size, get your exclusive deal — all in one place.
-            </p>
-          </div>
+    <section className="px-4 py-10 border-y border-gray-800 bg-gray-900/20">
+      <div className="max-w-6xl mx-auto">
+        <div className="mb-6">
+          <p className="text-xs uppercase tracking-wider font-semibold text-emerald-400 mb-2">
+            Two-step configurator
+          </p>
+          <h2 className="text-2xl md:text-3xl font-bold text-white">
+            Find the program that fits you
+          </h2>
+          <p className="text-gray-400 mt-2">
+            Start with your goal. Price and rules update as you choose.
+          </p>
+        </div>
 
-          <div className="grid lg:grid-cols-3 gap-6">
-            {/* LEFT / MAIN — Program + Size pickers + Specs */}
-            <div className="lg:col-span-2 space-y-6">
-              {/* Program picker */}
-              <div className="bg-gray-900/70 rounded-2xl border border-gray-800 p-5">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-6 h-6 rounded-full bg-emerald-500 text-white text-xs font-bold flex items-center justify-center">
-                    1
-                  </div>
-                  <h3 className="text-sm font-semibold text-white uppercase tracking-wider">Choose Your Program</h3>
-                </div>
+        <div className="grid lg:grid-cols-[minmax(0,1fr)_360px] gap-6 items-start">
+          {/* ---------------------------------------------------- controls */}
+          <div className="space-y-4">
+            {/* Step 1 — framed as a goal, not a product name */}
+            <fieldset className="bg-gray-900/70 rounded-2xl border border-gray-800 p-5">
+              <legend className="flex items-center gap-2 px-2">
+                <span className="w-6 h-6 rounded-full bg-emerald-500 text-gray-950 text-xs font-bold flex items-center justify-center">
+                  1
+                </span>
+                <span className="text-sm font-semibold text-white">
+                  How do you want to be funded?
+                </span>
+              </legend>
 
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {programs.map(([program, list]) => {
-                    const isActive = program === selectedProgram
-                    const isCheapest = program === cheapestProgram
-                    const isPopular = program === popularProgram
-                    const cheapest = list.reduce(
-                      (min, c) => (c.price !== null && (min === null || c.price < min) ? c.price : min),
-                      null as number | null
-                    )
-                    const reco = programRecommendation(program)
-                    return (
-                      <button
-                        key={program}
-                        type="button"
-                        onClick={() => handleSelectProgram(program)}
-                        className={`relative text-left p-4 rounded-xl border transition-all ${
-                          isActive
-                            ? 'bg-emerald-500/10 border-emerald-500 shadow-lg shadow-emerald-500/10'
-                            : 'bg-gray-800/40 border-gray-700 hover:border-gray-600 hover:bg-gray-800/60'
-                        }`}
-                      >
-                        {/* Badges */}
-                        {(isPopular || isCheapest) && (
-                          <div className="absolute -top-2 right-3 flex gap-1">
-                            {isPopular && (
-                              <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-yellow-500 text-gray-900 rounded-full">
-                                Most Popular
-                              </span>
-                            )}
-                            {isCheapest && !isPopular && (
-                              <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-emerald-500 text-gray-900 rounded-full">
-                                Cheapest
-                              </span>
-                            )}
-                          </div>
-                        )}
+              <div className="grid sm:grid-cols-2 gap-3 mt-3">
+                {programs.map(([program, list]) => {
+                  const isActive = program === selectedProgram
+                  const guide = guideFor.get(program.toLowerCase())
+                  const cheapest = list.reduce<number | null>((min, c) => {
+                    const p = c.discounted_price ?? c.price
+                    return p !== null && (min === null || p < min) ? p : min
+                  }, null)
 
-                        <p className={`font-semibold text-base mb-1 ${isActive ? 'text-emerald-400' : 'text-white'}`}>
-                          {program}
-                        </p>
-                        <p className="text-xs text-gray-500 mb-2">
-                          {list.length} {list.length > 1 ? 'sizes' : 'size'}
-                          {cheapest !== null && <> · from {formatPrice(cheapest, priceSuffix)}</>}
-                        </p>
-                        {reco && (
-                          <p className="text-xs text-gray-400 flex items-start gap-1.5 mt-2 pt-2 border-t border-gray-700/50">
-                            <span className={isActive ? 'text-emerald-400 mt-0.5' : 'text-gray-500 mt-0.5'}>
-                              {reco.icon}
-                            </span>
-                            <span>{reco.label}</span>
-                          </p>
-                        )}
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-
-              {/* Size picker */}
-              <div className="bg-gray-900/70 rounded-2xl border border-gray-800 p-5">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-6 h-6 rounded-full bg-emerald-500 text-white text-xs font-bold flex items-center justify-center">
-                    2
-                  </div>
-                  <h3 className="text-sm font-semibold text-white uppercase tracking-wider">Pick Your Account Size</h3>
-                </div>
-
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-                  {availableSizes.map((c) => {
-                    const isActive = c.account_size === selectedSize
-                    return (
-                      <button
-                        key={c.id}
-                        type="button"
-                        onClick={() => setSelectedSize(c.account_size ?? '')}
-                        className={`p-3 rounded-lg border text-center transition-all ${
-                          isActive
-                            ? 'bg-emerald-500/10 border-emerald-500 shadow-md shadow-emerald-500/10'
-                            : 'bg-gray-800/40 border-gray-700 hover:border-gray-600 hover:bg-gray-800/60'
-                        }`}
-                      >
-                        <p className={`font-bold text-sm ${isActive ? 'text-emerald-400' : 'text-white'}`}>
-                          {c.account_size}
-                        </p>
-                        {c.price !== null && (
-                          <p className="text-xs text-gray-500 mt-0.5">{formatPrice(c.price, priceSuffix)}</p>
-                        )}
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-
-              {/* Firm's own checkout choice — shown before the CTA so the
-                  visitor understands the extra step and its cost. */}
-              {hasCheckoutStep && (
-                <div
-                  id="checkout-step"
-                  className={`rounded-2xl border p-5 scroll-mt-28 transition-colors ${
-                    checkoutReady
-                      ? 'bg-gray-900/70 border-gray-800'
-                      : 'bg-amber-500/5 border-amber-500/40'
-                  }`}
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    <div
-                      className={`w-6 h-6 rounded-full text-white text-xs font-bold flex items-center justify-center ${
-                        checkoutReady ? 'bg-emerald-500' : 'bg-amber-500'
+                  return (
+                    <button
+                      key={program}
+                      type="button"
+                      aria-pressed={isActive}
+                      onClick={() => handleSelectProgram(program)}
+                      className={`text-left p-4 rounded-xl border transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
+                        isActive
+                          ? 'bg-emerald-500/10 border-emerald-500'
+                          : 'bg-gray-800/40 border-gray-700 hover:border-gray-600'
                       }`}
                     >
-                      3
-                    </div>
-                    <h3 className="text-sm font-semibold text-white uppercase tracking-wider">
-                      {checkoutOptions?.label || 'Choose an option'}
-                    </h3>
-                  </div>
+                      {guide?.badge && (
+                        <span className="inline-block mb-2 px-2 py-0.5 bg-gray-900/70 border border-gray-700 rounded-full text-gray-300 text-[11px] font-medium">
+                          {guide.badge}
+                        </span>
+                      )}
+                      <p className={`font-semibold ${isActive ? 'text-emerald-400' : 'text-white'}`}>
+                        {program}
+                      </p>
+                      <p className="text-gray-500 text-xs mt-1">
+                        {list.length} size{list.length > 1 ? 's' : ''}
+                        {cheapest !== null && <> · from {formatPrice(cheapest, priceSuffix)}</>}
+                      </p>
+                    </button>
+                  )
+                })}
+              </div>
+            </fieldset>
 
+            {/* Step 2 — size */}
+            <fieldset className="bg-gray-900/70 rounded-2xl border border-gray-800 p-5">
+              <legend className="flex items-center gap-2 px-2">
+                <span className="w-6 h-6 rounded-full bg-emerald-500 text-gray-950 text-xs font-bold flex items-center justify-center">
+                  2
+                </span>
+                <span className="text-sm font-semibold text-white">Pick your account size</span>
+              </legend>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3">
+                {availableSizes.map((c) => {
+                  const isActive = c.account_size === selectedSize
+                  const p = c.discounted_price ?? c.price
+                  return (
+                    <button
+                      key={c.id}
+                      type="button"
+                      aria-pressed={isActive}
+                      onClick={() => setSelectedSize(c.account_size ?? '')}
+                      className={`p-3 rounded-lg border text-center transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
+                        isActive
+                          ? 'bg-emerald-500/10 border-emerald-500'
+                          : 'bg-gray-800/40 border-gray-700 hover:border-gray-600'
+                      }`}
+                    >
+                      <p className={`font-bold ${isActive ? 'text-emerald-400' : 'text-white'}`}>
+                        {c.account_size}
+                      </p>
+                      <p className="text-gray-500 text-xs mt-0.5">{formatPrice(p, priceSuffix)}</p>
+                    </button>
+                  )
+                })}
+              </div>
+            </fieldset>
+
+            {/* Advanced — folded, pre-selected, never blocking */}
+            {hasCheckoutStep && (
+              <details className="group bg-gray-900/40 border border-gray-800 rounded-2xl overflow-hidden">
+                <summary className="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer list-none hover:bg-gray-800/30 transition-colors">
+                  <span className="text-sm text-white font-medium">
+                    {checkoutOptions?.label || 'Advanced options'}
+                    {selectedFeedName && (
+                      <span className="text-gray-500 font-normal"> · {selectedFeedName}</span>
+                    )}
+                  </span>
+                  <ChevronDown className="w-4 h-4 text-gray-500 flex-shrink-0 transition-transform group-open:rotate-180" />
+                </summary>
+                <div className="px-5 pb-5 pt-1 border-t border-gray-800">
                   {checkoutOptions?.help && (
-                    <p className="text-gray-400 text-xs leading-relaxed mb-4">{checkoutOptions.help}</p>
+                    <p className="text-gray-400 text-xs leading-relaxed mb-3">
+                      {checkoutOptions.help}
+                    </p>
                   )}
-
                   <div className="grid sm:grid-cols-3 gap-2">
                     {checkoutChoices.map((opt) => {
-                      const isActive = opt.value === selectedCheckoutOption
+                      const isActive = opt.value === selectedFeed
                       return (
                         <button
                           key={opt.value}
                           type="button"
-                          onClick={() => setSelectedCheckoutOption(opt.value)}
-                          className={`p-3 rounded-lg border text-left transition-all ${
+                          aria-pressed={isActive}
+                          onClick={() => setSelectedFeed(opt.value)}
+                          className={`p-3 rounded-lg border text-left transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
                             isActive
-                              ? 'bg-emerald-500/10 border-emerald-500 shadow-md shadow-emerald-500/10'
-                              : 'bg-gray-800/40 border-gray-700 hover:border-gray-600 hover:bg-gray-800/60'
+                              ? 'bg-emerald-500/10 border-emerald-500'
+                              : 'bg-gray-800/40 border-gray-700 hover:border-gray-600'
                           }`}
                         >
-                          <p className={`font-semibold text-sm ${isActive ? 'text-emerald-400' : 'text-white'}`}>
+                          <p
+                            className={`font-semibold text-sm ${
+                              isActive ? 'text-emerald-400' : 'text-white'
+                            }`}
+                          >
                             {opt.name}
                           </p>
                           {opt.sub && <p className="text-xs text-gray-500 mt-0.5">{opt.sub}</p>}
@@ -449,371 +399,100 @@ export default function ChallengeSelector({
                     })}
                   </div>
                 </div>
-              )}
-
-              {/* Challenge specs */}
-              {currentChallenge && (
-                <div className="bg-gray-900/70 rounded-2xl border border-gray-800 p-5">
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="w-6 h-6 rounded-full bg-gray-700 text-white text-xs font-bold flex items-center justify-center">
-                      {hasCheckoutStep ? 4 : 3}
-                    </div>
-                    <h3 className="text-sm font-semibold text-white uppercase tracking-wider">Your Deal Details</h3>
-                  </div>
-
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    <SpecItem
-                      icon={<Target className="w-4 h-4" />}
-                      label="Evaluation"
-                      value={fmtSteps(currentChallenge.steps)}
-                    />
-                    <SpecItem
-                      icon={<TrendingUp className="w-4 h-4" />}
-                      label="Profit Split"
-                      value={currentChallenge.profit_split !== null ? `${currentChallenge.profit_split}%` : '—'}
-                      highlight={currentChallenge.profit_split !== null && currentChallenge.profit_split >= 90}
-                    />
-                    <SpecItem
-                      icon={<Shield className="w-4 h-4" />}
-                      label="Max Drawdown"
-                      value={fmtRisk(currentChallenge.max_drawdown, currentChallenge.risk_unit)}
-                    />
-                    <SpecItem
-                      icon={<TrendingDown className="w-4 h-4" />}
-                      label="Daily Loss"
-                      value={fmtRisk(currentChallenge.max_daily_loss, currentChallenge.risk_unit)}
-                    />
-                    <SpecItem
-                      icon={<Target className="w-4 h-4" />}
-                      label="Phase 1 Target"
-                      value={
-                        currentChallenge.phase1_profit_target !== null
-                          ? fmtRisk(currentChallenge.phase1_profit_target, currentChallenge.risk_unit)
-                          : 'N/A'
-                      }
-                    />
-                    <SpecItem
-                      icon={<Target className="w-4 h-4" />}
-                      label="Phase 2 Target"
-                      value={
-                        currentChallenge.phase2_profit_target !== null
-                          ? fmtRisk(currentChallenge.phase2_profit_target, currentChallenge.risk_unit)
-                          : 'N/A'
-                      }
-                    />
-                  </div>
-
-                  {/* Permissions */}
-                  <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-gray-800">
-                    <PermBadge label="Scalping" value={currentChallenge.allows_scalping} />
-                    <PermBadge label="News Trading" value={currentChallenge.allows_news_trading} />
-                    <PermBadge label="EAs / Bots" value={currentChallenge.allows_ea} />
-                  </div>
-
-                  {/* Extra rules */}
-                  <div className="mt-4 pt-4 border-t border-gray-800 space-y-2 text-sm">
-                    {currentChallenge.drawdown_type && (
-                      <div className="flex justify-between text-gray-400">
-                        <span>Drawdown Type</span>
-                        <span className="text-white">{currentChallenge.drawdown_type}</span>
-                      </div>
-                    )}
-                    {currentChallenge.consistency_rule && (
-                      <div className="flex justify-between text-gray-400 gap-3">
-                        <span className="whitespace-nowrap">Consistency Rule</span>
-                        <span className="text-white text-right">{currentChallenge.consistency_rule}</span>
-                      </div>
-                    )}
-                    {currentChallenge.payout_frequency_description && (
-                      <div className="flex justify-between text-gray-400 gap-3">
-                        <span className="whitespace-nowrap">Payout Frequency</span>
-                        <span className="text-white text-right">
-                          {currentChallenge.payout_frequency_description}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* RIGHT / SIDEBAR — Deal Summary + CTA (sticky on desktop, hidden on mobile — replaced by fixed bottom bar) */}
-            <div className="hidden lg:block lg:sticky lg:top-6 lg:self-start">
-              <DealSummaryCard
-                firmName={firmName}
-                selectedProgram={selectedProgram}
-                currentChallenge={currentChallenge}
-                displayPrice={displayPrice}
-                isSubscription={isSubscription}
-                checkoutReady={checkoutReady}
-                checkoutLabel={checkoutOptions?.label}
-                discountCode={discountCode}
-                discountPercent={discountPercent}
-                codeCopied={codeCopied}
-                onCopyCode={handleCopyCode}
-                ctaLink={ctaLink}
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* MOBILE — Sticky bottom bar with expandable Deal Summary */}
-      {currentChallenge && (
-        <>
-          {/* Backdrop when expanded */}
-          {mobileSummaryOpen && (
-            <div
-              className="lg:hidden fixed inset-0 bg-black/50 z-40"
-              onClick={() => setMobileSummaryOpen(false)}
-            />
-          )}
-
-          {/* Fixed bottom bar (always visible on mobile) */}
-          <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-gray-900 border-t border-emerald-500/30 shadow-2xl">
-            {/* Expanded summary (slides up) */}
-            {mobileSummaryOpen && (
-              <div className="max-h-[70vh] overflow-y-auto p-4 border-b border-gray-800">
-                <DealSummaryCard
-                  firmName={firmName}
-                  selectedProgram={selectedProgram}
-                  currentChallenge={currentChallenge}
-                  displayPrice={displayPrice}
-                isSubscription={isSubscription}
-                checkoutReady={checkoutReady}
-                checkoutLabel={checkoutOptions?.label}
-                  discountCode={discountCode}
-                  discountPercent={discountPercent}
-                  codeCopied={codeCopied}
-                  onCopyCode={handleCopyCode}
-                  ctaLink={ctaLink}
-                  compact
-                />
-              </div>
+              </details>
             )}
+          </div>
 
-            {/* Compact bar (always visible) */}
-            <div className="flex items-center gap-3 p-3">
+          {/* ---------------------------------------------------- summary */}
+          <aside className="lg:sticky lg:top-6 bg-gray-900/70 border border-emerald-500/25 rounded-2xl p-5">
+            <p className="text-xs uppercase tracking-wider font-semibold text-gray-500 mb-1">
+              Your selection
+            </p>
+            <p className="text-white font-bold mb-4">
+              {selectedProgram} {currentChallenge?.account_size}
+            </p>
+
+            <div className="mb-4">
+              {displayPrice.hasDiscount && displayPrice.original !== null && (
+                <p className="text-gray-500 text-sm">
+                  <s>{formatPrice(displayPrice.original)}</s> normally
+                </p>
+              )}
+              <p className="text-white">
+                <span className="text-3xl font-bold">{formatPrice(displayPrice.final)}</span>
+                {isSubscription && <span className="text-gray-500 text-base"> /month</span>}
+              </p>
+              {displayPrice.hasDiscount && discountNote && (
+                <p className="text-gray-500 text-xs mt-1">{discountNote}</p>
+              )}
+            </div>
+
+            <dl className="divide-y divide-gray-800/70 mb-4">
+              {keyNumbers.map((k) => (
+                <div key={k.label} className="flex items-baseline justify-between gap-4 py-2">
+                  <dt className="text-gray-500 text-sm">{k.label}</dt>
+                  <dd className="text-white text-sm font-medium text-right">{k.value}</dd>
+                </div>
+              ))}
+            </dl>
+
+            {discountCode && (
               <button
                 type="button"
-                onClick={() => setMobileSummaryOpen((v) => !v)}
-                className="flex-1 text-left"
+                onClick={handleCopyCode}
+                className="w-full flex items-center justify-between gap-2 px-3 py-2.5 mb-3 bg-gray-800/60 border border-gray-700 rounded-lg hover:border-gray-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
               >
-                <p className="text-xs text-gray-500 mb-0.5">
-                  {selectedProgram} · {currentChallenge.account_size}
-                </p>
-                <div className="flex items-baseline gap-2">
-                  {displayPrice.hasDiscount && displayPrice.original !== null && (
-                    <span className="text-xs text-gray-500 line-through">
-                      {formatPrice(displayPrice.original)}
-                    </span>
-                  )}
-                  <span className="text-xl font-bold text-white">{formatPrice(displayPrice.final, priceSuffix)}</span>
-                </div>
+                <span className="text-gray-500 text-xs">Code applied automatically</span>
+                <span className="flex items-center gap-1.5 text-emerald-400 font-mono font-semibold text-sm">
+                  {discountCode}
+                  {codeCopied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                </span>
               </button>
-              {checkoutReady ? (
-                <a
-                  href={ctaLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 px-5 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-lg transition-colors"
-                >
-                  Get Deal
-                  <ExternalLink className="w-4 h-4" />
-                </a>
-              ) : (
-                <a
-                  href="#checkout-step"
-                  className="flex items-center gap-1.5 px-5 py-3 bg-amber-500/15 border border-amber-500/40 text-amber-300 font-semibold rounded-lg hover:bg-amber-500/25 transition-colors"
-                >
-                  ↑ {checkoutOptions?.label || 'One step left'}
-                </a>
-              )}
-            </div>
-          </div>
-
-          {/* Spacer so page content isn't hidden under the sticky bar on mobile */}
-          <div className="lg:hidden h-20" />
-        </>
-      )}
-    </>
-  )
-}
-
-// =============================================================================
-// SUB-COMPONENTS
-// =============================================================================
-
-interface DealSummaryProps {
-  firmName: string
-  selectedProgram: string
-  currentChallenge: Challenge | undefined
-  displayPrice: { original: number | null; final: number | null; hasDiscount: boolean }
-  isSubscription: boolean
-  checkoutReady: boolean
-  checkoutLabel?: string
-  discountCode: string | null | undefined
-  discountPercent: number | null | undefined
-  codeCopied: boolean
-  onCopyCode: () => void
-  ctaLink: string
-  compact?: boolean
-}
-
-function DealSummaryCard(props: DealSummaryProps) {
-  const {
-    firmName,
-    selectedProgram,
-    currentChallenge,
-    displayPrice,
-    isSubscription,
-    checkoutReady,
-    checkoutLabel,
-    discountCode,
-    discountPercent,
-    codeCopied,
-    onCopyCode,
-    ctaLink,
-    compact = false,
-  } = props
-
-  if (!currentChallenge) return null
-
-  return (
-    <div className="bg-gradient-to-br from-emerald-500/10 to-gray-900 rounded-2xl border border-emerald-500/30 p-6">
-      <div className="flex items-center gap-2 mb-4">
-        <Award className="w-4 h-4 text-emerald-400" />
-        <span className="text-xs font-semibold uppercase tracking-wider text-emerald-400">Your Deal</span>
-      </div>
-
-      <div className="space-y-3 mb-6">
-        <div className="flex justify-between items-baseline">
-          <span className="text-sm text-gray-400">Firm</span>
-          <span className="text-white font-medium">{firmName}</span>
-        </div>
-        <div className="flex justify-between items-baseline">
-          <span className="text-sm text-gray-400">Program</span>
-          <span className="text-white font-medium text-right">{selectedProgram}</span>
-        </div>
-        <div className="flex justify-between items-baseline">
-          <span className="text-sm text-gray-400">Account Size</span>
-          <span className="text-white font-medium">{currentChallenge.account_size}</span>
-        </div>
-        {currentChallenge.profit_split !== null && (
-          <div className="flex justify-between items-baseline">
-            <span className="text-sm text-gray-400">Profit Split</span>
-            <span className="text-emerald-400 font-medium">up to {currentChallenge.profit_split}%</span>
-          </div>
-        )}
-      </div>
-
-      <div className="py-4 border-y border-gray-800 mb-4">
-        <div className="flex justify-between items-baseline">
-          <span className="text-sm text-gray-400">{isSubscription ? 'Billed monthly' : 'Total'}</span>
-          <div className="text-right">
-            {displayPrice.hasDiscount && displayPrice.original !== null && (
-              <p className="text-sm text-gray-500 line-through">{formatPrice(displayPrice.original)}</p>
             )}
-            <p className="text-3xl font-bold text-white">
-              {formatPrice(displayPrice.final)}
-              {isSubscription && <span className="text-base text-gray-500 font-normal"> /month</span>}
+
+            <a
+              href={ctaLink}
+              target="_blank"
+              rel="noopener noreferrer sponsored"
+              className="w-full inline-flex items-center justify-center gap-2 px-4 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-semibold rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
+            >
+              Continue to {firmName}
+              <ExternalLink className="w-4 h-4" />
+            </a>
+            <p className="text-gray-600 text-[11px] mt-2 text-center">
+              Payment page pre-filled. We may earn a commission.
             </p>
-            {displayPrice.hasDiscount && discountPercent && (
-              <p className="text-xs text-emerald-400 mt-0.5">You save {discountPercent}%</p>
-            )}
+          </aside>
+        </div>
+      </div>
+
+      {/* ------------------------------------------------- mobile CTA bar */}
+      <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-gray-950/95 backdrop-blur border-t border-gray-800 px-4 py-3">
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-gray-500 text-[11px] truncate">
+              {selectedProgram} · {currentChallenge?.account_size}
+            </p>
+            <p className="text-white font-bold leading-tight">
+              {displayPrice.hasDiscount && displayPrice.original !== null && (
+                <s className="text-gray-600 text-xs font-normal mr-1.5">
+                  {formatPrice(displayPrice.original)}
+                </s>
+              )}
+              {formatPrice(displayPrice.final, priceSuffix)}
+            </p>
           </div>
-        </div>
-      </div>
-
-      {discountCode && discountCode !== 'PENDING' && (
-        <div className="mb-4">
-          <p className="text-xs text-gray-500 mb-2">
-            Exclusive code{discountPercent ? ` — ${discountPercent}% OFF` : ''}
-          </p>
-          <button
-            type="button"
-            onClick={onCopyCode}
-            className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-mono text-sm transition-all ${
-              codeCopied
-                ? 'bg-emerald-500 text-white'
-                : 'bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30'
-            }`}
+          <a
+            href={ctaLink}
+            target="_blank"
+            rel="noopener noreferrer sponsored"
+            className="flex items-center gap-1.5 px-5 py-3 bg-emerald-500 text-gray-950 font-semibold rounded-lg flex-shrink-0"
           >
-            {codeCopied ? (
-              <>
-                <Check className="w-4 h-4" /> Copied!
-              </>
-            ) : (
-              <>
-                <Copy className="w-4 h-4" /> {discountCode}
-              </>
-            )}
-          </button>
+            Continue
+            <ExternalLink className="w-4 h-4" />
+          </a>
         </div>
-      )}
-
-      {checkoutReady ? (
-        <a
-          href={ctaLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors"
-        >
-          Claim This Deal
-          <ExternalLink className="w-4 h-4" />
-        </a>
-      ) : (
-        <a
-          href="#checkout-step"
-          className="block w-full py-4 bg-amber-500/10 border border-amber-500/40 rounded-xl text-center hover:bg-amber-500/20 transition-colors"
-        >
-          <p className="text-amber-300 text-sm font-semibold">
-            ↑ {checkoutLabel || 'One more choice'} to continue
-          </p>
-        </a>
-      )}
-
-      {!compact && (
-        <p className="text-xs text-gray-500 text-center mt-3">
-          Secure redirect to {firmName}
-        </p>
-      )}
-    </div>
-  )
-}
-
-function SpecItem({
-  icon,
-  label,
-  value,
-  highlight,
-}: {
-  icon: React.ReactNode
-  label: string
-  value: string
-  highlight?: boolean
-}) {
-  return (
-    <div className={`rounded-lg p-3 border ${highlight ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-gray-800/50 border-gray-700/50'}`}>
-      <div className="flex items-center gap-1.5 text-gray-500 text-xs mb-1">
-        {icon}
-        <span>{label}</span>
       </div>
-      <p className={`font-semibold text-sm ${highlight ? 'text-emerald-400' : 'text-white'}`}>{value}</p>
-    </div>
-  )
-}
-
-function PermBadge({ label, value }: { label: string; value: boolean | null }) {
-  const isYes = value === true
-  return (
-    <span
-      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${
-        isYes ? 'bg-emerald-500/10 text-emerald-400' : 'bg-gray-700/50 text-gray-500'
-      }`}
-    >
-      {isYes ? <Check className="w-3 h-3" /> : <span className="w-3 h-3 flex items-center justify-center">–</span>}
-      {label}
-    </span>
+    </section>
   )
 }
