@@ -33,7 +33,6 @@ const COPY = {
   en: {
     chooseProgram: 'Choose your program',
     seeRules: 'See the key rules',
-    independent: (d: string) => `Independent analysis · Partner offer · Terms checked ${d}`,
     onTrustpilot: 'on Trustpilot',
     from: 'From',
     perMonth: '/month',
@@ -41,8 +40,8 @@ const COPY = {
     runsUntil: (d: string) => `Offer runs until ${d}`,
     configure: 'Configure my account',
     visit: (f: string) => `Visit ${f}`,
-    billedMonthly: 'Billed monthly during evaluation only. We may earn a commission.',
-    commission: 'We may earn a commission on this link.',
+    billedMonthly: 'Billed monthly during evaluation only.',
+    commission: '',
     founded: 'Founded',
     country: 'Country',
     regulated: 'Regulated',
@@ -82,7 +81,6 @@ const COPY = {
   fr: {
     chooseProgram: 'Choisir mon programme',
     seeRules: 'Voir les règles essentielles',
-    independent: (d: string) => `Analyse indépendante · Offre partenaire · Conditions vérifiées le ${d}`,
     onTrustpilot: 'sur Trustpilot',
     from: 'À partir de',
     perMonth: '/mois',
@@ -90,9 +88,8 @@ const COPY = {
     runsUntil: (d: string) => `Offre valable jusqu’au ${d}`,
     configure: 'Configurer mon compte',
     visit: (f: string) => `Visiter ${f}`,
-    billedMonthly:
-      'Abonnement mensuel durant l’évaluation seulement. Nous percevons une commission.',
-    commission: 'Nous percevons une commission sur ce lien.',
+    billedMonthly: 'Abonnement mensuel durant l’évaluation seulement.',
+    commission: '',
     founded: 'Création',
     country: 'Pays',
     regulated: 'Régulé',
@@ -483,15 +480,6 @@ export default function PropFirmPageClient({
               </a>
             </div>
 
-            <p className="text-gray-600 text-xs">
-              {t.independent(
-                new Date().toLocaleDateString(dateFmt, {
-                  day: 'numeric',
-                  month: 'long',
-                  year: 'numeric',
-                })
-              )}
-            </p>
           </div>
 
           {/* --- Offer card --- */}
@@ -557,9 +545,11 @@ export default function PropFirmPageClient({
               {challenges.length === 0 && <ExternalLink className="w-4 h-4" />}
             </a>
 
-            <p className="text-gray-600 text-[11px] mt-3 text-center leading-relaxed">
-              {isSubscription ? t.billedMonthly : t.commission}
-            </p>
+            {(isSubscription ? t.billedMonthly : t.commission) && (
+              <p className="text-gray-600 text-[11px] mt-3 text-center leading-relaxed">
+                {isSubscription ? t.billedMonthly : t.commission}
+              </p>
+            )}
 
             <div className="mt-4 pt-4 border-t border-gray-800 space-y-1.5 text-xs">
               {foundedText && (

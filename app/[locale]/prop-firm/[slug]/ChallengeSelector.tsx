@@ -90,7 +90,7 @@ const COPY = {
     codeAuto: 'Code applied automatically',
     cta: (firm: string) => `Continue to ${firm}`,
     ctaShort: 'Continue',
-    disclosure: 'Payment page pre-filled. We may earn a commission.',
+    disclosure: 'Payment page pre-filled with your selection.',
     compareTitle: 'Which one is right for you?',
     compareIntro: 'A comparison, not a second decision — the configurator above already has your choice.',
     pick: (p: string) => `Select ${p}`,
@@ -117,7 +117,7 @@ const COPY = {
     codeAuto: 'Code appliqué automatiquement',
     cta: (firm: string) => `Continuer vers ${firm}`,
     ctaShort: 'Continuer',
-    disclosure: 'Page de paiement préremplie. Nous percevons une commission.',
+    disclosure: 'Page de paiement préremplie avec votre sélection.',
     compareTitle: 'Lequel vous convient ?',
     compareIntro:
       'Une comparaison, pas un second choix — le configurateur ci-dessus a déjà enregistré votre sélection.',
