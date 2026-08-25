@@ -119,6 +119,8 @@ interface PropFirm {
   verdict?: string | null
   discount_expires_at?: string | null
   discount_note?: string | null
+  category_badge?: string | null
+  included_items?: string[] | string | null
   proof_stats?: { value?: string; label?: string }[] | null
   value_strip?: { title?: string; sub?: string }[] | null
   journey?: {
@@ -280,8 +282,10 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-white font-semibold">{firm.name}</p>
-                {assets.length > 0 && (
-                  <p className="text-emerald-400 text-xs font-medium">{assets[0]}</p>
+                {(firm.category_badge || assets[0]) && (
+                  <p className="text-emerald-400 text-xs font-medium">
+                    {firm.category_badge || assets[0]}
+                  </p>
                 )}
               </div>
               <div className="flex gap-2">
@@ -486,6 +490,7 @@ export default function PropFirmPageClient({ firm, similarFirms, challenges = []
             discountCode={firm.discount_code}
             discountPercent={firm.discount_percent}
             discountNote={firm.discount_note}
+            includedItems={toArray(firm.included_items)}
           />
         </div>
       )}

@@ -35,6 +35,7 @@ export interface Challenge {
   billing_period: string | null // 'one-time' | 'monthly'
   risk_unit: string | null // 'percent'  | 'usd'
   affiliate_url: string | null
+  max_contracts: number | null
 }
 
 // Some firms make you pick something at their own checkout before you can pay
@@ -64,6 +65,8 @@ interface Props {
   discountPercent?: number | null
   /** Free-text note under the price, e.g. "for the first 4 billings". */
   discountNote?: string | null
+  /** What the price already covers — removes the "what else will I pay" doubt. */
+  includedItems?: string[] | null
 }
 
 // =============================================================================
@@ -116,6 +119,7 @@ export default function ChallengeSelector({
   discountCode,
   discountPercent,
   discountNote,
+  includedItems,
 }: Props) {
   // ---------------------------------------------------------------- derived
 
@@ -243,7 +247,9 @@ export default function ChallengeSelector({
     { label: 'Profit target', value: fmtRisk(currentChallenge?.phase1_profit_target, riskUnit) },
     { label: 'Max drawdown', value: fmtRisk(currentChallenge?.max_drawdown, riskUnit) },
     { label: 'Daily loss', value: fmtRisk(currentChallenge?.max_daily_loss, riskUnit) },
-    { label: 'Profit split', value: fmtRisk(currentChallenge?.profit_split) },
+    currentChallenge?.max_contracts
+      ? { label: 'Max contracts', value: String(currentChallenge.max_contracts) }
+      : { label: 'Profit split', value: fmtRisk(currentChallenge?.profit_split) },
   ]
 
   const selectedFeedName = checkoutChoices.find((o) => o.value === selectedFeed)?.name
@@ -435,6 +441,20 @@ export default function ChallengeSelector({
                 </div>
               ))}
             </dl>
+
+            {includedItems && includedItems.length > 0 && (
+              <div className="mb-4 pt-4 border-t border-gray-800">
+                <p className="text-white text-sm font-semibold mb-2">Included at no extra cost</p>
+                <ul className="space-y-1.5">
+                  {includedItems.map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-gray-400 text-sm">
+                      <Check className="w-3.5 h-3.5 text-emerald-400 mt-0.5 flex-shrink-0" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             {discountCode && (
               <button
