@@ -7,7 +7,6 @@ import {
   Star,
   ExternalLink,
   Check,
-  X,
   Globe,
   Shield,
   AlertTriangle,
@@ -17,7 +16,7 @@ import {
   Share2,
   Zap,
   ThumbsUp,
-  ThumbsDown,
+  Info,
   Receipt,
   RotateCcw,
   Wallet,
@@ -53,10 +52,12 @@ const COPY = {
     beforeBuy: 'Before you buy',
     scaling: 'Scaling',
     honest: 'Honest view',
-    whyChoose: (f: string) => `Why choose ${f}?`,
-    honestIntro: "From trader feedback and the firm's own specifications.",
+    whyChoose: (f: string) => `${f}: strengths and things to know`,
+    honestIntro: 'Our independent analysis, based on verified official rules and documents.',
     strengths: 'Strengths',
-    limitations: 'Limitations',
+    // "Limitations" reads as a warning label. These are trade-offs a buyer
+    // should weigh, not defects — the wording and the colour should say so.
+    limitations: 'Things to know',
     seeAll: 'See all permissions and restrictions',
     fullSpecs: 'Full specifications, costs and platforms',
     platforms: 'Platforms',
@@ -101,10 +102,11 @@ const COPY = {
     beforeBuy: 'À connaître avant d’acheter',
     scaling: 'Progression',
     honest: 'Avis honnête',
-    whyChoose: (f: string) => `Pourquoi choisir ${f} ?`,
-    honestIntro: 'D’après les retours de traders et les spécifications officielles.',
+    whyChoose: (f: string) => `${f} : points forts et points à connaître`,
+    honestIntro:
+      'Notre analyse indépendante à partir des règles et documents officiels vérifiés.',
     strengths: 'Points forts',
-    limitations: 'Limites',
+    limitations: 'Points à connaître',
     seeAll: 'Voir toutes les autorisations et restrictions',
     fullSpecs: 'Spécifications complètes, coûts et plateformes',
     platforms: 'Plateformes',
@@ -832,17 +834,22 @@ export default function PropFirmPageClient({
               title={t.whyChoose(firm.name)}
               intro={t.honestIntro}
             />
-            <div className="grid md:grid-cols-2 gap-5">
+            {/* items-start, not stretch: forcing equal heights would pad the
+                shorter card with empty space now that it holds four items. */}
+            <div className="grid md:grid-cols-2 gap-4 items-start">
               {pros.length > 0 && (
-                <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-5">
-                  <div className="flex items-center gap-2 mb-4">
-                    <ThumbsUp className="w-4 h-4 text-emerald-400" />
-                    <h3 className="font-semibold text-white">{t.strengths}</h3>
+                <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl px-5 py-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <ThumbsUp className="w-4 h-4 text-emerald-400" aria-hidden="true" />
+                    <h3 className="font-semibold text-white text-base">{t.strengths}</h3>
                   </div>
-                  <ul className="space-y-2.5">
+                  <ul className="space-y-2">
                     {pros.map((pro, i) => (
-                      <li key={i} className="flex items-start gap-2 text-gray-300 text-sm">
-                        <Check className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                      <li key={i} className="flex items-start gap-2.5 text-gray-300 text-base leading-snug">
+                        <Check
+                          className="w-4 h-4 text-emerald-400 mt-1 flex-shrink-0"
+                          aria-hidden="true"
+                        />
                         <span>{pro}</span>
                       </li>
                     ))}
@@ -850,15 +857,18 @@ export default function PropFirmPageClient({
                 </div>
               )}
               {cons.length > 0 && (
-                <div className="bg-red-500/5 border border-red-500/20 rounded-2xl p-5">
-                  <div className="flex items-center gap-2 mb-4">
-                    <ThumbsDown className="w-4 h-4 text-red-400" />
-                    <h3 className="font-semibold text-white">{t.limitations}</h3>
+                <div className="bg-amber-500/5 border border-amber-500/25 rounded-2xl px-5 py-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Info className="w-4 h-4 text-amber-400" aria-hidden="true" />
+                    <h3 className="font-semibold text-white text-base">{t.limitations}</h3>
                   </div>
-                  <ul className="space-y-2.5">
+                  <ul className="space-y-2">
                     {cons.map((con, i) => (
-                      <li key={i} className="flex items-start gap-2 text-gray-300 text-sm">
-                        <X className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
+                      <li key={i} className="flex items-start gap-2.5 text-gray-300 text-base leading-snug">
+                        <Info
+                          className="w-4 h-4 text-amber-400 mt-1 flex-shrink-0"
+                          aria-hidden="true"
+                        />
                         <span>{con}</span>
                       </li>
                     ))}
