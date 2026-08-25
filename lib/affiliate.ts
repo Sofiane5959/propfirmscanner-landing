@@ -51,3 +51,22 @@ export const AFFILIATE_LINK_PROPS = {
   target: '_blank',
   rel: 'sponsored noopener noreferrer',
 } as const
+
+/**
+ * What this function can and cannot guarantee.
+ *
+ * CAN: every outbound click leaves our site through /api/go, carrying the
+ * affiliate id, the tracking parameters and — where the destination supports it
+ * — the coupon as a URL parameter. The click is logged with its placement.
+ *
+ * CANNOT: keep the coupon applied once the visitor is browsing the partner's
+ * site. That depends on the partner's own cookie lifetime and on how they
+ * prioritise their campaign codes against affiliate coupons. Earn2Trade, for
+ * one, overwrites the coupon field with an active site-wide campaign.
+ *
+ * The only path where the coupon is certain is a deep link that lands straight
+ * on the partner's checkout with the code in the query string — which is what
+ * the configurator does via each challenge's own affiliate_url. Links that drop
+ * the visitor on a landing page to browse are best-effort by nature.
+ */
+export const AFFILIATE_COUPON_GUARANTEE = 'deep-link-only' as const

@@ -362,6 +362,7 @@ export default function PropFirmPageClient({
   // automatic coupon and loses the click. Placement distinguishes each button.
   const heroCtaUrl = buildAffiliateUrl(firm.slug, { placement: 'hero_offer_card', locale })
   const officialSiteUrl = buildAffiliateUrl(firm.slug, { placement: 'official_website', locale })
+  const logoUrl_ = buildAffiliateUrl(firm.slug, { placement: 'logo', locale })
 
 
   // Reference specs live in a collapsed block: complete, but not in the way.
@@ -410,7 +411,12 @@ export default function PropFirmPageClient({
           {/* --- Copy --- */}
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <div className="relative w-14 h-14 bg-gray-800 rounded-xl overflow-hidden flex-shrink-0 border border-gray-700">
+              <a
+                href={logoUrl_}
+                {...AFFILIATE_LINK_PROPS}
+                aria-label={t.visit(firm.name)}
+                className="relative w-14 h-14 bg-gray-800 rounded-xl overflow-hidden flex-shrink-0 border border-gray-700 hover:border-gray-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+              >
                 {logoUrl ? (
                   <Image src={logoUrl} alt={firm.name} fill className="object-contain p-2" />
                 ) : (
@@ -418,7 +424,7 @@ export default function PropFirmPageClient({
                     {firm.name.charAt(0).toUpperCase()}
                   </div>
                 )}
-              </div>
+              </a>
               <div className="flex-1 min-w-0">
                 <p className="text-white font-semibold">{firm.name}</p>
                 {(firm.category_badge || assets[0]) && (
