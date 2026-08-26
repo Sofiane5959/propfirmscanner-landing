@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useHideOnScrollDown } from '@/hooks/useHideOnScrollDown';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/providers/AuthProvider';
@@ -375,6 +376,10 @@ function UserDropdown({ t }: { t: Record<string, string> }) {
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  // Slides away while reading, returns on the first upward scroll. Pinned open
+  // whenever the mobile menu is: collapsing the bar someone just opened would
+  // take the menu with it.
+  const headerHidden = useHideOnScrollDown({ disabled: mobileMenuOpen });
   const pathname = usePathname();
   const { user, isLoading, signInWithGoogle, signOut } = useAuth();
   
@@ -412,7 +417,12 @@ export function Navbar() {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-white/10">
+    <nav
+      data-collapsing-header
+      className={`fixed top-0 left-0 right-0 z-50 glass border-b border-white/10 transition-transform duration-300 motion-reduce:transition-none ${
+        headerHidden ? '-translate-y-full' : 'translate-y-0'
+      }`}
+    >
       <div className="max-w-[1440px] mx-auto px-3 sm:px-4 lg:px-6">
         <div className="flex items-center justify-between h-16">
           

@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { Copy, CheckCircle2, BadgeCheck, ShieldCheck, ExternalLink } from 'lucide-react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { AFFILIATE_LINK_PROPS } from '@/lib/affiliate'
+import { useHideOnScrollDown } from '@/hooks/useHideOnScrollDown'
 
 // =====================================================
 // TYPES
@@ -162,6 +163,9 @@ export default function PromoTicker({ deals: initialDeals = [] }: PromoTickerPro
   const [startX, setStartX] = useState(0)
   const [scrollLeft, setScrollLeft] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
+  // Collapses with the navbar rather than separately, so the two never leave a
+  // stray bar floating at the top of the page.
+  const headerHidden = useHideOnScrollDown()
   
   // Fetch deals from Supabase on mount
   useEffect(() => {
@@ -260,7 +264,14 @@ export default function PromoTicker({ deals: initialDeals = [] }: PromoTickerPro
   const duplicatedDeals = [...deals, ...deals]
   
   return (
-    <div className="w-full bg-gray-900/95 border-b border-gray-800 backdrop-blur-sm sticky top-16 z-40">
+    <div
+      data-collapsing-header
+      // Sits at top: 4rem with its own height below that, so clearing the
+      // viewport means travelling both.
+      className={`w-full bg-gray-900/95 border-b border-gray-800 backdrop-blur-sm sticky top-16 z-40 transition-transform duration-300 motion-reduce:transition-none ${
+        headerHidden ? '-translate-y-[calc(100%+4rem)]' : 'translate-y-0'
+      }`}
+    >
       <div className="max-w-[100vw] overflow-hidden">
         <div className="flex items-center">
           {/* Trust Label */}
