@@ -97,6 +97,10 @@ export default function AnalyticsPage() {
   const [includeBots, setIncludeBots] = useState(false)
   const [sortKey, setSortKey] = useState<keyof ClickRow>('clicks_30d')
   const [copiedId, setCopiedId] = useState<string | null>(null)
+  // Rows logged before the prefetch filter shipped. They are indistinguishable
+  // from real clicks at row level, so they are counted but flagged, never
+  // silently trusted.
+  const [untrackedCount, setUntrackedCount] = useState(0)
 
   // The click id only earns its place if it can be pasted into the partner's
   // panel — Earn2Trade lists it under Reports -> Raw clicks, Extra Data 1.
@@ -116,7 +120,10 @@ export default function AnalyticsPage() {
 
     const { data: clicksData, error: clicksError } = await supabase
       .from('affiliate_clicks')
-      .select('firm_slug, firm_name, destination_type, is_bot, created_at')
+      .select('firm_slug, firm_name, destination_type, is_bot, created_at, click_id')
+      // Speculative browser fetches are not clicks. Excluded from every total
+      // on this page — see database/affiliate-prefetch-flag.sql.
+      .eq('is_prefetch', false)
       .order('created_at', { ascending: false })
       .limit(10000)
 
@@ -128,6 +135,12 @@ export default function AnalyticsPage() {
     }
 
     const filtered = (clicksData || []).filter(c => includeBots || !c.is_bot)
+
+    // click_id landed with the attribution tunnel, and the prefetch filter
+    // shipped alongside it. A row without one predates both: it was recorded
+    // when the offers banner still used next/link, so the router prefetched
+    // one "click" per visible deal on every page view across the whole site.
+    setUntrackedCount(filtered.filter(c => !c.click_id).length)
 
     const now = Date.now()
     const day = 24 * 60 * 60 * 1000
@@ -177,6 +190,7 @@ export default function AnalyticsPage() {
     const { data: recentData } = await supabase
       .from('affiliate_clicks')
       .select('id, click_id, firm_slug, firm_name, destination_type, source, locale, country, is_bot, created_at')
+      .eq('is_prefetch', false)
       .order('created_at', { ascending: false })
       .limit(30)
     setRecent(recentData || [])
@@ -184,6 +198,7 @@ export default function AnalyticsPage() {
     const { data: sourceData } = await supabase
       .from('affiliate_clicks')
       .select('source, is_bot')
+      .eq('is_prefetch', false)
       .gte('created_at', new Date(now - 30 * day).toISOString())
     if (sourceData) {
       const map = new Map<string, number>()
@@ -273,6 +288,22 @@ export default function AnalyticsPage() {
           <StatCard label="Deep link clicks" value={totalDeepLink} sub={pctOf(totalDeepLink)} highlight={totalDeepLink > 0} />
           <StatCard label="Website clicks" value={totalWebsite} sub={pctOf(totalWebsite)} />
         </div>
+        {untrackedCount > 0 && (
+          <div className="mb-6 -mt-3 px-4 py-3 rounded-lg border border-amber-500/30 bg-amber-500/5">
+            <p className="text-xs text-amber-300 font-medium mb-1">
+              {untrackedCount.toLocaleString()} of these clicks predate the prefetch fix — treat them as an upper bound
+            </p>
+            <p className="text-[11px] text-amber-400/70 leading-relaxed">
+              Until the offers banner stopped using <code className="font-mono">next/link</code>, the router
+              prefetched <code className="font-mono">/api/go/…</code> for every visible deal on every page view,
+              and each prefetch was logged as a click. Rows with no{' '}
+              <code className="font-mono">click_id</code> come from that period and cannot be told apart from real
+              clicks one by one. Run <code className="font-mono">database/affiliate-prefetch-analysis.sql</code> to
+              size the problem, then mark the matching rows{' '}
+              <code className="font-mono">is_prefetch = true</code> to drop them from these totals.
+            </p>
+          </div>
+        )}
         {totalOther > 0 && (
           <p className="text-xs text-amber-400/80 mb-6 -mt-3">
             {totalOther} click{totalOther > 1 ? 's' : ''} carry a destination_type this dashboard

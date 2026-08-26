@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { ExternalLink, Check, Copy } from 'lucide-react'
 import { buildAffiliateUrl, AFFILIATE_LINK_PROPS } from '@/lib/affiliate'
+import { formatMoney } from '@/lib/format'
 
 // =============================================================================
 // TYPES
@@ -149,9 +150,7 @@ function sizeToNumber(size: string | null): number {
 // Putting the dollar sign in front reads as a translation nobody proofread.
 function formatPrice(price: number | null, suffix = '', locale = 'en'): string {
   if (price === null || price === undefined) return '—'
-  const opts = { minimumFractionDigits: 0, maximumFractionDigits: 2 } as const
-  if (locale === 'fr') return `${price.toLocaleString('fr-FR', opts)}\u00A0$${suffix}`
-  return `$${price.toLocaleString('en-US', opts)}${suffix}`
+  return formatMoney(price, locale, suffix)
 }
 
 // Risk figures are percentages on forex firms and dollar amounts on futures
@@ -160,9 +159,7 @@ function formatPrice(price: number | null, suffix = '', locale = 'en'): string {
 function fmtRisk(value: number | null | undefined, unit?: string | null, locale = 'en'): string {
   if (value === null || value === undefined) return '—'
   if (unit === 'usd') {
-    return locale === 'fr'
-      ? `${Number(value).toLocaleString('fr-FR')}\u00A0$`
-      : `$${Number(value).toLocaleString('en-US')}`
+    return formatMoney(Number(value), locale)
   }
   return locale === 'fr' ? `${value}\u00A0%` : `${value}%`
 }

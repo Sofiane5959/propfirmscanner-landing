@@ -25,6 +25,7 @@ import {
 } from 'lucide-react'
 import ChallengeSelector, { type Challenge } from './ChallengeSelector'
 import { buildAffiliateUrl, AFFILIATE_LINK_PROPS } from '@/lib/affiliate'
+import { formatMoney, formatNumber, formatDayMonth } from '@/lib/format'
 
 // UI copy. Firm content is translated in the DB via prop_firms.translations;
 // these are the labels the component owns.
@@ -312,11 +313,10 @@ export default function PropFirmPageClient({
     return merged as unknown as PropFirm
   })()
 
-  const dateFmt = locale === 'fr' ? 'fr-FR' : 'en-GB'
-
   // French writes the currency after the amount: "150 $", not "$150".
-  const money = (v: number) =>
-    locale === 'fr' ? `${v.toLocaleString('fr-FR')}\u00A0$` : `$${v.toLocaleString('en-US')}`
+  // Formatting is deterministic rather than locale-data driven — see
+  // lib/format.ts for why toLocaleString broke hydration on this page.
+  const money = (v: number) => formatMoney(v, locale)
 
   const handleShare = () => {
     if (navigator.share) {
@@ -395,9 +395,7 @@ export default function PropFirmPageClient({
 
   const hasReference = specs.length > 0 || policies.length > 0 || platforms.length > 0 || assets.length > 0
 
-  const expiryText = firm.discount_expires_at
-    ? new Date(firm.discount_expires_at).toLocaleDateString(dateFmt, { day: 'numeric', month: 'long' })
-    : null
+  const expiryText = formatDayMonth(firm.discount_expires_at, locale)
 
   return (
     // Bottom padding on mobile clears the fixed CTA bar; it is removed at lg
@@ -515,7 +513,7 @@ export default function PropFirmPageClient({
                 <span className="text-white font-semibold text-sm">{firm.trustpilot_rating.toFixed(1)}</span>
                 {firm.trustpilot_reviews > 0 && (
                   <span className="text-gray-500 text-xs">
-                    ({firm.trustpilot_reviews.toLocaleString()} {t.onTrustpilot})
+                    ({formatNumber(firm.trustpilot_reviews, locale)} {t.onTrustpilot})
                   </span>
                 )}
               </div>
@@ -1186,7 +1184,7 @@ function generateFAQs(
   const fr = locale === 'fr'
   const n = firm.name
   // French convention puts the currency after the amount, with a space.
-  const money = (v: number) => (fr ? `${v.toLocaleString('fr-FR')} $` : `$${v.toLocaleString('en-US')}`)
+  const money = (v: number) => formatMoney(v, fr ? 'fr' : 'en')
 
   // --- Legitimacy ------------------------------------------------------
   faqs.push({

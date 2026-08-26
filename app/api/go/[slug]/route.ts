@@ -50,6 +50,25 @@ function isBot(userAgent: string | null): boolean {
   return BOT_UA_PATTERNS.some(p => p.test(userAgent))
 }
 
+/**
+ * Is this request a speculative fetch rather than a human clicking?
+ *
+ * Next-Router-Prefetch is the App Router's prefetch marker. RSC marks any
+ * router-initiated request: on this route that can only ever be a prefetch or
+ * a client navigation that is about to fail anyway, because the response is a
+ * redirect to a partner domain and the router cannot follow that — it falls
+ * back to a full browser navigation, which reaches us again without the
+ * header and is logged then. Purpose / Sec-Purpose come from the browser
+ * itself (Chrome sends "prefetch", sometimes "prefetch;prerender").
+ */
+function isPrefetch(request: NextRequest): boolean {
+  const h = request.headers
+  if (h.get('next-router-prefetch')) return true
+  if (h.get('rsc')) return true
+  const purpose = `${h.get('purpose') || ''} ${h.get('x-purpose') || ''} ${h.get('sec-purpose') || ''}`
+  return purpose.toLowerCase().includes('prefetch')
+}
+
 function hashIp(ip: string): string {
   return crypto
     .createHash('sha256')
@@ -94,6 +113,29 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { slug: string } }
 ) {
+  // ----------------------------------------------------------
+  // 0. A prefetch is not a click
+  // ----------------------------------------------------------
+  // Browsers and the Next.js router fetch links before anyone clicks them.
+  // Everything this route does — mint a click_id, write a row, redirect — is
+  // a side effect, so an unfiltered prefetch invents a conversion. The banner
+  // in the root layout used next/link, so every page view fired one of these
+  // per visible deal; that is the bulk of the historical affiliate_clicks
+  // rows and the "repeated" clicks in the partner panel.
+  //
+  // This runs before the firm lookup and before generateClickId(), so a
+  // prefetch costs neither a database row nor an identifier.
+  //
+  // 204 rather than a redirect: a cached 3xx could be replayed as the real
+  // navigation later and skip the tracker entirely. An empty, uncacheable
+  // response makes the browser come back for the actual click.
+  if (isPrefetch(request)) {
+    return new NextResponse(null, {
+      status: 204,
+      headers: { 'Cache-Control': 'no-store' },
+    })
+  }
+
   const { slug } = params
   const url = new URL(request.url)
   
@@ -219,6 +261,10 @@ export async function GET(
     .from('affiliate_clicks')
     .insert({
       click_id: clickId,
+      // Real navigations only — prefetches never reach this line. Kept
+      // explicit so the dashboard can filter on it and so the historical
+      // rows, which predate the filter, stay distinguishable.
+      is_prefetch: false,
       firm_slug: firm.slug,
       firm_name: firm.name,
       destination_type: destinationType,
