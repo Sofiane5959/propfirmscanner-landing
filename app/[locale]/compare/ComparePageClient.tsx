@@ -2,6 +2,8 @@
 
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
+import { useHideOnScrollDown } from '@/hooks/useHideOnScrollDown'
+import { formatMonthYear } from '@/lib/format'
 import Image from 'next/image'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
@@ -1731,6 +1733,9 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
   
   const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'rating')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  // Shared with the navbar and the offers banner: when those slide away the
+  // filter bar takes their place instead of leaving a 4rem gap above itself.
+  const headerHidden = useHideOnScrollDown()
   const [currentPage, setCurrentPage] = useState(1)
   const [compareList, setCompareList] = useState<string[]>([])
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
@@ -2174,15 +2179,19 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
       )}
       
       {/* HEADER */}
-      <section className="pt-6 pb-4 px-4 border-b border-gray-800 sticky top-16 z-30 bg-gray-900/95 backdrop-blur-sm">
+      {/* HEADER — identity. Read once, so it scrolls away like any other
+          content. Pinning it cost 118px of a phone screen for a title nobody
+          re-reads, and it sat behind the offers banner anyway: both were
+          sticky at top-16, and this one is the lower z-index of the two. */}
+      <section className="pt-6 pb-3 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
               <div className="flex items-center gap-3 mb-1">
                 <h1 className="text-h3 sm:text-h2 text-white font-display">{t.pageTitle}</h1>
                 <span className="px-2 py-0.5 bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[11px] font-medium uppercase tracking-wider rounded-md flex items-center gap-1"><BadgeCheck className="w-3 h-3" />Verified</span>
               </div>
-              <p className="text-small text-gray-500">Every prop firm. One place. <span className="text-gray-600">·</span> <span className="text-gray-400">Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span></p>
+              <p className="text-small text-gray-500">Every prop firm. One place. <span className="text-gray-600">·</span> <span className="text-gray-400">Last updated: {formatMonthYear(new Date())}</span></p>
             </div>
             <div className="flex items-center gap-2">
               <button onClick={() => setViewMode('grid')} aria-label="Grid view" aria-pressed={viewMode === 'grid'} className={`p-2 rounded-md border transition-colors ${viewMode === 'grid' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-gray-800 text-gray-400 border-gray-700 hover:border-gray-600'}`}>
@@ -2193,7 +2202,19 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
               </button>
             </div>
           </div>
-          
+        </div>
+      </section>
+
+      {/* FILTERS — the one part that earns its place on screen: you need them
+          while you are scrolling the list they filter. Rides up by 4rem when
+          the navbar and banner collapse, so it always sits flush against
+          whatever is above it. */}
+      <section
+        className={`pt-3 pb-4 px-4 border-b border-gray-800 sticky top-16 z-30 bg-gray-900/95 backdrop-blur-sm transition-transform duration-300 motion-reduce:transition-none ${
+          headerHidden ? '-translate-y-16' : 'translate-y-0'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto">
           <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-2">
               {/* Search */}

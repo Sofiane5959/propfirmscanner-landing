@@ -80,6 +80,19 @@ const MONTHS: Record<string, string[]> = {
  * the 31st for every reader. Returns null on an unparseable value so callers
  * can drop the line rather than print "Invalid Date".
  */
+/**
+ * Month and year of a date, read in UTC: "August 2026" / "août 2026".
+ *
+ * Same reason as formatDayMonth: toLocaleDateString reads month names from the
+ * runtime's ICU build and renders in the runtime's time zone, so the server and
+ * the browser can disagree — on the name, and on the month itself for a
+ * timestamp within hours of a month boundary.
+ */
+export function formatMonthYear(date: Date, locale?: string | null): string {
+  const months = locale === 'fr' ? MONTHS.fr : MONTHS.en
+  return `${months[date.getUTCMonth()]} ${date.getUTCFullYear()}`
+}
+
 export function formatDayMonth(iso: string | null | undefined, locale?: string | null): string | null {
   if (!iso) return null
   const date = new Date(iso)
