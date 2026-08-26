@@ -63,10 +63,68 @@ function isBot(userAgent: string | null): boolean {
  */
 function isPrefetch(request: NextRequest): boolean {
   const h = request.headers
+
+  // Explicit prefetch markers. Reliable when present, absent more often than
+  // you would hope — which is why they are no longer the only test.
   if (h.get('next-router-prefetch')) return true
   if (h.get('rsc')) return true
   const purpose = `${h.get('purpose') || ''} ${h.get('x-purpose') || ''} ${h.get('sec-purpose') || ''}`
-  return purpose.toLowerCase().includes('prefetch')
+  if (purpose.toLowerCase().includes('prefetch')) return true
+
+  // The stronger signal, and the reason this function stopped being a
+  // blacklist. Fetch Metadata describes what the request IS rather than why it
+  // was made, so it catches speculative loads that announce themselves as
+  // nothing at all.
+  //
+  // A person clicking a link produces a top-level navigation:
+  //   Sec-Fetch-Mode: navigate   Sec-Fetch-Dest: document
+  // Anything script-initiated — a router prefetch, a scanner, a preview
+  // unfurler — produces Mode: cors/no-cors and Dest: empty. This route only
+  // ever exists to be navigated to, so anything else is not a click.
+  //
+  // Browsers that send no Sec-Fetch-* at all fall through to `false` and are
+  // treated as real clicks: better to log a rare phantom than to silently drop
+  // genuine commissions on an old browser.
+  const mode = h.get('sec-fetch-mode')
+  if (mode && mode !== 'navigate') return true
+
+  const dest = h.get('sec-fetch-dest')
+  if (dest && dest !== 'document') return true
+
+  return false
+}
+
+/**
+ * Temporary diagnostic: what does the server actually receive?
+ *
+ * Set DEBUG_GO_HEADERS=1 in the environment, load a page without clicking
+ * anything, and read the function logs. Header names are always listed;
+ * values are only printed for the ones that matter here, because the rest
+ * includes cookies and authorization.
+ *
+ * Remove this once the question is settled.
+ */
+const HEADER_VALUES_SAFE_TO_LOG = [
+  'sec-fetch-mode', 'sec-fetch-dest', 'sec-fetch-site', 'sec-fetch-user',
+  'sec-purpose', 'purpose', 'x-purpose', 'rsc', 'next-router-prefetch',
+  'accept', 'user-agent', 'referer',
+]
+
+function logHeaders(request: NextRequest, slug: string, verdict: boolean): void {
+  if (process.env.DEBUG_GO_HEADERS !== '1') return
+  const names: string[] = []
+  const values: Record<string, string> = {}
+  request.headers.forEach((value, name) => {
+    names.push(name)
+    if (HEADER_VALUES_SAFE_TO_LOG.includes(name)) values[name] = value.slice(0, 200)
+  })
+  // eslint-disable-next-line no-console
+  console.log('[go-headers]', JSON.stringify({
+    slug,
+    treatedAsPrefetch: verdict,
+    values,
+    allHeaderNames: names.sort(),
+  }))
 }
 
 function hashIp(ip: string): string {
@@ -129,7 +187,9 @@ export async function GET(
   // 204 rather than a redirect: a cached 3xx could be replayed as the real
   // navigation later and skip the tracker entirely. An empty, uncacheable
   // response makes the browser come back for the actual click.
-  if (isPrefetch(request)) {
+  const prefetch = isPrefetch(request)
+  logHeaders(request, params.slug, prefetch)
+  if (prefetch) {
     return new NextResponse(null, {
       status: 204,
       headers: { 'Cache-Control': 'no-store' },
