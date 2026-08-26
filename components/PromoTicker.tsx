@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Copy, CheckCircle2, BadgeCheck, ShieldCheck, ExternalLink } from 'lucide-react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { AFFILIATE_LINK_PROPS } from '@/lib/affiliate'
 
 // =====================================================
 // TYPES
@@ -71,13 +72,11 @@ const DealPill = ({ deal }: { deal: PromoDeal }) => {
   // affiliate link — no code to copy.
   const hasCode = !!(deal.discount_code && deal.discount_code.trim().length > 0)
   
-  return (
-    <Link
-      href={url}
-      target={hasOutbound ? '_blank' : undefined}
-      rel={hasOutbound ? 'noopener noreferrer' : undefined}
-      className="flex-shrink-0 flex items-center gap-2 px-3 py-1.5 bg-gray-800/80 hover:bg-gray-700/80 border border-gray-700/50 hover:border-emerald-500/30 rounded-full transition-all group"
-    >
+  const pillClass =
+    'flex-shrink-0 flex items-center gap-2 px-3 py-1.5 bg-gray-800/80 hover:bg-gray-700/80 border border-gray-700/50 hover:border-emerald-500/30 rounded-full transition-all group'
+
+  const inner = (
+    <>
       {/* Logo */}
       {deal.logo_url ? (
         <div className="w-5 h-5 rounded-full bg-white flex items-center justify-center overflow-hidden p-0.5">
@@ -119,6 +118,34 @@ const DealPill = ({ deal }: { deal: PromoDeal }) => {
           via link
         </span>
       )}
+    </>
+  )
+
+  // The outbound pill MUST be a native anchor, never next/link.
+  //
+  // /api/go/{slug} looks like an internal route to the App Router, so a <Link>
+  // gets speculatively prefetched the moment the pill enters the viewport —
+  // and this ticker sits in the root layout, at the top of every page. Each
+  // page view therefore fired one tracked "click" per visible deal, against a
+  // route whose whole job is to log a click and 302 away. That is where the
+  // console's "Failed to fetch RSC payload for /api/go/..." came from: the
+  // prefetch asked for an RSC payload and got a redirect to a partner domain.
+  //
+  // A plain <a> is never prefetched. The route also rejects prefetch requests
+  // server-side now, but this is the fix that stops them being made at all.
+  if (hasOutbound) {
+    return (
+      <a href={url} {...AFFILIATE_LINK_PROPS} className={pillClass}>
+        {inner}
+      </a>
+    )
+  }
+
+  // Internal fallback for firms with no outbound link: <Link> is correct here,
+  // prefetching an ordinary page costs nothing and logs nothing.
+  return (
+    <Link href={url} className={pillClass}>
+      {inner}
     </Link>
   )
 }
