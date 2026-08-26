@@ -31,12 +31,18 @@ interface ClickRow {
   clicks_7d: number
   clicks_30d: number
   affiliate_clicks: number
+  deep_link_clicks: number
   website_clicks: number
+  // Catch-all so the categories always add up to total_clicks, whatever the
+  // route starts emitting next. See the bucketing note in fetchData().
+  other_clicks: number
   last_click_at: string | null
 }
 
 interface RecentClick {
   id: string
+  // NULL on the rows logged before click_id tracking shipped.
+  click_id: string | null
   firm_slug: string
   firm_name: string | null
   destination_type: string
@@ -90,6 +96,20 @@ export default function AnalyticsPage() {
   const [bySource, setBySource] = useState<SourceRow[]>([])
   const [includeBots, setIncludeBots] = useState(false)
   const [sortKey, setSortKey] = useState<keyof ClickRow>('clicks_30d')
+  const [copiedId, setCopiedId] = useState<string | null>(null)
+
+  // The click id only earns its place if it can be pasted into the partner's
+  // panel — Earn2Trade lists it under Reports -> Raw clicks, Extra Data 1.
+  const copyClickId = async (id: string) => {
+    try {
+      await navigator.clipboard.writeText(id)
+      setCopiedId(id)
+      setTimeout(() => setCopiedId(c => (c === id ? null : c)), 1200)
+    } catch {
+      // Clipboard unavailable (insecure context, denied permission) — the
+      // full value is on screen and selectable either way.
+    }
+  }
 
   const fetchData = async () => {
     setRefreshing(true)
@@ -123,7 +143,9 @@ export default function AnalyticsPage() {
         clicks_7d: 0,
         clicks_30d: 0,
         affiliate_clicks: 0,
+        deep_link_clicks: 0,
         website_clicks: 0,
+        other_clicks: 0,
         last_click_at: null as string | null,
       }
 
@@ -132,8 +154,17 @@ export default function AnalyticsPage() {
       if (ageMs <= day) existing.clicks_24h++
       if (ageMs <= 7 * day) existing.clicks_7d++
       if (ageMs <= 30 * day) existing.clicks_30d++
+      // destination_type has had three values since per-plan deep links
+      // shipped: 'affiliate', 'affiliate_challenge' and 'website'. The old
+      // if/else pair matched only two of them, so every affiliate_challenge
+      // row landed in total_clicks and in no column — the header total read
+      // 963 against 927 in the categories. Every branch is covered now, and
+      // anything unrecognised falls into other_clicks rather than vanishing,
+      // so the invariant holds if a fourth type ever appears.
       if (c.destination_type === 'affiliate') existing.affiliate_clicks++
+      else if (c.destination_type === 'affiliate_challenge') existing.deep_link_clicks++
       else if (c.destination_type === 'website') existing.website_clicks++
+      else existing.other_clicks++
       if (!existing.last_click_at || c.created_at > existing.last_click_at) {
         existing.last_click_at = c.created_at
       }
@@ -145,7 +176,7 @@ export default function AnalyticsPage() {
 
     const { data: recentData } = await supabase
       .from('affiliate_clicks')
-      .select('id, firm_slug, firm_name, destination_type, source, locale, country, is_bot, created_at')
+      .select('id, click_id, firm_slug, firm_name, destination_type, source, locale, country, is_bot, created_at')
       .order('created_at', { ascending: false })
       .limit(30)
     setRecent(recentData || [])
@@ -190,7 +221,10 @@ export default function AnalyticsPage() {
 
   const totalClicks = byFirm.reduce((s, r) => s + r.total_clicks, 0)
   const totalAffiliate = byFirm.reduce((s, r) => s + r.affiliate_clicks, 0)
+  const totalDeepLink = byFirm.reduce((s, r) => s + r.deep_link_clicks, 0)
   const totalWebsite = byFirm.reduce((s, r) => s + r.website_clicks, 0)
+  const totalOther = byFirm.reduce((s, r) => s + r.other_clicks, 0)
+  const pctOf = (n: number) => (totalClicks > 0 ? `${Math.round((n / totalClicks) * 100)}%` : '0%')
   const total24h = byFirm.reduce((s, r) => s + r.clicks_24h, 0)
   const total7d = byFirm.reduce((s, r) => s + r.clicks_7d, 0)
 
@@ -204,7 +238,7 @@ export default function AnalyticsPage() {
               Back to admin
             </Link>
             <h1 className="text-2xl font-bold text-white">Affiliate Analytics</h1>
-            <p className="text-sm text-gray-500">Click tracking on every affiliate / website link</p>
+            <p className="text-sm text-gray-500">Click tracking on every outbound link</p>
           </div>
           <div className="flex items-center gap-3">
             <label className="flex items-center gap-2 text-xs text-gray-400 cursor-pointer">
@@ -227,13 +261,24 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+        {/* Total = affiliate + deep link + website (+ other). Deep links stand
+            on their own tile: it is the configurator path, the one that lands
+            the visitor on a pre-filled checkout, so it has to be readable
+            without mentally subtracting it from the affiliate figure. */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
           <StatCard label="Total clicks" value={totalClicks} />
           <StatCard label="Last 24h" value={total24h} highlight={total24h > 0} />
           <StatCard label="Last 7d" value={total7d} />
-          <StatCard label="Affiliate clicks" value={totalAffiliate} sub={`${totalClicks > 0 ? Math.round((totalAffiliate / totalClicks) * 100) : 0}%`} />
-          <StatCard label="Website clicks" value={totalWebsite} sub={`${totalClicks > 0 ? Math.round((totalWebsite / totalClicks) * 100) : 0}%`} />
+          <StatCard label="Affiliate clicks" value={totalAffiliate} sub={pctOf(totalAffiliate)} />
+          <StatCard label="Deep link clicks" value={totalDeepLink} sub={pctOf(totalDeepLink)} highlight={totalDeepLink > 0} />
+          <StatCard label="Website clicks" value={totalWebsite} sub={pctOf(totalWebsite)} />
         </div>
+        {totalOther > 0 && (
+          <p className="text-xs text-amber-400/80 mb-6 -mt-3">
+            {totalOther} click{totalOther > 1 ? 's' : ''} carry a destination_type this dashboard
+            does not recognise yet — counted under “Other” in the table below.
+          </p>
+        )}
 
         {loading ? (
           <div className="text-center text-gray-500 py-12">Loading analytics…</div>
@@ -262,7 +307,11 @@ export default function AnalyticsPage() {
                       <Th label="30d" sortKey="clicks_30d" current={sortKey} onClick={setSortKey} />
                       <Th label="Total" sortKey="total_clicks" current={sortKey} onClick={setSortKey} />
                       <Th label="Affiliate" sortKey="affiliate_clicks" current={sortKey} onClick={setSortKey} />
+                      <Th label="Deep link" sortKey="deep_link_clicks" current={sortKey} onClick={setSortKey} />
                       <Th label="Website" sortKey="website_clicks" current={sortKey} onClick={setSortKey} />
+                      {totalOther > 0 && (
+                        <Th label="Other" sortKey="other_clicks" current={sortKey} onClick={setSortKey} />
+                      )}
                       <th className="text-left px-4 py-2 font-medium">Last click</th>
                     </tr>
                   </thead>
@@ -284,7 +333,15 @@ export default function AnalyticsPage() {
                         <td className="px-4 py-2.5 text-right tabular-nums text-gray-300">{row.clicks_30d}</td>
                         <td className="px-4 py-2.5 text-right tabular-nums text-white font-medium">{row.total_clicks}</td>
                         <td className="px-4 py-2.5 text-right tabular-nums text-emerald-400">{row.affiliate_clicks}</td>
+                        <td className="px-4 py-2.5 text-right tabular-nums">
+                          <span className={row.deep_link_clicks > 0 ? 'text-sky-400 font-medium' : 'text-gray-600'}>
+                            {row.deep_link_clicks}
+                          </span>
+                        </td>
                         <td className="px-4 py-2.5 text-right tabular-nums text-gray-400">{row.website_clicks}</td>
+                        {totalOther > 0 && (
+                          <td className="px-4 py-2.5 text-right tabular-nums text-amber-400">{row.other_clicks}</td>
+                        )}
                         <td className="px-4 py-2.5 text-gray-500 text-xs">{formatRelative(row.last_click_at)}</td>
                       </tr>
                     ))}
@@ -336,11 +393,39 @@ export default function AnalyticsPage() {
                           {r.firm_name || r.firm_slug}
                         </span>
                         <span className="text-gray-500">{r.source || '—'}</span>
-                        <span className={`px-1.5 py-0.5 rounded text-[10px] ${r.destination_type === 'affiliate' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-gray-700 text-gray-400'}`}>
-                          {r.destination_type}
+                        <span
+                          title={r.destination_type}
+                          className={`px-1.5 py-0.5 rounded text-[10px] shrink-0 ${
+                            r.destination_type === 'affiliate_challenge'
+                              ? 'bg-sky-500/20 text-sky-400'
+                              : r.destination_type === 'affiliate'
+                              ? 'bg-emerald-500/20 text-emerald-400'
+                              : 'bg-gray-700 text-gray-400'
+                          }`}
+                        >
+                          {r.destination_type === 'affiliate_challenge' ? 'deep link' : r.destination_type}
                         </span>
+                        {/* Paste target for the partner's panel — Earn2Trade
+                            shows it under Reports -> Raw clicks, Extra Data 1. */}
+                        {r.click_id ? (
+                          <button
+                            type="button"
+                            onClick={() => copyClickId(r.click_id as string)}
+                            title={`${r.click_id} — click to copy`}
+                            className="font-mono text-[10px] text-gray-500 hover:text-emerald-400 shrink-0 tabular-nums"
+                          >
+                            {copiedId === r.click_id ? 'copied ✓' : r.click_id}
+                          </button>
+                        ) : (
+                          <span
+                            title="Logged before click_id tracking shipped"
+                            className="font-mono text-[10px] text-gray-700 shrink-0"
+                          >
+                            —
+                          </span>
+                        )}
                         {r.is_bot && <span className="px-1 py-0.5 rounded bg-yellow-500/20 text-yellow-400 text-[10px]">bot</span>}
-                        <span className="text-gray-500 text-[10px]">{formatRelative(r.created_at)}</span>
+                        <span className="text-gray-500 text-[10px] shrink-0">{formatRelative(r.created_at)}</span>
                       </div>
                     ))
                   )}
