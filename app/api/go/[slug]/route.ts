@@ -169,7 +169,7 @@ export async function GET(
   
   const { data: firm, error: firmError } = await supabase
     .from('prop_firms')
-    .select('slug, name, affiliate_url, website_url, subid_param')
+    .select('slug, name, affiliate_url, website_url, subid_param, discount_code')
     .eq('slug', slug)
     .maybeSingle()
   
@@ -201,18 +201,63 @@ export async function GET(
     }
   }
 
+  // ----------------------------------------------------------
+  // 1c. Coupon rescue for links that named no plan
+  // ----------------------------------------------------------
+  // A firm-level affiliate_url carries the coupon as a query parameter, but it
+  // lands on the partner's marketing page, and partners drop that parameter as
+  // soon as the visitor walks from there to checkout — Earn2Trade overwrites it
+  // with whatever site-wide campaign is live. Every banner, deal card, compare
+  // CTA and favourite on this site pointed there, so we advertised a discount
+  // and then sent people to pay full price, losing the commission with it.
+  //
+  // The coupon is only certain on a deep link that lands straight on the
+  // partner's checkout with the code in the query string, which is exactly what
+  // a challenge's own affiliate_url is. So when a link named no plan, we pick
+  // the entry plan rather than the marketing page.
+  //
+  // Two deliberate limits:
+  //   - An explicit ?challenge= always wins. A visitor who configured a plan is
+  //     never redirected to a different one.
+  //   - Only for firms that actually have a coupon to protect. Without one there
+  //     is nothing to lose on the landing page, and sending someone who clicked
+  //     "Visit <firm>" straight to a checkout would be its own small lie. Those
+  //     links keep pointing at the firm exactly as before.
+  let couponAffiliate: string | null = null
+  if (!challengeAffiliate && firm.discount_code) {
+    const { data: entryPlan } = await supabase
+      .from('prop_firm_challenges')
+      .select('affiliate_url')
+      .eq('firm_slug', firm.slug)
+      .not('affiliate_url', 'is', null)
+      .neq('affiliate_url', '#')
+      .order('price', { ascending: true, nullsFirst: false })
+      .limit(1)
+      .maybeSingle()
+
+    if (entryPlan?.affiliate_url) couponAffiliate = entryPlan.affiliate_url
+  }
+
   // Pick the destination: challenge link, then firm affiliate, then website
   const firmAffiliate = firm.affiliate_url && firm.affiliate_url !== '#' ? firm.affiliate_url : null
   const website = firm.website_url && firm.website_url !== '#' ? firm.website_url : null
-  const destination = challengeAffiliate || firmAffiliate || website
+  const destination = challengeAffiliate || couponAffiliate || firmAffiliate || website
   
   if (!destination) {
     // Nothing to redirect to — back to the firm's page on our site
     return NextResponse.redirect(new URL(`/${locale}/prop-firm/${slug}`, request.url), 302)
   }
   
+  // affiliate_challenge = the visitor picked this plan in the configurator.
+  // affiliate_coupon     = we upgraded a plan-less link to the entry plan's
+  //                        checkout so the coupon would survive.
+  // Kept apart on purpose: both are deep links, but only the first one reflects
+  // a choice the visitor actually made, and conflating them would overstate how
+  // well the configurator converts.
   const destinationType = challengeAffiliate
     ? 'affiliate_challenge'
+    : couponAffiliate
+    ? 'affiliate_coupon'
     : firmAffiliate
     ? 'affiliate'
     : 'website'

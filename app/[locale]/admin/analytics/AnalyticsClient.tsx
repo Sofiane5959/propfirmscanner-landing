@@ -174,8 +174,17 @@ export default function AnalyticsPage() {
       // 963 against 927 in the categories. Every branch is covered now, and
       // anything unrecognised falls into other_clicks rather than vanishing,
       // so the invariant holds if a fourth type ever appears.
+      // 'affiliate_challenge' is a plan the visitor chose in the configurator;
+      // 'affiliate_coupon' is a plan-less link the route upgraded to the entry
+      // plan's checkout so the coupon would survive. Both land on a checkout,
+      // so they share a column — the recent-activity badge keeps them apart for
+      // anyone who needs to know which is which.
       if (c.destination_type === 'affiliate') existing.affiliate_clicks++
-      else if (c.destination_type === 'affiliate_challenge') existing.deep_link_clicks++
+      else if (
+        c.destination_type === 'affiliate_challenge' ||
+        c.destination_type === 'affiliate_coupon'
+      )
+        existing.deep_link_clicks++
       else if (c.destination_type === 'website') existing.website_clicks++
       else existing.other_clicks++
       if (!existing.last_click_at || c.created_at > existing.last_click_at) {
@@ -429,12 +438,18 @@ export default function AnalyticsPage() {
                           className={`px-1.5 py-0.5 rounded text-[10px] shrink-0 ${
                             r.destination_type === 'affiliate_challenge'
                               ? 'bg-sky-500/20 text-sky-400'
+                              : r.destination_type === 'affiliate_coupon'
+                              ? 'bg-indigo-500/20 text-indigo-300'
                               : r.destination_type === 'affiliate'
                               ? 'bg-emerald-500/20 text-emerald-400'
                               : 'bg-gray-700 text-gray-400'
                           }`}
                         >
-                          {r.destination_type === 'affiliate_challenge' ? 'deep link' : r.destination_type}
+                          {r.destination_type === 'affiliate_challenge'
+                            ? 'deep link'
+                            : r.destination_type === 'affiliate_coupon'
+                            ? 'coupon link'
+                            : r.destination_type}
                         </span>
                         {/* Paste target for the partner's panel — Earn2Trade
                             shows it under Reports -> Raw clicks, Extra Data 1. */}
