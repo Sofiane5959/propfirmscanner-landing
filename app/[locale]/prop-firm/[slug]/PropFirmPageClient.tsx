@@ -36,7 +36,9 @@ const COPY = {
     onTrustpilot: 'on Trustpilot',
     from: 'From',
     perMonth: '/month',
-    codeAuto: (c: string) => `Code ${c} — applied automatically`,
+    // Never "applied automatically": the coupon is only certain at the moment
+    // of the redirect. What the partner does with it afterwards is theirs.
+    codeAuto: (c: string) => `Code ${c} — prefilled when you are redirected`,
     runsUntil: (d: string) => `Offer runs until ${d}`,
     configure: 'Configure my account',
     visit: (f: string) => `Visit ${f}`,
@@ -46,6 +48,7 @@ const COPY = {
     country: 'Country',
     regulated: 'Regulated',
     officialSite: 'Official website',
+    officialOffer: 'Official offer — code prefilled',
     choosingProgram: 'Choosing a program',
     afterPass: 'After you pass',
     noHidden: 'All the costs to expect',
@@ -72,7 +75,7 @@ const COPY = {
     readyTitle: 'Ready to pick your program?',
     readyIntro: 'Configure your account and check the rules one last time before payment.',
     readyCta: (f: string) => `Configure my ${f} account`,
-    partnerLink: (c: string) => `Partner link · code ${c} applied automatically`,
+    partnerLink: (c: string) => `Partner link · code ${c} prefilled at checkout`,
     similar: 'Similar firms',
     riskTitle: 'Trading risk warning',
     risk:
@@ -86,7 +89,7 @@ const COPY = {
     onTrustpilot: 'sur Trustpilot',
     from: 'À partir de',
     perMonth: '/mois',
-    codeAuto: (c: string) => `Code ${c} — appliqué automatiquement`,
+    codeAuto: (c: string) => `Code ${c} — prérempli au moment de la redirection`,
     runsUntil: (d: string) => `Offre valable jusqu’au ${d}`,
     configure: 'Configurer mon compte',
     visit: (f: string) => `Visiter ${f}`,
@@ -96,6 +99,7 @@ const COPY = {
     country: 'Pays',
     regulated: 'Régulé',
     officialSite: 'Site officiel',
+    officialOffer: 'Offre officielle — code prérempli',
     choosingProgram: 'Choix du programme',
     afterPass: 'Après la réussite',
     noHidden: 'Tous les coûts à prévoir',
@@ -122,7 +126,7 @@ const COPY = {
     readyIntro:
       'Configurez votre compte et vérifiez une dernière fois les règles avant le paiement.',
     readyCta: (f: string) => `Configurer mon compte ${f}`,
-    partnerLink: (c: string) => `Lien partenaire · code ${c} appliqué automatiquement`,
+    partnerLink: (c: string) => `Lien partenaire · code ${c} prérempli au checkout`,
     similar: 'Firmes similaires',
     riskTitle: 'Avertissement sur les risques',
     risk:
@@ -365,9 +369,36 @@ export default function PropFirmPageClient({
   const hasVerifiedDeal = Boolean(firm.discount_code && firm.discount_percent)
   // Never the partner's public URL: that drops the affiliate params, skips the
   // automatic coupon and loses the click. Placement distinguishes each button.
+  // The firm-level affiliate_url carries the coupon as a parameter, but it
+  // lands on the partner's marketing page — and Earn2Trade, for one, drops the
+  // coupon field as soon as the visitor navigates from there to checkout,
+  // overwriting it with whatever site-wide campaign is live. A visitor who
+  // clicked the logo or "official website" therefore paid full price against a
+  // discount we had just shown them.
+  //
+  // The only destination where the coupon is certain is a deep link that lands
+  // straight on the partner's checkout with the code in the query string —
+  // which is what each challenge's own affiliate_url is. Challenges arrive
+  // ordered by price, so the first one with a link is the entry plan.
+  //
+  // Scoped deliberately: only firms that have BOTH a verified coupon to
+  // protect AND a challenge deep link to protect it with. Everywhere else
+  // these links keep pointing at the firm's site exactly as before.
+  const couponDeepLink = hasVerifiedDeal
+    ? challenges.find((c) => c.affiliate_url && c.affiliate_url !== '#') ?? null
+    : null
+
   const heroCtaUrl = buildAffiliateUrl(firm.slug, { placement: 'hero_offer_card', locale })
-  const officialSiteUrl = buildAffiliateUrl(firm.slug, { placement: 'official_website', locale })
-  const logoUrl_ = buildAffiliateUrl(firm.slug, { placement: 'logo', locale })
+  const officialSiteUrl = buildAffiliateUrl(firm.slug, {
+    placement: 'official_website',
+    locale,
+    challenge: couponDeepLink?.slug,
+  })
+  const logoUrl_ = buildAffiliateUrl(firm.slug, {
+    placement: 'logo',
+    locale,
+    challenge: couponDeepLink?.slug,
+  })
 
 
   // Reference specs live in a collapsed block: complete, but not in the way.
@@ -417,7 +448,7 @@ export default function PropFirmPageClient({
               <a
                 href={logoUrl_}
                 {...AFFILIATE_LINK_PROPS}
-                aria-label={t.visit(firm.name)}
+                aria-label={couponDeepLink ? t.officialOffer : t.visit(firm.name)}
                 className="relative w-14 h-14 bg-gray-800 rounded-xl overflow-hidden flex-shrink-0 border border-gray-700 hover:border-gray-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
               >
                 {logoUrl ? (
@@ -592,7 +623,10 @@ export default function PropFirmPageClient({
                   {...AFFILIATE_LINK_PROPS}
                   className="inline-flex items-center gap-1.5 text-gray-500 hover:text-white transition-colors"
                 >
-                  <Globe className="w-3.5 h-3.5" /> {t.officialSite}
+                  {/* The label follows the destination: calling a checkout
+                      page "official website" would be its own small lie. */}
+                  <Globe className="w-3.5 h-3.5" />{' '}
+                  {couponDeepLink ? t.officialOffer : t.officialSite}
                 </a>
               )}
             </div>
