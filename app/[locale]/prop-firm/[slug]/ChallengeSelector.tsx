@@ -65,6 +65,34 @@ interface Props {
   includedItems?: string[] | null
 }
 
+/**
+ * Is there enough in these challenges to put a configurator in front of a
+ * buyer?
+ *
+ * Some firms are imported with placeholder rows: one programme literally named
+ * "Program", account sizes from 1,000 to 2,000,000, and a dash in every cell
+ * that matters. Rendering the configurator anyway puts a payment button under
+ * a price of "—", which reads as a broken site and taints the pages that are
+ * correct.
+ *
+ * The bar is deliberately low: one challenge a visitor could actually act on,
+ * meaning it has a price and a profit target. Firms below it fall back to the
+ * firm-level content and a link to the official site, which the page already
+ * renders when a firm has no challenges at all.
+ *
+ * Only a gate on the whole section, never a per-row filter: hiding individual
+ * rows would quietly drop legitimate plans whose target is stored elsewhere.
+ */
+export function hasUsableChallenges(challenges: Challenge[]): boolean {
+  return challenges.some(
+    (c) =>
+      c.price !== null &&
+      c.price !== undefined &&
+      (c.phase1_profit_target ?? c.profit_target_sum) !== null &&
+      (c.phase1_profit_target ?? c.profit_target_sum) !== undefined
+  )
+}
+
 // =============================================================================
 // COPY
 // =============================================================================
@@ -294,7 +322,7 @@ export default function ChallengeSelector({
     [currentChallenge, firmSlug, selectedFeed, checkoutOptions, locale]
   )
 
-  if (challenges.length === 0) return null
+  if (!hasUsableChallenges(challenges)) return null
 
   const riskUnit = currentChallenge?.risk_unit
   const keyNumbers = [

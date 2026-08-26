@@ -23,7 +23,7 @@ import {
   Layers,
   GraduationCap,
 } from 'lucide-react'
-import ChallengeSelector, { type Challenge } from './ChallengeSelector'
+import ChallengeSelector, { hasUsableChallenges, type Challenge } from './ChallengeSelector'
 import { buildAffiliateUrl, AFFILIATE_LINK_PROPS } from '@/lib/affiliate'
 import { formatMoney, formatNumber, formatDayMonth } from '@/lib/format'
 
@@ -357,6 +357,11 @@ export default function PropFirmPageClient({
   const payoutMethods = toArray(firm.payout_methods)
   const payoutSpeed = formatPayoutSpeed(firm)
 
+  // Whether this firm has challenge data worth configuring. Drives every
+  // buying affordance on the page: with placeholder rows the configurator is
+  // hidden and the CTAs point at the official site instead of a payment flow.
+  const canConfigure = hasUsableChallenges(challenges)
+
   const hasVerifiedDeal = Boolean(firm.discount_code && firm.discount_percent)
   // Never the partner's public URL: that drops the affiliate params, skips the
   // automatic coupon and loses the click. Placement distinguishes each button.
@@ -476,7 +481,7 @@ export default function PropFirmPageClient({
             )}
 
             <div className="flex flex-wrap gap-3 mb-4">
-              {challenges.length > 0 && (
+              {canConfigure && (
                 <a
                   href="#challenges"
                   className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-semibold rounded-lg transition-colors"
@@ -551,12 +556,12 @@ export default function PropFirmPageClient({
             )}
 
             <a
-              href={challenges.length > 0 ? '#challenges' : heroCtaUrl}
-              {...(challenges.length === 0 ? AFFILIATE_LINK_PROPS : {})}
+              href={canConfigure ? '#challenges' : heroCtaUrl}
+              {...(!canConfigure ? AFFILIATE_LINK_PROPS : {})}
               className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-semibold rounded-lg transition-colors"
             >
-              {challenges.length > 0 ? t.configure : t.visit(firm.name)}
-              {challenges.length === 0 && <ExternalLink className="w-4 h-4" />}
+              {canConfigure ? t.configure : t.visit(firm.name)}
+              {!canConfigure && <ExternalLink className="w-4 h-4" />}
             </a>
 
             {(isSubscription ? t.billedMonthly : t.commission) && (
@@ -617,7 +622,7 @@ export default function PropFirmPageClient({
       {/* ================================================================ */}
       {/* 3. CONFIGURATOR — full width, owns its own two-column layout    */}
       {/* ================================================================ */}
-      {challenges.length > 0 && (
+      {canConfigure && (
         <div id="challenges" className="scroll-mt-28 print:scroll-mt-0">
           <ChallengeSelector
             firmSlug={firm.slug}
@@ -1020,7 +1025,7 @@ export default function PropFirmPageClient({
         {/* ============================================================== */}
         {/* 14. FINAL CTA                                                  */}
         {/* ============================================================== */}
-        {challenges.length > 0 && (
+        {canConfigure && (
           <section className="bg-gray-900/70 border border-emerald-500/25 rounded-2xl p-8 text-center">
             {expiryText && (
               <p className="text-emerald-400 text-xs uppercase tracking-wider font-semibold mb-2">

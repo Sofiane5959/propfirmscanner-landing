@@ -26,17 +26,17 @@ function getLocaleFromPath(pathname: string): Locale {
 const translations: Record<Locale, Record<string, string>> = {
   en: {
     // Hero
-    freeGuide: 'Free 40+ Page Guide',
+    freeGuide: 'Free 13-page guide',
     heroTitle1: 'How to Choose the',
     heroTitle2: 'Perfect Prop Firm',
     heroTitle3: 'in 2026',
     heroDescription: 'Stop wasting money on the wrong prop firms. Our comprehensive guide reveals exactly what to look for, red flags to avoid, and our top picks for every trading style.',
     // Benefits
-    benefit1: 'Save $500+ by avoiding bad choices',
-    benefit2: '30+ hours of research condensed',
-    benefit3: 'Used by 5,000+ traders',
+    benefit1: '6 chapters, from challenge types to red flags',
+    benefit2: 'Covers rules, drawdown and payouts',
+    benefit3: 'Free - no payment, no card',
     benefit4: 'Updated for 2026',
-    socialProof: 'Trusted by 5,000+ traders worldwide',
+    socialProof: '13 pages, 6 chapters, updated 2026',
     // Form
     getYourFreeGuide: 'Get Your Free Guide',
     enterEmailToDownload: 'Enter your email to download instantly',
@@ -71,33 +71,22 @@ const translations: Record<Locale, Record<string, string>> = {
     chapter5Desc: 'How to spot scam prop firms',
     chapter6Title: 'Our Top Picks for 2026',
     chapter6Desc: 'Best prop firms by category',
-    // Testimonials
-    whatTradersSay: 'What Traders Say',
-    testimonial1Quote: 'This guide saved me from choosing a scam prop firm. The red flags section is gold!',
-    testimonial1Name: 'Michael T.',
-    testimonial1Role: 'Forex Trader',
-    testimonial2Quote: 'Finally understood the difference between challenge types. Passed my first evaluation!',
-    testimonial2Name: 'Sarah K.',
-    testimonial2Role: 'Day Trader',
-    testimonial3Quote: 'Wish I had this before wasting $500 on the wrong firm. Essential reading.',
-    testimonial3Name: 'James R.',
-    testimonial3Role: 'Swing Trader',
     // Final CTA
     readyToFind: 'Ready to Find Your Perfect Prop Firm?',
     downloadNowStart: 'Download the free guide now and start your funded trading journey the right way.',
     getFreeGuideNow: 'Get Free Guide Now',
   },
   fr: {
-    freeGuide: 'Guide Gratuit de 40+ Pages',
+    freeGuide: 'Guide gratuit de 13 pages',
     heroTitle1: 'Comment Choisir la',
     heroTitle2: 'Prop Firm Parfaite',
     heroTitle3: 'en 2026',
     heroDescription: 'Arrêtez de gaspiller votre argent sur les mauvaises prop firms. Notre guide complet révèle exactement ce qu\'il faut rechercher, les signaux d\'alerte à éviter et nos meilleurs choix pour chaque style de trading.',
-    benefit1: 'Économisez 500$+ en évitant les mauvais choix',
-    benefit2: '30+ heures de recherche condensées',
-    benefit3: 'Utilisé par 5 000+ traders',
-    benefit4: 'Mis à jour pour 2026',
-    socialProof: 'Approuvé par 5 000+ traders dans le monde',
+    benefit1: '6 chapitres, des types de challenge aux signaux d alerte',
+    benefit2: 'Regles, drawdown et retraits expliques',
+    benefit3: 'Gratuit - sans paiement, sans carte',
+    benefit4: 'Mis a jour pour 2026',
+    socialProof: '13 pages, 6 chapitres, mis a jour en 2026',
     getYourFreeGuide: 'Obtenez Votre Guide Gratuit',
     enterEmailToDownload: 'Entrez votre email pour télécharger instantanément',
     emailPlaceholder: 'Entrez votre adresse email',
@@ -127,31 +116,21 @@ const translations: Record<Locale, Record<string, string>> = {
     chapter5Desc: 'Comment repérer les prop firms frauduleuses',
     chapter6Title: 'Nos Meilleurs Choix pour 2026',
     chapter6Desc: 'Meilleures prop firms par catégorie',
-    whatTradersSay: 'Ce que Disent les Traders',
-    testimonial1Quote: 'Ce guide m\'a évité de choisir une prop firm frauduleuse. La section signaux d\'alerte est en or !',
-    testimonial1Name: 'Michel T.',
-    testimonial1Role: 'Trader Forex',
-    testimonial2Quote: 'J\'ai enfin compris la différence entre les types de challenges. J\'ai réussi ma première évaluation !',
-    testimonial2Name: 'Sarah K.',
-    testimonial2Role: 'Day Trader',
-    testimonial3Quote: 'J\'aurais aimé avoir ça avant de gaspiller 500$ sur la mauvaise firm. Lecture essentielle.',
-    testimonial3Name: 'Jacques R.',
-    testimonial3Role: 'Swing Trader',
     readyToFind: 'Prêt à Trouver Votre Prop Firm Parfaite ?',
     downloadNowStart: 'Téléchargez le guide gratuit maintenant et commencez votre parcours de trading financé du bon pied.',
     getFreeGuideNow: 'Obtenir le Guide Gratuit',
   },
   de: {
-    freeGuide: 'Kostenloser 40+ Seiten Guide',
+    freeGuide: 'Kostenloser Leitfaden, 13 Seiten',
     heroTitle1: 'Wie Sie die',
     heroTitle2: 'Perfekte Prop Firm',
     heroTitle3: 'in 2026 Wählen',
     heroDescription: 'Verschwenden Sie kein Geld mehr für die falschen Prop Firms. Unser umfassender Guide zeigt genau, worauf Sie achten müssen, welche Warnsignale Sie vermeiden sollten und unsere Top-Empfehlungen für jeden Trading-Stil.',
-    benefit1: 'Sparen Sie 500$+ durch kluge Entscheidungen',
-    benefit2: '30+ Stunden Recherche zusammengefasst',
-    benefit3: 'Von 5.000+ Tradern genutzt',
-    benefit4: 'Aktualisiert für 2026',
-    socialProof: 'Vertraut von 5.000+ Tradern weltweit',
+    benefit1: '6 Kapitel, von Challenge-Typen bis Warnsignalen',
+    benefit2: 'Regeln, Drawdown und Auszahlungen erklaert',
+    benefit3: 'Kostenlos - keine Zahlung, keine Karte',
+    benefit4: 'Aktualisiert fuer 2026',
+    socialProof: '13 Seiten, 6 Kapitel, aktualisiert 2026',
     getYourFreeGuide: 'Holen Sie Sich Ihren Kostenlosen Guide',
     enterEmailToDownload: 'E-Mail eingeben für sofortigen Download',
     emailPlaceholder: 'Ihre E-Mail-Adresse eingeben',
@@ -181,31 +160,21 @@ const translations: Record<Locale, Record<string, string>> = {
     chapter5Desc: 'Wie Sie betrügerische Prop Firms erkennen',
     chapter6Title: 'Unsere Top-Empfehlungen für 2026',
     chapter6Desc: 'Beste Prop Firms nach Kategorie',
-    whatTradersSay: 'Was Trader Sagen',
-    testimonial1Quote: 'Dieser Guide hat mich davor bewahrt, eine betrügerische Prop Firm zu wählen. Der Abschnitt über Warnsignale ist Gold wert!',
-    testimonial1Name: 'Michael T.',
-    testimonial1Role: 'Forex Trader',
-    testimonial2Quote: 'Endlich verstehe ich den Unterschied zwischen den Challenge-Typen. Habe meine erste Bewertung bestanden!',
-    testimonial2Name: 'Sarah K.',
-    testimonial2Role: 'Day Trader',
-    testimonial3Quote: 'Hätte ich das gehabt, bevor ich 500$ bei der falschen Firma verschwendet habe. Pflichtlektüre.',
-    testimonial3Name: 'James R.',
-    testimonial3Role: 'Swing Trader',
     readyToFind: 'Bereit, Ihre Perfekte Prop Firm zu Finden?',
     downloadNowStart: 'Laden Sie jetzt den kostenlosen Guide herunter und starten Sie Ihre Funded-Trading-Reise richtig.',
     getFreeGuideNow: 'Kostenlosen Guide Holen',
   },
   es: {
-    freeGuide: 'Guía Gratuita de 40+ Páginas',
+    freeGuide: 'Guia gratuita de 13 paginas',
     heroTitle1: 'Cómo Elegir la',
     heroTitle2: 'Prop Firm Perfecta',
     heroTitle3: 'en 2026',
     heroDescription: 'Deja de desperdiciar dinero en las prop firms equivocadas. Nuestra guía completa revela exactamente qué buscar, las señales de alerta a evitar y nuestras mejores recomendaciones para cada estilo de trading.',
-    benefit1: 'Ahorra $500+ evitando malas decisiones',
-    benefit2: '30+ horas de investigación condensadas',
-    benefit3: 'Usado por 5,000+ traders',
+    benefit1: '6 capitulos, de los tipos de challenge a las senales de alerta',
+    benefit2: 'Reglas, drawdown y retiros explicados',
+    benefit3: 'Gratis - sin pago, sin tarjeta',
     benefit4: 'Actualizado para 2026',
-    socialProof: 'Confiado por 5,000+ traders en todo el mundo',
+    socialProof: '13 paginas, 6 capitulos, actualizado en 2026',
     getYourFreeGuide: 'Obtén Tu Guía Gratuita',
     enterEmailToDownload: 'Ingresa tu email para descargar al instante',
     emailPlaceholder: 'Ingresa tu dirección de email',
@@ -235,31 +204,21 @@ const translations: Record<Locale, Record<string, string>> = {
     chapter5Desc: 'Cómo detectar prop firms fraudulentas',
     chapter6Title: 'Nuestras Mejores Elecciones para 2026',
     chapter6Desc: 'Mejores prop firms por categoría',
-    whatTradersSay: 'Lo que Dicen los Traders',
-    testimonial1Quote: '¡Esta guía me salvó de elegir una prop firm fraudulenta. La sección de señales de alerta es oro!',
-    testimonial1Name: 'Miguel T.',
-    testimonial1Role: 'Trader de Forex',
-    testimonial2Quote: '¡Por fin entendí la diferencia entre tipos de challenges. Pasé mi primera evaluación!',
-    testimonial2Name: 'Sara K.',
-    testimonial2Role: 'Day Trader',
-    testimonial3Quote: 'Ojalá hubiera tenido esto antes de desperdiciar $500 en la firma equivocada. Lectura esencial.',
-    testimonial3Name: 'Jaime R.',
-    testimonial3Role: 'Swing Trader',
     readyToFind: '¿Listo para Encontrar Tu Prop Firm Perfecta?',
     downloadNowStart: 'Descarga la guía gratuita ahora y comienza tu viaje de trading financiado de la manera correcta.',
     getFreeGuideNow: 'Obtener Guía Gratuita Ahora',
   },
   pt: {
-    freeGuide: 'Guia Gratuito de 40+ Páginas',
+    freeGuide: 'Guia gratuito de 13 paginas',
     heroTitle1: 'Como Escolher a',
     heroTitle2: 'Prop Firm Perfeita',
     heroTitle3: 'em 2026',
     heroDescription: 'Pare de desperdiçar dinheiro nas prop firms erradas. Nosso guia completo revela exatamente o que procurar, sinais de alerta a evitar e nossas melhores escolhas para cada estilo de trading.',
-    benefit1: 'Economize $500+ evitando más escolhas',
-    benefit2: '30+ horas de pesquisa condensadas',
-    benefit3: 'Usado por 5.000+ traders',
+    benefit1: '6 capitulos, dos tipos de challenge aos sinais de alerta',
+    benefit2: 'Regras, drawdown e saques explicados',
+    benefit3: 'Gratis - sem pagamento, sem cartao',
     benefit4: 'Atualizado para 2026',
-    socialProof: 'Confiado por 5.000+ traders em todo o mundo',
+    socialProof: '13 paginas, 6 capitulos, atualizado em 2026',
     getYourFreeGuide: 'Obtenha Seu Guia Gratuito',
     enterEmailToDownload: 'Digite seu email para baixar instantaneamente',
     emailPlaceholder: 'Digite seu endereço de email',
@@ -289,31 +248,21 @@ const translations: Record<Locale, Record<string, string>> = {
     chapter5Desc: 'Como identificar prop firms fraudulentas',
     chapter6Title: 'Nossas Melhores Escolhas para 2026',
     chapter6Desc: 'Melhores prop firms por categoria',
-    whatTradersSay: 'O que os Traders Dizem',
-    testimonial1Quote: 'Este guia me salvou de escolher uma prop firm fraudulenta. A seção de sinais de alerta é ouro!',
-    testimonial1Name: 'Miguel T.',
-    testimonial1Role: 'Trader de Forex',
-    testimonial2Quote: 'Finalmente entendi a diferença entre tipos de desafios. Passei minha primeira avaliação!',
-    testimonial2Name: 'Sara K.',
-    testimonial2Role: 'Day Trader',
-    testimonial3Quote: 'Queria ter tido isso antes de desperdiçar $500 na firma errada. Leitura essencial.',
-    testimonial3Name: 'Tiago R.',
-    testimonial3Role: 'Swing Trader',
     readyToFind: 'Pronto para Encontrar Sua Prop Firm Perfeita?',
     downloadNowStart: 'Baixe o guia gratuito agora e comece sua jornada de trading financiado da maneira certa.',
     getFreeGuideNow: 'Obter Guia Gratuito Agora',
   },
   ar: {
-    freeGuide: 'دليل مجاني من 40+ صفحة',
+    freeGuide: 'دليل مجاني من 13 صفحة',
     heroTitle1: 'كيف تختار',
     heroTitle2: 'شركة التداول المثالية',
     heroTitle3: 'في 2026',
     heroDescription: 'توقف عن إهدار المال على شركات التداول الخاطئة. دليلنا الشامل يكشف بالضبط ما يجب البحث عنه، علامات التحذير التي يجب تجنبها، وأفضل اختياراتنا لكل نمط تداول.',
-    benefit1: 'وفر 500$+ بتجنب الخيارات السيئة',
-    benefit2: '30+ ساعة من البحث مختصرة',
-    benefit3: 'يستخدمه 5,000+ متداول',
+    benefit1: '6 فصول، من انواع التحدي الى علامات الانذار',
+    benefit2: 'شرح القواعد والسحب والارباح',
+    benefit3: 'مجاني - بدون دفع، بدون بطاقة',
     benefit4: 'محدث لعام 2026',
-    socialProof: 'موثوق به من قبل 5,000+ متداول حول العالم',
+    socialProof: '13 صفحة، 6 فصول، محدث 2026',
     getYourFreeGuide: 'احصل على دليلك المجاني',
     enterEmailToDownload: 'أدخل بريدك الإلكتروني للتحميل فوراً',
     emailPlaceholder: 'أدخل عنوان بريدك الإلكتروني',
@@ -343,31 +292,21 @@ const translations: Record<Locale, Record<string, string>> = {
     chapter5Desc: 'كيف تكتشف شركات التداول الاحتيالية',
     chapter6Title: 'أفضل اختياراتنا لعام 2026',
     chapter6Desc: 'أفضل شركات التداول حسب الفئة',
-    whatTradersSay: 'ماذا يقول المتداولون',
-    testimonial1Quote: 'هذا الدليل أنقذني من اختيار شركة تداول احتيالية. قسم علامات التحذير ذهب!',
-    testimonial1Name: 'محمد ت.',
-    testimonial1Role: 'متداول فوركس',
-    testimonial2Quote: 'أخيراً فهمت الفرق بين أنواع التحديات. نجحت في أول تقييم لي!',
-    testimonial2Name: 'سارة ك.',
-    testimonial2Role: 'متداول يومي',
-    testimonial3Quote: 'ليتني حصلت على هذا قبل إهدار 500$ على الشركة الخاطئة. قراءة أساسية.',
-    testimonial3Name: 'جيمس ر.',
-    testimonial3Role: 'متداول سوينغ',
     readyToFind: 'هل أنت مستعد لإيجاد شركة التداول المثالية؟',
     downloadNowStart: 'حمّل الدليل المجاني الآن وابدأ رحلة التداول الممول بالطريقة الصحيحة.',
     getFreeGuideNow: 'احصل على الدليل المجاني الآن',
   },
   hi: {
-    freeGuide: 'मुफ्त 40+ पेज गाइड',
+    freeGuide: '13 पेज की मुफ़्त गाइड',
     heroTitle1: 'कैसे चुनें',
     heroTitle2: 'परफेक्ट प्रॉप फर्म',
     heroTitle3: '2026 में',
     heroDescription: 'गलत प्रॉप फर्म्स पर पैसा बर्बाद करना बंद करें। हमारी व्यापक गाइड बताती है कि क्या देखना है, किन खतरे के संकेतों से बचना है, और हर ट्रेडिंग स्टाइल के लिए हमारी शीर्ष पसंद।',
-    benefit1: 'खराब चॉइस से बचकर $500+ बचाएं',
-    benefit2: '30+ घंटे की रिसर्च संक्षेप में',
-    benefit3: '5,000+ ट्रेडर्स द्वारा उपयोग',
+    benefit1: '6 अध्याय, चैलेंज प्रकार से चेतावनी संकेतों तक',
+    benefit2: 'नियम, ड्रॉडाउन और पेआउट समझाए गए',
+    benefit3: 'मुफ़्त - कोई भुगतान नहीं, कोई कार्ड नहीं',
     benefit4: '2026 के लिए अपडेटेड',
-    socialProof: 'दुनिया भर में 5,000+ ट्रेडर्स द्वारा विश्वसनीय',
+    socialProof: '13 पेज, 6 अध्याय, 2026 में अपडेटेड',
     getYourFreeGuide: 'अपनी मुफ्त गाइड पाएं',
     enterEmailToDownload: 'तुरंत डाउनलोड के लिए ईमेल दर्ज करें',
     emailPlaceholder: 'अपना ईमेल पता दर्ज करें',
@@ -397,16 +336,6 @@ const translations: Record<Locale, Record<string, string>> = {
     chapter5Desc: 'स्कैम प्रॉप फर्म्स कैसे पहचानें',
     chapter6Title: '2026 के लिए हमारी टॉप पिक्स',
     chapter6Desc: 'श्रेणी के अनुसार बेस्ट प्रॉप फर्म्स',
-    whatTradersSay: 'ट्रेडर्स क्या कहते हैं',
-    testimonial1Quote: 'इस गाइड ने मुझे स्कैम प्रॉप फर्म चुनने से बचाया। रेड फ्लैग्स सेक्शन गोल्ड है!',
-    testimonial1Name: 'माइकल टी.',
-    testimonial1Role: 'फॉरेक्स ट्रेडर',
-    testimonial2Quote: 'आखिरकार चैलेंज टाइप्स के बीच अंतर समझ आया। पहली इवैल्यूएशन पास कर ली!',
-    testimonial2Name: 'सारा के.',
-    testimonial2Role: 'डे ट्रेडर',
-    testimonial3Quote: 'काश गलत फर्म पर $500 बर्बाद करने से पहले यह होता। जरूरी पढ़ाई।',
-    testimonial3Name: 'जेम्स आर.',
-    testimonial3Role: 'स्विंग ट्रेडर',
     readyToFind: 'अपनी परफेक्ट प्रॉप फर्म खोजने के लिए तैयार?',
     downloadNowStart: 'अभी मुफ्त गाइड डाउनलोड करें और अपनी फंडेड ट्रेडिंग यात्रा सही तरीके से शुरू करें।',
     getFreeGuideNow: 'अभी मुफ्त गाइड पाएं',
@@ -443,12 +372,6 @@ export default function GuidePageClient() {
     { icon: Award, text: t.benefit4 },
   ]
 
-  // Testimonials with translations
-  const TESTIMONIALS = [
-    { quote: t.testimonial1Quote, name: t.testimonial1Name, role: t.testimonial1Role },
-    { quote: t.testimonial2Quote, name: t.testimonial2Name, role: t.testimonial2Role },
-    { quote: t.testimonial3Quote, name: t.testimonial3Name, role: t.testimonial3Role },
-  ]
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -649,31 +572,6 @@ export default function GuidePageClient() {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="py-16 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-white mb-4">{t.whatTradersSay}</h2>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {TESTIMONIALS.map((testimonial, i) => (
-              <div key={i} className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
-                <div className="flex gap-1 mb-4">
-                  {[...Array(5)].map((_, j) => (
-                    <Star key={j} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                  ))}
-                </div>
-                <p className="text-gray-300 mb-4">&ldquo;{testimonial.quote}&rdquo;</p>
-                <div>
-                  <div className="text-white font-medium">{testimonial.name}</div>
-                  <div className="text-gray-500 text-sm">{testimonial.role}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Final CTA */}
       <section className="py-16 px-4">
