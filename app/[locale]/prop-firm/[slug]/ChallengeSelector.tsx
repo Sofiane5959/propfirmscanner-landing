@@ -159,9 +159,21 @@ const COPY = {
 // HELPERS
 // =============================================================================
 
+/**
+ * The programme name is whatever precedes the account size in the challenge
+ * name: "IF Micro $5,000" belongs to "IF Micro".
+ *
+ * The size token has to start with a digit, or with the currency sign. It is
+ * tempting to write the class as [\d,.KMk]+ so that "50K" matches, but K and M
+ * then also match the first letter of the next word — and the quantifier is
+ * lazy, so "IF Micro $5,000" stopped at the M of Micro and grouped under "IF".
+ * That silently merged IF Micro with IF Micro Clarity under one meaningless
+ * heading, and did the same to One-Phase Micro and to Earn2Trade's Gauntlet
+ * Mini. Anchoring on a digit keeps "50K" working without swallowing words.
+ */
 function extractProgram(challengeName: string | null): string {
   if (!challengeName) return 'Program'
-  const m = challengeName.match(/^(.+?)\s+\$?[\d,.KMk]+/i)
+  const m = challengeName.match(/^(.+?)\s+\$?\d[\d,.]*[KMkm]?/)
   return (m ? m[1] : challengeName).trim()
 }
 
