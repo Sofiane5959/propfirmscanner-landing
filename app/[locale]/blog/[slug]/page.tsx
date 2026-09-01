@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { generateDynamicAlternates } from '@/lib/seo'
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Clock, Calendar, ArrowLeft, ArrowRight, User, Share2, BookOpen, Shield, Brain, TrendingUp, ChevronRight, Home } from 'lucide-react';
@@ -9,7 +10,7 @@ import { blogPosts, getPostBySlug, getRelatedPosts, CATEGORY_COLORS } from '@/li
 // =============================================================================
 
 interface Props {
-  params: { slug: string };
+  params: { slug: string; locale: string };
 }
 
 // =============================================================================
@@ -58,9 +59,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: post.title,
       description: post.description,
     },
-    alternates: {
-      canonical: `https://www.propfirmscanner.org/blog/${params.slug}`,
-    },
+    ...generateDynamicAlternates(params.locale || 'en', `/blog/${params.slug}`),
   };
 }
 

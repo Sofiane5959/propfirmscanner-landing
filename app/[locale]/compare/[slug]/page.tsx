@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import { generateDynamicAlternates } from '@/lib/seo'
 import { createClient } from '@supabase/supabase-js'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
@@ -60,7 +61,7 @@ interface PropFirm {
 }
 
 interface Props {
-  params: { slug: string }
+  params: { slug: string; locale: string }
 }
 
 // Parse slug to get firm slugs (supports 2-4 firms)
@@ -98,9 +99,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: `https://propfirmscanner.org/compare/${params.slug}`,
       type: 'article',
     },
-    alternates: {
-      canonical: `https://propfirmscanner.org/compare/${params.slug}`,
-    },
+    ...generateDynamicAlternates(params.locale || 'en', `/compare/${params.slug}`),
   }
 }
 

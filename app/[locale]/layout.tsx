@@ -4,7 +4,15 @@
 // =============================================================================
 
 import type { Metadata } from 'next'
-import { generateAlternates } from '@/lib/seo'
+import { fontSans, fontDisplay, fontMono } from '@/lib/fonts'
+import { AuthProvider } from '@/providers/AuthProvider'
+import { Navbar } from '@/components/Navbar'
+import PromoTicker from '@/components/PromoTicker'
+import Footer from '@/components/Footer'
+import GoogleAnalytics from '@/components/GoogleAnalytics'
+import { NewsletterPopup } from '@/components/NewsletterPopup'
+import '../globals.css'
+import { generateAlternates, localeHref } from '@/lib/seo'
 
 // =============================================================================
 // METADATA CONFIGURATION
@@ -73,7 +81,7 @@ export async function generateMetadata({
     openGraph: {
       type: 'website',
       locale: locale,
-      url: `https://www.propfirmscanner.org/${locale}`,
+      url: localeHref(locale, '/'),
       siteName: siteName,
       title: `${siteName} - Compare Prop Trading Firms`,
       description: localeDescriptions[locale] || localeDescriptions.en,
@@ -92,7 +100,10 @@ export async function generateMetadata({
       description: localeDescriptions[locale] || localeDescriptions.en,
       images: ['https://www.propfirmscanner.org/og-image.png'],
     },
-    ...generateAlternates('/'),
+    // Locale-aware: this used to hand every locale the same English canonical,
+    // which told search engines the six localised homepages were duplicates of
+    // the English one.
+    ...generateAlternates('/', locale),
   }
 }
 
@@ -127,8 +138,29 @@ export default function LocaleLayout({
   const dir = locale === 'ar' ? 'rtl' : 'ltr'
 
   return (
-    <div lang={locale} dir={dir}>
-      {children}
-    </div>
+    // lang and dir are set here, on the document itself, from the route
+    // parameter. They used to sit on an inner <div> while <html> was hard-coded
+    // to lang="en", so every Arabic page was served as English with no RTL.
+    <html
+      lang={locale}
+      dir={dir}
+      className={`${fontSans.variable} ${fontDisplay.variable} ${fontMono.variable} dark`}
+    >
+      <head>
+        <GoogleAnalytics />
+        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+      </head>
+      <body className="font-sans bg-bg-base text-text-primary antialiased">
+        <AuthProvider>
+          <Navbar />
+          <PromoTicker deals={[]} />
+          <main className="pt-16">{children}</main>
+          <Footer />
+          <NewsletterPopup />
+        </AuthProvider>
+      </body>
+    </html>
   )
 }

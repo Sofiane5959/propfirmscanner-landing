@@ -1,16 +1,26 @@
 import type { Metadata } from 'next'
+import { generateDynamicAlternates } from '@/lib/seo'
 import { 
   Clock, Plus, Zap, Bug, Shield, Star, 
   ArrowUpRight, Bell
 } from 'lucide-react'
 import Link from 'next/link'
 
-export const metadata: Metadata = {
+export async function generateMetadata({
+  params,
+}: {
+  params: { locale: string }
+}): Promise<Metadata> {
+  const locale = params.locale || 'en'
+
+  // Canonical was a hard-coded absolute URL, identical for the seven
+  // locales. generateDynamicAlternates makes it self-referential and
+  // emits hreflang only for the locales that are actually translated.
+  return {
   title: 'Changelog & Updates | PropFirm Scanner',
   description: 'See what\'s new on PropFirm Scanner. Latest features, improvements, and bug fixes.',
-  alternates: {
-    canonical: 'https://www.propfirmscanner.org/changelog',
-  },
+    ...generateDynamicAlternates(locale, '/changelog'),
+  }
 }
 
 interface ChangelogEntry {

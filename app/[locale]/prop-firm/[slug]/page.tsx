@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
 import PropFirmPageClient from './PropFirmPageClient'
+import { generateDynamicAlternates, localeHref } from '@/lib/seo'
 
 interface Props {
   // This route lives at app/[locale]/prop-firm/[slug], so locale is part of
@@ -78,17 +79,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description,
-    alternates: {
-      canonical: `${SITE_URL}${path}`,
-      languages: {
-        en: `${SITE_URL}/en/prop-firm/${firm.slug}`,
-        fr: `${SITE_URL}/fr/prop-firm/${firm.slug}`,
-      },
-    },
+    // The English hreflang used to carry an /en prefix, which 307s to the
+    // unprefixed route: a redirect handed to a crawler on every firm page.
+    // generateDynamicAlternates emits English unprefixed and lists only the
+    // locales that are really translated.
+    ...generateDynamicAlternates(locale, `/prop-firm/${firm.slug}`),
     openGraph: {
       title,
       description,
-      url: `${SITE_URL}${path}`,
+      url: localeHref(locale, `/prop-firm/${firm.slug}`),
       type: 'article',
       locale: locale === 'fr' ? 'fr_FR' : 'en_GB',
     },

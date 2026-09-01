@@ -1,13 +1,6 @@
 import type { Metadata, Viewport } from 'next';
-import { fontSans, fontDisplay, fontMono } from '@/lib/fonts';
 import './globals.css';
 
-import { AuthProvider } from '@/providers/AuthProvider';
-import { Navbar } from '@/components/Navbar';
-import PromoTicker from '@/components/PromoTicker';
-import Footer from '@/components/Footer';
-import GoogleAnalytics from '@/components/GoogleAnalytics';
-import { NewsletterPopup } from '@/components/NewsletterPopup';
 
 export const viewport: Viewport = {
   themeColor: '#10B981',
@@ -17,7 +10,10 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://propfirmscanner.org'),
+  // Every relative canonical on the site resolves against this. It was set
+  // without www while the site answers on www.propfirmscanner.org, so each one
+  // pointed at a host that 307s — a redirect handed to crawlers on every page.
+  metadataBase: new URL('https://www.propfirmscanner.org'),
   title: 'PropFirmScanner - Compare & Track Prop Trading Firms',
   description: 'Compare prop trading firms, track your accounts, and never break a rule again. Your complete prop firm management dashboard.',
   keywords: 'prop firm, prop trading, FTMO, funded trader, trading challenge, forex prop firm',
@@ -33,7 +29,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://propfirmscanner.org',
+    url: 'https://www.propfirmscanner.org',
     siteName: 'PropFirmScanner',
     title: 'PropFirmScanner - Compare & Track Prop Trading Firms',
     description: 'Compare prop trading firms, track your accounts, and never break a rule again.',
@@ -58,36 +54,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <html
-      lang="en"
-      className={`${fontSans.variable} ${fontDisplay.variable} ${fontMono.variable} dark`}
-    >
-      <head>
-        <GoogleAnalytics />
-        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-      </head>
-      <body className="font-sans bg-bg-base text-text-primary antialiased">
-        <AuthProvider>
-          <Navbar />
-          <PromoTicker deals={[]} />
-          <main className="pt-16">
-            {children}
-          </main>
-          <Footer />
-          {/* Newsletter popup — auto-shows after 30s on eligible pages.
-              Excluded routes (dashboard, quiz, admin, legal) are handled
-              inside the component via usePathname(). */}
-          <NewsletterPopup />
-        </AuthProvider>
-      </body>
-    </html>
-  );
+// The document shell lives in app/[locale]/layout.tsx.
+//
+// <html lang> and dir have to reflect the page's language, and only the locale
+// layout knows it: this file sits above the [locale] segment and receives no
+// params. Reading the locale from headers() here would opt the whole app out
+// of static rendering. So the shell moved down one level, where the locale is
+// a route parameter and the pages stay statically generated.
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return children;
 }

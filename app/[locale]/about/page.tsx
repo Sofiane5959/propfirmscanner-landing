@@ -1,16 +1,26 @@
 import type { Metadata } from 'next'
+import { generateDynamicAlternates } from '@/lib/seo'
 import Link from 'next/link'
 import { 
   Users, Target, Shield, TrendingUp, Heart,
   CheckCircle, Globe, Award, Zap
 } from 'lucide-react'
 
-export const metadata: Metadata = {
+export async function generateMetadata({
+  params,
+}: {
+  params: { locale: string }
+}): Promise<Metadata> {
+  const locale = params.locale || 'en'
+
+  // Canonical was a hard-coded absolute URL, identical for the seven
+  // locales. generateDynamicAlternates makes it self-referential and
+  // emits hreflang only for the locales that are actually translated.
+  return {
   title: 'About Us | PropFirm Scanner',
   description: 'Learn about PropFirm Scanner - the leading prop firm comparison platform helping traders find their perfect match since 2024.',
-  alternates: {
-    canonical: 'https://www.propfirmscanner.org/about',
-  },
+    ...generateDynamicAlternates(locale, '/about'),
+  }
 }
 
 const STATS = [

@@ -8,6 +8,53 @@ const BASE_URL = 'https://www.propfirmscanner.org';
 const locales = ['en', 'fr', 'de', 'es', 'pt', 'ar', 'hi'] as const;
 type Locale = (typeof locales)[number];
 
+/**
+ * Locales that actually have their own copy.
+ *
+ * The other five routes work and stay reachable, but every string they render
+ * comes from the English COPY object: the components hold `en` and `fr` only
+ * and fall back with `locale === 'fr' ? COPY.fr : COPY.en`. Announcing seven
+ * translations in hreflang when two exist tells search engines to index five
+ * duplicates of the English page.
+ *
+ * Move a locale here the day its copy exists, and hreflang follows.
+ */
+const TRANSLATED_LOCALES = ['en', 'fr'] as const;
+
+/**
+ * Public URL of a path in a given locale.
+ *
+ * English is unprefixed: the middleware runs next-intl with
+ * localePrefix 'as-needed', so /en/compare answers 307 to /compare. Any URL we
+ * publish with an /en prefix — canonical, hreflang or sitemap — is a redirect
+ * we asked a crawler to follow.
+ */
+export function localeHref(locale: string, path: string): string {
+  const clean = path === '/' ? '' : path.replace(/\/$/, '');
+  return locale === 'en' ? `${BASE_URL}${clean || '/'}` : `${BASE_URL}/${locale}${clean}`;
+}
+
+/** Canonical + reciprocal hreflang for one page, in one locale. */
+function alternatesFor(locale: string, path: string) {
+  const languages: Record<string, string> = {};
+  TRANSLATED_LOCALES.forEach((loc) => {
+    languages[loc] = localeHref(loc, path);
+  });
+  languages['x-default'] = localeHref('en', path);
+
+  // Self-referential for a locale that has its own copy. The five untranslated
+  // locales serve the English page verbatim, so pointing their canonical at
+  // English states what is true rather than claiming six distinct pages.
+  const isTranslated = (TRANSLATED_LOCALES as readonly string[]).includes(locale);
+
+  return {
+    alternates: {
+      canonical: localeHref(isTranslated ? locale : 'en', path),
+      languages,
+    },
+  };
+}
+
 // =============================================================================
 // GENERATE ALTERNATES FOR STATIC PAGES
 // Use in page.tsx metadata export
@@ -27,24 +74,10 @@ type Locale = (typeof locales)[number];
  *   ...generateAlternates('/compare'),
  * }
  */
-export function generateAlternates(path: string) {
-  const languages: Record<string, string> = {};
-  
-  // Generate URL for each language
-  locales.forEach((locale) => {
-    languages[locale] = `${BASE_URL}/${locale}${path}`;
-  });
-  
-  // Add x-default (fallback for unsupported languages)
-  languages['x-default'] = `${BASE_URL}/en${path}`;
-  
-  return {
-    alternates: {
-      canonical: `${BASE_URL}/en${path}`,
-      languages,
-    },
-  };
+export function generateAlternates(path: string, locale: string = 'en') {
+  return alternatesFor(locale, path);
 }
+
 
 // =============================================================================
 // GENERATE ALTERNATES FOR DYNAMIC PAGES
@@ -68,21 +101,9 @@ export function generateAlternates(path: string) {
  * }
  */
 export function generateDynamicAlternates(locale: string, path: string) {
-  const languages: Record<string, string> = {};
-  
-  locales.forEach((loc) => {
-    languages[loc] = `${BASE_URL}/${loc}${path}`;
-  });
-  
-  languages['x-default'] = `${BASE_URL}/en${path}`;
-  
-  return {
-    alternates: {
-      canonical: `${BASE_URL}/${locale}${path}`,
-      languages,
-    },
-  };
+  return alternatesFor(locale, path);
 }
+
 
 // =============================================================================
 // ALL SITE PAGES - For sitemap generation
@@ -184,4 +205,4 @@ export function generateAllUrls() {
 // HELPER: Get all locales
 // =============================================================================
 
-export { locales, type Locale, BASE_URL };
+export { locales, TRANSLATED_LOCALES, type Locale, BASE_URL };

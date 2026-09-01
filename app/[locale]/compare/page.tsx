@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import { Metadata } from 'next'
 import { createClient } from '@supabase/supabase-js'
 import ComparePageClient from './ComparePageClient'
+import { generateDynamicAlternates, localeHref } from '@/lib/seo'
 
 // Static Supabase client (no cookies - works for public data)
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
@@ -11,24 +12,37 @@ function getStaticSupabaseClient() {
   return createClient(supabaseUrl, supabaseAnonKey)
 }
 
-export const metadata: Metadata = {
-  title: 'Compare Prop Firms - Find Your Perfect Match | PropFirmScanner',
-  description: 'Compare 80+ verified prop trading firms side by side. Filter by price, profit split, markets, trading style and more. Find the best prop firm for your needs.',
-  keywords: 'prop firm comparison, compare prop firms, best prop firm, FTMO alternative, funded trader, forex prop firm, futures prop firm',
-  openGraph: {
-    title: 'Compare Prop Firms - Find Your Perfect Match',
-    description: 'Compare 80+ verified prop trading firms. Filter by price, profit split, markets and more.',
-    type: 'website',
-    url: 'https://propfirmscanner.org/compare',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Compare Prop Firms',
-    description: 'Compare 80+ verified prop trading firms side by side.',
-  },
-  alternates: {
-    canonical: 'https://propfirmscanner.org/compare',
-  },
+export async function generateMetadata({
+  params,
+}: {
+  params: { locale: string }
+}): Promise<Metadata> {
+  const locale = params.locale || 'en'
+
+  // Was a static object with a hard-coded canonical of
+  // 'https://propfirmscanner.org/compare' — no www, and identical for all seven
+  // locales. The host 307s, so the canonical pointed at a redirect, and the
+  // French and Arabic pages both declared the English one as their original.
+  return {
+    title: 'Compare Prop Firms - Find Your Perfect Match | PropFirmScanner',
+    description:
+      'Compare verified prop trading firms side by side. Filter by price, profit split, markets, trading style and more. Find the best prop firm for your needs.',
+    keywords:
+      'prop firm comparison, compare prop firms, best prop firm, FTMO alternative, funded trader, forex prop firm, futures prop firm',
+    openGraph: {
+      title: 'Compare Prop Firms - Find Your Perfect Match',
+      description:
+        'Compare verified prop trading firms. Filter by price, profit split, markets and more.',
+      type: 'website',
+      url: localeHref(locale, '/compare'),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'Compare Prop Firms',
+      description: 'Compare verified prop trading firms side by side.',
+    },
+    ...generateDynamicAlternates(locale, '/compare'),
+  }
 }
 
 // Generate JSON-LD Structured Data

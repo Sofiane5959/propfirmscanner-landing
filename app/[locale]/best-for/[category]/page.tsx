@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import { generateDynamicAlternates } from '@/lib/seo'
 import { createClient } from '@supabase/supabase-js'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
@@ -22,7 +23,7 @@ function toArray(value: unknown): string[] {
 }
 
 interface Props {
-  params: { category: string }
+  params: { category: string; locale: string }
 }
 
 // Category configurations
@@ -113,9 +114,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: category.description,
       url: `https://www.propfirmscanner.org/best-for/${params.category}`,
     },
-    alternates: {
-      canonical: `https://www.propfirmscanner.org/best-for/${params.category}`,
-    },
+    ...generateDynamicAlternates(params.locale || 'en', `/best-for/${params.category}`),
   }
 }
 
