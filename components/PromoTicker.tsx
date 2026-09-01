@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { Copy, CheckCircle2, BadgeCheck, ShieldCheck, ExternalLink } from 'lucide-react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { AFFILIATE_LINK_PROPS } from '@/lib/affiliate'
+import { resolvePromotion } from '@/lib/promotion'
 import { useHideOnScrollDown } from '@/hooks/useHideOnScrollDown'
 
 // =====================================================
@@ -18,6 +19,7 @@ interface PromoDeal {
   logo_url?: string
   discount_percent: number
   discount_code?: string | null  // optional — some firms only have an affiliate link with auto-discount, no code
+  discount_expires_at?: string | null
   affiliate_url?: string
   website_url?: string
   trust_status?: string
@@ -65,9 +67,11 @@ const DealPill = ({ deal }: { deal: PromoDeal }) => {
   // server-side and redirects to the affiliate (or website) URL.
   // The fallback to /prop-firm/{slug} is for firms with no link at all.
   const hasOutbound = !!(deal.affiliate_url || deal.website_url)
-  const url = hasOutbound
-    ? `/api/go/${deal.slug}?source=banner`
-    : `/prop-firm/${deal.slug}`
+  // Two separate names, not one ternary: the affiliate guard checks statically
+  // that no next/link ever receives an /api/go href, and a single variable
+  // holding either value makes that check impossible to answer.
+  const outboundUrl = `/api/go/${deal.slug}?source=banner`
+  const internalUrl = `/prop-firm/${deal.slug}`
   // A code is "real" only if it's a non-empty, non-null string.
   // Some firms (FTMO, FundedNext) apply discounts automatically via the
   // affiliate link — no code to copy.
@@ -136,7 +140,7 @@ const DealPill = ({ deal }: { deal: PromoDeal }) => {
   // server-side now, but this is the fix that stops them being made at all.
   if (hasOutbound) {
     return (
-      <a href={url} {...AFFILIATE_LINK_PROPS} className={pillClass}>
+      <a href={outboundUrl} {...AFFILIATE_LINK_PROPS} className={pillClass}>
         {inner}
       </a>
     )
@@ -145,7 +149,7 @@ const DealPill = ({ deal }: { deal: PromoDeal }) => {
   // Internal fallback for firms with no outbound link: <Link> is correct here,
   // prefetching an ordinary page costs nothing and logs nothing.
   return (
-    <Link href={url} className={pillClass}>
+    <Link href={internalUrl} className={pillClass}>
       {inner}
     </Link>
   )
@@ -185,7 +189,7 @@ export default function PromoTicker({ deals: initialDeals = [] }: PromoTickerPro
         // Order: priority_tier ASC (Top 10 first), then discount % desc.
         const { data, error } = await supabase
           .from('prop_firms')
-          .select('id, name, slug, logo_url, discount_percent, discount_code, affiliate_url, website_url, trust_status, priority_tier')
+          .select('id, name, slug, logo_url, discount_percent, discount_code, discount_expires_at, affiliate_url, website_url, trust_status, priority_tier')
           .gt('discount_percent', 0)
           .eq('listing_status', 'listed')
           .order('priority_tier', { ascending: true, nullsFirst: false })
@@ -198,7 +202,12 @@ export default function PromoTicker({ deals: initialDeals = [] }: PromoTickerPro
         }
         
         if (data && data.length > 0) {
-          setDeals(data)
+          // The query cannot filter on the date because a null expiry means
+          // "no end date", not "expired". Dropping the finished ones here keeps
+          // the banner from advertising an offer the firm page no longer
+          // honours — the two used to disagree.
+          const live = data.filter((d) => resolvePromotion(d).isActive)
+          setDeals(live)
         }
       } catch (err) {
         console.error('Failed to fetch promo deals:', err)

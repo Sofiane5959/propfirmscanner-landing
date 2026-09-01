@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { ExternalLink, Check, Copy } from 'lucide-react'
 import { buildAffiliateUrl, AFFILIATE_LINK_PROPS } from '@/lib/affiliate'
-import { formatMoney } from '@/lib/format'
+import { formatMoney, cleanMoneyLabel } from '@/lib/format'
 
 // =============================================================================
 // TYPES
@@ -446,7 +446,7 @@ export default function ChallengeSelector({
                           isActive ? 'text-emerald-400' : 'text-white'
                         }`}
                       >
-                        {c.account_size}
+                        {cleanMoneyLabel(c.account_size)}
                       </span>
                       <span className="block text-gray-500 text-sm">
                         {formatPrice(p, priceSuffix, locale)}
@@ -510,7 +510,7 @@ export default function ChallengeSelector({
               {t.selection}
             </p>
             <p className="text-white text-base font-bold mb-3">
-              {selectedProgram} {currentChallenge?.account_size}
+              {selectedProgram} {cleanMoneyLabel(currentChallenge?.account_size)}
             </p>
 
             <div className="mb-3">
@@ -639,7 +639,7 @@ export default function ChallengeSelector({
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
             <p className="text-gray-500 text-xs truncate">
-              {selectedProgram} · {currentChallenge?.account_size}
+              {selectedProgram} · {cleanMoneyLabel(currentChallenge?.account_size)}
             </p>
             <p className="text-white text-base font-bold leading-tight">
               {formatPrice(displayPrice.final, priceSuffix, locale)}

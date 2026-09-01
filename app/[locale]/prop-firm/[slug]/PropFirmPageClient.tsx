@@ -25,7 +25,8 @@ import {
 } from 'lucide-react'
 import ChallengeSelector, { hasUsableChallenges, type Challenge } from './ChallengeSelector'
 import { buildAffiliateUrl, AFFILIATE_LINK_PROPS } from '@/lib/affiliate'
-import { formatMoney, formatNumber, formatDayMonth } from '@/lib/format'
+import { formatMoney, formatNumber, formatDayMonth, cleanMoneyLabel } from '@/lib/format'
+import { resolvePromotion } from '@/lib/promotion'
 
 // UI copy. Firm content is translated in the DB via prop_firms.translations;
 // these are the labels the component owns.
@@ -366,7 +367,11 @@ export default function PropFirmPageClient({
   // hidden and the CTAs point at the official site instead of a payment flow.
   const canConfigure = hasUsableChallenges(challenges)
 
-  const hasVerifiedDeal = Boolean(firm.discount_code && firm.discount_percent)
+  // One promotion record for the whole page. Previously each block tested
+  // discount_code and discount_percent on its own and none of them looked at
+  // the date, so an offer that ended yesterday was still setting today's price.
+  const promotion = resolvePromotion(firm)
+  const hasVerifiedDeal = promotion.isActive
   // Never the partner's public URL: that drops the affiliate params, skips the
   // automatic coupon and loses the click. Placement distinguishes each button.
   // The firm-level affiliate_url carries the coupon as a parameter, but it
@@ -384,7 +389,7 @@ export default function PropFirmPageClient({
   // Scoped deliberately: only firms that have BOTH a verified coupon to
   // protect AND a challenge deep link to protect it with. Everywhere else
   // these links keep pointing at the firm's site exactly as before.
-  const couponDeepLink = hasVerifiedDeal
+  const couponDeepLink = promotion.isActive
     ? challenges.find((c) => c.affiliate_url && c.affiliate_url !== '#') ?? null
     : null
 
@@ -406,8 +411,8 @@ export default function PropFirmPageClient({
   if (firm.leverage_forex) specs.push({ label: 'Leverage (forex)', value: firm.leverage_forex })
   if (payoutSpeed) specs.push({ label: 'Payout speed', value: payoutSpeed })
   if (firm.min_payout) specs.push({ label: 'Minimum payout', value: `$${firm.min_payout}` })
-  if (firm.scaling_max) specs.push({ label: 'Scaling plan', value: `Up to ${firm.scaling_max}` })
-  if (firm.max_allocation) specs.push({ label: 'Max allocation', value: firm.max_allocation })
+  if (firm.scaling_max) specs.push({ label: 'Scaling plan', value: `Up to ${cleanMoneyLabel(firm.scaling_max)}` })
+  if (firm.max_allocation) specs.push({ label: 'Max allocation', value: cleanMoneyLabel(firm.max_allocation) ?? firm.max_allocation })
   if (firm.drawdown_type) specs.push({ label: 'Drawdown type', value: firm.drawdown_type })
   if (firm.consistency_rule) specs.push({ label: 'Consistency rule', value: firm.consistency_rule })
   if (firm.time_limit) specs.push({ label: 'Time limit', value: firm.time_limit })
@@ -431,7 +436,9 @@ export default function PropFirmPageClient({
 
   const hasReference = specs.length > 0 || policies.length > 0 || platforms.length > 0 || assets.length > 0
 
-  const expiryText = formatDayMonth(firm.discount_expires_at, locale)
+  // Only announce an end date while the offer is still running. Printing
+  // "runs until 31 August" on 1 September is worse than printing nothing.
+  const expiryText = promotion.isActive ? formatDayMonth(firm.discount_expires_at, locale) : null
 
   return (
     // Bottom padding on mobile clears the fixed CTA bar; it is removed at lg
@@ -504,7 +511,7 @@ export default function PropFirmPageClient({
               <div className="flex flex-wrap gap-x-6 gap-y-2 mb-5">
                 {proofStats.map((s, i) => (
                   <span key={i} className="text-sm text-gray-400">
-                    <strong className="text-white font-semibold">{s.value}</strong>
+                    <strong className="text-white font-semibold">{cleanMoneyLabel(s.value) ?? s.value}</strong>
                     {s.label ? ` ${s.label}` : ''}
                   </span>
                 ))}
@@ -565,7 +572,7 @@ export default function PropFirmPageClient({
                   <span className="text-3xl font-bold">
                     {money(
                       hasVerifiedDeal
-                        ? Math.round(firm.min_price * (1 - firm.discount_percent / 100) * 100) / 100
+                        ? Math.round(firm.min_price * (1 - (promotion.percent as number) / 100) * 100) / 100
                         : firm.min_price
                     )}
                   </span>
@@ -578,7 +585,7 @@ export default function PropFirmPageClient({
               <div className="mb-4 px-3 py-2.5 bg-emerald-500/10 border border-emerald-500/25 rounded-lg">
                 <p className="text-emerald-300 text-sm font-semibold flex items-center gap-1.5">
                   <Zap className="w-3.5 h-3.5" />
-                  {t.codeAuto(firm.discount_code)}
+                  {t.codeAuto(promotion.code as string)}
                 </p>
                 {expiryText && (
                   <p className="text-gray-500 text-xs mt-1">{t.runsUntil(expiryText)}</p>
@@ -665,8 +672,8 @@ export default function PropFirmPageClient({
             locale={locale}
             checkoutOptions={firm.checkout_options}
             programGuide={firm.program_guide}
-            discountCode={firm.discount_code}
-            discountPercent={firm.discount_percent}
+            discountCode={promotion.code}
+            discountPercent={promotion.percent}
             discountNote={firm.discount_note}
             includedItems={toArray(firm.included_items)}
           />
@@ -708,7 +715,7 @@ export default function PropFirmPageClient({
                         {opt.specs.map((sp, si) => (
                           <div key={si} className="flex items-baseline justify-between gap-4 py-2">
                             <dt className="text-gray-500 text-sm">{sp.label}</dt>
-                            <dd className="text-white text-sm text-right">{sp.value}</dd>
+                            <dd className="text-white text-sm text-right">{cleanMoneyLabel(sp.value) ?? sp.value}</dd>
                           </div>
                         ))}
                       </dl>
@@ -937,7 +944,7 @@ export default function PropFirmPageClient({
                           {column.map((s) => (
                             <div key={s.label} className="flex items-baseline justify-between gap-4 py-3">
                               <dt className="text-gray-500 text-sm flex-shrink-0">{s.label}</dt>
-                              <dd className="text-white text-sm text-right">{s.value}</dd>
+                              <dd className="text-white text-sm text-right">{cleanMoneyLabel(s.value) ?? s.value}</dd>
                             </div>
                           ))}
                         </div>
@@ -1080,7 +1087,7 @@ export default function PropFirmPageClient({
             </a>
             {hasVerifiedDeal && (
               <p className="text-gray-600 text-xs mt-3">
-                {t.partnerLink(firm.discount_code)}
+                {t.partnerLink(promotion.code as string)}
               </p>
             )}
           </section>

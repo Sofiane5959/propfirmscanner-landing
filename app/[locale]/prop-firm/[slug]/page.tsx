@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
 import PropFirmPageClient from './PropFirmPageClient'
 import { generateDynamicAlternates, localeHref } from '@/lib/seo'
+import { resolvePromotion } from '@/lib/promotion'
 
 interface Props {
   // This route lives at app/[locale]/prop-firm/[slug], so locale is part of
@@ -133,7 +134,13 @@ export default async function PropFirmPage({ params }: Props) {
   // regardless of what they trade — which is how futures firms ended up
   // recommended under a forex firm. Match the asset class first, and only fall
   // back to a generic list if that leaves us short.
+  // Every column here is required for a card to be publishable. A row missing
+  // any of them is dropped rather than rendered with a blank cell: an
+  // alternative shown without a price or a rating is not an alternative.
   const SIMILAR_COLUMNS = 'id, name, slug, logo_url, trustpilot_rating, min_price, profit_split'
+  const SIMILAR_LIMIT = 3
+  const isComplete = (f: Record<string, unknown>) =>
+    Boolean(f.name && f.slug && f.logo_url && f.trustpilot_rating && f.min_price && f.profit_split)
   const isFutures = firm.is_futures === true
 
   // Futures and forex firms are not alternatives to each other. Match the
@@ -155,9 +162,9 @@ export default async function PropFirmPage({ params }: Props) {
     min_price: number
     profit_split: number
   }
-  let similarFirms = (matched || []) as SimilarRow[]
+  let similarFirms = ((matched || []) as SimilarRow[]).filter(isComplete)
 
-  if (similarFirms.length < 4) {
+  if (similarFirms.length < SIMILAR_LIMIT) {
     // PostgREST needs each UUID quoted inside the in-list. Passing them bare
     // makes the whole filter fail, which is how this section ended up empty.
     const exclude = [firm.id, ...similarFirms.map((f) => f.id)]
@@ -169,10 +176,14 @@ export default async function PropFirmPage({ params }: Props) {
       .select(SIMILAR_COLUMNS)
       .not('id', 'in', `(${exclude})`)
       .order('trustpilot_rating', { ascending: false })
-      .limit(4 - similarFirms.length)
+      .limit(SIMILAR_LIMIT - similarFirms.length)
 
-    similarFirms = [...similarFirms, ...((filler || []) as SimilarRow[])]
+    similarFirms = [...similarFirms, ...((filler || []) as SimilarRow[]).filter(isComplete)]
   }
+
+  // Never more than three, and never a partial card. Padding the row with an
+  // incomplete firm makes the whole section look unreliable.
+  similarFirms = similarFirms.slice(0, SIMILAR_LIMIT)
 
   // Ordered by price so the configurator's first program is the cheapest entry
   // point rather than whatever Postgres returned first.
@@ -182,52 +193,89 @@ export default async function PropFirmPage({ params }: Props) {
     .eq('firm_slug', params.slug)
     .order('price', { ascending: true })
 
-  // Advertise the price the visitor will actually pay when a real code exists.
+  // Structured data must quote the price actually on sale today. A promotion
+  // that has expired no longer discounts anything, so the schema falls back to
+  // the list price rather than advertising a figure the checkout will not honour.
+  const promotion = resolvePromotion(firm as { discount_code?: string | null; discount_percent?: number | null; discount_expires_at?: string | null })
   const challengeRows = (challenges || []) as { price: number | null; discounted_price: number | null }[]
   const cheapest: number | null = challengeRows.reduce(
     (min: number | null, c) => {
-      const p = c.discounted_price ?? c.price
+      const p = promotion.isActive ? c.discounted_price ?? c.price : c.price
       return p !== null && (min === null || p < min) ? p : min
     },
     null as number | null
   )
   const offerPrice = cheapest ?? firm.min_price ?? 0
 
-  const jsonLd = {
+  const pageUrl = localeHref(locale, `/prop-firm/${firm.slug}`)
+
+  // Two graphs, deliberately separate.
+  //
+  // The Product no longer carries aggregateRating. The only rating we hold is
+  // Trustpilot's — collected by Trustpilot, from their reviewers, about the
+  // firm. Emitting it here presents someone else's rating as ours, which is
+  // both a misattribution and the kind of self-serving markup Google rejects.
+  // The page still shows the score, credited to Trustpilot, in the HTML.
+  //
+  // No FAQPage: the questions are assembled inside the client component and we
+  // cannot guarantee here that every answer is rendered in the server HTML.
+  // Declaring FAQPage without that guarantee is a structured-data violation, so
+  // it stays out until the generator moves server-side.
+  const productLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: firm.name,
     description: firm.verdict || `${firm.name} prop trading firm`,
     brand: { '@type': 'Brand', name: firm.name },
-    ...(firm.trustpilot_rating
+    // Only quote an offer when there is a real price behind it.
+    ...(offerPrice > 0
       ? {
-          aggregateRating: {
-            '@type': 'AggregateRating',
-            ratingValue: firm.trustpilot_rating,
-            reviewCount: firm.trustpilot_reviews || 1,
-            bestRating: 5,
-            worstRating: 1,
+          offers: {
+            '@type': 'Offer',
+            price: offerPrice,
+            priceCurrency: 'USD',
+            availability: 'https://schema.org/InStock',
+            url: pageUrl,
+            ...(promotion.isActive && promotion.expiresAt
+              ? { priceValidUntil: promotion.expiresAt.toISOString().slice(0, 10) }
+              : {}),
           },
         }
       : {}),
-    offers: {
-      '@type': 'Offer',
-      price: offerPrice,
-      priceCurrency: 'USD',
-      availability: 'https://schema.org/InStock',
-      url: `${SITE_URL}/${locale}/prop-firm/${firm.slug}`,
-    },
+  }
+
+  const breadcrumbLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: localeHref(locale, '/') },
+      { '@type': 'ListItem', position: 2, name: 'Prop firms', item: localeHref(locale, '/compare') },
+      { '@type': 'ListItem', position: 3, name: firm.name, item: pageUrl },
+    ],
+  }
+
+  // prop_firms.translations holds every locale at once. Passing the whole
+  // object shipped the French copy inside the English page's payload, and vice
+  // versa. Only the locale being rendered crosses to the client.
+  const allTranslations = (firm as { translations?: Record<string, unknown> | null }).translations
+  const firmForLocale = {
+    ...firm,
+    translations: allTranslations?.[locale] ? { [locale]: allTranslations[locale] } : null,
   }
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
 
       <PropFirmPageClient
-        firm={firm}
+        firm={firmForLocale}
         similarFirms={similarFirms}
         challenges={challenges || []}
         locale={locale}

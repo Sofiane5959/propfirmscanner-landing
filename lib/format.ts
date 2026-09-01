@@ -102,3 +102,18 @@ export function formatDayMonth(iso: string | null | undefined, locale?: string |
   const month = months[date.getUTCMonth()]
   return locale === 'fr' ? `${day} ${month}` : `${day} ${month}`
 }
+
+
+/**
+ * Cleans a money-ish label that came from the database.
+ *
+ * Some rows carry a currency sign that was added twice on import — "$$25K",
+ * "$$400K", "$$140-156/month" all ship in the served payload today. The values
+ * should be fixed at the source, and there is SQL to do it, but a listing page
+ * must never print "$$25K" while that lands. Collapses runs of the sign and
+ * trims, leaving anything else untouched.
+ */
+export function cleanMoneyLabel(value: string | null | undefined): string | null {
+  if (!value) return null
+  return value.replace(/\${2,}/g, '$').trim() || null
+}
