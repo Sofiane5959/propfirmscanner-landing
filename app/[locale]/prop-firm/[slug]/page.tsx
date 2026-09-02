@@ -126,7 +126,17 @@ export default async function PropFirmPage({ params }: Props) {
     .eq('slug', params.slug)
     .single()
 
-  if (error || !firm) {
+  // A missing row and an unreachable database are not the same event. PostgREST
+  // answers PGRST116 for "no rows"; anything else is infrastructure. Treating
+  // both as notFound() served a 200 page titled "Prop Firm Not Found" during a
+  // Supabase outage, which is exactly the soft 404 Google penalises — and with
+  // revalidate it would be cached. Rethrowing turns an outage into a 500, which
+  // is honest and is not cached.
+  if (error && error.code !== 'PGRST116') {
+    throw new Error(`prop_firms lookup failed for "${params.slug}": ${error.message}`)
+  }
+
+  if (!firm) {
     notFound()
   }
 

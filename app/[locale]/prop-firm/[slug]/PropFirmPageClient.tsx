@@ -35,6 +35,8 @@ const COPY = {
     chooseProgram: 'Choose your program',
     seeRules: 'See the key rules',
     onTrustpilot: 'on Trustpilot',
+    ratingChecked: (d: string) => `· Trustpilot rating, read ${d}`,
+    verifiedOn: (d: string) => `Information verified on ${d} against Earn2Trade's own documents and help centre.`,
     from: 'From',
     perMonth: '/month',
     // Never "applied automatically": the coupon is only certain at the moment
@@ -88,6 +90,8 @@ const COPY = {
     chooseProgram: 'Choisir mon programme',
     seeRules: 'Voir les règles essentielles',
     onTrustpilot: 'sur Trustpilot',
+    ratingChecked: (d: string) => `· note Trustpilot, relevée le ${d}`,
+    verifiedOn: (d: string) => `Informations vérifiées le ${d} à partir des documents et du centre d'aide officiels.`,
     from: 'À partir de',
     perMonth: '/mois',
     codeAuto: (c: string) => `Code ${c} — prérempli au moment de la redirection`,
@@ -438,6 +442,11 @@ export default function PropFirmPageClient({
 
   // Only announce an end date while the offer is still running. Printing
   // "runs until 31 August" on 1 September is worse than printing nothing.
+  const verifiedText = formatDayMonth(
+    (firm as { data_verified_at?: string | null }).data_verified_at, locale)
+  const ratingCheckedText = formatDayMonth(
+    (firm as { rating_checked_at?: string | null }).rating_checked_at, locale)
+
   const expiryText = promotion.isActive ? formatDayMonth(firm.discount_expires_at, locale) : null
 
   return (
@@ -458,8 +467,11 @@ export default function PropFirmPageClient({
                 aria-label={couponDeepLink ? t.officialOffer : t.visit(firm.name)}
                 className="relative w-14 h-14 bg-gray-800 rounded-xl overflow-hidden flex-shrink-0 border border-gray-700 hover:border-gray-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
               >
+                {/* sizes="56px": the box is 56px square. Without it, `fill`
+                    defaults to 100vw and the browser downloads a full-width
+                    source to draw a thumbnail. */}
                 {logoUrl ? (
-                  <Image src={logoUrl} alt={firm.name} fill className="object-contain p-2" />
+                  <Image src={logoUrl} alt={firm.name} fill sizes="56px" className="object-contain p-2" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-emerald-500/10 text-emerald-400 text-xl font-bold">
                     {firm.name.charAt(0).toUpperCase()}
@@ -518,6 +530,10 @@ export default function PropFirmPageClient({
               </div>
             )}
 
+            {verifiedText && (
+              <p className="text-gray-500 text-xs mb-3">{t.verifiedOn(verifiedText)}</p>
+            )}
+
             <div className="flex flex-wrap gap-3 mb-4">
               {canConfigure && (
                 <a
@@ -558,6 +574,12 @@ export default function PropFirmPageClient({
                   <span className="text-gray-500 text-xs">
                     ({formatNumber(firm.trustpilot_reviews, locale)} {t.onTrustpilot})
                   </span>
+                )}
+                {/* Explicitly someone else's rating. It is collected by
+                    Trustpilot from their reviewers; PropFirmScanner does not
+                    gather ratings. The date says when we last read it. */}
+                {ratingCheckedText && (
+                  <span className="text-gray-600 text-[11px]">{t.ratingChecked(ratingCheckedText)}</span>
                 )}
               </div>
             )}
