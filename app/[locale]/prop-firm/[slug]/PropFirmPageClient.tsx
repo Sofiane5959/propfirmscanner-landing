@@ -325,7 +325,10 @@ export default function PropFirmPageClient({
   // French writes the currency after the amount: "150 $", not "$150".
   // Formatting is deterministic rather than locale-data driven — see
   // lib/format.ts for why toLocaleString broke hydration on this page.
-  const money = (v: number) => formatMoney(v, locale)
+  // FTMO prices in euros. Rendering that as dollars is a factual error, and
+  // converting would invent a figure that drifts with the exchange rate.
+  const currency = (firm as { price_currency?: string | null }).price_currency || 'USD'
+  const money = (v: number) => formatMoney(v, locale, '', currency)
 
   const handleShare = () => {
     if (navigator.share) {
@@ -694,6 +697,7 @@ export default function PropFirmPageClient({
             locale={locale}
             checkoutOptions={firm.checkout_options}
             programGuide={firm.program_guide}
+            currency={currency}
             discountCode={promotion.code}
             discountPercent={promotion.percent}
             discountNote={firm.discount_note}

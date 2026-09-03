@@ -52,15 +52,33 @@ export function formatNumber(value: number, locale?: string | null): string {
   return locale === 'fr' ? group(value, '\u00A0', ',') : group(value, ',', '.')
 }
 
+/** Currencies firms actually price in. USD unless a firm says otherwise. */
+export type Currency = 'USD' | 'EUR' | 'GBP'
+
+const SYMBOL: Record<Currency, string> = { USD: '$', EUR: '\u20AC', GBP: '\u00A3' }
+
 /**
  * An amount with its currency where the locale puts it: "$1,500" against
  * "1 500 $". `suffix` carries things like "/month" inside the returned string
  * so callers do not have to know which side the sign sits on.
+ *
+ * The currency is a parameter, not a constant, because it is not always the
+ * dollar. FTMO prices in euros: 79 \u20AC is not $79, and the gap is real money.
+ * Converting would be worse \u2014 an invented figure that drifts with the rate.
+ * So the symbol travels with the amount, and a firm that stores no currency
+ * keeps the previous behaviour.
  */
-export function formatMoney(value: number, locale?: string | null, suffix = ''): string {
+export function formatMoney(
+  value: number,
+  locale?: string | null,
+  suffix = '',
+  currency: Currency | string | null = 'USD'
+): string {
+  const symbol = SYMBOL[(currency || 'USD') as Currency] ?? SYMBOL.USD
+  // French writes the symbol after the amount, in both currencies.
   return locale === 'fr'
-    ? `${formatNumber(value, 'fr')}\u00A0$${suffix}`
-    : `$${formatNumber(value, 'en')}${suffix}`
+    ? `${formatNumber(value, 'fr')}\u00A0${symbol}${suffix}`
+    : `${symbol}${formatNumber(value, 'en')}${suffix}`
 }
 
 // Written out rather than derived, so the strings never depend on the

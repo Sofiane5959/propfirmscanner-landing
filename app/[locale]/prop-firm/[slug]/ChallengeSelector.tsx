@@ -59,6 +59,8 @@ interface Props {
   locale?: string
   checkoutOptions?: CheckoutOptions | null
   programGuide?: ProgramGuide | null
+  /** Currency the firm prices in. Defaults to USD when the column is null. */
+  currency?: string | null
   discountCode?: string | null
   discountPercent?: number | null
   discountNote?: string | null
@@ -188,18 +190,20 @@ function sizeToNumber(size: string | null): number {
 
 // French writes the currency after the amount, with a space: "75 $/mois".
 // Putting the dollar sign in front reads as a translation nobody proofread.
-function formatPrice(price: number | null, suffix = '', locale = 'en'): string {
+function formatPrice(price: number | null, suffix = '', locale = 'en', currency = 'USD'): string {
   if (price === null || price === undefined) return '—'
-  return formatMoney(price, locale, suffix)
+  return formatMoney(price, locale, suffix, currency)
 }
 
 // Risk figures are percentages on forex firms and dollar amounts on futures
 // firms. Rendering 2000 as "2000%" instead of "$2,000" is a different claim,
 // so the unit travels with the challenge.
-function fmtRisk(value: number | null | undefined, unit?: string | null, locale = 'en'): string {
+function fmtRisk(value: number | null | undefined, unit?: string | null, locale = 'en', currency = 'USD'): string {
   if (value === null || value === undefined) return '—'
   if (unit === 'usd') {
-    return formatMoney(Number(value), locale)
+    // risk_unit says the figure is an amount, not a percentage. The account
+    // itself is denominated in the firm's currency.
+    return formatMoney(Number(value), locale, '', currency)
   }
   return locale === 'fr' ? `${value}\u00A0%` : `${value}%`
 }
@@ -213,6 +217,7 @@ export default function ChallengeSelector({
   firmName,
   challenges,
   locale = 'en',
+  currency: currencyProp,
   checkoutOptions,
   programGuide,
   discountCode,
@@ -220,6 +225,8 @@ export default function ChallengeSelector({
   discountNote,
   includedItems,
 }: Props) {
+  // La colonne peut etre nulle : le dollar reste le defaut.
+  const currency = currencyProp || 'USD'
   const t = locale === 'fr' ? COPY.fr : COPY.en
   const configRef = useRef<HTMLDivElement | null>(null)
 
@@ -338,12 +345,12 @@ export default function ChallengeSelector({
 
   const riskUnit = currentChallenge?.risk_unit
   const keyNumbers = [
-    { label: t.target, value: fmtRisk(currentChallenge?.phase1_profit_target, riskUnit, locale) },
-    { label: t.drawdown, value: fmtRisk(currentChallenge?.max_drawdown, riskUnit, locale) },
-    { label: t.dailyLoss, value: fmtRisk(currentChallenge?.max_daily_loss, riskUnit, locale) },
+    { label: t.target, value: fmtRisk(currentChallenge?.phase1_profit_target, riskUnit, locale, currency) },
+    { label: t.drawdown, value: fmtRisk(currentChallenge?.max_drawdown, riskUnit, locale, currency) },
+    { label: t.dailyLoss, value: fmtRisk(currentChallenge?.max_daily_loss, riskUnit, locale, currency) },
     currentChallenge?.max_contracts
       ? { label: t.contracts, value: String(currentChallenge.max_contracts) }
-      : { label: t.split, value: fmtRisk(currentChallenge?.profit_split, null, locale) },
+      : { label: t.split, value: fmtRisk(currentChallenge?.profit_split, null, locale, currency) },
   ]
 
   return (
@@ -408,7 +415,7 @@ export default function ChallengeSelector({
                       </span>
                       <span className="block text-gray-500 text-sm mt-0.5">
                         {t.sizes(list.length)}
-                        {cheapest !== null && ` · ${t.from} ${formatPrice(cheapest, priceSuffix, locale)}`}
+                        {cheapest !== null && ` · ${t.from} ${formatPrice(cheapest, priceSuffix, locale, currency)}`}
                       </span>
                     </button>
                   )
@@ -449,7 +456,7 @@ export default function ChallengeSelector({
                         {cleanMoneyLabel(c.account_size)}
                       </span>
                       <span className="block text-gray-500 text-sm">
-                        {formatPrice(p, priceSuffix, locale)}
+                        {formatPrice(p, priceSuffix, locale, currency)}
                       </span>
                     </button>
                   )
@@ -515,14 +522,14 @@ export default function ChallengeSelector({
 
             <div className="mb-3">
               <p className="text-white leading-none">
-                <span className="text-3xl font-bold">{formatPrice(displayPrice.final, '', locale)}</span>
+                <span className="text-3xl font-bold">{formatPrice(displayPrice.final, '', locale, currency)}</span>
                 {isSubscription && <span className="text-gray-500 text-base">{t.perMonth}</span>}
               </p>
               {displayPrice.hasDiscount && displayPrice.original !== null && (
                 <p className="text-gray-500 text-sm mt-1">
                   {discountNote ? `${discountNote} ` : ''}
                   <span className="text-gray-400">
-                    {formatPrice(displayPrice.original, priceSuffix, locale)} {t.normally}
+                    {formatPrice(displayPrice.original, priceSuffix, locale, currency)} {t.normally}
                   </span>
                 </p>
               )}
@@ -642,10 +649,10 @@ export default function ChallengeSelector({
               {selectedProgram} · {cleanMoneyLabel(currentChallenge?.account_size)}
             </p>
             <p className="text-white text-base font-bold leading-tight">
-              {formatPrice(displayPrice.final, priceSuffix, locale)}
+              {formatPrice(displayPrice.final, priceSuffix, locale, currency)}
               {displayPrice.hasDiscount && displayPrice.original !== null && (
                 <s className="text-gray-600 text-sm font-normal ml-1.5">
-                  {formatPrice(displayPrice.original, '', locale)}
+                  {formatPrice(displayPrice.original, '', locale, currency)}
                 </s>
               )}
             </p>
