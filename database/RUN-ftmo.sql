@@ -65,7 +65,9 @@ where slug = 'ftmo';
 
 
 -- 4. Les programmes — c est ce qui fait apparaitre le configurateur
-begin;
+-- Pas de begin/commit : l editeur SQL de Supabase enveloppe deja le
+-- script dans sa propre transaction. Un begin explicite a l interieur
+-- peut faire echouer l ensemble sans message clair.
 
 delete from prop_firm_challenges where firm_slug = 'ftmo';
 
@@ -80,7 +82,6 @@ insert into prop_firm_challenges (id, slug, name, firm_name, firm_slug, account_
   (gen_random_uuid(), 'ftmo-2-step-swing-50k', 'FTMO 2-Step Swing 50K', 'FTMO', 'ftmo', '$50K', '2 steps', 10, 5, 10, 5, 'Fixe (statique)', 'Static', null, 379, null, null, 'Aucune regle de regularite. 4 jours de trading minimum dans chaque phase.', true, true, true, 'one-time', 'percent'),
   (gen_random_uuid(), 'ftmo-2-step-swing-100k', 'FTMO 2-Step Swing 100K', 'FTMO', 'ftmo', '$100K', '2 steps', 10, 5, 10, 5, 'Fixe (statique)', 'Static', null, 599, null, null, 'Aucune regle de regularite. 4 jours de trading minimum dans chaque phase.', true, true, true, 'one-time', 'percent');
 
-commit;
 
 
 -- 5. CONTROLE — ces requetes disent si ca a marche

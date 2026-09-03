@@ -62,7 +62,9 @@ where slug = 'the5ers';
 
 
 -- 4. Les programmes — c est ce qui fait apparaitre le configurateur
-begin;
+-- Pas de begin/commit : l editeur SQL de Supabase enveloppe deja le
+-- script dans sa propre transaction. Un begin explicite a l interieur
+-- peut faire echouer l ensemble sans message clair.
 
 delete from prop_firm_challenges where firm_slug = 'the5ers';
 
@@ -84,7 +86,6 @@ insert into prop_firm_challenges (id, slug, name, firm_name, firm_slug, account_
   (gen_random_uuid(), 'the5ers-pro-growth-50k', 'Pro Growth $50K', 'The5ers', 'the5ers', '$50K', '1 step', 6, 3, 10, null, 'Statique', 'Static', null, 329, 296.1, null, 'Aucun jour minimum sur Hyper Growth ; 3 jours rentables sur Pro Growth. Duree illimitee. Scalping manuel autorise, tick scalping interdit.', true, true, true, 'one-time', 'percent'),
   (gen_random_uuid(), 'the5ers-summer-plan-100k', 'Summer Plan 1 Step $100K', 'The5ers', 'the5ers', '$100K', '1 step', 6, 3, 10, null, 'Statique', 'Static', null, 249, null, 'Retrait minimum 250 $, plafond 2 000 $. Remboursement des frais a partir du 3e retrait. Bonus 10 %. Partage 75 %.', 'Aucun jour minimum sur Hyper Growth ; 3 jours rentables sur Pro Growth. Duree illimitee. Scalping manuel autorise, tick scalping interdit.', true, true, true, 'one-time', 'percent');
 
-commit;
 
 
 -- 5. CONTROLE — ces requetes disent si ca a marche

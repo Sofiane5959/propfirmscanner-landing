@@ -65,7 +65,9 @@ where slug = 'futureselite';
 
 
 -- 4. Les programmes — c est ce qui fait apparaitre le configurateur
-begin;
+-- Pas de begin/commit : l editeur SQL de Supabase enveloppe deja le
+-- script dans sa propre transaction. Un begin explicite a l interieur
+-- peut faire echouer l ensemble sans message clair.
 
 delete from prop_firm_challenges where firm_slug = 'futureselite';
 
@@ -75,7 +77,6 @@ insert into prop_firm_challenges (id, slug, name, firm_name, firm_slug, account_
   (gen_random_uuid(), 'futureselite-elite-100k', 'Elite $100K', 'FuturesElite', 'futureselite', '$100K', '1 step', 3000, null, 6000, null, 'End of Day', 'Trailing', 90, 293, null, 'Une fois finance : 90 % de partage, plafond de retrait 2 500 $, retrait possible chaque jour, 6 jours de trading minimum, aucun buffer. Reset 159 $.', 'Evaluation : 3 jours de trading minimum et une regle de regularite. Aucune regle de regularite une fois finance. Aucun frais d activation.', true, true, true, 'one-time', 'usd'),
   (gen_random_uuid(), 'futureselite-elite-150k', 'Elite $150K', 'FuturesElite', 'futureselite', '$150K', '1 step', 4500, null, 9000, null, 'End of Day', 'Trailing', 90, 353, null, 'Une fois finance : 90 % de partage, plafond de retrait 3 000 $, retrait possible chaque jour, 6 jours de trading minimum, aucun buffer. Reset 229 $.', 'Evaluation : 3 jours de trading minimum et une regle de regularite. Aucune regle de regularite une fois finance. Aucun frais d activation.', true, true, true, 'one-time', 'usd');
 
-commit;
 
 
 -- 5. CONTROLE — ces requetes disent si ca a marche
