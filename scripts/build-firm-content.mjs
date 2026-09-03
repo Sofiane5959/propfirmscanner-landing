@@ -105,6 +105,18 @@ function build(firm) {
   L.push(sets.join(',\n'))
   L.push(`where slug = ${S(firm.slug)};`)
   L.push('')
+  if (firm.promo) {
+    L.push('')
+    L.push('-- 3b. Code promo')
+    for (const line of firm.promo.why) L.push('-- ' + line)
+    L.push('update prop_firms set')
+    L.push(`  discount_code    = ${S(firm.promo.code)},`)
+    L.push(`  discount_percent = ${N(firm.promo.percent)},`)
+    L.push(`  discount_note    = ${S(firm.promo.note)},`)
+    L.push("  discount_status  = 'active'")
+    L.push(`where slug = ${S(firm.slug)};`)
+    L.push('')
+  }
   L.push('')
   L.push('-- 4. Les programmes — c est ce qui fait apparaitre le configurateur')
   L.push('-- Pas de begin/commit : l editeur SQL de Supabase enveloppe deja le')

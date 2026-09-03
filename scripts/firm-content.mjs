@@ -577,4 +577,287 @@ export const THE5ERS = {
   ],
 }
 
-export const ALL_FIRMS = [FTMO, THE5ERS, FUTURESELITE]
+// -----------------------------------------------------------------------------
+// HANTEC TRADER
+// -----------------------------------------------------------------------------
+// Source : e-mail de Desiree Almeida, Partnership Manager de Hantec Trader,
+// 3 septembre 2026. C'est une source de première main — la firme décrivant sa
+// propre offre — donc la seule fiche de ce fichier qui ne repose sur aucun
+// recoupement de tiers. Elle corrige aussi deux erreurs qu'elle a relevées
+// elle-même sur notre page : le partage des profits et les règles d'actualités.
+// -----------------------------------------------------------------------------
+export const HANTEC = {
+  slug: 'hantec-trader',
+  scalars: {
+    name: 'Hantec Trader',
+    website_url: 'https://htrader.hmarkets.com/',
+    affiliate_url: 'https://myhtrader.hmarkets.com/purchasechallenge?affiliateId=2766',
+    founded_year: 2023,
+    headquarters: 'Suite 201, The Catalyst Silicon Avenue, 40 Cybercity, 72201 Ebène, Maurice',
+    country: 'Mauritius',
+    price_currency: 'USD',
+    is_regulated: false,
+    regulation_details:
+      'Hantec Trader Limited, société mauricienne n° C191400. Non régulée : société de trading propriétaire. Courtier partenaire : Hantec Markets Limited / Hantec Markets Mauritius.',
+    profit_split: 80,
+    min_price: 13,
+    max_price: 2139,
+    is_futures: false,
+    drawdown_type:
+      'Perte journalière calculée sur le plus élevé du solde ou de l’equity à la clôture de la veille. Drawdown global glissant ou statique selon le programme.',
+    time_limit: 'Aucune limite de temps, sauf Instant24 : 24 heures à partir du premier trade',
+    payout_frequency: 'on-request',
+    source_url: 'https://htrader.hmarkets.com/',
+  },
+  arrays: {
+    platforms: ['MetaTrader 4', 'MetaTrader 5'],
+    assets: ['Forex', 'Indices', 'Matières premières', 'Métaux', 'Crypto'],
+    payout_methods: ['Virement bancaire', 'Cryptomonnaie', 'Portefeuilles électroniques'],
+    included_items: [
+      'MetaTrader 4 et MetaTrader 5',
+      'Sept programmes, de l’instantané au trois étapes',
+      'Add-on 95 % de partage disponible sur six programmes',
+    ],
+    pros: [
+      'Sept programmes couvrant l’instantané, une, deux et trois étapes',
+      'Entrée à partir de 13 $ avec Instant24',
+      'Partage de 80 %, porté à 95 % avec l’add-on sur six programmes',
+      'Aucune limite de temps, sauf Instant24 par construction',
+      'Décision de retrait sous 24 heures ouvrées pour les demandes éligibles',
+      'Courtier partenaire identifié : Hantec Markets',
+    ],
+    cons: [
+      'Non régulée : société de trading propriétaire, pas un courtier',
+      'Les traders américains ne sont pas acceptés',
+      '32 territoires exclus, dont l’Allemagne, la Belgique et l’Australie',
+      'Le trading d’actualités est restreint par défaut, sauf Instant24',
+      'Le scalping peut entraîner un ajustement des profits au-delà d’un seuil',
+      'Levier limité à 1:1 sur la crypto',
+    ],
+    special_features: [
+      'Partage de 80 %, porté à 95 % avec l’add-on 95% Reward Share',
+      'Sept programmes, de Instant24 en 24 heures à Endurance en trois étapes',
+      'Perte journalière calculée sur le plus élevé du solde ou de l’equity de la veille',
+      'Add-on News Trading pour lever la restriction autour des annonces',
+      'Levier 1:50 sur le forex, 1:15 sur indices et matières premières, 1:10 sur métaux',
+      'Les traders américains ne sont pas acceptés',
+    ],
+  },
+  json: {
+    verdict_card: {
+      title: 'Pour qui, et pour qui pas',
+      body:
+        'Hantec Trader propose sept programmes qui couvrent presque tous les profils, de l’instantané à 13 $ au parcours en trois étapes. Le partage démarre à 80 % et monte à 95 % avec un add-on payant. En contrepartie, la firme n’est pas régulée et ferme un nombre inhabituel de marchés.',
+      points: [
+        'Un choix de sept parcours, du financement instantané au trois étapes',
+        'Une entrée très bon marché : Instant24 démarre à 13 $',
+        'Un partage porté à 95 % si vous prenez l’add-on',
+        'Un courtier partenaire identifié, adossé au groupe Hantec Markets',
+      ],
+    },
+    program_guide: {
+      title: 'Sept programmes, trois familles',
+      intro:
+        'Le choix se fait d’abord sur le format : financé tout de suite, ou évaluation en une, deux ou trois étapes.',
+      options: [
+        {
+          name: 'Instant Funding',
+          badge: 'Financé immédiatement',
+          summary:
+            'Aucune évaluation, aucun objectif. La contrepartie est le prix : 43 $ sur un 1K, jusqu’à 2 139 $ sur un 50K.',
+          points: ['De 1K à 50K', 'Aucun objectif de profit', 'Perte journalière de 6 %', 'Drawdown global glissant de 6 %'],
+        },
+        {
+          name: 'Instant Lite',
+          badge: 'Financé, moins cher',
+          summary:
+            'La même logique à un cinquième du prix, contre une perte journalière plus serrée et 5 jours rentables par cycle de retrait.',
+          points: ['De 1K à 100K, à partir de 19 $', 'Perte journalière de 3 %', 'Drawdown global de 5 %', '5 jours rentables par cycle de retrait'],
+        },
+        {
+          name: 'Instant24',
+          badge: 'Vingt-quatre heures',
+          summary:
+            'Le format le moins cher du catalogue : le compte vit 24 heures à partir du premier trade. C’est aussi le seul programme où le trading d’actualités est libre.',
+          points: ['De 2K à 100K, à partir de 13 $', '24 heures depuis le premier trade', 'Perte journalière de 2 %', 'Trading d’actualités autorisé'],
+        },
+        {
+          name: 'Express',
+          badge: 'Une étape',
+          summary:
+            'Une seule phase à 10 %, sans jour minimum, avec un drawdown global glissant de 6 %.',
+          points: ['De 2K à 200K, à partir de 39 $', 'Objectif de 10 %', 'Aucun jour minimum', 'Drawdown glissant de 6 %'],
+        },
+        {
+          name: 'Enhanced',
+          badge: 'Deux étapes',
+          summary:
+            'Objectif de 10 % puis 5 %, avec la limite journalière la plus large du catalogue et un drawdown statique.',
+          points: ['De 5K à 200K, à partir de 59 $', 'Objectif 10 % puis 5 %', 'Perte journalière de 5 %', '3 jours rentables par étape'],
+        },
+        {
+          name: 'EnhancedX',
+          badge: 'Deux étapes, sans jour minimum',
+          summary:
+            'Des objectifs plus bas que Enhanced, 8 % puis 4 %, et aucun jour minimum, contre une limite journalière plus serrée.',
+          points: ['De 5K à 200K, à partir de 59 $', 'Objectif 8 % puis 4 %', 'Perte journalière de 4 %', 'Aucun jour minimum'],
+        },
+        {
+          name: 'Endurance',
+          badge: 'Trois étapes',
+          summary:
+            'Trois paliers à 6 %, le chemin le plus progressif et le moins cher à capital égal : 29 $ pour un 5K.',
+          points: ['De 5K à 200K, à partir de 29 $', 'Objectif de 6 % à chaque étape', 'Drawdown statique de 8 %', '3 jours par étape'],
+        },
+      ],
+    },
+    key_rules: {
+      title: 'Les règles qui décident',
+      intro:
+        'Quatre points communiqués directement par la firme, dont deux qui corrigeaient notre fiche précédente.',
+      rules: [
+        {
+          title: 'Le partage est de 80 %, pas de 95 %',
+          detail:
+            'Le taux standard est de 80 %. Les 95 % s’obtiennent avec l’add-on payant « 95% Reward Share », disponible sur Instant Funding, Instant Lite, Instant24, Endurance, EnhancedX, Enhanced et Express.',
+        },
+        {
+          title: 'Le trading d’actualités est restreint par défaut',
+          detail:
+            'Pendant l’évaluation, il est libre sur Express, Enhanced, EnhancedX et Endurance. Sur un compte Hantec Trader financé, ouvrir ou fermer une position dans les 3 minutes autour d’une annonce à fort impact est interdit, sauf à prendre l’add-on News Trading. Instant Funding et Instant Lite suivent la même restriction ; Instant24 est le seul à l’autoriser librement.',
+        },
+        {
+          title: 'Le scalping est encadré par un seuil, pas interdit',
+          detail:
+            'Si les profits nets issus de positions tenues moins de 3 minutes représentent 30 % ou plus du profit net total sur la période d’évaluation, l’activité est qualifiée de scalping et peut entraîner un ajustement des profits ou une restriction de trading.',
+        },
+        {
+          title: 'La perte journalière se calcule sur la veille',
+          detail:
+            'Sur les sept programmes, la limite journalière est mesurée sur le plus élevé du solde ou de l’equity à la clôture de la veille. Le drawdown global, lui, est glissant sur les programmes instantanés et Express, statique sur Endurance, Enhanced et EnhancedX.',
+        },
+      ],
+      more: [
+        'Levier 1:50 sur le forex, 1:15 sur indices et matières premières',
+        'Levier 1:10 sur les métaux, 1:1 sur la crypto',
+        'MetaTrader 4 et MetaTrader 5',
+        'Décision de retrait sous 24 heures ouvrées pour les demandes éligibles',
+        'Retraits par virement, crypto ou portefeuille électronique',
+      ],
+    },
+    journey: {
+      title: 'Ce qui se passe après le paiement',
+      intro: 'Le parcours dépend de la famille de programme choisie.',
+      steps: [
+        {
+          title: 'Financement immédiat',
+          detail:
+            'Sur Instant Funding, Instant Lite et Instant24, il n’y a pas d’évaluation : le compte est actif dès l’achat, avec ses limites de risque propres.',
+        },
+        {
+          title: 'Évaluation',
+          detail:
+            'Sur Express, une seule phase à 10 %. Sur Enhanced et EnhancedX, deux phases. Sur Endurance, trois paliers à 6 %. Aucune limite de temps sur ces quatre programmes.',
+        },
+        {
+          title: 'Compte Hantec Trader',
+          detail:
+            'Une fois financé, la restriction d’actualités s’applique dans les 3 minutes autour des annonces à fort impact, sauf add-on News Trading, et sauf sur Instant24.',
+        },
+        {
+          title: 'Retraits',
+          detail:
+            'Décision sous 24 heures ouvrées pour les demandes éligibles ; le délai d’arrivée des fonds dépend du moyen choisi. Partage de 80 %, ou 95 % avec l’add-on.',
+        },
+      ],
+    },
+  },
+  challenges: [
+    // Instant Funding — aucune évaluation, perte journalière 6 %, drawdown glissant 6 %
+    ['hantec-instant-funding-1k', 'Instant Funding $1K', '$1K', 'Instant', 6, 6, null, null, 'Glissant sur le solde', 'Trailing', 43, null],
+    ['hantec-instant-funding-2k', 'Instant Funding $2K', '$2K', 'Instant', 6, 6, null, null, 'Glissant sur le solde', 'Trailing', 86, null],
+    ['hantec-instant-funding-5k', 'Instant Funding $5K', '$5K', 'Instant', 6, 6, null, null, 'Glissant sur le solde', 'Trailing', 214, null],
+    ['hantec-instant-funding-10k', 'Instant Funding $10K', '$10K', 'Instant', 6, 6, null, null, 'Glissant sur le solde', 'Trailing', 428, null],
+    ['hantec-instant-funding-25k', 'Instant Funding $25K', '$25K', 'Instant', 6, 6, null, null, 'Glissant sur le solde', 'Trailing', 1069, null],
+    ['hantec-instant-funding-50k', 'Instant Funding $50K', '$50K', 'Instant', 6, 6, null, null, 'Glissant sur le solde', 'Trailing', 2139, null],
+    // Instant Lite — perte journalière 3 %, drawdown glissant 5 %, 5 jours rentables par cycle
+    ['hantec-instant-lite-1k', 'Instant Lite $1K', '$1K', 'Instant Lite', 5, 3, null, null, 'Glissant sur le solde', 'Trailing', 19, null],
+    ['hantec-instant-lite-2k', 'Instant Lite $2K', '$2K', 'Instant Lite', 5, 3, null, null, 'Glissant sur le solde', 'Trailing', 39, null],
+    ['hantec-instant-lite-5k', 'Instant Lite $5K', '$5K', 'Instant Lite', 5, 3, null, null, 'Glissant sur le solde', 'Trailing', 79, null],
+    ['hantec-instant-lite-10k', 'Instant Lite $10K', '$10K', 'Instant Lite', 5, 3, null, null, 'Glissant sur le solde', 'Trailing', 129, null],
+    ['hantec-instant-lite-25k', 'Instant Lite $25K', '$25K', 'Instant Lite', 5, 3, null, null, 'Glissant sur le solde', 'Trailing', 239, null],
+    ['hantec-instant-lite-50k', 'Instant Lite $50K', '$50K', 'Instant Lite', 5, 3, null, null, 'Glissant sur le solde', 'Trailing', 369, null],
+    ['hantec-instant-lite-100k', 'Instant Lite $100K', '$100K', 'Instant Lite', 5, 3, null, null, 'Glissant sur le solde', 'Trailing', 699, null],
+    // Instant24 — 24 heures depuis le premier trade, perte journalière 2 %, global 3 %
+    ['hantec-instant24-2k', 'Instant24 $2K', '$2K', 'Instant 24h', 3, 2, null, null, 'Glissant sur le solde', 'Trailing', 13, null],
+    ['hantec-instant24-5k', 'Instant24 $5K', '$5K', 'Instant 24h', 3, 2, null, null, 'Glissant sur le solde', 'Trailing', 17, null],
+    ['hantec-instant24-10k', 'Instant24 $10K', '$10K', 'Instant 24h', 3, 2, null, null, 'Glissant sur le solde', 'Trailing', 38, null],
+    ['hantec-instant24-25k', 'Instant24 $25K', '$25K', 'Instant 24h', 3, 2, null, null, 'Glissant sur le solde', 'Trailing', 89, null],
+    ['hantec-instant24-50k', 'Instant24 $50K', '$50K', 'Instant 24h', 3, 2, null, null, 'Glissant sur le solde', 'Trailing', 190, null],
+    ['hantec-instant24-100k', 'Instant24 $100K', '$100K', 'Instant 24h', 3, 2, null, null, 'Glissant sur le solde', 'Trailing', 299, null],
+    // Endurance — 3 étapes à 6 %, journalière 4 %, global statique 8 %
+    ['hantec-endurance-5k', 'Endurance $5K', '$5K', '3 steps', 8, 4, 6, 6, 'Statique', 'Static', 29, null],
+    ['hantec-endurance-10k', 'Endurance $10K', '$10K', '3 steps', 8, 4, 6, 6, 'Statique', 'Static', 59, null],
+    ['hantec-endurance-25k', 'Endurance $25K', '$25K', '3 steps', 8, 4, 6, 6, 'Statique', 'Static', 109, null],
+    ['hantec-endurance-50k', 'Endurance $50K', '$50K', '3 steps', 8, 4, 6, 6, 'Statique', 'Static', 189, null],
+    ['hantec-endurance-100k', 'Endurance $100K', '$100K', '3 steps', 8, 4, 6, 6, 'Statique', 'Static', 299, null],
+    ['hantec-endurance-200k', 'Endurance $200K', '$200K', '3 steps', 8, 4, 6, 6, 'Statique', 'Static', 499, null],
+    // EnhancedX — 2 étapes 8 % puis 4 %, journalière 4 %, global statique 8 %
+    ['hantec-enhancedx-5k', 'EnhancedX $5K', '$5K', '2 steps', 8, 4, 8, 4, 'Statique', 'Static', 59, null],
+    ['hantec-enhancedx-10k', 'EnhancedX $10K', '$10K', '2 steps', 8, 4, 8, 4, 'Statique', 'Static', 99, null],
+    ['hantec-enhancedx-25k', 'EnhancedX $25K', '$25K', '2 steps', 8, 4, 8, 4, 'Statique', 'Static', 219, null],
+    ['hantec-enhancedx-50k', 'EnhancedX $50K', '$50K', '2 steps', 8, 4, 8, 4, 'Statique', 'Static', 359, null],
+    ['hantec-enhancedx-100k', 'EnhancedX $100K', '$100K', '2 steps', 8, 4, 8, 4, 'Statique', 'Static', 599, null],
+    ['hantec-enhancedx-200k', 'EnhancedX $200K', '$200K', '2 steps', 8, 4, 8, 4, 'Statique', 'Static', 1169, null],
+    // Enhanced — 2 étapes 10 % puis 5 %, journalière 5 %, global statique 10 %
+    ['hantec-enhanced-5k', 'Enhanced $5K', '$5K', '2 steps', 10, 5, 10, 5, 'Statique', 'Static', 59, null],
+    ['hantec-enhanced-10k', 'Enhanced $10K', '$10K', '2 steps', 10, 5, 10, 5, 'Statique', 'Static', 99, null],
+    ['hantec-enhanced-25k', 'Enhanced $25K', '$25K', '2 steps', 10, 5, 10, 5, 'Statique', 'Static', 219, null],
+    ['hantec-enhanced-50k', 'Enhanced $50K', '$50K', '2 steps', 10, 5, 10, 5, 'Statique', 'Static', 359, null],
+    ['hantec-enhanced-100k', 'Enhanced $100K', '$100K', '2 steps', 10, 5, 10, 5, 'Statique', 'Static', 599, null],
+    ['hantec-enhanced-200k', 'Enhanced $200K', '$200K', '2 steps', 10, 5, 10, 5, 'Statique', 'Static', 1169, null],
+    // Express — 1 étape à 10 %, journalière 5 %, global glissant 6 %
+    ['hantec-express-2k', 'Express $2K', '$2K', '1 step', 6, 5, 10, null, 'Glissant sur le solde', 'Trailing', 39, null],
+    ['hantec-express-5k', 'Express $5K', '$5K', '1 step', 6, 5, 10, null, 'Glissant sur le solde', 'Trailing', 59, null],
+    ['hantec-express-10k', 'Express $10K', '$10K', '1 step', 6, 5, 10, null, 'Glissant sur le solde', 'Trailing', 99, null],
+    ['hantec-express-25k', 'Express $25K', '$25K', '1 step', 6, 5, 10, null, 'Glissant sur le solde', 'Trailing', 199, null],
+    ['hantec-express-50k', 'Express $50K', '$50K', '1 step', 6, 5, 10, null, 'Glissant sur le solde', 'Trailing', 319, null],
+    ['hantec-express-100k', 'Express $100K', '$100K', '1 step', 6, 5, 10, null, 'Glissant sur le solde', 'Trailing', 529, null],
+    ['hantec-express-200k', 'Express $200K', '$200K', '1 step', 6, 5, 10, null, 'Glissant sur le solde', 'Trailing', 999, null],
+  ],
+  consistency: {
+    'Instant': 'Aucun objectif de profit, aucun jour minimum. Partage de 80 %, porté à 95 % avec l’add-on. Actualités restreintes dans les 3 minutes autour des annonces à fort impact, sauf add-on News Trading.',
+    'Instant Lite': '5 jours rentables par cycle de retrait. Aucun objectif de profit. Actualités restreintes dans les 3 minutes autour des annonces à fort impact, sauf add-on News Trading.',
+    'Instant 24h': 'Le compte vit 24 heures à partir du premier trade. Aucun objectif de profit. Seul programme où le trading d’actualités est libre.',
+    '1 step': 'Aucun jour minimum. Actualités libres pendant l’évaluation, restreintes une fois financé sauf add-on.',
+    '2 steps': 'Enhanced : 3 jours rentables par étape. EnhancedX : aucun jour minimum. Actualités libres pendant l’évaluation, restreintes une fois financé sauf add-on.',
+    '3 steps': '3 jours de trading par étape. Actualités libres pendant l’évaluation, restreintes une fois financé sauf add-on.',
+  },
+  riskUnit: 'percent',
+  // Cinq codes publics, tous conditionnels. NEW35 est le plus avantageux mais
+  // reserve aux nouveaux clients : la condition part dans discount_note, qui
+  // s affiche sous le prix. Les quatre autres vivent dans les regles.
+  promo: {
+    code: 'NEW35',
+    percent: 35,
+    note: 'Reserve aux nouveaux clients, sur le premier achat uniquement. Autres codes : INSTANT20 (20 % sur Instant Funding et Instant Lite), SAVE20, SAVE15 et SAVE10 selon la taille du compte.',
+    why: [
+      'Cinq codes publics fournis par la firme, tous conditionnels. NEW35 est le',
+      'plus avantageux mais ne vaut que pour un premier achat : la condition est',
+      'ecrite dans discount_note, affichee sous le prix. Sans elle, la page',
+      'promettrait 35 % a des clients existants qui ne les auront pas.',
+    ],
+  },
+  notes: [
+    'SOURCE. E-mail de Desiree Almeida, Partnership Manager de Hantec Trader, 3 septembre 2026. Source de première main : la firme décrit sa propre offre. Aucun recoupement de tiers n’a été nécessaire.',
+    'DEUX CORRECTIONS DEMANDEES PAR LA FIRME. Le partage affiché était faux : il est de 80 %, et non de 95 %, les 95 % nécessitant un add-on payant. Les règles d’actualités étaient également inexactes : elles varient par programme et par stade.',
+    'CODE PROMO. La firme fournit cinq codes publics, tous conditionnels : NEW35 (35 %, nouveaux clients uniquement, premier achat), INSTANT20 (20 % sur Instant Funding et Instant Lite), SAVE20 (20 % sur 2K/5K/10K Express, Enhanced, EnhancedX, Endurance), SAVE15 (15 % sur 25K/50K de ces mêmes programmes), SAVE10 (10 % sur 100K/200K). Aucun n’est propre à PropFirmScanner. NEW35 est écrit comme code principal avec sa condition en discount_note ; les autres figurent dans les règles.',
+    'discount_code valait « Axtpvm6z7 » à 5 % : un jeton technique, pas un code que le visiteur peut saisir. Remplacé.',
+    'LOGO. La firme a fourni ses logos officiels en pièce jointe. À enregistrer dans public/logos/hantec-trader.png puis mettre à jour logo_url, qui pointe encore sur une favicon Google.',
+    'PROGRAMME D’AFFILIATION. 10 % à 15 % selon le palier (Silver, Gold, Platinum), cookie de 30 jours, paiement à la demande dès 50 $. L’affiliate_url en base porte affiliateId=2766 ; à confirmer que c’est bien le tien dans le portail affilié.',
+    'LEVIER. Forex 1:50, indices et matières premières 1:15, métaux 1:10, crypto 1:1. Identique sur les sept programmes. Non stocké faute de colonne dédiée : figure dans key_rules.more.',
+    'PAYS RESTREINTS. 32 territoires, dont les États-Unis, l’Allemagne, la Belgique, l’Australie, la République tchèque et la Roumanie. Aucune colonne dédiée : l’essentiel figure dans cons et special_features.',
+  ],
+}
+
+export const ALL_FIRMS = [FTMO, THE5ERS, FUTURESELITE, HANTEC]
