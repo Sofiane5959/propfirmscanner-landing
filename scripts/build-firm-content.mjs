@@ -86,7 +86,7 @@ function build(firm) {
   L.push('-- 2. Colonnes necessaires (sans effet si elles existent deja)')
   for (const c of ['price_currency text default \'USD\'', 'data_verified_at timestamptz',
     'data_verified_by text', 'source_url text', 'rating_checked_at timestamptz',
-    'discount_status text', 'discount_starts_at timestamptz',
+    'discount_status text', 'discount_starts_at timestamptz', 'max_profit_split integer',
     'restricted_countries text[]']) {
     L.push(`alter table prop_firms add column if not exists ${c};`)
   }
@@ -139,8 +139,12 @@ function build(firm) {
   L.push('')
   L.push(`insert into prop_firm_challenges (${COLS.join(', ')}) values`)
   const rows = firm.challenges.map(c => {
-    const [slug, name, size, steps, maxDd, dailyDd, t1, t2, ddType, lossType, price, disc] = c
-    const split = firm.profitSplitPerChallenge ?? (firm.scalars.profit_split ?? null)
+    const [slug, name, size, steps, maxDd, dailyDd, t1, t2, ddType, lossType, price, disc, rowSplit] = c
+    // Le partage varie par programme chez plusieurs firmes : FTMO donne 90 %
+    // sur le 1-Step et 80 % sur le 2-Step, The5ers va de 50 % a 80 % selon le
+    // programme. Un 13e element facultatif porte cette valeur ; sinon on
+    // retombe sur le taux unique de la firme.
+    const split = rowSplit ?? firm.profitSplitPerChallenge ?? (firm.scalars.profit_split ?? null)
     const payout = firm.payout?.[slug] ?? null
     return '  (' + [
       'gen_random_uuid()', S(slug), S(name), S(firm.scalars.name), S(firm.slug), S(size), S(steps),
