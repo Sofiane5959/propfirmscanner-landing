@@ -9,8 +9,10 @@
 -- fin de fichier, avec la raison. C'est la regle du projet : ne jamais publier
 -- un chiffre non verifie contre la source officielle.
 --
--- PREREQUIS : database/earn2trade-data-fixes.sql (colonnes data_verified_at,
--- rating_checked_at, source_url, discount_status).
+-- PREREQUIS : database/shared-01-schema-provenance.sql, qui cree les colonnes
+-- utilisees ici (price_currency, data_verified_at, rating_checked_at,
+-- source_url, discount_status). Ce fichier ne contient que des donnees FTMO et
+-- The5ers, il ne depend d aucune autre firme.
 -- =============================================================================
 
 
@@ -19,18 +21,6 @@
 -- -----------------------------------------------------------------------------
 select * from prop_firms where slug in ('ftmo', 'the5ers');
 select * from prop_firm_challenges where firm_slug in ('ftmo', 'the5ers');
-
-
--- -----------------------------------------------------------------------------
--- ETAPE 1 — Colonne de devise
--- -----------------------------------------------------------------------------
--- FTMO facture en euros. Afficher 79 EUR comme "$79" est une erreur factuelle,
--- et convertir serait inventer un chiffre qui derive avec le taux. Le code sait
--- desormais afficher le bon symbole ; il lui faut la colonne.
-alter table prop_firms add column if not exists price_currency text default 'USD';
-
-comment on column prop_firms.price_currency is
-  'Devise de facturation de la firme. USD par defaut. Le rendu suit ce champ, aucune conversion n est faite.';
 
 
 -- =============================================================================
