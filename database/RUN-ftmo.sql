@@ -53,7 +53,7 @@ update prop_firms set
   included_items       = '["MetaTrader 4, MetaTrader 5 and cTrader","FTMO trading platform and metrics dashboard","Free retry after a failed Verification phase"]',
   pros                 = '["Operating since 2015, one of the longest records in the sector","No time limit on either the 1-Step or the 2-Step","The 1-Step has no minimum trading days","Best-day rule on the 1-Step is a condition to meet, not a breach","Swing account removes news and weekend restrictions once funded","Prices in euros, from 79 EUR"]',
   cons                 = '["Maximum funded capital is 200,000 USD, low against futures specialists","The 2-Step requires 4 trading days in each phase","Standard funded account restricts news trading and overnight holding","Swing is not available on the 1-Step","Profit split and scaling terms are not confirmed on the pages consulted"]',
-  special_features     = '["Two distinct products with genuinely different rules","1-Step: 3% daily loss and an end-of-day trailing drawdown","2-Step: 5% daily loss and a fixed drawdown","The best-day rule applies to the 1-Step only","No news, overnight or weekend restrictions during the evaluation"]',
+  special_features     = '["Two distinct products with genuinely different rules","1-Step: 3% daily loss and an end-of-day trailing drawdown","2-Step: 5% daily loss and a fixed drawdown","The best-day rule applies to the 1-Step only","No news, overnight or weekend restrictions during the evaluation","Payment by card, Apple Pay, Google Pay, PayPal, Revolut Pay, Skrill, bank transfer or crypto"]',
   verdict_card         = '{"title":"Pour qui, et pour qui pas","body":"FTMO vend deux produits qu''il faut distinguer avant d''acheter. Le 1-Step est plus souple sur le calendrier mais plus strict au quotidien ; le 2-Step est l''inverse.","points":["Le 1-Step convient si vous ne pouvez pas trader regulierement : aucun jour minimum","Le 2-Step convient si vous supportez mal une limite journaliere serree : 5 % contre 3 %","Evitez le 1-Step si un drawdown qui monte et ne redescend jamais vous gene","Evitez FTMO si vous visez plus de 200 000 $ de capital"]}',
   program_guide        = '{"title":"Deux produits, deux logiques","intro":"Les deux menent a un compte finance. La difference tient au calendrier et a la tolerance quotidienne.","options":[{"name":"1-Step","badge":"Une seule phase","summary":"Un objectif de 10 %, aucun jour minimum, mais une limite journaliere de 3 % et un drawdown qui suit vos plus hauts.","points":["Objectif 10 %","Perte journaliere 3 %","Drawdown glissant en fin de journee","Meilleur jour <= 50 % du profit des jours positifs"]},{"name":"2-Step","badge":"Deux phases","summary":"Objectif de 10 % puis 5 %, une limite journaliere plus large a 5 % et un drawdown fixe, contre 4 jours de trading minimum par phase.","points":["Objectif 10 % puis 5 %","Perte journaliere 5 %","Drawdown fixe","4 jours de trading minimum dans chaque phase"]}]}',
   key_rules            = '{"title":"Les regles qui decident","intro":"Trois points que la plupart des comparateurs rapportent mal.","rules":[{"title":"La perte journaliere differe selon le produit","detail":"3 % sur le 1-Step, 5 % sur le 2-Step. Plusieurs sites annoncent 5 % pour les deux : c''est faux."},{"title":"Le drawdown aussi","detail":"Le 1-Step utilise un drawdown glissant recalcule chaque jour a minuit : il monte avec votre plus haut solde de cloture et ne redescend jamais. Le 2-Step est en drawdown fixe."},{"title":"Depasser la regle du meilleur jour n''est pas une infraction","detail":"Sur le 1-Step, votre meilleure journee doit rester sous 50 % du profit des jours positifs. Au-dessus, vous continuez simplement a trader jusqu a repasser dessous. C''est une condition de validation, pas un couperet."},{"title":"Standard et Swing ne se distinguent que sur le compte finance","detail":"Pendant l''evaluation, aucune restriction sur les annonces macro ni sur les positions overnight ou week-end. Sur le compte finance, le Standard restreint les deux ; le Swing ne restreint rien. Swing n''existe pas sur le 1-Step."}],"more":["Aucune limite de temps sur les deux produits","Aucun jour minimum sur le 1-Step","4 jours de trading minimum par phase sur le 2-Step","Plateformes MT4, MT5 et cTrader","Prix affiches en euros"]}',
@@ -117,3 +117,16 @@ from prop_firm_challenges where firm_slug = 'ftmo' order by price;
 --
 -- FTMO FUTURES existe en beta avec ses propres regles. Ne pas melanger aux
 -- lignes ci-dessus.
+--
+-- FICHE D INTAKE. PropFirmScanner_FTMO_PREFILLED.xlsx porte 37 mentions TO
+-- VERIFY : profit split, objectifs, pertes, jours minimum, regle de
+-- regularite, frais de reset, remboursement, entite juridique, taux d
+-- affiliation. Elle est preremplie depuis les memes sources que le
+-- dossier, pas confirmee par FTMO. A leur envoyer telle quelle.
+--
+-- TRADINGVIEW. La fiche d intake le liste comme plateforme disponible, le
+-- dossier le donne "en cours d integration" en aout 2026. Conflit non
+-- resolu : non ecrit dans platforms.
+--
+-- CEO Otakar Suffner et les 78 pays restreints figurent dans la fiche mais
+-- proviennent de PropFirmMatch. Non ecrits.

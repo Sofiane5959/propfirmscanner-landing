@@ -65,6 +65,7 @@ const FTMO = {
       '2-Step: 5% daily loss and a fixed drawdown',
       'The best-day rule applies to the 1-Step only',
       'No news, overnight or weekend restrictions during the evaluation',
+      'Payment by card, Apple Pay, Google Pay, PayPal, Revolut Pay, Skrill, bank transfer or crypto',
     ],
   },
   json: {
@@ -144,6 +145,9 @@ const FTMO = {
     'CHIFFRES DECLARATIFS. 4,5 M de clients, 650 M$ de recompenses, 140 pays, 300 employes. Declarations de la firme sur elle-meme, publiables uniquement avec la mention "selon FTMO".',
     'FREQUENCE DES RETRAITS, FRAIS DE RESET, REMBOURSEMENT, ENTITE JURIDIQUE. Non trouves.',
     'FTMO FUTURES existe en beta avec ses propres regles. Ne pas melanger aux lignes ci-dessus.',
+    'FICHE D INTAKE. PropFirmScanner_FTMO_PREFILLED.xlsx porte 37 mentions TO VERIFY : profit split, objectifs, pertes, jours minimum, regle de regularite, frais de reset, remboursement, entite juridique, taux d affiliation. Elle est preremplie depuis les memes sources que le dossier, pas confirmee par FTMO. A leur envoyer telle quelle.',
+    'TRADINGVIEW. La fiche d intake le liste comme plateforme disponible, le dossier le donne "en cours d integration" en aout 2026. Conflit non resolu : non ecrit dans platforms.',
+    'CEO Otakar Suffner et les 78 pays restreints figurent dans la fiche mais proviennent de PropFirmMatch. Non ecrits.',
   ],
 }
 
@@ -293,13 +297,18 @@ const THE5ERS = {
     headquarters: 'Enstar House, 168 Praed Street, Londres W2 1RH, Royaume-Uni',
     country: 'United Kingdom', price_currency: 'USD', is_regulated: false,
     regulation_details: 'FIVE PERCENT ONLINE LTD, societe britannique n 12553363. Aucune licence de regulateur financier. Environnement de trading entierement simule, les fonds d evaluation sont fictifs.',
-    trustpilot_rating: 4.7, min_price: 249, max_allocation: '$4,000,000',
+    trustpilot_rating: 4.7, min_price: 22, max_price: 850,
+    // Deux plafonds a ne pas confondre : l allocation par trader est de
+    // 670 000 $, le plan de croissance peut mener a 4 M$ cumules.
+    max_allocation: '$670,000 par trader, jusqu a $4,000,000 via le plan de croissance',
     is_futures: false, drawdown_type: 'Varie selon le programme',
     time_limit: 'Aucune limite de temps',
+    payout_frequency: 'bi-weekly',
     source_url: 'https://the5ers.com/faqs/',
   },
   arrays: {
     platforms: ['MetaTrader 5', 'cTrader'],
+    assets: ['Forex CFD', 'Indices', 'Commodities', 'Crypto'],
     pros: [
       'En activite depuis 2016',
       'Capital finance maximum de 4 000 000 $, parmi les plus eleves',
@@ -324,12 +333,38 @@ const THE5ERS = {
   json: {
     verdict_card: {
       title: 'Pour qui, et pour qui pas',
-      body: "The5ers affiche le plus haut plafond de capital du comparatif, mais ferme le marche americain et ne publie les parametres complets que d'un seul de ses quatre programmes.",
+      body: "Quatre programmes tres differents, du Bootcamp a 22 $ au Hyper Growth a 850 $. Le point commun : les traders americains ne sont pas acceptes.",
       points: [
-        'Convient si vous visez un capital eleve a terme',
-        'Convient si vous etes hors des 31 territoires exclus',
+        'Convient si vous cherchez une entree tres bon marche : le Bootcamp demarre a 22 $',
+        'Convient si vous visez un capital eleve : la croissance peut mener a 4 M$',
         'Evitez si vous tradez depuis les Etats-Unis : la firme ne vous acceptera pas',
-        'Evitez si vous voulez comparer toutes les grilles avant d acheter',
+        'Evitez le Bootcamp si un stop-loss obligatoire sous 3 minutes vous gene',
+      ],
+    },
+    program_guide: {
+      title: 'Quatre chemins vers un compte finance',
+      intro: 'Ils ne se distinguent pas par le prix mais par la contrainte quotidienne.',
+      options: [
+        {
+          name: 'High Stakes Classic', badge: '2 etapes',
+          summary: "L offre principale : objectif 8 % puis 5 %, perte journaliere de 5 % calculee sur le plus eleve du solde ou de l equity, frais rembourses a la reussite.",
+          points: ['5K a 100K, de 39 a 545 $', 'Objectif 8 % puis 5 %', '3 jours rentables par phase', 'Frais rembourses a la reussite'],
+        },
+        {
+          name: 'Bootcamp', badge: 'Le moins cher',
+          summary: "Trois paliers de 20K a 250K, objectif de 6 % a chaque etape. En echange, un levier de 1:10 et un stop-loss obligatoire.",
+          points: ['A partir de 22 $', 'Objectif 6 % par palier', 'Levier 1:10 seulement', 'Stop-loss sous 3 minutes, risque 2 % maximum'],
+        },
+        {
+          name: 'Hyper Growth', badge: 'Une seule etape',
+          summary: "Aucun jour minimum, et une pause a 3 % qui verrouille le compte jusqu au lendemain au lieu de l eliminer. Le compte double a chaque palier de 10 %.",
+          points: ['5K a 20K, de 260 a 850 $', 'Aucun jour minimum', 'Pause journaliere, pas elimination', 'Le compte double a chaque 10 %'],
+        },
+        {
+          name: 'Pro Growth', badge: 'Une seule etape',
+          summary: 'Le meme format en une etape, nettement moins cher, contre 3 jours rentables exiges.',
+          points: ['5K a 50K, de 52 a 329 $', 'Objectif 10 %', '3 jours rentables', 'Prix remises sur plusieurs tailles'],
+        },
       ],
     },
     key_rules: {
@@ -350,20 +385,46 @@ const THE5ERS = {
       ],
     },
   },
+  // Quatre programmes plus le Summer Plan. Prix issus de la fiche d intake, qui
+  // recoupent le dossier sur deux sources tierces independantes.
   challenges: [
-    ['the5ers-summer-plan-1-step-100k', 'The5ers Summer Plan 1 Step 100K', '$100K', '1 step', 6, 3, 10, null, 'Statique', 'Static', 249, null],
+    // High Stakes Classic — 2 etapes. Objectif 8 % puis 5 %, perte journaliere
+    // 5 % calculee sur le plus eleve du solde ou de l equity en debut de jour.
+    ['the5ers-high-stakes-5k', 'High Stakes Classic $5K', '$5K', '2 steps', 10, 5, 8, 5, 'Statique', 'Static', 39, null],
+    ['the5ers-high-stakes-10k', 'High Stakes Classic $10K', '$10K', '2 steps', 10, 5, 8, 5, 'Statique', 'Static', 78, null],
+    ['the5ers-high-stakes-25k', 'High Stakes Classic $25K', '$25K', '2 steps', 10, 5, 8, 5, 'Statique', 'Static', 195, null],
+    ['the5ers-high-stakes-50k', 'High Stakes Classic $50K', '$50K', '2 steps', 10, 5, 8, 5, 'Statique', 'Static', 309, null],
+    ['the5ers-high-stakes-100k', 'High Stakes Classic $100K', '$100K', '2 steps', 10, 5, 8, 5, 'Statique', 'Static', 545, null],
+    // Bootcamp — 3 etapes, objectif 6 % a chaque palier, levier 1:10, stop-loss
+    // obligatoire dans les 3 minutes avec 2 % de risque maximum.
+    ['the5ers-bootcamp-20k', 'Bootcamp $20K', '$20K', '3 steps', 5, null, 6, 6, 'Statique', 'Static', 22, null],
+    ['the5ers-bootcamp-100k', 'Bootcamp $100K', '$100K', '3 steps', 5, null, 6, 6, 'Statique', 'Static', 95, null],
+    ['the5ers-bootcamp-250k', 'Bootcamp $250K', '$250K', '3 steps', 5, null, 6, 6, 'Statique', 'Static', 225, null],
+    // Hyper Growth — 1 etape. La pause a 3 % verrouille le compte jusqu au
+    // lendemain, elle ne l elimine pas. Stop-out a 6 %.
+    ['the5ers-hyper-growth-5k', 'Hyper Growth $5K', '$5K', '1 step', 6, 3, 10, null, 'Statique', 'Static', 260, null],
+    ['the5ers-hyper-growth-10k', 'Hyper Growth $10K', '$10K', '1 step', 6, 3, 10, null, 'Statique', 'Static', 450, null],
+    ['the5ers-hyper-growth-20k', 'Hyper Growth $20K', '$20K', '1 step', 6, 3, 10, null, 'Statique', 'Static', 850, null],
+    // Pro Growth — 1 etape, 3 jours rentables. Prix remises releves sur la fiche.
+    ['the5ers-pro-growth-5k', 'Pro Growth $5K', '$5K', '1 step', 6, 3, 10, null, 'Statique', 'Static', 52, 46.8],
+    ['the5ers-pro-growth-10k', 'Pro Growth $10K', '$10K', '1 step', 6, 3, 10, null, 'Statique', 'Static', 98, 88.2],
+    ['the5ers-pro-growth-20k', 'Pro Growth $20K', '$20K', '1 step', 6, 3, 10, null, 'Statique', 'Static', 189, null],
+    ['the5ers-pro-growth-50k', 'Pro Growth $50K', '$50K', '1 step', 6, 3, 10, null, 'Statique', 'Static', 329, 296.1],
+    // Summer Plan — le seul dont les parametres viennent du site officiel.
+    ['the5ers-summer-plan-100k', 'Summer Plan 1 Step $100K', '$100K', '1 step', 6, 3, 10, null, 'Statique', 'Static', 249, null],
   ],
   consistency: {
-    '1 step': 'Regularite 50 % par jour. Duree illimitee. 2 comptes actifs maximum.',
+    '1 step': 'Aucun jour minimum sur Hyper Growth ; 3 jours rentables sur Pro Growth. Duree illimitee. Scalping manuel autorise, tick scalping interdit.',
+    '2 steps': '3 jours rentables minimum par phase. Frais rembourses a la reussite de l evaluation. Aucun ordre 2 minutes avant ou apres une annonce a fort impact.',
+    '3 steps': 'Stop-loss obligatoire dans les 3 minutes, risque maximum 2 % par position. Levier 1:10, nettement plus bas que les autres programmes.',
   },
   payout: {
-    'the5ers-summer-plan-1-step-100k': 'Retrait minimum 250 $, plafond 2 000 $. Remboursement des frais a partir du 3e retrait. Bonus 10 %. Partage 75 %.',
+    'the5ers-summer-plan-100k': 'Retrait minimum 250 $, plafond 2 000 $. Remboursement des frais a partir du 3e retrait. Bonus 10 %. Partage 75 %.',
   },
-  profitSplitPerChallenge: 75,
   riskUnit: 'percent',
   notes: [
-    'TROIS PROGRAMMES SUR QUATRE NON PUBLIES. Growth / Hyper Growth, High Stakes Classic et Bootcamp : leurs regles et prix viennent de TheTrustedProp, une analyse concurrente, explicitement non confirmee sur le site officiel. Non ecrits.',
-    'min_price = 249. C est le seul prix officiellement source. Les entrees a 22 $ et 39 $ viennent de TheTrustedProp. Consequence : The5ers apparait plus chere qu elle ne l est. Verifier sur the5ers.com/high-stakes/ et /bootcamp/ puis completer.',
+    'PARTAGE DES PROFITS : profit_split reste NULL, et c est le trou le plus visible de cette fiche. La fiche d intake annonce "80% to 100%" sur High Stakes et TO VERIFY partout ailleurs ; seul le Summer Plan officiel donne un chiffre ferme, 75 %. Publier 80 ou 100 serait reprendre une fourchette non confirmee. C est LE champ a faire confirmer par The5ers en priorite : une firme sans partage affiche est illisible sur une page comparative.',
+    'ORIGINE DES PRIX ET DES REGLES. La fiche d intake PropFirmScanner_The5ers_PREFILLED.xlsx est preremplie depuis les memes sources tierces que le dossier, pas confirmee par la firme : elle porte encore 24 mentions TO VERIFY. Les prix des quatre programmes y recoupent toutefois le dossier sur deux sources independantes, ce qui les rend nettement plus surs que le reste.',
     'COMMISSIONS. TheTrustedProp donne forex et metaux 4 $/lot, indices 2 $/lot, crypto gratuit. PropFirmMatch dit l inverse : crypto 0,06 %/lot, indices gratuit. Incompatibles, rien n est ecrit.',
     'RETRAIT MINIMUM. 150 $ selon TheTrustedProp, 250 $ sur le plan officiel. Seul le 250 $ est ecrit.',
     'CHIFFRES DECLARATIFS. 262 000 traders finances, 171 employes, 80 M$ verses. Declarations de la firme, publiables uniquement avec la mention "selon The5ers".',
