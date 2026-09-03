@@ -66,7 +66,14 @@ const categories: Record<string, {
   'high-profit-split': {
     title: 'Prop Firms with Highest Profit Split',
     description: 'Prop trading firms offering the highest profit splits (80%+). Keep more of your trading profits.',
-    filter: (firm) => firm.profit_split && firm.profit_split >= 80,
+    // profit_split n'est renseignee que sur une poignee de firmes ; la
+    // colonne alimentee a la creation du catalogue est max_profit_split.
+    // Filtrer sur la premiere seule excluait 108 firmes qui offrent
+    // pourtant 80 % ou plus, et la page n'en listait que 24.
+    filter: (firm) => {
+      const split = firm.profit_split ?? firm.max_profit_split
+      return split != null && split >= 80
+    },
     keywords: ['highest profit split prop firm', '90% profit split', 'best payout prop firm'],
   },
   'cheapest': {
@@ -225,7 +232,9 @@ export default async function CategoryPage({ params }: Props) {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-400">Profit Split</span>
-                      <span className="text-emerald-400 font-medium">{firm.profit_split}%</span>
+                      <span className="text-emerald-400 font-medium">
+                        {firm.profit_split ?? firm.max_profit_split}%
+                      </span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-400">Platforms</span>
