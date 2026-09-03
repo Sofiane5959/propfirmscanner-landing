@@ -27,6 +27,7 @@ alter table prop_firms add column if not exists source_url text;
 alter table prop_firms add column if not exists rating_checked_at timestamptz;
 alter table prop_firms add column if not exists discount_status text;
 alter table prop_firms add column if not exists discount_starts_at timestamptz;
+alter table prop_firms add column if not exists restricted_countries text[];
 
 
 -- 3. La firme : identite, contenu editorial, listes
@@ -52,6 +53,7 @@ update prop_firms set
   platforms            = '["MetaTrader 4","MetaTrader 5"]',
   assets               = '{"Forex","Indices","Matières premières","Métaux","Crypto"}'::text[],
   payout_methods       = '{"Virement bancaire","Cryptomonnaie","Portefeuilles électroniques"}'::text[],
+  restricted_countries = '{"Afghanistan","Allemagne","Australie","Belgique","Congo (Brazzaville)","Congo (Kinshasa)","Corée du Nord","Égypte","États-Unis","Haïti","Iran","Israël","Jordanie","Kosovo","Laos","Libye","Malaisie","Myanmar","Ouzbékistan","Pakistan","Porto Rico","Qatar","République tchèque","Roumanie","Russie","Serbie","Somalie","Soudan du Sud","Taïwan","Thaïlande","Viêt Nam","Yémen"}'::text[],
   included_items       = '{"MetaTrader 4 et MetaTrader 5","Sept programmes, de l’instantané au trois étapes","Add-on 95 % de partage disponible sur six programmes"}'::text[],
   pros                 = '{"Sept programmes couvrant l’instantané, une, deux et trois étapes","Entrée à partir de 13 $ avec Instant24","Partage de 80 %, porté à 95 % avec l’add-on sur six programmes","Aucune limite de temps, sauf Instant24 par construction","Décision de retrait sous 24 heures ouvrées pour les demandes éligibles","Courtier partenaire identifié : Hantec Markets"}'::text[],
   cons                 = '{"Non régulée : société de trading propriétaire, pas un courtier","Les traders américains ne sont pas acceptés","32 territoires exclus, dont l’Allemagne, la Belgique et l’Australie","Le trading d’actualités est restreint par défaut, sauf Instant24","Le scalping peut entraîner un ajustement des profits au-delà d’un seuil","Levier limité à 1:1 sur la crypto"}'::text[],
@@ -66,16 +68,16 @@ update prop_firms set
 where slug = 'hantec-trader';
 
 
--- 3b. Code promo
--- Cinq codes publics fournis par la firme, tous conditionnels. NEW35 est le
--- plus avantageux mais ne vaut que pour un premier achat : la condition est
--- ecrite dans discount_note, affichee sous le prix. Sans elle, la page
--- promettrait 35 % a des clients existants qui ne les auront pas.
+-- 3b. Effacer le code promo existant
+-- La base portait discount_code = Axtpvm6z7 a 5 %. Ce n est pas un code que
+-- le visiteur peut saisir au checkout : c est un jeton technique. Efface.
+-- Aucun code ne le remplace : les cinq codes de la firme sont publics, sans
+-- attribution, et les publier inviterait a acheter hors du lien affilie.
+-- A remplacer des que Hantec fournit un code dedie a PropFirmScanner.
 update prop_firms set
-  discount_code    = 'NEW35',
-  discount_percent = 35,
-  discount_note    = 'Reserve aux nouveaux clients, sur le premier achat uniquement. Autres codes : INSTANT20 (20 % sur Instant Funding et Instant Lite), SAVE20, SAVE15 et SAVE10 selon la taille du compte.',
-  discount_status  = 'active'
+  discount_code    = null,
+  discount_percent = null,
+  discount_status  = 'none'
 where slug = 'hantec-trader';
 
 
@@ -160,13 +162,14 @@ from prop_firm_challenges where firm_slug = 'hantec-trader' order by price;
 -- Les règles d’actualités étaient également inexactes : elles varient par
 -- programme et par stade.
 --
--- CODE PROMO. La firme fournit cinq codes publics, tous conditionnels :
--- NEW35 (35 %, nouveaux clients uniquement, premier achat), INSTANT20 (20
--- % sur Instant Funding et Instant Lite), SAVE20 (20 % sur 2K/5K/10K
--- Express, Enhanced, EnhancedX, Endurance), SAVE15 (15 % sur 25K/50K de
--- ces mêmes programmes), SAVE10 (10 % sur 100K/200K). Aucun n’est propre à
--- PropFirmScanner. NEW35 est écrit comme code principal avec sa condition
--- en discount_note ; les autres figurent dans les règles.
+-- CODE PROMO : AUCUN AFFICHÉ, VOLONTAIREMENT. La firme fournit cinq codes
+-- publics et conditionnels — NEW35, INSTANT20, SAVE20, SAVE15, SAVE10.
+-- Aucun n’appartient à PropFirmScanner : n’importe qui les trouve
+-- ailleurs, ils ne portent aucune attribution, et les publier revient à
+-- inviter le visiteur à acheter sans passer par le lien affilié.
+-- discount_code et discount_percent restent nuls jusqu’à ce que Hantec
+-- fournisse un code dédié, comme FuturesElite l’a fait avec SCANNED. C’est
+-- la demande à adresser à Desiree Almeida.
 --
 -- discount_code valait « Axtpvm6z7 » à 5 % : un jeton technique, pas un
 -- code que le visiteur peut saisir. Remplacé.

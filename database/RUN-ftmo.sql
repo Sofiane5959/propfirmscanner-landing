@@ -27,6 +27,7 @@ alter table prop_firms add column if not exists source_url text;
 alter table prop_firms add column if not exists rating_checked_at timestamptz;
 alter table prop_firms add column if not exists discount_status text;
 alter table prop_firms add column if not exists discount_starts_at timestamptz;
+alter table prop_firms add column if not exists restricted_countries text[];
 
 
 -- 3. La firme : identite, contenu editorial, listes

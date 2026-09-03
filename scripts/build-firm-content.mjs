@@ -30,7 +30,7 @@ const N = (n) => n === null || n === undefined ? 'null' : String(n)
 // included_items, payout_methods et special_features sont de vrais tableaux
 // Postgres (text[]) ; platforms est du text simple que toArray() reparse cote
 // code ; les blocs editoriaux sont du jsonb.
-const TEXT_ARRAY = new Set(['assets', 'pros', 'cons', 'included_items', 'payout_methods', 'special_features'])
+const TEXT_ARRAY = new Set(['assets', 'pros', 'cons', 'included_items', 'payout_methods', 'special_features', 'restricted_countries'])
 const JSONB = new Set(['verdict_card', 'program_guide', 'key_rules', 'journey', 'cost_timeline', 'checkout_options', 'proof_stats', 'value_strip', 'education', 'translations'])
 
 /**
@@ -86,7 +86,8 @@ function build(firm) {
   L.push('-- 2. Colonnes necessaires (sans effet si elles existent deja)')
   for (const c of ['price_currency text default \'USD\'', 'data_verified_at timestamptz',
     'data_verified_by text', 'source_url text', 'rating_checked_at timestamptz',
-    'discount_status text', 'discount_starts_at timestamptz']) {
+    'discount_status text', 'discount_starts_at timestamptz',
+    'restricted_countries text[]']) {
     L.push(`alter table prop_firms add column if not exists ${c};`)
   }
   L.push('')
@@ -105,6 +106,17 @@ function build(firm) {
   L.push(sets.join(',\n'))
   L.push(`where slug = ${S(firm.slug)};`)
   L.push('')
+  if (firm.clearPromo) {
+    L.push('')
+    L.push('-- 3b. Effacer le code promo existant')
+    for (const line of firm.clearPromo) L.push('-- ' + line)
+    L.push('update prop_firms set')
+    L.push('  discount_code    = null,')
+    L.push('  discount_percent = null,')
+    L.push("  discount_status  = 'none'")
+    L.push(`where slug = ${S(firm.slug)};`)
+    L.push('')
+  }
   if (firm.promo) {
     L.push('')
     L.push('-- 3b. Code promo')

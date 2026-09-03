@@ -36,7 +36,11 @@ const COPY = {
     seeRules: 'See the key rules',
     onTrustpilot: 'on Trustpilot',
     ratingChecked: (d: string) => `· Trustpilot rating, read ${d}`,
-    verifiedOn: (d: string) => `Information verified on ${d} against Earn2Trade's own documents and help centre.`,
+    // Le nom de la firme est un parametre. Il etait code en dur, si bien que
+    // chaque fiche du site annonçait avoir ete verifiee « contre les documents
+    // d'Earn2Trade » — y compris les fiches de ses concurrents.
+    verifiedOn: (d: string, f: string) =>
+      `Information verified on ${d} against ${f}'s own documents and help centre.`,
     from: 'From',
     perMonth: '/month',
     // Never "applied automatically": the coupon is only certain at the moment
@@ -65,6 +69,7 @@ const COPY = {
     // "Limitations" reads as a warning label. These are trade-offs a buyer
     // should weigh, not defects — the wording and the colour should say so.
     limitations: 'Things to know',
+    restrictedCountries: (n: number) => `See the ${n} countries and territories not accepted`,
     seeAll: 'See all permissions and restrictions',
     fullSpecs: 'Full specifications, costs and platforms',
     platforms: 'Platforms',
@@ -91,7 +96,8 @@ const COPY = {
     seeRules: 'Voir les règles essentielles',
     onTrustpilot: 'sur Trustpilot',
     ratingChecked: (d: string) => `· note Trustpilot, relevée le ${d}`,
-    verifiedOn: (d: string) => `Informations vérifiées le ${d} à partir des documents et du centre d'aide officiels.`,
+    verifiedOn: (d: string, f: string) =>
+      `Informations vérifiées le ${d} à partir des documents et du centre d'aide officiels de ${f}.`,
     from: 'À partir de',
     perMonth: '/mois',
     codeAuto: (c: string) => `Code ${c} — prérempli au moment de la redirection`,
@@ -117,6 +123,7 @@ const COPY = {
       'Notre analyse indépendante à partir des règles et documents officiels vérifiés.',
     strengths: 'Points forts',
     limitations: 'Points à connaître',
+    restrictedCountries: (n: number) => `Voir les ${n} pays et territoires non acceptés`,
     seeAll: 'Voir toutes les autorisations et restrictions',
     fullSpecs: 'Spécifications complètes, coûts et plateformes',
     platforms: 'Plateformes',
@@ -431,6 +438,10 @@ export default function PropFirmPageClient({
   if (firm.reset_fee) policies.push({ icon: <RotateCcw className="w-4 h-4" />, title: 'Reset fee', body: firm.reset_fee })
   if (firm.swap_free) policies.push({ icon: <Layers className="w-4 h-4" />, title: 'Swap-free option', body: firm.swap_free })
 
+  const restrictedCountries = toArray(
+    (firm as { restricted_countries?: string[] | string | null }).restricted_countries
+  )
+
   const proofStats = firm.proof_stats?.filter((s) => s.value) ?? []
   const valueStrip = firm.value_strip?.filter((v) => v.title) ?? []
   const journey = firm.journey || null
@@ -534,7 +545,7 @@ export default function PropFirmPageClient({
             )}
 
             {verifiedText && (
-              <p className="text-gray-500 text-xs mb-3">{t.verifiedOn(verifiedText)}</p>
+              <p className="text-gray-500 text-xs mb-3">{t.verifiedOn(verifiedText, firm.name)}</p>
             )}
 
             <div className="flex flex-wrap gap-3 mb-4">
@@ -949,6 +960,27 @@ export default function PropFirmPageClient({
                       </li>
                     ))}
                   </ul>
+
+                  {/* La liste complète des pays exclus est longue et n'intéresse
+                      qu'une minorité de lecteurs — mais elle est décisive pour
+                      eux. Repliée sous les points à connaître plutôt qu'absente
+                      ou étalée. */}
+                  {restrictedCountries.length > 0 && (
+                    <div className="mt-4">
+                      <Disclosure summary={t.restrictedCountries(restrictedCountries.length)}>
+                        <ul className="flex flex-wrap gap-x-3 gap-y-1.5 pt-2">
+                          {restrictedCountries.map((country) => (
+                            <li
+                              key={country}
+                              className="text-gray-400 text-sm before:content-['·'] before:mr-3 before:text-gray-600 first:before:content-none first:before:mr-0"
+                            >
+                              {country}
+                            </li>
+                          ))}
+                        </ul>
+                      </Disclosure>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
