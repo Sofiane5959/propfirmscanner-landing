@@ -27,6 +27,7 @@ import ChallengeSelector, { hasUsableChallenges, type Challenge } from './Challe
 import { buildAffiliateUrl, AFFILIATE_LINK_PROPS } from '@/lib/affiliate'
 import { formatMoney, formatNumber, formatDayMonth, cleanMoneyLabel } from '@/lib/format'
 import { resolvePromotion } from '@/lib/promotion'
+import { toArray } from '@/lib/to-array'
 
 // UI copy. Firm content is translated in the DB via prop_firms.translations;
 // these are the labels the component owns.
@@ -154,15 +155,6 @@ const COPY = {
 
 // Several DB columns are typed TEXT but consumed as arrays. A string survives
 // every `.length` guard and then throws on `.map`, taking the page down.
-function toArray(value: unknown): string[] {
-  if (Array.isArray(value)) {
-    return value.filter((v): v is string => typeof v === 'string' && v.trim().length > 0)
-  }
-  if (typeof value === 'string' && value.trim()) {
-    return value.split(/[,;]/).map((s) => s.trim()).filter(Boolean)
-  }
-  return []
-}
 
 function formatPayoutSpeed(firm: PropFirm): string | null {
   if (firm.payout_speed_label) return firm.payout_speed_label

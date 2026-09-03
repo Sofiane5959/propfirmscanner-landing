@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useAuth } from '@/providers/AuthProvider';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Star, ArrowLeft, Loader2, ExternalLink, Trash2, BarChart3, TrendingUp } from 'lucide-react';
+import { toArray } from '@/lib/to-array'
 
 const locales = ['en', 'fr', 'de', 'es', 'pt', 'ar', 'hi'] as const;
 type Locale = (typeof locales)[number];
@@ -257,7 +258,7 @@ export default function FavoritesPage() {
                             <TrendingUp className="w-3 h-3" /> Up to {firm.max_profit_split}%
                           </span>
                         )}
-                        {firm.challenge_types && firm.challenge_types.slice(0, 3).map((t) => (
+                        {toArray(firm.challenge_types).slice(0, 3).map((t) => (
                           <span key={t} className="text-xs bg-gray-800 text-gray-400 px-1.5 py-0.5 rounded">
                             {t.replace('_Steps', '-Step').replace('_', ' ')}
                           </span>

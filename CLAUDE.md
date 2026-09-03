@@ -7,10 +7,35 @@ Déploiement Vercel via GitHub Desktop — pas de git en ligne de commande.
 ## Pièges connus
 
 - `platforms` et `challenge_types` sont typées TEXT en Postgres mais déclarées
-  `string[]` en TypeScript. Toujours passer par `toArray()`. TypeScript ne voit
-  rien, l'erreur n'apparaît qu'au runtime sur `.map()` ou `.forEach()`. Ce
-  mismatch a mis `/compare` hors service deux fois en août 2026. Consommateurs :
-  PropFirmPageClient, ChallengeSelector, ComparePageClient, PropFirmCard.
+  `string[]` en TypeScript. Toujours importer `toArray` depuis
+  `lib/to-array.ts`. TypeScript ne voit rien, l'erreur n'apparaît qu'au runtime
+  sur `.map()` ou `.forEach()`. Ce mismatch a mis `/compare` hors service deux
+  fois en août 2026, puis a fait échouer le build de production le 3 septembre
+  2026 sur les 21 pages `/compare/ftmo-vs-*`.
+
+  La cause de la troisième panne : `toArray` était recopiée à l'identique dans
+  quatre fichiers et exportée d'aucun, donc les consommateurs qui en avaient
+  besoin n'avaient rien à importer. Elle vit maintenant dans `lib/to-array.ts`
+  et accepte les quatre formats présents en base : tableau, liste à virgules,
+  JSON dans une colonne TEXT, littéral `{a,b}`.
+
+  Consommateurs : PropFirmPageClient, ChallengeSelector, ComparePageClient,
+  `components/compare/PropFirmCard.tsx` **et** `components/PropFirmCard.tsx`
+  (deux fichiers distincts), `app/[locale]/compare/[slug]/page.tsx`,
+  `app/[locale]/best-for/[category]/page.tsx`,
+  `app/[locale]/dashboard/favorites/page.tsx`.
+
+- `scripts/build-firm-content.mjs` écrit `platforms` en liste séparée par des
+  virgules, jamais en JSON. Du JSON dans cette colonne TEXT affichait des
+  puces « MetaTrader 4" » et « ["MetaTrader 4 » sur les fiches.
+
+- `profit_split` n'est renseignée que sur une poignée de firmes ; la colonne
+  alimentée pour tout le catalogue est `max_profit_split` (119 firmes ont la
+  seconde sans la première). Tout filtre ou affichage doit lire
+  `profit_split ?? max_profit_split`. Un filtre sur `profit_split` seule ne
+  listait que 24 firmes sur `/best-for/high-profit-split` au lieu de 132.
+  Ne jamais recopier l'une dans l'autre : « jusqu'à 90 % » ne dit pas où la
+  firme commence.
 - `prop_firm_challenges.id` n'a pas de valeur par défaut. Tout INSERT doit
   fournir `gen_random_uuid()`.
 - Supabase renvoie `any`. Annoter explicitement les callbacks de `.map()` et

@@ -52,7 +52,7 @@ update prop_firms set
   payout_frequency     = 'on-request',
   source_url           = 'https://htrader.hmarkets.com/',
   logo_url             = '/logos/hantec-trader.png',
-  platforms            = '["MetaTrader 4","MetaTrader 5"]',
+  platforms            = 'MetaTrader 4, MetaTrader 5',
   assets               = '{"Forex","Indices","Matières premières","Métaux","Crypto"}'::text[],
   payout_methods       = '{"Virement bancaire","Cryptomonnaie","Portefeuilles électroniques"}'::text[],
   restricted_countries = '{"Afghanistan","Allemagne","Australie","Belgique","Congo (Brazzaville)","Congo (Kinshasa)","Corée du Nord","Égypte","États-Unis","Haïti","Iran","Israël","Jordanie","Kosovo","Laos","Libye","Malaisie","Myanmar","Ouzbékistan","Pakistan","Porto Rico","Qatar","République tchèque","Roumanie","Russie","Serbie","Somalie","Soudan du Sud","Taïwan","Thaïlande","Viêt Nam","Yémen"}'::text[],

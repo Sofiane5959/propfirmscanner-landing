@@ -548,6 +548,7 @@ import {
   Banknote, Upload, ImageIcon, Sparkles
 } from 'lucide-react'
 import { PriceAlertButton } from '@/components/PriceAlert'
+import { toArray } from '@/lib/to-array'
 
 // =====================================================
 // TYPES
@@ -736,15 +737,6 @@ function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T | ((pre
 // as string[] on the PropFirm interface. A string passes every `.length` guard
 // and then throws on `.forEach` / `.map`, which takes the entire page down and
 // is invisible at build time. Every firm is normalised once in processedFirms.
-const toArray = (value: unknown): string[] => {
-  if (Array.isArray(value)) {
-    return value.filter((v): v is string => typeof v === 'string' && v.trim().length > 0)
-  }
-  if (typeof value === 'string' && value.trim()) {
-    return value.split(/[,;]/).map(x => x.trim()).filter(Boolean)
-  }
-  return []
-}
 
 const normalizeFirmArrays = (firm: PropFirm): PropFirm => {
   const listCol = toArray((firm as { platforms_list?: unknown }).platforms_list)

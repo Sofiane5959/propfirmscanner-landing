@@ -2,6 +2,7 @@
 
 import type { PropFirm } from '@/types'
 import { ExternalLink, MapPin, Shield } from 'lucide-react'
+import { toArray } from '@/lib/to-array'
 
 interface PropFirmCardProps {
   firm: PropFirm
@@ -11,15 +12,6 @@ interface PropFirmCardProps {
 // Several DB columns (platforms, challenge_types) are typed TEXT but consumed
 // here as arrays. Calling .map() on a string throws and takes the whole page
 // down, so every list field goes through this first.
-function toArray(value: unknown): string[] {
-  if (Array.isArray(value)) {
-    return value.filter((v): v is string => typeof v === 'string' && v.trim().length > 0)
-  }
-  if (typeof value === 'string' && value.trim()) {
-    return value.split(/[,;]/).map((s) => s.trim()).filter(Boolean)
-  }
-  return []
-}
 
 // Platform logos as SVG components with better visuals
 const PlatformLogo = ({ platform, size = 'sm' }: { platform: string; size?: 'sm' | 'md' }) => {

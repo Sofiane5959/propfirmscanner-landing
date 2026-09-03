@@ -51,7 +51,7 @@ update prop_firms set
   time_limit           = 'Aucune limite de temps, sur les deux produits',
   payout_frequency     = 'sur demande, au plus tôt 14 jours après le premier trade',
   source_url           = 'https://ftmo.com/en/trading-objectives/',
-  platforms            = '["MetaTrader 4","MetaTrader 5","cTrader","TradingView"]',
+  platforms            = 'MetaTrader 4, MetaTrader 5, cTrader, TradingView',
   assets               = '{"CFD sur forex","Métaux","Indices","Énergie","Crypto","Matières premières","CFD sur actions"}'::text[],
   payout_methods       = '{"Virement bancaire","Autres moyens affichés dans l’espace client, selon disponibilité"}'::text[],
   included_items       = '{"MetaTrader 4, MetaTrader 5, cTrader et TradingView","Tableau de bord FTMO et métriques de performance","Aucun frais d’activation du compte financé"}'::text[],

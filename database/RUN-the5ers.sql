@@ -51,7 +51,7 @@ update prop_firms set
   time_limit           = 'Aucune limite de temps, mais un compte resté 30 jours sans trade expire',
   payout_frequency     = 'tous les 14 jours, après validation',
   source_url           = 'https://the5ers.com/challenge-programs-bootcamp-high-stakes-hyper-growth-explained/',
-  platforms            = '["MetaTrader 5"]',
+  platforms            = 'MetaTrader 5',
   assets               = '{"CFD sur forex","Indices","Métaux","Matières premières","Crypto"}'::text[],
   payout_methods       = '{"Moyens affichés dans le Hub The5ers, variables selon le compte"}'::text[],
   restricted_countries = '{"Afghanistan","Biélorussie","Bosnie-Herzégovine","Burundi","Congo (Brazzaville)","Congo (Kinshasa)","Corée du Nord","Crimée","Cuba","Érythrée","Guinée","Guinée-Bissau","Irak","Iran","Israël","Laos","Liban","Liberia","Libye","Myanmar","Papouasie-Nouvelle-Guinée","République centrafricaine","Russie","Somalie","Soudan","Soudan du Sud","Syrie","Territoires palestiniens","Vanuatu","Venezuela","Yémen"}'::text[],

@@ -47,8 +47,16 @@ const pgArray = (v) =>
 function listLiteral(col, v) {
   if (TEXT_ARRAY.has(col)) return pgArray(v)
   if (JSONB.has(col)) return J(v) + '::jsonb'
-  // colonne text : on y ecrit du JSON, que toArray() reparse
-  return J(v)
+  // Colonne TEXT simple (platforms, challenge_types). On y ecrit une liste
+  // separee par des virgules, PAS du JSON.
+  //
+  // La version precedente y ecrivait du JSON. lib/to-array.ts sait desormais
+  // le relire, mais avant le 3 septembre 2026 il ne savait que decouper sur
+  // les virgules : les puces affichaient « MetaTrader 4" » et « ["MetaTrader 4 »
+  // sur FTMO, The5ers et Hantec Trader, guillemets et crochets compris.
+  // Une virgule dans un nom de plateforme casserait ce format ; aucun n en
+  // contient, et l alternative (du JSON) a deja coute une panne.
+  return S(v.join(', '))
 }
 
 // -----------------------------------------------------------------------------

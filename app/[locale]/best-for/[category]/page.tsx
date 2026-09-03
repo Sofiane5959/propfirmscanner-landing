@@ -4,6 +4,7 @@ import { createClient } from '@supabase/supabase-js'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { Star, ArrowRight, DollarSign, ExternalLink, Check, Filter } from 'lucide-react'
+import { toArray } from '@/lib/to-array'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -12,15 +13,6 @@ const supabase = createClient(supabaseUrl, supabaseKey)
 // Helper: accepts string ("MT5, MT4") OR array (["MT5", "MT4"]) OR null,
 // always returns a clean array of trimmed non-empty strings.
 // Used to safely handle DB columns that are stored as TEXT but treated as arrays in the frontend.
-function toArray(value: unknown): string[] {
-  if (Array.isArray(value)) {
-    return value.filter((v): v is string => typeof v === 'string' && v.trim().length > 0)
-  }
-  if (typeof value === 'string' && value.trim()) {
-    return value.split(/[,;]/).map((s) => s.trim()).filter(Boolean)
-  }
-  return []
-}
 
 interface Props {
   params: { category: string; locale: string }

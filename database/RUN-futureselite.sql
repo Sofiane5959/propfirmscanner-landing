@@ -50,7 +50,7 @@ update prop_firms set
   time_limit           = 'Aucune limite de temps',
   payout_frequency     = 'on-demand',
   source_url           = 'https://futureselite.com',
-  platforms            = '["Tradovate","NinjaTrader","Quantower","ATAS","Volumetrica","DeepCharts","WealthCharts"]',
+  platforms            = 'Tradovate, NinjaTrader, Quantower, ATAS, Volumetrica, DeepCharts, WealthCharts',
   assets               = '{"Futures"}'::text[],
   included_items       = '{"Journal de trading et tableau de bord analytique","Aucun frais d’activation du compte financé","Sept plateformes au choix"}'::text[],
   pros                 = '{"Partage des profits à 90 % sur le programme Elite","Drawdown de fin de journée, sans aucune limite de perte journalière","Aucune règle de régularité une fois financé","Aucun frais d’activation pour débloquer le compte financé","Retrait possible chaque jour une fois financé","Remises par lot : le cinquième compte est offert"}'::text[],

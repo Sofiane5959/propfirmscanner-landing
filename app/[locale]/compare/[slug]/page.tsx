@@ -10,6 +10,7 @@ import {
   Target, Shield, Zap, Calendar, Percent,
   Award, ChevronRight
 } from 'lucide-react'
+import { toArray } from '@/lib/to-array'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -436,13 +437,13 @@ export default async function ComparePage({ params }: Props) {
                   {firms.map((firm, i) => (
                     <td key={i} className="p-4">
                       <div className="flex flex-wrap justify-center gap-1">
-                        {(firm.platforms || []).slice(0, 4).map(p => (
+                        {toArray(firm.platforms).slice(0, 4).map(p => (
                           <span key={p} className="px-2 py-0.5 bg-gray-700 text-gray-300 text-xs rounded">
                             {p}
                           </span>
                         ))}
-                        {(firm.platforms || []).length > 4 && (
-                          <span className="text-xs text-gray-500">+{firm.platforms.length - 4}</span>
+                        {toArray(firm.platforms).length > 4 && (
+                          <span className="text-xs text-gray-500">+{toArray(firm.platforms).length - 4}</span>
                         )}
                       </div>
                     </td>

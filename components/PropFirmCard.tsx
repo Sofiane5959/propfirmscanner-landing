@@ -6,6 +6,7 @@ import {
   TrendingDown, Bot, Newspaper, Calendar,
   Clock, AlertTriangle, XCircle
 } from 'lucide-react'
+import { toArray } from '@/lib/to-array'
 
 // =====================================================
 // TRUST BADGE COMPONENT (intégré)
@@ -300,16 +301,16 @@ export function PropFirmCard({ firm, compact = false }: PropFirmCardProps) {
         </div>
 
         {/* Platforms & Markets */}
-        {firm.platforms && firm.platforms.length > 0 && (
+        {toArray(firm.platforms).length > 0 && (
           <div className="flex flex-wrap gap-1 mb-4">
-            {firm.platforms.slice(0, 4).map(platform => (
+            {toArray(firm.platforms).slice(0, 4).map(platform => (
               <span key={platform} className="px-2 py-0.5 bg-gray-700 text-gray-300 text-xs rounded">
                 {platform}
               </span>
             ))}
-            {firm.platforms.length > 4 && (
+            {toArray(firm.platforms).length > 4 && (
               <span className="px-2 py-0.5 bg-gray-700 text-gray-400 text-xs rounded">
-                +{firm.platforms.length - 4}
+                +{toArray(firm.platforms).length - 4}
               </span>
             )}
           </div>
