@@ -51,6 +51,20 @@ update prop_firms set
   drawdown_type      = 'Varie selon le produit : glissant (1-Step) ou fixe (2-Step)',
   time_limit         = 'Aucune limite de temps, sur les deux produits',
   min_price          = 79,
+  max_price          = 599,
+  country            = 'Czech Republic',
+  max_allocation     = '$200,000',
+  -- Colonnes tableau : stockees en JSON texte, comme le reste de la table.
+  -- TradingView est volontairement absent : le dossier dit "en cours
+  -- d integration", donc pas disponible aujourd hui.
+  platforms          = '["MetaTrader 4","MetaTrader 5","cTrader"]',
+  assets             = '["Forex CFD","Metals","Indices","Energy","Crypto","Commodities","Stocks"]',
+  payout_methods     = '["Bank transfer","Crypto","Skrill","Mastercard","Visa Direct"]',
+  -- La distinction Standard / Swing est officielle et souvent mal rapportee :
+  -- pendant l evaluation aucune restriction, quel que soit le type de compte.
+  -- C est sur le compte finance que Standard restreint, et Swing n existe pas
+  -- sur le 1-Step.
+  special_features   = '["No time limit on either product","During the evaluation there are no news, overnight or weekend restrictions","Funded Standard account: news trading and overnight or weekend holding are restricted","Funded Swing account: none of those restrictions, 2-Step only","The best-day rule applies to the 1-Step only, and breaching it is not a failure"]',
   updated_at         = now()
 where slug = 'ftmo';
 
@@ -157,6 +171,14 @@ update prop_firms set
   source_url         = 'https://the5ers.com/faqs/',
   drawdown_type      = 'Varie selon le programme',
   time_limit         = 'Aucune limite de temps',
+  country            = 'United Kingdom',
+  max_allocation     = '$4,000,000',
+  platforms          = '["MetaTrader 5","cTrader"]',
+  -- Liste officielle de 31 territoires interdits. Il n existe pas de colonne
+  -- dediee, or l exclusion des Etats-Unis est le filtre le plus decisif pour un
+  -- acheteur : elle ferme l un des plus gros marches. Elle figure donc ici, et
+  -- la liste complete merite sa propre colonne.
+  special_features   = '["US traders are not accepted","Simulated trading environment: evaluation funds are not real capital","Part of the 5% Group, alongside Trade The Pool, Trade Delicious, TSG Brokers and The5ers Futures","Maximum funded capital $4,000,000","31 restricted territories, including the United States and Israel"]',
   updated_at         = now()
 where slug = 'the5ers';
 
