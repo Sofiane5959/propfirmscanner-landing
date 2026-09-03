@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
+import FirmLogo from '@/components/FirmLogo'
 import Link from 'next/link'
 import {
   Star,
@@ -485,18 +485,9 @@ export default function PropFirmPageClient({
                     a transparent background: on a dark tile they render as an
                     empty square. Every other logo tile on the site (compare,
                     best-for, dashboard, admin, PromoTicker) is already white —
-                    this one was the outlier.
-
-                    sizes="56px": the box is 56px square. Without it, `fill`
-                    defaults to 100vw and the browser downloads a full-width
-                    source to draw a thumbnail. */}
-                {logoUrl ? (
-                  <Image src={logoUrl} alt={firm.name} fill sizes="56px" className="object-contain p-2" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-emerald-500/10 text-emerald-400 text-xl font-bold">
-                    {firm.name.charAt(0).toUpperCase()}
-                  </div>
-                )}
+                    this one was the outlier. FirmLogo also falls back to a
+                    monogram when the remote logo fails to load. */}
+                <FirmLogo src={logoUrl} name={firm.name} size={56} className="text-xl" />
               </a>
               <div className="flex-1 min-w-0">
                 <p className="text-white font-semibold">{firm.name}</p>
@@ -1173,13 +1164,7 @@ export default function PropFirmPageClient({
                   className="flex items-center gap-3 p-4 bg-gray-900/50 border border-gray-800 rounded-xl hover:border-emerald-500/30 transition-colors"
                 >
                   <div className="relative w-10 h-10 bg-white border border-gray-200 rounded-lg overflow-hidden flex-shrink-0">
-                    {sf.logo_url ? (
-                      <Image src={sf.logo_url} alt={sf.name} fill sizes="40px" className="object-contain p-1" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-emerald-400 font-bold">
-                        {sf.name.charAt(0)}
-                      </div>
-                    )}
+                    <FirmLogo src={sf.logo_url} name={sf.name} size={40} padding="p-1" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-white font-medium truncate">{sf.name}</p>

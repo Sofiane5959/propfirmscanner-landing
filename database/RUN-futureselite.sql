@@ -42,6 +42,7 @@ update prop_firms set
   is_regulated         = false,
   regulation_details   = 'Quantum SRL, Corso G. Matteotti 61, Latina 04100, Italie, n° 03095010595. Aucune licence de régulateur financier. Comptes de démonstration, performances hypothétiques.',
   profit_split         = 90,
+  max_profit_split     = 90,
   min_price            = 95,
   max_price            = 353,
   is_futures           = true,

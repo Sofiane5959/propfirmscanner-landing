@@ -293,6 +293,11 @@ export const FUTURESELITE = {
     regulation_details:
       'Quantum SRL, Corso G. Matteotti 61, Latina 04100, Italie, n° 03095010595. Aucune licence de régulateur financier. Comptes de démonstration, performances hypothétiques.',
     profit_split: 90,
+    // Ecrit explicitement : la valeur de seed valait 80, soit MOINS que le
+    // taux de base corrige a 90. Le tableau /compare affichait donc un
+    // maximum inferieur au taux courant. FuturesElite ne documente pas de
+    // palier au-dessus de 90 : max = base.
+    max_profit_split: 90,
     min_price: 95,
     max_price: 353,
     is_futures: true,
