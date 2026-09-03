@@ -41,6 +41,7 @@ update prop_firms set
   is_regulated         = false,
   regulation_details   = 'Hantec Trader Limited, société mauricienne n° C191400. Non régulée : société de trading propriétaire. Courtier partenaire : Hantec Markets Limited / Hantec Markets Mauritius.',
   profit_split         = 80,
+  max_profit_split     = 95,
   min_price            = 13,
   max_price            = 2139,
   is_futures           = false,

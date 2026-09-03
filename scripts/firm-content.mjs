@@ -600,6 +600,10 @@ export const HANTEC = {
     regulation_details:
       'Hantec Trader Limited, société mauricienne n° C191400. Non régulée : société de trading propriétaire. Courtier partenaire : Hantec Markets Limited / Hantec Markets Mauritius.',
     profit_split: 80,
+    // 95 % avec l'add-on « 95% Reward Share ». La FAQ distingue desormais le
+    // taux standard du maximum ; sans max_profit_split elle annoncerait
+    // « jusqu'a 80 % », ce que la firme nous a signale comme faux.
+    max_profit_split: 95,
     min_price: 13,
     max_price: 2139,
     is_futures: false,

@@ -1307,15 +1307,25 @@ function generateFAQs(
   }
 
   // --- Profit split ------------------------------------------------------
-  if (firm.max_profit_split || firm.profit_split) {
-    const split = firm.max_profit_split || firm.profit_split
+  // « jusqu'a X % » presentait le taux standard comme un plafond. Hantec Trader
+  // nous l'a signale : 80 % est leur base, 95 % le maximum avec un add-on
+  // payant. Annoncer « jusqu'a 80 % » sous-vendait la firme et decrivait mal
+  // l'offre. Quand les deux valeurs different, on les distingue.
+  if (firm.profit_split || firm.max_profit_split) {
+    const base = firm.profit_split
+    const max = firm.max_profit_split
+    const tiered = base && max && max > base
     faqs.push({
       question: fr
         ? `Quel partage des profits propose ${n} ?`
         : `What profit split does ${n} offer?`,
-      answer: fr
-        ? `${n} propose un partage des profits allant jusqu’à ${split} %. Le taux exact dépend du programme et, chez certaines firmes, du montant de chaque retrait — le configurateur affiche le chiffre correspondant à votre sélection.`
-        : `${n} offers profit splits up to ${split}%. The exact split depends on the program and, at some firms, on the size of each withdrawal — the configurator shows the figure for your selection.`,
+      answer: tiered
+        ? fr
+          ? `${n} applique un partage de ${base} % en standard, qui peut monter jusqu’à ${max} %. Les conditions du taux supérieur — programme, palier ou option payante — sont détaillées dans les règles de cette page.`
+          : `${n} pays a ${base}% profit split as standard, rising to ${max}%. What unlocks the higher rate — the programme, a scaling tier or a paid add-on — is set out in the rules on this page.`
+        : fr
+          ? `${n} applique un partage des profits de ${base || max} %. Le configurateur affiche le taux correspondant à votre sélection.`
+          : `${n} pays a ${base || max}% profit split. The configurator shows the rate for your selection.`,
     })
   }
 
@@ -1329,9 +1339,13 @@ function generateFAQs(
       question: fr
         ? `${n} autorise-t-il le scalping et le trading des actualités ?`
         : `Does ${n} allow scalping and news trading?`,
+      // La version precedente affirmait que « les comptes a financement
+      // immediat et a fort levier sont generalement les plus restreints ».
+      // Cette phrase ne venait d'aucune donnee : c'etait une generalisation
+      // codee en dur, servie a l'identique pour les 350 firmes. Retiree.
       answer: fr
-        ? `${n} autorise ${permissions.join(', ')} sur certains programmes, mais pas tous — les comptes à financement immédiat et à fort levier sont généralement les plus restreints. Vérifiez le programme exact dans le configurateur avant d’acheter.`
-        : `${n} allows ${permissions.join(', ')} on some of their programs, but not all — instant-funding and high-leverage accounts are usually the most restricted. Check the exact program in the configurator before purchasing.`,
+        ? `${n} autorise ${permissions.join(', ')}. Les conditions varient selon le programme et selon le stade — évaluation ou compte financé. Le détail applicable figure dans les règles de cette page et dans le configurateur.`
+        : `${n} allows ${permissions.join(', ')}. The conditions vary by programme and by stage — evaluation or funded account. What applies where is set out in the rules on this page and in the configurator.`,
     })
   }
 
