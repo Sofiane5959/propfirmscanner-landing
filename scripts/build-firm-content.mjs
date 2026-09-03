@@ -542,7 +542,7 @@ function build(firm) {
   L.push('       (verdict_card is not null) as a_un_verdict,')
   L.push('       (key_rules is not null) as a_des_regles,')
   L.push('       (journey is not null) as a_un_parcours,')
-  L.push('       jsonb_array_length(pros) as nb_pros')
+  L.push('       cardinality(pros) as nb_pros')
   L.push(`from prop_firms where slug = ${S(firm.slug)};`)
   L.push('')
   L.push(`-- Attendu : ${firm.challenges.length} ligne(s).`)

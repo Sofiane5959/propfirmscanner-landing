@@ -84,7 +84,7 @@ select slug, name, min_price, price_currency, profit_split, is_futures,
        (verdict_card is not null) as a_un_verdict,
        (key_rules is not null) as a_des_regles,
        (journey is not null) as a_un_parcours,
-       jsonb_array_length(pros) as nb_pros
+       cardinality(pros) as nb_pros
 from prop_firms where slug = 'futureselite';
 
 -- Attendu : 4 ligne(s).

@@ -71,12 +71,13 @@ set proof_stats = (
     )
 where slug = 'earn2trade' and proof_stats::text ilike '%2025%';
 
+-- pros est un text[], pas du jsonb : array_remove/unnest, pas jsonb_agg.
 update prop_firms
 set pros = (
-      select coalesce(jsonb_agg(e), '[]'::jsonb) from jsonb_array_elements(pros) e
-      where e::text not ilike '%traders funded in 2025%'
+      select coalesce(array_agg(e), '{}'::text[]) from unnest(pros) e
+      where e not ilike '%traders funded in 2025%'
     )
-where slug = 'earn2trade' and pros::text ilike '%traders funded in 2025%';
+where slug = 'earn2trade' and array_to_string(pros, ' ') ilike '%traders funded in 2025%';
 
 -- 5d. Logo officiel local
 -- logo_url pointait sur https://www.google.com/s2/favicons?domain=earn2trade.com&sz=128
