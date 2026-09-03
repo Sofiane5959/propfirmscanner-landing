@@ -23,6 +23,33 @@ const J = (o) => "'" + JSON.stringify(o).replace(/'/g, "''") + "'"
 const S = (s) => s === null || s === undefined ? 'null' : "'" + String(s).replace(/'/g, "''") + "'"
 const N = (n) => n === null || n === undefined ? 'null' : String(n)
 
+
+// Types reels des colonnes, releves dans information_schema.columns.
+// Ils ne sont pas homogenes et c est le piege : assets, pros, cons,
+// included_items, payout_methods et special_features sont de vrais tableaux
+// Postgres (text[]) ; platforms est du text simple que toArray() reparse cote
+// code ; les blocs editoriaux sont du jsonb.
+const TEXT_ARRAY = new Set(['assets', 'pros', 'cons', 'included_items', 'payout_methods', 'special_features'])
+const JSONB = new Set(['verdict_card', 'program_guide', 'key_rules', 'journey', 'cost_timeline', 'checkout_options', 'proof_stats', 'value_strip', 'education', 'translations'])
+
+/**
+ * Litteral de tableau Postgres : {"a","b"}
+ *
+ * JSON.stringify produit exactement la forme attendue pour un element de
+ * text[] : entre guillemets doubles, avec les guillemets et antislashs internes
+ * echappes. Les apostrophes sont ensuite doublees par J()/S() au niveau du
+ * litteral SQL.
+ */
+const pgArray = (v) =>
+  "'{" + v.map(x => JSON.stringify(String(x))).join(',').replace(/'/g, "''") + "}'::text[]"
+
+function listLiteral(col, v) {
+  if (TEXT_ARRAY.has(col)) return pgArray(v)
+  if (JSONB.has(col)) return J(v) + '::jsonb'
+  // colonne text : on y ecrit du JSON, que toArray() reparse
+  return J(v)
+}
+
 // -----------------------------------------------------------------------------
 // FTMO — source : dossier_ftmo_the5ers.md (ftmo.com), releve du 3 septembre 2026
 // -----------------------------------------------------------------------------
@@ -479,8 +506,8 @@ function build(firm) {
   for (const [k, v] of Object.entries(firm.scalars)) {
     sets.push(`  ${k.padEnd(20)} = ${typeof v === 'number' ? N(v) : typeof v === 'boolean' ? String(v) : S(v)}`)
   }
-  for (const [k, v] of Object.entries(firm.arrays)) sets.push(`  ${k.padEnd(20)} = ${J(v)}`)
-  for (const [k, v] of Object.entries(firm.json)) sets.push(`  ${k.padEnd(20)} = ${J(v)}`)
+  for (const [k, v] of Object.entries(firm.arrays)) sets.push(`  ${k.padEnd(20)} = ${listLiteral(k, v)}`)
+  for (const [k, v] of Object.entries(firm.json)) sets.push(`  ${k.padEnd(20)} = ${J(v)}::jsonb`)
   sets.push(`  ${'data_verified_at'.padEnd(20)} = timestamptz '2026-09-03'`)
   sets.push(`  ${'data_verified_by'.padEnd(20)} = 'PropFirmScanner'`)
   sets.push(`  ${'updated_at'.padEnd(20)} = now()`)
