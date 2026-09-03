@@ -479,9 +479,15 @@ export default function PropFirmPageClient({
                 href={logoUrl_}
                 {...AFFILIATE_LINK_PROPS}
                 aria-label={couponDeepLink ? t.officialOffer : t.visit(firm.name)}
-                className="relative w-14 h-14 bg-gray-800 rounded-xl overflow-hidden flex-shrink-0 border border-gray-700 hover:border-gray-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+                className="relative w-14 h-14 bg-white rounded-xl overflow-hidden flex-shrink-0 border border-gray-200 hover:border-emerald-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
               >
-                {/* sizes="56px": the box is 56px square. Without it, `fill`
+                {/* bg-white, not bg-gray-800. Most firms ship a dark-ink logo on
+                    a transparent background: on a dark tile they render as an
+                    empty square. Every other logo tile on the site (compare,
+                    best-for, dashboard, admin, PromoTicker) is already white —
+                    this one was the outlier.
+
+                    sizes="56px": the box is 56px square. Without it, `fill`
                     defaults to 100vw and the browser downloads a full-width
                     source to draw a thumbnail. */}
                 {logoUrl ? (
@@ -1166,9 +1172,9 @@ export default function PropFirmPageClient({
                   href={`/prop-firm/${sf.slug}`}
                   className="flex items-center gap-3 p-4 bg-gray-900/50 border border-gray-800 rounded-xl hover:border-emerald-500/30 transition-colors"
                 >
-                  <div className="relative w-10 h-10 bg-gray-800 rounded-lg overflow-hidden flex-shrink-0">
+                  <div className="relative w-10 h-10 bg-white border border-gray-200 rounded-lg overflow-hidden flex-shrink-0">
                     {sf.logo_url ? (
-                      <Image src={sf.logo_url} alt={sf.name} fill className="object-contain p-1" />
+                      <Image src={sf.logo_url} alt={sf.name} fill sizes="40px" className="object-contain p-1" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-emerald-400 font-bold">
                         {sf.name.charAt(0)}

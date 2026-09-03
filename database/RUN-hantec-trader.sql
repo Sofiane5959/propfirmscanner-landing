@@ -50,6 +50,7 @@ update prop_firms set
   time_limit           = 'Aucune limite de temps, sauf Instant24 : 24 heures à partir du premier trade',
   payout_frequency     = 'on-request',
   source_url           = 'https://htrader.hmarkets.com/',
+  logo_url             = '/logos/hantec-trader.png',
   platforms            = '["MetaTrader 4","MetaTrader 5"]',
   assets               = '{"Forex","Indices","Matières premières","Métaux","Crypto"}'::text[],
   payout_methods       = '{"Virement bancaire","Cryptomonnaie","Portefeuilles électroniques"}'::text[],
@@ -174,9 +175,10 @@ from prop_firm_challenges where firm_slug = 'hantec-trader' order by price;
 -- discount_code valait « Axtpvm6z7 » à 5 % : un jeton technique, pas un
 -- code que le visiteur peut saisir. Remplacé.
 --
--- LOGO. La firme a fourni ses logos officiels en pièce jointe. À
--- enregistrer dans public/logos/hantec-trader.png puis mettre à jour
--- logo_url, qui pointe encore sur une favicon Google.
+-- LOGO. Corrigé. logo_url pointait sur une favicon Google du domaine «
+-- hantectrader.com », qui n’est pas le leur : la requête renvoyait une
+-- image vide. Le logo officiel fourni par la firme est servi depuis
+-- public/logos/hantec-trader.png (256 x 256, H orange sur fond noir).
 --
 -- PROGRAMME D’AFFILIATION. 10 % à 15 % selon le palier (Silver, Gold,
 -- Platinum), cookie de 30 jours, paiement à la demande dès 50 $.
@@ -187,6 +189,8 @@ from prop_firm_challenges where firm_slug = 'hantec-trader' order by price;
 -- crypto 1:1. Identique sur les sept programmes. Non stocké faute de
 -- colonne dédiée : figure dans key_rules.more.
 --
--- PAYS RESTREINTS. 32 territoires, dont les États-Unis, l’Allemagne, la
--- Belgique, l’Australie, la République tchèque et la Roumanie. Aucune
--- colonne dédiée : l’essentiel figure dans cons et special_features.
+-- PAYS RESTREINTS. Les 32 territoires sont désormais écrits dans
+-- restricted_countries, colonne créée par l’étape 2 de ce script et
+-- affichée derrière un dépliant sur la page. Les plus notables —
+-- États-Unis, Allemagne, Belgique, Australie — restent aussi dans cons, où
+-- ils sont vus sans clic.

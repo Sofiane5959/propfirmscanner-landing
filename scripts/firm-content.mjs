@@ -612,6 +612,10 @@ export const HANTEC = {
     time_limit: 'Aucune limite de temps, sauf Instant24 : 24 heures à partir du premier trade',
     payout_frequency: 'on-request',
     source_url: 'https://htrader.hmarkets.com/',
+    // Logo officiel fourni par la firme, servi en local. logo_url pointait sur
+    // une favicon Google du domaine « hantectrader.com » — qui n'est pas le
+    // leur : la requete renvoyait une image vide, d'ou un logo invisible.
+    logo_url: '/logos/hantec-trader.png',
   },
   arrays: {
     platforms: ['MetaTrader 4', 'MetaTrader 5'],
@@ -865,10 +869,10 @@ export const HANTEC = {
     'DEUX CORRECTIONS DEMANDEES PAR LA FIRME. Le partage affiché était faux : il est de 80 %, et non de 95 %, les 95 % nécessitant un add-on payant. Les règles d’actualités étaient également inexactes : elles varient par programme et par stade.',
 'CODE PROMO : AUCUN AFFICHÉ, VOLONTAIREMENT. La firme fournit cinq codes publics et conditionnels — NEW35, INSTANT20, SAVE20, SAVE15, SAVE10. Aucun n’appartient à PropFirmScanner : n’importe qui les trouve ailleurs, ils ne portent aucune attribution, et les publier revient à inviter le visiteur à acheter sans passer par le lien affilié. discount_code et discount_percent restent nuls jusqu’à ce que Hantec fournisse un code dédié, comme FuturesElite l’a fait avec SCANNED. C’est la demande à adresser à Desiree Almeida.',
     'discount_code valait « Axtpvm6z7 » à 5 % : un jeton technique, pas un code que le visiteur peut saisir. Remplacé.',
-    'LOGO. La firme a fourni ses logos officiels en pièce jointe. À enregistrer dans public/logos/hantec-trader.png puis mettre à jour logo_url, qui pointe encore sur une favicon Google.',
+    'LOGO. Corrigé. logo_url pointait sur une favicon Google du domaine « hantectrader.com », qui n’est pas le leur : la requête renvoyait une image vide. Le logo officiel fourni par la firme est servi depuis public/logos/hantec-trader.png (256 x 256, H orange sur fond noir).',
     'PROGRAMME D’AFFILIATION. 10 % à 15 % selon le palier (Silver, Gold, Platinum), cookie de 30 jours, paiement à la demande dès 50 $. L’affiliate_url en base porte affiliateId=2766 ; à confirmer que c’est bien le tien dans le portail affilié.',
     'LEVIER. Forex 1:50, indices et matières premières 1:15, métaux 1:10, crypto 1:1. Identique sur les sept programmes. Non stocké faute de colonne dédiée : figure dans key_rules.more.',
-    'PAYS RESTREINTS. 32 territoires, dont les États-Unis, l’Allemagne, la Belgique, l’Australie, la République tchèque et la Roumanie. Aucune colonne dédiée : l’essentiel figure dans cons et special_features.',
+    'PAYS RESTREINTS. Les 32 territoires sont désormais écrits dans restricted_countries, colonne créée par l’étape 2 de ce script et affichée derrière un dépliant sur la page. Les plus notables — États-Unis, Allemagne, Belgique, Australie — restent aussi dans cons, où ils sont vus sans clic.',
   ],
 }
 
