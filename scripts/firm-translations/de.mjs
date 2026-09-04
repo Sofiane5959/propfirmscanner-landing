@@ -534,7 +534,7 @@ export const de = {
         {
           title: 'Konten stapeln',
           detail:
-            'Elite ist auf 5 finanzierte Konten begrenzt. Durch Stapeln eines gleich großen Programms sind bis zu 10 Konten parallel möglich.',
+            'Elite zählt zu einer gemeinsamen Obergrenze von 5 finanzierten Konten mit Custom, Instant und Nitro. Insgesamt sind 10 aktive finanzierte Konten möglich, Nitro allein höchstens 3. Ein Bundle-Kauf hebt diese Grenzen nicht an.',
         },
       ],
     },

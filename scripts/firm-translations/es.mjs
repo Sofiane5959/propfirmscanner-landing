@@ -531,7 +531,7 @@ export const es = {
         {
           title: 'Acumular cuentas',
           detail:
-            'Elite se limita a 5 cuentas financiadas. Acumulando un programa del mismo tamaño, hasta 10 cuentas en paralelo.',
+            'Elite cuenta dentro de un límite común de 5 cuentas financiadas junto a Custom, Instant y Nitro. El techo global es de 10 cuentas financiadas activas, y Nitro por sí solo se limita a 3. Comprar un lote no eleva esos límites.',
         },
       ],
     },

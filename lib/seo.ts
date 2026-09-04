@@ -67,8 +67,14 @@ export function localeHref(locale: string, path: string): string {
 }
 
 /** Canonical + reciprocal hreflang for one page, in one locale. */
-function alternatesFor(locale: string, path: string) {
-  const declared = localesFor(path);
+function alternatesFor(locale: string, path: string, available?: readonly string[]) {
+  // `available` permet a une page de declarer les locales qu'elle possede
+  // reellement. Une fiche firme sait, elle, quelles traductions existent dans
+  // sa colonne `translations` : c'est plus juste qu'une regle globale.
+  //
+  // Sans cet argument, la page espagnole de FuturesElite portait un canonical
+  // ANGLAIS et aucun hreflang espagnol, alors que son contenu espagnol existe.
+  const declared = available && available.length > 0 ? available : localesFor(path);
   const languages: Record<string, string> = {};
   declared.forEach((loc) => {
     languages[loc] = localeHref(loc, path);
@@ -133,8 +139,12 @@ export function generateAlternates(path: string, locale: string = 'en') {
  *   }
  * }
  */
-export function generateDynamicAlternates(locale: string, path: string) {
-  return alternatesFor(locale, path);
+export function generateDynamicAlternates(
+  locale: string,
+  path: string,
+  available?: readonly string[]
+) {
+  return alternatesFor(locale, path, available);
 }
 
 

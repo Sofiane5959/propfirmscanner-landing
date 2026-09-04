@@ -972,8 +972,8 @@ export default function PropFirmPageClient({
         <div className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-800">
           <ProgramExplorer
             data={programData}
+            firmSlug={firm.slug}
             locale={locale}
-            ctaHref={logoUrl_}
             ctaLabel={canConfigure ? t.configure : t.visit(firm.name)}
           />
         </div>

@@ -44,7 +44,7 @@ export const FUTURESELITE_PROGRAMS = [
     sort_order: 1,
     max_funded_accounts: 5,
     max_funded_note:
-      'Compté dans le plafond commun de 5 comptes financés Elite + Custom + Instant + Nitro.',
+      'Counts towards the shared cap of 5 funded accounts across Elite, Custom, Instant and Nitro.',
     summary:
       'One-step evaluation, end-of-day drawdown and no daily loss limit. The only programme whose payout amount rule is documented in detail.',
     source_url: PRICING,
@@ -70,7 +70,7 @@ export const FUTURESELITE_PROGRAMS = [
     sort_order: 2,
     max_funded_accounts: 3,
     max_funded_note:
-      'CONFLIT : le bundle en vend jusqu’à 5, la FAQ officielle n’en autorise que 3 actifs financés. La FAQ fait foi.',
+      'Conflict: the bundle sells up to 5, while the official FAQ allows only 3 active funded Nitro accounts. The FAQ prevails.',
     summary:
       'One-step evaluation with the lowest minimum trading days. Once funded it switches to a trailing-equity drawdown with a buffer.',
     source_url: PRICING,
@@ -95,7 +95,7 @@ export const FUTURESELITE_PROGRAMS = [
     evaluation_steps: 1,
     sort_order: 3,
     max_funded_accounts: 10,
-    max_funded_note: 'Plafond propre à Prime : 10 comptes financés actifs.',
+    max_funded_note: 'Prime has its own cap: 10 active funded accounts.',
     summary:
       'The only programme with a daily loss limit in both phases. It also carries the longest bundle ladder, up to ten accounts.',
     source_url: PRICING,
@@ -121,7 +121,7 @@ export const FUTURESELITE_PROGRAMS = [
     sort_order: 4,
     max_funded_accounts: 5,
     max_funded_note:
-      'Compté dans le plafond commun de 5 comptes financés Elite + Custom + Instant + Nitro.',
+      'Counts towards the shared cap of 5 funded accounts across Elite, Custom, Instant and Nitro.',
     summary:
       'No evaluation: the account is live from purchase. Payout eligibility still requires 10 trading days and a 20% consistency rule.',
     source_url: PRICING,

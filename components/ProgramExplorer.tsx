@@ -22,6 +22,7 @@ import {
   type FirmProgramData, type Phase, type ProgramPlan, type Severity,
   priceFor, planFor, regularPriceFor, sizesOf,
 } from '@/lib/firm-programs'
+import { buildAffiliateUrl } from '@/lib/affiliate'
 
 const COPY = {
   en: {
@@ -123,6 +124,251 @@ const COPY = {
       needs_confirmation: 'À confirmer',
     } as Record<Severity, string>,
   },
+  de: {
+    eyebrow: 'Programme, Regeln und Preise',
+    intro: 'Wählen Sie ein Programm und eine Größe. Evaluierung und finanziertes Konto bleiben getrennt.',
+    step1: 'Wählen Sie Ihr Programm',
+    step2: 'Wählen Sie Ihre Kontogröße',
+    evaluation: 'Evaluierung',
+    funded: 'Finanziertes Konto',
+    noEvaluation: 'Keine Evaluierung — das Konto ist ab dem Kauf finanziert.',
+    priceToday: 'Preis heute',
+    regular: 'Regulärer Preis',
+    publicBetter: (code: string, p: string) =>
+      `Ein öffentliches Angebot (${code}) gibt derzeit ${p} — mehr als unser Partnercode. Wir zeigen es, statt es zu verschweigen.`,
+    noExpiry: 'Für dieses Angebot ist kein Ablaufdatum veröffentlicht.',
+    profitTarget: 'Gewinnziel',
+    maxLoss: 'Maximaler Verlust',
+    dailyLoss: 'Tagesverlustlimit',
+    drawdown: 'Drawdown',
+    buffer: 'Buffer',
+    noBuffer: 'Keiner',
+    bufferUnknown: 'Nicht angegeben',
+    contracts: 'Max. Kontrakte',
+    scaling: 'Kontrakt-Skalierung',
+    minDays: 'Mindesthandelstage',
+    consistency: 'Konsistenzregel',
+    split: 'Gewinnbeteiligung',
+    payoutCap: 'Auszahlungsobergrenze',
+    minPayout: 'Mindestauszahlung',
+    betweenPayouts: 'Tage zwischen Auszahlungen',
+    resetFee: 'Reset-Gebühr',
+    activationFee: 'Aktivierungsgebühr',
+    none: 'Keine',
+    notApplicable: 'Nicht zutreffend',
+    bundle: 'Bundle & Save',
+    bundleIntro: 'Wie viele Konten Sie KAUFEN dürfen. Nicht, wie viele gleichzeitig finanziert sein dürfen.',
+    fundedLimit: (n: number) => `Offizielles Limit: ${n} aktive finanzierte Konten`,
+    account: 'Konto',
+    free: 'Gratis',
+    rules: 'Regeln, die das Konto sperren oder einschränken können',
+    platforms: 'Plattformen',
+    noSurcharge:
+      'An der Kasse wird kein Aufpreis angezeigt. Marktdaten, Kommissionen und Plattformlizenzen können dennoch zu Ihren Lasten gehen.',
+    severity: {
+      hard_breach: 'Sofortige Sperrung',
+      restriction: 'Einschränkung',
+      payout_condition: 'Auszahlungsbedingung',
+      allowed: 'Erlaubt',
+      needs_confirmation: 'Zu bestätigen',
+    } as Record<Severity, string>,
+  },
+  es: {
+    eyebrow: 'Programas, reglas y precios',
+    intro: 'Elige un programa y un tamaño. Las reglas de evaluación y de cuenta financiada no se mezclan.',
+    step1: 'Elige tu programa',
+    step2: 'Elige el tamaño de tu cuenta',
+    evaluation: 'Evaluación',
+    funded: 'Cuenta financiada',
+    noEvaluation: 'Sin evaluación: la cuenta está financiada desde la compra.',
+    priceToday: 'Precio hoy',
+    regular: 'Precio normal',
+    publicBetter: (code: string, p: string) =>
+      `Una oferta pública (${code}) da actualmente ${p}, más que nuestro código de socio. La mostramos en lugar de ocultarla.`,
+    noExpiry: 'No se publica fecha de caducidad para esta oferta.',
+    profitTarget: 'Objetivo de beneficio',
+    maxLoss: 'Pérdida máxima',
+    dailyLoss: 'Pérdida diaria',
+    drawdown: 'Drawdown',
+    buffer: 'Colchón',
+    noBuffer: 'Ninguno',
+    bufferUnknown: 'No indicado',
+    contracts: 'Contratos máximos',
+    scaling: 'Escalado de contratos',
+    minDays: 'Días mínimos de trading',
+    consistency: 'Regla de consistencia',
+    split: 'Reparto de beneficios',
+    payoutCap: 'Tope de retiro',
+    minPayout: 'Retiro mínimo',
+    betweenPayouts: 'Días entre retiros',
+    resetFee: 'Coste de reinicio',
+    activationFee: 'Coste de activación',
+    none: 'Ninguna',
+    notApplicable: 'No aplicable',
+    bundle: 'Bundle & Save',
+    bundleIntro: 'Cuántas cuentas puedes COMPRAR. No cuántas pueden estar financiadas a la vez.',
+    fundedLimit: (n: number) => `Límite oficial: ${n} cuentas financiadas activas`,
+    account: 'Cuenta',
+    free: 'Gratis',
+    rules: 'Reglas que pueden cerrar o restringir la cuenta',
+    platforms: 'Plataformas',
+    noSurcharge:
+      'No se muestra ningún recargo al pagar. Los datos de mercado, las comisiones y las licencias de plataforma pueden seguir corriendo por tu cuenta.',
+    severity: {
+      hard_breach: 'Cierre inmediato',
+      restriction: 'Restricción',
+      payout_condition: 'Condición de retiro',
+      allowed: 'Permitido',
+      needs_confirmation: 'Por confirmar',
+    } as Record<Severity, string>,
+  },
+  pt: {
+    eyebrow: 'Programas, regras e preços',
+    intro: 'Escolha um programa e um tamanho. As regras de avaliação e de conta financiada não se misturam.',
+    step1: 'Escolha o seu programa',
+    step2: 'Escolha o tamanho da sua conta',
+    evaluation: 'Avaliação',
+    funded: 'Conta financiada',
+    noEvaluation: 'Sem avaliação: a conta está financiada desde a compra.',
+    priceToday: 'Preço hoje',
+    regular: 'Preço normal',
+    publicBetter: (code: string, p: string) =>
+      `Uma oferta pública (${code}) dá atualmente ${p}, mais do que o nosso código de parceiro. Mostramo-la em vez de a esconder.`,
+    noExpiry: 'Não é publicada data de expiração para esta oferta.',
+    profitTarget: 'Objetivo de lucro',
+    maxLoss: 'Perda máxima',
+    dailyLoss: 'Perda diária',
+    drawdown: 'Drawdown',
+    buffer: 'Almofada',
+    noBuffer: 'Nenhuma',
+    bufferUnknown: 'Não indicado',
+    contracts: 'Contratos máximos',
+    scaling: 'Escalonamento de contratos',
+    minDays: 'Dias mínimos de negociação',
+    consistency: 'Regra de consistência',
+    split: 'Partilha de lucros',
+    payoutCap: 'Teto de levantamento',
+    minPayout: 'Levantamento mínimo',
+    betweenPayouts: 'Dias entre levantamentos',
+    resetFee: 'Custo de reinício',
+    activationFee: 'Custo de ativação',
+    none: 'Nenhuma',
+    notApplicable: 'Não aplicável',
+    bundle: 'Bundle & Save',
+    bundleIntro: 'Quantas contas pode COMPRAR. Não quantas podem estar financiadas ao mesmo tempo.',
+    fundedLimit: (n: number) => `Limite oficial: ${n} contas financiadas ativas`,
+    account: 'Conta',
+    free: 'Grátis',
+    rules: 'Regras que podem encerrar ou restringir a conta',
+    platforms: 'Plataformas',
+    noSurcharge:
+      'Não é mostrado qualquer acréscimo no pagamento. Dados de mercado, comissões e licenças de plataforma podem continuar a seu cargo.',
+    severity: {
+      hard_breach: 'Encerramento imediato',
+      restriction: 'Restrição',
+      payout_condition: 'Condição de levantamento',
+      allowed: 'Permitido',
+      needs_confirmation: 'A confirmar',
+    } as Record<Severity, string>,
+  },
+  ar: {
+    eyebrow: 'البرامج والقواعد والأسعار',
+    intro: 'اختر برنامجًا وحجمًا. تبقى قواعد التقييم وقواعد الحساب المموَّل منفصلة.',
+    step1: 'اختر برنامجك',
+    step2: 'اختر حجم حسابك',
+    evaluation: 'التقييم',
+    funded: 'الحساب المموَّل',
+    noEvaluation: 'لا يوجد تقييم — الحساب مموَّل منذ الشراء.',
+    priceToday: 'السعر اليوم',
+    regular: 'السعر العادي',
+    publicBetter: (code: string, p: string) =>
+      `يمنح عرض عام (${code}) حاليًا ${p}، أي أكثر من رمز الشراكة لدينا. نعرضه بدل إخفائه.`,
+    noExpiry: 'لم يُنشر تاريخ انتهاء لهذا العرض.',
+    profitTarget: 'هدف الربح',
+    maxLoss: 'الخسارة القصوى',
+    dailyLoss: 'حد الخسارة اليومية',
+    drawdown: 'التراجع',
+    buffer: 'الهامش الاحتياطي',
+    noBuffer: 'لا يوجد',
+    bufferUnknown: 'غير محدد',
+    contracts: 'الحد الأقصى للعقود',
+    scaling: 'زيادة العقود',
+    minDays: 'الحد الأدنى لأيام التداول',
+    consistency: 'قاعدة الانتظام',
+    split: 'تقاسم الأرباح',
+    payoutCap: 'سقف السحب',
+    minPayout: 'الحد الأدنى للسحب',
+    betweenPayouts: 'الأيام بين السحوبات',
+    resetFee: 'رسوم إعادة التعيين',
+    activationFee: 'رسوم التفعيل',
+    none: 'لا شيء',
+    notApplicable: 'لا ينطبق',
+    bundle: 'الحزم والتوفير',
+    bundleIntro: 'عدد الحسابات التي يمكنك شراؤها. لا عدد الحسابات التي يمكن تمويلها في آن واحد.',
+    fundedLimit: (n: number) => `الحد الرسمي: ${n} حسابات مموَّلة نشطة`,
+    account: 'حساب',
+    free: 'مجاني',
+    rules: 'قواعد قد تُغلق الحساب أو تقيّده',
+    platforms: 'المنصات',
+    noSurcharge:
+      'لا يظهر أي رسم إضافي عند الدفع. ومع ذلك قد تبقى بيانات السوق والعمولات وتراخيص المنصات على عاتقك.',
+    severity: {
+      hard_breach: 'إغلاق فوري',
+      restriction: 'تقييد',
+      payout_condition: 'شرط سحب',
+      allowed: 'مسموح',
+      needs_confirmation: 'بحاجة إلى تأكيد',
+    } as Record<Severity, string>,
+  },
+  hi: {
+    eyebrow: 'प्रोग्राम, नियम और कीमतें',
+    intro: 'एक प्रोग्राम और आकार चुनें। मूल्यांकन और फ़ंडेड खाते के नियम अलग रहते हैं।',
+    step1: 'अपना प्रोग्राम चुनें',
+    step2: 'अपने खाते का आकार चुनें',
+    evaluation: 'मूल्यांकन',
+    funded: 'फ़ंडेड खाता',
+    noEvaluation: 'कोई मूल्यांकन नहीं — खाता ख़रीद से ही फ़ंडेड है।',
+    priceToday: 'आज की कीमत',
+    regular: 'सामान्य कीमत',
+    publicBetter: (code: string, p: string) =>
+      `एक सार्वजनिक ऑफ़र (${code}) इस समय ${p} देता है — हमारे पार्टनर कोड से अधिक। हम इसे छिपाने के बजाय दिखाते हैं।`,
+    noExpiry: 'इस ऑफ़र के लिए कोई समाप्ति तिथि प्रकाशित नहीं है।',
+    profitTarget: 'लाभ लक्ष्य',
+    maxLoss: 'अधिकतम हानि',
+    dailyLoss: 'दैनिक हानि सीमा',
+    drawdown: 'ड्रॉडाउन',
+    buffer: 'बफ़र',
+    noBuffer: 'कोई नहीं',
+    bufferUnknown: 'नहीं बताया गया',
+    contracts: 'अधिकतम कॉन्ट्रैक्ट',
+    scaling: 'कॉन्ट्रैक्ट स्केलिंग',
+    minDays: 'न्यूनतम ट्रेडिंग दिवस',
+    consistency: 'कंसिस्टेंसी नियम',
+    split: 'लाभ का बँटवारा',
+    payoutCap: 'पेआउट सीमा',
+    minPayout: 'न्यूनतम पेआउट',
+    betweenPayouts: 'दो पेआउट के बीच दिन',
+    resetFee: 'रीसेट शुल्क',
+    activationFee: 'सक्रियण शुल्क',
+    none: 'कोई नहीं',
+    notApplicable: 'लागू नहीं',
+    bundle: 'बंडल और बचत',
+    bundleIntro: 'आप कितने खाते ख़रीद सकते हैं। यह नहीं कि एक साथ कितने फ़ंडेड हो सकते हैं।',
+    fundedLimit: (n: number) => `आधिकारिक सीमा: ${n} सक्रिय फ़ंडेड खाते`,
+    account: 'खाता',
+    free: 'मुफ़्त',
+    rules: 'वे नियम जो खाता बंद या सीमित कर सकते हैं',
+    platforms: 'प्लेटफ़ॉर्म',
+    noSurcharge:
+      'भुगतान पर कोई अतिरिक्त शुल्क नहीं दिखता। फिर भी बाज़ार डेटा, कमीशन और प्लेटफ़ॉर्म लाइसेंस आपके ज़िम्मे रह सकते हैं।',
+    severity: {
+      hard_breach: 'तत्काल बंद',
+      restriction: 'प्रतिबंध',
+      payout_condition: 'पेआउट शर्त',
+      allowed: 'अनुमत',
+      needs_confirmation: 'पुष्टि आवश्यक',
+    } as Record<Severity, string>,
+  },
 }
 
 // Le brief interdit la coche verte sur « With restrictions » et sur un statut à
@@ -184,16 +430,18 @@ function PhaseCard({ title, plan, t }: { title: string; plan: ProgramPlan | null
 
 export default function ProgramExplorer({
   data,
+  firmSlug,
   locale = 'en',
-  ctaHref,
   ctaLabel,
 }: {
   data: FirmProgramData
+  firmSlug: string
   locale?: string
-  ctaHref: string
   ctaLabel: string
 }) {
-  const t = locale === 'fr' ? COPY.fr : COPY.en
+  // Les sept locales. La version precedente n en connaissait que deux, et la
+  // page espagnole affichait « Choose your program » et « Price today ».
+  const t = COPY[locale as keyof typeof COPY] ?? COPY.en
   const [programSlug, setProgramSlug] = useState(data.programs[0]?.slug ?? '')
 
   const program = data.programs.find((p) => p.slug === programSlug) ?? data.programs[0]
@@ -211,6 +459,17 @@ export default function ProgramExplorer({
   const evaluation = planFor(program, 'evaluation', activeSize)
   const funded = planFor(program, 'sim_funded', activeSize)
   const bundle = data.bundles.filter((b) => b.program_slug === program.slug)
+
+  // Le CTA du configurateur portait `source=logo&placement=logo` : il reutilisait
+  // le lien de la tuile logo, si bien que chaque clic sur « configurer » etait
+  // journalise comme un clic sur le logo, sans programme ni taille. Il est
+  // desormais construit a partir de la selection courante.
+  const ctaHref = buildAffiliateUrl(firmSlug, {
+    placement: 'configurator',
+    locale,
+    program: program.slug,
+    size: String(activeSize),
+  })
 
   return (
     <section id="programs" className="scroll-mt-28">

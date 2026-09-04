@@ -128,7 +128,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     // unprefixed route: a redirect handed to a crawler on every firm page.
     // generateDynamicAlternates emits English unprefixed and lists only the
     // locales that are really translated.
-    ...generateDynamicAlternates(locale, `/prop-firm/${firm.slug}`),
+    // Les locales realmente disponibles pour CETTE fiche : l'anglais, qui est
+    // la langue des colonnes de base, plus chaque bundle present dans
+    // `translations`. Declarer l'espagnol quand il n'existe pas serait aussi
+    // faux que de l'omettre quand il existe.
+    ...generateDynamicAlternates(
+      locale,
+      `/prop-firm/${firm.slug}`,
+      Array.from(new Set(['en', ...Object.keys((firm.translations as Record<string, unknown> | null) || {})]))
+    ),
     openGraph: {
       title,
       description,
@@ -272,6 +280,23 @@ export default async function PropFirmPage({ params }: Props) {
 
   const pageUrl = localeHref(locale, `/prop-firm/${firm.slug}`)
 
+  // Fourchette de prix verifiee, tous programmes confondus. Elle agrege les
+  // challenges historiques ET les plans de la structure normalisee, pour que
+  // le balisage reste juste quelle que soit la source qui alimente la fiche.
+  const allPrices: number[] = [
+    ...challengeRows.map((c) => (promotion.isActive ? c.discounted_price ?? c.price : c.price)),
+    ...(programData?.programs ?? []).flatMap((p) =>
+      p.plans.map((pl) => (pl.regular_price === null ? null : Number(pl.regular_price)))
+    ),
+  ].filter((p): p is number => p !== null && p > 0)
+
+  const priceRange = {
+    low: allPrices.length ? Math.min(...allPrices) : offerPrice,
+    high: allPrices.length ? Math.max(...allPrices) : offerPrice,
+    count: allPrices.length,
+    currency: (firm as { price_currency?: string | null }).price_currency || 'USD',
+  }
+
   // Two graphs, deliberately separate.
   //
   // The Product no longer carries aggregateRating. The only rating we hold is
@@ -290,19 +315,40 @@ export default async function PropFirmPage({ params }: Props) {
     name: firm.name,
     description: firm.verdict || `${firm.name} prop trading firm`,
     brand: { '@type': 'Brand', name: firm.name },
-    // Only quote an offer when there is a real price behind it.
-    ...(offerPrice > 0
+    // AggregateOffer, pas Offer.
+    //
+    // Une fiche multi-programmes n'a pas UN prix : FuturesElite va de 95 $
+    // (Elite 25K) a 569 $ (Instant 150K). La version precedente publiait le
+    // prix le plus bas comme s'il valait pour toute la page, y compris quand
+    // le visiteur avait selectionne un autre programme. Le balisage annoncait
+    // donc a Google un prix que le checkout ne pratique pas.
+    //
+    // La fourchette est calculee cote serveur, sur les prix verifies : elle
+    // reste valable pour la representation canonique du produit, ce qu'un
+    // prix choisi cote client ne serait pas.
+    ...(priceRange.low > 0
       ? {
-          offers: {
-            '@type': 'Offer',
-            price: offerPrice,
-            priceCurrency: 'USD',
-            availability: 'https://schema.org/InStock',
-            url: pageUrl,
-            ...(promotion.isActive && promotion.expiresAt
-              ? { priceValidUntil: promotion.expiresAt.toISOString().slice(0, 10) }
-              : {}),
-          },
+          offers:
+            priceRange.low === priceRange.high
+              ? {
+                  '@type': 'Offer',
+                  price: priceRange.low,
+                  priceCurrency: priceRange.currency,
+                  availability: 'https://schema.org/InStock',
+                  url: pageUrl,
+                  ...(promotion.isActive && promotion.expiresAt
+                    ? { priceValidUntil: promotion.expiresAt.toISOString().slice(0, 10) }
+                    : {}),
+                }
+              : {
+                  '@type': 'AggregateOffer',
+                  lowPrice: priceRange.low,
+                  highPrice: priceRange.high,
+                  offerCount: priceRange.count,
+                  priceCurrency: priceRange.currency,
+                  availability: 'https://schema.org/InStock',
+                  url: pageUrl,
+                },
         }
       : {}),
   }

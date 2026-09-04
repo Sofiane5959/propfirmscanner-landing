@@ -547,7 +547,7 @@ export const FUTURESELITE = {
     verdict_card: {
       title: 'Who it suits, and who it does not',
       body:
-        'FuturesElite bets on generous terms once you are funded: a 90% split, no consistency rule, daily payouts. In exchange, the firm is young, unregulated, and publishes only one of its four price lists.',
+        'FuturesElite bets on generous terms once you are funded: a 90% split, no consistency rule, daily payouts. In exchange, the firm is young and is a proprietary trading company rather than a regulated broker.',
       points: [
         'A high split and frequent payouts, with no waiting period',
         'An evaluation with no daily loss limit, which leaves room to breathe',
@@ -556,9 +556,9 @@ export const FUTURESELITE = {
       ],
     },
     program_guide: {
-      title: 'The Elite programme',
+      title: 'Four programmes',
       intro:
-        'Elite is the only programme whose price list is public. Nitro, Prime and Instant exist at checkout, but their prices are not shown.',
+        'Four programmes are sold: Elite, Nitro, Prime and Instant. Their prices and rules differ, and the configurator above shows each one.',
       options: [
         {
           name: 'Elite',
@@ -629,7 +629,7 @@ export const FUTURESELITE = {
         {
           title: 'Stacking accounts',
           detail:
-            'Elite caps at 5 funded accounts. By stacking a programme of the same size, up to 10 accounts in parallel.',
+            'Elite counts towards a shared cap of 5 funded accounts across Elite, Custom, Instant and Nitro. The overall ceiling is 10 active funded accounts, and Nitro alone is limited to 3. Buying a bundle does not raise those limits.',
         },
       ],
     },
@@ -699,18 +699,18 @@ export const FUTURESELITE = {
     verdict_card: {
       title: 'Pour qui, et pour qui pas',
       body:
-        'FuturesElite mise sur des conditions g\u00e9n\u00e9reuses une fois financ\u00e9 : 90 % de partage, aucune r\u00e8gle de r\u00e9gularit\u00e9, retrait quotidien. En \u00e9change, la firme est jeune, sans r\u00e9gulateur, et ne publie qu\u2019une seule de ses quatre grilles.',
+        'FuturesElite mise sur des conditions g\u00e9n\u00e9reuses une fois financ\u00e9 : 90 % de partage, aucune r\u00e8gle de r\u00e9gularit\u00e9, retrait quotidien. En \u00e9change, la firme est jeune et reste une soci\u00e9t\u00e9 de trading propri\u00e9taire, pas un courtier r\u00e9gul\u00e9.',
       points: [
         'Un partage \u00e9lev\u00e9 et des retraits fr\u00e9quents, sans attendre une \u00e9ch\u00e9ance',
         'Une \u00e9valuation sans limite de perte journali\u00e8re, qui laisse respirer',
         'Un compte financ\u00e9 qui s\u2019ouvre sans frais d\u2019activation',
-        'La possibilit\u00e9 d\u2019empiler jusqu\u2019\u00e0 dix comptes en parall\u00e8le',
+        'Un plafond de 10 comptes financ\u00e9s actifs, dont 5 au maximum partag\u00e9s entre Elite, Custom, Instant et Nitro',
       ],
     },
     program_guide: {
-      title: 'Le programme Elite',
+      title: 'Quatre programmes',
       intro:
-        'Elite est le seul programme dont la grille tarifaire est publique. Nitro, Prime et Instant existent \u00e0 l\u2019achat, mais leurs prix ne sont pas expos\u00e9s.',
+        'Quatre programmes sont vendus : Elite, Nitro, Prime et Instant. Leurs prix et leurs r\u00e8gles diff\u00e8rent, et le configurateur ci-dessus les d\u00e9taille un par un.',
       options: [
         {
           name: 'Elite',
