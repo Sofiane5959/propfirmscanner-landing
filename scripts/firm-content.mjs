@@ -18,35 +18,231 @@
 // -----------------------------------------------------------------------------
 export const FTMO = {
   slug: 'ftmo',
+  // Les colonnes de base sont en ANGLAIS. Le francais vit dans `fr`, ecrit
+  // dans translations.fr et superpose par PropFirmPageClient selon la locale.
   scalars: {
     name: 'FTMO',
     founded_year: 2015,
-    headquarters: 'Bureaux Quadrio, Purkyňova 2121/3, 110 00 Prague, République tchèque',
+    headquarters: 'Quadrio Offices, Purkyňova 2121/3, 110 00 Prague, Czech Republic',
     country: 'Czech Republic',
     price_currency: 'EUR',
     is_regulated: false,
     regulation_details:
-      'FTMO Evaluation Global s.r.o. ; l’entité contractante peut varier selon la région. Ni courtier ni entreprise d’investissement : le service repose sur des comptes simulés et n’accepte aucun dépôt de client.',
+      'FTMO Evaluation Global s.r.o.; the contracting entity can vary by region. Neither a broker nor an investment firm: the service runs on simulated accounts and takes no client deposits.',
     trustpilot_rating: 4.8,
     min_price: 79,
     max_price: 1080,
     profit_split: 80,
     max_profit_split: 90,
-    max_allocation: 'Jusqu’à 400 000 $ d’allocation initiale, et jusqu’à 2 000 000 $ via le plan de scaling',
+    max_allocation: 'Up to $400,000 initial allocation, and up to $2,000,000 through the Scaling Plan',
     is_futures: false,
     drawdown_type:
-      'Perte journalière calculée sur l’equity et remise à zéro à minuit CE(S)T. Drawdown global glissant en fin de journée sur le 1-Step, verrouillé une fois arrivé au solde de départ ; fixe sur le 2-Step.',
-    time_limit: 'Aucune limite de temps, sur les deux produits',
-    payout_frequency: 'sur demande, au plus tôt 14 jours après le premier trade',
+      'Daily loss measured on equity and reset at midnight CE(S)T. Overall drawdown trails end-of-day on the 1-Step and locks once it reaches the starting balance; fixed on the 2-Step.',
+    time_limit: 'No time limit, on either product',
+    payout_frequency: 'on request, no earlier than 14 days after your first trade',
     source_url: 'https://ftmo.com/en/trading-objectives/',
   },
   arrays: {
     platforms: ['MetaTrader 4', 'MetaTrader 5', 'cTrader', 'TradingView'],
+    assets: ['Forex CFDs', 'Metals', 'Indices', 'Energies', 'Crypto', 'Commodities', 'Stock CFDs'],
+    payout_methods: ['Bank transfer', 'Other methods shown in the Client Area, where available'],
+    included_items: [
+      'MetaTrader 4, MetaTrader 5, cTrader and TradingView',
+      'FTMO dashboard and performance metrics',
+      'No activation fee on the funded account',
+    ],
+    pros: [
+      'Trading since 2015, one of the longest track records in the sector',
+      '90% split on the 1-Step, the higher of the two products',
+      'No time limit, on either the 1-Step or the 2-Step',
+      'The 1-Step sets no fixed minimum trading days',
+      'On the 2-Step, the fee comes back in full with your first reward',
+      'The Swing account lifts news, overnight and weekend restrictions',
+      'Allocation up to $400,000, and up to $2,000,000 through the Scaling Plan',
+      'Priced in euros, from €79',
+    ],
+    cons: [
+      'No resets: after a failure you buy a whole new challenge',
+      'The fee refund is not advertised on the 1-Step',
+      'The 1-Step tightens the daily limit to 3% and uses a trailing drawdown',
+      'The 2-Step requires 4 trading days in each phase',
+      'The funded Standard account restricts news, overnight and weekend holding',
+      'Swing does not exist on the 1-Step and caps leverage at 1:30',
+      'Swing offers no 200K account',
+    ],
+    special_features: [
+      'Two products with genuinely different rules',
+      '1-Step: 3% daily loss, trailing drawdown that locks at the starting balance',
+      '2-Step: 5% daily loss, fixed drawdown',
+      'The Best Day Rule applies to the 1-Step only',
+      'Leverage up to 1:100 on Standard, 1:30 on Swing',
+      'Scaling Plan: +25% balance every 4 months, on the 2-Step only',
+      'No mandatory stop-loss',
+      'Pay by card, bank wire, PayPal, Skrill, crypto and Revolut Pay; Apple Pay and Google Pay where available',
+    ],
+  },
+  json: {
+    verdict_card: {
+      title: 'Who it suits, and who it does not',
+      body:
+        'FTMO sells two products worth telling apart before you buy. The 1-Step pays more — 90% — and sets no calendar, but tightens the screws day to day. The 2-Step pays 80%, leaves more daily room, and refunds the fee with your first reward.',
+      points: [
+        'The best split with no strings: 90% from your first reward on the 1-Step',
+        'Getting the fee back: the 2-Step refunds it in full with the first reward',
+        'A comfortable daily limit: 5% on the 2-Step against 3% on the 1-Step',
+        'The freedom to hold positions overnight and over the weekend, with Swing',
+        'An allocation that reaches $2,000,000 through the Scaling Plan',
+      ],
+    },
+    program_guide: {
+      title: 'Three routes, three trade-offs',
+      intro:
+        'All three lead to a funded account. The choice turns on the split, the calendar, and how freely you can hold positions.',
+      options: [
+        {
+          name: '1-Step',
+          badge: 'Single phase',
+          summary:
+            'The highest split, 90%, and no minimum days. In exchange, a 3% daily limit and a drawdown that follows your highs.',
+          points: [
+            '10% target, 90% split',
+            '3% daily loss',
+            'Trailing drawdown, locked at the starting balance',
+            'Best day ≤ 50% of the profit from winning days',
+            'From €79 (10K) to €999 (200K)',
+          ],
+        },
+        {
+          name: '2-Step Standard',
+          badge: 'Two phases',
+          summary:
+            '10% then 5% targets, a wider 5% daily limit and a fixed drawdown. The fee is refunded with your first reward.',
+          points: [
+            '10% then 5% target, 80% split',
+            '5% daily loss, fixed drawdown',
+            '4 minimum trading days per phase',
+            'Fee refunded in full at the first reward',
+            'From €89 (10K) to €1,080 (200K)',
+          ],
+        },
+        {
+          name: '2-Step Swing',
+          badge: 'Hold positions',
+          summary:
+            'The 2-Step rules with no news, overnight or weekend restrictions, funded account included. Leverage drops to 1:30 and there is no 200K.',
+          points: [
+            'Same targets and limits as the 2-Step Standard',
+            'News, overnight and weekend free, even once funded',
+            'Leverage capped at 1:30',
+            'From €99 (10K) to €599 (100K)',
+          ],
+        },
+      ],
+    },
+    key_rules: {
+      title: 'The rules that decide it',
+      intro: 'Five points most comparison sites get wrong.',
+      rules: [
+        {
+          title: 'The split depends on the product',
+          detail:
+            '90% on the 1-Step, unconditionally. 80% on the 2-Step, rising to 90% through the Scaling Plan. Pages that advertise "up to 90%" across the range hide the fact that the 1-Step starts there.',
+        },
+        {
+          title: 'Only the 2-Step refunds the fee',
+          detail:
+            'The 2-Step returns 100% of the challenge price with your first reward. On the 1-Step, FTMO advertises no refund. Cheaper on the sticker, the 1-Step therefore costs more once you are funded.',
+        },
+        {
+          title: 'The daily loss differs, and is measured on equity',
+          detail:
+            '3% on the 1-Step, 5% on the 2-Step. It is measured on equity — floating losses, commissions and swaps included — and resets at midnight CE(S)T, not in your own time zone.',
+        },
+        {
+          title: 'The 1-Step drawdown trails, then locks',
+          detail:
+            'It rises with your highest closing balance, then stops for good once it reaches the starting balance. The 2-Step is on a fixed drawdown from the first trade.',
+        },
+        {
+          title: 'There is no reset',
+          detail:
+            'A failed challenge cannot be restarted at a discount: you buy a whole new one. That is a real cost difference against firms charging 50% for a reset.',
+        },
+      ],
+      more: [
+        'No time limit on any of the three routes',
+        'No fixed minimum days on the 1-Step; 4 per phase on the 2-Step',
+        'No activation fee on the funded account',
+        'No mandatory stop-loss',
+        'Leverage up to 1:100 on Standard, 1:30 on Swing',
+        'Scaling Plan: +25% balance every 4 months, on the 2-Step',
+        'MT4, MT5, cTrader and TradingView',
+      ],
+    },
+    journey: {
+      title: 'What happens after you pay',
+      intro: 'The route differs by product.',
+      steps: [
+        {
+          title: 'Evaluation',
+          detail:
+            'One phase on the 1-Step, two on the 2-Step. No restriction on news, overnight or weekend positions at this stage, whichever product you picked.',
+        },
+        {
+          title: 'Verification',
+          detail:
+            'On the 2-Step only: a second 5% target, under the same risk limits as the first phase.',
+        },
+        {
+          title: 'FTMO Account',
+          detail:
+            'Standard restricts news and requires closing before market breaks over 2 hours and before the weekend. Swing restricts nothing. Swing does not exist on the 1-Step.',
+        },
+        {
+          title: 'Rewards',
+          detail:
+            'The first cannot be requested before 14 days; after that you choose your reward day. On the 2-Step, that first reward also refunds the challenge price.',
+        },
+      ],
+    },
+    cost_timeline: {
+      title: 'What you will pay',
+      intro: 'The costs do not all land at the same moment — and some of it comes back.',
+      steps: [
+        {
+          label: 'At purchase',
+          title: 'One-off fee',
+          detail: 'From €79 for a 1-Step 10K to €1,080 for a 2-Step 200K. No subscription.',
+        },
+        {
+          label: 'On failure',
+          title: 'No reset available',
+          detail: 'FTMO does not sell discounted resets: starting over means buying a whole new challenge.',
+        },
+        {
+          label: 'On passing',
+          title: 'No activation fee',
+          detail: 'The funded account opens with no further payment.',
+        },
+        {
+          label: 'At the first reward',
+          title: 'Refund on the 2-Step',
+          detail:
+            'The 2-Step returns 100% of the challenge price with the first reward. The 1-Step advertises no refund.',
+        },
+      ],
+    },
+  },
+  // Surcouche francaise, ecrite dans translations.fr.
+  fr: {
+    regulation_details:
+      'FTMO Evaluation Global s.r.o. ; l’entité contractante peut varier selon la région. Ni courtier ni entreprise d’investissement : le service repose sur des comptes simulés et n’accepte aucun dépôt de client.',
+    max_allocation: 'Jusqu’à 400 000 $ d’allocation initiale, et jusqu’à 2 000 000 $ via le plan de scaling',
+    drawdown_type:
+      'Perte journalière calculée sur l’equity et remise à zéro à minuit CE(S)T. Drawdown global glissant en fin de journée sur le 1-Step, verrouillé une fois arrivé au solde de départ ; fixe sur le 2-Step.',
+    time_limit: 'Aucune limite de temps, sur les deux produits',
+    payout_frequency: 'sur demande, au plus tôt 14 jours après le premier trade',
     assets: ['CFD sur forex', 'Métaux', 'Indices', 'Énergie', 'Crypto', 'Matières premières', 'CFD sur actions'],
-    // Ce sont bien les moyens de RETRAIT. La version précédente y listait les
-    // moyens de PAIEMENT (cartes, PayPal, Skrill) : deux colonnes distinctes
-    // dans la fiche, confondues par erreur. Les moyens de paiement sont
-    // désormais dans special_features.
     payout_methods: ['Virement bancaire', 'Autres moyens affichés dans l’espace client, selon disponibilité'],
     included_items: [
       'MetaTrader 4, MetaTrader 5, cTrader et TradingView',
@@ -82,8 +278,6 @@ export const FTMO = {
       'Aucune obligation de stop-loss',
       'Paiement par carte, virement, PayPal, Skrill, crypto et Revolut Pay ; Apple Pay et Google Pay selon disponibilité',
     ],
-  },
-  json: {
     verdict_card: {
       title: 'Pour qui, et pour qui pas',
       body:
@@ -239,40 +433,42 @@ export const FTMO = {
   // Colonne 1 = 1-Step, colonne 3 = 2-Step Standard, colonne 4 = 2-Step Swing.
   // Le 13e élément porte le partage propre au programme.
   challenges: [
-    ['ftmo-1-step-10k', 'FTMO 1-Step 10K', '$10K', '1 step', 10, 3, 10, null, 'Glissant, verrouillé au solde de départ', 'Trailing', 79, null, 90],
-    ['ftmo-1-step-25k', 'FTMO 1-Step 25K', '$25K', '1 step', 10, 3, 10, null, 'Glissant, verrouillé au solde de départ', 'Trailing', 199, null, 90],
-    ['ftmo-1-step-50k', 'FTMO 1-Step 50K', '$50K', '1 step', 10, 3, 10, null, 'Glissant, verrouillé au solde de départ', 'Trailing', 319, null, 90],
-    ['ftmo-1-step-100k', 'FTMO 1-Step 100K', '$100K', '1 step', 10, 3, 10, null, 'Glissant, verrouillé au solde de départ', 'Trailing', 499, null, 90],
-    ['ftmo-1-step-200k', 'FTMO 1-Step 200K', '$200K', '1 step', 10, 3, 10, null, 'Glissant, verrouillé au solde de départ', 'Trailing', 999, null, 90],
-    ['ftmo-2-step-standard-10k', 'FTMO 2-Step Standard 10K', '$10K', '2 steps', 10, 5, 10, 5, 'Fixe (statique)', 'Static', 89, null, 80],
-    ['ftmo-2-step-standard-25k', 'FTMO 2-Step Standard 25K', '$25K', '2 steps', 10, 5, 10, 5, 'Fixe (statique)', 'Static', 250, null, 80],
-    ['ftmo-2-step-standard-50k', 'FTMO 2-Step Standard 50K', '$50K', '2 steps', 10, 5, 10, 5, 'Fixe (statique)', 'Static', 345, null, 80],
-    ['ftmo-2-step-standard-100k', 'FTMO 2-Step Standard 100K', '$100K', '2 steps', 10, 5, 10, 5, 'Fixe (statique)', 'Static', 540, null, 80],
-    ['ftmo-2-step-standard-200k', 'FTMO 2-Step Standard 200K', '$200K', '2 steps', 10, 5, 10, 5, 'Fixe (statique)', 'Static', 1080, null, 80],
-    ['ftmo-2-step-swing-10k', 'FTMO 2-Step Swing 10K', '$10K', '2 steps', 10, 5, 10, 5, 'Fixe (statique)', 'Static', 99, null, 80],
-    ['ftmo-2-step-swing-25k', 'FTMO 2-Step Swing 25K', '$25K', '2 steps', 10, 5, 10, 5, 'Fixe (statique)', 'Static', 279, null, 80],
-    ['ftmo-2-step-swing-50k', 'FTMO 2-Step Swing 50K', '$50K', '2 steps', 10, 5, 10, 5, 'Fixe (statique)', 'Static', 379, null, 80],
-    ['ftmo-2-step-swing-100k', 'FTMO 2-Step Swing 100K', '$100K', '2 steps', 10, 5, 10, 5, 'Fixe (statique)', 'Static', 599, null, 80],
+    ['ftmo-1-step-10k', 'FTMO 1-Step 10K', '$10K', '1 step', 10, 3, 10, null, 'Trailing, locks at starting balance', 'Trailing', 79, null, 90],
+    ['ftmo-1-step-25k', 'FTMO 1-Step 25K', '$25K', '1 step', 10, 3, 10, null, 'Trailing, locks at starting balance', 'Trailing', 199, null, 90],
+    ['ftmo-1-step-50k', 'FTMO 1-Step 50K', '$50K', '1 step', 10, 3, 10, null, 'Trailing, locks at starting balance', 'Trailing', 319, null, 90],
+    ['ftmo-1-step-100k', 'FTMO 1-Step 100K', '$100K', '1 step', 10, 3, 10, null, 'Trailing, locks at starting balance', 'Trailing', 499, null, 90],
+    ['ftmo-1-step-200k', 'FTMO 1-Step 200K', '$200K', '1 step', 10, 3, 10, null, 'Trailing, locks at starting balance', 'Trailing', 999, null, 90],
+    ['ftmo-2-step-standard-10k', 'FTMO 2-Step Standard 10K', '$10K', '2 steps', 10, 5, 10, 5, 'Fixed (static)', 'Static', 89, null, 80],
+    ['ftmo-2-step-standard-25k', 'FTMO 2-Step Standard 25K', '$25K', '2 steps', 10, 5, 10, 5, 'Fixed (static)', 'Static', 250, null, 80],
+    ['ftmo-2-step-standard-50k', 'FTMO 2-Step Standard 50K', '$50K', '2 steps', 10, 5, 10, 5, 'Fixed (static)', 'Static', 345, null, 80],
+    ['ftmo-2-step-standard-100k', 'FTMO 2-Step Standard 100K', '$100K', '2 steps', 10, 5, 10, 5, 'Fixed (static)', 'Static', 540, null, 80],
+    ['ftmo-2-step-standard-200k', 'FTMO 2-Step Standard 200K', '$200K', '2 steps', 10, 5, 10, 5, 'Fixed (static)', 'Static', 1080, null, 80],
+    ['ftmo-2-step-swing-10k', 'FTMO 2-Step Swing 10K', '$10K', '2 steps', 10, 5, 10, 5, 'Fixed (static)', 'Static', 99, null, 80],
+    ['ftmo-2-step-swing-25k', 'FTMO 2-Step Swing 25K', '$25K', '2 steps', 10, 5, 10, 5, 'Fixed (static)', 'Static', 279, null, 80],
+    ['ftmo-2-step-swing-50k', 'FTMO 2-Step Swing 50K', '$50K', '2 steps', 10, 5, 10, 5, 'Fixed (static)', 'Static', 379, null, 80],
+    ['ftmo-2-step-swing-100k', 'FTMO 2-Step Swing 100K', '$100K', '2 steps', 10, 5, 10, 5, 'Fixed (static)', 'Static', 599, null, 80],
   ],
+  // En anglais : ces colonnes vivent dans prop_firm_challenges, que le bundle
+  // translations ne couvre pas. Elles ne sont pas affichees sur la fiche.
   consistency: {
     '1 step':
-      'Meilleur jour ≤ 50 % du profit des jours positifs. Dépasser le seuil ne fait pas échouer l’évaluation : il faut continuer jusqu’à repasser dessous. Aucun jour de trading minimum fixe, mais la règle en impose en pratique au moins deux rentables.',
+      'Best day ≤ 50% of the profit from winning days. Going over does not fail the evaluation: you keep trading until you are back under. No fixed minimum trading days, though the rule implies at least two winning ones.',
     '2 steps':
-      'Aucune règle de régularité. 4 jours de trading minimum dans chaque phase. Frais remboursés à 100 % avec la première récompense.',
+      'No consistency rule. 4 minimum trading days in each phase. Fee refunded in full with the first reward.',
   },
   riskUnit: 'percent',
   notes: [
-    'PARTAGE DES PROFITS. Enfin tranché par la fiche remplie du 3 septembre 2026 : 90 % sur le 1-Step, 80 % sur le 2-Step avec 90 % atteignable via le plan de scaling. La version précédente laissait profit_split à NULL faute de source. La colonne firme porte 80 avec max_profit_split à 90 ; le détail par programme vit dans prop_firm_challenges.',
-    'ALLOCATION. Corrigée. La fiche précédente plafonnait à 200 000 $, qui était le plus gros compte achetable et non l’allocation maximale. La fiche remplie donne 400 000 $ d’allocation initiale et 2 000 000 $ via le scaling.',
-    'REMISES. FTMO affichait le 3 septembre 2026 une offre publique : 399,20 € au lieu de 499 € sur le 1-Step 100K (-20 %), et 439 € au lieu de 540 € sur le 2-Step Standard 100K. Aucun prix barré n’est écrit : ce sont les remises publiques de la firme, pas un code PropFirmScanner. Les publier reviendrait à promettre une réduction qui ne passe pas par notre lien et qui peut disparaître sans préavis.',
-    'TRADINGVIEW. Conflit résolu : la fiche remplie la liste parmi les plateformes disponibles. Ajoutée.',
-    'NOUVEL ESSAI GRATUIT après un échec en phase de vérification : retiré. La fiche remplie indique « No reset; a new Challenge is required », ce qui contredit la formulation précédente sans la réfuter formellement. À faire confirmer par FTMO avant de la remettre.',
-    'PAYS RESTREINTS. La fiche renvoie à la page officielle plutôt qu’à une liste figée, en précisant qu’elle bouge avec les sanctions et que les États-Unis et l’Australie passent par des offres régionales. Aucune liste écrite : restricted_countries reste vide, ce qui vaut mieux qu’une liste périmée.',
-    'FTMO US passe par OANDA ; aucun courtier d’exécution mondial n’est publiquement nommé. Non écrit en base faute de colonne, mais utile si une page « FTMO pour les traders américains » est écrite un jour.',
-    'AFFILIATION. 8 % de base, paliers jusqu’à 20 %. Durée du cookie non publiée. Demandes de retrait traitées sous 2 à 3 jours ouvrés.',
-    'CHIFFRES DÉCLARATIFS. 4,5 M de clients, 650 M$ de récompenses, 140 pays, 300 employés. Déclarations de la firme sur elle-même, publiables uniquement avec la mention « selon FTMO ». Non écrits.',
-    'FTMO FUTURES (Growth/Pro) est sorti de bêta le 3 septembre 2026 avec ses propres règles. Exclu de cette fiche, qui ne couvre que les CFD. Mérite sa propre entrée si le produit se confirme.',
-    'PROVENANCE. Cette fiche vient d’un classeur rempli le 3 septembre 2026 à partir des pages officielles FTMO listées dans son onglet « Sources & Notes ». Elle n’a PAS été renvoyée et validée par FTMO, contrairement à la fiche Hantec Trader qui vient d’un e-mail de la firme. La page peut donc dire « vérifié contre la documentation de FTMO », jamais « confirmé par FTMO ».',
+    'LANGUE. Les colonnes de base portent l’anglais, le français vit dans translations.fr. La version précédente écrivait le français en base : la page anglaise, qui est la page par défaut du site, servait du français. C’est ce que Sofiane a signalé le 3 septembre 2026.',
+    'PARTAGE DES PROFITS. Tranché par la fiche remplie du 3 septembre 2026 : 90 % sur le 1-Step, 80 % sur le 2-Step avec 90 % atteignable via le plan de scaling. La colonne firme porte 80 avec max_profit_split à 90 ; le détail par programme vit dans prop_firm_challenges.',
+    'ALLOCATION. Corrigée. La fiche précédente plafonnait à 200 000 $, qui était le plus gros compte achetable et non l’allocation maximale.',
+    'REMISES. FTMO affichait le 3 septembre 2026 une offre publique : 399,20 € au lieu de 499 € sur le 1-Step 100K (-20 %), et 439 € au lieu de 540 € sur le 2-Step Standard 100K. Aucun prix barré n’est écrit : ce sont les remises publiques de la firme, pas un code PropFirmScanner.',
+    'TRADINGVIEW. Conflit résolu : la fiche remplie la liste parmi les plateformes disponibles.',
+    'NOUVEL ESSAI GRATUIT après un échec en phase de vérification : retiré. La fiche remplie indique « No reset; a new Challenge is required ». À faire confirmer par FTMO avant de le remettre.',
+    'PAYS RESTREINTS. La fiche renvoie à la page officielle plutôt qu’à une liste figée. restricted_countries reste vide, ce qui vaut mieux qu’une liste périmée.',
+    'AFFILIATION. 8 % de base, paliers jusqu’à 20 %. Durée du cookie non publiée. Retraits traités sous 2 à 3 jours ouvrés.',
+    'CHIFFRES DÉCLARATIFS. 4,5 M de clients, 650 M$ de récompenses, 140 pays, 300 employés. Déclarations de la firme, publiables uniquement avec la mention « selon FTMO ». Non écrits.',
+    'FTMO FUTURES (Growth/Pro) est sorti de bêta le 3 septembre 2026 avec ses propres règles. Exclu de cette fiche, qui ne couvre que les CFD.',
+    'PROVENANCE. Classeur rempli le 3 septembre 2026 à partir des pages officielles FTMO. Il n’a PAS été renvoyé et validé par FTMO, contrairement à la fiche Hantec Trader. La page peut dire « vérifié contre la documentation de FTMO », jamais « confirmé par FTMO ».',
   ],
 }
 
@@ -281,17 +477,18 @@ export const FTMO = {
 // -----------------------------------------------------------------------------
 export const FUTURESELITE = {
   slug: 'futureselite',
+  // Colonnes de base en ANGLAIS ; le francais est dans `fr` -> translations.fr.
   scalars: {
     name: 'FuturesElite',
     website_url: 'https://futureselite.com',
     affiliate_url:
       'https://app.futureselite.com/dashboard/choose-plan?aff=AFF5465384&coupon=scanned',
-    headquarters: 'Corso G. Matteotti 61, Latina 04100, Italie',
+    headquarters: 'Corso G. Matteotti 61, Latina 04100, Italy',
     country: 'Italy',
     price_currency: 'USD',
     is_regulated: false,
     regulation_details:
-      'Quantum SRL, Corso G. Matteotti 61, Latina 04100, Italie, n° 03095010595. Aucune licence de régulateur financier. Comptes de démonstration, performances hypothétiques.',
+      'Quantum SRL, Corso G. Matteotti 61, Latina 04100, Italy, no. 03095010595. No financial regulator licence. Demo accounts, hypothetical performance.',
     profit_split: 90,
     // Ecrit explicitement : la valeur de seed valait 80, soit MOINS que le
     // taux de base corrige a 90. Le tableau /compare affichait donc un
@@ -301,156 +498,308 @@ export const FUTURESELITE = {
     min_price: 95,
     max_price: 353,
     is_futures: true,
-    drawdown_type: 'Fin de journée',
-    time_limit: 'Aucune limite de temps',
-    payout_frequency: 'on-demand',
+    drawdown_type: 'End of day',
+    time_limit: 'No time limit',
+    payout_frequency: 'on demand, daily once funded',
     source_url: 'https://futureselite.com',
   },
   arrays: {
     platforms: ['Tradovate', 'NinjaTrader', 'Quantower', 'ATAS', 'Volumetrica', 'DeepCharts', 'WealthCharts'],
     assets: ['Futures'],
     included_items: [
-      'Journal de trading et tableau de bord analytique',
-      'Aucun frais d’activation du compte financé',
-      'Sept plateformes au choix',
+      'Trading journal and analytics dashboard',
+      'No activation fee on the funded account',
+      'Seven platforms to choose from',
     ],
     pros: [
-      'Partage des profits à 90 % sur le programme Elite',
-      'Drawdown de fin de journée, sans aucune limite de perte journalière',
-      'Aucune règle de régularité une fois financé',
-      'Aucun frais d’activation pour débloquer le compte financé',
-      'Retrait possible chaque jour une fois financé',
-      'Remises par lot : le cinquième compte est offert',
+      '90% profit split on the Elite programme',
+      'End-of-day drawdown, with no daily loss limit at all',
+      'No consistency rule once funded',
+      'No activation fee to unlock the funded account',
+      'Payouts available every day once funded',
+      'Bundle discounts: the fifth account is free',
     ],
     cons: [
-      'Aucune licence de régulateur financier',
-      'Comptes de démonstration, performances hypothétiques',
-      '3 jours de trading minimum en évaluation, 6 une fois financé',
-      'Plafond de retrait par demande, de 1 000 à 3 000 $ selon la taille',
-      'Les grilles Nitro, Prime et Instant ne sont pas publiques',
+      'No financial regulator licence',
+      'Demo accounts, hypothetical performance',
+      '3 minimum trading days in evaluation, 6 once funded',
+      'Per-request payout cap, from $1,000 to $3,000 by account size',
+      'The Nitro, Prime and Instant price lists are not public',
     ],
     special_features: [
-      'Partage des profits à 90 % sur le programme Elite',
-      'Drawdown de fin de journée, aucune limite de perte journalière',
-      'Aucune règle de régularité une fois financé',
-      'Aucun frais d’activation du compte financé',
-      'Remises par lot : le cinquième compte est offert',
-      'Comptes Instant disponibles, sans évaluation',
+      '90% profit split on the Elite programme',
+      'End-of-day drawdown, no daily loss limit',
+      'No consistency rule once funded',
+      'No activation fee on the funded account',
+      'Bundle discounts: the fifth account is free',
+      'Instant accounts available, with no evaluation',
     ],
   },
   json: {
     verdict_card: {
-      title: 'Pour qui, et pour qui pas',
+      title: 'Who it suits, and who it does not',
       body:
-        'FuturesElite mise sur des conditions généreuses une fois financé : 90 % de partage, aucune règle de régularité, retrait quotidien. En échange, la firme est jeune, sans régulateur, et ne publie qu’une seule de ses quatre grilles.',
+        'FuturesElite bets on generous terms once you are funded: a 90% split, no consistency rule, daily payouts. In exchange, the firm is young, unregulated, and publishes only one of its four price lists.',
       points: [
-        'Un partage élevé et des retraits fréquents, sans attendre une échéance',
-        'Une évaluation sans limite de perte journalière, qui laisse respirer',
-        'Un compte financé qui s’ouvre sans frais d’activation',
-        'La possibilité d’empiler jusqu’à dix comptes en parallèle',
+        'A high split and frequent payouts, with no waiting period',
+        'An evaluation with no daily loss limit, which leaves room to breathe',
+        'A funded account that opens with no activation fee',
+        'The option to stack up to ten accounts in parallel',
       ],
     },
     program_guide: {
-      title: 'Le programme Elite',
+      title: 'The Elite programme',
       intro:
-        'Elite est le seul programme dont la grille tarifaire est publique. Nitro, Prime et Instant existent à l’achat, mais leurs prix ne sont pas exposés.',
+        'Elite is the only programme whose price list is public. Nitro, Prime and Instant exist at checkout, but their prices are not shown.',
       options: [
         {
           name: 'Elite',
-          badge: 'Grille publique',
+          badge: 'Public pricing',
           summary:
-            'Une évaluation en une étape, un drawdown de fin de journée, aucune perte journalière, et 90 % de partage une fois financé.',
+            'A one-step evaluation, an end-of-day drawdown, no daily loss limit, and a 90% split once funded.',
           points: [
-            'Objectif de 5 % du capital',
-            'Aucune limite de perte journalière',
-            '3 jours de trading minimum',
-            'Aucun frais d’activation',
+            '5% profit target',
+            'No daily loss limit',
+            '3 minimum trading days',
+            'No activation fee',
           ],
         },
       ],
     },
     key_rules: {
-      title: 'Les règles qui décident',
-      intro: 'Ce qui distingue vraiment FuturesElite des autres firmes futures.',
+      title: 'The rules that decide it',
+      intro: 'What genuinely sets FuturesElite apart from other futures firms.',
       rules: [
         {
-          title: 'Aucune limite de perte journalière',
+          title: 'No daily loss limit',
           detail:
-            'Ni pendant l’évaluation, ni une fois financé. Le risque est encadré par la seule Maximum Loss Limit, recalculée en fin de journée. C’est l’argument principal de la firme, pas une donnée manquante.',
+            'Neither during the evaluation nor once funded. Risk is bounded by the Maximum Loss Limit alone, recalculated at the end of each day. That is the firm\u2019s headline argument, not a missing figure.',
         },
         {
-          title: 'Drawdown de fin de journée',
+          title: 'End-of-day drawdown',
           detail:
-            'La limite se met à jour une fois par jour sur le solde de clôture, pas en continu. Une position en perte latente ne déclenche donc pas la limite tant que la journée n’est pas close.',
+            'The limit updates once a day on the closing balance, not continuously. A position sitting at a floating loss therefore does not trip the limit until the day closes.',
         },
         {
-          title: 'Aucune règle de régularité une fois financé',
+          title: 'No consistency rule once funded',
           detail:
-            'La règle s’applique pendant l’évaluation puis disparaît sur le compte financé. La page de vente affiche deux valeurs côte à côte, 40 % et 50 %, sans préciser laquelle s’applique : à confirmer auprès du partenaire.',
+            'The rule applies during the evaluation and then disappears on the funded account. The sales page shows two figures side by side, 40% and 50%, without saying which applies: to be confirmed with the partner.',
         },
         {
-          title: 'Aucun frais d’activation',
+          title: 'No activation fee',
           detail:
-            'Passer l’évaluation suffit à ouvrir le compte financé. Les frais de reset, eux, existent : de 79 à 229 $ selon la taille.',
+            'Passing the evaluation is enough to open the funded account. Reset fees do exist: $79 to $229 by size.',
         },
       ],
       more: [
-        'Retrait possible chaque jour une fois financé',
-        '6 jours de trading minimum avant un retrait',
-        'Aucun buffer de profit exigé',
-        'Sept plateformes au choix, dont Tradovate et NinjaTrader',
-        'Le cinquième compte d’un lot est offert',
+        'Payouts available every day once funded',
+        '6 minimum trading days before a payout',
+        'No profit buffer required',
+        'Seven platforms to choose from, including Tradovate and NinjaTrader',
+        'The fifth account in a bundle is free',
       ],
     },
     journey: {
-      title: 'Ce qui se passe après le paiement',
-      intro: 'Une seule étape d’évaluation, puis le compte financé s’ouvre immédiatement.',
+      title: 'What happens after you pay',
+      intro: 'A single evaluation step, then the funded account opens immediately.',
       steps: [
         {
-          title: 'Évaluation',
+          title: 'Evaluation',
           detail:
-            'Atteindre l’objectif de profit sans franchir la Maximum Loss Limit, sur au moins 3 jours de trading. Aucune limite de temps.',
+            'Hit the profit target without breaching the Maximum Loss Limit, across at least 3 trading days. No time limit.',
         },
         {
-          title: 'Compte financé',
+          title: 'Funded account',
           detail:
-            'Ouvert dès la validation, sans frais d’activation. La règle de régularité disparaît à ce stade.',
+            'Opened as soon as you pass, with no activation fee. The consistency rule disappears at this stage.',
+        },
+        {
+          title: 'Payouts',
+          detail:
+            'Available every day, after 6 trading days, within the per-request cap: $1,000 on a 25K, up to $3,000 on a 150K.',
+        },
+        {
+          title: 'Stacking accounts',
+          detail:
+            'Elite caps at 5 funded accounts. By stacking a programme of the same size, up to 10 accounts in parallel.',
+        },
+      ],
+    },
+    cost_timeline: {
+      title: 'What you will pay',
+      intro: 'The costs do not all land at the same moment.',
+      steps: [
+        {
+          label: 'At purchase',
+          title: 'One-off fee',
+          detail: 'From $95 for a 25K to $353 for a 150K, before discount. No subscription.',
+        },
+        {
+          label: 'On failure',
+          title: 'Optional reset',
+          detail: 'From $79 on a 25K to $229 on a 150K. Starting over is never compulsory.',
+        },
+        {
+          label: 'On passing',
+          title: 'No activation fee',
+          detail: 'The funded account opens with no further payment.',
+        },
+        {
+          label: 'At payout',
+          title: 'Per-request cap',
+          detail: 'From $1,000 to $3,000 by account size, with 90% for you.',
+        },
+      ],
+    },
+  },
+  fr: {
+    headquarters: 'Corso G. Matteotti 61, Latina 04100, Italie',
+    regulation_details:
+      'Quantum SRL, Corso G. Matteotti 61, Latina 04100, Italie, n\u00b0 03095010595. Aucune licence de r\u00e9gulateur financier. Comptes de d\u00e9monstration, performances hypoth\u00e9tiques.',
+    drawdown_type: 'Fin de journ\u00e9e',
+    time_limit: 'Aucune limite de temps',
+    payout_frequency: 'sur demande, chaque jour une fois financ\u00e9',
+    assets: ['Futures'],
+    included_items: [
+      'Journal de trading et tableau de bord analytique',
+      'Aucun frais d\u2019activation du compte financ\u00e9',
+      'Sept plateformes au choix',
+    ],
+    pros: [
+      'Partage des profits \u00e0 90 % sur le programme Elite',
+      'Drawdown de fin de journ\u00e9e, sans aucune limite de perte journali\u00e8re',
+      'Aucune r\u00e8gle de r\u00e9gularit\u00e9 une fois financ\u00e9',
+      'Aucun frais d\u2019activation pour d\u00e9bloquer le compte financ\u00e9',
+      'Retrait possible chaque jour une fois financ\u00e9',
+      'Remises par lot : le cinqui\u00e8me compte est offert',
+    ],
+    cons: [
+      'Aucune licence de r\u00e9gulateur financier',
+      'Comptes de d\u00e9monstration, performances hypoth\u00e9tiques',
+      '3 jours de trading minimum en \u00e9valuation, 6 une fois financ\u00e9',
+      'Plafond de retrait par demande, de 1 000 \u00e0 3 000 $ selon la taille',
+      'Les grilles Nitro, Prime et Instant ne sont pas publiques',
+    ],
+    special_features: [
+      'Partage des profits \u00e0 90 % sur le programme Elite',
+      'Drawdown de fin de journ\u00e9e, aucune limite de perte journali\u00e8re',
+      'Aucune r\u00e8gle de r\u00e9gularit\u00e9 une fois financ\u00e9',
+      'Aucun frais d\u2019activation du compte financ\u00e9',
+      'Remises par lot : le cinqui\u00e8me compte est offert',
+      'Comptes Instant disponibles, sans \u00e9valuation',
+    ],
+    verdict_card: {
+      title: 'Pour qui, et pour qui pas',
+      body:
+        'FuturesElite mise sur des conditions g\u00e9n\u00e9reuses une fois financ\u00e9 : 90 % de partage, aucune r\u00e8gle de r\u00e9gularit\u00e9, retrait quotidien. En \u00e9change, la firme est jeune, sans r\u00e9gulateur, et ne publie qu\u2019une seule de ses quatre grilles.',
+      points: [
+        'Un partage \u00e9lev\u00e9 et des retraits fr\u00e9quents, sans attendre une \u00e9ch\u00e9ance',
+        'Une \u00e9valuation sans limite de perte journali\u00e8re, qui laisse respirer',
+        'Un compte financ\u00e9 qui s\u2019ouvre sans frais d\u2019activation',
+        'La possibilit\u00e9 d\u2019empiler jusqu\u2019\u00e0 dix comptes en parall\u00e8le',
+      ],
+    },
+    program_guide: {
+      title: 'Le programme Elite',
+      intro:
+        'Elite est le seul programme dont la grille tarifaire est publique. Nitro, Prime et Instant existent \u00e0 l\u2019achat, mais leurs prix ne sont pas expos\u00e9s.',
+      options: [
+        {
+          name: 'Elite',
+          badge: 'Grille publique',
+          summary:
+            'Une \u00e9valuation en une \u00e9tape, un drawdown de fin de journ\u00e9e, aucune perte journali\u00e8re, et 90 % de partage une fois financ\u00e9.',
+          points: [
+            'Objectif de 5 % du capital',
+            'Aucune limite de perte journali\u00e8re',
+            '3 jours de trading minimum',
+            'Aucun frais d\u2019activation',
+          ],
+        },
+      ],
+    },
+    key_rules: {
+      title: 'Les r\u00e8gles qui d\u00e9cident',
+      intro: 'Ce qui distingue vraiment FuturesElite des autres firmes futures.',
+      rules: [
+        {
+          title: 'Aucune limite de perte journali\u00e8re',
+          detail:
+            'Ni pendant l\u2019\u00e9valuation, ni une fois financ\u00e9. Le risque est encadr\u00e9 par la seule Maximum Loss Limit, recalcul\u00e9e en fin de journ\u00e9e. C\u2019est l\u2019argument principal de la firme, pas une donn\u00e9e manquante.',
+        },
+        {
+          title: 'Drawdown de fin de journ\u00e9e',
+          detail:
+            'La limite se met \u00e0 jour une fois par jour sur le solde de cl\u00f4ture, pas en continu. Une position en perte latente ne d\u00e9clenche donc pas la limite tant que la journ\u00e9e n\u2019est pas close.',
+        },
+        {
+          title: 'Aucune r\u00e8gle de r\u00e9gularit\u00e9 une fois financ\u00e9',
+          detail:
+            'La r\u00e8gle s\u2019applique pendant l\u2019\u00e9valuation puis dispara\u00eet sur le compte financ\u00e9. La page de vente affiche deux valeurs c\u00f4te \u00e0 c\u00f4te, 40 % et 50 %, sans pr\u00e9ciser laquelle s\u2019applique : \u00e0 confirmer aupr\u00e8s du partenaire.',
+        },
+        {
+          title: 'Aucun frais d\u2019activation',
+          detail:
+            'Passer l\u2019\u00e9valuation suffit \u00e0 ouvrir le compte financ\u00e9. Les frais de reset, eux, existent : de 79 \u00e0 229 $ selon la taille.',
+        },
+      ],
+      more: [
+        'Retrait possible chaque jour une fois financ\u00e9',
+        '6 jours de trading minimum avant un retrait',
+        'Aucun buffer de profit exig\u00e9',
+        'Sept plateformes au choix, dont Tradovate et NinjaTrader',
+        'Le cinqui\u00e8me compte d\u2019un lot est offert',
+      ],
+    },
+    journey: {
+      title: 'Ce qui se passe apr\u00e8s le paiement',
+      intro: 'Une seule \u00e9tape d\u2019\u00e9valuation, puis le compte financ\u00e9 s\u2019ouvre imm\u00e9diatement.',
+      steps: [
+        {
+          title: '\u00c9valuation',
+          detail:
+            'Atteindre l\u2019objectif de profit sans franchir la Maximum Loss Limit, sur au moins 3 jours de trading. Aucune limite de temps.',
+        },
+        {
+          title: 'Compte financ\u00e9',
+          detail:
+            'Ouvert d\u00e8s la validation, sans frais d\u2019activation. La r\u00e8gle de r\u00e9gularit\u00e9 dispara\u00eet \u00e0 ce stade.',
         },
         {
           title: 'Retraits',
           detail:
-            'Possibles chaque jour, après 6 jours de trading, dans la limite du plafond par demande : 1 000 $ sur un 25K, jusqu’à 3 000 $ sur un 150K.',
+            'Possibles chaque jour, apr\u00e8s 6 jours de trading, dans la limite du plafond par demande : 1 000 $ sur un 25K, jusqu\u2019\u00e0 3 000 $ sur un 150K.',
         },
         {
           title: 'Cumul de comptes',
           detail:
-            'Elite plafonne à 5 comptes financés. En empilant un programme de même taille, jusqu’à 10 comptes en parallèle.',
+            'Elite plafonne \u00e0 5 comptes financ\u00e9s. En empilant un programme de m\u00eame taille, jusqu\u2019\u00e0 10 comptes en parall\u00e8le.',
         },
       ],
     },
     cost_timeline: {
       title: 'Ce que vous paierez',
-      intro: 'Les coûts n’arrivent pas tous au même moment.',
+      intro: 'Les co\u00fbts n\u2019arrivent pas tous au m\u00eame moment.',
       steps: [
         {
-          label: 'À l’achat',
+          label: '\u00c0 l\u2019achat',
           title: 'Frais unique',
-          detail: 'De 95 $ pour un 25K à 353 $ pour un 150K, hors remise. Aucun abonnement.',
+          detail: 'De 95 $ pour un 25K \u00e0 353 $ pour un 150K, hors remise. Aucun abonnement.',
         },
         {
-          label: 'En cas d’échec',
+          label: 'En cas d\u2019\u00e9chec',
           title: 'Reset optionnel',
-          detail: 'De 79 $ sur un 25K à 229 $ sur un 150K. Reprendre à zéro n’est jamais obligatoire.',
+          detail: 'De 79 $ sur un 25K \u00e0 229 $ sur un 150K. Reprendre \u00e0 z\u00e9ro n\u2019est jamais obligatoire.',
         },
         {
-          label: 'À la validation',
-          title: 'Aucun frais d’activation',
-          detail: 'Le compte financé s’ouvre sans paiement supplémentaire.',
+          label: '\u00c0 la validation',
+          title: 'Aucun frais d\u2019activation',
+          detail: 'Le compte financ\u00e9 s\u2019ouvre sans paiement suppl\u00e9mentaire.',
         },
         {
           label: 'Au retrait',
           title: 'Plafond par demande',
-          detail: 'De 1 000 à 3 000 $ selon la taille du compte, avec 90 % pour vous.',
+          detail: 'De 1 000 \u00e0 3 000 $ selon la taille du compte, avec 90 % pour vous.',
         },
       ],
     },
@@ -461,19 +810,21 @@ export const FUTURESELITE = {
     ['futureselite-elite-100k', 'Elite $100K', '$100K', '1 step', 3000, null, 6000, null, 'Fin de journée', 'Trailing', 293, null],
     ['futureselite-elite-150k', 'Elite $150K', '$150K', '1 step', 4500, null, 9000, null, 'Fin de journée', 'Trailing', 353, null],
   ],
+  // En anglais : ces colonnes vivent dans prop_firm_challenges, que le bundle
+  // translations ne couvre pas. Elles suivent donc la langue de base.
   consistency: {
     '1 step':
-      'Évaluation : 3 jours de trading minimum et une règle de régularité. Aucune règle de régularité une fois financé. Aucune limite de perte journalière. Aucun frais d’activation.',
+      'Evaluation: 3 minimum trading days and a consistency rule. No consistency rule once funded. No daily loss limit. No activation fee.',
   },
   payout: {
     'futureselite-elite-25k':
-      'Une fois financé : 90 % de partage, plafond de retrait 1 000 $, retrait possible chaque jour, 6 jours de trading minimum, aucun buffer. Reset 79 $.',
+      'Once funded: 90% split, $1,000 payout cap, payouts available daily, 6 minimum trading days, no buffer. Reset $79.',
     'futureselite-elite-50k':
-      'Une fois financé : 90 % de partage, plafond de retrait 2 000 $, retrait possible chaque jour, 6 jours de trading minimum, aucun buffer. Reset 89 $.',
+      'Once funded: 90% split, $2,000 payout cap, payouts available daily, 6 minimum trading days, no buffer. Reset $89.',
     'futureselite-elite-100k':
-      'Une fois financé : 90 % de partage, plafond de retrait 2 500 $, retrait possible chaque jour, 6 jours de trading minimum, aucun buffer. Reset 159 $.',
+      'Once funded: 90% split, $2,500 payout cap, payouts available daily, 6 minimum trading days, no buffer. Reset $159.',
     'futureselite-elite-150k':
-      'Une fois financé : 90 % de partage, plafond de retrait 3 000 $, retrait possible chaque jour, 6 jours de trading minimum, aucun buffer. Reset 229 $.',
+      'Once funded: 90% split, $3,000 payout cap, payouts available daily, 6 minimum trading days, no buffer. Reset $229.',
   },
   riskUnit: 'usd',
   notes: [
@@ -491,33 +842,252 @@ export const FUTURESELITE = {
 // -----------------------------------------------------------------------------
 export const THE5ERS = {
   slug: 'the5ers',
+  // Colonnes de base en ANGLAIS ; le francais est dans `fr` -> translations.fr.
   scalars: {
     name: 'The5ers',
     founded_year: 2016,
-    headquarters: 'Enstar House, 168 Praed Street, Londres W2 1RH, Royaume-Uni',
+    headquarters: 'Enstar House, 168 Praed Street, London W2 1RH, United Kingdom',
     country: 'United Kingdom',
     price_currency: 'USD',
     is_regulated: false,
     regulation_details:
-      'Five Percent Online Ltd, société britannique n° 12553363 et société israélienne n° 515864007. Société d’évaluation de trading propriétaire : ni courtier, ni dépositaire, ni bourse, ni établissement financier régulé. Environnement de trading entièrement simulé.',
+      'Five Percent Online Ltd, England & Wales no. 12553363 and Israel no. 515864007. A proprietary-trading evaluation company: not a broker, custodian, exchange or regulated financial institution. Fully simulated trading environment.',
     trustpilot_rating: 4.7,
     min_price: 22,
     max_price: 850,
     profit_split: 80,
     max_profit_split: 100,
     max_allocation:
-      'Jusqu’à 500 000 $ sur High Stakes et Pro Growth, jusqu’à 4 000 000 $ sur Hyper Growth et Bootcamp',
+      'Up to $500,000 on High Stakes and Pro Growth, up to $4,000,000 on Hyper Growth and Bootcamp',
     is_futures: false,
+    drawdown_type:
+      'Static overall loss on all four programmes: 10% on High Stakes, 6% on Hyper Growth and Pro Growth, 5% in evaluation and 4% once funded on Bootcamp.',
+    time_limit: 'No time limit, but an account left 30 days without a trade expires',
+    payout_frequency: 'every 14 days, after approval',
+    source_url: 'https://the5ers.com/challenge-programs-bootcamp-high-stakes-hyper-growth-explained/',
+  },
+  arrays: {
+    platforms: ['MetaTrader 5'],
+    assets: ['Forex CFDs', 'Indices', 'Metals', 'Commodities', 'Crypto'],
+    payout_methods: ['Methods shown in The5ers Hub, varying by account'],
+    restricted_countries: [
+      'Afghanistan', 'Belarus', 'Bosnia and Herzegovina', 'Burundi',
+      'Central African Republic', 'Congo (Brazzaville)', 'Congo (Kinshasa)',
+      'Crimea', 'Cuba', 'Eritrea', 'Guinea', 'Guinea-Bissau', 'Iran', 'Iraq',
+      'Israel', 'Laos', 'Lebanon', 'Liberia', 'Libya', 'Myanmar',
+      'North Korea', 'Palestinian Territory', 'Papua New Guinea', 'Russia',
+      'Somalia', 'South Sudan', 'Sudan', 'Syria', 'Vanuatu', 'Venezuela',
+      'Yemen',
+    ],
+    included_items: [
+      'MetaTrader 5 in Hedge mode, on desktop, web and mobile',
+      'Four programmes, from one to three phases',
+      'Account growth up to a 100% split',
+    ],
+    pros: [
+      'Trading since 2016',
+      'Entry from $22, one of the lowest on the market',
+      'The split can reach 100%, a rare ceiling',
+      'The growth plan can lead to $4,000,000 on Hyper Growth and Bootcamp',
+      'Four genuinely different programmes, from one to three phases',
+      'No consistency rule on any of the four programmes',
+      'Overnight and weekend holding allowed throughout',
+      'Two identified legal entities, in the UK and Israel',
+    ],
+    cons: [
+      'The split starts at 50% on Hyper Growth and Bootcamp',
+      'A single platform: MetaTrader 5',
+      '31 excluded territories, including Russia, Iran and Israel',
+      'No financial regulator licence',
+      'Fully simulated environment: the funds are not real capital',
+      'An account left 30 days without a trade expires',
+      'No publicly advertised reset: you buy a new evaluation',
+      'Large payouts can be split into weekly instalments of $10,000',
+    ],
+    special_features: [
+      'Split varies by programme: 80% High Stakes, 75% Pro Growth, 50% Hyper Growth and Bootcamp',
+      'All four programmes climb to 100% through account growth',
+      'MetaTrader 5 in Hedge mode, on desktop, web and mobile',
+      'Forex commission of $4 per round-turn lot, varying by asset',
+      'Leverage up to 1:100 on High Stakes, 1:30 on the other three',
+      'Indices and metals up to 1:25, crypto 1:2 on High Stakes',
+      'An account left 30 days without a trade expires',
+      'Part of the 5% Group, alongside Trade The Pool, Trade Delicious and TSG Brokers',
+    ],
+  },
+  json: {
+    verdict_card: {
+      title: 'Who it suits, and who it does not',
+      body:
+        'The5ers sells four programmes whose starting split ranges from 50% to 80%. All climb to 100% as the account grows, but where you start changes the maths of your first months completely.',
+      points: [
+        'Starting for almost nothing: $22 on Bootcamp or High Stakes 2.5K',
+        'The best entry split of the range: 80% on High Stakes',
+        'Aiming very large: Hyper Growth and Bootcamp lead to $4,000,000',
+        'A 100% split ceiling, which few firms offer',
+        'No consistency rule, on any of the four programmes',
+      ],
+    },
+    program_guide: {
+      title: 'Four programmes, four trade-offs',
+      intro: 'The choice turns on three dials: the starting split, the number of phases, and the price.',
+      options: [
+        {
+          name: 'High Stakes',
+          badge: 'Two phases',
+          summary:
+            'The most balanced programme: 80% split from the start, 10% then 5% targets, and the widest daily limit of the range.',
+          points: [
+            '10% then 5% target, 80% split',
+            '5% daily loss, 10% overall loss',
+            '3 minimum winning days per phase',
+            'Leverage up to 1:100, the highest of the range',
+            'From $22 (2.5K) to $545 (100K)',
+          ],
+        },
+        {
+          name: 'Pro Growth',
+          badge: 'Single phase',
+          summary:
+            'A single 10% phase and a 75% starting split, at a contained price. Overall loss drops to 6%.',
+          points: [
+            '10% target in one phase, 75% split',
+            '3% daily loss, 6% overall loss',
+            'Gradual growth up to $500,000',
+            'From $52 (5K) to $329 (50K)',
+          ],
+        },
+        {
+          name: 'Hyper Growth',
+          badge: 'Single phase, high ceiling',
+          summary:
+            'The account doubles at each 10% step, up to $4,000,000. In exchange, the split starts at 50% and the entry price is the highest of the range.',
+          points: [
+            '10% target in one phase, 50% starting split',
+            'The account doubles at each target reached',
+            '6% overall loss, 3% daily pause threshold',
+            'From $260 (5K) to $850 (20K)',
+          ],
+        },
+        {
+          name: 'Bootcamp',
+          badge: 'Three phases',
+          summary:
+            'Three 6% steps, with no daily limit during the evaluation, and fees paid in two parts: a low entry, the balance on success.',
+          points: [
+            'Three 6% targets, 50% starting split',
+            'No daily limit during the evaluation',
+            '5% overall loss, tightened to 4% once funded',
+            'Entry from $22 (20K) to $225 (250K), balance due after success',
+          ],
+        },
+      ],
+    },
+    key_rules: {
+      title: 'The rules that decide it',
+      intro: 'Five points comparison sites get wrong or stay silent about.',
+      rules: [
+        {
+          title: 'The starting split ranges from 50% to 80% by programme',
+          detail:
+            'High Stakes starts at 80%, Pro Growth at 75%, Hyper Growth and Bootcamp at 50%. All four climb to 100% as the account grows, but advertising "up to 100%" without saying where you start hides half the information.',
+        },
+        {
+          title: 'The Hyper Growth daily threshold is a pause, not a failure',
+          detail:
+            'On Hyper Growth, going past 3% in a day suspends trading until the next day instead of closing the account. On Pro Growth it is a genuine 3% daily loss. On Bootcamp there is no daily limit during the evaluation; the 3% pause only arrives once funded.',
+        },
+        {
+          title: 'An account inactive for 30 days expires',
+          detail:
+            'There is no deadline to pass an evaluation, but going 30 days without placing a trade closes the account. It is the only calendar constraint here, and it is rarely mentioned elsewhere.',
+        },
+        {
+          title: 'News can be held through, not traded',
+          detail:
+            'On High Stakes, holding a position through a high-impact release is allowed; opening or closing within the 2 minutes around it is not. The other three programmes forbid news-exploitation strategies without imposing that window.',
+        },
+        {
+          title: 'Large payouts can be split',
+          detail:
+            'Payouts go out every 14 days from your first trade on a funded account, after approval. A large amount may be paid in weekly instalments capped at $10,000. Worth factoring in if you are aiming at a big account.',
+        },
+      ],
+      more: [
+        'No consistency rule on any of the four programmes',
+        'Overnight and weekend holding allowed; indices carry high swaps',
+        'Forex commission of $4 per round-turn lot, varying by asset',
+        'Leverage up to 1:100 on High Stakes, 1:30 on the other three',
+        'Indices and metals up to 1:25; crypto 1:2 on High Stakes',
+        'No mandatory stop-loss',
+        'MetaTrader 5 in Hedge mode only',
+      ],
+    },
+    journey: {
+      title: 'What happens after you pay',
+      intro: 'The route depends on how many phases your programme has.',
+      steps: [
+        {
+          title: 'Evaluation',
+          detail:
+            'One phase on Hyper Growth and Pro Growth, two on High Stakes, three on Bootcamp. No deadline, but an account without a trade for 30 days expires.',
+        },
+        {
+          title: 'Funded account',
+          detail:
+            'The split starts at the programme rate — 80%, 75% or 50% — and climbs towards 100% as the account grows.',
+        },
+        {
+          title: 'Growth',
+          detail:
+            'High Stakes advances at each 10% step, Hyper Growth doubles the account at each step, Pro Growth grows gradually, Bootcamp at each 5% step. The ceiling is $500,000 on High Stakes and Pro Growth, $4,000,000 on the other two.',
+        },
+        {
+          title: 'Payouts',
+          detail:
+            'Every 14 days from your first trade on a funded account, subject to approval. A large amount may be split into weekly instalments of up to $10,000.',
+        },
+      ],
+    },
+    cost_timeline: {
+      title: 'What you will pay',
+      intro: 'Three of the four programmes are paid once. Bootcamp is not.',
+      steps: [
+        {
+          label: 'At purchase',
+          title: 'One-off fee, except Bootcamp',
+          detail:
+            'From $22 for a High Stakes 2.5K to $850 for a Hyper Growth 20K. Bootcamp asks only a reduced entry: $22 for a 20K, $225 for a 250K.',
+        },
+        {
+          label: 'On success',
+          title: 'Bootcamp balance',
+          detail:
+            'Bootcamp claims the rest of the fee once the evaluation is passed — $50 on the 20K. The other three ask for nothing further.',
+        },
+        {
+          label: 'On failure',
+          title: 'No advertised reset',
+          detail: 'The5ers publishes no reset price: starting over means buying a full evaluation.',
+        },
+        {
+          label: 'At payout',
+          title: 'Instalments possible',
+          detail:
+            'Payouts every 14 days after approval. Large amounts may be paid in weekly instalments of $10,000.',
+        },
+      ],
+    },
+  },
+  fr: {
+    regulation_details:
+      'Five Percent Online Ltd, société britannique n° 12553363 et société israélienne n° 515864007. Société d’évaluation de trading propriétaire : ni courtier, ni dépositaire, ni bourse, ni établissement financier régulé. Environnement de trading entièrement simulé.',
+    max_allocation:
+      'Jusqu’à 500 000 $ sur High Stakes et Pro Growth, jusqu’à 4 000 000 $ sur Hyper Growth et Bootcamp',
     drawdown_type:
       'Perte globale statique sur les quatre programmes : 10 % sur High Stakes, 6 % sur Hyper Growth et Pro Growth, 5 % en évaluation et 4 % une fois financé sur Bootcamp.',
     time_limit: 'Aucune limite de temps, mais un compte resté 30 jours sans trade expire',
     payout_frequency: 'tous les 14 jours, après validation',
-    source_url: 'https://the5ers.com/challenge-programs-bootcamp-high-stakes-hyper-growth-explained/',
-  },
-  arrays: {
-    // MetaTrader 5 uniquement. cTrader figurait dans la version precedente ;
-    // la fiche remplie ne liste que MT5 en mode Hedge.
-    platforms: ['MetaTrader 5'],
     assets: ['CFD sur forex', 'Indices', 'Métaux', 'Matières premières', 'Crypto'],
     payout_methods: ['Moyens affichés dans le Hub The5ers, variables selon le compte'],
     restricted_countries: [
@@ -563,8 +1133,6 @@ export const THE5ERS = {
       'Un compte resté 30 jours sans trade expire',
       'Membre du 5% Group, avec Trade The Pool, Trade Delicious et TSG Brokers',
     ],
-  },
-  json: {
     verdict_card: {
       title: 'Pour qui, et pour qui pas',
       body:
@@ -579,8 +1147,7 @@ export const THE5ERS = {
     },
     program_guide: {
       title: 'Quatre programmes, quatre compromis',
-      intro:
-        'Le choix se joue sur trois curseurs : le partage de départ, le nombre de phases et le prix.',
+      intro: 'Le choix se joue sur trois curseurs : le partage de départ, le nombre de phases et le prix.',
       options: [
         {
           name: 'High Stakes',
@@ -732,56 +1299,54 @@ export const THE5ERS = {
   },
   // Prix releves dans la fiche remplie du 3 septembre 2026, onglet Pricing.
   // ATTENTION : cette grille est mal alignee — plusieurs montants sont poses
-  // dans la colonne du programme voisin. L'affectation retenue ci-dessous est
-  // la seule compatible avec la ligne « Account sizes offered » de l'onglet
-  // Programs, qui dit quelles tailles chaque programme propose :
+  // dans la colonne du programme voisin. L'affectation retenue est la seule
+  // compatible avec la ligne « Account sizes offered » de l'onglet Programs :
   //   $20K  = Hyper Growth (High Stakes ne vend pas de 20K)
   //   $50K  = Pro Growth   (Hyper Growth s'arrete a 20K)
   //   $100K et $250K = Bootcamp (aucun autre programme ne vend ces tailles)
-  // Ce n'est pas une deduction par analogie : c'est la seule lecture qui ne
-  // contredit pas la fiche elle-meme. A refaire confirmer malgre tout.
   // Le 13e element porte le partage de depart propre au programme.
   challenges: [
-    ['the5ers-high-stakes-2-5k', 'High Stakes $2.5K', '$2.5K', '2 steps', 10, 5, 10, 5, 'Statique', 'Static', 22, null, 80],
-    ['the5ers-high-stakes-5k', 'High Stakes $5K', '$5K', '2 steps', 10, 5, 10, 5, 'Statique', 'Static', 39, null, 80],
-    ['the5ers-high-stakes-10k', 'High Stakes $10K', '$10K', '2 steps', 10, 5, 10, 5, 'Statique', 'Static', 78, null, 80],
-    ['the5ers-high-stakes-25k', 'High Stakes $25K', '$25K', '2 steps', 10, 5, 10, 5, 'Statique', 'Static', 195, null, 80],
-    ['the5ers-high-stakes-50k', 'High Stakes $50K', '$50K', '2 steps', 10, 5, 10, 5, 'Statique', 'Static', 309, null, 80],
-    ['the5ers-high-stakes-100k', 'High Stakes $100K', '$100K', '2 steps', 10, 5, 10, 5, 'Statique', 'Static', 545, null, 80],
-    ['the5ers-pro-growth-5k', 'Pro Growth $5K', '$5K', '1 step', 6, 3, 10, null, 'Statique', 'Static', 52, null, 75],
-    ['the5ers-pro-growth-10k', 'Pro Growth $10K', '$10K', '1 step', 6, 3, 10, null, 'Statique', 'Static', 98, null, 75],
-    ['the5ers-pro-growth-20k', 'Pro Growth $20K', '$20K', '1 step', 6, 3, 10, null, 'Statique', 'Static', 189, null, 75],
-    ['the5ers-pro-growth-50k', 'Pro Growth $50K', '$50K', '1 step', 6, 3, 10, null, 'Statique', 'Static', 329, null, 75],
-    ['the5ers-hyper-growth-5k', 'Hyper Growth $5K', '$5K', '1 step', 6, 3, 10, null, 'Statique', 'Static', 260, null, 50],
-    ['the5ers-hyper-growth-10k', 'Hyper Growth $10K', '$10K', '1 step', 6, 3, 10, null, 'Statique', 'Static', 450, null, 50],
-    ['the5ers-hyper-growth-20k', 'Hyper Growth $20K', '$20K', '1 step', 6, 3, 10, null, 'Statique', 'Static', 850, null, 50],
-    ['the5ers-bootcamp-20k', 'Bootcamp $20K', '$20K', '3 steps', 5, null, 6, 6, 'Statique', 'Static', 22, null, 50],
-    ['the5ers-bootcamp-100k', 'Bootcamp $100K', '$100K', '3 steps', 5, null, 6, 6, 'Statique', 'Static', 95, null, 50],
-    ['the5ers-bootcamp-250k', 'Bootcamp $250K', '$250K', '3 steps', 5, null, 6, 6, 'Statique', 'Static', 225, null, 50],
+    ['the5ers-high-stakes-2-5k', 'High Stakes $2.5K', '$2.5K', '2 steps', 10, 5, 10, 5, 'Static', 'Static', 22, null, 80],
+    ['the5ers-high-stakes-5k', 'High Stakes $5K', '$5K', '2 steps', 10, 5, 10, 5, 'Static', 'Static', 39, null, 80],
+    ['the5ers-high-stakes-10k', 'High Stakes $10K', '$10K', '2 steps', 10, 5, 10, 5, 'Static', 'Static', 78, null, 80],
+    ['the5ers-high-stakes-25k', 'High Stakes $25K', '$25K', '2 steps', 10, 5, 10, 5, 'Static', 'Static', 195, null, 80],
+    ['the5ers-high-stakes-50k', 'High Stakes $50K', '$50K', '2 steps', 10, 5, 10, 5, 'Static', 'Static', 309, null, 80],
+    ['the5ers-high-stakes-100k', 'High Stakes $100K', '$100K', '2 steps', 10, 5, 10, 5, 'Static', 'Static', 545, null, 80],
+    ['the5ers-pro-growth-5k', 'Pro Growth $5K', '$5K', '1 step', 6, 3, 10, null, 'Static', 'Static', 52, null, 75],
+    ['the5ers-pro-growth-10k', 'Pro Growth $10K', '$10K', '1 step', 6, 3, 10, null, 'Static', 'Static', 98, null, 75],
+    ['the5ers-pro-growth-20k', 'Pro Growth $20K', '$20K', '1 step', 6, 3, 10, null, 'Static', 'Static', 189, null, 75],
+    ['the5ers-pro-growth-50k', 'Pro Growth $50K', '$50K', '1 step', 6, 3, 10, null, 'Static', 'Static', 329, null, 75],
+    ['the5ers-hyper-growth-5k', 'Hyper Growth $5K', '$5K', '1 step', 6, 3, 10, null, 'Static', 'Static', 260, null, 50],
+    ['the5ers-hyper-growth-10k', 'Hyper Growth $10K', '$10K', '1 step', 6, 3, 10, null, 'Static', 'Static', 450, null, 50],
+    ['the5ers-hyper-growth-20k', 'Hyper Growth $20K', '$20K', '1 step', 6, 3, 10, null, 'Static', 'Static', 850, null, 50],
+    ['the5ers-bootcamp-20k', 'Bootcamp $20K', '$20K', '3 steps', 5, null, 6, 6, 'Static', 'Static', 22, null, 50],
+    ['the5ers-bootcamp-100k', 'Bootcamp $100K', '$100K', '3 steps', 5, null, 6, 6, 'Static', 'Static', 95, null, 50],
+    ['the5ers-bootcamp-250k', 'Bootcamp $250K', '$250K', '3 steps', 5, null, 6, 6, 'Static', 'Static', 225, null, 50],
   ],
   consistency: {
     '1 step':
-      'Aucune règle de régularité. La fiche officielle se contredit sur le nombre de jours rentables : son tableau en annonce 3, ses spécifications n’en imposent aucun. Un compte resté 30 jours sans trade expire. Sur Hyper Growth, dépasser 3 % dans la journée met le compte en pause au lieu de le clôturer.',
+      'No consistency rule. The official page contradicts itself on winning days: its table says 3, its specifications require none. An account left 30 days without a trade expires. On Hyper Growth, going past 3% in a day pauses the account rather than closing it.',
     '2 steps':
-      '3 jours rentables minimum par phase, sans règle de régularité. Aucun ordre exécuté dans les 2 minutes avant ou après une annonce à fort impact ; tenir une position à travers l’annonce reste autorisé.',
+      '3 minimum winning days per phase, with no consistency rule. No order executed within 2 minutes before or after a high-impact release; holding a position through it is allowed.',
     '3 steps':
-      'Aucun jour minimum annoncé, aucune règle de régularité. Aucune limite journalière pendant l’évaluation ; une pause journalière de 3 % s’applique une fois financé. Frais payés en deux temps : entrée réduite, solde dû à la réussite.',
+      'No minimum days stated, no consistency rule. No daily limit during the evaluation; a 3% daily pause applies once funded. Fees paid in two parts: a reduced entry, the balance due on success.',
   },
   riskUnit: 'percent',
   notes: [
-    'PARTAGE DES PROFITS — RÉSOLU. C’était le trou le plus visible de cette fiche : profit_split restait NULL faute de source. La fiche remplie du 3 septembre 2026 donne enfin le détail par programme : 80 % High Stakes, 75 % Pro Growth, 50 % Hyper Growth, 50 % Bootcamp, les quatre montant jusqu’à 100 % via la croissance du compte. La colonne firme porte 80 (le programme phare) avec max_profit_split à 100.',
-    'GRILLE DE PRIX MAL ALIGNÉE. L’onglet Pricing pose plusieurs montants dans la colonne du programme voisin : 850 $ apparaît sous High Stakes alors que High Stakes ne vend pas de 20K, 95 $ et 329 $ apparaissent sous Hyper Growth alors que Hyper Growth s’arrête à 20K. L’affectation retenue est la seule compatible avec la ligne « Account sizes offered » du même classeur. Elle reproduit celle de la version précédente, ce qui la conforte sans la prouver : à faire confirmer par The5ers.',
-    'ÉTATS-UNIS — CORRECTION. La version précédente affirmait « Les traders américains ne sont pas acceptés » et comptait les États-Unis parmi les territoires exclus. La liste officielle de la fiche remplie ne les contient pas. L’affirmation est retirée. Israël, en revanche, y figure bien, malgré l’entité israélienne du groupe.',
-    'SUMMER PLAN retiré. Le challenge the5ers-summer-plan-100k à 249 $ ne figure dans aucun des quatre programmes de la fiche remplie du 3 septembre 2026. Un plan saisonnier arrivé à échéance ne doit pas rester dans un configurateur.',
+    'LANGUE. Colonnes de base en anglais, français dans translations.fr. La version précédente écrivait le français en base et la page anglaise servait donc du français.',
+    'PARTAGE DES PROFITS — RÉSOLU. profit_split restait NULL faute de source. La fiche remplie du 3 septembre 2026 donne le détail par programme : 80 % High Stakes, 75 % Pro Growth, 50 % Hyper Growth, 50 % Bootcamp, les quatre montant jusqu’à 100 % via la croissance. La colonne firme porte 80 avec max_profit_split à 100.',
+    'GRILLE DE PRIX MAL ALIGNÉE. L’onglet Pricing pose plusieurs montants dans la colonne du programme voisin : 850 $ sous High Stakes alors que High Stakes ne vend pas de 20K, 95 $ et 329 $ sous Hyper Growth alors que Hyper Growth s’arrête à 20K. L’affectation retenue est la seule compatible avec la ligne « Account sizes offered » du même classeur. À faire confirmer par The5ers.',
+    'ÉTATS-UNIS — CORRECTION. La version précédente affirmait « Les traders américains ne sont pas acceptés ». La liste officielle ne les contient pas. Retiré. Israël y figure bien, malgré l’entité israélienne du groupe.',
+    'SUMMER PLAN retiré. Le challenge à 249 $ ne figure dans aucun des quatre programmes de la fiche du 3 septembre 2026.',
     'PLATEFORMES. cTrader retiré : la fiche ne liste que MetaTrader 5 en mode Hedge.',
-    'OBJECTIF HIGH STAKES — CORRECTION. La version précédente donnait 8 % en première phase. La fiche remplie donne 10 %, puis 5 %.',
-    'COMMISSIONS — RÉSOLU. Les deux sources tierces précédentes se contredisaient. La fiche donne 4 $ par lot aller-retour sur le forex, variable selon l’actif. Écrit.',
-    'REMISES. Une offre publique de 10 % circule chez un concurrent affilié. Aucun prix barré n’est écrit : ce n’est pas un code PropFirmScanner, et la fiche recommande elle-même de ne publier que les nôtres.',
-    'discount_code GDSWCVRTE7 est en base, d’origine inconnue et absent des deux fiches. À confirmer contre le panneau partenaire ou à retirer, comme le jeton Axtpvm6z7 l’a été chez Hantec.',
-    'RETRAITS. Rise est cité comme moyen de retrait par des comparateurs, pas par la firme : payout_methods renvoie au Hub plutôt que de nommer un prestataire non confirmé.',
-    'AFFILIATION. Taux, durée du cookie et calendrier de paiement non publiés. À relever dans le panneau affilié.',
-    'CHIFFRES DÉCLARATIFS. 262 000 traders financés, 171 employés, 80 M$ versés. Déclarations de la firme sur elle-même, publiables uniquement avec la mention « selon The5ers ». Non écrits.',
-    'PROVENANCE. Comme pour FTMO, ce classeur a été rempli à partir des pages officielles The5ers listées dans son onglet « Sources & Notes », et n’a pas été renvoyé et validé par la firme. La page peut dire « vérifié contre la documentation de The5ers », jamais « confirmé par The5ers ».',
+    'OBJECTIF HIGH STAKES — CORRECTION. La version précédente donnait 8 % en première phase. La fiche donne 10 %, puis 5 %.',
+    'COMMISSIONS — RÉSOLU. Les deux sources tierces se contredisaient. La fiche donne 4 $ par lot aller-retour sur le forex.',
+    'REMISES. Une offre publique de 10 % circule chez un concurrent affilié. Aucun prix barré n’est écrit : ce n’est pas un code PropFirmScanner.',
+    'discount_code GDSWCVRTE7 est en base, d’origine inconnue. À confirmer contre le panneau partenaire ou à retirer.',
+    'RETRAITS. Rise est cité comme moyen de retrait par des comparateurs, pas par la firme : payout_methods renvoie au Hub.',
+    'AFFILIATION. Taux, durée du cookie et calendrier de paiement non publiés.',
+    'CHIFFRES DÉCLARATIFS. 262 000 traders financés, 171 employés, 80 M$ versés. Déclarations de la firme, non écrites.',
+    'PROVENANCE. Classeur rempli à partir des pages officielles The5ers, non renvoyé et validé par la firme. La page peut dire « vérifié contre la documentation de The5ers », jamais « confirmé par The5ers ».',
   ],
 }
 
@@ -796,17 +1361,18 @@ export const THE5ERS = {
 // -----------------------------------------------------------------------------
 export const HANTEC = {
   slug: 'hantec-trader',
+  // Colonnes de base en ANGLAIS ; le francais est dans `fr` -> translations.fr.
   scalars: {
     name: 'Hantec Trader',
     website_url: 'https://htrader.hmarkets.com/',
     affiliate_url: 'https://myhtrader.hmarkets.com/purchasechallenge?affiliateId=2766',
     founded_year: 2023,
-    headquarters: 'Suite 201, The Catalyst Silicon Avenue, 40 Cybercity, 72201 Ebène, Maurice',
+    headquarters: 'Suite 201, The Catalyst Silicon Avenue, 40 Cybercity, 72201 Ebène, Mauritius',
     country: 'Mauritius',
     price_currency: 'USD',
     is_regulated: false,
     regulation_details:
-      'Hantec Trader Limited, société mauricienne n° C191400. Non régulée : société de trading propriétaire. Courtier partenaire : Hantec Markets Limited / Hantec Markets Mauritius.',
+      'Hantec Trader Limited, Mauritius company no. C191400. Unregulated: a proprietary trading company. Partner broker: Hantec Markets Limited / Hantec Markets Mauritius.',
     profit_split: 80,
     // 95 % avec l'add-on « 95% Reward Share ». La FAQ distingue desormais le
     // taux standard du maximum ; sans max_profit_split elle annoncerait
@@ -816,9 +1382,9 @@ export const HANTEC = {
     max_price: 2139,
     is_futures: false,
     drawdown_type:
-      'Perte journalière calculée sur le plus élevé du solde ou de l’equity à la clôture de la veille. Drawdown global glissant ou statique selon le programme.',
-    time_limit: 'Aucune limite de temps, sauf Instant24 : 24 heures à partir du premier trade',
-    payout_frequency: 'on-request',
+      'Daily loss measured on the higher of balance or equity at the previous day’s close. Overall drawdown trailing or static depending on the programme.',
+    time_limit: 'No time limit, except Instant24: 24 hours from your first trade',
+    payout_frequency: 'on request, decided within 24 business hours',
     source_url: 'https://htrader.hmarkets.com/',
     // Logo officiel fourni par la firme, servi en local. logo_url pointait sur
     // une favicon Google du domaine « hantectrader.com » — qui n'est pas le
@@ -827,10 +1393,185 @@ export const HANTEC = {
   },
   arrays: {
     platforms: ['MetaTrader 4', 'MetaTrader 5'],
-    assets: ['Forex', 'Indices', 'Matières premières', 'Métaux', 'Crypto'],
-    payout_methods: ['Virement bancaire', 'Cryptomonnaie', 'Portefeuilles électroniques'],
+    assets: ['Forex', 'Indices', 'Commodities', 'Metals', 'Crypto'],
+    payout_methods: ['Bank transfer', 'Cryptocurrency', 'E-wallets'],
     // Liste officielle communiquée par la firme. Repliée sous « Points à
     // connaître » sur la page : longue, mais décisive pour qui la consulte.
+    restricted_countries: [
+      'Afghanistan', 'Australia', 'Belgium', 'Congo (Brazzaville)', 'Congo (Kinshasa)',
+      'Czech Republic', 'Egypt', 'Germany', 'Haiti', 'Iran', 'Israel', 'Jordan',
+      'Kosovo', 'Laos', 'Libya', 'Malaysia', 'Myanmar', 'North Korea', 'Pakistan',
+      'Puerto Rico', 'Qatar', 'Romania', 'Russia', 'Serbia', 'Somalia',
+      'South Sudan', 'Taiwan', 'Thailand', 'United States', 'Uzbekistan',
+      'Vietnam', 'Yemen',
+    ],
+    included_items: [
+      'MetaTrader 4 and MetaTrader 5',
+      'Seven programmes, from instant funding to three steps',
+      '95% split add-on available on six programmes',
+    ],
+    pros: [
+      'Seven programmes covering instant, one, two and three steps',
+      'Entry from $13 with Instant24',
+      '80% split, raised to 95% with the add-on on six programmes',
+      'No time limit, except Instant24 by design',
+      'Payout decision within 24 business hours for eligible requests',
+      'Identified partner broker: Hantec Markets',
+    ],
+    cons: [
+      'Unregulated: a proprietary trading company, not a broker',
+      'US traders are not accepted',
+      '32 excluded territories, including Germany, Belgium and Australia',
+      'News trading is restricted by default, except on Instant24',
+      'Scalping can trigger a profit adjustment beyond a threshold',
+      'Leverage capped at 1:1 on crypto',
+    ],
+    special_features: [
+      '80% split, raised to 95% with the 95% Reward Share add-on',
+      'Seven programmes, from Instant24 over 24 hours to Endurance over three steps',
+      'Daily loss measured on the higher of the previous day’s balance or equity',
+      'News Trading add-on to lift the restriction around releases',
+      'Leverage 1:50 on forex, 1:15 on indices and commodities, 1:10 on metals',
+      'US traders are not accepted',
+    ],
+  },
+  json: {
+    verdict_card: {
+      title: 'Who it suits, and who it does not',
+      body:
+        'Hantec Trader offers seven programmes covering almost every profile, from instant funding at $13 to a three-step route. The split starts at 80% and rises to 95% with a paid add-on. In exchange, the firm is unregulated and closes an unusual number of markets.',
+      points: [
+        'A choice of seven routes, from instant funding to three steps',
+        'A very cheap entry: Instant24 starts at $13',
+        'A split raised to 95% if you take the add-on',
+        'An identified partner broker, backed by the Hantec Markets group',
+      ],
+    },
+    program_guide: {
+      title: 'Seven programmes, three families',
+      intro:
+        'The choice starts with the format: funded straight away, or an evaluation over one, two or three steps.',
+      options: [
+        {
+          name: 'Instant Funding',
+          badge: 'Funded immediately',
+          summary:
+            'No evaluation, no target. The trade-off is the price: $43 on a 1K, up to $2,139 on a 50K.',
+          points: ['From 1K to 50K', 'No profit target', '6% daily loss', '6% trailing overall drawdown'],
+        },
+        {
+          name: 'Instant Lite',
+          badge: 'Funded, cheaper',
+          summary:
+            'The same idea at a fifth of the price, against a tighter daily loss and 5 winning days per payout cycle.',
+          points: ['From 1K to 100K, from $19', '3% daily loss', '5% overall drawdown', '5 winning days per payout cycle'],
+        },
+        {
+          name: 'Instant24',
+          badge: 'Twenty-four hours',
+          summary:
+            'The cheapest format in the catalogue: the account lives 24 hours from your first trade. It is also the only programme where news trading is free.',
+          points: ['From 2K to 100K, from $13', '24 hours from the first trade', '2% daily loss', 'News trading allowed'],
+        },
+        {
+          name: 'Express',
+          badge: 'One step',
+          summary: 'A single 10% phase, with no minimum days, and a 6% trailing overall drawdown.',
+          points: ['From 2K to 200K, from $39', '10% target', 'No minimum days', '6% trailing drawdown'],
+        },
+        {
+          name: 'Enhanced',
+          badge: 'Two steps',
+          summary:
+            '10% then 5% targets, with the widest daily limit in the catalogue and a static drawdown.',
+          points: ['From 5K to 200K, from $59', '10% then 5% target', '5% daily loss', '3 winning days per step'],
+        },
+        {
+          name: 'EnhancedX',
+          badge: 'Two steps, no minimum days',
+          summary:
+            'Lower targets than Enhanced, 8% then 4%, and no minimum days, against a tighter daily limit.',
+          points: ['From 5K to 200K, from $59', '8% then 4% target', '4% daily loss', 'No minimum days'],
+        },
+        {
+          name: 'Endurance',
+          badge: 'Three steps',
+          summary:
+            'Three 6% steps, the most gradual route and the cheapest at equal capital: $29 for a 5K.',
+          points: ['From 5K to 200K, from $29', '6% target at each step', '8% static drawdown', '3 days per step'],
+        },
+      ],
+    },
+    key_rules: {
+      title: 'The rules that decide it',
+      intro: 'Four points sent directly by the firm, two of which corrected our previous page.',
+      rules: [
+        {
+          title: 'The split is 80%, not 95%',
+          detail:
+            'The standard rate is 80%. The 95% comes from the paid "95% Reward Share" add-on, available on Instant Funding, Instant Lite, Instant24, Endurance, EnhancedX, Enhanced and Express.',
+        },
+        {
+          title: 'News trading is restricted by default',
+          detail:
+            'During the evaluation it is free on Express, Enhanced, EnhancedX and Endurance. On a funded Hantec Trader account, opening or closing a position within 3 minutes of a high-impact release is forbidden unless you take the News Trading add-on. Instant Funding and Instant Lite follow the same restriction; Instant24 is the only one that allows it freely.',
+        },
+        {
+          title: 'Scalping is bounded by a threshold, not banned',
+          detail:
+            'If net profits from positions held under 3 minutes account for 30% or more of total net profit over the evaluation period, the activity is classed as scalping and can lead to a profit adjustment or a trading restriction.',
+        },
+        {
+          title: 'The daily loss is measured on the previous day',
+          detail:
+            'Across all seven programmes, the daily limit is measured on the higher of balance or equity at the previous day’s close. The overall drawdown trails on the instant programmes and Express, and is static on Endurance, Enhanced and EnhancedX.',
+        },
+      ],
+      more: [
+        'Leverage 1:50 on forex, 1:15 on indices and commodities',
+        'Leverage 1:10 on metals, 1:1 on crypto',
+        'MetaTrader 4 and MetaTrader 5',
+        'Payout decision within 24 business hours for eligible requests',
+        'Payouts by bank transfer, crypto or e-wallet',
+      ],
+    },
+    journey: {
+      title: 'What happens after you pay',
+      intro: 'The route depends on which programme family you picked.',
+      steps: [
+        {
+          title: 'Instant funding',
+          detail:
+            'On Instant Funding, Instant Lite and Instant24 there is no evaluation: the account is live from purchase, with its own risk limits.',
+        },
+        {
+          title: 'Evaluation',
+          detail:
+            'On Express, a single 10% phase. On Enhanced and EnhancedX, two phases. On Endurance, three 6% steps. No time limit on those four programmes.',
+        },
+        {
+          title: 'Hantec Trader account',
+          detail:
+            'Once funded, the news restriction applies within 3 minutes of high-impact releases, unless you hold the News Trading add-on, and except on Instant24.',
+        },
+        {
+          title: 'Payouts',
+          detail:
+            'Decision within 24 business hours for eligible requests; how fast the funds land depends on the method. 80% split, or 95% with the add-on.',
+        },
+      ],
+    },
+  },
+  fr: {
+    headquarters: 'Suite 201, The Catalyst Silicon Avenue, 40 Cybercity, 72201 Ebène, Maurice',
+    regulation_details:
+      'Hantec Trader Limited, société mauricienne n° C191400. Non régulée : société de trading propriétaire. Courtier partenaire : Hantec Markets Limited / Hantec Markets Mauritius.',
+    drawdown_type:
+      'Perte journalière calculée sur le plus élevé du solde ou de l’equity à la clôture de la veille. Drawdown global glissant ou statique selon le programme.',
+    time_limit: 'Aucune limite de temps, sauf Instant24 : 24 heures à partir du premier trade',
+    payout_frequency: 'sur demande, avec décision sous 24 heures ouvrées',
+    assets: ['Forex', 'Indices', 'Matières premières', 'Métaux', 'Crypto'],
+    payout_methods: ['Virement bancaire', 'Cryptomonnaie', 'Portefeuilles électroniques'],
     restricted_countries: [
       'Afghanistan', 'Allemagne', 'Australie', 'Belgique', 'Congo (Brazzaville)',
       'Congo (Kinshasa)', 'Corée du Nord', 'Égypte', 'États-Unis', 'Haïti', 'Iran',
@@ -868,8 +1609,6 @@ export const HANTEC = {
       'Levier 1:50 sur le forex, 1:15 sur indices et matières premières, 1:10 sur métaux',
       'Les traders américains ne sont pas acceptés',
     ],
-  },
-  json: {
     verdict_card: {
       title: 'Pour qui, et pour qui pas',
       body:
@@ -1051,13 +1790,15 @@ export const HANTEC = {
     ['hantec-express-100k', 'Express $100K', '$100K', '1 step', 6, 5, 10, null, 'Glissant sur le solde', 'Trailing', 529, null],
     ['hantec-express-200k', 'Express $200K', '$200K', '1 step', 6, 5, 10, null, 'Glissant sur le solde', 'Trailing', 999, null],
   ],
+  // En anglais, comme FuturesElite : prop_firm_challenges n'a pas de bundle
+  // de traduction.
   consistency: {
-    'Instant': 'Aucun objectif de profit, aucun jour minimum. Partage de 80 %, porté à 95 % avec l’add-on. Actualités restreintes dans les 3 minutes autour des annonces à fort impact, sauf add-on News Trading.',
-    'Instant Lite': '5 jours rentables par cycle de retrait. Aucun objectif de profit. Actualités restreintes dans les 3 minutes autour des annonces à fort impact, sauf add-on News Trading.',
-    'Instant 24h': 'Le compte vit 24 heures à partir du premier trade. Aucun objectif de profit. Seul programme où le trading d’actualités est libre.',
-    '1 step': 'Aucun jour minimum. Actualités libres pendant l’évaluation, restreintes une fois financé sauf add-on.',
-    '2 steps': 'Enhanced : 3 jours rentables par étape. EnhancedX : aucun jour minimum. Actualités libres pendant l’évaluation, restreintes une fois financé sauf add-on.',
-    '3 steps': '3 jours de trading par étape. Actualités libres pendant l’évaluation, restreintes une fois financé sauf add-on.',
+    'Instant': 'No profit target, no minimum days. 80% split, raised to 95% with the add-on. News restricted within 3 minutes of high-impact releases, unless you hold the News Trading add-on.',
+    'Instant Lite': '5 winning days per payout cycle. No profit target. News restricted within 3 minutes of high-impact releases, unless you hold the News Trading add-on.',
+    'Instant 24h': 'The account lives 24 hours from the first trade. No profit target. The only programme where news trading is free.',
+    '1 step': 'No minimum days. News free during the evaluation, restricted once funded unless you hold the add-on.',
+    '2 steps': 'Enhanced: 3 winning days per step. EnhancedX: no minimum days. News free during the evaluation, restricted once funded unless you hold the add-on.',
+    '3 steps': '3 trading days per step. News free during the evaluation, restricted once funded unless you hold the add-on.',
   },
   riskUnit: 'percent',
   // Aucun code affiché. Les cinq codes fournis par Hantec — NEW35, INSTANT20,
