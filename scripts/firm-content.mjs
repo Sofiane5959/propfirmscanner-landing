@@ -503,6 +503,13 @@ export const FUTURESELITE = {
     time_limit: 'No time limit',
     payout_frequency: 'on demand, daily once funded',
     source_url: 'https://futureselite.com',
+    // logo_url pointait sur /logos/futureselite.png — un fichier qui n'a jamais
+    // ete cree. La production repondait 404 et la tuile restait vide. Une note
+    // « a telecharger » avait ete laissee dans le SQL, mais la colonne avait ete
+    // pointee sur le fichier absent entre-temps : une note ne remplace pas un
+    // fichier. En attendant l'asset officiel, on sert la favicon du BON domaine,
+    // qui elle repond.
+    logo_url: 'https://www.google.com/s2/favicons?domain=futureselite.com&sz=128',
   },
   arrays: {
     platforms: ['Tradovate', 'NinjaTrader', 'Quantower', 'ATAS', 'Volumetrica', 'DeepCharts', 'WealthCharts'],
@@ -832,7 +839,7 @@ export const FUTURESELITE = {
     'LE CODE PROMO. SCANNED donne −20 %, confirmé par e-mail par FuturesElite. Mais un coupon SUMMER s’active seul et donne −25 % : sur l’Elite 25K, 71,25 $ contre 76,00 $. Annoncer le code ferait payer plus cher. discount_code et discount_percent restent nuls, l’UPDATE est préparé en commentaire.',
     'NITRO, PRIME, INSTANT. Les trois programmes existent mais leur grille est derrière une authentification. Ils ne figurent pas dans program_guide : une option sans prix ni challenge donne un bouton mort dans le configurateur. Nitro : paiements quotidiens, pas de perte journalière. Prime : le moins cher, jusqu’à 10 comptes, 1,5 M$ cumulés. Instant : aucune évaluation, 80 % de partage.',
     'RÈGLE DE RÉGULARITÉ. La page affiche 40 % et 50 % côte à côte sans dire laquelle s’applique. Décrite en toutes lettres, sans chiffre inventé.',
-    'LE LOGO. logo_url pointe encore sur une favicon Google. Leur équipe indique de prendre le logo sur leur profil X. À télécharger dans public/logos/futureselite.png puis mettre à jour logo_url.',
+    'LOGO. logo_url pointait sur /logos/futureselite.png, fichier jamais créé : la production répondait 404 et la tuile était vide. Corrigé vers la favicon du domaine futureselite.com, qui répond. Leur équipe indique de prendre le logo officiel sur leur profil X : le jour où le fichier existe dans public/logos/, repointer logo_url dessus. Ne jamais pointer une colonne sur un fichier absent.',
     'TRUSTPILOT. Les compteurs de leur page d’accueil affichent tous zéro. trustpilot_rating laissé tel quel plutôt que d’écrire un zéro trompeur.',
     'PRÉSÉLECTION DU PLAN PAR URL. Leur application ne lit que aff, ref, coupon et type. Aucun paramètre de taille. Le lien préremplit l’affiliation et le coupon ; le visiteur choisit son plan sur place.',
   ],

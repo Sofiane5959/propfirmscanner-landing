@@ -51,6 +51,7 @@ update prop_firms set
   time_limit           = 'No time limit',
   payout_frequency     = 'on demand, daily once funded',
   source_url           = 'https://futureselite.com',
+  logo_url             = 'https://www.google.com/s2/favicons?domain=futureselite.com&sz=128',
   platforms            = 'Tradovate, NinjaTrader, Quantower, ATAS, Volumetrica, DeepCharts, WealthCharts',
   assets               = '{"Futures"}'::text[],
   included_items       = '{"Trading journal and analytics dashboard","No activation fee on the funded account","Seven platforms to choose from"}'::text[],
@@ -118,9 +119,12 @@ from prop_firm_challenges where firm_slug = 'futureselite' order by price;
 -- RÈGLE DE RÉGULARITÉ. La page affiche 40 % et 50 % côte à côte sans dire
 -- laquelle s’applique. Décrite en toutes lettres, sans chiffre inventé.
 --
--- LE LOGO. logo_url pointe encore sur une favicon Google. Leur équipe
--- indique de prendre le logo sur leur profil X. À télécharger dans
--- public/logos/futureselite.png puis mettre à jour logo_url.
+-- LOGO. logo_url pointait sur /logos/futureselite.png, fichier jamais créé
+-- : la production répondait 404 et la tuile était vide. Corrigé vers la
+-- favicon du domaine futureselite.com, qui répond. Leur équipe indique de
+-- prendre le logo officiel sur leur profil X : le jour où le fichier
+-- existe dans public/logos/, repointer logo_url dessus. Ne jamais pointer
+-- une colonne sur un fichier absent.
 --
 -- TRUSTPILOT. Les compteurs de leur page d’accueil affichent tous zéro.
 -- trustpilot_rating laissé tel quel plutôt que d’écrire un zéro trompeur.

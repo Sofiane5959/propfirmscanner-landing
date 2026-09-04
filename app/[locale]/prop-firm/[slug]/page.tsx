@@ -4,6 +4,7 @@ import { createClient } from '@supabase/supabase-js'
 import PropFirmPageClient from './PropFirmPageClient'
 import { generateDynamicAlternates, localeHref } from '@/lib/seo'
 import { resolvePromotion } from '@/lib/promotion'
+import { loadFirmPrograms } from '@/lib/firm-programs'
 
 interface Props {
   // This route lives at app/[locale]/prop-firm/[slug], so locale is part of
@@ -248,6 +249,13 @@ export default async function PropFirmPage({ params }: Props) {
     .eq('firm_slug', params.slug)
     .order('price', { ascending: true })
 
+  // Structure normalisee (programmes / phases / promotions). Renvoie null quand
+  // la firme n'en a pas : la fiche garde alors exactement son affichage
+  // historique, base sur prop_firm_challenges. Les sept tables avaient ete
+  // remplies avant qu'aucun code ne les lise — d'ou une fiche inchangee malgre
+  // 27 plans importes.
+  const programData = await loadFirmPrograms(supabase, params.slug)
+
   // Structured data must quote the price actually on sale today. A promotion
   // that has expired no longer discounts anything, so the schema falls back to
   // the list price rather than advertising a figure the checkout will not honour.
@@ -333,6 +341,7 @@ export default async function PropFirmPage({ params }: Props) {
         firm={firmForLocale}
         similarFirms={similarFirms}
         challenges={challenges || []}
+        programData={programData}
         locale={locale}
       />
     </>

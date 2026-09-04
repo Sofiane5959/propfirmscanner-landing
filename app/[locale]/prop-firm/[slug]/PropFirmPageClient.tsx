@@ -28,6 +28,8 @@ import { buildAffiliateUrl, AFFILIATE_LINK_PROPS } from '@/lib/affiliate'
 import { formatMoney, formatNumber, formatDayMonth, cleanMoneyLabel } from '@/lib/format'
 import { resolvePromotion } from '@/lib/promotion'
 import { toArray } from '@/lib/to-array'
+import ProgramExplorer from '@/components/ProgramExplorer'
+import type { FirmProgramData } from '@/lib/firm-programs'
 
 // UI copy. Firm content is translated in the DB via prop_firms.translations;
 // these are the labels the component owns.
@@ -574,8 +576,9 @@ export default function PropFirmPageClient({
   firm: rawFirm,
   similarFirms,
   challenges = [],
+  programData = null,
   locale = 'en',
-}: Props) {
+}: Props & { programData?: FirmProgramData | null }) {
   const [isFavorite, setIsFavorite] = useState(false)
   // Les sept locales, pas seulement fr : avant, de/es/pt/ar/hi retombaient
   // sur l anglais et la fiche restait anglaise pour eux.
@@ -961,7 +964,22 @@ export default function PropFirmPageClient({
       {/* ================================================================ */}
       {/* 3. CONFIGURATOR — full width, owns its own two-column layout    */}
       {/* ================================================================ */}
-      {canConfigure && (
+      {/* Structure normalisee : programmes, phases, promotions, bundles, regles.
+          Elle remplace le configurateur historique quand elle existe, et
+          disparait sinon — les ~349 fiches sans lignes dans firm_programs
+          gardent exactement leur affichage. */}
+      {programData && programData.programs.length > 0 && (
+        <div className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-800">
+          <ProgramExplorer
+            data={programData}
+            locale={locale}
+            ctaHref={logoUrl_}
+            ctaLabel={canConfigure ? t.configure : t.visit(firm.name)}
+          />
+        </div>
+      )}
+
+      {canConfigure && !programData && (
         <div id="challenges" className="scroll-mt-28 print:scroll-mt-0">
           <ChallengeSelector
             firmSlug={firm.slug}
