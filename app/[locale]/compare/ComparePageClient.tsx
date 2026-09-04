@@ -1952,9 +1952,12 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
     if (debouncedFilters.hasDiscount) params.set('deals', 'true')
     if (!debouncedFilters.verifiedOnly) params.set('verified', 'false')
     if (sortBy !== 'rating') params.set('sort', sortBy)
-    const newUrl = params.toString() ? `?${params.toString()}` : '/compare'
+    // Sans filtre, on revient au chemin COURANT, pas au '/compare' anglais
+    // ecrit en dur : sur /de/compare ou /fr/compare, ce dernier faisait sortir
+    // le visiteur de sa langue. pathname porte deja le prefixe de locale.
+    const newUrl = params.toString() ? `?${params.toString()}` : pathname
     router.replace(newUrl, { scroll: false })
-  }, [debouncedFilters, sortBy, router])
+  }, [debouncedFilters, sortBy, router, pathname])
   
   const processedFirms = useMemo(() => {
     const filtered = firms.filter(f => !isBlocklisted(f.name)).map(normalizeFirmArrays)
