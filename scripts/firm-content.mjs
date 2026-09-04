@@ -235,6 +235,7 @@ export const FTMO = {
   },
   // Surcouche francaise, ecrite dans translations.fr.
   fr: {
+    headquarters: 'Bureaux Quadrio, Purkyňova 2121/3, 110 00 Prague, République tchèque',
     regulation_details:
       'FTMO Evaluation Global s.r.o. ; l’entité contractante peut varier selon la région. Ni courtier ni entreprise d’investissement : le service repose sur des comptes simulés et n’accepte aucun dépôt de client.',
     max_allocation: 'Jusqu’à 400 000 $ d’allocation initiale, et jusqu’à 2 000 000 $ via le plan de scaling',
@@ -1080,6 +1081,7 @@ export const THE5ERS = {
     },
   },
   fr: {
+    headquarters: 'Enstar House, 168 Praed Street, Londres W2 1RH, Royaume-Uni',
     regulation_details:
       'Five Percent Online Ltd, société britannique n° 12553363 et société israélienne n° 515864007. Société d’évaluation de trading propriétaire : ni courtier, ni dépositaire, ni bourse, ni établissement financier régulé. Environnement de trading entièrement simulé.',
     max_allocation:

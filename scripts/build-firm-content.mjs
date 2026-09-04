@@ -19,6 +19,7 @@
 
 import { writeFile } from 'node:fs/promises'
 import { ALL_FIRMS } from './firm-content.mjs'
+import { BUNDLES } from './firm-translations/index.mjs'
 
 const J = (o) => "'" + JSON.stringify(o).replace(/'/g, "''") + "'"
 const S = (s) => s === null || s === undefined ? 'null' : "'" + String(s).replace(/'/g, "''") + "'"
@@ -113,7 +114,19 @@ function build(firm) {
   // vient se superposer par-dessus (PropFirmPageClient fusionne le bundle en une
   // fois). Ecrire du francais dans les colonnes de base, comme la version
   // precedente le faisait, servait du francais sur la page anglaise.
-  if (firm.fr) sets.push(`  ${'translations'.padEnd(20)} = ${J({ fr: firm.fr })}::jsonb`)
+  // Un bundle par locale traduite. Les colonnes de base portent l ANGLAIS ;
+  // PropFirmPageClient superpose translations[locale] par-dessus.
+  // Le francais vit dans firm-content.mjs (bloc `fr`), les autres langues
+  // dans scripts/firm-translations/<locale>.mjs — un fichier par langue, pour
+  // qu ajouter une langue soit un fichier et non une refonte.
+  const bundles = {}
+  if (firm.fr) bundles.fr = firm.fr
+  for (const [loc, parSlug] of Object.entries(BUNDLES)) {
+    if (parSlug[firm.slug]) bundles[loc] = parSlug[firm.slug]
+  }
+  if (Object.keys(bundles).length) {
+    sets.push(`  ${'translations'.padEnd(20)} = ${J(bundles)}::jsonb`)
+  }
   sets.push(`  ${'data_verified_at'.padEnd(20)} = timestamptz '2026-09-03'`)
   sets.push(`  ${'data_verified_by'.padEnd(20)} = 'PropFirmScanner'`)
   sets.push(`  ${'updated_at'.padEnd(20)} = now()`)
