@@ -172,6 +172,13 @@ create index if not exists firm_live_tiers_firm_idx on firm_live_tiers (firm_slu
 
 -- Lecture publique, ecriture reservee au service. Meme posture que les autres
 -- tables du catalogue : la fiche firme est publique.
+-- Les tables du catalogue sont publiques en lecture. Le privilege SELECT doit
+-- etre accorde EN PLUS de la politique RLS : une politique n'ouvre rien si le
+-- role n'a pas le droit de lire la table.
+grant select on firm_programs, firm_program_plans, firm_promotions,
+                firm_program_bundles, firm_platforms, firm_rules, firm_live_tiers
+  to anon, authenticated;
+
 alter table firm_programs        enable row level security;
 alter table firm_program_plans   enable row level security;
 alter table firm_promotions      enable row level security;
@@ -187,18 +194,28 @@ begin
                            'firm_program_bundles', 'firm_platforms', 'firm_rules',
                            'firm_live_tiers']
   loop
-    if not exists (select 1 from pg_policies where tablename = t and policyname = 'lecture publique') then
-      execute format('create policy %L on %I for select using (true)', 'lecture publique', t);
+    -- Le nom de la politique est un IDENTIFIANT, pas un litteral. Une premiere
+    -- version utilisait %L et produisait create policy 'lecture publique',
+    -- avec des apostrophes : erreur 42601, et tout le script annule avec elle.
+    -- Le nom est donc ecrit en dur, sans espace, et seule la table est
+    -- interpolee avec %I.
+    if not exists (
+      select 1 from pg_policies
+      where schemaname = 'public' and tablename = t and policyname = 'firm_public_read'
+    ) then
+      execute format('create policy firm_public_read on public.%I for select using (true)', t);
     end if;
   end loop;
 end $$;
 
 
 -- CONTROLE
-select table_name, (select count(*) from information_schema.columns c
-                    where c.table_name = t.table_name) as nb_colonnes
+select t.table_name,
+       (select count(*) from information_schema.columns c
+         where c.table_schema = 'public' and c.table_name = t.table_name) as nb_colonnes
 from information_schema.tables t
-where table_name in ('firm_programs', 'firm_program_plans', 'firm_promotions',
-                     'firm_program_bundles', 'firm_platforms', 'firm_rules',
-                     'firm_live_tiers')
-order by table_name;
+where t.table_schema = 'public'
+  and t.table_name in ('firm_programs', 'firm_program_plans', 'firm_promotions',
+                       'firm_program_bundles', 'firm_platforms', 'firm_rules',
+                       'firm_live_tiers')
+order by t.table_name;
