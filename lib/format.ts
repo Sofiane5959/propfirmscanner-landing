@@ -47,9 +47,28 @@ function group(value: number, groupSep: string, decimalSep: string): string {
   return negative ? `-${out}` : out
 }
 
-/** A bare number: "1,234.5" in English, "1 234,5" (no-break space) in French. */
+/**
+ * Separateurs par langue. La version precedente n avait que deux cas, `fr` et
+ * « tout le reste en anglais » : l allemand, l espagnol et le portugais
+ * affichaient donc « 1,000 » la ou ils ecrivent « 1.000 ».
+ *
+ * Le formatage reste deterministe plutot que fonde sur les donnees ICU : voir
+ * l en-tete de ce fichier, `toLocaleString` cassait l hydratation parce que
+ * Node et les navigateurs ne s accordent pas sur l espace insecable.
+ */
+const SEPARATEURS: Record<string, [string, string]> = {
+  fr: ['\u00A0', ','],
+  de: ['.', ','],
+  es: ['.', ','],
+  pt: ['.', ','],
+  en: [',', '.'],
+  ar: [',', '.'],
+  hi: [',', '.'],
+}
+
 export function formatNumber(value: number, locale?: string | null): string {
-  return locale === 'fr' ? group(value, '\u00A0', ',') : group(value, ',', '.')
+  const [g, d] = SEPARATEURS[locale || 'en'] ?? SEPARATEURS.en
+  return group(value, g, d)
 }
 
 /** Currencies firms actually price in. USD unless a firm says otherwise. */

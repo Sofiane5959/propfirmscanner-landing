@@ -49,7 +49,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .single()
 
   if (!firm) {
-    return { title: locale === 'fr' ? 'Prop firm introuvable' : 'Prop Firm Not Found' }
+    return {
+      title: ({ en: 'Prop Firm Not Found', fr: 'Prop firm introuvable',
+                de: 'Prop-Firma nicht gefunden', es: 'Prop firm no encontrada',
+                pt: 'Prop firm não encontrada',
+                ar: 'لم يتم العثور على الشركة',
+                hi: 'प्रॉप फ़र्म नहीं मिली' } as Record<string, string>)[locale]
+                ?? 'Prop Firm Not Found',
+    }
   }
 
   // Hardcoding the year meant the title said "2025" well into 2026 — a stale
@@ -57,23 +64,59 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // maintained, and Google reads it too.
   const year = new Date().getFullYear()
 
-  const fr = (firm.translations as Record<string, Record<string, string>> | null)?.fr
-  const summary =
-    (locale === 'fr' ? fr?.verdict : null) ||
-    firm.verdict ||
-    (locale === 'fr'
-      ? `Frais, règles de trading, partage des profits et code promo ${firm.name}.`
-      : `Fees, trading rules, profit split and promo codes for ${firm.name}.`)
+  // Les sept langues. La version precedente n'avait que deux branches,
+  // `locale === 'fr' ? ... : ...`, si bien que /de, /es, /pt, /ar et /hi
+  // portaient un titre anglais dans l'onglet comme dans Google.
+  const META: Record<string, {
+    fallback: (f: string) => string
+    title: (f: string, y: number) => string
+    description: (s: string, y: number) => string
+  }> = {
+    en: {
+      fallback: (f) => `Fees, trading rules, profit split and promo codes for ${f}.`,
+      title: (f, y) => `${f} Review ${y} — Fees, Rules & Promo Codes`,
+      description: (s, y) => `${s} Independent comparison, updated ${y}.`,
+    },
+    fr: {
+      fallback: (f) => `Frais, règles de trading, partage des profits et code promo ${f}.`,
+      title: (f, y) => `Avis ${f} ${y} — Frais, règles et code promo`,
+      description: (s, y) => `${s} Comparatif indépendant mis à jour en ${y}.`,
+    },
+    de: {
+      fallback: (f) => `Gebühren, Handelsregeln, Gewinnbeteiligung und Promo-Codes für ${f}.`,
+      title: (f, y) => `${f} Test ${y} — Gebühren, Regeln & Promo-Codes`,
+      description: (s, y) => `${s} Unabhängiger Vergleich, aktualisiert ${y}.`,
+    },
+    es: {
+      fallback: (f) => `Comisiones, reglas de trading, reparto de beneficios y códigos promocionales de ${f}.`,
+      title: (f, y) => `Reseña de ${f} ${y} — Comisiones, reglas y códigos`,
+      description: (s, y) => `${s} Comparativa independiente, actualizada en ${y}.`,
+    },
+    pt: {
+      fallback: (f) => `Custos, regras de negociação, partilha de lucros e códigos promocionais da ${f}.`,
+      title: (f, y) => `Análise ${f} ${y} — Custos, regras e códigos`,
+      description: (s, y) => `${s} Comparação independente, atualizada em ${y}.`,
+    },
+    ar: {
+      fallback: (f) => `الرسوم وقواعد التداول وتقاسم الأرباح ورموز الخصم لدى ${f}.`,
+      title: (f, y) => `مراجعة ${f} ${y} — الرسوم والقواعد ورموز الخصم`,
+      description: (s, y) => `${s} مقارنة مستقلة، مُحدّثة في ${y}.`,
+    },
+    hi: {
+      fallback: (f) => `${f} की फ़ीस, ट्रेडिंग नियम, लाभ का बँटवारा और प्रोमो कोड।`,
+      title: (f, y) => `${f} समीक्षा ${y} — फ़ीस, नियम और प्रोमो कोड`,
+      description: (s, y) => `${s} स्वतंत्र तुलना, ${y} में अपडेट।`,
+    },
+  }
 
-  const title =
-    locale === 'fr'
-      ? `Avis ${firm.name} ${year} — Frais, règles et code promo`
-      : `${firm.name} Review ${year} — Fees, Rules & Promo Codes`
+  const m = META[locale] ?? META.en
 
-  const description =
-    locale === 'fr'
-      ? `${summary} Comparatif indépendant mis à jour en ${year}.`
-      : `${summary} Independent comparison, updated ${year}.`
+  // Le verdict traduit vient du bundle de la locale, plus seulement de `fr`.
+  const bundle = (firm.translations as Record<string, Record<string, string>> | null)?.[locale]
+  const summary = bundle?.verdict || (locale === 'en' ? firm.verdict : '') || firm.verdict || m.fallback(firm.name)
+
+  const title = m.title(firm.name, year)
+  const description = m.description(summary, year)
 
   const path = `/${locale}/prop-firm/${firm.slug}`
 
@@ -90,7 +133,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
       url: localeHref(locale, `/prop-firm/${firm.slug}`),
       type: 'article',
-      locale: locale === 'fr' ? 'fr_FR' : 'en_GB',
+      locale: ({ en: 'en_GB', fr: 'fr_FR', de: 'de_DE', es: 'es_ES',
+                 pt: 'pt_PT', ar: 'ar_AR', hi: 'hi_IN' } as Record<string, string>)[locale]
+                 ?? 'en_GB',
     },
     twitter: {
       card: 'summary_large_image',

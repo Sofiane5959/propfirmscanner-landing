@@ -3,10 +3,10 @@
     "compare": "Comparar",
     "deals": "Ofertas",
     "blog": "Blog",
-    "education": "Educacao",
+    "education": "Educação",
     "rules": "Regras",
     "freeGuide": "Guia",
-    "free": "GRATIS",
+    "free": "GRÁTIS",
     "soon": "Em breve",
     "products": "Produtos",
     "language": "Idioma",
@@ -32,7 +32,7 @@
     "title": "Tudo o que voce precisa",
     "subtitle": "Todas as ferramentas para encontrar e acompanhar sua prop firm perfeita",
     "compare": {
-      "title": "Comparacao inteligente",
+      "title": "Comparação inteligente",
       "description": "Compare mais de 50 prop firms com filtros detalhados para regras, taxas e divisao de lucros"
     },
     "track": {
@@ -78,7 +78,7 @@
     "price": "Preco",
     "profitSplit": "Divisao de lucros",
     "accountSize": "Tamanho da conta",
-    "rating": "Avaliacao",
+    "rating": "Avaliação",
     "viewDetails": "Ver detalhes",
     "compare": "Comparar",
     "noResults": "Nenhuma firm corresponde aos seus filtros",
