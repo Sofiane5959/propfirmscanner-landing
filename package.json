@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "i18n:check": "node scripts/i18n-audit.mjs",
-    "i18n:strict": "node scripts/i18n-audit.mjs --strict"
+    "i18n:strict": "node scripts/i18n-audit.mjs --strict",
+    "test:programs": "node scripts/test-program-selection.mjs"
   },
   "dependencies": {
     "@supabase/auth-helpers-nextjs": "^0.10.0",

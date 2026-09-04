@@ -21,12 +21,17 @@ import { useMemo, useState } from 'react'
 import {
   type FirmProgramData, type Phase, type ProgramPlan, type Severity,
   priceFor, planFor, regularPriceFor, sizesOf,
+  marketsOf, variantsOf, rulesFor, evaluationPhases, currencyFor,
 } from '@/lib/firm-programs'
 import { buildAffiliateUrl } from '@/lib/affiliate'
 
 const COPY = {
   en: {
     eyebrow: 'Programs, rules and prices',
+    market: 'Market',
+    variant: 'Account type',
+    pending: 'Verification in progress — no rule or price is published for this product yet.',
+    markets: { cfd: 'CFD', futures: 'Futures', stocks: 'Stocks' } as Record<string, string>,
     intro: 'Pick a program and a size. Evaluation and funded rules stay separate.',
     step1: 'Choose your program',
     step2: 'Choose your account size',
@@ -68,6 +73,10 @@ const COPY = {
       'No surcharge is displayed at checkout. Market data, commissions and platform licences may still be yours to pay.',
     severity: {
       hard_breach: 'Hard breach',
+      temporary_pause: 'Temporary pause',
+      payout_adjustment: 'Payout adjustment',
+      eligibility_condition: 'Eligibility condition',
+      informational: 'For information',
       restriction: 'Restriction',
       payout_condition: 'Payout condition',
       allowed: 'Allowed',
@@ -76,6 +85,10 @@ const COPY = {
   },
   fr: {
     eyebrow: 'Programmes, règles et prix',
+    market: 'Marché',
+    variant: 'Type de compte',
+    pending: 'Vérification en cours — aucune règle ni prix n’est publié pour ce produit.',
+    markets: { cfd: 'CFD', futures: 'Futures', stocks: 'Actions' } as Record<string, string>,
     intro: 'Choisissez un programme et une taille. L’évaluation et le compte financé restent séparés.',
     step1: 'Choisissez votre programme',
     step2: 'Choisissez votre taille de compte',
@@ -118,6 +131,10 @@ const COPY = {
       'Aucun supplément n’est affiché au paiement. Données de marché, commissions et licences logicielles peuvent rester à votre charge.',
     severity: {
       hard_breach: 'Clôture immédiate',
+      temporary_pause: 'Pause temporaire',
+      payout_adjustment: 'Ajustement du retrait',
+      eligibility_condition: 'Condition d’éligibilité',
+      informational: 'Pour information',
       restriction: 'Restriction',
       payout_condition: 'Condition de retrait',
       allowed: 'Autorisé',
@@ -126,6 +143,10 @@ const COPY = {
   },
   de: {
     eyebrow: 'Programme, Regeln und Preise',
+    market: 'Markt',
+    variant: 'Kontotyp',
+    pending: 'Prüfung läuft — für dieses Produkt sind noch keine Regeln oder Preise veröffentlicht.',
+    markets: { cfd: 'CFD', futures: 'Futures', stocks: 'Aktien' } as Record<string, string>,
     intro: 'Wählen Sie ein Programm und eine Größe. Evaluierung und finanziertes Konto bleiben getrennt.',
     step1: 'Wählen Sie Ihr Programm',
     step2: 'Wählen Sie Ihre Kontogröße',
@@ -167,6 +188,10 @@ const COPY = {
       'An der Kasse wird kein Aufpreis angezeigt. Marktdaten, Kommissionen und Plattformlizenzen können dennoch zu Ihren Lasten gehen.',
     severity: {
       hard_breach: 'Sofortige Sperrung',
+      temporary_pause: 'Vorübergehende Pause',
+      payout_adjustment: 'Auszahlungsanpassung',
+      eligibility_condition: 'Zulassungsbedingung',
+      informational: 'Zur Information',
       restriction: 'Einschränkung',
       payout_condition: 'Auszahlungsbedingung',
       allowed: 'Erlaubt',
@@ -175,6 +200,10 @@ const COPY = {
   },
   es: {
     eyebrow: 'Programas, reglas y precios',
+    market: 'Mercado',
+    variant: 'Tipo de cuenta',
+    pending: 'Verificación en curso: aún no se publica ninguna regla ni precio para este producto.',
+    markets: { cfd: 'CFD', futures: 'Futuros', stocks: 'Acciones' } as Record<string, string>,
     intro: 'Elige un programa y un tamaño. Las reglas de evaluación y de cuenta financiada no se mezclan.',
     step1: 'Elige tu programa',
     step2: 'Elige el tamaño de tu cuenta',
@@ -216,6 +245,10 @@ const COPY = {
       'No se muestra ningún recargo al pagar. Los datos de mercado, las comisiones y las licencias de plataforma pueden seguir corriendo por tu cuenta.',
     severity: {
       hard_breach: 'Cierre inmediato',
+      temporary_pause: 'Pausa temporal',
+      payout_adjustment: 'Ajuste del retiro',
+      eligibility_condition: 'Condición de elegibilidad',
+      informational: 'Informativo',
       restriction: 'Restricción',
       payout_condition: 'Condición de retiro',
       allowed: 'Permitido',
@@ -224,6 +257,10 @@ const COPY = {
   },
   pt: {
     eyebrow: 'Programas, regras e preços',
+    market: 'Mercado',
+    variant: 'Tipo de conta',
+    pending: 'Verificação em curso — ainda não é publicada qualquer regra ou preço para este produto.',
+    markets: { cfd: 'CFD', futures: 'Futuros', stocks: 'Ações' } as Record<string, string>,
     intro: 'Escolha um programa e um tamanho. As regras de avaliação e de conta financiada não se misturam.',
     step1: 'Escolha o seu programa',
     step2: 'Escolha o tamanho da sua conta',
@@ -265,6 +302,10 @@ const COPY = {
       'Não é mostrado qualquer acréscimo no pagamento. Dados de mercado, comissões e licenças de plataforma podem continuar a seu cargo.',
     severity: {
       hard_breach: 'Encerramento imediato',
+      temporary_pause: 'Pausa temporária',
+      payout_adjustment: 'Ajuste do levantamento',
+      eligibility_condition: 'Condição de elegibilidade',
+      informational: 'Informativo',
       restriction: 'Restrição',
       payout_condition: 'Condição de levantamento',
       allowed: 'Permitido',
@@ -273,6 +314,10 @@ const COPY = {
   },
   ar: {
     eyebrow: 'البرامج والقواعد والأسعار',
+    market: 'السوق',
+    variant: 'نوع الحساب',
+    pending: 'التحقق جارٍ — لم تُنشر بعد أي قاعدة أو سعر لهذا المنتج.',
+    markets: { cfd: 'عقود الفروقات', futures: 'العقود الآجلة', stocks: 'الأسهم' } as Record<string, string>,
     intro: 'اختر برنامجًا وحجمًا. تبقى قواعد التقييم وقواعد الحساب المموَّل منفصلة.',
     step1: 'اختر برنامجك',
     step2: 'اختر حجم حسابك',
@@ -314,6 +359,10 @@ const COPY = {
       'لا يظهر أي رسم إضافي عند الدفع. ومع ذلك قد تبقى بيانات السوق والعمولات وتراخيص المنصات على عاتقك.',
     severity: {
       hard_breach: 'إغلاق فوري',
+      temporary_pause: 'إيقاف مؤقت',
+      payout_adjustment: 'تعديل السحب',
+      eligibility_condition: 'شرط الأهلية',
+      informational: 'للعلم',
       restriction: 'تقييد',
       payout_condition: 'شرط سحب',
       allowed: 'مسموح',
@@ -322,6 +371,10 @@ const COPY = {
   },
   hi: {
     eyebrow: 'प्रोग्राम, नियम और कीमतें',
+    market: 'बाज़ार',
+    variant: 'खाता प्रकार',
+    pending: 'सत्यापन जारी — इस उत्पाद के लिए अभी कोई नियम या कीमत प्रकाशित नहीं है।',
+    markets: { cfd: 'CFD', futures: 'फ़्यूचर्स', stocks: 'स्टॉक' } as Record<string, string>,
     intro: 'एक प्रोग्राम और आकार चुनें। मूल्यांकन और फ़ंडेड खाते के नियम अलग रहते हैं।',
     step1: 'अपना प्रोग्राम चुनें',
     step2: 'अपने खाते का आकार चुनें',
@@ -363,6 +416,10 @@ const COPY = {
       'भुगतान पर कोई अतिरिक्त शुल्क नहीं दिखता। फिर भी बाज़ार डेटा, कमीशन और प्लेटफ़ॉर्म लाइसेंस आपके ज़िम्मे रह सकते हैं।',
     severity: {
       hard_breach: 'तत्काल बंद',
+      temporary_pause: 'अस्थायी विराम',
+      payout_adjustment: 'पेआउट समायोजन',
+      eligibility_condition: 'पात्रता शर्त',
+      informational: 'जानकारी के लिए',
       restriction: 'प्रतिबंध',
       payout_condition: 'पेआउट शर्त',
       allowed: 'अनुमत',
@@ -376,14 +433,25 @@ const COPY = {
 // d'un booléen.
 const SEVERITY_STYLE: Record<Severity, { badge: string; mark: string }> = {
   hard_breach: { badge: 'bg-red-500/10 text-red-300 border-red-500/30', mark: '×' },
+  // Une pause n'est pas une cloture : l'ambre, pas le rouge.
+  temporary_pause: { badge: 'bg-orange-500/10 text-orange-300 border-orange-500/30', mark: '‖' },
+  payout_adjustment: { badge: 'bg-violet-500/10 text-violet-300 border-violet-500/30', mark: '±' },
+  eligibility_condition: { badge: 'bg-sky-500/10 text-sky-300 border-sky-500/30', mark: '§' },
+  informational: { badge: 'bg-gray-500/10 text-gray-400 border-gray-600/30', mark: 'i' },
   restriction: { badge: 'bg-amber-500/10 text-amber-300 border-amber-500/30', mark: '!' },
   payout_condition: { badge: 'bg-sky-500/10 text-sky-300 border-sky-500/30', mark: '§' },
   allowed: { badge: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30', mark: '✓' },
   needs_confirmation: { badge: 'bg-gray-500/10 text-gray-300 border-gray-500/30', mark: '?' },
 }
 
-const money = (v: number | null | undefined) =>
-  v === null || v === undefined ? null : '$' + Number(v).toLocaleString('en-US')
+const SYMBOLE: Record<string, string> = { USD: '$', EUR: '\u20AC', GBP: '\u00A3' }
+
+// La devise vient du plan. FTMO facture en euros : afficher « $540 » serait
+// une erreur de fait, pas une approximation de mise en forme.
+const money = (v: number | null | undefined, cur = 'USD') =>
+  v === null || v === undefined
+    ? null
+    : (SYMBOLE[cur] ?? '$') + Number(v).toLocaleString('en-US')
 const pct = (v: number | null | undefined) =>
   v === null || v === undefined ? null : Math.round(Number(v) * 100) + '%'
 
@@ -400,18 +468,18 @@ function Row({ label, value, note }: { label: string; value: string | null; note
   )
 }
 
-function PhaseCard({ title, plan, t }: { title: string; plan: ProgramPlan | null; t: typeof COPY.en }) {
+function PhaseCard({ title, plan, currency = 'USD', t }: { title: string; plan: ProgramPlan | null; currency?: string; t: typeof COPY.en }) {
   if (!plan) return null
   const buffer =
     plan.buffer_status === 'none' ? t.noBuffer
-      : plan.buffer_status === 'amount' ? money(plan.buffer)
+      : plan.buffer_status === 'amount' ? money(plan.buffer, currency)
       : t.bufferUnknown
   return (
     <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-5">
       <h4 className="text-white font-semibold mb-3">{title}</h4>
-      <Row label={t.profitTarget} value={money(plan.profit_target)} />
-      <Row label={t.maxLoss} value={money(plan.maximum_loss_limit)} />
-      <Row label={t.dailyLoss} value={money(plan.daily_loss_limit)} />
+      <Row label={t.profitTarget} value={money(plan.profit_target, currency)} />
+      <Row label={t.maxLoss} value={money(plan.maximum_loss_limit, currency)} />
+      <Row label={t.dailyLoss} value={money(plan.daily_loss_limit, currency)} />
       <Row label={t.drawdown} value={plan.drawdown_type} />
       <Row label={t.buffer} value={buffer} />
       <Row label={t.contracts} value={plan.max_contracts === null ? null : String(plan.max_contracts)} />
@@ -419,11 +487,11 @@ function PhaseCard({ title, plan, t }: { title: string; plan: ProgramPlan | null
       <Row label={t.minDays} value={plan.minimum_trading_days === null ? null : String(plan.minimum_trading_days)} />
       <Row label={t.consistency} value={plan.consistency_rule === null ? t.none : pct(plan.consistency_rule)} />
       <Row label={t.split} value={pct(plan.profit_split)} />
-      <Row label={t.payoutCap} value={money(plan.payout_cap)} />
-      <Row label={t.minPayout} value={money(plan.minimum_payout)} />
+      <Row label={t.payoutCap} value={money(plan.payout_cap, currency)} />
+      <Row label={t.minPayout} value={money(plan.minimum_payout, currency)} />
       <Row label={t.betweenPayouts} value={plan.days_between_payouts === null ? null : String(plan.days_between_payouts)} />
-      <Row label={t.resetFee} value={plan.reset_fee === null ? t.notApplicable : money(plan.reset_fee)} />
-      <Row label={t.activationFee} value={plan.activation_fee === null ? null : money(plan.activation_fee)} />
+      <Row label={t.resetFee} value={plan.reset_fee === null ? t.notApplicable : money(plan.reset_fee, currency)} />
+      <Row label={t.activationFee} value={plan.activation_fee === null ? null : money(plan.activation_fee, currency)} />
     </div>
   )
 }
@@ -442,23 +510,51 @@ export default function ProgramExplorer({
   // Les sept locales. La version precedente n en connaissait que deux, et la
   // page espagnole affichait « Choose your program » et « Price today ».
   const t = COPY[locale as keyof typeof COPY] ?? COPY.en
-  const [programSlug, setProgramSlug] = useState(data.programs[0]?.slug ?? '')
 
-  const program = data.programs.find((p) => p.slug === programSlug) ?? data.programs[0]
-  const sizes = useMemo(() => (program ? sizesOf(program) : []), [program])
+  // La sélection est la source unique de vérité : marché, puis programme,
+  // puis variante, puis taille. Chaque niveau filtre le suivant, et un choix
+  // devenu invalide retombe sur la première valeur disponible plutôt que
+  // d'afficher un plan vide ou, pire, celui d'un autre programme.
+  const markets = useMemo(() => marketsOf(data), [data])
+  const [market, setMarket] = useState(markets[0] ?? 'cfd')
+  const activeMarket = markets.includes(market) ? market : markets[0]
+
+  const visibles = useMemo(
+    () => data.programs.filter((p) => (p.market || 'cfd') === activeMarket),
+    [data.programs, activeMarket]
+  )
+
+  const [programSlug, setProgramSlug] = useState('')
+  const program = visibles.find((p) => p.slug === programSlug) ?? visibles[0]
+
+  const variants = useMemo(() => (program ? variantsOf(program) : []), [program])
+  const [variantKey, setVariantKey] = useState<string | null>(null)
+  const activeVariant = variants.some((v) => v.key === variantKey)
+    ? variantKey
+    : variants[0]?.key ?? null
+
+  const sizes = useMemo(
+    () => (program ? sizesOf(program, activeVariant) : []),
+    [program, activeVariant]
+  )
   const [size, setSize] = useState<number | null>(null)
-  // Changer de programme peut rendre la taille choisie indisponible : on
-  // retombe sur la plus petite du nouveau programme plutôt que d'afficher un
-  // plan vide.
   const activeSize = size !== null && sizes.includes(size) ? size : sizes[0]
 
-  if (!program || activeSize === undefined) return null
+  if (!program) return null
 
-  const regular = regularPriceFor(program, activeSize)
-  const price = priceFor(data.promotions, program.slug, activeSize, regular)
-  const evaluation = planFor(program, 'evaluation', activeSize)
-  const funded = planFor(program, 'sim_funded', activeSize)
+  // Un programme sans plan est volontaire : recopier la grille d'un produit
+  // voisin serait pire que de dire que la vérification est en cours.
+  const enVerification = program.plans.length === 0
+
+  const regular = enVerification ? null : regularPriceFor(program, activeSize, activeVariant)
+  const currency = enVerification ? 'USD' : currencyFor(program, activeSize, activeVariant)
+  const price = priceFor(data.promotions, program.slug, activeSize, regular, new Date(), activeVariant)
+  const phases = enVerification ? [] : evaluationPhases(program, activeSize, activeVariant)
+  const funded = enVerification ? null : planFor(program, 'sim_funded', activeSize, activeVariant)
   const bundle = data.bundles.filter((b) => b.program_slug === program.slug)
+  // Les règles du programme choisi, plus celles de la firme. Jamais celles
+  // d'un autre programme.
+  const rules = rulesFor(data, program.slug)
 
   // Le CTA du configurateur portait `source=logo&placement=logo` : il reutilisait
   // le lien de la tuile logo, si bien que chaque clic sur « configurer » etait
@@ -468,7 +564,9 @@ export default function ProgramExplorer({
     placement: 'configurator',
     locale,
     program: program.slug,
-    size: String(activeSize),
+    size: activeSize === undefined ? null : String(activeSize),
+    optKey: activeVariant ? 'variant' : null,
+    optValue: activeVariant,
   })
 
   return (
@@ -477,9 +575,34 @@ export default function ProgramExplorer({
       <h2 className="text-2xl md:text-3xl font-bold text-white mb-1">{t.step1}</h2>
       <p className="text-gray-400 mb-5">{t.intro}</p>
 
+      {/* Étape 0 — marché. Affiché seulement quand la firme en a plusieurs :
+          FTMO sépare CFD et Futures, The5ers y ajoute les actions. Sans ce
+          filtre, les règles Futures apparaissaient sous un produit CFD. */}
+      {markets.length > 1 && (
+        <div role="radiogroup" aria-label={t.market} className="flex flex-wrap gap-2 mb-5">
+          {markets.map((m) => {
+            const on = m === activeMarket
+            return (
+              <button
+                key={m}
+                type="button"
+                role="radio"
+                aria-checked={on}
+                onClick={() => { setMarket(m); setProgramSlug(''); setVariantKey(null); setSize(null) }}
+                className={`min-h-[44px] px-4 rounded-lg border text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
+                  on ? 'border-emerald-500 bg-emerald-500/10 text-white' : 'border-gray-800 bg-gray-900/50 text-gray-300 hover:border-gray-700'
+                }`}
+              >
+                {t.markets[m] ?? m}
+              </button>
+            )
+          })}
+        </div>
+      )}
+
       {/* Étape 1 — programme */}
       <div role="radiogroup" aria-label={t.step1} className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-        {data.programs.map((p) => {
+        {visibles.map((p) => {
           const on = p.slug === program.slug
           return (
             <button
@@ -487,7 +610,7 @@ export default function ProgramExplorer({
               type="button"
               role="radio"
               aria-checked={on}
-              onClick={() => setProgramSlug(p.slug)}
+              onClick={() => { setProgramSlug(p.slug); setVariantKey(null); setSize(null) }}
               className={`min-h-[44px] text-left p-4 rounded-xl border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
                 on ? 'border-emerald-500 bg-emerald-500/10' : 'border-gray-800 bg-gray-900/50 hover:border-gray-700'
               }`}
@@ -500,6 +623,40 @@ export default function ProgramExplorer({
           )
         })}
       </div>
+
+      {/* Un programme sans plan : on le dit, on n'invente pas sa grille. */}
+      {enVerification && (
+        <p className="mb-6 text-amber-300 text-sm bg-amber-500/10 border border-amber-500/30 rounded-lg p-3">
+          {t.pending}
+        </p>
+      )}
+
+      {/* Étape 1 bis — variante. Standard et Swing, ou 8/5 et 10/5 : deux
+          offres de même taille qui n'ont ni le même prix ni les mêmes règles. */}
+      {variants.length > 1 && (
+        <>
+          <h3 className="text-white font-semibold mb-2">{t.variant}</h3>
+          <div role="radiogroup" aria-label={t.variant} className="flex flex-wrap gap-2 mb-6">
+            {variants.map((v) => {
+              const on = v.key === activeVariant
+              return (
+                <button
+                  key={v.key ?? 'base'}
+                  type="button"
+                  role="radio"
+                  aria-checked={on}
+                  onClick={() => { setVariantKey(v.key); setSize(null) }}
+                  className={`min-h-[44px] px-4 rounded-lg border text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
+                    on ? 'border-emerald-500 bg-emerald-500/10 text-white' : 'border-gray-800 bg-gray-900/50 text-gray-300 hover:border-gray-700'
+                  }`}
+                >
+                  {v.label || '—'}
+                </button>
+              )
+            })}
+          </div>
+        </>
+      )}
 
       {/* Étape 2 — taille */}
       <h3 className="text-white font-semibold mb-2">{t.step2}</h3>
@@ -524,12 +681,13 @@ export default function ProgramExplorer({
       </div>
 
       {/* Prix */}
+      {!enVerification && (
       <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-5 mb-6">
         <div className="flex items-baseline gap-3 flex-wrap">
           <span className="text-gray-400 text-sm">{t.priceToday}</span>
-          <span className="text-3xl font-bold text-white">{money(price.final) ?? '—'}</span>
+          <span className="text-3xl font-bold text-white">{money(price.final, currency) ?? '—'}</span>
           {price.promotion && price.regular !== price.final && (
-            <span className="text-gray-500 line-through">{money(price.regular)}</span>
+            <span className="text-gray-500 line-through">{money(price.regular, currency)}</span>
           )}
           {price.promotion?.code && (
             <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-300 text-xs border border-emerald-500/30">
@@ -555,17 +713,28 @@ export default function ProgramExplorer({
           {ctaLabel}
         </a>
       </div>
+      )}
 
-      {/* Évaluation et financé, jamais mélangés */}
-      <div className="grid md:grid-cols-2 gap-4 mb-8">
-        {evaluation ? (
-          <PhaseCard title={t.evaluation} plan={evaluation} t={t} />
+      {/* Phases d'évaluation puis compte financé, jamais mélangés.
+          Un 2-Step affiche ses deux phases séparément : le second objectif
+          n'a plus à se cacher dans une note. */}
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+        {phases.length > 0 ? (
+          phases.map((pl, i) => (
+            <PhaseCard
+              key={pl.phase}
+              title={phases.length > 1 ? `${t.evaluation} ${i + 1}` : t.evaluation}
+              plan={pl}
+              currency={currency}
+              t={t}
+            />
+          ))
         ) : (
           <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-5 text-gray-400 text-sm">
             {t.noEvaluation}
           </div>
         )}
-        <PhaseCard title={t.funded} plan={funded} t={t} />
+        <PhaseCard title={t.funded} plan={funded} currency={currency} t={t} />
       </div>
 
       {/* Bundle : capacité d'achat, distincte du plafond financé */}
@@ -598,11 +767,11 @@ export default function ProgramExplorer({
       )}
 
       {/* Règles, avec le niveau de gravité en toutes lettres */}
-      {data.rules.length > 0 && (
+      {rules.length > 0 && (
         <div className="mb-8">
           <h3 className="text-white font-semibold mb-3">{t.rules}</h3>
           <ul className="space-y-2">
-            {data.rules.map((r) => {
+            {rules.map((r) => {
               const sev = (r.severity ?? 'needs_confirmation') as Severity
               const style = SEVERITY_STYLE[sev]
               return (

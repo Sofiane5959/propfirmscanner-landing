@@ -22,18 +22,42 @@
 
 import type { SupabaseClient } from '@supabase/supabase-js'
 
-export type Phase = 'evaluation' | 'sim_funded' | 'live'
+export type Phase = 'evaluation' | 'evaluation_2' | 'evaluation_3' | 'sim_funded' | 'live'
 
 /** Les cinq niveaux imposés par le brief. Un booléen ne pouvait pas les porter. */
 export type Severity =
   | 'hard_breach'
+  | 'temporary_pause'
+  | 'payout_adjustment'
+  | 'eligibility_condition'
   | 'restriction'
-  | 'payout_condition'
   | 'allowed'
+  | 'informational'
+  | 'payout_condition'
   | 'needs_confirmation'
 
 export interface ProgramPlan {
   phase: Phase
+  /** Distingue deux offres de meme taille : Standard et Swing, 8/5 et 10/5. */
+  variant_key: string | null
+  variant_label: string | null
+  account_type: string | null
+  target_variant: string | null
+  /** La devise appartient au plan : FTMO facture en EUR, The5ers en USD. */
+  currency: string | null
+  platform: string | null
+  post_pass_fee: number | null
+  /** Distincte de consistency_rule : FTMO l'applique au 1-Step seulement. */
+  best_day_rule: number | null
+  minimum_profitable_days: number | null
+  leverage: string | null
+  time_limit: string | null
+  overnight_rule: string | null
+  weekend_rule: string | null
+  payout_eligible: boolean | null
+  scaling_note: string | null
+  refund_note: string | null
+  editorial_note: string | null
   account_size: number
   regular_price: number | null
   profit_target: number | null
@@ -66,6 +90,11 @@ export interface ProgramPlan {
 export interface Program {
   slug: string
   name: string
+  /** cfd | futures | stocks — sans lui, Futures et CFD se melangeaient. */
+  market: string
+  program_family: string | null
+  /** active | promotional | beta | legacy | unverified | discontinued */
+  status: string
   kind: string
   evaluation_steps: number | null
   summary: string | null
@@ -80,6 +109,11 @@ export interface Program {
 export interface Promotion {
   program_slug: string | null
   account_size: number | null
+  eligible_variants: string[] | null
+  eligible_markets: string[] | null
+  checkout_verified: boolean | null
+  affiliate_exclusive: boolean | null
+  stacking_rule: string | null
   code: string | null
   label: string | null
   discount_type: string
@@ -109,6 +143,8 @@ export interface PlatformRow {
 }
 
 export interface FirmRule {
+  /** null = regle de toute la firme. Renseigne = regle propre au programme. */
+  program_slug: string | null
   scope: string
   title: string
   detail: string | null
@@ -138,7 +174,7 @@ export async function loadFirmPrograms(
 ): Promise<FirmProgramData | null> {
   const { data: programs, error } = await supabase
     .from('firm_programs')
-    .select('id, slug, name, kind, evaluation_steps, summary, sort_order, max_funded_accounts, max_funded_note, source_url, verified_at')
+    .select('*')
     .eq('firm_slug', firmSlug)
     .order('sort_order', { ascending: true })
 
@@ -214,13 +250,18 @@ export function priceFor(
   programSlug: string,
   accountSize: number,
   regular: number | null,
-  now: Date = new Date()
+  now: Date = new Date(),
+  variantKey: string | null = null
 ): PriceResult {
   const applicable = promotions.filter(
     (p) =>
       isLive(p, now) &&
       (p.program_slug === null || p.program_slug === programSlug) &&
-      (p.account_size === null || Number(p.account_size) === accountSize)
+      (p.account_size === null || Number(p.account_size) === accountSize) &&
+      // La promotion 20 % de FTMO ne vaut que pour le 1-Step 100K Standard :
+      // sans ce filtre elle s'appliquait a toutes les variantes.
+      (!p.eligible_variants || p.eligible_variants.length === 0 ||
+       (variantKey !== null && p.eligible_variants.includes(variantKey)))
   )
 
   if (regular === null || applicable.length === 0) {
@@ -247,16 +288,60 @@ export function priceFor(
   }
 }
 
+/** Marches distincts, dans l'ordre d'affichage des programmes. */
+export function marketsOf(data: FirmProgramData): string[] {
+  return Array.from(new Set(data.programs.map((p) => p.market || 'cfd')))
+}
+
+/** Variantes d'un programme. `[null]` quand il n'en a pas. */
+export function variantsOf(program: Program): { key: string | null; label: string }[] {
+  const seen = new Map<string, { key: string | null; label: string }>()
+  for (const pl of program.plans) {
+    const key = pl.variant_key ?? null
+    const id = key ?? ''
+    if (!seen.has(id)) seen.set(id, { key, label: pl.variant_label || pl.account_type || '' })
+  }
+  return Array.from(seen.values())
+}
+
+/** Regles qui s'appliquent au programme choisi, plus celles de la firme. */
+export function rulesFor(data: FirmProgramData, programSlug: string): FirmRule[] {
+  return data.rules.filter((r) => !r.program_slug || r.program_slug === programSlug)
+}
+
+/** Les phases d'evaluation d'une variante, dans l'ordre. */
+export function evaluationPhases(program: Program, size: number, variantKey: string | null): ProgramPlan[] {
+  const order: Phase[] = ['evaluation', 'evaluation_2', 'evaluation_3']
+  return order
+    .map((ph) => planFor(program, ph, size, variantKey))
+    .filter((p): p is ProgramPlan => p !== null)
+}
+
 /** Tailles proposées par un programme, toutes phases confondues. */
-export function sizesOf(program: Program): number[] {
+export function sizesOf(program: Program, variantKey?: string | null): number[] {
   // Array.from plutot que le spread : la cible TypeScript du projet n active
   // pas downlevelIteration, et [...new Set()] ne compile pas.
-  return Array.from(new Set(program.plans.map((p) => Number(p.account_size)))).sort((a, b) => a - b)
+  const plans = variantKey === undefined
+    ? program.plans
+    : program.plans.filter((p) => (p.variant_key ?? null) === variantKey)
+  return Array.from(new Set(plans.map((p) => Number(p.account_size)))).sort((a, b) => a - b)
 }
 
 /** Le plan d'une phase pour une taille donnée, ou null s'il n'existe pas. */
-export function planFor(program: Program, phase: Phase, size: number): ProgramPlan | null {
-  return program.plans.find((p) => p.phase === phase && Number(p.account_size) === size) || null
+export function planFor(
+  program: Program,
+  phase: Phase,
+  size: number,
+  variantKey?: string | null
+): ProgramPlan | null {
+  return (
+    program.plans.find(
+      (p) =>
+        p.phase === phase &&
+        Number(p.account_size) === size &&
+        (variantKey === undefined || (p.variant_key ?? null) === variantKey)
+    ) || null
+  )
 }
 
 /**
@@ -265,9 +350,23 @@ export function planFor(program: Program, phase: Phase, size: number): ProgramPl
  * Il vit sur la ligne d'évaluation pour les programmes évalués, et sur la ligne
  * financée pour Instant, qui n'a pas d'évaluation.
  */
-export function regularPriceFor(program: Program, size: number): number | null {
-  const evaluation = planFor(program, 'evaluation', size)
+export function regularPriceFor(
+  program: Program,
+  size: number,
+  variantKey?: string | null
+): number | null {
+  const evaluation = planFor(program, 'evaluation', size, variantKey)
   if (evaluation?.regular_price != null) return Number(evaluation.regular_price)
-  const funded = planFor(program, 'sim_funded', size)
+  const funded = planFor(program, 'sim_funded', size, variantKey)
   return funded?.regular_price != null ? Number(funded.regular_price) : null
+}
+
+/** Devise du plan choisi. Annoncer USD sur un prix affiche en EUR serait faux. */
+export function currencyFor(
+  program: Program,
+  size: number,
+  variantKey?: string | null
+): string {
+  const p = planFor(program, 'evaluation', size, variantKey) || planFor(program, 'sim_funded', size, variantKey)
+  return p?.currency || 'USD'
 }
