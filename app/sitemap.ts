@@ -14,7 +14,7 @@
 import type { MetadataRoute } from 'next'
 import { createClient } from '@supabase/supabase-js'
 import { blogPosts } from '@/lib/blog-data'
-import { localeHref, TRANSLATED_LOCALES } from '@/lib/seo'
+import { localeHref, localesFor } from '@/lib/seo'
 
 export const revalidate = 3600
 
@@ -47,14 +47,21 @@ const STATIC_PAGES: { path: string; priority: number; changeFrequency: MetadataR
 const BEST_FOR = ['scalping', 'news-trading', 'beginners', 'swing-trading', 'ea-trading',
   'high-profit-split', 'cheapest', 'instant-funding', 'forex', 'futures', 'crypto']
 
-/** One entry per translated locale. English is unprefixed, so nothing redirects. */
+/**
+ * One entry per locale the page is genuinely written in. English is unprefixed,
+ * so nothing redirects.
+ *
+ * `localesFor` returns all seven for the shared pages and en + fr for the firm
+ * pages. A previous version used a single site-wide list of two, which left
+ * five translated home pages, /compare, /best-for and /blog out of the sitemap.
+ */
 function forEachLocale(
   path: string,
   lastModified: Date,
   priority: number,
   changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency']
 ): MetadataRoute.Sitemap {
-  return TRANSLATED_LOCALES.map((locale) => ({
+  return localesFor(path).map((locale) => ({
     url: localeHref(locale, path),
     lastModified,
     changeFrequency,

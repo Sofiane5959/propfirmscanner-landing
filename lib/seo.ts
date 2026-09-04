@@ -9,17 +9,49 @@ const locales = ['en', 'fr', 'de', 'es', 'pt', 'ar', 'hi'] as const;
 type Locale = (typeof locales)[number];
 
 /**
- * Locales that actually have their own copy.
+ * Locales in which a FIRM PAGE is genuinely rendered.
  *
- * The other five routes work and stay reachable, but every string they render
- * comes from the English COPY object: the components hold `en` and `fr` only
- * and fall back with `locale === 'fr' ? COPY.fr : COPY.en`. Announcing seven
- * translations in hreflang when two exist tells search engines to index five
- * duplicates of the English page.
+ * `app/[locale]/prop-firm/[slug]` holds its copy in a COPY object that knows
+ * `en` and `fr` only (`locale === 'fr' ? COPY.fr : COPY.en`), and the firm
+ * content itself is stored in English with a French bundle in
+ * `prop_firms.translations.fr`. Nothing exists for the other five.
  *
- * Move a locale here the day its copy exists, and hreflang follows.
+ * Measured on production, 3 September 2026, share of the visible text in the
+ * requested language on /prop-firm/ftmo:
+ *
+ *     en 99%   fr 88%   de 2%   es 2%   pt 2%   ar 26%   hi 24%
+ *
+ * Declaring seven hreflang alternates for those pages would invite Google to
+ * index five near-duplicates of the English page, across 350 firms.
+ *
+ * Add a locale here the day its bundle exists in `translations`, and both
+ * hreflang and the sitemap follow.
  */
-const TRANSLATED_LOCALES = ['en', 'fr'] as const;
+const FIRM_PAGE_LOCALES = ['en', 'fr'] as const;
+
+/**
+ * Everything else IS translated, in all seven locales.
+ *
+ * The shared interface comes from `messages/<locale>.json`, which carries the
+ * same 115 keys in all seven. Same measurement, same day, on the home page and
+ * on /compare:
+ *
+ *     de 100%   ar 100%   hi 96%   fr 71%   es 60%   pt 60%
+ *
+ * A previous version of this file restricted the whole site to en + fr on the
+ * strength of the firm-page observation above. That was wrong: it hid five
+ * genuinely translated home pages, /compare, /best-for and /blog from search
+ * engines. The locale set belongs to the page, not to the site.
+ */
+const FIRM_PATH = /^\/prop-firm\//;
+
+export function localesFor(path: string): readonly string[] {
+  return FIRM_PATH.test(path) ? FIRM_PAGE_LOCALES : locales;
+}
+
+// Conserve pour compatibilite : la valeur historique, desormais reservee aux
+// fiches firmes.
+const TRANSLATED_LOCALES = FIRM_PAGE_LOCALES;
 
 /**
  * Public URL of a path in a given locale.
@@ -36,16 +68,17 @@ export function localeHref(locale: string, path: string): string {
 
 /** Canonical + reciprocal hreflang for one page, in one locale. */
 function alternatesFor(locale: string, path: string) {
+  const declared = localesFor(path);
   const languages: Record<string, string> = {};
-  TRANSLATED_LOCALES.forEach((loc) => {
+  declared.forEach((loc) => {
     languages[loc] = localeHref(loc, path);
   });
   languages['x-default'] = localeHref('en', path);
 
-  // Self-referential for a locale that has its own copy. The five untranslated
-  // locales serve the English page verbatim, so pointing their canonical at
-  // English states what is true rather than claiming six distinct pages.
-  const isTranslated = (TRANSLATED_LOCALES as readonly string[]).includes(locale);
+  // Self-referential for a locale this page really is written in. A locale that
+  // is not points its canonical at English: that states what is true rather
+  // than claiming a distinct page that does not exist.
+  const isTranslated = declared.includes(locale);
 
   return {
     alternates: {
