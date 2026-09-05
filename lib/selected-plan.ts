@@ -135,7 +135,13 @@ export function criticalRules(sel: SelectedPlan): CriticalRule[] {
         ? { label: 'Leverage', value: p.leverage, severity: 'restriction' }
         : null,
     f?.minimum_trading_days != null
-      ? { label: 'Minimum trading days before payout', value: String(f.minimum_trading_days), severity: 'payout_condition' }
+      ? {
+          label: sel.evaluationPhases.length === 0
+            ? 'Minimum qualifying trading days before payout'
+            : 'Minimum trading days before payout',
+          value: String(f.minimum_trading_days),
+          severity: 'payout_condition',
+        }
       : p.minimum_trading_days !== null
         ? { label: 'Minimum trading days', value: String(p.minimum_trading_days), severity: 'payout_condition' }
         : null,

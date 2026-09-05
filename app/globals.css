@@ -73,3 +73,44 @@
     @apply text-tiny text-accent uppercase tracking-wider font-medium;
   }
 }
+
+
+/* ==========================================================================
+   IMPRESSION
+   La fiche sert de document de comparaison : elle est imprimee et enregistree
+   en PDF. Trois problemes sinon : la navigation `fixed` se repete sur chaque
+   feuille, le resume `sticky` se fige au milieu du papier, et les cartes se
+   coupent en deux entre deux pages.
+   ========================================================================== */
+@media print {
+  /* Rien de fixe ni de collant sur du papier : la notion de fenetre n'existe
+     plus, un element `fixed` se reimprime a chaque feuille. */
+  .fixed,
+  .sticky,
+  [class*=":sticky"],
+  [class*=":fixed"] {
+    position: static !important;
+  }
+
+  /* Encre noire sur fond blanc : le theme sombre vide les cartouches. */
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  /* Ne pas couper une carte ou un tableau entre deux feuilles. */
+  section,
+  table,
+  li {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  h1, h2, h3 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  /* Les liens d'affiliation ne sont PAS developpes : imprimer l'URL de suivi
+     n'apprend rien au lecteur et expose le parametrage du tunnel. */
+}

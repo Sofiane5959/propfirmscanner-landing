@@ -16,8 +16,9 @@
 
 import { useState } from 'react'
 import type { SelectedPlan, CriticalRule, CriticalSeverity } from '@/lib/selected-plan'
-import { criticalRules, suitabilityFor, formatAmount, asAmountOrPercent, humanise } from '@/lib/selected-plan'
+import { criticalRules, suitabilityFor, formatAmount, asAmountOrPercent } from '@/lib/selected-plan'
 import type { FirmCapabilities } from '@/lib/firm-capabilities'
+import { ChevronDown } from 'lucide-react'
 
 // Jamais la même coche verte pour tous les types de règle : la conséquence
 // décide de la couleur et du symbole.
@@ -92,19 +93,47 @@ export function SelectedPlanSummary({ sel, ctaHref, ctaLabel }: {
           </div>
           <p className="text-gray-500 text-xs mb-4">Amount payable today</p>
 
-          <Line label="Profit target" value={asAmountOrPercent(e?.profit_target ?? null, sel.currency)} />
+          <Line
+            label="Profit target"
+            value={
+              sel.evaluationPhases.length === 0
+                ? 'No evaluation — funded rules apply immediately'
+                : asAmountOrPercent(e?.profit_target ?? null, sel.currency)
+            }
+          />
           <Line label="Maximum loss" value={asAmountOrPercent(e?.maximum_loss_limit ?? null, sel.currency)} />
           <Line label="Daily loss" value={e?.daily_loss_limit != null ? asAmountOrPercent(e.daily_loss_limit, sel.currency) : null} />
+          {/* Sans phase d'evaluation, une transition « 20% -> 20% » n'a aucun
+              sens : les deux valeurs sont la meme regle vue deux fois. On
+              affiche alors la seule regle qui existe, celle du compte finance. */}
           <Line
             label="Consistency"
             value={
-              e?.consistency_rule != null || f?.consistency_rule != null
-                ? `${e?.consistency_rule != null ? Math.round(e.consistency_rule * 100) + '%' : 'none'} → ${f?.consistency_rule != null ? Math.round(f.consistency_rule * 100) + '%' : 'none'}`
+              sel.evaluationPhases.length === 0
+                ? (f?.consistency_rule != null ? Math.round(f.consistency_rule * 100) + '% funded' : null)
+                : e?.consistency_rule != null || f?.consistency_rule != null
+                  ? `${e?.consistency_rule != null ? Math.round(e.consistency_rule * 100) + '%' : 'none'} → ${f?.consistency_rule != null ? Math.round(f.consistency_rule * 100) + '%' : 'none'}`
+                  : null
+            }
+            note={sel.evaluationPhases.length === 0 ? null : 'Evaluation → funded'}
+          />
+          {/* « Minimum trading days » est ambigu sur un produit instantane :
+              il ne s'agit pas d'achever une evaluation mais de devenir
+              eligible au retrait. */}
+          <Line
+            label={
+              sel.evaluationPhases.length === 0
+                ? 'Minimum qualifying trading days before payout'
+                : 'First payout'
+            }
+            value={
+              f?.minimum_trading_days != null
+                ? sel.evaluationPhases.length === 0
+                  ? String(f.minimum_trading_days)
+                  : `after ${f.minimum_trading_days} trading days`
                 : null
             }
-            note="Evaluation → funded"
           />
-          <Line label="First payout" value={f?.minimum_trading_days != null ? `after ${f.minimum_trading_days} trading days` : null} />
           <Line label="Profit split" value={f?.profit_split != null ? Math.round(f.profit_split * 100) + '%' : null} />
 
           <a
@@ -352,46 +381,98 @@ export function EvidenceLog({ sel }: { sel: SelectedPlan }) {
 // -----------------------------------------------------------------------------
 // 8. Specifications completes, repliees
 // -----------------------------------------------------------------------------
+/**
+ * Ordre d'affichage des categories de regles.
+ *
+ * Fixe deliberement : groupe par ordre d'insertion des donnees, la page se
+ * reorganisait des qu'une regle etait ajoutee. L'ordre suit ici la question
+ * que le lecteur se pose, de la plus frequente a la plus tardive : quand
+ * puis-je trader, comment, avec quel compte, combien de comptes, comment
+ * suis-je paye, et que se passe-t-il en live.
+ *
+ * `other` est un vrai filet : une portee ajoutee en base sans passer par ce
+ * fichier reste visible au lieu d'etre silencieusement omise.
+ */
+const CATEGORIES_REGLES: { scope: string; label: string }[] = [
+  { scope: 'session', label: 'Trading hours and sessions' },
+  { scope: 'conduct', label: 'Trading conduct' },
+  { scope: 'account', label: 'Account and identity' },
+  { scope: 'limits', label: 'How many accounts you can hold' },
+  { scope: 'payout', label: 'Payouts' },
+  { scope: 'live', label: 'Live account' },
+  { scope: 'other', label: 'Other' },
+]
+
 export function CompleteSpecifications({ sel }: { sel: SelectedPlan }) {
-  const [open, setOpen] = useState(false)
+  // Un ensemble, pas un booleen : chaque categorie s'ouvre sans fermer les
+  // autres. Comparer deux categories est le cas d'usage courant.
+  const [ouvertes, setOuvertes] = useState<string[]>([])
+  const bascule = (scope: string) =>
+    setOuvertes((v) => (v.includes(scope) ? v.filter((x) => x !== scope) : [...v, scope]))
+
+  const connues = new Set(CATEGORIES_REGLES.map((c) => c.scope))
   const groupes = new Map<string, typeof sel.rules>()
   for (const r of sel.rules) {
-    const g = groupes.get(r.scope) || []
+    const cle = connues.has(r.scope) && r.scope !== 'other' ? r.scope : 'other'
+    const g = groupes.get(cle) || []
     g.push(r)
-    groupes.set(r.scope, g)
+    groupes.set(cle, g)
   }
   if (groupes.size === 0) return null
 
+  const visibles = CATEGORIES_REGLES.filter((c) => (groupes.get(c.scope) || []).length > 0)
+
   return (
-    <Section id="specifications" title="Complete rules and permissions" intro="Below the decision blocks, on purpose.">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-        className="min-h-[44px] px-4 rounded-lg border border-gray-800 bg-gray-900/50 text-gray-300 text-sm hover:border-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
-      >
-        {open ? 'Hide the full rules' : `Show the full rules (${sel.rules.length})`}
-      </button>
-      {open && (
-        <div className="mt-4 space-y-5">
-          {Array.from(groupes.entries()).map(([scope, rules]) => (
-            <div key={scope}>
-              <p className="text-white font-semibold mb-2">{humanise(scope)}</p>
-              <ul className="space-y-2">
-                {rules.map((r) => (
-                  <li key={r.title} className="bg-gray-900/50 border border-gray-800 rounded-lg p-3">
-                    <p className="text-white text-sm font-medium">{r.title}</p>
-                    {r.detail ? <p className="text-gray-400 text-sm mt-0.5">{r.detail}</p> : null}
-                    {r.confidence === 'needs_confirmation' ? (
-                      <p className="text-amber-400/80 text-xs mt-1">Not confirmed</p>
-                    ) : null}
-                  </li>
-                ))}
-              </ul>
+    <Section
+      id="specifications"
+      title="Complete rules and permissions"
+      intro="Below the decision blocks, on purpose. Open only the category you need."
+    >
+      <div className="space-y-2">
+        {visibles.map(({ scope, label }) => {
+          const rules = groupes.get(scope) || []
+          const ouverte = ouvertes.includes(scope)
+          const aConfirmer = rules.filter((r) => r.confidence === 'needs_confirmation').length
+          return (
+            <div key={scope} className="border border-gray-800 rounded-lg overflow-hidden">
+              <button
+                type="button"
+                onClick={() => bascule(scope)}
+                aria-expanded={ouverte}
+                aria-controls={`regles-${scope}`}
+                className="w-full min-h-[44px] px-4 py-3 flex items-center justify-between gap-3 text-left bg-gray-900/50 hover:bg-gray-900/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+              >
+                <span className="text-white text-sm font-medium">{label}</span>
+                <span className="flex items-center gap-2 flex-shrink-0">
+                  {/* Le compte des regles non confirmees est visible categorie
+                      fermee : sinon il faut tout ouvrir pour savoir ou regarder. */}
+                  {aConfirmer > 0 && (
+                    <span className="text-amber-400/80 text-xs">{aConfirmer} unconfirmed</span>
+                  )}
+                  <span className="text-gray-500 text-xs tabular-nums">{rules.length}</span>
+                  <ChevronDown
+                    className={`w-4 h-4 text-gray-500 transition-transform motion-reduce:transition-none ${ouverte ? 'rotate-180' : ''}`}
+                    aria-hidden="true"
+                  />
+                </span>
+              </button>
+              {ouverte && (
+                <ul id={`regles-${scope}`} className="p-3 space-y-2 border-t border-gray-800">
+                  {rules.map((r) => (
+                    <li key={r.title} className="bg-gray-900/50 border border-gray-800 rounded-lg p-3">
+                      <p className="text-white text-sm font-medium">{r.title}</p>
+                      {r.detail ? <p className="text-gray-400 text-sm mt-0.5">{r.detail}</p> : null}
+                      {r.confidence === 'needs_confirmation' ? (
+                        <p className="text-amber-400/80 text-xs mt-1">Not confirmed</p>
+                      ) : null}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
-          ))}
-        </div>
-      )}
+          )
+        })}
+      </div>
     </Section>
   )
 }

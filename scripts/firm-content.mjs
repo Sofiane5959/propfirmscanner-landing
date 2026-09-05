@@ -512,7 +512,10 @@ export const FUTURESELITE = {
     logo_url: 'https://www.google.com/s2/favicons?domain=futureselite.com&sz=128',
   },
   arrays: {
-    platforms: ['Tradovate', 'NinjaTrader', 'Quantower', 'ATAS', 'Volumetrica', 'DeepCharts', 'WealthCharts'],
+    // Meme liste que FUTURESELITE_PLATFORMS, relevee le 4 septembre 2026.
+    // WealthCharts ne figure plus sur la page officielle ; DeepDOM si.
+    // Toujours sept, donc « Seven platforms to choose from » reste juste.
+    platforms: ['Tradovate', 'NinjaTrader', 'Quantower', 'ATAS', 'Volumetrica', 'DeepDOM', 'DeepCharts'],
     assets: ['Futures'],
     included_items: [
       'Trading journal and analytics dashboard',
@@ -840,7 +843,7 @@ export const FUTURESELITE = {
     'NITRO, PRIME, INSTANT. Les trois programmes existent mais leur grille est derrière une authentification. Ils ne figurent pas dans program_guide : une option sans prix ni challenge donne un bouton mort dans le configurateur. Nitro : paiements quotidiens, pas de perte journalière. Prime : le moins cher, jusqu’à 10 comptes, 1,5 M$ cumulés. Instant : aucune évaluation, 80 % de partage.',
     'RÈGLE DE RÉGULARITÉ. La page affiche 40 % et 50 % côte à côte sans dire laquelle s’applique. Décrite en toutes lettres, sans chiffre inventé.',
     'LOGO. logo_url pointait sur /logos/futureselite.png, fichier jamais créé : la production répondait 404 et la tuile était vide. Corrigé vers la favicon du domaine futureselite.com, qui répond. Leur équipe indique de prendre le logo officiel sur leur profil X : le jour où le fichier existe dans public/logos/, repointer logo_url dessus. Ne jamais pointer une colonne sur un fichier absent.',
-    'TRUSTPILOT. Les compteurs de leur page d’accueil affichent tous zéro. trustpilot_rating laissé tel quel plutôt que d’écrire un zéro trompeur.',
+    'TRUSTPILOT. Les compteurs de leur page d’accueil affichent tous zéro. La fiche montrait pourtant « 4,3 — 25 avis », un couple venu du seed initial et rattaché à aucune source. Vérification tentée le 5 septembre 2026 : Trustpilot répond par un contrôle anti-robot, qui n’a pas été contourné. Faute de source, la note est retirée par database/RUN-futureselite-trustpilot.sql. La remettre demande un relevé manuel.',
     'PRÉSÉLECTION DU PLAN PAR URL. Leur application ne lit que aff, ref, coupon et type. Aucun paramètre de taille. Le lien préremplit l’affiliation et le coupon ; le visiteur choisit son plan sur place.',
   ],
 }

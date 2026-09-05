@@ -611,8 +611,12 @@ export default function ProgramExplorer({
         </div>
       )}
 
-      {/* Étape 1 — programme */}
-      <div role="radiogroup" aria-label={t.step1} className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+      {/* Étape 1 — programme.
+          Deux colonnes au maximum : à quatre, chaque carte devenait trop
+          étroite pour son sous-titre, et le nom du programme passait sur deux
+          lignes dès qu'il dépassait un mot. Le choix du programme est la
+          décision la plus lourde de la page, il mérite la largeur. */}
+      <div role="radiogroup" aria-label={t.step1} className="grid sm:grid-cols-2 gap-3 mb-6">
         {visibles.map((p) => {
           const on = p.slug === program.slug
           return (

@@ -125,7 +125,7 @@ export default function PromoPopup() {
   const claimUrl = `/api/go/${promo.slug}?source=promo-popup`;
 
   return (
-    <div className="fixed bottom-4 right-4 z-[9999]">
+    <div className="print:hidden fixed bottom-4 right-4 z-[9999]">
       <div className="relative w-80 bg-gray-900 border border-gray-700 rounded-2xl overflow-hidden shadow-2xl">
         <div className={`bg-gradient-to-r ${color} p-4`}>
           <button

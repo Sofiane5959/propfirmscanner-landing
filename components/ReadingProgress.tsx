@@ -86,7 +86,7 @@ export function CircularReadingProgress({ size = 48, strokeWidth = 4 }: { size?:
   if (progress < 5) return null
 
   return (
-    <div className="fixed bottom-24 right-6 z-50">
+    <div className="print:hidden fixed bottom-24 right-6 z-50">
       <svg width={size} height={size} className="transform -rotate-90">
         {/* Background circle */}
         <circle

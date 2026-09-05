@@ -176,7 +176,7 @@ export const FUTURESELITE_PROMOTIONS = [
   { program_slug: 'instant', account_size: 150000, code: 'SUMMER', discount_value: 0.30 },
 ].map((p) => ({
   ...p,
-  label: 'Public SUMMER offer',
+  label: 'Current public offer — expiry not published',
   discount_type: 'percent',
   is_public: true,
   status: 'active',
@@ -248,13 +248,18 @@ export const FUTURESELITE_BUNDLES = [
 // Le brief interdit d'affirmer qu'elles sont toutes gratuites : le checkout
 // n'affiche pas de supplement, mais donnees de marche, commissions et licences
 // logicielles peuvent rester a la charge du trader.
+// Liste alignee sur la page d'accueil officielle relevee le 4 septembre 2026.
+// Deux corrections : « DeepChart » etait une faute pour DeepCharts, et
+// WealthCharts ne figure plus sur la page officielle — retire plutot que
+// conserve par habitude. Volumetrica et DeepDOM y sont ajoutes.
 export const FUTURESELITE_PLATFORMS = [
   ['Tradovate', 'selectable', 'not_displayed', 'Evaluation and funded availability should be reconfirmed per account'],
   ['NinjaTrader', 'selectable', 'not_displayed', 'Potential external licence cost in live trading'],
-  ['WealthCharts', 'selectable', 'not_displayed', null],
-  ['DeepChart', 'selectable', 'not_displayed', 'Dashboard provides credentials and a Dxfeed agreement flow'],
   ['Quantower', 'selectable', 'not_displayed', null],
   ['ATAS', 'selectable', 'not_displayed', null],
+  ['Volumetrica', 'selectable', 'not_displayed', null],
+  ['DeepDOM', 'selectable', 'not_displayed', null],
+  ['DeepCharts', 'selectable', 'not_displayed', 'Dashboard provides credentials and a Dxfeed agreement flow'],
 ].map(([name, configurator_status, checkout_surcharge, note], i) => ({
   name, configurator_status, checkout_surcharge, note, sort_order: i + 1,
 }))
@@ -285,6 +290,14 @@ export const FUTURESELITE_RULES = [
   ['payout', 'Bank transfer', '1 to 3 days after approval.', 'payout_condition', 'verified', FAQ + '11949985-how-are-payouts-processed'],
   ['payout', 'Direct crypto', 'Maximum $500 per request. Above that, standard Rise methods apply.', 'payout_condition', 'verified', FAQ + '11949985-how-are-payouts-processed'],
   ['payout', 'Elite maximum request', 'Elite accounts bought from 2026-06-25 15:00 CET: 50% of total profit remaining, capped by account size. Older Elite accounts use 50% of current-cycle profit. Documented for Elite only.', 'payout_condition', 'verified', FAQ + '16387630-how-much-can-i-request'],
+  // Deux chiffres coexistent pour l'Elite 25K : 3 jours sur le configurateur
+  // (achever l'evaluation) et 6 jours dans la FAQ (devenir eligible au retrait).
+  // Les deux peuvent etre vrais, ce sont deux etapes differentes — mais la
+  // source ne le dit pas explicitement, donc on ne tranche pas a sa place. La
+  // regle est publiee comme non resolue, avec ses deux liens.
+  // La colonne ne porte qu'une source ; le second lien est donc nomme dans le
+  // texte, sans quoi le lecteur ne pourrait verifier qu'une moitie du conflit.
+  ['payout', 'Elite 25K minimum trading days', 'Unresolved: the configurator at ' + PRICING + ' states 3 trading days, and the payout FAQ at ' + FAQ + '11949982-what-is-the-payout-process-like-on-futures-elite states 6. They may describe two different steps — completing the evaluation, then becoming eligible for a payout — but no official page says so. Check both before relying on either.', 'payout_condition', 'needs_confirmation', PRICING],
   ['live', 'Transition to live', 'A risk-team decision. The fifth payout is a ceiling, not an automatic entitlement.', 'payout_condition', 'verified', FAQ + '15899069-live-trading-program'],
   ['live', 'Live starting balance', 'Starts at $0 with a loss floor based on account size. 50K example: $2,000 loss floor and $1,000 cushion.', 'restriction', 'verified', FAQ + '15899069-live-trading-program'],
   ['live', 'Live cushion unlock', '15 profitable days meeting the size-specific daily minimum. Days need not be consecutive.', 'payout_condition', 'verified', FAQ + '15899069-live-trading-program'],

@@ -166,7 +166,7 @@ export function FloatingCompareBasket() {
   const compareUrl = `/compare/custom?firms=${items.map(i => i.slug).join(',')}`
 
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+    <div className="print:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
       {/* Expanded View */}
       {isExpanded && (
         <div className="mb-3 bg-gray-800 border border-gray-700 rounded-xl p-4 shadow-2xl w-80">

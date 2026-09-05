@@ -419,7 +419,7 @@ export function Navbar() {
   return (
     <nav
       data-collapsing-header
-      className={`fixed top-0 left-0 right-0 z-50 glass border-b border-white/10 transition-transform duration-300 motion-reduce:transition-none ${
+      className={`print:hidden fixed top-0 left-0 right-0 z-50 glass border-b border-white/10 transition-transform duration-300 motion-reduce:transition-none ${
         headerHidden ? '-translate-y-full' : 'translate-y-0'
       }`}
     >

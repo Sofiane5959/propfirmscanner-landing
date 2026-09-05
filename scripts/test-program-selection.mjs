@@ -180,6 +180,42 @@ console.log('\n12. Architecture — aucun composant nomme d apres une firme')
   cas('aucun fichier specifique a une firme', trouves.length === 0, trouves.join(','))
 }
 
+console.log('')
+console.log('13. Aucune section dupliquee entre le niveau firme et la selection')
+{
+  const { readFileSync } = await import('node:fs')
+  const page = readFileSync('app/[locale]/prop-firm/[slug]/PropFirmPageClient.tsx', 'utf8')
+
+  // Quatre concepts existent en deux exemplaires : une version firme, figee sur
+  // un seul programme, et une version qui suit la selection. La version firme
+  // ne doit etre rendue que lorsque la firme n a pas de programmes normalises.
+  //
+  // Ce test lit le code plutot que le DOM : c est la ou l oubli se produit.
+  // Il echouera si quelqu un rajoute un jour la version firme sans la porte.
+  const PORTES = [
+    ['journey', 'journey?.steps?.length'],
+    ['cost_timeline', 'costTimeline?.steps?.length'],
+    ['key_rules', 'keyRules?.rules?.length'],
+    ['verdict_card.points', 'verdictCard.points && verdictCard.points.length > 0'],
+  ]
+  for (const [nom, expr] of PORTES) {
+    const garde = '!selectedDrivesPage && ' + expr
+    cas(`${nom} : rendu seulement sans programmes normalises`,
+      page.includes(garde) && page.split(expr).length - 1 === page.split(garde).length - 1,
+      'condition non gardee')
+  }
+
+  // Le brief interdit de masquer en CSS plutot que de ne pas rendre. On lit
+  // ligne par ligne : une ligne qui nomme un doublon ET une technique de
+  // masquage est une regression, quelle que soit la technique employee.
+  const MASQUAGE = ['hidden', 'display:none', 'display: none', 'sr-only', 'invisible']
+  const masquages = page
+    .split('\n')
+    .filter((l) => ['journey', 'costTimeline', 'keyRules', 'verdictCard'].some((v) => l.includes(v)))
+    .filter((l) => MASQUAGE.some((m) => l.includes(m)))
+  cas('aucun doublon masque en CSS', masquages.length === 0, masquages.join(' | ').slice(0, 160))
+}
+
 console.log('\n' + '-'.repeat(50))
 console.log(`${ok} reussis, ${ko} echoues`)
 process.exit(ko === 0 ? 0 : 1)

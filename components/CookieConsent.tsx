@@ -171,7 +171,7 @@ export default function CookieConsent() {
 
       {/* Banner */}
       {!showSettings && (
-        <div className="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 p-4 z-[997] shadow-2xl">
+        <div className="print:hidden fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 p-4 z-[997] shadow-2xl">
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-start gap-4">
               <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center flex-shrink-0">

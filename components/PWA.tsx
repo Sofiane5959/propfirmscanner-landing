@@ -102,7 +102,7 @@ export function PWAInstallPrompt() {
   if (!showPrompt || dismissed || !deferredPrompt) return null
 
   return (
-    <div className="fixed bottom-20 left-4 right-4 md:left-auto md:right-4 md:w-96 bg-gray-800 border border-gray-700 rounded-xl p-4 shadow-2xl z-50">
+    <div className="print:hidden fixed bottom-20 left-4 right-4 md:left-auto md:right-4 md:w-96 bg-gray-800 border border-gray-700 rounded-xl p-4 shadow-2xl z-50">
       <button
         onClick={handleDismiss}
         className="absolute top-2 right-2 p-1 text-gray-400 hover:text-white"
@@ -180,7 +180,7 @@ export function UpdatePrompt() {
   if (!showUpdate) return null
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-96 bg-emerald-500 text-white rounded-xl p-4 shadow-2xl z-50">
+    <div className="print:hidden fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-96 bg-emerald-500 text-white rounded-xl p-4 shadow-2xl z-50">
       <div className="flex items-center justify-between">
         <div>
           <h3 className="font-semibold">Update Available</h3>

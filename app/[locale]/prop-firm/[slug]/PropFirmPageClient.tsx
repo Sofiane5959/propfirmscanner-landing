@@ -43,7 +43,7 @@ const COPY = {
     // chaque fiche du site annonçait avoir ete verifiee « contre les documents
     // d'Earn2Trade » — y compris les fiches de ses concurrents.
     verifiedOn: (d: string, f: string) =>
-      `Information verified on ${d} against ${f}'s own documents and help centre.`,
+      `Firm information reviewed on ${d} against ${f}'s own documents and help centre.`,
     from: 'From',
     perMonth: '/month',
     // Never "applied automatically": the coupon is only certain at the moment
@@ -100,7 +100,7 @@ const COPY = {
     onTrustpilot: 'sur Trustpilot',
     ratingChecked: (d: string) => `· note Trustpilot, relevée le ${d}`,
     verifiedOn: (d: string, f: string) =>
-      `Informations vérifiées le ${d} à partir des documents et du centre d'aide officiels de ${f}.`,
+      `Informations relues le ${d} à partir des documents et du centre d'aide officiels de ${f}.`,
     from: 'À partir de',
     perMonth: '/mois',
     codeAuto: (c: string) => `Code ${c} — prérempli au moment de la redirection`,
@@ -155,7 +155,7 @@ const COPY = {
     onTrustpilot: 'auf Trustpilot',
     ratingChecked: (d: string) => `· Trustpilot-Bewertung, geprüft am ${d}`,
     verifiedOn: (d: string, f: string) =>
-      `Angaben am ${d} anhand der Unterlagen und des Hilfe-Centers von ${f} geprüft.`,
+      `Angaben am ${d} anhand der Unterlagen und des Hilfe-Centers von ${f} durchgesehen.`,
     from: 'Ab',
     perMonth: '/Monat',
     codeAuto: (c: string) => `Code ${c} — bei der Weiterleitung vorausgefüllt`,
@@ -210,7 +210,7 @@ const COPY = {
     onTrustpilot: 'en Trustpilot',
     ratingChecked: (d: string) => `· valoración de Trustpilot, consultada el ${d}`,
     verifiedOn: (d: string, f: string) =>
-      `Información verificada el ${d} con los documentos y el centro de ayuda oficiales de ${f}.`,
+      `Información revisada el ${d} con los documentos y el centro de ayuda oficiales de ${f}.`,
     from: 'Desde',
     perMonth: '/mes',
     codeAuto: (c: string) => `Código ${c} — precargado al redirigirte`,
@@ -265,7 +265,7 @@ const COPY = {
     onTrustpilot: 'no Trustpilot',
     ratingChecked: (d: string) => `· avaliação Trustpilot, consultada a ${d}`,
     verifiedOn: (d: string, f: string) =>
-      `Informação verificada a ${d} com os documentos e o centro de ajuda oficiais da ${f}.`,
+      `Informação revista a ${d} com os documentos e o centro de ajuda oficiais da ${f}.`,
     from: 'A partir de',
     perMonth: '/mês',
     codeAuto: (c: string) => `Código ${c} — pré-preenchido no momento do redirecionamento`,
@@ -320,7 +320,7 @@ const COPY = {
     onTrustpilot: 'على Trustpilot',
     ratingChecked: (d: string) => `· تقييم Trustpilot، تمت مراجعته في ${d}`,
     verifiedOn: (d: string, f: string) =>
-      `تم التحقق من المعلومات في ${d} استنادًا إلى مستندات ${f} الرسمية ومركز المساعدة.`,
+      `تمت مراجعة المعلومات في ${d} استنادًا إلى مستندات ${f} الرسمية ومركز المساعدة.`,
     from: 'ابتداءً من',
     perMonth: '/شهريًا',
     codeAuto: (c: string) => `الرمز ${c} — يُملأ تلقائيًا عند إعادة التوجيه`,
@@ -373,7 +373,7 @@ const COPY = {
     onTrustpilot: 'Trustpilot पर',
     ratingChecked: (d: string) => `· Trustpilot रेटिंग, ${d} को देखी गई`,
     verifiedOn: (d: string, f: string) =>
-      `जानकारी ${d} को ${f} के आधिकारिक दस्तावेज़ों और सहायता केंद्र से सत्यापित की गई।`,
+      `जानकारी की ${d} को ${f} के आधिकारिक दस्तावेज़ों और सहायता केंद्र से समीक्षा की गई।`,
     from: 'से शुरू',
     perMonth: '/माह',
     codeAuto: (c: string) => `कोड ${c} — रीडायरेक्ट के समय पहले से भरा हुआ`,
@@ -713,6 +713,15 @@ export default function PropFirmPageClient({
   const proofStats = firm.proof_stats?.filter((s) => s.value) ?? []
   const valueStrip = firm.value_strip?.filter((v) => v.title) ?? []
   const journey = firm.journey || null
+  // Quand la firme a des programmes normalisés, les sections pilotées par la
+  // sélection font autorité : journey, cost_timeline, key_rules et verdict_card
+  // décrivent alors un seul programme et resteraient figées sur lui. On ne les
+  // masque pas en CSS, on ne les rend pas du tout.
+  //
+  // C'est une capacité, pas un slug : une fiche sans programmes normalisés
+  // garde exactement son affichage historique.
+  const selectedDrivesPage = Boolean(programData && programData.programs.length > 0)
+
   const keyRules = firm.key_rules || null
   const education = firm.education || null
   const verdictCard = firm.verdict_card || null
@@ -732,8 +741,10 @@ export default function PropFirmPageClient({
   const expiryText = promotion.isActive ? formatDayMonth(firm.discount_expires_at, locale) : null
 
   return (
-    // Bottom padding on mobile clears the fixed CTA bar; it is removed at lg
-    // where the bar is hidden, and for print.
+    // Bottom padding on mobile clears the floating widgets that sit in the
+    // bottom-right corner (back-to-top, reading progress). It used to clear a
+    // fixed CTA bar; that bar no longer exists, but the widgets still do, so
+    // the padding stays and the comment now says why.
     <div className="min-h-screen bg-gray-950 pb-24 lg:pb-0 print:pb-0">
       {/* ================================================================ */}
       {/* 1. HERO — a benefit headline, proof, and the offer side by side  */}
@@ -1007,7 +1018,7 @@ export default function PropFirmPageClient({
         {/* ============================================================== */}
         {/* 5. JOURNEY — what happens after you pay                       */}
         {/* ============================================================== */}
-        {journey?.steps?.length ? (
+        {!selectedDrivesPage && journey?.steps?.length ? (
           <section id="journey" className="scroll-mt-28 print:scroll-mt-0">
             <SectionHeading
               eyebrow={t.afterPass}
@@ -1053,7 +1064,7 @@ export default function PropFirmPageClient({
         {/* ============================================================== */}
         {/* 6. COSTS                                                       */}
         {/* ============================================================== */}
-        {costTimeline?.steps?.length ? (
+        {!selectedDrivesPage && costTimeline?.steps?.length ? (
           <section id="costs" className="scroll-mt-28 print:scroll-mt-0">
             <SectionHeading
               eyebrow={t.noHidden}
@@ -1112,7 +1123,7 @@ export default function PropFirmPageClient({
         {/* ============================================================== */}
         {/* 8. KEY RULES — four that matter, the rest folded away          */}
         {/* ============================================================== */}
-        {keyRules?.rules?.length ? (
+        {!selectedDrivesPage && keyRules?.rules?.length ? (
           <section id="rules" className="scroll-mt-28 print:scroll-mt-0">
             <SectionHeading
               eyebrow={t.beforeBuy}
@@ -1366,8 +1377,16 @@ export default function PropFirmPageClient({
         {/* ============================================================== */}
         {/* 12. VERDICT                                                    */}
         {/* ============================================================== */}
+        {/* Sans la colonne de droite, la grille laisserait une gouttiere de
+            300 px vide : le verdict passe alors sur une seule colonne. */}
         {verdictCard?.body ? (
-          <section className="grid md:grid-cols-[minmax(0,1fr)_300px] gap-6 items-start">
+          <section
+            className={`grid gap-6 items-start ${
+              !selectedDrivesPage && verdictCard.points && verdictCard.points.length > 0
+                ? 'md:grid-cols-[minmax(0,1fr)_300px]'
+                : ''
+            }`}
+          >
             <div>
               <SectionHeading
                 eyebrow={t.verdict}
@@ -1375,7 +1394,10 @@ export default function PropFirmPageClient({
               />
               <p className="text-gray-300 leading-relaxed">{verdictCard.body}</p>
             </div>
-            {verdictCard.points && verdictCard.points.length > 0 && (
+            {/* Le corps du verdict decrit la FIRME et reste. Les points
+                « Good fit if you want » decrivent un PROGRAMME : ils
+                doublonnaient SuitabilityVerdict, qui suit la selection. */}
+            {!selectedDrivesPage && verdictCard.points && verdictCard.points.length > 0 && (
               <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-5">
                 <p className="text-white font-semibold text-sm mb-3">{t.goodFit}</p>
                 <ul className="space-y-2">

@@ -76,21 +76,21 @@ insert into firm_program_plans (program_id, phase, account_size, regular_price,
 insert into firm_promotions (firm_slug, program_slug, account_size, code, label,
   discount_type, discount_value, starts_at, expires_at, verified_at, source_url,
   status, is_public, editorial_note) values
-  ('futureselite', 'elite', 25000, 'SUMMER', 'Public SUMMER offer', 'percent', 0.25, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
-  ('futureselite', 'elite', 50000, 'SUMMER', 'Public SUMMER offer', 'percent', 0.3, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
-  ('futureselite', 'elite', 100000, 'SUMMER', 'Public SUMMER offer', 'percent', 0.3, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
-  ('futureselite', 'elite', 150000, 'SUMMER', 'Public SUMMER offer', 'percent', 0.3, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
-  ('futureselite', 'nitro', 25000, 'SUMMER', 'Public SUMMER offer', 'percent', 0.3, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
-  ('futureselite', 'nitro', 50000, 'SUMMER', 'Public SUMMER offer', 'percent', 0.3, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
-  ('futureselite', 'nitro', 100000, 'SUMMER', 'Public SUMMER offer', 'percent', 0.3, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
-  ('futureselite', 'nitro', 150000, 'SUMMER', 'Public SUMMER offer', 'percent', 0.3, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
-  ('futureselite', 'prime', 25000, 'SUMMER', 'Public SUMMER offer', 'percent', 0.3, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
-  ('futureselite', 'prime', 50000, 'SUMMER', 'Public SUMMER offer', 'percent', 0.35, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
-  ('futureselite', 'prime', 100000, 'SUMMER', 'Public SUMMER offer', 'percent', 0.35, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
-  ('futureselite', 'prime', 150000, 'SUMMER', 'Public SUMMER offer', 'percent', 0.35, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
-  ('futureselite', 'instant', 50000, 'SUMMER', 'Public SUMMER offer', 'percent', 0.3, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
-  ('futureselite', 'instant', 100000, 'SUMMER', 'Public SUMMER offer', 'percent', 0.3, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
-  ('futureselite', 'instant', 150000, 'SUMMER', 'Public SUMMER offer', 'percent', 0.3, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
+  ('futureselite', 'elite', 25000, 'SUMMER', 'Current public offer — expiry not published', 'percent', 0.25, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
+  ('futureselite', 'elite', 50000, 'SUMMER', 'Current public offer — expiry not published', 'percent', 0.3, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
+  ('futureselite', 'elite', 100000, 'SUMMER', 'Current public offer — expiry not published', 'percent', 0.3, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
+  ('futureselite', 'elite', 150000, 'SUMMER', 'Current public offer — expiry not published', 'percent', 0.3, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
+  ('futureselite', 'nitro', 25000, 'SUMMER', 'Current public offer — expiry not published', 'percent', 0.3, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
+  ('futureselite', 'nitro', 50000, 'SUMMER', 'Current public offer — expiry not published', 'percent', 0.3, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
+  ('futureselite', 'nitro', 100000, 'SUMMER', 'Current public offer — expiry not published', 'percent', 0.3, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
+  ('futureselite', 'nitro', 150000, 'SUMMER', 'Current public offer — expiry not published', 'percent', 0.3, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
+  ('futureselite', 'prime', 25000, 'SUMMER', 'Current public offer — expiry not published', 'percent', 0.3, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
+  ('futureselite', 'prime', 50000, 'SUMMER', 'Current public offer — expiry not published', 'percent', 0.35, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
+  ('futureselite', 'prime', 100000, 'SUMMER', 'Current public offer — expiry not published', 'percent', 0.35, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
+  ('futureselite', 'prime', 150000, 'SUMMER', 'Current public offer — expiry not published', 'percent', 0.35, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
+  ('futureselite', 'instant', 50000, 'SUMMER', 'Current public offer — expiry not published', 'percent', 0.3, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
+  ('futureselite', 'instant', 100000, 'SUMMER', 'Current public offer — expiry not published', 'percent', 0.3, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
+  ('futureselite', 'instant', 150000, 'SUMMER', 'Current public offer — expiry not published', 'percent', 0.3, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
   ('futureselite', null, null, 'SCANNED', 'PropFirmScanner partner code', 'percent', 0.2, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', false, 'Gives 20%, below the public SUMMER offer (25-35%) on every programme as of 2026-09-04. Must never be labelled best price, exclusive or save more while that holds. Realignment requested from the firm.');
 
 
@@ -127,10 +127,11 @@ insert into firm_program_bundles (firm_slug, program_slug, account_number, disco
 insert into firm_platforms (firm_slug, name, configurator_status, checkout_surcharge, note, sort_order) values
   ('futureselite', 'Tradovate', 'selectable', 'not_displayed', 'Evaluation and funded availability should be reconfirmed per account', 1),
   ('futureselite', 'NinjaTrader', 'selectable', 'not_displayed', 'Potential external licence cost in live trading', 2),
-  ('futureselite', 'WealthCharts', 'selectable', 'not_displayed', null, 3),
-  ('futureselite', 'DeepChart', 'selectable', 'not_displayed', 'Dashboard provides credentials and a Dxfeed agreement flow', 4),
-  ('futureselite', 'Quantower', 'selectable', 'not_displayed', null, 5),
-  ('futureselite', 'ATAS', 'selectable', 'not_displayed', null, 6);
+  ('futureselite', 'Quantower', 'selectable', 'not_displayed', null, 3),
+  ('futureselite', 'ATAS', 'selectable', 'not_displayed', null, 4),
+  ('futureselite', 'Volumetrica', 'selectable', 'not_displayed', null, 5),
+  ('futureselite', 'DeepDOM', 'selectable', 'not_displayed', null, 6),
+  ('futureselite', 'DeepCharts', 'selectable', 'not_displayed', 'Dashboard provides credentials and a Dxfeed agreement flow', 7);
 
 
 -- 7. Regles
@@ -155,14 +156,15 @@ insert into firm_rules (firm_slug, scope, title, detail, severity, confidence, s
   ('futureselite', 'payout', 'Bank transfer', '1 to 3 days after approval.', 'payout_condition', 'verified', 'https://faq.futureselite.com/en/articles/11949985-how-are-payouts-processed', timestamptz '2026-09-04', 18),
   ('futureselite', 'payout', 'Direct crypto', 'Maximum $500 per request. Above that, standard Rise methods apply.', 'payout_condition', 'verified', 'https://faq.futureselite.com/en/articles/11949985-how-are-payouts-processed', timestamptz '2026-09-04', 19),
   ('futureselite', 'payout', 'Elite maximum request', 'Elite accounts bought from 2026-06-25 15:00 CET: 50% of total profit remaining, capped by account size. Older Elite accounts use 50% of current-cycle profit. Documented for Elite only.', 'payout_condition', 'verified', 'https://faq.futureselite.com/en/articles/16387630-how-much-can-i-request', timestamptz '2026-09-04', 20),
-  ('futureselite', 'live', 'Transition to live', 'A risk-team decision. The fifth payout is a ceiling, not an automatic entitlement.', 'payout_condition', 'verified', 'https://faq.futureselite.com/en/articles/15899069-live-trading-program', timestamptz '2026-09-04', 21),
-  ('futureselite', 'live', 'Live starting balance', 'Starts at $0 with a loss floor based on account size. 50K example: $2,000 loss floor and $1,000 cushion.', 'restriction', 'verified', 'https://faq.futureselite.com/en/articles/15899069-live-trading-program', timestamptz '2026-09-04', 22),
-  ('futureselite', 'live', 'Live cushion unlock', '15 profitable days meeting the size-specific daily minimum. Days need not be consecutive.', 'payout_condition', 'verified', 'https://faq.futureselite.com/en/articles/15899069-live-trading-program', timestamptz '2026-09-04', 23),
-  ('futureselite', 'live', 'Live payout', 'Daily, $200 minimum, on profits above the cushion or unlocked reserve.', 'payout_condition', 'verified', 'https://faq.futureselite.com/en/articles/15899069-live-trading-program', timestamptz '2026-09-04', 24),
-  ('futureselite', 'live', 'Market data', 'Exchange market data is the trader’s responsibility on a live account. Amount not specified.', 'restriction', 'verified', 'https://faq.futureselite.com/en/articles/12291073-market-data-costs', timestamptz '2026-09-04', 25),
-  ('futureselite', 'live', 'Commissions', 'Commissions and exchange fees are charged per instrument on each executed trade. The official FAQ still labels some exchange fees as 2024 rates.', 'restriction', 'verified', 'https://faq.futureselite.com/en/articles/12291021-what-are-the-costs-fees', timestamptz '2026-09-04', 26),
-  ('futureselite', 'live', 'Platform licence', 'A paid platform licence may apply depending on the selected platform.', 'restriction', 'verified', 'https://faq.futureselite.com/en/articles/12291021-what-are-the-costs-fees', timestamptz '2026-09-04', 27),
-  ('futureselite', 'live', 'Maintenance fee', 'No hidden administrative maintenance fee is stated: $0.', 'allowed', 'verified', 'https://faq.futureselite.com/en/articles/12291021-what-are-the-costs-fees', timestamptz '2026-09-04', 28);
+  ('futureselite', 'payout', 'Elite 25K minimum trading days', 'Unresolved: the configurator at https://futureselite.com/#pricing states 3 trading days, and the payout FAQ at https://faq.futureselite.com/en/articles/11949982-what-is-the-payout-process-like-on-futures-elite states 6. They may describe two different steps — completing the evaluation, then becoming eligible for a payout — but no official page says so. Check both before relying on either.', 'payout_condition', 'needs_confirmation', 'https://futureselite.com/#pricing', timestamptz '2026-09-04', 21),
+  ('futureselite', 'live', 'Transition to live', 'A risk-team decision. The fifth payout is a ceiling, not an automatic entitlement.', 'payout_condition', 'verified', 'https://faq.futureselite.com/en/articles/15899069-live-trading-program', timestamptz '2026-09-04', 22),
+  ('futureselite', 'live', 'Live starting balance', 'Starts at $0 with a loss floor based on account size. 50K example: $2,000 loss floor and $1,000 cushion.', 'restriction', 'verified', 'https://faq.futureselite.com/en/articles/15899069-live-trading-program', timestamptz '2026-09-04', 23),
+  ('futureselite', 'live', 'Live cushion unlock', '15 profitable days meeting the size-specific daily minimum. Days need not be consecutive.', 'payout_condition', 'verified', 'https://faq.futureselite.com/en/articles/15899069-live-trading-program', timestamptz '2026-09-04', 24),
+  ('futureselite', 'live', 'Live payout', 'Daily, $200 minimum, on profits above the cushion or unlocked reserve.', 'payout_condition', 'verified', 'https://faq.futureselite.com/en/articles/15899069-live-trading-program', timestamptz '2026-09-04', 25),
+  ('futureselite', 'live', 'Market data', 'Exchange market data is the trader’s responsibility on a live account. Amount not specified.', 'restriction', 'verified', 'https://faq.futureselite.com/en/articles/12291073-market-data-costs', timestamptz '2026-09-04', 26),
+  ('futureselite', 'live', 'Commissions', 'Commissions and exchange fees are charged per instrument on each executed trade. The official FAQ still labels some exchange fees as 2024 rates.', 'restriction', 'verified', 'https://faq.futureselite.com/en/articles/12291021-what-are-the-costs-fees', timestamptz '2026-09-04', 27),
+  ('futureselite', 'live', 'Platform licence', 'A paid platform licence may apply depending on the selected platform.', 'restriction', 'verified', 'https://faq.futureselite.com/en/articles/12291021-what-are-the-costs-fees', timestamptz '2026-09-04', 28),
+  ('futureselite', 'live', 'Maintenance fee', 'No hidden administrative maintenance fee is stated: $0.', 'allowed', 'verified', 'https://faq.futureselite.com/en/articles/12291021-what-are-the-costs-fees', timestamptz '2026-09-04', 29);
 
 
 -- 8. Bareme du compte live
@@ -176,8 +178,8 @@ insert into firm_live_tiers (firm_slug, account_size, conversion_cap, loss_floor
 
 -- 9. CONTROLE
 -- Attendu : 4 programmes, 27 plans, 16 promotions,
---           25 paliers de bundle, 6 plateformes,
---           28 regles, 5 paliers live.
+--           25 paliers de bundle, 7 plateformes,
+--           29 regles, 5 paliers live.
 select p.name, pl.phase, pl.account_size, pl.regular_price, pl.profit_target,
        pl.maximum_loss_limit, pl.daily_loss_limit, pl.drawdown_type, pl.buffer_status,
        pl.max_contracts, pl.minimum_trading_days, pl.consistency_rule,
