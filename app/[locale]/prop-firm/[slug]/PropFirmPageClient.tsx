@@ -979,7 +979,13 @@ export default function PropFirmPageClient({
         </div>
       )}
 
-      {canConfigure && !programData && (
+      {/* Le configurateur historique reste rendu tant que la firme a des
+          challenges ET des options de checkout que la structure normalisee ne
+          porte pas encore — le selecteur de flux de donnees d'Earn2Trade, par
+          exemple. Le cablage precedent etait exclusif : le jour ou Earn2Trade
+          aurait recu des lignes dans firm_programs, elle aurait perdu ce
+          selecteur sans que rien ne le signale. */}
+      {canConfigure && (!programData || Boolean(firm.checkout_options)) && (
         <div id="challenges" className="scroll-mt-28 print:scroll-mt-0">
           <ChallengeSelector
             firmSlug={firm.slug}

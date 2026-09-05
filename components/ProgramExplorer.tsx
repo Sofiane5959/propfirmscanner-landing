@@ -24,6 +24,12 @@ import {
   marketsOf, variantsOf, rulesFor, evaluationPhases, currencyFor,
 } from '@/lib/firm-programs'
 import { buildAffiliateUrl } from '@/lib/affiliate'
+import { buildSelectedPlan } from '@/lib/selected-plan'
+import { deriveCapabilities } from '@/lib/firm-capabilities'
+import {
+  SelectedPlanSummary, CriticalRules, FundingTimeline, TrueCost,
+  PayoutConditions, SuitabilityVerdict, EvidenceLog, CompleteSpecifications,
+} from '@/components/prop-firm/PlanSections'
 
 const COPY = {
   en: {
@@ -556,6 +562,11 @@ export default function ProgramExplorer({
   // d'un autre programme.
   const rules = rulesFor(data, program.slug)
 
+  // L'objet unique que TOUTES les sections consomment. Tant qu'elles lisaient
+  // chacune leur propre source, une seule suivait la sélection.
+  const selected = buildSelectedPlan(data, program, activeVariant, activeSize)
+  const caps = deriveCapabilities(data, null)
+
   // Le CTA du configurateur portait `source=logo&placement=logo` : il reutilisait
   // le lien de la tuile logo, si bien que chaque clic sur « configurer » etait
   // journalise comme un clic sur le logo, sans programme ni taille. Il est
@@ -715,6 +726,19 @@ export default function ProgramExplorer({
       </div>
       )}
 
+      {/* Résumé collant à droite sur ordinateur, sections pilotées par la
+          sélection en dessous. Toutes lisent `selected`. */}
+      {!enVerification && (
+        <div className="grid lg:grid-cols-[minmax(0,1fr)_320px] gap-6 mb-10">
+          <div className="min-w-0 order-2 lg:order-1">
+            <CriticalRules sel={selected} />
+          </div>
+          <div className="order-1 lg:order-2">
+            <SelectedPlanSummary sel={selected} ctaHref={ctaHref} ctaLabel={ctaLabel} />
+          </div>
+        </div>
+      )}
+
       {/* Phases d'évaluation puis compte financé, jamais mélangés.
           Un 2-Step affiche ses deux phases séparément : le second objectif
           n'a plus à se cacher dans une note. */}
@@ -806,6 +830,16 @@ export default function ProgramExplorer({
           <p className="text-gray-500 text-xs">{t.noSurcharge}</p>
         </div>
       )}
+
+      {/* Décision d'abord, exhaustivité ensuite : l'ordre est celui du brief. */}
+      <div className="mt-10">
+        <FundingTimeline sel={selected} />
+        <TrueCost sel={selected} caps={caps} />
+        <PayoutConditions sel={selected} />
+        <SuitabilityVerdict sel={selected} />
+        <CompleteSpecifications sel={selected} />
+        <EvidenceLog sel={selected} />
+      </div>
     </section>
   )
 }

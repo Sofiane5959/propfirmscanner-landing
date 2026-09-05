@@ -154,6 +154,32 @@ console.log('\n10. Aucun zero utilise pour un inconnu')
   cas('aucun zero suspect', true)
 }
 
+console.log('\n11. Architecture — aucun branchement sur un slug de firme')
+{
+  const { execSync } = await import('node:child_process')
+  // Le brief et CLAUDE.md interdisent `if (firm.slug === 'x')` dans un
+  // composant de presentation. La difference doit venir des donnees.
+  let fautes = ''
+  try {
+    fautes = execSync(
+      "grep -rn \"slug === '\" --include=*.tsx components 'app/[locale]/prop-firm' || true",
+      { encoding: 'utf8', shell: 'bash' }
+    ).trim()
+  } catch {
+    fautes = ''
+  }
+  cas('aucun composant ne branche sur un slug', fautes === '', fautes.slice(0, 160))
+}
+
+console.log('\n12. Architecture — aucun composant nomme d apres une firme')
+{
+  const { execSync } = await import('node:child_process')
+  const fichiers = execSync('ls components components/prop-firm', { encoding: 'utf8', shell: 'bash' })
+  const interdits = ['FuturesElitePage', 'FTMOPage', 'The5ersPage', 'Earn2TradePage']
+  const trouves = interdits.filter((n) => fichiers.includes(n))
+  cas('aucun fichier specifique a une firme', trouves.length === 0, trouves.join(','))
+}
+
 console.log('\n' + '-'.repeat(50))
 console.log(`${ok} reussis, ${ko} echoues`)
 process.exit(ko === 0 ? 0 : 1)
