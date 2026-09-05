@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import FirmLogo from '@/components/FirmLogo'
 import Link from 'next/link'
 import {
@@ -28,8 +28,9 @@ import { buildAffiliateUrl, AFFILIATE_LINK_PROPS } from '@/lib/affiliate'
 import { formatMoney, formatNumber, formatDayMonth, cleanMoneyLabel } from '@/lib/format'
 import { resolvePromotion } from '@/lib/promotion'
 import { toArray } from '@/lib/to-array'
-import ProgramExplorer from '@/components/ProgramExplorer'
 import type { FirmProgramData } from '@/lib/firm-programs'
+import { programsToChallenges, parsePlanKey } from '@/lib/program-to-challenges'
+import EvaluationVsFunded from '@/components/prop-firm/EvaluationVsFunded'
 
 // UI copy. Firm content is translated in the DB via prop_firms.translations;
 // these are the labels the component owns.
@@ -644,10 +645,9 @@ export default function PropFirmPageClient({
   const payoutMethods = toArray(firm.payout_methods)
   const payoutSpeed = formatPayoutSpeed(firm)
 
-  // Whether this firm has challenge data worth configuring. Drives every
-  // buying affordance on the page: with placeholder rows the configurator is
-  // hidden and the CTAs point at the official site instead of a payment flow.
-  const canConfigure = hasUsableChallenges(challenges)
+  // Les lignes historiques valent-elles un configurateur ? Des lignes bouchons
+  // mettraient un bouton de paiement sous un prix affiche « — ».
+  const challengesUtilisables = hasUsableChallenges(challenges)
 
   // One promotion record for the whole page. Previously each block tested
   // discount_code and discount_percent on its own and none of them looked at
@@ -713,14 +713,36 @@ export default function PropFirmPageClient({
   const proofStats = firm.proof_stats?.filter((s) => s.value) ?? []
   const valueStrip = firm.value_strip?.filter((v) => v.title) ?? []
   const journey = firm.journey || null
-  // Quand la firme a des programmes normalisés, les sections pilotées par la
-  // sélection font autorité : journey, cost_timeline, key_rules et verdict_card
-  // décrivent alors un seul programme et resteraient figées sur lui. On ne les
-  // masque pas en CSS, on ne les rend pas du tout.
-  //
-  // C'est une capacité, pas un slug : une fiche sans programmes normalisés
-  // garde exactement son affichage historique.
-  const selectedDrivesPage = Boolean(programData && programData.programs.length > 0)
+  // Les programmes normalises entrent dans le configurateur existant. `null`
+  // quand la firme n'en a pas : on retombe sur prop_firm_challenges.
+  const adapte = useMemo(
+    () => programsToChallenges(programData, firm.slug, firm.name),
+    [programData, firm.slug, firm.name]
+  )
+
+  // Une seule source pour le configurateur, quelle que soit l'origine des
+  // donnees. Sans challenges exploitables des deux cotes, pas de section.
+  const configurateur = adapte
+    ? { challenges: adapte.challenges, guide: adapte.guide, currency: adapte.currency ?? currency }
+    : challengesUtilisables
+      ? { challenges, guide: firm.program_guide, currency }
+      : null
+
+  // Une seule reponse a « la page propose-t-elle d'acheter ici ? ». Elle
+  // commande le CTA du hero, l'ancre #challenges et le CTA final. Tant qu'elle
+  // ne regardait que les lignes historiques, une firme servie par les
+  // programmes normalises affichait le configurateur mais renvoyait le
+  // visiteur vers le site officiel — deux messages contradictoires.
+  const canConfigure = Boolean(configurateur)
+
+  // La ligne choisie dans le configurateur, remontee ici pour que la section
+  // evaluation / compte finance suive la selection au lieu de rester figee.
+  const [selectionKey, setSelectionKey] = useState<string | null>(null)
+  const selection = useMemo(() => {
+    if (!programData) return null
+    const cle = selectionKey ?? adapte?.challenges[0]?.id ?? null
+    return cle ? parsePlanKey(cle) : null
+  }, [programData, selectionKey, adapte])
 
   const keyRules = firm.key_rules || null
   const education = firm.education || null
@@ -975,41 +997,30 @@ export default function PropFirmPageClient({
       {/* ================================================================ */}
       {/* 3. CONFIGURATOR — full width, owns its own two-column layout    */}
       {/* ================================================================ */}
-      {/* Structure normalisee : programmes, phases, promotions, bundles, regles.
-          Elle remplace le configurateur historique quand elle existe, et
-          disparait sinon — les ~349 fiches sans lignes dans firm_programs
-          gardent exactement leur affichage. */}
-      {programData && programData.programs.length > 0 && (
-        <div className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-800">
-          <ProgramExplorer
-            data={programData}
-            firmSlug={firm.slug}
-            locale={locale}
-            ctaLabel={canConfigure ? t.configure : t.visit(firm.name)}
-          />
-        </div>
-      )}
-
-      {/* Le configurateur historique reste rendu tant que la firme a des
-          challenges ET des options de checkout que la structure normalisee ne
-          porte pas encore — le selecteur de flux de donnees d'Earn2Trade, par
-          exemple. Le cablage precedent etait exclusif : le jour ou Earn2Trade
-          aurait recu des lignes dans firm_programs, elle aurait perdu ce
-          selecteur sans que rien ne le signale. */}
-      {canConfigure && (!programData || Boolean(firm.checkout_options)) && (
+      {/* UN SEUL configurateur pour toutes les firmes.
+          Les programmes normalises n'ouvrent pas une seconde interface : ils
+          sont traduits vers la forme que ce composant lit deja. Une firme sans
+          lignes dans firm_programs continue de servir prop_firm_challenges,
+          sans rien changer a son affichage.
+          Le selecteur de flux de donnees d'Earn2Trade (checkout_options) reste
+          disponible dans les deux cas — il vient de la colonne firme, pas des
+          programmes, et une version precedente le perdait des qu'une firme
+          recevait des programmes normalises. */}
+      {configurateur && (
         <div id="challenges" className="scroll-mt-28 print:scroll-mt-0">
           <ChallengeSelector
             firmSlug={firm.slug}
             firmName={firm.name}
-            challenges={challenges}
+            challenges={configurateur.challenges}
             locale={locale}
             checkoutOptions={firm.checkout_options}
-            programGuide={firm.program_guide}
-            currency={currency}
+            programGuide={configurateur.guide}
+            currency={configurateur.currency}
             discountCode={promotion.code}
             discountPercent={promotion.percent}
             discountNote={firm.discount_note}
             includedItems={toArray(firm.included_items)}
+            onSelectionChange={programData ? setSelectionKey : undefined}
           />
         </div>
       )}
@@ -1018,7 +1029,7 @@ export default function PropFirmPageClient({
         {/* ============================================================== */}
         {/* 5. JOURNEY — what happens after you pay                       */}
         {/* ============================================================== */}
-        {!selectedDrivesPage && journey?.steps?.length ? (
+        {journey?.steps?.length ? (
           <section id="journey" className="scroll-mt-28 print:scroll-mt-0">
             <SectionHeading
               eyebrow={t.afterPass}
@@ -1062,9 +1073,22 @@ export default function PropFirmPageClient({
         ) : null}
 
         {/* ============================================================== */}
+        {/* 5bis. REGLES PAR PHASE — la seule section propre aux firmes a  */}
+        {/*       programmes normalises. Elle suit la selection.           */}
+        {/* ============================================================== */}
+        {programData && selection && (
+          <EvaluationVsFunded
+            data={programData}
+            selection={selection}
+            locale={locale}
+            currency={currency}
+          />
+        )}
+
+        {/* ============================================================== */}
         {/* 6. COSTS                                                       */}
         {/* ============================================================== */}
-        {!selectedDrivesPage && costTimeline?.steps?.length ? (
+        {costTimeline?.steps?.length ? (
           <section id="costs" className="scroll-mt-28 print:scroll-mt-0">
             <SectionHeading
               eyebrow={t.noHidden}
@@ -1123,7 +1147,7 @@ export default function PropFirmPageClient({
         {/* ============================================================== */}
         {/* 8. KEY RULES — four that matter, the rest folded away          */}
         {/* ============================================================== */}
-        {!selectedDrivesPage && keyRules?.rules?.length ? (
+        {keyRules?.rules?.length ? (
           <section id="rules" className="scroll-mt-28 print:scroll-mt-0">
             <SectionHeading
               eyebrow={t.beforeBuy}
@@ -1377,16 +1401,8 @@ export default function PropFirmPageClient({
         {/* ============================================================== */}
         {/* 12. VERDICT                                                    */}
         {/* ============================================================== */}
-        {/* Sans la colonne de droite, la grille laisserait une gouttiere de
-            300 px vide : le verdict passe alors sur une seule colonne. */}
         {verdictCard?.body ? (
-          <section
-            className={`grid gap-6 items-start ${
-              !selectedDrivesPage && verdictCard.points && verdictCard.points.length > 0
-                ? 'md:grid-cols-[minmax(0,1fr)_300px]'
-                : ''
-            }`}
-          >
+          <section className="grid md:grid-cols-[minmax(0,1fr)_300px] gap-6 items-start">
             <div>
               <SectionHeading
                 eyebrow={t.verdict}
@@ -1397,7 +1413,7 @@ export default function PropFirmPageClient({
             {/* Le corps du verdict decrit la FIRME et reste. Les points
                 « Good fit if you want » decrivent un PROGRAMME : ils
                 doublonnaient SuitabilityVerdict, qui suit la selection. */}
-            {!selectedDrivesPage && verdictCard.points && verdictCard.points.length > 0 && (
+            {verdictCard.points && verdictCard.points.length > 0 && (
               <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-5">
                 <p className="text-white font-semibold text-sm mb-3">{t.goodFit}</p>
                 <ul className="space-y-2">

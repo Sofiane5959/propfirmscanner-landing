@@ -181,40 +181,101 @@ console.log('\n12. Architecture — aucun composant nomme d apres une firme')
 }
 
 console.log('')
-console.log('13. Aucune section dupliquee entre le niveau firme et la selection')
+console.log('13. Un seul systeme de fiche, celui d Earn2Trade')
 {
-  const { readFileSync } = await import('node:fs')
+  const { readFileSync, existsSync } = await import('node:fs')
   const page = readFileSync('app/[locale]/prop-firm/[slug]/PropFirmPageClient.tsx', 'utf8')
 
-  // Quatre concepts existent en deux exemplaires : une version firme, figee sur
-  // un seul programme, et une version qui suit la selection. La version firme
-  // ne doit etre rendue que lorsque la firme n a pas de programmes normalises.
-  //
-  // Ce test lit le code plutot que le DOM : c est la ou l oubli se produit.
-  // Il echouera si quelqu un rajoute un jour la version firme sans la porte.
-  const PORTES = [
-    ['journey', 'journey?.steps?.length'],
-    ['cost_timeline', 'costTimeline?.steps?.length'],
-    ['key_rules', 'keyRules?.rules?.length'],
-    ['verdict_card.points', 'verdictCard.points && verdictCard.points.length > 0'],
-  ]
-  for (const [nom, expr] of PORTES) {
-    const garde = '!selectedDrivesPage && ' + expr
-    cas(`${nom} : rendu seulement sans programmes normalises`,
-      page.includes(garde) && page.split(expr).length - 1 === page.split(garde).length - 1,
-      'condition non gardee')
+  // Earn2Trade et FuturesElite passent par la MEME route et le meme composant.
+  // Une version precedente avait ajoute un second configurateur qui recopiait
+  // la mise en page a quelques pixels pres : toute correction ergonomique
+  // devait etre faite deux fois, et la seconde etait oubliee.
+  for (const mort of ['components/ProgramExplorer.tsx', 'components/prop-firm/PlanSections.tsx']) {
+    cas('supprime : ' + mort, !existsSync(mort))
   }
 
-  // Le brief interdit de masquer en CSS plutot que de ne pas rendre. On lit
-  // ligne par ligne : une ligne qui nomme un doublon ET une technique de
-  // masquage est une regression, quelle que soit la technique employee.
-  const MASQUAGE = ['hidden', 'display:none', 'display: none', 'sr-only', 'invisible']
-  const masquages = page
-    .split('\n')
-    .filter((l) => ['journey', 'costTimeline', 'keyRules', 'verdictCard'].some((v) => l.includes(v)))
-    .filter((l) => MASQUAGE.some((m) => l.includes(m)))
-  cas('aucun doublon masque en CSS', masquages.length === 0, masquages.join(' | ').slice(0, 160))
+  const nbSelecteurs = page.split('<ChallengeSelector').length - 1
+  cas('un seul configurateur monte dans la page', nbSelecteurs === 1, String(nbSelecteurs))
+
+  // Les sections du gabarit doivent etre rendues pour TOUTES les firmes. Les
+  // eteindre pour celles a programmes normalises etait exactement le defaut
+  // signale : la fiche perdait son parcours, ses couts et ses regles.
+  cas('aucune porte n eteint les sections du gabarit',
+    !page.includes('selectedDrivesPage'))
+  for (const section of ['journey?.steps?.length', 'costTimeline?.steps?.length', 'keyRules?.rules?.length']) {
+    cas('section rendue sur ses donnees seules : ' + section, page.includes('{' + section + ' ? ('))
+  }
+
+  // Le brief interdit un composant nomme d apres une firme ET un branchement
+  // sur un slug. La seule section ajoutee est generique.
+  cas('la section par phase existe', existsSync('components/prop-firm/EvaluationVsFunded.tsx'))
 }
+
+console.log('')
+console.log('14. Basculement de programme et rendu conditionnel des phases')
+{
+  // L adaptateur est en TypeScript, donc non importable ici. On teste les
+  // invariants sur les DONNEES qui l alimentent : c est la que les erreurs se
+  // sont produites, et ce sont elles que l adaptateur traduit.
+  const { FUTURESELITE_PROGRAMS } = await import('./futureselite-programs.mjs')
+
+  const combinaisons = (p) => {
+    const vues = new Set()
+    for (const pl of p.plans) vues.add((pl.variant_key ?? '') + '|' + pl.account_size)
+    return Array.from(vues)
+  }
+
+  for (const p of FUTURESELITE_PROGRAMS.filter((x) => x.plans.length > 0)) {
+    const combos = combinaisons(p)
+    cas(`${p.slug} : au moins une taille vendable`, combos.length > 0)
+
+    // Chaque combinaison doit avoir un compte finance, sinon la section par
+    // phase n a pas de second terme et disparait sans explication.
+    const sansFinance = combos.filter((c) => {
+      const [v, s] = c.split('|')
+      return !p.plans.some((pl) => pl.phase === 'sim_funded' &&
+        (pl.variant_key ?? '') === v && String(pl.account_size) === s)
+    })
+    cas(`${p.slug} : chaque taille a un compte finance`, sansFinance.length === 0, sansFinance.join(','))
+
+    // Rendu conditionnel : un produit instantane ne doit porter AUCUNE ligne
+    // d evaluation, sinon la page affiche un objectif a atteindre qui n existe
+    // pas. C est le defaut « 20 % -> 20 % » vu sur la fiche.
+    const aEvaluation = p.plans.some((pl) => pl.phase === 'evaluation')
+    if (p.kind === 'instant') {
+      cas(`${p.slug} : instantane, aucune phase d evaluation`, !aEvaluation)
+    } else {
+      cas(`${p.slug} : evaluation presente`, aEvaluation)
+    }
+  }
+
+  // Basculer de programme doit changer ce que le visiteur lit. Deux programmes
+  // dont toutes les regles coincident signaleraient une recopie.
+  const parSlug = (s) => FUTURESELITE_PROGRAMS.find((p) => p.slug === s)
+  const elite = parSlug('elite')
+  const instant = FUTURESELITE_PROGRAMS.find((p) => p.kind === 'instant')
+  if (elite && instant) {
+    const f = (p) => p.plans.find((pl) => pl.phase === 'sim_funded' && pl.account_size === 25000)
+    const a = f(elite)
+    const b = f(instant)
+    cas('Elite et Instant ne partagent pas leur drawdown au meme palier',
+      !a || !b || a.drawdown_type !== b.drawdown_type || a.minimum_trading_days !== b.minimum_trading_days,
+      `${a?.drawdown_type} / ${b?.drawdown_type}`)
+  }
+
+  // Une unite melangee ferait afficher « 1000 % » au lieu de « 1 000 $ ».
+  // L adaptateur tranche sur < 1 ; encore faut-il que les donnees ne melangent
+  // pas les deux dans un meme plan.
+  for (const p of FUTURESELITE_PROGRAMS) {
+    for (const pl of p.plans) {
+      const vus = [pl.maximum_loss_limit, pl.daily_loss_limit].filter((v) => v !== null && v !== undefined)
+      if (vus.length < 2) continue
+      cas(`${p.slug} ${pl.account_size} : limites dans la meme unite`,
+        vus.every((v) => v < 1) || vus.every((v) => v >= 1), vus.join('/'))
+    }
+  }
+}
+
 
 console.log('\n' + '-'.repeat(50))
 console.log(`${ok} reussis, ${ko} echoues`)

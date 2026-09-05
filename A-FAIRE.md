@@ -1,84 +1,39 @@
-# Ce que tu dois faire
+# Ce qu'il reste à faire
 
-Établi le 5 septembre 2026. Le code est commité et poussé (`02948f9`), donc il
-est déjà en production. Tout ce qui suit est de ton côté : je n'ai pas accès à
-la base ni à Vercel.
+Mis à jour le 5 septembre 2026, après la restauration du gabarit Earn2Trade.
 
-Chaque fichier se colle dans **supabase.com → SQL Editor → New query → Run**.
+## SQL à passer, dans cet ordre
 
-⚠️ L'éditeur Supabase enveloppe tout le script dans **une seule transaction** :
-une erreur annule tout le fichier. Et il n'affiche que le **dernier** résultat.
-Donc : un fichier à la fois, et lis le message avant de passer au suivant.
+Un fichier à la fois dans **supabase.com → SQL Editor** : l'éditeur enveloppe
+tout dans une seule transaction, une erreur annule le fichier entier.
 
----
+    1. database/RUN-futureselite.sql   ← régénéré, 34 colonnes
+    2. database/RUN-ftmo.sql
+    3. database/RUN-the5ers.sql
 
-## 1. URGENT — les clics d'affiliation ne sont plus enregistrés
+`RUN-futureselite.sql` porte maintenant quatre champs éditoriaux nouveaux :
+`headline`, `verdict`, `description` et `category_badge`. Sans eux le H1 de la
+fiche retombe sur le nom de la firme — c'est exactement le « FuturesElite sous
+FuturesElite » que le brief demande de supprimer. Le composant était correct,
+la donnée manquait.
 
-**Fichier : `database/affiliate-prefetch-flag.sql`**
+`RUN-ftmo.sql` et `RUN-the5ers.sql` restent nécessaires pour les langues : les
+deux fiches n'annoncent que `en` et `fr` au lieu de huit.
 
-`app/api/go/[slug]/route.ts` écrit désormais une colonne `is_prefetch` qui
-n'existe pas encore en base. L'insert est *fire-and-forget* : les visiteurs
-sont bien redirigés vers les partenaires, **mais aucun clic n'est comptabilisé
-depuis le déploiement**. Tu perds la mesure, pas le trafic.
+Puis recharge chaque fiche **deux fois** : le premier appel sert une copie
+périmée.
 
-C'est additif et idempotent : aucune ligne existante n'est modifiée.
+## Ce que je n'ai pas pu vérifier
 
-À vérifier après : un clic sur n'importe quel lien de firme doit créer une
-ligne dans `affiliate_clicks`.
+**`affiliate-prefetch-flag.sql`** ne laisse aucune trace sur une page. Clique un
+lien de firme et regarde si une ligne apparaît dans `affiliate_clicks`. Si la
+table ne bouge pas, la colonne `is_prefetch` manque encore et aucun clic n'est
+compté.
 
----
-
-## 2. La couche variantes, sans laquelle FTMO et The5ers restent faux
-
-Dans cet ordre strict — chacun dépend du précédent.
-
-| # | Fichier | Ce que ça fait |
-|---|---|---|
-| 2a | `RUN-program-schema.sql` | Crée les 7 tables. **Passe-le même si tu crois l'avoir déjà fait** : tout est en `if not exists`, le rejouer ne casse rien. C'est celui qui avait échoué sur l'erreur `42601` de politique RLS, corrigée depuis. |
-| 2b | `RUN-program-schema-v2.sql` | Ajoute `variant_key`, `market`, `program_family`, et descend la devise au niveau du plan. Sans lui, FTMO Standard et Swing s'écrasent l'un l'autre à taille égale, et le Summer 100K de The5ers ne peut pas exister en 8/5 **et** 10/5. |
-| 2c | `RUN-ftmo-programs-v2.sql` | Les programmes FTMO. |
-| 2d | `RUN-the5ers-programs-v2.sql` | Les programmes The5ers. |
-
-Contrôle à la fin de 2b : la requête finale doit renvoyer
-`firm_rules_severity_check`. Si elle ne renvoie rien, le fichier n'est pas
-passé en entier.
-
----
-
-## 3. FuturesElite
-
-| # | Fichier | Ce que ça fait |
-|---|---|---|
-| 3a | `RUN-futureselite-programs.sql` | **Régénéré aujourd'hui.** 4 programmes, 27 plans, 29 règles (une de plus : le conflit 3 j / 6 j sur l'Elite 25K), plateformes corrigées. Idempotent : il efface puis réinsère les lignes de cette seule firme. |
-| 3b | `RUN-futureselite-trustpilot.sql` | Retire la note « 4,3 — 25 avis ». Voir l'explication plus bas. |
-
----
-
-## 4. Les fiches qui n'ont jamais été rejouées
-
-`RUN-ftmo.sql` et `RUN-the5ers.sql` n'ont pas été repassés depuis l'ajout des
-six paquets de langue. C'est **exactement** ce qui fait que leurs pages
-sortent en anglais avec un `canonical` faux et seulement deux `hreflang`.
-Tant qu'ils ne sont pas rejoués, le problème de langue que tu as signalé
-persiste, quoi que fasse le code.
-
----
-
-## 5. Les trois autres firmes, si tu veux les publier
-
-`RUN-e8-markets-programs.sql`, `RUN-city-traders-imperium-programs.sql`,
-`RUN-brightfunded-programs.sql`. Elles ne dépendent que de l'étape 2a, pas de
-la v2. À passer quand tu veux, dans n'importe quel ordre.
-
----
-
-## 6. Un `.env.local` sur ta machine
-
-Il n'y en a pas — seulement `.env.example`. Conséquence : `npm run build`
-compile et passe le type-check, puis **échoue systématiquement** à
-*Collecting page data* sur `supabaseUrl is required`. Ce n'est pas une
-régression, c'est décrit dans `CLAUDE.md`, mais ça veut dire que je ne peux
-jamais te confirmer qu'un build de production passe en entier.
+**Les captures d'écran** demandées au point 4 du handoff. Elles supposent une
+page qui s'affiche, donc une base qui répond. Il n'y a pas de `.env.local` sur
+cette machine — seulement `.env.example` — donc `npm run build` s'arrête à
+*Collecting page data* et `npm run dev` ne servirait pas la fiche non plus.
 
 Les quatre variables qui bloquent :
 
@@ -87,57 +42,37 @@ Les quatre variables qui bloquent :
     SUPABASE_SERVICE_ROLE_KEY
     STRIPE_SECRET_KEY
 
-Ça débloquerait aussi les tests de mise en page à 320 / 375 / 768 / 1024 /
-1440 px et à 200 % de zoom : ils demandent une page qui s'affiche, donc une
-base qui répond.
+Donne-les-moi, ou déploie et dis-le-moi : je prends les captures à 375, 768,
+1024 et 1440 px plus le rendu impression, et je compare pixel à pixel avec
+Earn2Trade.
 
----
+**Le lint.** Le projet n'a aucune configuration ESLint : `npm run lint` propose
+d'en créer une plutôt que de vérifier quoi que ce soit. Je n'en ai pas ajouté —
+ce serait une décision de projet, pas une correction de fiche. Le type-check,
+lui, passe.
 
-## 7. Une décision qui t'appartient : la note Trustpilot
+## Une décision qui t'appartient
 
-La fiche FuturesElite affichait **4,3 — 25 avis**. Ce couple vient du seed
-initial et n'est rattaché à aucune source, alors que les compteurs du site
-officiel de FuturesElite sont tous à zéro.
+La note Trustpilot « 4,3 — 25 avis » de FuturesElite ne vient d'aucune source,
+et Trustpilot répond par un contrôle anti-robot que je ne contourne pas.
+`database/RUN-futureselite-trustpilot.sql` la retire. Si tu préfères la garder,
+relève les vrais chiffres dans ton navigateur et envoie-les-moi.
 
-J'ai essayé de le vérifier : Trustpilot répond par un contrôle anti-robot, que
-je ne contourne pas. Ne pouvant pas vérifier, j'ai préparé le retrait
-(étape 3b) plutôt que de laisser en ligne une note qui pèse sur une décision
-d'achat sans source.
+## Conflits de données non résolus
 
-**Si tu veux la garder** : ouvre
-`https://www.trustpilot.com/review/futureselite.com` dans ton navigateur,
-relève la note et le nombre d'avis, envoie-les-moi — je rejoue l'UPDATE avec
-les vraies valeurs et la date du relevé. Ne passe pas 3b entre-temps.
+Séparés des questions de code, comme demandé :
 
-En revanche `Country: Italy` est bien sourcé (Quantum SRL, Corso G. Matteotti
-61, Latina, n° 03095010595) : je l'ai gardé.
-
----
-
-## 8. Ce qu'il me manque de toi
-
-Deux points du brief que je n'ai pas pu appliquer, faute d'avoir encore le
-texte sous les yeux :
-
-- **l'ordre des 19 sections** de la page ;
-- **le hero compact** (les consignes exactes de hauteur et de contenu).
-
-Renvoie-moi ces deux passages du brief et je les applique dans la foulée.
-
----
-
-## Ordre le plus court
-
-    1.  affiliate-prefetch-flag.sql        ← urgent, tu perds des données maintenant
-    2a. RUN-program-schema.sql
-    2b. RUN-program-schema-v2.sql
-    2c. RUN-ftmo-programs-v2.sql
-    2d. RUN-the5ers-programs-v2.sql
-    3a. RUN-futureselite-programs.sql
-    3b. RUN-futureselite-trustpilot.sql    ← sauf si tu relèves la vraie note
-    4.  RUN-ftmo.sql puis RUN-the5ers.sql  ← corrige les langues
-    5.  les trois autres firmes, quand tu veux
-
-Après le lot, recharge une fiche **deux fois** : l'ISR sert une copie périmée
-au premier appel. Juger sur le premier chargement fait chercher un bug qui
-n'existe pas.
+- **Elite 25K, jours minimum** : le configurateur dit 3, la FAQ paiements dit 6.
+  Les deux peuvent être vrais — réussir l'évaluation, puis devenir éligible au
+  retrait — mais aucune page officielle ne le dit. Publié comme
+  `Needs confirmation` avec les deux liens.
+- **Règle de régularité** : la page officielle affiche 40 % et 50 % côte à côte
+  sans dire laquelle s'applique.
+- **Scalping** : le configurateur affiche « No » sur tous les plans, sans
+  définition ni seuil de durée.
+- **News trading une fois financé** : « With restrictions », sans fenêtre
+  d'événement précisée.
+- **Coupon `scanned`** : le lien d'affiliation préremplit −20 % alors que
+  l'offre publique SUMMER donne −25 %. Tu as choisi de garder le lien ; la
+  promotion est stockée avec `is_public: false` pour que la page ne présente
+  jamais `SCANNED` comme le meilleur prix.

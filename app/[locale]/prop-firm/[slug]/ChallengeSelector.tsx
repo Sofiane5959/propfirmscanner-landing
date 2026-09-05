@@ -65,6 +65,13 @@ interface Props {
   discountPercent?: number | null
   discountNote?: string | null
   includedItems?: string[] | null
+  /**
+   * Remonte l'identifiant de la ligne choisie a chaque changement de programme
+   * ou de taille. Les sections situees sous le configurateur s'en servent pour
+   * suivre la selection au lieu d'afficher un contenu fige sur un programme.
+   * Absent quand la fiche n'a rien a synchroniser.
+   */
+  onSelectionChange?: (challengeId: string) => void
 }
 
 /**
@@ -363,6 +370,7 @@ export default function ChallengeSelector({
   discountPercent,
   discountNote,
   includedItems,
+  onSelectionChange,
 }: Props) {
   // La colonne peut etre nulle : le dollar reste le defaut.
   const currency = currencyProp || 'USD'
@@ -414,6 +422,12 @@ export default function ChallengeSelector({
     () => availableSizes.find((c) => c.account_size === selectedSize) ?? availableSizes[0],
     [availableSizes, selectedSize]
   )
+
+  // On previent le parent APRES le rendu, jamais pendant : appeler un setState
+  // de parent au milieu du rendu enfant declenche une boucle de mise a jour.
+  useEffect(() => {
+    if (currentChallenge?.id) onSelectionChange?.(currentChallenge.id)
+  }, [currentChallenge?.id, onSelectionChange])
 
   useEffect(() => {
     if (!codeCopied) return

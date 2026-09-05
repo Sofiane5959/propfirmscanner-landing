@@ -481,6 +481,29 @@ export const FUTURESELITE = {
   // Colonnes de base en ANGLAIS ; le francais est dans `fr` -> translations.fr.
   scalars: {
     name: 'FuturesElite',
+    // Le H1. Une proposition de valeur, jamais le nom de la firme repete :
+    // l'identite est deja affichee au-dessus, avec le logo.
+    category_badge: 'Futures only',
+    headline: 'Four routes to a funded futures account, evaluation or instant',
+    verdict:
+      'A futures prop firm built around choice: Elite and Prime run classic evaluations, ' +
+      'Nitro targets faster payouts, and Instant funds you the day you buy. Each program ' +
+      'carries its own loss limits, consistency rule and payout conditions, so the right ' +
+      'one depends less on price than on how you actually trade.',
+    description:
+      'FuturesElite sells simulated futures accounts across four programs. Elite and Prime ' +
+      'are evaluation routes with a one-time fee and no deadline to pass. Nitro and Instant ' +
+      'shorten or remove the evaluation entirely, Instant funding you from purchase with no ' +
+      'objective to reach. All four settle at a 90% profit split, and payouts can be ' +
+      'requested daily once an account is funded.\n\n' +
+      'It suits futures traders who already have a method and want to choose the rule set ' +
+      'that fits it, rather than accept one. Loss limits are dollar amounts rather than ' +
+      'percentages, drawdown is calculated at the end of the day on the evaluation programs, ' +
+      'and seven platforms are available including Tradovate, NinjaTrader and Quantower.\n\n' +
+      'The caveat matters more than the pricing. Quantum SRL holds no financial regulator ' +
+      'licence, and every account is simulated: performance is hypothetical throughout. The ' +
+      'live trading program exists but is a risk-team decision, not an entitlement earned at ' +
+      'a fixed number of payouts.',
     website_url: 'https://futureselite.com',
     affiliate_url:
       'https://app.futureselite.com/dashboard/choose-plan?aff=AFF5465384&coupon=scanned',
@@ -664,6 +687,30 @@ export const FUTURESELITE = {
     },
   },
   fr: {
+    category_badge: 'Futures uniquement',
+    headline: 'Quatre voies vers un compte futures finance, evaluation ou immediat',
+    verdict:
+      'Une firme futures construite autour du choix : Elite et Prime proposent des ' +
+      'evaluations classiques, Nitro vise des paiements plus rapides, et Instant finance ' +
+      'des l\u2019achat. Chaque programme porte ses propres limites de perte, sa regle de ' +
+      'regularite et ses conditions de retrait \u2014 le bon depend moins du prix que de ' +
+      'votre facon de trader.',
+    description:
+      'FuturesElite vend des comptes futures simules repartis en quatre programmes. Elite et ' +
+      'Prime sont des evaluations a frais unique, sans date limite pour reussir. Nitro et ' +
+      'Instant raccourcissent ou suppriment l\u2019evaluation, Instant vous financant des ' +
+      'l\u2019achat sans objectif a atteindre. Les quatre aboutissent a 90 % de partage des ' +
+      'profits, avec des retraits possibles chaque jour une fois le compte finance.\n\n' +
+      'Elle convient aux traders futures qui ont deja une methode et veulent choisir le jeu ' +
+      'de regles qui lui correspond, plutot que de le subir. Les limites de perte sont des ' +
+      'montants en dollars et non des pourcentages, le drawdown se calcule en fin de journee ' +
+      'sur les programmes d\u2019evaluation, et sept plateformes sont disponibles, dont ' +
+      'Tradovate, NinjaTrader et Quantower.\n\n' +
+      'La reserve compte plus que le tarif. Quantum SRL ne detient aucune licence de ' +
+      'regulateur financier, et tous les comptes sont simules : les performances restent ' +
+      'hypothetiques du debut a la fin. Le programme de trading live existe mais releve ' +
+      'd\u2019une decision de l\u2019equipe de risque, pas d\u2019un droit acquis apres un ' +
+      'nombre fixe de retraits.',
     headquarters: 'Corso G. Matteotti 61, Latina 04100, Italie',
     regulation_details:
       'Quantum SRL, Corso G. Matteotti 61, Latina 04100, Italie, n\u00b0 03095010595. Aucune licence de r\u00e9gulateur financier. Comptes de d\u00e9monstration, performances hypoth\u00e9tiques.',
