@@ -296,11 +296,17 @@ console.log('15. Gabarit generique — ordre, unicite et accessibilite')
   cas('les plateformes precedent le configurateur',
     posPlateformes > 0 && posPlateformes < posConfig, `${posPlateformes} / ${posConfig}`)
 
-  // « About » doit etre une section, pas un paragraphe cache dans le pli des
-  // specifications completes.
+  // « About » doit etre une section a part entiere, et venir AVANT les forces
+  // et avant les specifications completes : c est elle qui permet de decider
+  // si la suite merite d etre lue. Elle etait repliee dans le pli, donc
+  // invisible pour qui ne deroulait pas.
   const posAbout = page.indexOf('id=\"about\"')
   const posReference = page.indexOf('id=\"reference\"')
-  cas('la section A propos existe hors du pli', posAbout > 0 && posAbout > posReference)
+  const posForces = page.indexOf('11. STRENGTHS & LIMITS')
+  cas('la section A propos existe', posAbout > 0)
+  cas('A propos precede les forces', posAbout > 0 && posAbout < posForces, `${posAbout} / ${posForces}`)
+  cas('A propos precede les specifications completes',
+    posAbout > 0 && posAbout < posReference, `${posAbout} / ${posReference}`)
 
   // Un lecteur d ecran doit entendre le changement de selection.
   cas('region live polie sur la selection',
@@ -312,6 +318,26 @@ console.log('15. Gabarit generique — ordre, unicite et accessibilite')
   // Le brief interdit explicitement cette phrase sur la fiche.
   cas('phrase interdite absente',
     !page.includes('does not replace the complete trading agreement'))
+
+  // « Configurateur en deux etapes » decrivait un produit, pas un outil, et
+  // etait faux pour toute firme vendant une evaluation en une etape ou un
+  // compte instantane. Ce libelle est partage par les 350 fiches.
+  const config = readFileSync('app/[locale]/prop-firm/[slug]/ChallengeSelector.tsx', 'utf8')
+  cas('le configurateur ne se dit plus « two-step »',
+    !/two-step configurator/i.test(config))
+
+  // Un seul mecanisme de selection : la comparaison sous le configurateur ne
+  // doit plus porter de bouton « Select X ».
+  cas('la comparaison ne propose plus de second choix',
+    !config.includes('handleSelectProgram(opt.name, true)'))
+
+  // Le CTA final doit lire la meme selection que le configurateur.
+  cas('le CTA final porte la selection', page.includes('ligneChoisie'))
+
+  // L impression ne doit plus reserver une feuille par section.
+  const css = readFileSync('app/globals.css', 'utf8')
+  cas('les hauteurs ecran sont neutralisees a l impression',
+    css.includes('min-height: 0 !important'))
 
   // Aucune firme proposee en alternative sans lien actif ET code verifie actif.
   for (const exigence of ['f.affiliate_url', 'f.discount_code', 'discount_expires_at']) {

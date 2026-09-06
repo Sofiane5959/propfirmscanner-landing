@@ -141,42 +141,84 @@ export const FTMO = {
     },
     key_rules: {
       title: 'The rules that decide it',
-      intro: 'Five points most comparison sites get wrong.',
+      intro:
+        'Grouped by what they cost you: losing the account, blocking a payout, or limiting how you trade.',
+      // Trois categories, dans l'ordre de la consequence. Une regle qui fait
+      // perdre le compte et une regle qui limite le scalping ne meritent pas
+      // le meme poids visuel : les melanger obligeait le lecteur a les trier
+      // lui-meme.
       rules: [
         {
-          title: 'The split depends on the product',
+          category: 'Account-failure rules',
+          title: 'Maximum Loss Limit',
           detail:
-            '90% on the 1-Step, unconditionally. 80% on the 2-Step, rising to 90% through the Scaling Plan. Pages that advertise "up to 90%" across the range hide the fact that the 1-Step starts there.',
+            'The only hard risk boundary: there is no daily loss limit in either phase. It is recalculated once a day on the closing balance, so a floating loss does not trip it until the day closes. Breaching it ends the account.',
+          severity: 'hard_breach',
         },
         {
-          title: 'Only the 2-Step refunds the fee',
+          category: 'Account-failure rules',
+          title: 'Positions must close before 16:55 EST',
           detail:
-            'The 2-Step returns 100% of the challenge price with your first reward. On the 1-Step, FTMO advertises no refund. Cheaper on the sticker, the 1-Step therefore costs more once you are funded.',
+            'Overnight holding is not allowed and automatic liquidation may occur. The session runs 18:00 EST to 16:55 EST the following day.',
+          severity: 'hard_breach',
         },
         {
-          title: 'The daily loss differs, and is measured on equity',
+          category: 'Account-failure rules',
+          title: '30 days without a trade closes a live account',
           detail:
-            '3% on the 1-Step, 5% on the 2-Step. It is measured on equity — floating losses, commissions and swaps included — and resets at midnight CE(S)T, not in your own time zone.',
+            'Inactivity on a live account is permanent closure, not a suspension.',
+          severity: 'hard_breach',
         },
         {
-          title: 'The 1-Step drawdown trails, then locks',
+          category: 'Passing or payout blockers',
+          title: 'Minimum trading days',
           detail:
-            'It rises with your highest closing balance, then stops for good once it reaches the starting balance. The 2-Step is on a fixed drawdown from the first trade.',
+            'Three trading days to complete the evaluation. A separate minimum applies before a payout can be requested, and the two figures are documented inconsistently for the Elite 25K: see the phase rules.',
+          severity: 'payout_condition',
         },
         {
-          title: 'There is no reset',
+          category: 'Passing or payout blockers',
+          title: 'Consistency rule during the evaluation only',
           detail:
-            'A failed challenge cannot be restarted at a discount: you buy a whole new one. That is a real cost difference against firms charging 50% for a reset.',
+            'It disappears on the funded account. The sales page shows 40% and 50% side by side without saying which applies.',
+          severity: 'payout_condition',
+        },
+        {
+          category: 'Passing or payout blockers',
+          title: 'Per-request payout cap',
+          detail:
+            'From $1,000 on a 25K up to $3,000 on a 150K, with a $500 minimum on Elite. Payouts can be requested daily once eligible, through Rise, after KYC.',
+          severity: 'payout_condition',
+        },
+        {
+          category: 'Trading restrictions',
+          title: 'No fully automated trading',
+          detail:
+            'AI systems and bots are not permitted. Semi-automated assistance is not defined by the firm.',
+          severity: 'restriction',
+        },
+        {
+          category: 'Trading restrictions',
+          title: 'A stop order is required on every live position',
+          detail:
+            'Applies to live accounts. Protective stops are a stated trader responsibility, not a recommendation.',
+          severity: 'restriction',
+        },
+        {
+          category: 'Trading restrictions',
+          title: 'How many accounts you can hold at once',
+          detail:
+            'Ten funded accounts overall, five combined across Elite, Custom, Instant and Nitro, three on Nitro. Buying a bundle does not raise those limits.',
+          severity: 'restriction',
         },
       ],
       more: [
-        'No time limit on any of the three routes',
-        'No fixed minimum days on the 1-Step; 4 per phase on the 2-Step',
-        'No activation fee on the funded account',
-        'No mandatory stop-loss',
-        'Leverage up to 1:100 on Standard, 1:30 on Swing',
-        'Scaling Plan: +25% balance every 4 months, on the 2-Step',
-        'MT4, MT5, cTrader and TradingView',
+        'No activation fee on the funded account; reset fees run $79 to $229 by size',
+        'No profit buffer required',
+        'No time limit to pass, and a one-time fee rather than a subscription',
+        'Seven platforms to choose from, including Tradovate and NinjaTrader',
+        'The fifth account in a bundle is free',
+        'Exchange market data and commissions are the trader\u2019s cost on a live account',
       ],
     },
     journey: {
@@ -580,6 +622,16 @@ export const FUTURESELITE = {
         'A funded account that opens with no activation fee',
         'The option to stack up to ten accounts in parallel',
       ],
+      // Le titre promet « qui elle ne convient pas » ; sans ce second groupe
+      // la section ne tenait que la moitie de sa promesse. Chaque point est un
+      // fait verifie de cette fiche, pas une reserve generique.
+      counterPoints: [
+        'You want a regulated broker: Quantum SRL holds no financial regulator licence.',
+        'You want real capital: every account is simulated, and performance stays hypothetical.',
+        'You run fully automated systems: AI and bots are prohibited.',
+        'You want to withdraw a whole balance at once: each request is capped by account size.',
+        'You need a guaranteed route to live trading: it is a risk-team decision, not an entitlement.',
+      ],
     },
     program_guide: {
       title: 'Four programmes',
@@ -600,6 +652,15 @@ export const FUTURESELITE = {
         },
       ],
     },
+    // Quatre faits qui font ecarter ou retenir la firme en deux secondes.
+    // Chacun porte sa qualification : « aucune limite journaliere » sans
+    // « la perte maximale reste » se lirait comme une absence de risque.
+    value_strip: [
+      { title: 'No daily loss limit', sub: 'Maximum Loss Limit still applies, recalculated daily' },
+      { title: 'End-of-day drawdown', sub: 'On the evaluation programs; Instant uses trailing equity' },
+      { title: 'Daily payout requests', sub: 'Once the minimum trading days are met, within the cap' },
+      { title: 'No activation fee', sub: 'Reset is optional, $79 to $229 by size' },
+    ],
     key_rules: {
       title: 'The rules that decide it',
       intro: 'What genuinely sets FuturesElite apart from other futures firms.',
@@ -651,11 +712,6 @@ export const FUTURESELITE = {
           title: 'Payouts',
           detail:
             'Available every day, after 6 trading days, within the per-request cap: $1,000 on a 25K, up to $3,000 on a 150K.',
-        },
-        {
-          title: 'Stacking accounts',
-          detail:
-            'Elite counts towards a shared cap of 5 funded accounts across Elite, Custom, Instant and Nitro. The overall ceiling is 10 active funded accounts, and Nitro alone is limited to 3. Buying a bundle does not raise those limits.',
         },
       ],
     },

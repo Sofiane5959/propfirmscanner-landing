@@ -27,7 +27,7 @@
 // =============================================================================
 
 import type { Challenge, ProgramGuide } from '@/app/[locale]/prop-firm/[slug]/ChallengeSelector'
-import type { FirmProgramData, Program, ProgramPlan } from '@/lib/firm-programs'
+import type { FirmProgramData, Program, ProgramPlan, Promotion } from '@/lib/firm-programs'
 
 /** Identifiant stable d'une ligne : le composant le renvoie, la page le resout. */
 export function planKey(programSlug: string, variantKey: string | null, size: number): string {
@@ -103,6 +103,53 @@ export interface AdaptedPrograms {
   guide: ProgramGuide
   /** Devise dominante des plans, quand elle ne vient pas de la colonne firme. */
   currency: string | null
+  /** Code applique au prix remise, quand une promotion active en porte un. */
+  discountCode: string | null
+  /** Note a afficher quand une offre publique fait mieux que notre code. */
+  betterPublicOffer: string | null
+}
+
+/**
+ * La promotion qui s'applique reellement a une ligne donnee.
+ *
+ * Deux familles cohabitent chez FuturesElite, et les confondre coute de
+ * l'argent au visiteur :
+ *
+ *   - notre code partenaire (`is_public: false`), preremplit le lien affilie ;
+ *   - l'offre publique de la firme (`is_public: true`), qui s'active seule.
+ *
+ * Le prix affiche doit etre celui que le visiteur paiera EN PASSANT PAR NOUS,
+ * donc celui du code partenaire. Quand l'offre publique fait mieux, on ne
+ * l'efface pas : on le dit. Presenter notre code comme le meilleur prix
+ * pendant qu'une offre publique donne davantage ferait payer plus cher.
+ */
+function promotionActive(
+  promotions: Promotion[],
+  programSlug: string,
+  variantKey: string | null,
+  size: number,
+  maintenant: number
+): { partenaire: Promotion | null; publique: Promotion | null } {
+  const applicable = (p: Promotion) => {
+    if (p.status !== 'active') return false
+    if (p.program_slug !== null && p.program_slug !== programSlug) return false
+    if (p.account_size !== null && p.account_size !== size) return false
+    if (p.eligible_variants && !p.eligible_variants.includes(variantKey ?? 'standard')) return false
+    // Une date absente vaut « sans echeance publiee », jamais « expiree ».
+    if (p.starts_at && new Date(p.starts_at).getTime() > maintenant) return false
+    if (p.expires_at && new Date(p.expires_at).getTime() <= maintenant) return false
+    return true
+  }
+  const retenues = promotions.filter(applicable)
+  const meilleure = (liste: Promotion[]) =>
+    liste.reduce<Promotion | null>(
+      (best, p) => (!best || p.discount_value > best.discount_value ? p : best),
+      null
+    )
+  return {
+    partenaire: meilleure(retenues.filter((p) => !p.is_public)),
+    publique: meilleure(retenues.filter((p) => p.is_public)),
+  }
 }
 
 /**
@@ -128,6 +175,8 @@ export function programsToChallenges(
 
   const challenges: Challenge[] = []
   const devises = new Set<string>()
+  const codes = new Set<string>()
+  const meilleuresPubliques: string[] = []
 
   for (const program of vendables) {
     for (const { variantKey, size } of combinationsOf(program)) {
@@ -146,6 +195,20 @@ export function programsToChallenges(
         premiere.daily_loss_limit,
         evaluation?.profit_target,
       ])
+
+      const prixStandard = premiere.regular_price ?? funded?.regular_price ?? null
+      const promo = promotionActive(data.promotions, program.slug, variantKey, size, Date.now())
+      if (promo.partenaire?.code) codes.add(promo.partenaire.code)
+      if (
+        promo.publique &&
+        promo.partenaire &&
+        promo.publique.discount_value > promo.partenaire.discount_value
+      ) {
+        meilleuresPubliques.push(
+          `${Math.round(promo.publique.discount_value * 100)}%` +
+            (promo.publique.code ? ` (${promo.publique.code})` : '')
+        )
+      }
 
       const etiquetteVariante = variantLabel(variantKey)
       const nomProgramme = etiquetteVariante ? `${program.name} ${etiquetteVariante}` : program.name
@@ -177,9 +240,14 @@ export function programsToChallenges(
         drawdown_type: premiere.drawdown_type,
         max_loss_type: premiere.drawdown_type,
         profit_split: funded?.profit_split != null ? Math.round(funded.profit_split * 100) : null,
-        price: premiere.regular_price ?? funded?.regular_price ?? null,
-        // La remise vient du niveau firme, le composant l'applique lui-meme.
-        discounted_price: null,
+        price: prixStandard,
+        // Calcule par ligne : la remise varie par programme ET par taille, une
+        // valeur unique au niveau firme afficherait le mauvais prix partout
+        // sauf sur un palier.
+        discounted_price:
+          prixStandard != null && promo.partenaire
+            ? Math.round(prixStandard * (1 - promo.partenaire.discount_value) * 100) / 100
+            : null,
         payout_frequency_description:
           funded?.days_between_payouts === 1
             ? 'Daily once funded'
@@ -233,5 +301,18 @@ export function programsToChallenges(
     challenges,
     guide,
     currency: devises.size === 1 ? Array.from(devises)[0] : null,
+    // Un seul code affichable : deux codes differents selon la taille
+    // rendraient la carte de selection incomprehensible. Plusieurs = aucun.
+    discountCode: codes.size === 1 ? Array.from(codes)[0] : null,
+    // Formule au pluriel prudent : la meilleure offre publique varie selon le
+    // programme, on ne promet donc pas un chiffre unique.
+    betterPublicOffer:
+      meilleuresPubliques.length > 0
+        ? `The firm currently advertises a public offer of up to ${
+            meilleuresPubliques
+              .map((v) => parseInt(v, 10))
+              .reduce((a, b) => Math.max(a, b), 0)
+          }% on some plans, which is larger than this code. Check the checkout total before paying.`
+        : null,
   }
 }

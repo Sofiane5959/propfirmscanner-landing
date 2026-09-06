@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import FirmLogo from '@/components/FirmLogo'
 import Link from 'next/link'
 import {
@@ -22,6 +22,7 @@ import {
   Wallet,
   Layers,
   GraduationCap,
+  X,
 } from 'lucide-react'
 import ChallengeSelector, { hasUsableChallenges, type Challenge } from './ChallengeSelector'
 import { buildAffiliateUrl, AFFILIATE_LINK_PROPS } from '@/lib/affiliate'
@@ -86,6 +87,9 @@ const COPY = {
     regulation: 'Regulation',
     verdict: 'PropFirmScanner verdict',
     goodFit: 'A good fit if you want',
+    copyCode: 'Copy code',
+    copied: 'Copied',
+    badFit: 'Consider another firm if you…',
     faq: 'Frequently asked questions',
     faqIntro: (f: string) => `Everything traders ask about ${f}.`,
     readyTitle: 'Ready to pick your program?',
@@ -144,6 +148,9 @@ const COPY = {
     regulation: 'Régulation',
     verdict: 'Verdict PropFirmScanner',
     goodFit: 'Bon choix si vous recherchez',
+    copyCode: 'Copier le code',
+    copied: 'Copié',
+    badFit: 'Regardez ailleurs si…',
     faq: 'Questions fréquentes',
     faqIntro: (f: string) => `Tout ce que les traders demandent sur ${f}.`,
     readyTitle: 'Prêt à choisir votre programme ?',
@@ -203,6 +210,9 @@ const COPY = {
     regulation: 'Regulierung',
     verdict: 'PropFirmScanner-Fazit',
     goodFit: 'Gut geeignet, wenn Sie Folgendes suchen',
+    copyCode: 'Code kopieren',
+    copied: 'Kopiert',
+    badFit: 'Eine andere Firma passt besser, wenn…',
     faq: 'Häufige Fragen',
     faqIntro: (f: string) => `Alles, was Trader über ${f} fragen.`,
     readyTitle: 'Bereit, Ihr Programm zu wählen?',
@@ -262,6 +272,9 @@ const COPY = {
     regulation: 'Regulación',
     verdict: 'Veredicto de PropFirmScanner',
     goodFit: 'Buena elección si buscas',
+    copyCode: 'Copiar código',
+    copied: 'Copiado',
+    badFit: 'Considera otra firma si…',
     faq: 'Preguntas frecuentes',
     faqIntro: (f: string) => `Todo lo que los traders preguntan sobre ${f}.`,
     readyTitle: '¿Listo para elegir tu programa?',
@@ -321,6 +334,9 @@ const COPY = {
     regulation: 'Regulação',
     verdict: 'Veredicto PropFirmScanner',
     goodFit: 'Boa escolha se procura',
+    copyCode: 'Copiar código',
+    copied: 'Copiado',
+    badFit: 'Considere outra firma se…',
     faq: 'Perguntas frequentes',
     faqIntro: (f: string) => `Tudo o que os traders perguntam sobre a ${f}.`,
     readyTitle: 'Pronto para escolher o seu programa?',
@@ -379,6 +395,9 @@ const COPY = {
     regulation: 'التنظيم',
     verdict: 'خلاصة PropFirmScanner',
     goodFit: 'خيار جيد إذا كنت تبحث عن',
+    copyCode: 'نسخ الكود',
+    copied: 'تم النسخ',
+    badFit: 'فكر في شركة أخرى إذا…',
     faq: 'الأسئلة الشائعة',
     faqIntro: (f: string) => `كل ما يسأل عنه المتداولون بخصوص ${f}.`,
     readyTitle: 'هل أنت مستعد لاختيار برنامجك؟',
@@ -436,6 +455,9 @@ const COPY = {
     regulation: 'विनियमन',
     verdict: 'PropFirmScanner का फ़ैसला',
     goodFit: 'अच्छा विकल्प, अगर आप चाहते हैं',
+    copyCode: 'कोड कॉपी करें',
+    copied: 'कॉपी हुआ',
+    badFit: 'किसी और फ़र्म पर विचार करें, अगर…',
     faq: 'अक्सर पूछे जाने वाले प्रश्न',
     faqIntro: (f: string) => `${f} के बारे में ट्रेडर्स जो कुछ पूछते हैं, सब यहाँ।`,
     readyTitle: 'अपना प्रोग्राम चुनने के लिए तैयार हैं?',
@@ -552,11 +574,18 @@ interface PropFirm {
   key_rules?: {
     title?: string
     intro?: string
-    rules?: { title?: string; detail?: string }[]
+    /** `category` et `severity` sont facultatifs : sans eux, grille plate. */
+    rules?: { title?: string; detail?: string; category?: string; severity?: string }[]
     more?: string[]
   } | null
   education?: { title?: string; intro?: string; items?: string[] } | null
-  verdict_card?: { title?: string; body?: string; points?: string[] } | null
+  verdict_card?: {
+    title?: string
+    body?: string
+    points?: string[]
+    /** Le second groupe de suitabilite. Absent = section a une colonne. */
+    counterPoints?: string[]
+  } | null
   program_guide?: {
     title?: string
     intro?: string
@@ -772,9 +801,17 @@ export default function PropFirmPageClient({
   // Une seule source pour le configurateur, quelle que soit l'origine des
   // donnees. Sans challenges exploitables des deux cotes, pas de section.
   const configurateur = adapte
-    ? { challenges: adapte.challenges, guide: adapte.guide, currency: adapte.currency ?? currency }
+    ? {
+        challenges: adapte.challenges,
+        guide: adapte.guide,
+        currency: adapte.currency ?? currency,
+        // Le code et la remise viennent des promotions normalisees, pas des
+        // colonnes firme : elles varient par programme et par taille.
+        code: adapte.discountCode ?? promotion.code,
+        note: adapte.betterPublicOffer ?? firm.discount_note,
+      }
     : challengesUtilisables
-      ? { challenges, guide: firm.program_guide, currency }
+      ? { challenges, guide: firm.program_guide, currency, code: promotion.code, note: firm.discount_note }
       : null
 
   // Une seule reponse a « la page propose-t-elle d'acheter ici ? ». Elle
@@ -787,12 +824,13 @@ export default function PropFirmPageClient({
   // La ligne choisie dans le configurateur, remontee ici pour que la section
   // evaluation / compte finance suive la selection au lieu de rester figee.
   const [selectionKey, setSelectionKey] = useState<string | null>(null)
+  // La ligne selectionnee, lue une seule fois ici. Le CTA final et la region
+  // live la partagent : deux etats separes finissaient toujours par diverger.
+  const ligneChoisie = configurateur?.challenges.find((c) => c.id === selectionKey) ?? null
+
   // Le texte annonce nomme la ligne choisie, pas « selection modifiee » : le
   // lecteur doit savoir CE qui est selectionne, sans revenir en arriere.
-  const annonceSelection = useMemo(() => {
-    const choisi = configurateur?.challenges.find((c) => c.id === selectionKey)
-    return choisi?.name ? `Selected: ${choisi.name}` : ''
-  }, [configurateur, selectionKey])
+  const annonceSelection = ligneChoisie?.name ? `Selected: ${ligneChoisie.name}` : ''
   const selection = useMemo(() => {
     if (!programData) return null
     const cle = selectionKey ?? adapte?.challenges[0]?.id ?? null
@@ -1119,9 +1157,9 @@ export default function PropFirmPageClient({
             checkoutOptions={firm.checkout_options}
             programGuide={configurateur.guide}
             currency={configurateur.currency}
-            discountCode={promotion.code}
+            discountCode={configurateur.code}
             discountPercent={promotion.percent}
-            discountNote={firm.discount_note}
+            discountNote={configurateur.note}
             includedItems={toArray(firm.included_items)}
             onSelectionChange={programData ? setSelectionKey : undefined}
           />
@@ -1257,14 +1295,55 @@ export default function PropFirmPageClient({
               title={keyRules.title || 'The rules that actually matter'}
               intro={keyRules.intro}
             />
-            <div className="grid sm:grid-cols-2 gap-4 mb-4">
-              {keyRules.rules.map((r, i) => (
-                <article key={i} className="bg-gray-900/50 border border-gray-800 rounded-xl p-5">
-                  <h3 className="text-white font-semibold mb-1.5">{r.title}</h3>
-                  <p className="text-gray-400 text-sm leading-relaxed">{r.detail}</p>
-                </article>
-              ))}
-            </div>
+            {/* Groupees par consequence quand la donnee le permet. Perdre le
+                compte, voir un retrait bloque et devoir trader autrement ne
+                sont pas trois versions de la meme chose : les melanger dans
+                une grille uniforme laissait le lecteur les trier lui-meme.
+                Une firme dont les regles n'ont pas de `category` garde la
+                grille plate d'origine. */}
+            {keyRules.rules.some((r) => r.category) ? (
+              <div className="space-y-6 mb-4">
+                {Array.from(
+                  keyRules.rules.reduce((m, r) => {
+                    const c = r.category || 'Other'
+                    m.set(c, [...(m.get(c) || []), r])
+                    return m
+                  }, new Map<string, NonNullable<typeof keyRules.rules>>())
+                ).map(([categorie, regles]) => (
+                  <div key={categorie}>
+                    <p className="text-xs uppercase tracking-wider font-semibold text-gray-500 mb-2.5">
+                      {categorie}
+                    </p>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      {regles.map((r, i) => (
+                        <article
+                          key={i}
+                          className={`bg-gray-900/50 border rounded-xl p-5 ${
+                            r.severity === 'hard_breach'
+                              ? 'border-red-500/30'
+                              : r.severity === 'payout_condition'
+                                ? 'border-amber-500/25'
+                                : 'border-gray-800'
+                          }`}
+                        >
+                          <h3 className="text-white font-semibold mb-1.5">{r.title}</h3>
+                          <p className="text-gray-400 text-sm leading-relaxed">{r.detail}</p>
+                        </article>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid sm:grid-cols-2 gap-4 mb-4">
+                {keyRules.rules.map((r, i) => (
+                  <article key={i} className="bg-gray-900/50 border border-gray-800 rounded-xl p-5">
+                    <h3 className="text-white font-semibold mb-1.5">{r.title}</h3>
+                    <p className="text-gray-400 text-sm leading-relaxed">{r.detail}</p>
+                  </article>
+                ))}
+              </div>
+            )}
 
             {keyRules.more && keyRules.more.length > 0 && (
               <Disclosure summary={t.seeAll}>
@@ -1336,7 +1415,46 @@ export default function PropFirmPageClient({
         ) : null}
 
         {/* ============================================================== */}
-        {/* 10. STRENGTHS & LIMITS                                         */}
+        {/* 10. A PROPOS — le recit a gauche, les faits verifiables a   */}
+        {/*        droite, a hauteur egale.                                */}
+        {/* ============================================================== */}
+        {/* Ce bloc etait replie dans les specifications completes, donc
+            invisible pour qui ne deroulait pas. Une presentation de la firme
+            n'est pas une specification : c'est ce qui permet de decider si la
+            suite merite d'etre lue.
+            `items-stretch` plutot que `items-start` : le brief demande deux
+            panneaux de meme hauteur, et une colonne de faits plus courte que
+            le texte laissait une marche visible. */}
+        {(firm.description || aboutFacts.length > 0) && (
+          <section id="about" className="scroll-mt-28 print:scroll-mt-0">
+            <SectionHeading eyebrow={t.about(firm.name)} title={t.about(firm.name)} />
+            <div className="grid md:grid-cols-2 gap-6 items-stretch">
+              {firm.description && (
+                <div className="bg-gray-900/40 border border-gray-800 rounded-xl p-5">
+                  {/* La colonne est ecrite en paragraphes ; on les respecte. */}
+                  {firm.description.split('\n\n').map((para, i) => (
+                    <p key={i} className={`text-gray-300 text-sm leading-relaxed ${i > 0 ? 'mt-3' : ''}`}>
+                      {para}
+                    </p>
+                  ))}
+                </div>
+              )}
+              {aboutFacts.length > 0 && (
+                <dl className="bg-gray-900/40 border border-gray-800 rounded-xl p-5 divide-y divide-gray-800">
+                  {aboutFacts.map((f) => (
+                    <div key={f.label} className="flex justify-between gap-4 py-2 first:pt-0 last:pb-0">
+                      <dt className="text-gray-500 text-sm">{f.label}</dt>
+                      <dd className="text-gray-200 text-sm text-right">{f.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
+            </div>
+          </section>
+        )}
+
+        {/* ============================================================== */}
+        {/* 11. STRENGTHS & LIMITS                                         */}
         {/* ============================================================== */}
         {(pros.length > 0 || cons.length > 0) && (
           <section id="pros-cons" className="scroll-mt-28 print:scroll-mt-0">
@@ -1493,49 +1611,10 @@ export default function PropFirmPageClient({
         )}
 
         {/* ============================================================== */}
-        {/* 11bis. A PROPOS — le recit a gauche, les faits verifiables a   */}
-        {/*        droite, a hauteur egale.                                */}
-        {/* ============================================================== */}
-        {/* Ce bloc etait replie dans les specifications completes, donc
-            invisible pour qui ne deroulait pas. Une presentation de la firme
-            n'est pas une specification : c'est ce qui permet de decider si la
-            suite merite d'etre lue.
-            `items-stretch` plutot que `items-start` : le brief demande deux
-            panneaux de meme hauteur, et une colonne de faits plus courte que
-            le texte laissait une marche visible. */}
-        {(firm.description || aboutFacts.length > 0) && (
-          <section id="about" className="scroll-mt-28 print:scroll-mt-0">
-            <SectionHeading eyebrow={t.about(firm.name)} title={t.about(firm.name)} />
-            <div className="grid md:grid-cols-2 gap-6 items-stretch">
-              {firm.description && (
-                <div className="bg-gray-900/40 border border-gray-800 rounded-xl p-5">
-                  {/* La colonne est ecrite en paragraphes ; on les respecte. */}
-                  {firm.description.split('\n\n').map((para, i) => (
-                    <p key={i} className={`text-gray-300 text-sm leading-relaxed ${i > 0 ? 'mt-3' : ''}`}>
-                      {para}
-                    </p>
-                  ))}
-                </div>
-              )}
-              {aboutFacts.length > 0 && (
-                <dl className="bg-gray-900/40 border border-gray-800 rounded-xl p-5 divide-y divide-gray-800">
-                  {aboutFacts.map((f) => (
-                    <div key={f.label} className="flex justify-between gap-4 py-2 first:pt-0 last:pb-0">
-                      <dt className="text-gray-500 text-sm">{f.label}</dt>
-                      <dd className="text-gray-200 text-sm text-right">{f.value}</dd>
-                    </div>
-                  ))}
-                </dl>
-              )}
-            </div>
-          </section>
-        )}
-
-        {/* ============================================================== */}
         {/* 12. VERDICT                                                    */}
         {/* ============================================================== */}
         {verdictCard?.body ? (
-          <section className="grid md:grid-cols-[minmax(0,1fr)_300px] gap-6 items-start">
+          <section className="space-y-6">
             <div>
               <SectionHeading
                 eyebrow={t.verdict}
@@ -1546,17 +1625,40 @@ export default function PropFirmPageClient({
             {/* Le corps du verdict decrit la FIRME et reste. Les points
                 « Good fit if you want » decrivent un PROGRAMME : ils
                 doublonnaient SuitabilityVerdict, qui suit la selection. */}
-            {verdictCard.points && verdictCard.points.length > 0 && (
-              <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-5">
-                <p className="text-white font-semibold text-sm mb-3">{t.goodFit}</p>
-                <ul className="space-y-2">
-                  {verdictCard.points.map((pt, i) => (
-                    <li key={i} className="flex items-start gap-2 text-gray-400 text-sm">
-                      <Check className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
-                      <span>{pt}</span>
-                    </li>
-                  ))}
-                </ul>
+            {/* Le titre promet « qui elle convient, et qui elle ne convient
+                pas ». Sans le second groupe la section n'en tenait que la
+                moitie. Meme largeur et meme traitement pour les deux : la
+                colonne des reserves n'est pas une note de bas de page. */}
+            {(verdictCard.points?.length || verdictCard.counterPoints?.length) && (
+              <div className="grid sm:grid-cols-2 gap-4">
+                {verdictCard.points && verdictCard.points.length > 0 && (
+                  <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-5">
+                    <p className="text-white font-semibold text-sm mb-3">{t.goodFit}</p>
+                    <ul className="space-y-2">
+                      {verdictCard.points.map((pt, i) => (
+                        <li key={i} className="flex items-start gap-2 text-gray-400 text-sm">
+                          <Check className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                          <span>{pt}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {verdictCard.counterPoints && verdictCard.counterPoints.length > 0 && (
+                  <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-5">
+                    <p className="text-white font-semibold text-sm mb-3">{t.badFit}</p>
+                    <ul className="space-y-2">
+                      {verdictCard.counterPoints.map((pt, i) => (
+                        <li key={i} className="flex items-start gap-2 text-gray-400 text-sm">
+                          {/* Ambre plutot que rouge : ce sont des criteres de
+                              choix, pas des alertes. */}
+                          <X className="w-4 h-4 text-amber-400 mt-0.5 flex-shrink-0" />
+                          <span>{pt}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             )}
           </section>
@@ -1598,6 +1700,44 @@ export default function PropFirmPageClient({
             <p className="text-gray-400 mb-6 max-w-xl mx-auto">
               {t.readyIntro}
             </p>
+
+            {/* Le CTA final rappelait le nom de la firme et rien d'autre : le
+                visiteur qui avait configure un compte 150K devait remonter
+                pour verifier ce qu'il achetait. Il lit maintenant la MEME
+                selection que le configurateur, jamais une copie. */}
+            {ligneChoisie && (
+              <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 mb-5 text-sm">
+                <span className="text-white font-semibold">{ligneChoisie.name}</span>
+                {ligneChoisie.price != null && (
+                  <span className="text-gray-300">
+                    {ligneChoisie.discounted_price != null ? (
+                      <>
+                        <span className="text-gray-500 line-through mr-2">
+                          {formatMoney(ligneChoisie.price, locale, '', configurateur?.currency || 'USD')}
+                        </span>
+                        <span className="text-emerald-400 font-semibold">
+                          {formatMoney(
+                            ligneChoisie.discounted_price,
+                            locale,
+                            '',
+                            configurateur?.currency || 'USD'
+                          )}
+                        </span>
+                      </>
+                    ) : (
+                      formatMoney(ligneChoisie.price, locale, '', configurateur?.currency || 'USD')
+                    )}
+                  </span>
+                )}
+                {/* Le code n'est repete ici que s'il fait vraiment baisser le
+                    prix : un code affiche sans effet visible se lit comme une
+                    promesse non tenue. */}
+                {configurateur?.code && ligneChoisie.discounted_price != null && (
+                  <CopyCode code={configurateur.code} label={t.copyCode} copied={t.copied} />
+                )}
+              </div>
+            )}
+
             <a
               href="#challenges"
               className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-semibold rounded-lg transition-colors"
@@ -1673,6 +1813,37 @@ export default function PropFirmPageClient({
 // =============================================================================
 // SUB-COMPONENTS
 // =============================================================================
+
+/**
+ * Copie un code promo dans le presse-papiers.
+ *
+ * Son propre etat, deliberement : le configurateur en a deja un, et partager
+ * un booleen entre deux boutons distants faisait clignoter les deux ensemble.
+ * `navigator.clipboard` echoue en contexte non securise et sur certains
+ * navigateurs mobiles ; on avale l'erreur plutot que de casser la page, le
+ * code reste selectionnable a la main.
+ */
+function CopyCode({ code, label, copied }: { code: string; label: string; copied: string }) {
+  const [fait, setFait] = useState(false)
+  useEffect(() => {
+    if (!fait) return
+    const t = setTimeout(() => setFait(false), 2000)
+    return () => clearTimeout(t)
+  }, [fait])
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        navigator.clipboard?.writeText(code).then(() => setFait(true)).catch(() => {})
+      }}
+      className="min-h-[44px] inline-flex items-center gap-2 px-3 rounded-lg border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 text-sm font-mono focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+      aria-label={`${label} ${code}`}
+    >
+      {code}
+      <span className="font-sans text-xs text-emerald-400/80">{fait ? copied : label}</span>
+    </button>
+  )
+}
 
 function SectionHeading({
   eyebrow,

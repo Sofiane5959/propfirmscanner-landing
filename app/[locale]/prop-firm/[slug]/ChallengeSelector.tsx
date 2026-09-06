@@ -108,7 +108,7 @@ export function hasUsableChallenges(challenges: Challenge[]): boolean {
 
 const COPY = {
   en: {
-    eyebrow: 'Two-step configurator',
+    eyebrow: 'Account configurator',
     title: 'Find the program that fits you',
     intro: 'Start with your goal. Price and rules update as you choose.',
     step1: 'How do you want to be funded?',
@@ -135,7 +135,7 @@ const COPY = {
     picked: 'Selected',
   },
   fr: {
-    eyebrow: 'Configurateur en 2 étapes',
+    eyebrow: 'Configurateur de compte',
     title: 'Trouvez le programme adapté à votre profil',
     intro: 'Commencez par votre objectif. Le prix et les règles s’actualisent automatiquement.',
     step1: 'Comment souhaitez-vous être financé ?',
@@ -163,7 +163,7 @@ const COPY = {
     picked: 'Sélectionné',
   },
   de: {
-    eyebrow: 'Konfigurator in 2 Schritten',
+    eyebrow: 'Konto-Konfigurator',
     title: 'Finden Sie das passende Programm',
     intro: 'Beginnen Sie mit Ihrem Ziel. Preis und Regeln aktualisieren sich automatisch.',
     step1: 'Wie möchten Sie finanziert werden?',
@@ -191,7 +191,7 @@ const COPY = {
     picked: 'Ausgewählt',
   },
   es: {
-    eyebrow: 'Configurador en 2 pasos',
+    eyebrow: 'Configurador de cuenta',
     title: 'Encuentra el programa que te encaja',
     intro: 'Empieza por tu objetivo. El precio y las reglas se actualizan solos.',
     step1: '¿Cómo quieres recibir financiación?',
@@ -219,7 +219,7 @@ const COPY = {
     picked: 'Seleccionado',
   },
   pt: {
-    eyebrow: 'Configurador em 2 etapas',
+    eyebrow: 'Configurador de conta',
     title: 'Encontre o programa certo para si',
     intro: 'Comece pelo seu objetivo. O preço e as regras atualizam-se automaticamente.',
     step1: 'Como quer ser financiado?',
@@ -247,7 +247,7 @@ const COPY = {
     picked: 'Selecionado',
   },
   ar: {
-    eyebrow: 'أداة إعداد من خطوتين',
+    eyebrow: 'أداة إعداد الحساب',
     title: 'اعثر على البرنامج المناسب لك',
     intro: 'ابدأ بهدفك. يتحدّث السعر والقواعد تلقائيًا مع اختيارك.',
     step1: 'كيف تريد الحصول على التمويل؟',
@@ -274,7 +274,7 @@ const COPY = {
     picked: 'تم الاختيار',
   },
   hi: {
-    eyebrow: '2 चरणों वाला कॉन्फ़िगरेटर',
+    eyebrow: 'खाता कॉन्फ़िगरेटर',
     title: 'अपने लिए सही प्रोग्राम खोजें',
     intro: 'अपने लक्ष्य से शुरू करें। कीमत और नियम अपने आप अपडेट होते हैं।',
     step1: 'आप फ़ंडिंग कैसे चाहते हैं?',
@@ -775,18 +775,16 @@ export default function ChallengeSelector({
                         ))}
                       </ul>
                     )}
-                    <button
-                      type="button"
-                      onClick={() => opt.name && handleSelectProgram(opt.name, true)}
-                      disabled={isActive}
-                      className={`mt-auto w-full px-4 py-2.5 rounded-lg text-base font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
-                        isActive
-                          ? 'bg-emerald-500/10 border border-emerald-500/40 text-emerald-400 cursor-default'
-                          : 'bg-gray-800 hover:bg-gray-700 border border-gray-700 text-white'
-                      }`}
-                    >
-                      {isActive ? `✓ ${t.picked}` : t.pick(opt.name || '')}
-                    </button>
+                    {/* Plus de bouton ici. Le programme se choisit dans le
+                        configurateur, et nulle part ailleurs : deux mecanismes
+                        pour une seule decision obligeaient le visiteur a
+                        deviner lequel faisait autorite. La carte signale
+                        seulement lequel est actuellement selectionne. */}
+                    {isActive && (
+                      <p className="mt-auto pt-2 text-emerald-400 text-sm font-medium">
+                        {`✓ ${t.picked}`}
+                      </p>
+                    )}
                   </article>
                 )
               })}

@@ -113,4 +113,51 @@
 
   /* Les liens d'affiliation ne sont PAS developpes : imprimer l'URL de suivi
      n'apprend rien au lecteur et expose le parametrage du tunnel. */
+
+  /* Le PDF sortait sur 13 pages en paysage, la plupart a moitie vides. Deux
+     causes, toutes deux liees a des hauteurs pensees pour un ecran. */
+
+  /* 1. Les hauteurs minimales et les unites de viewport. `min-h-screen` sur
+        le conteneur de page reservait une feuille entiere avant meme le
+        premier paragraphe. */
+  [class*="min-h-"],
+  [class*="h-screen"],
+  [class*="min-h-screen"] {
+    min-height: 0 !important;
+    height: auto !important;
+  }
+
+  /* 2. `break-inside: avoid` applique a une SECTION entiere pousse toute une
+        section longue sur la feuille suivante. On le reserve aux blocs
+        courts : cartes, lignes de tableau, elements de liste. */
+  section {
+    break-inside: auto;
+    page-break-inside: auto;
+  }
+  article,
+  dl,
+  tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Un titre ne doit jamais rester seul en bas de page, mais il ne doit pas
+     non plus tirer sa section entiere avec lui. */
+  h1, h2, h3 {
+    break-after: avoid-page;
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* Les accordeons replies cachent le contenu a l'ecran ; sur papier, il n'y
+     a rien a deplier. On ouvre tout plutot que d'imprimer des titres vides. */
+  details {
+    display: block;
+  }
+  details > summary {
+    list-style: none;
+  }
+  details:not([open]) > *:not(summary) {
+    display: revert !important;
+  }
 }
