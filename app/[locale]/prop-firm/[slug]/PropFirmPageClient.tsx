@@ -77,6 +77,10 @@ const COPY = {
     seeAll: 'See all permissions and restrictions',
     fullSpecs: 'Full specifications, costs and platforms',
     platforms: 'Platforms',
+    headquarters: 'Headquarters',
+    market: 'Market',
+    payoutProvider: 'Payout provider',
+    dataFeeds: 'Data feeds',
     assets: 'Tradable assets',
     about: (f: string) => `About ${f}`,
     regulation: 'Regulation',
@@ -131,6 +135,10 @@ const COPY = {
     seeAll: 'Voir toutes les autorisations et restrictions',
     fullSpecs: 'Spécifications complètes, coûts et plateformes',
     platforms: 'Plateformes',
+    headquarters: 'Siège social',
+    market: 'Marché',
+    payoutProvider: 'Prestataire de paiement',
+    dataFeeds: 'Flux de données',
     assets: 'Actifs négociables',
     about: (f: string) => `À propos de ${f}`,
     regulation: 'Régulation',
@@ -186,6 +194,10 @@ const COPY = {
     seeAll: 'Alle Erlaubnisse und Einschränkungen ansehen',
     fullSpecs: 'Vollständige Spezifikationen, Kosten und Plattformen',
     platforms: 'Plattformen',
+    headquarters: 'Hauptsitz',
+    market: 'Markt',
+    payoutProvider: 'Auszahlungsdienstleister',
+    dataFeeds: 'Datenfeeds',
     assets: 'Handelbare Werte',
     about: (f: string) => `Über ${f}`,
     regulation: 'Regulierung',
@@ -241,6 +253,10 @@ const COPY = {
     seeAll: 'Ver todos los permisos y restricciones',
     fullSpecs: 'Especificaciones completas, costes y plataformas',
     platforms: 'Plataformas',
+    headquarters: 'Sede',
+    market: 'Mercado',
+    payoutProvider: 'Proveedor de pagos',
+    dataFeeds: 'Flujos de datos',
     assets: 'Activos negociables',
     about: (f: string) => `Sobre ${f}`,
     regulation: 'Regulación',
@@ -296,6 +312,10 @@ const COPY = {
     seeAll: 'Ver todas as permissões e restrições',
     fullSpecs: 'Especificações completas, custos e plataformas',
     platforms: 'Plataformas',
+    headquarters: 'Sede',
+    market: 'Mercado',
+    payoutProvider: 'Proveedor de pagos',
+    dataFeeds: 'Flujos de datos',
     assets: 'Ativos negociáveis',
     about: (f: string) => `Sobre a ${f}`,
     regulation: 'Regulação',
@@ -350,6 +370,10 @@ const COPY = {
     seeAll: 'عرض جميع الأذونات والقيود',
     fullSpecs: 'المواصفات الكاملة والتكاليف والمنصات',
     platforms: 'المنصات',
+    headquarters: 'المقر الرئيسي',
+    market: 'السوق',
+    payoutProvider: 'مزود الدفع',
+    dataFeeds: 'تدفقات البيانات',
     assets: 'الأصول القابلة للتداول',
     about: (f: string) => `عن ${f}`,
     regulation: 'التنظيم',
@@ -403,6 +427,10 @@ const COPY = {
     seeAll: 'सभी अनुमतियाँ और प्रतिबंध देखें',
     fullSpecs: 'पूरी विशिष्टताएँ, लागत और प्लेटफ़ॉर्म',
     platforms: 'प्लेटफ़ॉर्म',
+    headquarters: 'मुख्यालय',
+    market: 'बाज़ार',
+    payoutProvider: 'भुगतान प्रदाता',
+    dataFeeds: 'डेटा फ़ीड',
     assets: 'ट्रेड करने योग्य एसेट',
     about: (f: string) => `${f} के बारे में`,
     regulation: 'विनियमन',
@@ -469,6 +497,8 @@ interface PropFirm {
   allows_weekend_holding: boolean
   scaling_max: string
   consistency_rule: string
+  /** Futures ou CFD. Sert a nommer le marche dans la fiche d'identite. */
+  is_futures?: boolean | null
   platforms: string[] | string
   assets: string[] | string
   pros: string[]
@@ -642,7 +672,26 @@ export default function PropFirmPageClient({
     (c) => (c as { billing_period?: string }).billing_period === 'monthly'
   )
   const assets = toArray(firm.assets)
+  // Les flux de donnees ne sont pas une colonne : ils vivent dans les options
+  // de checkout, la ou une firme les facture. Absents partout ailleurs.
+  const dataFeeds = (firm.checkout_options?.options ?? []).map((o) => o.name).filter(Boolean)
+
   const payoutMethods = toArray(firm.payout_methods)
+
+  // Faits corporatifs verifiables. Chacun disparait quand sa colonne est vide :
+  // une fiche d'identite a trous inspire moins confiance qu'une fiche courte.
+  const aboutFacts = (
+    [
+      [t.founded, firm.founded_year || firm.year_founded || firm.founded],
+      [t.headquarters, firm.headquarters],
+      [t.market, firm.is_futures ? 'Futures' : 'CFD'],
+      [t.payoutProvider, payoutMethods.length > 0 ? payoutMethods.join(', ') : null],
+      [t.regulation, firm.is_regulated ? firm.regulation_details : null],
+    ] as [string, string | number | null | undefined][]
+  )
+    .filter(([, v]) => v !== null && v !== undefined && v !== '' && v !== 0)
+    .map(([label, value]) => ({ label, value: String(value) }))
+
   const payoutSpeed = formatPayoutSpeed(firm)
 
   // Les lignes historiques valent-elles un configurateur ? Des lignes bouchons
@@ -738,6 +787,12 @@ export default function PropFirmPageClient({
   // La ligne choisie dans le configurateur, remontee ici pour que la section
   // evaluation / compte finance suive la selection au lieu de rester figee.
   const [selectionKey, setSelectionKey] = useState<string | null>(null)
+  // Le texte annonce nomme la ligne choisie, pas « selection modifiee » : le
+  // lecteur doit savoir CE qui est selectionne, sans revenir en arriere.
+  const annonceSelection = useMemo(() => {
+    const choisi = configurateur?.challenges.find((c) => c.id === selectionKey)
+    return choisi?.name ? `Selected: ${choisi.name}` : ''
+  }, [configurateur, selectionKey])
   const selection = useMemo(() => {
     if (!programData) return null
     const cle = selectionKey ?? adapte?.challenges[0]?.id ?? null
@@ -995,7 +1050,49 @@ export default function PropFirmPageClient({
       )}
 
       {/* ================================================================ */}
-      {/* 3. CONFIGURATOR — full width, owns its own two-column layout    */}
+      {/* 3. PLATEFORMES, MARCHES ET FLUX — haut de page, volontairement  */}
+      {/* ================================================================ */}
+      {/* Ces trois listes disqualifient une firme en deux secondes : un trader
+          NinjaTrader n'a pas a derouler la fiche entiere pour decouvrir que la
+          plateforme n'est pas proposee. Elles restaient repliees dans les
+          specifications completes, tout en bas.
+          Compact par construction : trois groupes de pastilles, pas une
+          section a part entiere. Un groupe sans valeur ne s'affiche pas. */}
+      {(platforms.length > 0 || assets.length > 0 || dataFeeds.length > 0) && (
+        <section
+          id="platforms"
+          className="px-4 py-6 border-b border-gray-800 scroll-mt-28 print:scroll-mt-0"
+        >
+          <div className="max-w-6xl mx-auto grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-5">
+            {[
+              { label: t.platforms, values: platforms },
+              { label: t.assets, values: assets },
+              { label: t.dataFeeds, values: dataFeeds },
+            ]
+              .filter((g) => g.values.length > 0)
+              .map((g) => (
+                <div key={g.label}>
+                  <p className="text-xs uppercase tracking-wider font-semibold text-gray-500 mb-2">
+                    {g.label}
+                  </p>
+                  <ul className="flex flex-wrap gap-1.5">
+                    {g.values.map((v) => (
+                      <li
+                        key={v}
+                        className="px-2.5 py-1 rounded-md bg-gray-900/60 border border-gray-800 text-gray-300 text-xs"
+                      >
+                        {v}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+          </div>
+        </section>
+      )}
+
+      {/* ================================================================ */}
+      {/* 4. CONFIGURATOR — full width, owns its own two-column layout    */}
       {/* ================================================================ */}
       {/* UN SEUL configurateur pour toutes les firmes.
           Les programmes normalises n'ouvrent pas une seconde interface : ils
@@ -1008,6 +1105,12 @@ export default function PropFirmPageClient({
           recevait des programmes normalises. */}
       {configurateur && (
         <div id="challenges" className="scroll-mt-28 print:scroll-mt-0">
+          {/* Un lecteur d'ecran ne « voit » pas la carte de droite se mettre a
+              jour : sans annonce, changer de programme est silencieux. Polie
+              et non assertive, pour ne pas couper la lecture en cours. */}
+          <p className="sr-only" role="status" aria-live="polite">
+            {annonceSelection}
+          </p>
           <ChallengeSelector
             firmSlug={firm.slug}
             firmName={firm.name}
@@ -1376,15 +1479,6 @@ export default function PropFirmPageClient({
                   </div>
                 )}
 
-                {firm.description && (
-                  <div>
-                    <p className="text-xs uppercase tracking-wider font-semibold text-gray-500 mb-2.5">
-                      {t.about(firm.name)}
-                    </p>
-                    <p className="text-gray-300 text-sm leading-relaxed">{firm.description}</p>
-                  </div>
-                )}
-
                 {firm.is_regulated && firm.regulation_details && (
                   <div>
                     <p className="text-xs uppercase tracking-wider font-semibold text-gray-500 mb-2.5">
@@ -1395,6 +1489,45 @@ export default function PropFirmPageClient({
                 )}
               </div>
             </Disclosure>
+          </section>
+        )}
+
+        {/* ============================================================== */}
+        {/* 11bis. A PROPOS — le recit a gauche, les faits verifiables a   */}
+        {/*        droite, a hauteur egale.                                */}
+        {/* ============================================================== */}
+        {/* Ce bloc etait replie dans les specifications completes, donc
+            invisible pour qui ne deroulait pas. Une presentation de la firme
+            n'est pas une specification : c'est ce qui permet de decider si la
+            suite merite d'etre lue.
+            `items-stretch` plutot que `items-start` : le brief demande deux
+            panneaux de meme hauteur, et une colonne de faits plus courte que
+            le texte laissait une marche visible. */}
+        {(firm.description || aboutFacts.length > 0) && (
+          <section id="about" className="scroll-mt-28 print:scroll-mt-0">
+            <SectionHeading eyebrow={t.about(firm.name)} title={t.about(firm.name)} />
+            <div className="grid md:grid-cols-2 gap-6 items-stretch">
+              {firm.description && (
+                <div className="bg-gray-900/40 border border-gray-800 rounded-xl p-5">
+                  {/* La colonne est ecrite en paragraphes ; on les respecte. */}
+                  {firm.description.split('\n\n').map((para, i) => (
+                    <p key={i} className={`text-gray-300 text-sm leading-relaxed ${i > 0 ? 'mt-3' : ''}`}>
+                      {para}
+                    </p>
+                  ))}
+                </div>
+              )}
+              {aboutFacts.length > 0 && (
+                <dl className="bg-gray-900/40 border border-gray-800 rounded-xl p-5 divide-y divide-gray-800">
+                  {aboutFacts.map((f) => (
+                    <div key={f.label} className="flex justify-between gap-4 py-2 first:pt-0 last:pb-0">
+                      <dt className="text-gray-500 text-sm">{f.label}</dt>
+                      <dd className="text-gray-200 text-sm text-right">{f.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
+            </div>
           </section>
         )}
 
@@ -1438,7 +1571,11 @@ export default function PropFirmPageClient({
             title={t.faq}
             intro={t.faqIntro(firm.name)}
           />
-          <div className="space-y-3">
+          {/* Deux colonnes des md : une FAQ d'une douzaine de questions
+              produisait sinon un ruban vertical de 2 000 px juste avant le
+              CTA final. `items-start` empeche une reponse depliee d'etirer
+              sa voisine. */}
+          <div className="grid md:grid-cols-2 gap-x-6 gap-y-3 items-start">
             {generateFAQs(firm, isSubscription, locale).map((faq, i) => (
               <FAQItem key={i} question={faq.question} answer={faq.answer} />
             ))}

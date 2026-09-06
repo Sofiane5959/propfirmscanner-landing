@@ -201,10 +201,29 @@ export default async function PropFirmPage({ params }: Props) {
   // Every column here is required for a card to be publishable. A row missing
   // any of them is dropped rather than rendered with a blank cell: an
   // alternative shown without a price or a rating is not an alternative.
-  const SIMILAR_COLUMNS = 'id, name, slug, logo_url, trustpilot_rating, min_price, profit_split'
+  // Une seule chaine litterale, jamais une concatenation : le client Supabase
+  // deduit les colonnes du type litteral de cet argument. Coupee en deux avec
+  // un `+`, elle devient un `string` quelconque et la requete revient typee
+  // `GenericStringError[]`.
+  const SIMILAR_COLUMNS = 'id, name, slug, logo_url, trustpilot_rating, min_price, profit_split, affiliate_url, discount_code, discount_percent, discount_expires_at'
   const SIMILAR_LIMIT = 3
-  const isComplete = (f: Record<string, unknown>) =>
-    Boolean(f.name && f.slug && f.logo_url && f.trustpilot_rating && f.min_price && f.profit_split)
+
+  // Une alternative proposee ici doit etre actionnable : un lien d'affiliation
+  // qui fonctionne ET une remise verifiee encore valable. Sans les deux, la
+  // ligne est une impasse pour le visiteur et un lien mort pour le site.
+  //
+  // La date est evaluee a chaque rendu, pas figee a la construction : une
+  // offre expiree hier disparait d'elle-meme au lieu d'etre servie jusqu'a la
+  // prochaine revalidation manuelle.
+  const isComplete = (f: Record<string, unknown>) => {
+    if (!(f.name && f.slug && f.logo_url && f.trustpilot_rating && f.min_price && f.profit_split)) {
+      return false
+    }
+    if (!f.affiliate_url || !f.discount_code || !f.discount_percent) return false
+    const fin = f.discount_expires_at ? new Date(String(f.discount_expires_at)) : null
+    // Une date absente signifie « sans echeance publiee », pas « expiree ».
+    return !fin || Number.isNaN(fin.getTime()) || fin.getTime() > Date.now()
+  }
   const isFutures = firm.is_futures === true
 
   // Futures and forex firms are not alternatives to each other. Match the
@@ -215,7 +234,10 @@ export default async function PropFirmPage({ params }: Props) {
     .neq('id', firm.id)
     .eq('is_futures', isFutures)
     .order('trustpilot_rating', { ascending: false })
-    .limit(4)
+    // Large a dessein : exiger un code promo actif elimine la plupart des
+    // lignes, et demander 4 candidats pour en garder 3 ne laissait aucune
+    // marge. Le tri par note fait que les 30 premieres sont les meilleures.
+    .limit(30)
 
   type SimilarRow = {
     id: string
@@ -225,6 +247,10 @@ export default async function PropFirmPage({ params }: Props) {
     trustpilot_rating: number
     min_price: number
     profit_split: number
+    affiliate_url: string | null
+    discount_code: string | null
+    discount_percent: number | null
+    discount_expires_at: string | null
   }
   let similarFirms = ((matched || []) as SimilarRow[]).filter(isComplete)
 
@@ -239,8 +265,11 @@ export default async function PropFirmPage({ params }: Props) {
       .from('prop_firms')
       .select(SIMILAR_COLUMNS)
       .not('id', 'in', `(${exclude})`)
+      // Meme classe d'actifs ici aussi : une firme CFD n'est pas une
+      // alternative a une firme futures, et le complement l'ignorait.
+      .eq('is_futures', isFutures)
       .order('trustpilot_rating', { ascending: false })
-      .limit(SIMILAR_LIMIT - similarFirms.length)
+      .limit(30)
 
     similarFirms = [...similarFirms, ...((filler || []) as SimilarRow[]).filter(isComplete)]
   }

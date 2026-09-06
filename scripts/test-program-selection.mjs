@@ -277,6 +277,54 @@ console.log('14. Basculement de programme et rendu conditionnel des phases')
 }
 
 
+console.log('')
+console.log('15. Gabarit generique — ordre, unicite et accessibilite')
+{
+  const { readFileSync } = await import('node:fs')
+  const page = readFileSync('app/[locale]/prop-firm/[slug]/PropFirmPageClient.tsx', 'utf8')
+  const route = readFileSync('app/[locale]/prop-firm/[slug]/page.tsx', 'utf8')
+
+  // Un seul H1. Le nom de la firme est deja affiche comme etiquette d identite
+  // au-dessus ; un second titre le repeterait.
+  const nbH1 = page.split('<h1').length - 1
+  cas('un seul H1 dans la fiche', nbH1 === 1, String(nbH1))
+
+  // Les plateformes disqualifient une firme en deux secondes : elles doivent
+  // etre lisibles avant le configurateur, pas repliees en bas de page.
+  const posPlateformes = page.indexOf('id=\"platforms\"')
+  const posConfig = page.indexOf('id=\"challenges\"')
+  cas('les plateformes precedent le configurateur',
+    posPlateformes > 0 && posPlateformes < posConfig, `${posPlateformes} / ${posConfig}`)
+
+  // « About » doit etre une section, pas un paragraphe cache dans le pli des
+  // specifications completes.
+  const posAbout = page.indexOf('id=\"about\"')
+  const posReference = page.indexOf('id=\"reference\"')
+  cas('la section A propos existe hors du pli', posAbout > 0 && posAbout > posReference)
+
+  // Un lecteur d ecran doit entendre le changement de selection.
+  cas('region live polie sur la selection',
+    page.includes('aria-live=\"polite\"') && page.includes('annonceSelection'))
+
+  // La FAQ tenait sur une seule colonne : un ruban vertical avant le CTA.
+  cas('FAQ sur deux colonnes des md', page.includes('grid md:grid-cols-2 gap-x-6 gap-y-3 items-start'))
+
+  // Le brief interdit explicitement cette phrase sur la fiche.
+  cas('phrase interdite absente',
+    !page.includes('does not replace the complete trading agreement'))
+
+  // Aucune firme proposee en alternative sans lien actif ET code verifie actif.
+  for (const exigence of ['f.affiliate_url', 'f.discount_code', 'discount_expires_at']) {
+    cas('alternatives filtrees sur ' + exigence, route.includes(exigence))
+  }
+
+  // Tout lien sortant passe par le redirecteur interne : CLAUDE.md l impose et
+  // le brief le repete. Une URL partenaire en dur contournerait le tracking.
+  const enDur = page.match(/href=\"https?:\/\/(?!www\.propfirmscanner)/g) || []
+  cas('aucune URL partenaire en dur dans la fiche', enDur.length === 0, String(enDur.length))
+}
+
+
 console.log('\n' + '-'.repeat(50))
 console.log(`${ok} reussis, ${ko} echoues`)
 process.exit(ko === 0 ? 0 : 1)
