@@ -278,6 +278,34 @@ console.log('14. Basculement de programme et rendu conditionnel des phases')
 
 
 console.log('')
+console.log('17. Aucun contenu editorial ne fuit d une firme a l autre')
+{
+  const { FTMO, FUTURESELITE, THE5ERS } = await import('./firm-content.mjs')
+
+  // Quatre firmes partagent le titre « The rules that decide it ». Un
+  // remplacement par recherche de texte, sans ancrage sur la firme, avait
+  // recopie les regles de FuturesElite dans celles de FTMO — et le SQL
+  // genere l aurait ecrit en base.
+  const EMPREINTES = {
+    futureselite: ['16:55 EST', 'Nitro', 'Maximum Loss Limit', 'Rise'],
+    ftmo: ['FTMO', '1-Step', '2-Step'],
+    the5ers: ['The5ers', 'Summer'],
+  }
+  const texte = (firme) => JSON.stringify(firme?.arrays ?? {}) + JSON.stringify(firme?.scalars ?? {})
+
+  const cible = { ftmo: FTMO, futureselite: FUTURESELITE, the5ers: THE5ERS }
+  for (const [slug, firme] of Object.entries(cible)) {
+    if (!firme) continue
+    const t = texte(firme)
+    for (const [autre, marqueurs] of Object.entries(EMPREINTES)) {
+      if (autre === slug) continue
+      const fuites = marqueurs.filter((m) => t.includes(m))
+      cas(`${slug} ne porte aucune empreinte de ${autre}`, fuites.length === 0, fuites.join(', '))
+    }
+  }
+}
+
+console.log('')
 console.log('16. Donnees officielles du 7 septembre 2026')
 {
   const { FUTURESELITE_PARTNER_PROMOTION, FUTURESELITE_PROMOTIONS, FUTURESELITE_PLATFORMS, FUTURESELITE_PROGRAMS }
@@ -315,6 +343,33 @@ console.log('16. Donnees officielles du 7 septembre 2026')
   const nitro = FUTURESELITE_PROGRAMS.find((p) => p.slug === 'nitro')
   cas('aucun plafond Nitro chiffre', nitro.max_funded_accounts === null,
     String(nitro.max_funded_accounts))
+
+  // La comparaison SCANNED / offre publique doit se faire PLAN PAR PLAN.
+  // Une note unique au niveau firme serait fausse quatorze fois sur quinze.
+  const partenaire = FUTURESELITE_PARTNER_PROMOTION.discount_value
+  const moinsBons = FUTURESELITE_PROMOTIONS
+    .filter((p) => p.is_public && p.discount_value > partenaire)
+    .map((p) => `${p.program_slug} ${p.account_size}`)
+  cas('exactement trois plans ou l offre publique fait mieux', moinsBons.length === 3,
+    moinsBons.join(', '))
+  cas('et ce sont les trois Prime',
+    moinsBons.every((x) => x.startsWith('prime')), moinsBons.join(', '))
+  cas('SCANNED fait mieux sur l Elite 25K',
+    FUTURESELITE_PROMOTIONS.find((p) => p.program_slug === 'elite' && p.account_size === 25000)
+      .discount_value < partenaire)
+
+  // Les 3 jours d evaluation et les 6 jours profitables avant retrait sont
+  // deux regles distinctes, jamais un conflit : elles portent sur deux phases.
+  const { FUTURESELITE_RULES } = await import('./futureselite-programs.mjs')
+  cas('aucun conflit invente sur les jours minimum',
+    !FUTURESELITE_RULES.some((r) => /minimum trading days/i.test(r.title) &&
+      r.confidence === 'needs_confirmation'))
+
+  // Le desaccord Nitro ne s appuie que sur deux sources officielles : le
+  // bundle de cinq comptes ne dit rien du nombre de comptes finances.
+  const nitroRegle = FUTURESELITE_RULES.find((r) => /nitro funded accounts/i.test(r.title))
+  cas('le desaccord Nitro n invoque pas le bundle',
+    nitroRegle && !/bundle/i.test(nitroRegle.detail), nitroRegle?.detail?.slice(0, 60))
 
   // Instant : pas de 25K achetable, et 80 % de partage et non 90.
   const instant = FUTURESELITE_PROGRAMS.find((p) => p.kind === 'instant')

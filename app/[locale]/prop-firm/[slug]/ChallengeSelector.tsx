@@ -64,6 +64,14 @@ interface Props {
   discountCode?: string | null
   discountPercent?: number | null
   discountNote?: string | null
+  /**
+   * Note propre a la ligne selectionnee, prioritaire sur `discountNote`.
+   *
+   * Une remise partenaire peut etre meilleure que l'offre publique sur un plan
+   * et moins bonne sur un autre. Un avertissement fixe au niveau firme se
+   * tromperait donc sur la majorite des plans.
+   */
+  discountNoteFor?: (challengeId: string) => string | null
   includedItems?: string[] | null
   /**
    * Remonte l'identifiant de la ligne choisie a chaque changement de programme
@@ -369,6 +377,7 @@ export default function ChallengeSelector({
   discountCode,
   discountPercent,
   discountNote,
+  discountNoteFor,
   includedItems,
   onSelectionChange,
 }: Props) {
@@ -681,7 +690,9 @@ export default function ChallengeSelector({
               </p>
               {displayPrice.hasDiscount && displayPrice.original !== null && (
                 <p className="text-gray-500 text-sm mt-1">
-                  {discountNote ? `${discountNote} ` : ''}
+                  {(currentChallenge?.id ? discountNoteFor?.(currentChallenge.id) : null) ?? discountNote
+                    ? `${(currentChallenge?.id ? discountNoteFor?.(currentChallenge.id) : null) ?? discountNote} `
+                    : ''}
                   <span className="text-gray-400">
                     {formatPrice(displayPrice.original, priceSuffix, locale, currency)} {t.normally}
                   </span>

@@ -105,8 +105,15 @@ export interface AdaptedPrograms {
   currency: string | null
   /** Code applique au prix remise, quand une promotion active en porte un. */
   discountCode: string | null
-  /** Note a afficher quand une offre publique fait mieux que notre code. */
-  betterPublicOffer: string | null
+  /**
+   * Note propre a CHAQUE ligne, indexee par identifiant de plan.
+   *
+   * Une note unique au niveau firme etait fausse quatorze fois sur quinze :
+   * elle avertissait « l'offre publique fait mieux » y compris sur les plans
+   * ou notre code est meilleur ou egal. La comparaison se fait donc pour le
+   * plan reellement selectionne, jamais pour la firme en bloc.
+   */
+  publicOfferNoteByPlan: Record<string, string>
 }
 
 /**
@@ -176,7 +183,7 @@ export function programsToChallenges(
   const challenges: Challenge[] = []
   const devises = new Set<string>()
   const codes = new Set<string>()
-  const meilleuresPubliques: { programme: string; taille: string; pourcent: number }[] = []
+  const notesParPlan: Record<string, string> = {}
 
   for (const program of vendables) {
     for (const { variantKey, size } of combinationsOf(program)) {
@@ -204,14 +211,11 @@ export function programsToChallenges(
         promo.partenaire &&
         promo.publique.discount_value > promo.partenaire.discount_value
       ) {
-        // On note QUELS plans sont concernes, pas seulement qu'il en existe.
-        // Une note generale « l'offre publique fait mieux » serait fausse sur
-        // les quatorze plans ou notre code egale ou depasse l'offre publique.
-        meilleuresPubliques.push({
-          programme: program.name,
-          taille: sizeLabel(size),
-          pourcent: Math.round(promo.publique.discount_value * 100),
-        })
+        // Uniquement sur ce plan-ci. Un plan ou notre code egale ou depasse
+        // l'offre publique ne recoit aucune note : l'avertir serait faux.
+        notesParPlan[planKey(program.slug, variantKey, size)] =
+          `The firm currently advertises ${Math.round(promo.publique.discount_value * 100)}% ` +
+          `publicly on this plan, above this code. Check the checkout total before paying.`
       }
 
       const etiquetteVariante = variantLabel(variantKey)
@@ -310,15 +314,6 @@ export function programsToChallenges(
     discountCode: codes.size === 1 ? Array.from(codes)[0] : null,
     // Formule au pluriel prudent : la meilleure offre publique varie selon le
     // programme, on ne promet donc pas un chiffre unique.
-    // Nommee : le visiteur doit savoir SUR QUOI l'offre publique fait mieux.
-    // Vague, la note ferait douter du prix affiche sur tous les plans, y
-    // compris ceux ou notre code est le meilleur.
-    betterPublicOffer:
-      meilleuresPubliques.length > 0
-        ? `On ${Array.from(new Set(meilleuresPubliques.map((m) => m.programme))).join(' and ')} ` +
-          `${meilleuresPubliques.map((m) => m.taille).join(', ')}, the firm currently advertises ` +
-          `${Math.max(...meilleuresPubliques.map((m) => m.pourcent))}% publicly, above this code. ` +
-          `Check the checkout total before paying.`
-        : null,
+    publicOfferNoteByPlan: notesParPlan,
   }
 }

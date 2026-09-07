@@ -68,12 +68,16 @@ export const FUTURESELITE_PROGRAMS = [
     kind: 'evaluation',
     evaluation_steps: 1,
     sort_order: 2,
-    // Aucun chiffre publie : la FAQ dit 3, le configurateur a affiche MAX 4
-    // FUNDED, et le bundle en vend jusqu'a 5. Trois sources officielles, trois
-    // reponses. Choisir la plus prudente resterait un choix, pas un fait.
+    // Aucun chiffre publie : la FAQ dit 3, le configurateur a affiche
+    // MAX 4 FUNDED. Deux sources officielles, deux reponses.
+    //
+    // Le bundle de cinq comptes ne compte PAS comme troisieme source : acheter
+    // cinq evaluations ne dit rien du nombre de comptes qu'on peut detenir
+    // FINANCES en meme temps. Les additionner gonflait artificiellement le
+    // desaccord.
     max_funded_accounts: null,
     max_funded_note:
-      'Unresolved: the official FAQ states 3 active funded Nitro accounts, configurator cross-sell copy displayed MAX 4 FUNDED, and the bundle sells up to 5. Confirm with the firm before relying on any figure.',
+      'Unresolved: the official FAQ states 3 active funded Nitro accounts, while configurator cross-sell copy displayed MAX 4 FUNDED. Confirm with the firm before relying on either figure.',
     summary:
       'One-step evaluation with the lowest minimum trading days. Once funded it switches to a trailing-equity drawdown with a buffer.',
     source_url: PRICING,
@@ -311,9 +315,6 @@ export const FUTURESELITE_RULES = [
   // Les deux peuvent etre vrais, ce sont deux etapes differentes — mais la
   // source ne le dit pas explicitement, donc on ne tranche pas a sa place. La
   // regle est publiee comme non resolue, avec ses deux liens.
-  // La colonne ne porte qu'une source ; le second lien est donc nomme dans le
-  // texte, sans quoi le lecteur ne pourrait verifier qu'une moitie du conflit.
-  ['payout', 'Elite 25K minimum trading days', 'Unresolved: the configurator at ' + PRICING + ' states 3 trading days, and the payout FAQ at ' + FAQ + '11949982-what-is-the-payout-process-like-on-futures-elite states 6. They may describe two different steps — completing the evaluation, then becoming eligible for a payout — but no official page says so. Check both before relying on either.', 'payout_condition', 'needs_confirmation', PRICING],
   // Un « jour profitable » a un seuil minimal, propre a la taille du compte.
   // Sans lui, « 6 jours avant retrait » se lit comme six jours de presence,
   // alors qu'un jour a +20 $ ne compte pas. C'est un bloqueur de retrait, pas

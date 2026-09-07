@@ -808,10 +808,12 @@ export default function PropFirmPageClient({
         // Le code et la remise viennent des promotions normalisees, pas des
         // colonnes firme : elles varient par programme et par taille.
         code: adapte.discountCode ?? promotion.code,
-        note: adapte.betterPublicOffer ?? firm.discount_note,
+        note: firm.discount_note,
+        // La comparaison avec l'offre publique se fait plan par plan.
+        noteFor: (id: string) => adapte.publicOfferNoteByPlan[id] ?? null,
       }
     : challengesUtilisables
-      ? { challenges, guide: firm.program_guide, currency, code: promotion.code, note: firm.discount_note }
+      ? { challenges, guide: firm.program_guide, currency, code: promotion.code, note: firm.discount_note, noteFor: undefined }
       : null
 
   // Une seule reponse a « la page propose-t-elle d'acheter ici ? ». Elle
@@ -1160,6 +1162,7 @@ export default function PropFirmPageClient({
             discountCode={configurateur.code}
             discountPercent={promotion.percent}
             discountNote={configurateur.note}
+            discountNoteFor={configurateur.noteFor}
             includedItems={toArray(firm.included_items)}
             onSelectionChange={programData ? setSelectionKey : undefined}
           />

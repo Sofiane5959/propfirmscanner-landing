@@ -141,84 +141,42 @@ export const FTMO = {
     },
     key_rules: {
       title: 'The rules that decide it',
-      intro:
-        'Grouped by what they cost you: losing the account, blocking a payout, or limiting how you trade.',
-      // Trois categories, dans l'ordre de la consequence. Une regle qui fait
-      // perdre le compte et une regle qui limite le scalping ne meritent pas
-      // le meme poids visuel : les melanger obligeait le lecteur a les trier
-      // lui-meme.
+      intro: 'Five points most comparison sites get wrong.',
       rules: [
         {
-          category: 'Account-failure rules',
-          title: 'Maximum Loss Limit',
+          title: 'The split depends on the product',
           detail:
-            'The only hard risk boundary: there is no daily loss limit in either phase. It is recalculated once a day on the closing balance, so a floating loss does not trip it until the day closes. Breaching it ends the account.',
-          severity: 'hard_breach',
+            '90% on the 1-Step, unconditionally. 80% on the 2-Step, rising to 90% through the Scaling Plan. Pages that advertise "up to 90%" across the range hide the fact that the 1-Step starts there.',
         },
         {
-          category: 'Account-failure rules',
-          title: 'Positions must close before 16:55 EST',
+          title: 'Only the 2-Step refunds the fee',
           detail:
-            'Overnight holding is not allowed and automatic liquidation may occur. The session runs 18:00 EST to 16:55 EST the following day.',
-          severity: 'hard_breach',
+            'The 2-Step returns 100% of the challenge price with your first reward. On the 1-Step, FTMO advertises no refund. Cheaper on the sticker, the 1-Step therefore costs more once you are funded.',
         },
         {
-          category: 'Account-failure rules',
-          title: '30 days without a trade closes a live account',
+          title: 'The daily loss differs, and is measured on equity',
           detail:
-            'Inactivity on a live account is permanent closure, not a suspension.',
-          severity: 'hard_breach',
+            '3% on the 1-Step, 5% on the 2-Step. It is measured on equity — floating losses, commissions and swaps included — and resets at midnight CE(S)T, not in your own time zone.',
         },
         {
-          category: 'Passing or payout blockers',
-          title: 'Minimum trading days',
+          title: 'The 1-Step drawdown trails, then locks',
           detail:
-            'Three trading days to complete the evaluation. A separate minimum applies before a payout can be requested, and the two figures are documented inconsistently for the Elite 25K: see the phase rules.',
-          severity: 'payout_condition',
+            'It rises with your highest closing balance, then stops for good once it reaches the starting balance. The 2-Step is on a fixed drawdown from the first trade.',
         },
         {
-          category: 'Passing or payout blockers',
-          title: 'Consistency rule during the evaluation only',
+          title: 'There is no reset',
           detail:
-            'It disappears on the funded account. The sales page shows 40% and 50% side by side without saying which applies.',
-          severity: 'payout_condition',
-        },
-        {
-          category: 'Passing or payout blockers',
-          title: 'Per-request payout cap',
-          detail:
-            'From $1,000 on a 25K up to $3,000 on a 150K, with a $500 minimum on Elite. Payouts can be requested daily once eligible, through Rise, after KYC.',
-          severity: 'payout_condition',
-        },
-        {
-          category: 'Trading restrictions',
-          title: 'No fully automated trading',
-          detail:
-            'AI systems and bots are not permitted. Semi-automated assistance is not defined by the firm.',
-          severity: 'restriction',
-        },
-        {
-          category: 'Trading restrictions',
-          title: 'A stop order is required on every live position',
-          detail:
-            'Applies to live accounts. Protective stops are a stated trader responsibility, not a recommendation.',
-          severity: 'restriction',
-        },
-        {
-          category: 'Trading restrictions',
-          title: 'How many accounts you can hold at once',
-          detail:
-            'Ten funded accounts overall and five combined across Elite, Custom, Instant and Nitro. The Nitro-only cap is disputed between official sources, so no figure is published here. Buying a bundle does not raise the overall limits.',
-          severity: 'restriction',
+            'A failed challenge cannot be restarted at a discount: you buy a whole new one. That is a real cost difference against firms charging 50% for a reset.',
         },
       ],
       more: [
-        'No activation fee on the funded account; reset fees run $79 to $229 by size',
-        'No profit buffer required',
-        'No time limit to pass, and a one-time fee rather than a subscription',
-        'Seven platforms to choose from, including Tradovate and NinjaTrader',
-        'The fifth account in a bundle is free',
-        'Exchange market data and commissions are the trader\u2019s cost on a live account',
+        'No time limit on any of the three routes',
+        'No fixed minimum days on the 1-Step; 4 per phase on the 2-Step',
+        'No activation fee on the funded account',
+        'No mandatory stop-loss',
+        'Leverage up to 1:100 on Standard, 1:30 on Swing',
+        'Scaling Plan: +25% balance every 4 months, on the 2-Step',
+        'MT4, MT5, cTrader and TradingView',
       ],
     },
     journey: {
@@ -665,35 +623,84 @@ export const FUTURESELITE = {
     ],
     key_rules: {
       title: 'The rules that decide it',
-      intro: 'What genuinely sets FuturesElite apart from other futures firms.',
+      intro:
+        'Grouped by what they cost you: losing the account, blocking a payout, or limiting how you trade.',
+      // Trois categories, dans l'ordre de la consequence. Une regle qui fait
+      // perdre le compte et une regle qui limite le scalping ne meritent pas
+      // le meme poids visuel : les melanger obligeait le lecteur a les trier
+      // lui-meme.
       rules: [
         {
-          title: 'No daily loss limit',
+          category: 'Account-failure rules',
+          title: 'Maximum Loss Limit',
           detail:
-            'Neither during the evaluation nor once funded. Risk is bounded by the Maximum Loss Limit alone, recalculated at the end of each day. That is the firm\u2019s headline argument, not a missing figure.',
+            'The only hard risk boundary: there is no daily loss limit in either phase. It is recalculated once a day on the closing balance, so a floating loss does not trip it until the day closes. Breaching it ends the account.',
+          severity: 'hard_breach',
         },
         {
-          title: 'End-of-day drawdown',
+          category: 'Account-failure rules',
+          title: 'Positions must close before 16:55 EST',
           detail:
-            'The limit updates once a day on the closing balance, not continuously. A position sitting at a floating loss therefore does not trip the limit until the day closes.',
+            'Overnight holding is not allowed and automatic liquidation may occur. The session runs 18:00 EST to 16:55 EST the following day.',
+          severity: 'hard_breach',
         },
         {
-          title: 'No consistency rule once funded',
+          category: 'Account-failure rules',
+          title: '30 days without a trade closes a live account',
           detail:
-            'The rule applies during the evaluation and then disappears on the funded account. The sales page shows two figures side by side, 40% and 50%, without saying which applies: to be confirmed with the partner.',
+            'Inactivity on a live account is permanent closure, not a suspension.',
+          severity: 'hard_breach',
         },
         {
-          title: 'No activation fee',
+          category: 'Passing or payout blockers',
+          title: 'Minimum trading days',
           detail:
-            'Passing the evaluation is enough to open the funded account. Reset fees do exist: $79 to $229 by size.',
+            'Two counts, not one figure: three trading days to complete the Elite evaluation, then six profitable days before a payout can be requested. They apply to different phases and both hold.',
+          severity: 'payout_condition',
+        },
+        {
+          category: 'Passing or payout blockers',
+          title: 'Consistency rule during the evaluation only',
+          detail:
+            'It disappears on the funded account. The sales page shows 40% and 50% side by side without saying which applies.',
+          severity: 'payout_condition',
+        },
+        {
+          category: 'Passing or payout blockers',
+          title: 'Per-request payout cap',
+          detail:
+            'From $1,000 on a 25K up to $3,000 on a 150K, with a $500 minimum on Elite. Payouts can be requested daily once eligible, through Rise, after KYC.',
+          severity: 'payout_condition',
+        },
+        {
+          category: 'Trading restrictions',
+          title: 'No fully automated trading',
+          detail:
+            'AI systems and bots are not permitted. Semi-automated assistance is not defined by the firm.',
+          severity: 'restriction',
+        },
+        {
+          category: 'Trading restrictions',
+          title: 'A stop order is required on every live position',
+          detail:
+            'Applies to live accounts. Protective stops are a stated trader responsibility, not a recommendation.',
+          severity: 'restriction',
+        },
+        {
+          category: 'Trading restrictions',
+          title: 'How many accounts you can hold at once',
+          detail:
+            'Ten funded accounts overall and five combined across Elite, Custom, Instant and Nitro. The Nitro-only cap is disputed between official sources, so no figure is published here. Buying a bundle does not raise the overall limits.',
+          severity: 'restriction',
         },
       ],
       more: [
-        'Payouts available every day once funded',
-        '6 minimum trading days before a payout',
+        'No activation fee on the funded account; reset fees run $79 to $229 by size',
         'No profit buffer required',
-        'Six platforms selectable at purchase, including Tradovate and NinjaTrader; two more appear on the marketing page only',
+        'No time limit to pass, and a one-time fee rather than a subscription',
+        'Seven platforms to choose from, including Tradovate and NinjaTrader',
         'The fifth account in a bundle is free',
+        'Exchange market data and commissions are the trader\u2019s cost on a live account',
       ],
     },
     journey: {
