@@ -1,0 +1,67 @@
+
+RAPPORT DE PROVENANCE — FirmPageModel, pilote FuturesElite
+==============================================================================
+champ du modele                       table                   colonne
+------------------------------------------------------------------------------
+identity.name                         prop_firms              name
+identity.headline                     prop_firms              headline
+identity.intro                        prop_firms              verdict
+identity.verifiedAt                   prop_firms              data_verified_at
+programs                              firm_programs           slug,name,kind,market,evaluation_steps,summary
+programs[].plans[].phases[]           firm_program_plans      *
+firmFacts                             firm_program_plans      derive par universalFact
+catalogue.platforms                   firm_platforms          name,configurator_status,note
+catalogue.assets                      prop_firms              assets
+catalogue.dataFeeds                   prop_firms              checkout_options
+offer                                 firm_promotions         code,discount_value,is_public,status,starts_at,expires_at
+rules.critical                        prop_firms              key_rules
+rules.complete                        firm_rules              scope,title,detail,severity,confidence,source_url
+bundles                               firm_program_bundles    program_slug,account_number,discount_percent,note
+liveTiers                             firm_live_tiers         account_size,conversion_cap,loss_floor,cushion
+narrative.about                       prop_firms              description
+narrative.strengths                   prop_firms              pros
+narrative.limits                      prop_firms              cons
+narrative.verdict                     prop_firms              verdict_card
+narrative.journey                     prop_firms              journey
+
+CONTENU CONSTRUIT
+------------------------------------------------------------------------------
+  programmes vendables       4
+  plans                      15
+  plan par defaut            elite||25000
+  faits de firme             2
+      - No activation fee (True on every program)
+      - futures only (Every program trades the same market)
+  plateformes                8 dont 6 selectionnables
+  regles critiques           9
+  regles detaillees          33
+  paliers de bundle          25
+  paliers live               5
+  code promo                 SCANNED
+  plans avec avertissement   3
+
+TESTS SEMANTIQUES SUR LE MODELE
+------------------------------------------------------------------------------
+  ok   Instant est toujours a 80 %
+  ok   Instant est en fin de journee
+  ok   Instant demarre a 20 % de regularite
+  ok   Nitro finance est en Trailing Equity
+  ok   Prime porte une limite journaliere dans les deux phases
+  ok   Prime garde 40 % de regularite une fois finance
+  ok   Elite et Nitro paient 90 %
+  ok   six plateformes selectionnables
+  ok   les plateformes marketing ne sont pas selectionnables
+  ok   SCANNED vaut 30 %
+  ok   l offre ne promet aucun preremplissage
+  ok   trois plans seulement portent l avertissement de prix
+
+  ok   fait de firme legitime : « No activation fee »
+  ok   fait de firme legitime : « futures only »
+
+  ok   firm_rules atteint le modele
+  ok   firm_platforms atteint le modele
+  ok   firm_program_bundles atteint le modele
+  ok   firm_live_tiers atteint le modele
+
+------------------------------------------------------------------------------
+18 reussis, 0 echoues

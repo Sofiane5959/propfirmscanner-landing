@@ -526,6 +526,11 @@ export const FUTURESELITE = {
     min_price: 95,
     max_price: 353,
     is_futures: true,
+    // Herite du seed et sans objet ici : l'exposition d'un compte futures se
+    // mesure en contrats, pas en levier forex. Le composant ne rend plus la
+    // ligne sur une firme futures ; on efface aussi la valeur pour que la
+    // colonne ne resurgisse pas ailleurs (comparateur, export, flux).
+    leverage_forex: null,
     drawdown_type: 'End of day',
     time_limit: 'No time limit',
     payout_frequency: 'on demand, daily once funded',

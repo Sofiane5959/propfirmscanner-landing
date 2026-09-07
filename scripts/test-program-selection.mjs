@@ -281,6 +281,9 @@ console.log('')
 console.log('19. Les six formulations refusees ne reviennent nulle part')
 {
   const { execSync } = await import('node:child_process')
+  // Les fichiers DIAGNOSTIC-*.sql et ce fichier de test citent ces phrases
+  // comme PREDICATS de detection : les y interdire reviendrait a interdire
+  // de les chercher. Seul le contenu rendu est concerne.
   // Elles avaient survecu dans le bloc de traduction francaise et dans un
   // texte anglais que j'avais redige moi-meme. Une correction des colonnes de
   // base ne suffit pas : la surcouche `translations` sert le meme visiteur.
@@ -300,7 +303,7 @@ console.log('19. Les six formulations refusees ne reviennent nulle part')
     let trouve = ''
     try {
       trouve = execSync(
-        `grep -rlni ${JSON.stringify(phrase)} --include=*.mjs --include=*.tsx --include=*.ts --include=*.sql . 2>/dev/null | grep -v node_modules | grep -v '[.]next' | grep -v test-program-selection || true`,
+        `grep -rlni ${JSON.stringify(phrase)} --include=*.mjs --include=*.tsx --include=*.ts --include=*.sql . 2>/dev/null | grep -v node_modules | grep -v '[.]next' | grep -v test-program-selection | grep -v DIAGNOSTIC- || true`,
         { encoding: 'utf8', shell: 'bash' }
       ).trim()
     } catch { trouve = '' }

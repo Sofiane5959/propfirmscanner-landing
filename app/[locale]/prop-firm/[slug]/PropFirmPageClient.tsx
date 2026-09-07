@@ -843,7 +843,13 @@ export default function PropFirmPageClient({
 
   // Reference specs live in a collapsed block: complete, but not in the way.
   const specs: { label: string; value: string }[] = []
-  if (firm.leverage_forex) specs.push({ label: 'Leverage (forex)', value: firm.leverage_forex })
+  // Le levier forex ne veut rien dire sur une firme futures, ou l'exposition
+  // se mesure en contrats. La colonne existe sur toutes les fiches par
+  // heritage du seed ; on ne la rend que la ou elle a un sens. Corrige la
+  // classe entiere, pas seulement FuturesElite.
+  if (firm.leverage_forex && !firm.is_futures) {
+    specs.push({ label: 'Leverage (forex)', value: firm.leverage_forex })
+  }
   if (payoutSpeed) specs.push({ label: 'Payout speed', value: payoutSpeed })
   if (firm.min_payout) specs.push({ label: 'Minimum payout', value: `$${firm.min_payout}` })
   if (firm.scaling_max) specs.push({ label: 'Scaling plan', value: `Up to ${cleanMoneyLabel(firm.scaling_max)}` })
@@ -910,7 +916,10 @@ export default function PropFirmPageClient({
   const offreMiseEnAvant = useMemo(() => {
     const code = configurateur?.code
     if (!code) return null
-    const l = configurateur?.challenges.find((c) => c.id === selectionKey) ?? null
+    const l =
+      configurateur?.challenges.find((c) => c.id === selectionKey) ??
+      configurateur?.challenges[0] ??
+      null
     const devise = configurateur?.currency || 'USD'
     const pourcent =
       l?.price != null && l.discounted_price != null
@@ -934,7 +943,16 @@ export default function PropFirmPageClient({
 
   // La ligne selectionnee, lue une seule fois ici. Le CTA final et la region
   // live la partagent : deux etats separes finissaient toujours par diverger.
-  const ligneChoisie = configurateur?.challenges.find((c) => c.id === selectionKey) ?? null
+  // Le premier plan fait office de selection par defaut AVANT hydratation.
+  // Sans ce repli, `selectionKey` valait null au rendu serveur : le bloc
+  // d'offre et le CTA final n'existaient pas dans le HTML, donc invisibles
+  // pour un moteur de recherche et absents d'un PDF capture tot.
+  // Le configurateur ouvre lui aussi sur le premier programme et la plus
+  // petite taille : les deux defauts coincident.
+  const ligneChoisie =
+    configurateur?.challenges.find((c) => c.id === selectionKey) ??
+    configurateur?.challenges[0] ??
+    null
 
   // Le texte annonce nomme la ligne choisie, pas « selection modifiee » : le
   // lecteur doit savoir CE qui est selectionne, sans revenir en arriere.

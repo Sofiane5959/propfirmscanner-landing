@@ -153,12 +153,28 @@ export interface FirmRule {
   source_url: string | null
 }
 
+/** Bareme de conversion vers le compte live. */
+export interface LiveTier {
+  account_size: number
+  conversion_cap: number | null
+  loss_floor: number | null
+  cushion: number | null
+  daily_minimum: number | null
+  max_mini: number | null
+  max_micro: number | null
+}
+
 export interface FirmProgramData {
   programs: Program[]
   promotions: Promotion[]
   bundles: BundleStep[]
   platforms: PlatformRow[]
   rules: FirmRule[]
+  /**
+   * La table etait remplie par le SQL mais jamais interrogee : la progression
+   * vers le compte live n'atteignait donc jamais la page.
+   */
+  liveTiers: LiveTier[]
 }
 
 /**
@@ -185,7 +201,7 @@ export async function loadFirmPrograms(
 
   const ids = (programs as { id: string }[]).map((p) => p.id)
 
-  const [plansRes, promosRes, bundlesRes, platformsRes, rulesRes] = await Promise.all([
+  const [plansRes, promosRes, bundlesRes, platformsRes, rulesRes, tiersRes] = await Promise.all([
     supabase
       .from('firm_program_plans')
       .select('*')
@@ -195,6 +211,7 @@ export async function loadFirmPrograms(
     supabase.from('firm_program_bundles').select('*').eq('firm_slug', firmSlug).order('account_number', { ascending: true }),
     supabase.from('firm_platforms').select('*').eq('firm_slug', firmSlug).order('sort_order', { ascending: true }),
     supabase.from('firm_rules').select('*').eq('firm_slug', firmSlug).order('sort_order', { ascending: true }),
+    supabase.from('firm_live_tiers').select('*').eq('firm_slug', firmSlug).order('account_size', { ascending: true }),
   ])
 
   const plansByProgram = new Map<string, ProgramPlan[]>()
@@ -213,6 +230,7 @@ export async function loadFirmPrograms(
     bundles: (bundlesRes.data || []) as BundleStep[],
     platforms: (platformsRes.data || []) as PlatformRow[],
     rules: (rulesRes.data || []) as FirmRule[],
+    liveTiers: (tiersRes.data || []) as LiveTier[],
   }
 }
 

@@ -2,6 +2,18 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
 import PropFirmPageClient from './PropFirmPageClient'
+import FirmPage from '@/components/prop-firm/FirmPage'
+import { buildFirmPageModel } from '@/lib/firm-page-model'
+import { buildAffiliateUrl } from '@/lib/affiliate'
+
+/**
+ * Fiches servies par le modele unifie.
+ *
+ * Liste volontairement explicite plutot qu'un drapeau global : la bascule
+ * se decide firme par firme, et une regression ne peut toucher que les
+ * slugs enumeres ici.
+ */
+const PILOTE_MODELE = new Set(['futureselite'])
 import { generateDynamicAlternates, localeHref } from '@/lib/seo'
 import { resolvePromotion } from '@/lib/promotion'
 import { loadFirmPrograms } from '@/lib/firm-programs'
@@ -412,13 +424,28 @@ export default async function PropFirmPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
 
-      <PropFirmPageClient
-        firm={firmForLocale}
-        similarFirms={similarFirms}
-        challenges={challenges || []}
-        programData={programData}
-        locale={locale}
-      />
+      {/* PHASE PILOTE.
+          Le nouveau rendu ne s'active que pour les slugs listes ici. Les ~349
+          autres fiches continuent d'emprunter le chemin actuel, inchange.
+          `FirmPage` est GENERIQUE : aucun code n'y branche sur une firme, et
+          elargir le pilote se fait en ajoutant un slug a cette liste.
+          Le modele est construit COTE SERVEUR : le composant recoit un objet
+          complet et n'interroge plus aucune table. */}
+      {PILOTE_MODELE.has(firm.slug) ? (
+        <FirmPage
+          model={buildFirmPageModel(firm as never, programData)}
+          ctaHref={buildAffiliateUrl(firm.slug, { placement: 'hero', locale })}
+          locale={locale}
+        />
+      ) : (
+        <PropFirmPageClient
+          firm={firmForLocale}
+          similarFirms={similarFirms}
+          challenges={challenges || []}
+          programData={programData}
+          locale={locale}
+        />
+      )}
     </>
   )
 }

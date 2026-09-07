@@ -55,6 +55,7 @@ The caveat matters more than the pricing. Quantum SRL holds no financial regulat
   min_price            = 95,
   max_price            = 353,
   is_futures           = true,
+  leverage_forex       = null,
   drawdown_type        = 'End of day',
   time_limit           = 'No time limit',
   payout_frequency     = 'on demand, daily once funded',

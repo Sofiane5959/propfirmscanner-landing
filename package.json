@@ -9,7 +9,8 @@
     "lint": "next lint",
     "i18n:check": "node scripts/i18n-audit.mjs",
     "i18n:strict": "node scripts/i18n-audit.mjs --strict",
-    "test:programs": "node scripts/test-program-selection.mjs"
+    "test:programs": "node scripts/test-program-selection.mjs",
+    "model:report": "node scripts/firm-page-model-report.mjs"
   },
   "dependencies": {
     "@supabase/auth-helpers-nextjs": "^0.10.0",
