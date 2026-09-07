@@ -38,6 +38,8 @@ export const FUTURESELITE_PROGRAMS = [
   // ---------------------------------------------------------------------------
   {
     slug: 'elite',
+    market: 'futures',
+    status: 'active',
     name: 'Elite',
     kind: 'evaluation',
     evaluation_steps: 1,
@@ -64,6 +66,8 @@ export const FUTURESELITE_PROGRAMS = [
   // ---------------------------------------------------------------------------
   {
     slug: 'nitro',
+    market: 'futures',
+    status: 'active',
     name: 'Nitro',
     kind: 'evaluation',
     evaluation_steps: 1,
@@ -97,6 +101,8 @@ export const FUTURESELITE_PROGRAMS = [
   // ---------------------------------------------------------------------------
   {
     slug: 'prime',
+    market: 'futures',
+    status: 'active',
     name: 'Prime',
     kind: 'evaluation',
     evaluation_steps: 1,
@@ -122,6 +128,8 @@ export const FUTURESELITE_PROGRAMS = [
   // ---------------------------------------------------------------------------
   {
     slug: 'instant',
+    market: 'futures',
+    status: 'active',
     name: 'Instant',
     kind: 'instant',
     evaluation_steps: null,

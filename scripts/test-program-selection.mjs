@@ -278,6 +278,26 @@ console.log('14. Basculement de programme et rendu conditionnel des phases')
 
 
 console.log('')
+console.log('20. Aucune colonne dont la page depend n est laissee a son defaut')
+{
+  const { readFileSync } = await import('node:fs')
+  const sql = readFileSync('database/RUN-futureselite-programs.sql', 'utf8')
+  const entete = (sql.match(/insert into firm_programs \(([^)]*)\)/) || [])[1] || ''
+
+  // `market` valait 'cfd' par defaut : la fiche annoncait « cfd prop firm »
+  // sur une firme futures, et perdait le fait « Futures only ». Un defaut de
+  // schema n'est pas une valeur verifiee.
+  for (const colonne of ['market', 'status']) {
+    cas('firm_programs ecrit ' + colonne, entete.includes(colonne), entete)
+  }
+  cas('le marche insere est futures', /'futures'/.test(sql))
+
+  // La meme exigence sur les plans : la devise decide de l affichage du prix.
+  const enPlans = (sql.match(/insert into firm_program_plans \(([^)]*)\)/) || [])[1] || ''
+  cas('firm_program_plans ecrit currency', enPlans.includes('currency'), enPlans.slice(0, 120))
+}
+
+console.log('')
 console.log('19. Les six formulations refusees ne reviennent nulle part')
 {
   const { execSync } = await import('node:child_process')

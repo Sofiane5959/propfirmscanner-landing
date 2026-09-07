@@ -293,9 +293,17 @@ function buildData() {
   L.push('')
   L.push('')
   L.push('-- 2. Les quatre programmes')
-  L.push('insert into firm_programs (firm_slug, slug, name, kind, evaluation_steps, summary, sort_order, max_funded_accounts, max_funded_note, source_url, verified_at) values')
+  // `market` et `status` sont ecrits EXPLICITEMENT. Omis, ils prenaient leurs
+  // defauts de schema — `market` vaut 'cfd' par defaut, ce qui faisait annoncer
+  // « cfd prop firm » sur une firme futures et supprimait le fait « Futures
+  // only », dont la construction exige que les programmes et la fiche soient
+  // d'accord sur le marche.
+  //
+  // Un defaut de colonne n'est pas une valeur verifiee : toute colonne dont la
+  // page depend doit etre ecrite, jamais laissee au schema.
+  L.push('insert into firm_programs (firm_slug, slug, name, market, status, kind, evaluation_steps, summary, sort_order, max_funded_accounts, max_funded_note, source_url, verified_at) values')
   L.push(FUTURESELITE_PROGRAMS.map((p) =>
-    `  (${S(F)}, ${S(p.slug)}, ${S(p.name)}, ${S(p.kind)}, ${N(p.evaluation_steps)}, ${S(p.summary)}, ${N(p.sort_order)}, ${N(p.max_funded_accounts)}, ${S(p.max_funded_note)}, ${S(p.source_url)}, ${D(V)})`
+    `  (${S(F)}, ${S(p.slug)}, ${S(p.name)}, ${S(p.market || 'futures')}, ${S(p.status || 'active')}, ${S(p.kind)}, ${N(p.evaluation_steps)}, ${S(p.summary)}, ${N(p.sort_order)}, ${N(p.max_funded_accounts)}, ${S(p.max_funded_note)}, ${S(p.source_url)}, ${D(V)})`
   ).join(',\n') + ';')
   L.push('')
   L.push('')
@@ -308,6 +316,10 @@ function buildData() {
       const news = NEWS_STATUS[pl.phase] ?? null
       planRows.push('  (' + [
         `(select id from firm_programs where firm_slug = ${S(F)} and slug = ${S(p.slug)})`,
+        // `currency` etait laissee a son defaut 'USD'. Juste ici par hasard,
+        // faux le jour ou une firme facture en euros. Meme classe de defaut
+        // que `market` : une colonne dont la page depend s'ecrit toujours.
+        S(pl.currency ?? 'USD'),
         S(pl.phase), N(pl.account_size), N(pl.regular_price ?? null),
         N(pl.profit_target ?? null), N(pl.maximum_loss_limit ?? null), N(pl.daily_loss_limit ?? null),
         S(pl.drawdown_type ?? null), N(pl.buffer ?? null), S(pl.buffer_status ?? 'not_stated'),
@@ -321,7 +333,7 @@ function buildData() {
       ].join(', ') + ')')
     }
   }
-  L.push('insert into firm_program_plans (program_id, phase, account_size, regular_price,')
+  L.push('insert into firm_program_plans (program_id, currency, phase, account_size, regular_price,')
   L.push('  profit_target, maximum_loss_limit, daily_loss_limit, drawdown_type, buffer,')
   L.push('  buffer_status, max_contracts, contract_scaling, minimum_trading_days,')
   L.push('  consistency_rule, profit_split, payout_cap, minimum_payout, days_between_payouts,')

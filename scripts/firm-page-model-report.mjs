@@ -60,9 +60,11 @@ const programData = {
   programs: FUTURESELITE_PROGRAMS.map((p) => ({
     slug: p.slug,
     name: p.name,
-    market: 'futures',
+    // Lu depuis le fixture, jamais suppose : c'est precisement l'ecart qui
+    // faisait annoncer « cfd prop firm » en production.
+    market: p.market,
     program_family: null,
-    status: p.status ?? 'active',
+    status: p.status,
     kind: p.kind,
     evaluation_steps: p.evaluation_steps ?? null,
     summary: p.summary ?? null,
