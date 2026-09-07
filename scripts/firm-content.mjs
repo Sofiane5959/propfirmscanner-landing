@@ -499,7 +499,7 @@ export const FUTURESELITE = {
       'It suits futures traders who already have a method and want to choose the rule set ' +
       'that fits it, rather than accept one. Loss limits are dollar amounts rather than ' +
       'percentages, drawdown is calculated at the end of the day on the evaluation programs, ' +
-      'and seven platforms are available including Tradovate, NinjaTrader and Quantower.\n\n' +
+      'and six platforms are selectable at purchase, including Tradovate, NinjaTrader and Quantower.\n\n' +
       'The caveat matters more than the pricing. Quantum SRL holds no financial regulator ' +
       'licence, and every account is simulated: performance is hypothetical throughout. The ' +
       'live trading program exists but is a risk-team decision, not an entitlement earned at ' +
@@ -513,7 +513,7 @@ export const FUTURESELITE = {
     is_regulated: false,
     regulation_details:
       'Quantum SRL, Corso G. Matteotti 61, Latina 04100, Italy, no. 03095010595. No financial regulator licence. Demo accounts, hypothetical performance.',
-    profit_split: 90,
+    profit_split: 80,
     // Ecrit explicitement : la valeur de seed valait 80, soit MOINS que le
     // taux de base corrige a 90. Le tableau /compare affichait donc un
     // maximum inferieur au taux courant. FuturesElite ne documente pas de
@@ -549,8 +549,9 @@ export const FUTURESELITE = {
     ],
     pros: [
       '90% profit split on the Elite programme',
-      'End-of-day drawdown, with no daily loss limit at all',
-      'No consistency rule once funded',
+      'End-of-day drawdown on Elite, Nitro and Instant',
+      'No daily loss limit on Elite, Nitro and Instant \u2014 Prime has one in both phases',
+      'No funded consistency rule on Elite and Nitro',
       'No activation fee to unlock the funded account',
       'Payouts available every day once funded',
       'Bundle discounts: the fifth account is free',
@@ -560,12 +561,11 @@ export const FUTURESELITE = {
       'Demo accounts, hypothetical performance',
       '3 minimum trading days in evaluation, 6 once funded',
       'Per-request payout cap, from $1,000 to $3,000 by account size',
-      'The Nitro, Prime and Instant price lists are not public',
     ],
     special_features: [
       '90% profit split on the Elite programme',
-      'End-of-day drawdown, no daily loss limit',
-      'No consistency rule once funded',
+      'End-of-day drawdown on three of the four programs',
+      'Prime carries a daily loss limit and a 40% funded consistency rule',
       'No activation fee on the funded account',
       'Bundle discounts: the fifth account is free',
       'Instant accounts available, with no evaluation',
@@ -575,7 +575,7 @@ export const FUTURESELITE = {
     verdict_card: {
       title: 'Who it suits, and who it does not',
       body:
-        'FuturesElite bets on generous terms once you are funded: a 90% split, no consistency rule, daily payouts. In exchange, the firm is young and is a proprietary trading company rather than a regulated broker.',
+        'FuturesElite bets on generous terms once you are funded: up to a 90% split, daily payouts, and no funded consistency rule on Elite and Nitro. In exchange, the firm is young and is a proprietary trading company rather than a regulated broker.',
       points: [
         'A high split and frequent payouts, with no waiting period',
         'An evaluation with no daily loss limit, which leaves room to breathe',
@@ -616,10 +616,10 @@ export const FUTURESELITE = {
     // Chacun porte sa qualification : « aucune limite journaliere » sans
     // « la perte maximale reste » se lirait comme une absence de risque.
     value_strip: [
-      { title: 'No daily loss limit', sub: 'Maximum Loss Limit still applies, recalculated daily' },
-      { title: 'End-of-day drawdown', sub: 'On the evaluation programs; Instant uses trailing equity' },
-      { title: 'Daily payout requests', sub: 'Once the minimum trading days are met, within the cap' },
-      { title: 'No activation fee', sub: 'Reset is optional, $79 to $229 by size' },
+      { title: 'Futures only', sub: 'Simulated accounts, one-time fee, no monthly subscription' },
+      { title: 'No activation fee', sub: 'True on all four programs; reset is optional' },
+      { title: 'No time limit to pass', sub: 'No deadline on any evaluation program' },
+      { title: 'Daily payout requests', sub: 'Once the program\u2019s own minimum days are met' },
     ],
     key_rules: {
       title: 'The rules that decide it',
@@ -634,7 +634,7 @@ export const FUTURESELITE = {
           category: 'Account-failure rules',
           title: 'Maximum Loss Limit',
           detail:
-            'The only hard risk boundary: there is no daily loss limit in either phase. It is recalculated once a day on the closing balance, so a floating loss does not trip it until the day closes. Breaching it ends the account.',
+            'Breaching it ends the account. It is the only hard risk boundary on Elite, Nitro and Instant, which carry no daily loss limit; Prime adds one in both phases. Elite and Instant recalculate it once a day on the closing balance, so a floating loss does not trip it until the day closes, while Nitro switches to a trailing-equity calculation once funded.',
           severity: 'hard_breach',
         },
         {
@@ -660,9 +660,9 @@ export const FUTURESELITE = {
         },
         {
           category: 'Passing or payout blockers',
-          title: 'Consistency rule during the evaluation only',
+          title: 'Consistency rules differ by program',
           detail:
-            'It disappears on the funded account. The sales page shows 40% and 50% side by side without saying which applies.',
+            'Elite and Nitro drop it once funded. Prime keeps a 40% rule on the funded account, and Instant starts at 20%. The Elite sales page shows 40% and 50% side by side without saying which applies.',
           severity: 'payout_condition',
         },
         {
@@ -698,7 +698,7 @@ export const FUTURESELITE = {
         'No activation fee on the funded account; reset fees run $79 to $229 by size',
         'No profit buffer required',
         'No time limit to pass, and a one-time fee rather than a subscription',
-        'Seven platforms to choose from, including Tradovate and NinjaTrader',
+        'Six platforms selectable at purchase, including Tradovate and NinjaTrader',
         'The fifth account in a bundle is free',
         'Exchange market data and commissions are the trader\u2019s cost on a live account',
       ],
@@ -724,32 +724,11 @@ export const FUTURESELITE = {
         },
       ],
     },
-    cost_timeline: {
-      title: 'What you will pay',
-      intro: 'The costs do not all land at the same moment.',
-      steps: [
-        {
-          label: 'At purchase',
-          title: 'One-off fee',
-          detail: 'From $95 for a 25K to $353 for a 150K, before discount. No subscription.',
-        },
-        {
-          label: 'On failure',
-          title: 'Optional reset',
-          detail: 'From $79 on a 25K to $229 on a 150K. Starting over is never compulsory.',
-        },
-        {
-          label: 'On passing',
-          title: 'No activation fee',
-          detail: 'The funded account opens with no further payment.',
-        },
-        {
-          label: 'At payout',
-          title: 'Per-request cap',
-          detail: 'From $1,000 to $3,000 by account size, with 90% for you.',
-        },
-      ],
-    },
+    // Retiree : les frais reels vivent desormais dans le resume de
+    // selection et dans les regles par phase, ou ils suivent le programme
+    // choisi. Cette section les repetait au niveau firme, donc figes sur
+    // Elite. La colonne nulle fait disparaitre la section proprement.
+    cost_timeline: null,
   },
   fr: {
     category_badge: 'Futures uniquement',
@@ -937,7 +916,7 @@ export const FUTURESELITE = {
   // translations ne couvre pas. Elles suivent donc la langue de base.
   consistency: {
     '1 step':
-      'Evaluation: 3 minimum trading days and a consistency rule. No consistency rule once funded. No daily loss limit. No activation fee.',
+      'Minimum trading days, consistency rule, daily loss limit and funded consistency all differ by program. Select a program above to see the rules that apply to it.',
   },
   payout: {
     'futureselite-elite-25k':

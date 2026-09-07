@@ -278,6 +278,83 @@ console.log('14. Basculement de programme et rendu conditionnel des phases')
 
 
 console.log('')
+console.log('18. Chaque programme montre SES regles, jamais celles d un autre')
+{
+  const { FUTURESELITE_PROGRAMS, FUTURESELITE_PLATFORMS, FUTURESELITE_PARTNER_PROMOTION,
+          FUTURESELITE_PROMOTIONS } = await import('./futureselite-programs.mjs')
+  const { FUTURESELITE } = await import('./firm-content.mjs')
+  const { readFileSync } = await import('node:fs')
+
+  const p = (slug) => FUTURESELITE_PROGRAMS.find((x) => x.slug === slug)
+  const finance = (slug) => p(slug).plans.filter((x) => x.phase === 'sim_funded')
+  const evalue = (slug) => p(slug).plans.filter((x) => x.phase === 'evaluation')
+
+  // Instant : 80 % et fin de journee. Les deux erreurs venaient du niveau
+  // firme, qui annoncait 90 % et un drawdown unique pour les quatre programmes.
+  cas('Instant n affiche jamais 90 %', finance('instant').every((x) => x.profit_split === 0.8))
+  cas('Instant n affiche jamais Trailing Equity',
+    finance('instant').every((x) => x.drawdown_type === 'End of Day'))
+  cas('Instant demarre a 20 % de regularite',
+    finance('instant').every((x) => x.consistency_rule === 0.2))
+
+  // Prime : le seul programme avec une limite journaliere, dans les deux
+  // phases, et le seul qui garde une regularite une fois finance.
+  cas('Prime a une limite journaliere en evaluation',
+    evalue('prime').every((x) => x.daily_loss_limit != null))
+  cas('Prime a une limite journaliere une fois finance',
+    finance('prime').every((x) => x.daily_loss_limit != null))
+  cas('Prime garde 40 % de regularite finance',
+    finance('prime').every((x) => x.consistency_rule === 0.4))
+
+  // Nitro : bascule en trailing equity une fois finance.
+  cas('Nitro finance est en Trailing Equity',
+    finance('nitro').every((x) => x.drawdown_type === 'Trailing Equity'))
+  cas('Nitro en evaluation reste en fin de journee',
+    evalue('nitro').every((x) => x.drawdown_type === 'End of Day'))
+
+  // Elite : ses 3 jours et ses 6 jours ne debordent pas sur les autres.
+  cas('les jours d evaluation different entre programmes',
+    new Set(['elite', 'nitro', 'prime'].map((s) => evalue(s)[0].minimum_trading_days)).size > 1)
+  cas('les jours avant retrait different entre programmes',
+    new Set(['elite', 'nitro', 'prime'].map((s) => finance(s)[0].minimum_trading_days)).size > 1)
+
+  // Six plateformes selectionnables, pas sept.
+  cas('six plateformes selectionnables exactement',
+    FUTURESELITE_PLATFORMS.filter((x) => x.configurator_status === 'selectable').length === 6)
+
+  // SCANNED a 30 %.
+  cas('SCANNED affiche 30 %', FUTURESELITE_PARTNER_PROMOTION.discount_value === 0.30)
+
+  // Seuls les trois Prime a 35 % portent l avertissement de prix.
+  const avertis = FUTURESELITE_PROMOTIONS
+    .filter((x) => x.is_public && x.discount_value > FUTURESELITE_PARTNER_PROMOTION.discount_value)
+    .map((x) => `${x.program_slug}-${x.account_size}`)
+  cas('trois plans avertis, tous Prime',
+    avertis.length === 3 && avertis.every((x) => x.startsWith('prime')), avertis.join(', '))
+
+  // Aucune promesse de preremplissage nulle part dans la fiche.
+  const page = readFileSync('app/[locale]/prop-firm/[slug]/PropFirmPageClient.tsx', 'utf8')
+  const config = readFileSync('app/[locale]/prop-firm/[slug]/ChallengeSelector.tsx', 'utf8')
+  for (const [nom, texte] of [['la fiche', page], ['le configurateur', config]]) {
+    cas(`${nom} ne promet aucun preremplissage`,
+      // Sept ecritures : chercher « prefilled » en alphabet latin laissait passer
+      // les six promesses arabes et hindi, qui disent exactement la meme chose.
+      !/pre-?fill|prerempli|prérempli|vorausgef|precargad|pré-preenchid|مسبق|يُملأ|पहले से भरा/i.test(texte))
+  }
+
+  // Aucun fait propre a un programme dans la bande de faits de la firme.
+  const bande = JSON.stringify(FUTURESELITE.arrays?.value_strip ?? [])
+  const INTERDITS = ['No daily loss limit', 'No consistency rule once funded', 'Trailing Equity']
+  for (const f of INTERDITS) {
+    cas('la bande de faits ne generalise pas : ' + f, !bande.includes(f))
+  }
+
+  // Le partage de base n est plus 90 % : Instant paie 80 %.
+  cas('le partage de base de la firme vaut 80 %', FUTURESELITE.scalars.profit_split === 80,
+    String(FUTURESELITE.scalars.profit_split))
+}
+
+console.log('')
 console.log('17. Aucun contenu editorial ne fuit d une firme a l autre')
 {
   const { FTMO, FUTURESELITE, THE5ERS } = await import('./firm-content.mjs')

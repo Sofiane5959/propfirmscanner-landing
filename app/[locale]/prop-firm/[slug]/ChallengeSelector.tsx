@@ -136,7 +136,7 @@ const COPY = {
     codeAuto: 'Code applied automatically',
     cta: (firm: string) => `Continue to ${firm}`,
     ctaShort: 'Continue',
-    disclosure: 'Payment page pre-filled with your selection.',
+    disclosure: 'Check the selected plan and enter the code at checkout.',
     compareTitle: 'Which one is right for you?',
     compareIntro: 'A comparison, not a second decision — the configurator above already has your choice.',
     pick: (p: string) => `Select ${p}`,
@@ -163,7 +163,7 @@ const COPY = {
     codeAuto: 'Code appliqué automatiquement',
     cta: (firm: string) => `Continuer vers ${firm}`,
     ctaShort: 'Continuer',
-    disclosure: 'Page de paiement préremplie avec votre sélection.',
+    disclosure: 'Vérifiez le plan choisi et saisissez le code au paiement.',
     compareTitle: 'Lequel vous convient ?',
     compareIntro:
       'Une comparaison, pas un second choix — le configurateur ci-dessus a déjà enregistré votre sélection.',
@@ -191,7 +191,7 @@ const COPY = {
     codeAuto: 'Code wird automatisch angewendet',
     cta: (firm: string) => `Weiter zu ${firm}`,
     ctaShort: 'Weiter',
-    disclosure: 'Zahlungsseite mit Ihrer Auswahl vorausgefüllt.',
+    disclosure: 'Prüfen Sie den gewählten Plan und geben Sie den Code an der Kasse ein.',
     compareTitle: 'Welches passt zu Ihnen?',
     compareIntro:
       'Ein Vergleich, keine zweite Entscheidung — der Konfigurator oben hat Ihre Auswahl bereits gespeichert.',
@@ -219,7 +219,7 @@ const COPY = {
     codeAuto: 'Código aplicado automáticamente',
     cta: (firm: string) => `Continuar a ${firm}`,
     ctaShort: 'Continuar',
-    disclosure: 'Página de pago precargada con tu selección.',
+    disclosure: 'Revisa el plan elegido e introduce el código al pagar.',
     compareTitle: '¿Cuál te conviene?',
     compareIntro:
       'Una comparación, no una segunda decisión: el configurador de arriba ya tiene tu elección.',
@@ -247,7 +247,7 @@ const COPY = {
     codeAuto: 'Código aplicado automaticamente',
     cta: (firm: string) => `Continuar para ${firm}`,
     ctaShort: 'Continuar',
-    disclosure: 'Página de pagamento pré-preenchida com a sua seleção.',
+    disclosure: 'Confirme o plano escolhido e introduza o código no pagamento.',
     compareTitle: 'Qual é o certo para si?',
     compareIntro:
       'Uma comparação, não uma segunda decisão — o configurador acima já tem a sua escolha.',
@@ -275,7 +275,7 @@ const COPY = {
     codeAuto: 'يُطبَّق الرمز تلقائيًا',
     cta: (firm: string) => `المتابعة إلى ${firm}`,
     ctaShort: 'متابعة',
-    disclosure: 'صفحة الدفع مُعبّأة مسبقًا باختيارك.',
+    disclosure: 'تحقق من الخطة وأدخل الرمز عند الدفع.',
     compareTitle: 'أيّها يناسبك؟',
     compareIntro: 'مقارنة، لا قرار ثانٍ — أداة الإعداد أعلاه سجّلت اختيارك بالفعل.',
     pick: (p: string) => `اختيار ${p}`,
@@ -302,7 +302,7 @@ const COPY = {
     codeAuto: 'कोड अपने आप लागू',
     cta: (firm: string) => `${firm} पर जारी रखें`,
     ctaShort: 'जारी रखें',
-    disclosure: 'भुगतान पृष्ठ आपके चयन के साथ पहले से भरा हुआ।',
+    disclosure: 'चुनी गई योजना जांचें और भुगतान पर कोड डालें।',
     compareTitle: 'आपके लिए कौन-सा सही है?',
     compareIntro:
       'यह तुलना है, दूसरा निर्णय नहीं — ऊपर के कॉन्फ़िगरेटर में आपका चयन पहले से दर्ज है।',
@@ -757,7 +757,11 @@ export default function ChallengeSelector({
               {programGuide.intro || t.compareIntro}
             </p>
 
-            <div className="grid md:grid-cols-2 gap-3">
+            {/* Une seule rangee : quatre programmes sur deux colonnes
+                produisaient deux etages de cartes hautes juste apres le
+                configurateur, qui venait deja de poser le meme choix. La
+                comparaison est un rappel, pas une seconde decision. */}
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {programGuide.options.map((opt, i) => {
                 const isActive = opt.name === selectedProgram
                 return (
@@ -772,20 +776,13 @@ export default function ChallengeSelector({
                     {opt.badge && (
                       <span className="text-sm font-medium text-emerald-400 mb-1">{opt.badge}</span>
                     )}
-                    <h4 className="text-lg font-bold text-white mb-1.5">{opt.name}</h4>
+                    <h4 className="text-base font-bold text-white mb-1">{opt.name}</h4>
                     {opt.summary && (
-                      <p className="text-gray-300 text-base leading-snug mb-3">{opt.summary}</p>
+                      <p className="text-gray-400 text-sm leading-snug mb-2">{opt.summary}</p>
                     )}
-                    {opt.points && opt.points.length > 0 && (
-                      <ul className="space-y-1.5 mb-4">
-                        {opt.points.slice(0, 3).map((pt, pi) => (
-                          <li key={pi} className="flex items-start gap-2 text-gray-400 text-base">
-                            <span className="text-emerald-500 leading-none mt-1">·</span>
-                            <span>{pt}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
+                    {/* Les puces repetaient les regles que la table par phase
+                        montre en detail, et pour un seul programme a la fois.
+                        On garde le differenciateur, pas la fiche technique. */}
                     {/* Plus de bouton ici. Le programme se choisit dans le
                         configurateur, et nulle part ailleurs : deux mecanismes
                         pour une seule decision obligeaient le visiteur a

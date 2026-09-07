@@ -50,7 +50,7 @@ const COPY = {
     perMonth: '/month',
     // Never "applied automatically": the coupon is only certain at the moment
     // of the redirect. What the partner does with it afterwards is theirs.
-    codeAuto: (c: string) => `Code ${c} — prefilled when you are redirected`,
+    codeAuto: (c: string) => `Code ${c} — enter it at checkout`,
     runsUntil: (d: string) => `Offer runs until ${d}`,
     configure: 'Configure my account',
     visit: (f: string) => `Visit ${f}`,
@@ -60,7 +60,7 @@ const COPY = {
     country: 'Country',
     regulated: 'Regulated',
     officialSite: 'Official website',
-    officialOffer: 'Official offer — code prefilled',
+    officialOffer: 'Official offer',
     choosingProgram: 'Choosing a program',
     afterPass: 'After you pass',
     noHidden: 'All the costs to expect',
@@ -87,6 +87,14 @@ const COPY = {
     regulation: 'Regulation',
     verdict: 'PropFirmScanner verdict',
     goodFit: 'A good fit if you want',
+    splitLabel: 'Profit split',
+    priceRange: 'Price range',
+    payouts: 'Payouts',
+    drawdown: 'Drawdown',
+    notRegulated: 'No financial regulator licence',
+    withCode: 'with code',
+    claimDeal: 'Claim deal',
+    enterCodeAtCheckout: (c: string) => `Check the selected plan and enter ${c} at checkout.`,
     copyCode: 'Copy code',
     copied: 'Copied',
     badFit: 'Consider another firm if you…',
@@ -95,7 +103,7 @@ const COPY = {
     readyTitle: 'Ready to pick your program?',
     readyIntro: 'Configure your account and check the rules one last time before payment.',
     readyCta: (f: string) => `Configure my ${f} account`,
-    partnerLink: (c: string) => `Partner link · code ${c} prefilled at checkout`,
+    partnerLink: (c: string) => `Partner link · enter code ${c} at checkout`,
     similar: 'Similar firms',
     riskTitle: 'Trading risk warning',
     risk:
@@ -112,7 +120,7 @@ const COPY = {
       `Informations relues le ${d} à partir des documents et du centre d'aide officiels de ${f}.`,
     from: 'À partir de',
     perMonth: '/mois',
-    codeAuto: (c: string) => `Code ${c} — prérempli au moment de la redirection`,
+    codeAuto: (c: string) => `Code ${c} — à saisir au moment du paiement`,
     runsUntil: (d: string) => `Offre valable jusqu’au ${d}`,
     configure: 'Configurer mon compte',
     visit: (f: string) => `Visiter ${f}`,
@@ -122,7 +130,7 @@ const COPY = {
     country: 'Pays',
     regulated: 'Régulé',
     officialSite: 'Site officiel',
-    officialOffer: 'Offre officielle — code prérempli',
+    officialOffer: 'Offre officielle',
     choosingProgram: 'Choix du programme',
     afterPass: 'Après la réussite',
     noHidden: 'Tous les coûts à prévoir',
@@ -148,6 +156,14 @@ const COPY = {
     regulation: 'Régulation',
     verdict: 'Verdict PropFirmScanner',
     goodFit: 'Bon choix si vous recherchez',
+    splitLabel: 'Partage des profits',
+    priceRange: 'Fourchette de prix',
+    payouts: 'Retraits',
+    drawdown: 'Drawdown',
+    notRegulated: 'Aucune licence de régulateur financier',
+    withCode: 'avec le code',
+    claimDeal: 'Obtenir l’offre',
+    enterCodeAtCheckout: (c: string) => `Vérifiez le plan choisi et saisissez ${c} au paiement.`,
     copyCode: 'Copier le code',
     copied: 'Copié',
     badFit: 'Regardez ailleurs si…',
@@ -157,7 +173,7 @@ const COPY = {
     readyIntro:
       'Configurez votre compte et vérifiez une dernière fois les règles avant le paiement.',
     readyCta: (f: string) => `Configurer mon compte ${f}`,
-    partnerLink: (c: string) => `Lien partenaire · code ${c} prérempli au checkout`,
+    partnerLink: (c: string) => `Lien partenaire · code ${c} à saisir au paiement`,
     similar: 'Firmes similaires',
     riskTitle: 'Avertissement sur les risques',
     risk:
@@ -174,7 +190,7 @@ const COPY = {
       `Angaben am ${d} anhand der Unterlagen und des Hilfe-Centers von ${f} durchgesehen.`,
     from: 'Ab',
     perMonth: '/Monat',
-    codeAuto: (c: string) => `Code ${c} — bei der Weiterleitung vorausgefüllt`,
+    codeAuto: (c: string) => `Code ${c} — an der Kasse eingeben`,
     runsUntil: (d: string) => `Angebot gültig bis ${d}`,
     configure: 'Konto konfigurieren',
     visit: (f: string) => `${f} besuchen`,
@@ -184,7 +200,7 @@ const COPY = {
     country: 'Land',
     regulated: 'Reguliert',
     officialSite: 'Offizielle Website',
-    officialOffer: 'Offizielles Angebot — Code vorausgefüllt',
+    officialOffer: 'Offizielles Angebot',
     choosingProgram: 'Programmwahl',
     afterPass: 'Nach dem Bestehen',
     noHidden: 'Alle zu erwartenden Kosten',
@@ -210,6 +226,14 @@ const COPY = {
     regulation: 'Regulierung',
     verdict: 'PropFirmScanner-Fazit',
     goodFit: 'Gut geeignet, wenn Sie Folgendes suchen',
+    splitLabel: 'Gewinnbeteiligung',
+    priceRange: 'Preisspanne',
+    payouts: 'Auszahlungen',
+    drawdown: 'Drawdown',
+    notRegulated: 'Keine Finanzaufsichtslizenz',
+    withCode: 'mit Code',
+    claimDeal: 'Angebot sichern',
+    enterCodeAtCheckout: (c: string) => `Prüfen Sie den gewählten Plan und geben Sie ${c} an der Kasse ein.`,
     copyCode: 'Code kopieren',
     copied: 'Kopiert',
     badFit: 'Eine andere Firma passt besser, wenn…',
@@ -219,7 +243,7 @@ const COPY = {
     readyIntro:
       'Konfigurieren Sie Ihr Konto und prüfen Sie die Regeln ein letztes Mal vor der Zahlung.',
     readyCta: (f: string) => `Mein ${f}-Konto konfigurieren`,
-    partnerLink: (c: string) => `Partnerlink · Code ${c} an der Kasse vorausgefüllt`,
+    partnerLink: (c: string) => `Partnerlink · Code ${c} an der Kasse eingeben`,
     similar: 'Ähnliche Anbieter',
     riskTitle: 'Risikohinweis zum Handel',
     risk:
@@ -236,7 +260,7 @@ const COPY = {
       `Información revisada el ${d} con los documentos y el centro de ayuda oficiales de ${f}.`,
     from: 'Desde',
     perMonth: '/mes',
-    codeAuto: (c: string) => `Código ${c} — precargado al redirigirte`,
+    codeAuto: (c: string) => `Código ${c} — introdúcelo al pagar`,
     runsUntil: (d: string) => `Oferta válida hasta el ${d}`,
     configure: 'Configurar mi cuenta',
     visit: (f: string) => `Visitar ${f}`,
@@ -246,7 +270,7 @@ const COPY = {
     country: 'País',
     regulated: 'Regulada',
     officialSite: 'Sitio oficial',
-    officialOffer: 'Oferta oficial — código precargado',
+    officialOffer: 'Oferta oficial',
     choosingProgram: 'Elección del programa',
     afterPass: 'Tras superarla',
     noHidden: 'Todos los costes previstos',
@@ -272,6 +296,14 @@ const COPY = {
     regulation: 'Regulación',
     verdict: 'Veredicto de PropFirmScanner',
     goodFit: 'Buena elección si buscas',
+    splitLabel: 'Reparto de beneficios',
+    priceRange: 'Rango de precios',
+    payouts: 'Pagos',
+    drawdown: 'Drawdown',
+    notRegulated: 'Sin licencia de regulador financiero',
+    withCode: 'con el código',
+    claimDeal: 'Obtener la oferta',
+    enterCodeAtCheckout: (c: string) => `Revisa el plan elegido e introduce ${c} al pagar.`,
     copyCode: 'Copiar código',
     copied: 'Copiado',
     badFit: 'Considera otra firma si…',
@@ -281,7 +313,7 @@ const COPY = {
     readyIntro:
       'Configura tu cuenta y revisa las reglas una última vez antes de pagar.',
     readyCta: (f: string) => `Configurar mi cuenta de ${f}`,
-    partnerLink: (c: string) => `Enlace de socio · código ${c} precargado en el pago`,
+    partnerLink: (c: string) => `Enlace de socio · introduce el código ${c} al pagar`,
     similar: 'Firmas similares',
     riskTitle: 'Advertencia de riesgo',
     risk:
@@ -298,7 +330,7 @@ const COPY = {
       `Informação revista a ${d} com os documentos e o centro de ajuda oficiais da ${f}.`,
     from: 'A partir de',
     perMonth: '/mês',
-    codeAuto: (c: string) => `Código ${c} — pré-preenchido no momento do redirecionamento`,
+    codeAuto: (c: string) => `Código ${c} — introduza-o no pagamento`,
     runsUntil: (d: string) => `Oferta válida até ${d}`,
     configure: 'Configurar a minha conta',
     visit: (f: string) => `Visitar a ${f}`,
@@ -308,7 +340,7 @@ const COPY = {
     country: 'País',
     regulated: 'Regulada',
     officialSite: 'Site oficial',
-    officialOffer: 'Oferta oficial — código pré-preenchido',
+    officialOffer: 'Oferta oficial',
     choosingProgram: 'Escolha do programa',
     afterPass: 'Depois de passar',
     noHidden: 'Todos os custos a prever',
@@ -334,6 +366,14 @@ const COPY = {
     regulation: 'Regulação',
     verdict: 'Veredicto PropFirmScanner',
     goodFit: 'Boa escolha se procura',
+    splitLabel: 'Partilha de lucros',
+    priceRange: 'Intervalo de preços',
+    payouts: 'Pagamentos',
+    drawdown: 'Drawdown',
+    notRegulated: 'Sem licença de regulador financeiro',
+    withCode: 'com o código',
+    claimDeal: 'Obter a oferta',
+    enterCodeAtCheckout: (c: string) => `Confirme o plano escolhido e introduza ${c} no pagamento.`,
     copyCode: 'Copiar código',
     copied: 'Copiado',
     badFit: 'Considere outra firma se…',
@@ -343,7 +383,7 @@ const COPY = {
     readyIntro:
       'Configure a sua conta e verifique as regras uma última vez antes do pagamento.',
     readyCta: (f: string) => `Configurar a minha conta ${f}`,
-    partnerLink: (c: string) => `Link de parceiro · código ${c} pré-preenchido no checkout`,
+    partnerLink: (c: string) => `Link de parceiro · introduza o código ${c} no pagamento`,
     similar: 'Firmas semelhantes',
     riskTitle: 'Aviso de risco',
     risk:
@@ -360,7 +400,7 @@ const COPY = {
       `تمت مراجعة المعلومات في ${d} استنادًا إلى مستندات ${f} الرسمية ومركز المساعدة.`,
     from: 'ابتداءً من',
     perMonth: '/شهريًا',
-    codeAuto: (c: string) => `الرمز ${c} — يُملأ تلقائيًا عند إعادة التوجيه`,
+    codeAuto: (c: string) => `الرمز ${c} — أدخله عند الدفع`,
     runsUntil: (d: string) => `العرض ساري حتى ${d}`,
     configure: 'إعداد حسابي',
     visit: (f: string) => `زيارة ${f}`,
@@ -370,7 +410,7 @@ const COPY = {
     country: 'الدولة',
     regulated: 'خاضعة للتنظيم',
     officialSite: 'الموقع الرسمي',
-    officialOffer: 'عرض رسمي — الرمز مُعبّأ مسبقًا',
+    officialOffer: 'عرض رسمي',
     choosingProgram: 'اختيار البرنامج',
     afterPass: 'بعد اجتياز التقييم',
     noHidden: 'جميع التكاليف المتوقعة',
@@ -395,6 +435,14 @@ const COPY = {
     regulation: 'التنظيم',
     verdict: 'خلاصة PropFirmScanner',
     goodFit: 'خيار جيد إذا كنت تبحث عن',
+    splitLabel: 'تقاسم الأرباح',
+    priceRange: 'نطاق الأسعار',
+    payouts: 'المدفوعات',
+    drawdown: 'التراجع',
+    notRegulated: 'لا توجد رخصة تنظيمية',
+    withCode: 'بالرمز',
+    claimDeal: 'احصل على العرض',
+    enterCodeAtCheckout: (c: string) => `تحقق من الخطة وأدخل ${c} عند الدفع.`,
     copyCode: 'نسخ الكود',
     copied: 'تم النسخ',
     badFit: 'فكر في شركة أخرى إذا…',
@@ -403,7 +451,7 @@ const COPY = {
     readyTitle: 'هل أنت مستعد لاختيار برنامجك؟',
     readyIntro: 'أعدّ حسابك وراجع القواعد مرة أخيرة قبل الدفع.',
     readyCta: (f: string) => `إعداد حسابي لدى ${f}`,
-    partnerLink: (c: string) => `رابط شريك · الرمز ${c} مُعبّأ مسبقًا عند الدفع`,
+    partnerLink: (c: string) => `رابط شريك · أدخل الرمز ${c} عند الدفع`,
     similar: 'شركات مشابهة',
     riskTitle: 'تحذير من مخاطر التداول',
     risk:
@@ -420,7 +468,7 @@ const COPY = {
       `जानकारी की ${d} को ${f} के आधिकारिक दस्तावेज़ों और सहायता केंद्र से समीक्षा की गई।`,
     from: 'से शुरू',
     perMonth: '/माह',
-    codeAuto: (c: string) => `कोड ${c} — रीडायरेक्ट के समय पहले से भरा हुआ`,
+    codeAuto: (c: string) => `कोड ${c} — भुगतान पर डालें`,
     runsUntil: (d: string) => `ऑफ़र ${d} तक मान्य`,
     configure: 'मेरा खाता कॉन्फ़िगर करें',
     visit: (f: string) => `${f} पर जाएँ`,
@@ -430,7 +478,7 @@ const COPY = {
     country: 'देश',
     regulated: 'विनियमित',
     officialSite: 'आधिकारिक वेबसाइट',
-    officialOffer: 'आधिकारिक ऑफ़र — कोड पहले से भरा हुआ',
+    officialOffer: 'आधिकारिक ऑफ़र',
     choosingProgram: 'प्रोग्राम का चुनाव',
     afterPass: 'पास करने के बाद',
     noHidden: 'सभी अपेक्षित लागतें',
@@ -455,6 +503,14 @@ const COPY = {
     regulation: 'विनियमन',
     verdict: 'PropFirmScanner का फ़ैसला',
     goodFit: 'अच्छा विकल्प, अगर आप चाहते हैं',
+    splitLabel: 'प्रॉफिट स्प्लिट',
+    priceRange: 'मूल्य सीमा',
+    payouts: 'भुगतान',
+    drawdown: 'ड्रॉडाउन',
+    notRegulated: 'कोई वित्तीय नियामक लाइसेंस नहीं',
+    withCode: 'कोड के साथ',
+    claimDeal: 'ऑफ़र पाएँ',
+    enterCodeAtCheckout: (c: string) => `चुनी गई योजना जांचें और भुगतान पर ${c} डालें।`,
     copyCode: 'कोड कॉपी करें',
     copied: 'कॉपी हुआ',
     badFit: 'किसी और फ़र्म पर विचार करें, अगर…',
@@ -463,7 +519,7 @@ const COPY = {
     readyTitle: 'अपना प्रोग्राम चुनने के लिए तैयार हैं?',
     readyIntro: 'भुगतान से पहले अपना खाता कॉन्फ़िगर करें और नियम एक बार और जाँच लें।',
     readyCta: (f: string) => `मेरा ${f} खाता कॉन्फ़िगर करें`,
-    partnerLink: (c: string) => `पार्टनर लिंक · चेकआउट पर कोड ${c} पहले से भरा हुआ`,
+    partnerLink: (c: string) => `पार्टनर लिंक · भुगतान पर कोड ${c} डालें`,
     similar: 'मिलती-जुलती फ़र्में',
     riskTitle: 'ट्रेडिंग जोखिम चेतावनी',
     risk:
@@ -715,7 +771,26 @@ export default function PropFirmPageClient({
       [t.headquarters, firm.headquarters],
       [t.market, firm.is_futures ? 'Futures' : 'CFD'],
       [t.payoutProvider, payoutMethods.length > 0 ? payoutMethods.join(', ') : null],
-      [t.regulation, firm.is_regulated ? firm.regulation_details : null],
+      // La colonne de droite restait a trois lignes face a trois paragraphes.
+      // Ces quatre-la viennent de colonnes deja verifiees ; aucune n'est
+      // inventee, et chacune disparait si sa colonne est vide.
+      [
+        t.splitLabel,
+        firm.max_profit_split && firm.profit_split && firm.max_profit_split !== firm.profit_split
+          ? `${firm.profit_split}% to ${firm.max_profit_split}%`
+          : (firm.profit_split ?? firm.max_profit_split)
+            ? `${firm.profit_split ?? firm.max_profit_split}%`
+            : null,
+      ],
+      [
+        t.priceRange,
+        firm.min_price && firm.max_price
+          ? `${money(firm.min_price)} to ${money(firm.max_price)}`
+          : null,
+      ],
+      [t.payouts, firm.payout_frequency],
+      [t.drawdown, firm.drawdown_type],
+      [t.regulation, firm.is_regulated ? firm.regulation_details : t.notRegulated],
     ] as [string, string | number | null | undefined][]
   )
     .filter(([, v]) => v !== null && v !== undefined && v !== '' && v !== 0)
@@ -826,6 +901,37 @@ export default function PropFirmPageClient({
   // La ligne choisie dans le configurateur, remontee ici pour que la section
   // evaluation / compte finance suive la selection au lieu de rester figee.
   const [selectionKey, setSelectionKey] = useState<string | null>(null)
+  // L'offre mise en avant dans le hero. Elle derive de la MEME selection que
+  // le configurateur : un prix d'appel fige contredirait la carte du bas des
+  // que le visiteur change de programme.
+  //
+  // `null` quand la firme n'a pas de code actif : le bloc disparait plutot que
+  // d'afficher une remise a zero.
+  const offreMiseEnAvant = useMemo(() => {
+    const code = configurateur?.code
+    if (!code) return null
+    const l = configurateur?.challenges.find((c) => c.id === selectionKey) ?? null
+    const devise = configurateur?.currency || 'USD'
+    const pourcent =
+      l?.price != null && l.discounted_price != null
+        ? Math.round((1 - l.discounted_price / l.price) * 100)
+        : promotion.percent
+    if (!pourcent) return null
+    return {
+      code,
+      pourcent,
+      ligne: l?.name ?? null,
+      prix:
+        l?.price != null && l.discounted_price != null
+          ? {
+              avant: formatMoney(l.price, locale, '', devise),
+              apres: formatMoney(l.discounted_price, locale, '', devise),
+            }
+          : null,
+      avertissement: l?.id ? (configurateur?.noteFor?.(l.id) ?? null) : null,
+    }
+  }, [configurateur, selectionKey, locale, promotion.percent])
+
   // La ligne selectionnee, lue une seule fois ici. Le CTA final et la region
   // live la partagent : deux etats separes finissaient toujours par diverger.
   const ligneChoisie = configurateur?.challenges.find((c) => c.id === selectionKey) ?? null
@@ -962,6 +1068,58 @@ export default function PropFirmPageClient({
 
           {/* --- Offer card --- */}
           <aside className="bg-gray-900/70 border border-emerald-500/30 rounded-2xl p-5">
+            {/* L'offre d'abord, avant la note et le prix de depart : c'est
+                l'element qui decide du clic. Elle lit la MEME selection que le
+                configurateur plus bas, donc elle suit le programme et la
+                taille choisis au lieu d'annoncer un prix d'appel.
+                Aucun libelle « meilleure offre » : l'eligibilite par programme
+                et l'expiration ne sont pas confirmees. */}
+            {offreMiseEnAvant && (
+              <div className="mb-4 pb-4 border-b border-gray-800">
+                <div className="flex items-baseline gap-2 mb-2">
+                  <span className="text-2xl font-bold text-emerald-400">
+                    {offreMiseEnAvant.pourcent}% OFF
+                  </span>
+                  <span className="text-gray-500 text-xs">{t.withCode}</span>
+                </div>
+
+                <div className="mb-3">
+                  <CopyCode code={offreMiseEnAvant.code} label={t.copyCode} copied={t.copied} />
+                </div>
+
+                {offreMiseEnAvant.ligne && (
+                  <p className="text-gray-400 text-sm mb-1">{offreMiseEnAvant.ligne}</p>
+                )}
+                {offreMiseEnAvant.prix && (
+                  <p className="mb-3">
+                    <s className="text-gray-600 text-sm mr-2">{offreMiseEnAvant.prix.avant}</s>
+                    <span className="text-white text-lg font-semibold">
+                      {offreMiseEnAvant.prix.apres}
+                    </span>
+                  </p>
+                )}
+
+                <a
+                  href={heroCtaUrl}
+                  {...AFFILIATE_LINK_PROPS}
+                  className="w-full inline-flex items-center justify-center gap-2 min-h-[44px] px-5 bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-semibold rounded-lg transition-colors"
+                >
+                  {t.claimDeal}
+                </a>
+
+                {/* Discret, mais present : sur ces plans l'offre publique fait
+                    mieux que notre code. Le taire ferait payer plus cher. */}
+                {offreMiseEnAvant.avertissement && (
+                  <p className="text-amber-400/80 text-xs mt-2">{offreMiseEnAvant.avertissement}</p>
+                )}
+
+                {/* On ne promet ni deep link ni persistance du coupon : le lien
+                    atterrit sur l'entree de l'application, pas sur un panier
+                    deja rempli. */}
+                <p className="text-gray-500 text-xs mt-2">{t.enterCodeAtCheckout(offreMiseEnAvant.code)}</p>
+              </div>
+            )}
+
             {firm.trustpilot_rating > 0 && (
               <div className="flex items-center gap-2 mb-4 pb-4 border-b border-gray-800">
                 <div className="flex">
@@ -1169,7 +1327,9 @@ export default function PropFirmPageClient({
         </div>
       )}
 
-      <div className="max-w-6xl mx-auto px-4 py-12 space-y-16">
+      {/* 4 rem entre sections faisait defiler du vide entre deux blocs courts.
+          3 rem suffit a les separer sans les eloigner. */}
+      <div className="max-w-6xl mx-auto px-4 py-10 space-y-12">
         {/* ============================================================== */}
         {/* 5. JOURNEY — what happens after you pay                       */}
         {/* ============================================================== */}
