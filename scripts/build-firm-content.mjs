@@ -127,7 +127,12 @@ function build(firm) {
   if (Object.keys(bundles).length) {
     sets.push(`  ${'translations'.padEnd(20)} = ${J(bundles)}::jsonb`)
   }
-  sets.push(`  ${'data_verified_at'.padEnd(20)} = timestamptz '2026-09-03'`)
+  // La date etait figee au 3 septembre pour TOUTES les firmes. La deplacer
+  // globalement au 7 aurait affirme que les quatre ont ete revues ce jour-la.
+  // Chaque firme porte donc la sienne, et celles qui n'en declarent pas
+  // gardent la date d'origine.
+  const verifieLe = firm.verified_at || '2026-09-03'
+  sets.push(`  ${'data_verified_at'.padEnd(20)} = timestamptz '${verifieLe}'`)
   sets.push(`  ${'data_verified_by'.padEnd(20)} = 'PropFirmScanner'`)
   sets.push(`  ${'updated_at'.padEnd(20)} = now()`)
   L.push(sets.join(',\n'))

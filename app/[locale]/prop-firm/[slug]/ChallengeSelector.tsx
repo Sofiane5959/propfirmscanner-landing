@@ -133,7 +133,7 @@ const COPY = {
     contracts: 'Max contracts',
     split: 'Profit split',
     included: 'Included at no extra cost',
-    codeAuto: 'Code applied automatically',
+    codeAuto: (c: string) => `Copy ${c} and enter it at checkout.`,
     cta: (firm: string) => `Continue to ${firm}`,
     ctaShort: 'Continue',
     disclosure: 'Check the selected plan and enter the code at checkout.',
@@ -160,7 +160,7 @@ const COPY = {
     contracts: 'Contrats maximum',
     split: 'Partage des profits',
     included: 'Inclus sans supplément',
-    codeAuto: 'Code appliqué automatiquement',
+    codeAuto: (c: string) => `Copiez ${c} et saisissez-le au paiement.`,
     cta: (firm: string) => `Continuer vers ${firm}`,
     ctaShort: 'Continuer',
     disclosure: 'Vérifiez le plan choisi et saisissez le code au paiement.',
@@ -188,7 +188,7 @@ const COPY = {
     contracts: 'Max. Kontrakte',
     split: 'Gewinnbeteiligung',
     included: 'Ohne Aufpreis enthalten',
-    codeAuto: 'Code wird automatisch angewendet',
+    codeAuto: (c: string) => `Kopieren Sie ${c} und geben Sie ihn an der Kasse ein.`,
     cta: (firm: string) => `Weiter zu ${firm}`,
     ctaShort: 'Weiter',
     disclosure: 'Prüfen Sie den gewählten Plan und geben Sie den Code an der Kasse ein.',
@@ -216,7 +216,7 @@ const COPY = {
     contracts: 'Contratos máximos',
     split: 'Reparto de beneficios',
     included: 'Incluido sin coste adicional',
-    codeAuto: 'Código aplicado automáticamente',
+    codeAuto: (c: string) => `Copia ${c} e introdúcelo al pagar.`,
     cta: (firm: string) => `Continuar a ${firm}`,
     ctaShort: 'Continuar',
     disclosure: 'Revisa el plan elegido e introduce el código al pagar.',
@@ -244,7 +244,7 @@ const COPY = {
     contracts: 'Contratos máximos',
     split: 'Partilha de lucros',
     included: 'Incluído sem custo adicional',
-    codeAuto: 'Código aplicado automaticamente',
+    codeAuto: (c: string) => `Copie ${c} e introduza-o no pagamento.`,
     cta: (firm: string) => `Continuar para ${firm}`,
     ctaShort: 'Continuar',
     disclosure: 'Confirme o plano escolhido e introduza o código no pagamento.',
@@ -272,7 +272,7 @@ const COPY = {
     contracts: 'الحد الأقصى للعقود',
     split: 'تقاسم الأرباح',
     included: 'مشمول دون تكلفة إضافية',
-    codeAuto: 'يُطبَّق الرمز تلقائيًا',
+    codeAuto: (c: string) => `انسخ ${c} وأدخله عند الدفع.`,
     cta: (firm: string) => `المتابعة إلى ${firm}`,
     ctaShort: 'متابعة',
     disclosure: 'تحقق من الخطة وأدخل الرمز عند الدفع.',
@@ -299,7 +299,7 @@ const COPY = {
     contracts: 'अधिकतम कॉन्ट्रैक्ट',
     split: 'लाभ का बँटवारा',
     included: 'बिना अतिरिक्त शुल्क के शामिल',
-    codeAuto: 'कोड अपने आप लागू',
+    codeAuto: (c: string) => `${c} कॉपी करें और भुगतान पर डालें।`,
     cta: (firm: string) => `${firm} पर जारी रखें`,
     ctaShort: 'जारी रखें',
     disclosure: 'चुनी गई योजना जांचें और भुगतान पर कोड डालें।',
@@ -726,7 +726,10 @@ export default function ChallengeSelector({
                 onClick={handleCopyCode}
                 className="w-full flex items-center justify-between gap-2 px-3 py-2 mb-2 bg-gray-800/60 border border-gray-700 rounded-lg hover:border-gray-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
               >
-                <span className="text-gray-500 text-sm">{t.codeAuto}</span>
+                {/* Le libelle nomme le code et dit quoi en faire. Il affirmait
+                    auparavant que le code s'appliquait tout seul : rien ne
+                    l'applique, ni le lien d'affiliation ni le panier. */}
+                <span className="text-gray-500 text-sm">{t.codeAuto(discountCode ?? '')}</span>
                 <span className="flex items-center gap-1.5 text-emerald-400 font-mono font-semibold text-sm">
                   {discountCode}
                   {codeCopied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}

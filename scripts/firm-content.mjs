@@ -478,6 +478,9 @@ export const FTMO = {
 // -----------------------------------------------------------------------------
 export const FUTURESELITE = {
   slug: 'futureselite',
+  // Releve officiel du 7 septembre 2026 : prix, regles, plateformes et
+  // remise partenaire recoupes champ par champ.
+  verified_at: '2026-09-07',
   // Colonnes de base en ANGLAIS ; le francais est dans `fr` -> translations.fr.
   scalars: {
     name: 'FuturesElite',
@@ -494,8 +497,9 @@ export const FUTURESELITE = {
       'FuturesElite sells simulated futures accounts across four programs. Elite and Prime ' +
       'are evaluation routes with a one-time fee and no deadline to pass. Nitro and Instant ' +
       'shorten or remove the evaluation entirely, Instant funding you from purchase with no ' +
-      'objective to reach. All four settle at a 90% profit split, and payouts can be ' +
-      'requested daily once an account is funded.\n\n' +
+      'objective to reach. Elite, Nitro and Prime settle at a 90% profit split; Instant ' +
+      'pays 80%. Payouts can be requested daily once an account is funded, subject to each ' +
+      'program\u2019s own minimum days.\n\n' +
       'It suits futures traders who already have a method and want to choose the rule set ' +
       'that fits it, rather than accept one. Loss limits are dollar amounts rather than ' +
       'percentages, drawdown is calculated at the end of the day on the evaluation programs, ' +
@@ -548,7 +552,7 @@ export const FUTURESELITE = {
       'Six platforms to choose from in the configurator',
     ],
     pros: [
-      '90% profit split on the Elite programme',
+      '90% profit split on Elite, Nitro and Prime; 80% on Instant',
       'End-of-day drawdown on Elite, Nitro and Instant',
       'No daily loss limit on Elite, Nitro and Instant \u2014 Prime has one in both phases',
       'No funded consistency rule on Elite and Nitro',
@@ -559,11 +563,11 @@ export const FUTURESELITE = {
     cons: [
       'No financial regulator licence',
       'Demo accounts, hypothetical performance',
-      '3 minimum trading days in evaluation, 6 once funded',
+      'Minimum days differ by program; Elite needs 6 profitable days above a size-based threshold before a payout',
       'Per-request payout cap, from $1,000 to $3,000 by account size',
     ],
     special_features: [
-      '90% profit split on the Elite programme',
+      'Profit split up to 90% — 80% on Instant',
       'End-of-day drawdown on three of the four programs',
       'Prime carries a daily loss limit and a 40% funded consistency rule',
       'No activation fee on the funded account',
@@ -600,7 +604,6 @@ export const FUTURESELITE = {
       options: [
         {
           name: 'Elite',
-          badge: 'Public pricing',
           summary:
             'A one-step evaluation, an end-of-day drawdown, no daily loss limit, and a 90% split once funded.',
           points: [
@@ -743,12 +746,14 @@ export const FUTURESELITE = {
       'FuturesElite vend des comptes futures simules repartis en quatre programmes. Elite et ' +
       'Prime sont des evaluations a frais unique, sans date limite pour reussir. Nitro et ' +
       'Instant raccourcissent ou suppriment l\u2019evaluation, Instant vous financant des ' +
-      'l\u2019achat sans objectif a atteindre. Les quatre aboutissent a 90 % de partage des ' +
-      'profits, avec des retraits possibles chaque jour une fois le compte finance.\n\n' +
+      'l\u2019achat sans objectif a atteindre. Elite, Nitro et Prime aboutissent a 90 % de ' +
+      'partage des profits ; Instant en verse 80. Les retraits sont possibles chaque jour une ' +
+      'fois le compte finance, selon les jours minimum propres a chaque programme.\n\n' +
       'Elle convient aux traders futures qui ont deja une methode et veulent choisir le jeu ' +
       'de regles qui lui correspond, plutot que de le subir. Les limites de perte sont des ' +
       'montants en dollars et non des pourcentages, le drawdown se calcule en fin de journee ' +
-      'sur les programmes d\u2019evaluation, et sept plateformes sont disponibles, dont ' +
+      'sur les programmes d\u2019evaluation, et six plateformes sont selectionnables a ' +
+      'l\u2019achat, dont ' +
       'Tradovate, NinjaTrader et Quantower.\n\n' +
       'La reserve compte plus que le tarif. Quantum SRL ne detient aucune licence de ' +
       'regulateur financier, et tous les comptes sont simules : les performances restent ' +
@@ -765,12 +770,13 @@ export const FUTURESELITE = {
     included_items: [
       'Journal de trading et tableau de bord analytique',
       'Aucun frais d\u2019activation du compte financ\u00e9',
-      'Sept plateformes au choix',
+      'Six plateformes selectionnables a l\u2019achat',
     ],
     pros: [
-      'Partage des profits \u00e0 90 % sur le programme Elite',
-      'Drawdown de fin de journ\u00e9e, sans aucune limite de perte journali\u00e8re',
-      'Aucune r\u00e8gle de r\u00e9gularit\u00e9 une fois financ\u00e9',
+      'Partage des profits \u00e0 90 % sur Elite, Nitro et Prime ; 80 % sur Instant',
+      'Drawdown de fin de journ\u00e9e sur Elite, Nitro et Instant',
+      'Aucune limite de perte journali\u00e8re sauf sur Prime, qui en a une dans les deux phases',
+      'Aucune r\u00e8gle de r\u00e9gularit\u00e9 une fois financ\u00e9 sur Elite et Nitro',
       'Aucun frais d\u2019activation pour d\u00e9bloquer le compte financ\u00e9',
       'Retrait possible chaque jour une fois financ\u00e9',
       'Remises par lot : le cinqui\u00e8me compte est offert',
@@ -778,13 +784,13 @@ export const FUTURESELITE = {
     cons: [
       'Aucune licence de r\u00e9gulateur financier',
       'Comptes de d\u00e9monstration, performances hypoth\u00e9tiques',
-      '3 jours de trading minimum en \u00e9valuation, 6 une fois financ\u00e9',
+      'Les jours minimum diff\u00e8rent selon le programme ; Elite exige 6 jours profitables au-dessus d\u2019un seuil li\u00e9 \u00e0 la taille avant un retrait',
       'Plafond de retrait par demande, de 1 000 \u00e0 3 000 $ selon la taille',
-      'Les grilles Nitro, Prime et Instant ne sont pas publiques',
     ],
     special_features: [
-      'Partage des profits \u00e0 90 % sur le programme Elite',
-      'Drawdown de fin de journ\u00e9e, aucune limite de perte journali\u00e8re',
+      'Partage des profits jusqu\u2019\u00e0 90 % \u2014 80 % sur Instant',
+      'Drawdown de fin de journ\u00e9e sur trois des quatre programmes',
+      'Prime porte une limite journali\u00e8re et 40 % de r\u00e9gularit\u00e9 une fois financ\u00e9',
       'Aucune r\u00e8gle de r\u00e9gularit\u00e9 une fois financ\u00e9',
       'Aucun frais d\u2019activation du compte financ\u00e9',
       'Remises par lot : le cinqui\u00e8me compte est offert',
@@ -793,7 +799,7 @@ export const FUTURESELITE = {
     verdict_card: {
       title: 'Pour qui, et pour qui pas',
       body:
-        'FuturesElite mise sur des conditions g\u00e9n\u00e9reuses une fois financ\u00e9 : 90 % de partage, aucune r\u00e8gle de r\u00e9gularit\u00e9, retrait quotidien. En \u00e9change, la firme est jeune et reste une soci\u00e9t\u00e9 de trading propri\u00e9taire, pas un courtier r\u00e9gul\u00e9.',
+        'FuturesElite mise sur des conditions g\u00e9n\u00e9reuses une fois financ\u00e9 : jusqu\u2019\u00e0 90 % de partage, retrait quotidien, et aucune r\u00e8gle de r\u00e9gularit\u00e9 une fois financ\u00e9 sur Elite et Nitro. En \u00e9change, la firme est jeune et reste une soci\u00e9t\u00e9 de trading propri\u00e9taire, pas un courtier r\u00e9gul\u00e9.',
       points: [
         'Un partage \u00e9lev\u00e9 et des retraits fr\u00e9quents, sans attendre une \u00e9ch\u00e9ance',
         'Une \u00e9valuation sans limite de perte journali\u00e8re, qui laisse respirer',
@@ -849,7 +855,7 @@ export const FUTURESELITE = {
         'Retrait possible chaque jour une fois financ\u00e9',
         '6 jours de trading minimum avant un retrait',
         'Aucun buffer de profit exig\u00e9',
-        'Sept plateformes au choix, dont Tradovate et NinjaTrader',
+        'Six plateformes selectionnables a l\u2019achat, dont Tradovate et NinjaTrader',
         'Le cinqui\u00e8me compte d\u2019un lot est offert',
       ],
     },
@@ -920,13 +926,13 @@ export const FUTURESELITE = {
   },
   payout: {
     'futureselite-elite-25k':
-      'Once funded: 90% split, $1,000 payout cap, payouts available daily, 6 minimum trading days, no buffer. Reset $79.',
+      'Once funded: 90% split, $1,000 payout cap, payouts available daily, 6 profitable days above $100, no buffer. Reset $79.',
     'futureselite-elite-50k':
-      'Once funded: 90% split, $2,000 payout cap, payouts available daily, 6 minimum trading days, no buffer. Reset $89.',
+      'Once funded: 90% split, $2,000 payout cap, payouts available daily, 6 profitable days above $150, no buffer. Reset $89.',
     'futureselite-elite-100k':
-      'Once funded: 90% split, $2,500 payout cap, payouts available daily, 6 minimum trading days, no buffer. Reset $159.',
+      'Once funded: 90% split, $2,500 payout cap, payouts available daily, 6 profitable days above $250, no buffer. Reset $159.',
     'futureselite-elite-150k':
-      'Once funded: 90% split, $3,000 payout cap, payouts available daily, 6 minimum trading days, no buffer. Reset $229.',
+      'Once funded: 90% split, $3,000 payout cap, payouts available daily, 6 profitable days above $350, no buffer. Reset $229.',
   },
   riskUnit: 'usd',
   notes: [

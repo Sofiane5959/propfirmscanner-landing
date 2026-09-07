@@ -25,7 +25,7 @@
 // applicable vaut null et porte un statut explicite.
 // =============================================================================
 
-const VERIFIED = '2026-09-04'
+const VERIFIED = '2026-09-07'
 const PRICING = 'https://futureselite.com/#pricing'
 const FAQ_LIMITS = 'https://faq.futureselite.com/en/articles/11949051-how-many-accounts-can-i-have-with-futureselite'
 

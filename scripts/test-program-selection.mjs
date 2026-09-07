@@ -278,6 +278,38 @@ console.log('14. Basculement de programme et rendu conditionnel des phases')
 
 
 console.log('')
+console.log('19. Les six formulations refusees ne reviennent nulle part')
+{
+  const { execSync } = await import('node:child_process')
+  // Elles avaient survecu dans le bloc de traduction francaise et dans un
+  // texte anglais que j'avais redige moi-meme. Une correction des colonnes de
+  // base ne suffit pas : la surcouche `translations` sert le meme visiteur.
+  const REFUSEES = [
+    'all four settle at a 90%',
+    'Instant uses trailing equity',
+    'seven platforms',
+    'sept plateformes',
+    'price lists are not public',
+    'ne sont pas publiques',
+    'Code applied automatically',
+    'appliqué automatiquement',
+    '3 minimum trading days in evaluation, 6 once funded',
+    '6 une fois financ',
+  ]
+  for (const phrase of REFUSEES) {
+    let trouve = ''
+    try {
+      trouve = execSync(
+        `grep -rlni ${JSON.stringify(phrase)} --include=*.mjs --include=*.tsx --include=*.ts --include=*.sql . 2>/dev/null | grep -v node_modules | grep -v '[.]next' | grep -v test-program-selection || true`,
+        { encoding: 'utf8', shell: 'bash' }
+      ).trim()
+    } catch { trouve = '' }
+    cas('aucune occurrence : ' + phrase, trouve === '',
+      trouve.split(String.fromCharCode(10)).join(' '))
+  }
+}
+
+console.log('')
 console.log('18. Chaque programme montre SES regles, jamais celles d un autre')
 {
   const { FUTURESELITE_PROGRAMS, FUTURESELITE_PLATFORMS, FUTURESELITE_PARTNER_PROMOTION,
