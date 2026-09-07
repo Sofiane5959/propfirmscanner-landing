@@ -176,7 +176,7 @@ export function programsToChallenges(
   const challenges: Challenge[] = []
   const devises = new Set<string>()
   const codes = new Set<string>()
-  const meilleuresPubliques: string[] = []
+  const meilleuresPubliques: { programme: string; taille: string; pourcent: number }[] = []
 
   for (const program of vendables) {
     for (const { variantKey, size } of combinationsOf(program)) {
@@ -204,10 +204,14 @@ export function programsToChallenges(
         promo.partenaire &&
         promo.publique.discount_value > promo.partenaire.discount_value
       ) {
-        meilleuresPubliques.push(
-          `${Math.round(promo.publique.discount_value * 100)}%` +
-            (promo.publique.code ? ` (${promo.publique.code})` : '')
-        )
+        // On note QUELS plans sont concernes, pas seulement qu'il en existe.
+        // Une note generale « l'offre publique fait mieux » serait fausse sur
+        // les quatorze plans ou notre code egale ou depasse l'offre publique.
+        meilleuresPubliques.push({
+          programme: program.name,
+          taille: sizeLabel(size),
+          pourcent: Math.round(promo.publique.discount_value * 100),
+        })
       }
 
       const etiquetteVariante = variantLabel(variantKey)
@@ -306,13 +310,15 @@ export function programsToChallenges(
     discountCode: codes.size === 1 ? Array.from(codes)[0] : null,
     // Formule au pluriel prudent : la meilleure offre publique varie selon le
     // programme, on ne promet donc pas un chiffre unique.
+    // Nommee : le visiteur doit savoir SUR QUOI l'offre publique fait mieux.
+    // Vague, la note ferait douter du prix affiche sur tous les plans, y
+    // compris ceux ou notre code est le meilleur.
     betterPublicOffer:
       meilleuresPubliques.length > 0
-        ? `The firm currently advertises a public offer of up to ${
-            meilleuresPubliques
-              .map((v) => parseInt(v, 10))
-              .reduce((a, b) => Math.max(a, b), 0)
-          }% on some plans, which is larger than this code. Check the checkout total before paying.`
+        ? `On ${Array.from(new Set(meilleuresPubliques.map((m) => m.programme))).join(' and ')} ` +
+          `${meilleuresPubliques.map((m) => m.taille).join(', ')}, the firm currently advertises ` +
+          `${Math.max(...meilleuresPubliques.map((m) => m.pourcent))}% publicly, above this code. ` +
+          `Check the checkout total before paying.`
         : null,
   }
 }

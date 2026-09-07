@@ -68,9 +68,12 @@ export const FUTURESELITE_PROGRAMS = [
     kind: 'evaluation',
     evaluation_steps: 1,
     sort_order: 2,
-    max_funded_accounts: 3,
+    // Aucun chiffre publie : la FAQ dit 3, le configurateur a affiche MAX 4
+    // FUNDED, et le bundle en vend jusqu'a 5. Trois sources officielles, trois
+    // reponses. Choisir la plus prudente resterait un choix, pas un fait.
+    max_funded_accounts: null,
     max_funded_note:
-      'Conflict: the bundle sells up to 5, while the official FAQ allows only 3 active funded Nitro accounts. The FAQ prevails.',
+      'Unresolved: the official FAQ states 3 active funded Nitro accounts, configurator cross-sell copy displayed MAX 4 FUNDED, and the bundle sells up to 5. Confirm with the firm before relying on any figure.',
     summary:
       'One-step evaluation with the lowest minimum trading days. Once funded it switches to a trailing-equity drawdown with a buffer.',
     source_url: PRICING,
@@ -195,9 +198,16 @@ export const FUTURESELITE_PARTNER_PROMOTION = {
   program_slug: null,
   account_size: null,
   code: 'SCANNED',
-  label: 'PropFirmScanner partner code',
+  // Le libelle exact autorise par le releve officiel du 7 septembre 2026. Il
+  // porte la reserve avec le chiffre : l'eligibilite par programme et par
+  // taille n'est pas confirmee, ni l'expiration.
+  label: '30% with code SCANNED \u2014 eligibility and best-price status pending confirmation',
   discount_type: 'percent',
-  discount_value: 0.20,
+  // 30 %, et non 20 % : le releve du 7 septembre corrige la valeur retenue en
+  // aout. L'ecart n'est pas cosmetique — a 20 % le code etait toujours moins
+  // bon que l'offre publique, a 30 % il est meilleur sur l'Elite 25K, egal sur
+  // onze plans, et moins bon sur trois plans Prime seulement.
+  discount_value: 0.30,
   is_public: false,
   status: 'active',
   starts_at: null,
@@ -205,7 +215,7 @@ export const FUTURESELITE_PARTNER_PROMOTION = {
   verified_at: VERIFIED,
   source_url: PRICING,
   editorial_note:
-    'Gives 20%, below the public SUMMER offer (25-35%) on every programme as of 2026-09-04. Must never be labelled best price, exclusive or save more while that holds. Realignment requested from the firm.',
+    'Verified at 30% on 2026-09-07. Beats the public SUMMER offer on Elite 25K (25%), matches it on eleven plans (30%), and is below it on Prime 50K/100K/150K (35%). Never label it best deal, best verified price, applicable to all programs, or without expiry: per-program eligibility and expiry are both unconfirmed.',
 }
 
 // -----------------------------------------------------------------------------
@@ -253,13 +263,19 @@ export const FUTURESELITE_BUNDLES = [
 // WealthCharts ne figure plus sur la page officielle — retire plutot que
 // conserve par habitude. Volumetrica et DeepDOM y sont ajoutes.
 export const FUTURESELITE_PLATFORMS = [
-  ['Tradovate', 'selectable', 'not_displayed', 'Evaluation and funded availability should be reconfirmed per account'],
+  // Releve officiel du 7 septembre 2026 : la page marketing et le
+  // configurateur n'exposent PAS la meme liste. Celles qu'on peut reellement
+  // choisir a l'achat viennent du configurateur ; les deux presentes seulement
+  // sur la page marketing sont marquees comme telles plutot que supprimees ou
+  // presentees comme selectionnables.
+  ['Tradovate', 'selectable', 'not_displayed', null],
   ['NinjaTrader', 'selectable', 'not_displayed', 'Potential external licence cost in live trading'],
   ['Quantower', 'selectable', 'not_displayed', null],
   ['ATAS', 'selectable', 'not_displayed', null],
-  ['Volumetrica', 'selectable', 'not_displayed', null],
-  ['DeepDOM', 'selectable', 'not_displayed', null],
-  ['DeepCharts', 'selectable', 'not_displayed', 'Dashboard provides credentials and a Dxfeed agreement flow'],
+  ['WealthCharts', 'selectable', 'not_displayed', null],
+  ['DeepChart', 'selectable', 'not_displayed', 'Dashboard provides credentials and a Dxfeed agreement flow'],
+  ['Volumetrica', 'marketing_only', 'not_displayed', 'Listed on the official homepage but not exposed in the purchase configurator'],
+  ['DeepCharts', 'marketing_only', 'not_displayed', 'Listed on the official homepage but not exposed in the purchase configurator'],
 ].map(([name, configurator_status, checkout_surcharge, note], i) => ({
   name, configurator_status, checkout_surcharge, note, sort_order: i + 1,
 }))
@@ -298,6 +314,17 @@ export const FUTURESELITE_RULES = [
   // La colonne ne porte qu'une source ; le second lien est donc nomme dans le
   // texte, sans quoi le lecteur ne pourrait verifier qu'une moitie du conflit.
   ['payout', 'Elite 25K minimum trading days', 'Unresolved: the configurator at ' + PRICING + ' states 3 trading days, and the payout FAQ at ' + FAQ + '11949982-what-is-the-payout-process-like-on-futures-elite states 6. They may describe two different steps — completing the evaluation, then becoming eligible for a payout — but no official page says so. Check both before relying on either.', 'payout_condition', 'needs_confirmation', PRICING],
+  // Un « jour profitable » a un seuil minimal, propre a la taille du compte.
+  // Sans lui, « 6 jours avant retrait » se lit comme six jours de presence,
+  // alors qu'un jour a +20 $ ne compte pas. C'est un bloqueur de retrait, pas
+  // un detail de comptage.
+  ['payout', 'What counts as a profitable day', 'Elite requires 6 profitable days per payout, and a day only qualifies above a size-specific minimum: $100 on a 25K, $150 on a 50K, $250 on a 100K, $350 on a 150K.', 'payout_condition', 'verified', PRICING],
+  // Conflits releves le 7 septembre 2026. Publies comme non resolus plutot que
+  // tranches : chacun a deux sources officielles qui divergent.
+  ['account', 'Prime 150K maximum loss', 'Unresolved: the Prime overview and the live configurator show $4,500, while a detailed official MLL article has shown $4,000. The configurator value is used here.', 'hard_breach', 'needs_confirmation', PRICING],
+  ['account', 'Instant 25K availability', 'Documented in the official Instant FAQ but not currently purchasable: the live configurator exposes only 50K, 100K and 150K.', 'restriction', 'needs_confirmation', FAQ + '12901358-how-do-payout-works-on-the-new-instant-challenges'],
+  ['limits', 'Nitro funded accounts', 'Unresolved: the FAQ caps Nitro at 3 funded accounts while configurator cross-sell copy displayed MAX 4 FUNDED. No exact figure is published here until the firm confirms one.', 'restriction', 'needs_confirmation', FAQ_LIMITS],
+  ['account', 'Prime evaluation length', 'Can be passed in one trading day. A separate FAQ article describes no minimum; the configurator states one day.', 'allowed', 'needs_confirmation', PRICING],
   ['live', 'Transition to live', 'A risk-team decision. The fifth payout is a ceiling, not an automatic entitlement.', 'payout_condition', 'verified', FAQ + '15899069-live-trading-program'],
   ['live', 'Live starting balance', 'Starts at $0 with a loss floor based on account size. 50K example: $2,000 loss floor and $1,000 cushion.', 'restriction', 'verified', FAQ + '15899069-live-trading-program'],
   ['live', 'Live cushion unlock', '15 profitable days meeting the size-specific daily minimum. Days need not be consecutive.', 'payout_condition', 'verified', FAQ + '15899069-live-trading-program'],

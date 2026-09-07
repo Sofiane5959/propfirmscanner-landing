@@ -25,7 +25,7 @@ delete from firm_live_tiers where firm_slug = 'futureselite';
 -- 2. Les quatre programmes
 insert into firm_programs (firm_slug, slug, name, kind, evaluation_steps, summary, sort_order, max_funded_accounts, max_funded_note, source_url, verified_at) values
   ('futureselite', 'elite', 'Elite', 'evaluation', 1, 'One-step evaluation, end-of-day drawdown and no daily loss limit. The only programme whose payout amount rule is documented in detail.', 1, 5, 'Counts towards the shared cap of 5 funded accounts across Elite, Custom, Instant and Nitro.', 'https://futureselite.com/#pricing', timestamptz '2026-09-04'),
-  ('futureselite', 'nitro', 'Nitro', 'evaluation', 1, 'One-step evaluation with the lowest minimum trading days. Once funded it switches to a trailing-equity drawdown with a buffer.', 2, 3, 'Conflict: the bundle sells up to 5, while the official FAQ allows only 3 active funded Nitro accounts. The FAQ prevails.', 'https://futureselite.com/#pricing', timestamptz '2026-09-04'),
+  ('futureselite', 'nitro', 'Nitro', 'evaluation', 1, 'One-step evaluation with the lowest minimum trading days. Once funded it switches to a trailing-equity drawdown with a buffer.', 2, null, 'Unresolved: the official FAQ states 3 active funded Nitro accounts, configurator cross-sell copy displayed MAX 4 FUNDED, and the bundle sells up to 5. Confirm with the firm before relying on any figure.', 'https://futureselite.com/#pricing', timestamptz '2026-09-04'),
   ('futureselite', 'prime', 'Prime', 'evaluation', 1, 'The only programme with a daily loss limit in both phases. It also carries the longest bundle ladder, up to ten accounts.', 3, 10, 'Prime has its own cap: 10 active funded accounts.', 'https://futureselite.com/#pricing', timestamptz '2026-09-04'),
   ('futureselite', 'instant', 'Instant', 'instant', null, 'No evaluation: the account is live from purchase. Payout eligibility still requires 10 trading days and a 20% consistency rule.', 4, 5, 'Counts towards the shared cap of 5 funded accounts across Elite, Custom, Instant and Nitro.', 'https://futureselite.com/#pricing', timestamptz '2026-09-04');
 
@@ -91,7 +91,7 @@ insert into firm_promotions (firm_slug, program_slug, account_size, code, label,
   ('futureselite', 'instant', 50000, 'SUMMER', 'Current public offer — expiry not published', 'percent', 0.3, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
   ('futureselite', 'instant', 100000, 'SUMMER', 'Current public offer — expiry not published', 'percent', 0.3, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
   ('futureselite', 'instant', 150000, 'SUMMER', 'Current public offer — expiry not published', 'percent', 0.3, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', true, 'Automatically applied by the configurator on 2026-09-04. Volatile: reverify before publication.'),
-  ('futureselite', null, null, 'SCANNED', 'PropFirmScanner partner code', 'percent', 0.2, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', false, 'Gives 20%, below the public SUMMER offer (25-35%) on every programme as of 2026-09-04. Must never be labelled best price, exclusive or save more while that holds. Realignment requested from the firm.');
+  ('futureselite', null, null, 'SCANNED', '30% with code SCANNED — eligibility and best-price status pending confirmation', 'percent', 0.3, null, null, timestamptz '2026-09-04', 'https://futureselite.com/#pricing', 'active', false, 'Verified at 30% on 2026-09-07. Beats the public SUMMER offer on Elite 25K (25%), matches it on eleven plans (30%), and is below it on Prime 50K/100K/150K (35%). Never label it best deal, best verified price, applicable to all programs, or without expiry: per-program eligibility and expiry are both unconfirmed.');
 
 
 -- 5. Bundle & Save — capacite d ACHAT, distincte du plafond FINANCE
@@ -125,13 +125,14 @@ insert into firm_program_bundles (firm_slug, program_slug, account_number, disco
 
 -- 6. Plateformes
 insert into firm_platforms (firm_slug, name, configurator_status, checkout_surcharge, note, sort_order) values
-  ('futureselite', 'Tradovate', 'selectable', 'not_displayed', 'Evaluation and funded availability should be reconfirmed per account', 1),
+  ('futureselite', 'Tradovate', 'selectable', 'not_displayed', null, 1),
   ('futureselite', 'NinjaTrader', 'selectable', 'not_displayed', 'Potential external licence cost in live trading', 2),
   ('futureselite', 'Quantower', 'selectable', 'not_displayed', null, 3),
   ('futureselite', 'ATAS', 'selectable', 'not_displayed', null, 4),
-  ('futureselite', 'Volumetrica', 'selectable', 'not_displayed', null, 5),
-  ('futureselite', 'DeepDOM', 'selectable', 'not_displayed', null, 6),
-  ('futureselite', 'DeepCharts', 'selectable', 'not_displayed', 'Dashboard provides credentials and a Dxfeed agreement flow', 7);
+  ('futureselite', 'WealthCharts', 'selectable', 'not_displayed', null, 5),
+  ('futureselite', 'DeepChart', 'selectable', 'not_displayed', 'Dashboard provides credentials and a Dxfeed agreement flow', 6),
+  ('futureselite', 'Volumetrica', 'marketing_only', 'not_displayed', 'Listed on the official homepage but not exposed in the purchase configurator', 7),
+  ('futureselite', 'DeepCharts', 'marketing_only', 'not_displayed', 'Listed on the official homepage but not exposed in the purchase configurator', 8);
 
 
 -- 7. Regles
@@ -157,14 +158,19 @@ insert into firm_rules (firm_slug, scope, title, detail, severity, confidence, s
   ('futureselite', 'payout', 'Direct crypto', 'Maximum $500 per request. Above that, standard Rise methods apply.', 'payout_condition', 'verified', 'https://faq.futureselite.com/en/articles/11949985-how-are-payouts-processed', timestamptz '2026-09-04', 19),
   ('futureselite', 'payout', 'Elite maximum request', 'Elite accounts bought from 2026-06-25 15:00 CET: 50% of total profit remaining, capped by account size. Older Elite accounts use 50% of current-cycle profit. Documented for Elite only.', 'payout_condition', 'verified', 'https://faq.futureselite.com/en/articles/16387630-how-much-can-i-request', timestamptz '2026-09-04', 20),
   ('futureselite', 'payout', 'Elite 25K minimum trading days', 'Unresolved: the configurator at https://futureselite.com/#pricing states 3 trading days, and the payout FAQ at https://faq.futureselite.com/en/articles/11949982-what-is-the-payout-process-like-on-futures-elite states 6. They may describe two different steps — completing the evaluation, then becoming eligible for a payout — but no official page says so. Check both before relying on either.', 'payout_condition', 'needs_confirmation', 'https://futureselite.com/#pricing', timestamptz '2026-09-04', 21),
-  ('futureselite', 'live', 'Transition to live', 'A risk-team decision. The fifth payout is a ceiling, not an automatic entitlement.', 'payout_condition', 'verified', 'https://faq.futureselite.com/en/articles/15899069-live-trading-program', timestamptz '2026-09-04', 22),
-  ('futureselite', 'live', 'Live starting balance', 'Starts at $0 with a loss floor based on account size. 50K example: $2,000 loss floor and $1,000 cushion.', 'restriction', 'verified', 'https://faq.futureselite.com/en/articles/15899069-live-trading-program', timestamptz '2026-09-04', 23),
-  ('futureselite', 'live', 'Live cushion unlock', '15 profitable days meeting the size-specific daily minimum. Days need not be consecutive.', 'payout_condition', 'verified', 'https://faq.futureselite.com/en/articles/15899069-live-trading-program', timestamptz '2026-09-04', 24),
-  ('futureselite', 'live', 'Live payout', 'Daily, $200 minimum, on profits above the cushion or unlocked reserve.', 'payout_condition', 'verified', 'https://faq.futureselite.com/en/articles/15899069-live-trading-program', timestamptz '2026-09-04', 25),
-  ('futureselite', 'live', 'Market data', 'Exchange market data is the trader’s responsibility on a live account. Amount not specified.', 'restriction', 'verified', 'https://faq.futureselite.com/en/articles/12291073-market-data-costs', timestamptz '2026-09-04', 26),
-  ('futureselite', 'live', 'Commissions', 'Commissions and exchange fees are charged per instrument on each executed trade. The official FAQ still labels some exchange fees as 2024 rates.', 'restriction', 'verified', 'https://faq.futureselite.com/en/articles/12291021-what-are-the-costs-fees', timestamptz '2026-09-04', 27),
-  ('futureselite', 'live', 'Platform licence', 'A paid platform licence may apply depending on the selected platform.', 'restriction', 'verified', 'https://faq.futureselite.com/en/articles/12291021-what-are-the-costs-fees', timestamptz '2026-09-04', 28),
-  ('futureselite', 'live', 'Maintenance fee', 'No hidden administrative maintenance fee is stated: $0.', 'allowed', 'verified', 'https://faq.futureselite.com/en/articles/12291021-what-are-the-costs-fees', timestamptz '2026-09-04', 29);
+  ('futureselite', 'payout', 'What counts as a profitable day', 'Elite requires 6 profitable days per payout, and a day only qualifies above a size-specific minimum: $100 on a 25K, $150 on a 50K, $250 on a 100K, $350 on a 150K.', 'payout_condition', 'verified', 'https://futureselite.com/#pricing', timestamptz '2026-09-04', 22),
+  ('futureselite', 'account', 'Prime 150K maximum loss', 'Unresolved: the Prime overview and the live configurator show $4,500, while a detailed official MLL article has shown $4,000. The configurator value is used here.', 'hard_breach', 'needs_confirmation', 'https://futureselite.com/#pricing', timestamptz '2026-09-04', 23),
+  ('futureselite', 'account', 'Instant 25K availability', 'Documented in the official Instant FAQ but not currently purchasable: the live configurator exposes only 50K, 100K and 150K.', 'restriction', 'needs_confirmation', 'https://faq.futureselite.com/en/articles/12901358-how-do-payout-works-on-the-new-instant-challenges', timestamptz '2026-09-04', 24),
+  ('futureselite', 'limits', 'Nitro funded accounts', 'Unresolved: the FAQ caps Nitro at 3 funded accounts while configurator cross-sell copy displayed MAX 4 FUNDED. No exact figure is published here until the firm confirms one.', 'restriction', 'needs_confirmation', 'https://faq.futureselite.com/en/articles/11949051-how-many-accounts-can-i-have-with-futureselite', timestamptz '2026-09-04', 25),
+  ('futureselite', 'account', 'Prime evaluation length', 'Can be passed in one trading day. A separate FAQ article describes no minimum; the configurator states one day.', 'allowed', 'needs_confirmation', 'https://futureselite.com/#pricing', timestamptz '2026-09-04', 26),
+  ('futureselite', 'live', 'Transition to live', 'A risk-team decision. The fifth payout is a ceiling, not an automatic entitlement.', 'payout_condition', 'verified', 'https://faq.futureselite.com/en/articles/15899069-live-trading-program', timestamptz '2026-09-04', 27),
+  ('futureselite', 'live', 'Live starting balance', 'Starts at $0 with a loss floor based on account size. 50K example: $2,000 loss floor and $1,000 cushion.', 'restriction', 'verified', 'https://faq.futureselite.com/en/articles/15899069-live-trading-program', timestamptz '2026-09-04', 28),
+  ('futureselite', 'live', 'Live cushion unlock', '15 profitable days meeting the size-specific daily minimum. Days need not be consecutive.', 'payout_condition', 'verified', 'https://faq.futureselite.com/en/articles/15899069-live-trading-program', timestamptz '2026-09-04', 29),
+  ('futureselite', 'live', 'Live payout', 'Daily, $200 minimum, on profits above the cushion or unlocked reserve.', 'payout_condition', 'verified', 'https://faq.futureselite.com/en/articles/15899069-live-trading-program', timestamptz '2026-09-04', 30),
+  ('futureselite', 'live', 'Market data', 'Exchange market data is the trader’s responsibility on a live account. Amount not specified.', 'restriction', 'verified', 'https://faq.futureselite.com/en/articles/12291073-market-data-costs', timestamptz '2026-09-04', 31),
+  ('futureselite', 'live', 'Commissions', 'Commissions and exchange fees are charged per instrument on each executed trade. The official FAQ still labels some exchange fees as 2024 rates.', 'restriction', 'verified', 'https://faq.futureselite.com/en/articles/12291021-what-are-the-costs-fees', timestamptz '2026-09-04', 32),
+  ('futureselite', 'live', 'Platform licence', 'A paid platform licence may apply depending on the selected platform.', 'restriction', 'verified', 'https://faq.futureselite.com/en/articles/12291021-what-are-the-costs-fees', timestamptz '2026-09-04', 33),
+  ('futureselite', 'live', 'Maintenance fee', 'No hidden administrative maintenance fee is stated: $0.', 'allowed', 'verified', 'https://faq.futureselite.com/en/articles/12291021-what-are-the-costs-fees', timestamptz '2026-09-04', 34);
 
 
 -- 8. Bareme du compte live
@@ -178,8 +184,8 @@ insert into firm_live_tiers (firm_slug, account_size, conversion_cap, loss_floor
 
 -- 9. CONTROLE
 -- Attendu : 4 programmes, 27 plans, 16 promotions,
---           25 paliers de bundle, 7 plateformes,
---           29 regles, 5 paliers live.
+--           25 paliers de bundle, 8 plateformes,
+--           34 regles, 5 paliers live.
 select p.name, pl.phase, pl.account_size, pl.regular_price, pl.profit_target,
        pl.maximum_loss_limit, pl.daily_loss_limit, pl.drawdown_type, pl.buffer_status,
        pl.max_contracts, pl.minimum_trading_days, pl.consistency_rule,

@@ -278,6 +278,52 @@ console.log('14. Basculement de programme et rendu conditionnel des phases')
 
 
 console.log('')
+console.log('16. Donnees officielles du 7 septembre 2026')
+{
+  const { FUTURESELITE_PARTNER_PROMOTION, FUTURESELITE_PROMOTIONS, FUTURESELITE_PLATFORMS, FUTURESELITE_PROGRAMS }
+    = await import('./futureselite-programs.mjs')
+
+  // Le chiffre qui change le sens de la page : a 20 % notre code etait
+  // toujours moins bon que l offre publique, a 30 % il ne l est que sur trois
+  // plans Prime.
+  cas('SCANNED vaut 30 %', FUTURESELITE_PARTNER_PROMOTION.discount_value === 0.30,
+    String(FUTURESELITE_PARTNER_PROMOTION.discount_value))
+  cas('SCANNED reste non public', FUTURESELITE_PARTNER_PROMOTION.is_public === false)
+
+  // Formulations interdites par le releve officiel : l eligibilite par
+  // programme et l expiration ne sont pas confirmees.
+  const texte = [FUTURESELITE_PARTNER_PROMOTION.label, FUTURESELITE_PARTNER_PROMOTION.editorial_note].join(' ')
+  for (const interdit of ['best deal', 'best verified price']) {
+    const affirme = new RegExp('(?<!never label it [^.]{0,80})' + interdit, 'i').test(
+      FUTURESELITE_PARTNER_PROMOTION.label)
+    cas('le libelle ne dit pas « ' + interdit + ' »', !affirme)
+  }
+  cas('la reserve accompagne le chiffre', /pending confirmation/i.test(FUTURESELITE_PARTNER_PROMOTION.label))
+
+  // Un code de comparateur concurrent ne doit jamais atterrir dans nos donnees.
+  cas('aucun code MATCH', !texte.includes('MATCH') &&
+    !FUTURESELITE_PROMOTIONS.some((p) => p.code === 'MATCH'))
+
+  // Les deux listes de plateformes divergent : celles qu on peut choisir sont
+  // celles du configurateur, les autres sont marquees.
+  const selectables = FUTURESELITE_PLATFORMS.filter((p) => p.configurator_status === 'selectable')
+  cas('six plateformes selectionnables', selectables.length === 6, String(selectables.length))
+  cas('les plateformes marketing sont marquees',
+    FUTURESELITE_PLATFORMS.some((p) => p.configurator_status === 'marketing_only'))
+
+  // Deux sources officielles divergent sur le plafond Nitro : aucun chiffre.
+  const nitro = FUTURESELITE_PROGRAMS.find((p) => p.slug === 'nitro')
+  cas('aucun plafond Nitro chiffre', nitro.max_funded_accounts === null,
+    String(nitro.max_funded_accounts))
+
+  // Instant : pas de 25K achetable, et 80 % de partage et non 90.
+  const instant = FUTURESELITE_PROGRAMS.find((p) => p.kind === 'instant')
+  cas('Instant ne vend pas de 25K', !instant.plans.some((p) => p.account_size === 25000))
+  cas('Instant partage 80 %',
+    instant.plans.filter((p) => p.phase === 'sim_funded').every((p) => p.profit_split === 0.8))
+}
+
+console.log('')
 console.log('15. Gabarit generique — ordre, unicite et accessibilite')
 {
   const { readFileSync } = await import('node:fs')

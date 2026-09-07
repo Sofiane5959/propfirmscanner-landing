@@ -208,7 +208,7 @@ export const FTMO = {
           category: 'Trading restrictions',
           title: 'How many accounts you can hold at once',
           detail:
-            'Ten funded accounts overall, five combined across Elite, Custom, Instant and Nitro, three on Nitro. Buying a bundle does not raise those limits.',
+            'Ten funded accounts overall and five combined across Elite, Custom, Instant and Nitro. The Nitro-only cap is disputed between official sources, so no figure is published here. Buying a bundle does not raise the overall limits.',
           severity: 'restriction',
         },
       ],
@@ -577,15 +577,17 @@ export const FUTURESELITE = {
     logo_url: 'https://www.google.com/s2/favicons?domain=futureselite.com&sz=128',
   },
   arrays: {
-    // Meme liste que FUTURESELITE_PLATFORMS, relevee le 4 septembre 2026.
-    // WealthCharts ne figure plus sur la page officielle ; DeepDOM si.
-    // Toujours sept, donc « Seven platforms to choose from » reste juste.
-    platforms: ['Tradovate', 'NinjaTrader', 'Quantower', 'ATAS', 'Volumetrica', 'DeepDOM', 'DeepCharts'],
+    // Releve officiel du 7 septembre 2026 : la page marketing et le
+    // configurateur n'exposent pas la meme liste. Celle-ci est celle du
+    // CONFIGURATEUR, c'est-a-dire ce qu'on peut reellement choisir a l'achat.
+    // Volumetrica et DeepCharts n'apparaissent que sur la page marketing et
+    // sont signalees comme telles dans firm_platforms, pas ici.
+    platforms: ['Tradovate', 'NinjaTrader', 'Quantower', 'ATAS', 'WealthCharts', 'DeepChart'],
     assets: ['Futures'],
     included_items: [
       'Trading journal and analytics dashboard',
       'No activation fee on the funded account',
-      'Seven platforms to choose from',
+      'Six platforms to choose from in the configurator',
     ],
     pros: [
       '90% profit split on the Elite programme',
@@ -690,7 +692,7 @@ export const FUTURESELITE = {
         'Payouts available every day once funded',
         '6 minimum trading days before a payout',
         'No profit buffer required',
-        'Seven platforms to choose from, including Tradovate and NinjaTrader',
+        'Six platforms selectable at purchase, including Tradovate and NinjaTrader; two more appear on the marketing page only',
         'The fifth account in a bundle is free',
       ],
     },
