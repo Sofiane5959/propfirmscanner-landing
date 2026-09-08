@@ -123,6 +123,15 @@ export interface FirmPageModel {
     country: string | null
     /** « Futures prop firm », « CFD prop firm »… derive du marche. */
     firmType: string | null
+    /**
+     * « Simulated » quand toutes les phases financees sont simulees.
+     *
+     * Derive du nom de phase (`sim_funded`), donc d'une donnee structuree :
+     * le deduire d'une absence de licence aurait ete une inference.
+     */
+    accountModel: string | null
+    /** Frequence de retrait au niveau firme, quand elle est renseignee. */
+    payoutFrequency: string | null
   }
   /** Faits vrais pour TOUS les programmes achetables. Voir `universalFact`. */
   firmFacts: { label: string; detail: string | null }[]
@@ -364,6 +373,8 @@ export function buildFirmPageModel(
     // Derive du marche des programmes, pas d'une colonne libre : c'est la
     // meme source que le fait de firme, donc les deux ne peuvent pas diverger.
     firmType: null as string | null,
+    accountModel: null as string | null,
+    payoutFrequency: firm.payout_frequency ?? null,
   }
 
   // --- Programmes, plans, phases -------------------------------------------
@@ -420,10 +431,26 @@ export function buildFirmPageModel(
       }
     })
 
+  // Un libelle par marche, ecrit une fois. La version precedente capitalisait
+  // « futures » a la main et laissait passer « cfd prop firm » en minuscules
+  // pour tout autre marche : le defaut de la colonne devenait du texte visible.
+  // Un marche inconnu ne produit AUCUN libelle plutot qu'un mot brut.
+  const LIBELLE_MARCHE: Record<string, string> = {
+    futures: 'Futures prop firm',
+    cfd: 'CFD prop firm',
+    stocks: 'Stock prop firm',
+  }
   const marchesProgrammes = new Set(programmes.map((p) => p.market))
   identity.firmType =
-    marchesProgrammes.size === 1
-      ? `${Array.from(marchesProgrammes)[0] === 'futures' ? 'Futures' : Array.from(marchesProgrammes)[0]} prop firm`
+    marchesProgrammes.size === 1 ? LIBELLE_MARCHE[Array.from(marchesProgrammes)[0]] ?? null : null
+
+  // « Simulated » n'est affirme que si TOUTES les phases financees le sont.
+  const phasesFinancees = programmes.flatMap((p) =>
+    p.plans.flatMap((pl) => pl.phases.filter((ph) => ph.phase.startsWith('sim_') || ph.phase === 'funded'))
+  )
+  identity.accountModel =
+    phasesFinancees.length > 0 && phasesFinancees.every((ph) => ph.phase === 'sim_funded')
+      ? 'Simulated'
       : null
 
   const tousLesPlans = programmes.flatMap((p) => p.plans)
@@ -536,6 +563,8 @@ export function buildFirmPageModel(
   note('identity.foundedYear', 'prop_firms', 'founded,founded_year,year_founded')
   note('identity.country', 'prop_firms', 'country')
   note('identity.firmType', 'firm_programs', 'market (derive)')
+  note('identity.accountModel', 'firm_program_plans', 'phase (derive)')
+  note('identity.payoutFrequency', 'prop_firms', 'payout_frequency')
   note('catalogue.dataFeeds', 'prop_firms', 'checkout_options')
 
   // --- Offre, resolue PAR PLAN ---------------------------------------------

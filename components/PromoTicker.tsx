@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { usePathname } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Copy, CheckCircle2, BadgeCheck, ShieldCheck, ExternalLink } from 'lucide-react'
@@ -159,6 +160,16 @@ const DealPill = ({ deal }: { deal: PromoDeal }) => {
 // MAIN PROMO TICKER
 // =====================================================
 export default function PromoTicker({ deals: initialDeals = [] }: PromoTickerProps) {
+  // Le bandeau ne s'affiche pas sur une fiche firme : il y proposait le code
+  // promo d'une AUTRE firme, avec son propre bouton, juste au-dessus de
+  // l'offre de la firme qu'on est en train de lire. Deux offres concurrentes
+  // a trois centimetres l'une de l'autre.
+  //
+  // Le filtre porte sur la route, pas sur une firme : toutes les fiches sont
+  // concernees, et le bandeau reste sur le reste du site.
+  const chemin = usePathname()
+  const surUneFicheFirme = /\/prop-firm\//.test(chemin ?? '')
+
   const [deals, setDeals] = useState<PromoDeal[]>(initialDeals)
   const [isLoading, setIsLoading] = useState(initialDeals.length === 0)
   const [isPaused, setIsPaused] = useState(false)
@@ -266,6 +277,8 @@ export default function PromoTicker({ deals: initialDeals = [] }: PromoTickerPro
   }
   
   // Hide ticker while loading or if no deals
+  // Apres tous les hooks : React exige qu'ils soient appeles sans condition.
+  if (surUneFicheFirme) return null
   if (isLoading) return null
   if (!deals || deals.length === 0) return null
   

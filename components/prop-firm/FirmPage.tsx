@@ -127,6 +127,13 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
   const devise = plan?.currency ?? 'USD'
   const argent = (n: number) => formatMoney(n, locale, '', devise)
 
+  // La phase que le visiteur affronte en premier, et celle qui le paiera.
+  // Sur un produit instantane les deux se confondent : il n'y a pas
+  // d'evaluation, donc pas d'objectif a atteindre.
+  const phaseEvaluation = plan?.phases.find((p) => p.phase === 'evaluation') ?? null
+  const phaseFinancee = plan?.phases.find((p) => p.phase === 'sim_funded') ?? null
+  const premierePhase = phaseEvaluation ?? phaseFinancee
+
   const taille = (n: number) => (n >= 1000 ? `$${n / 1000}K` : `$${n}`)
 
   return (
@@ -256,6 +263,28 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
             ))}
         </div>
 
+        {/* Quatre faits d'etat civil du produit, en ligne. Chacun disparait
+            si sa source est vide : aucun n'est devine. */}
+        {(() => {
+          const entrees = [
+            ['Market', identity.firmType?.replace(' prop firm', '') ?? null],
+            ['Payment provider', catalogue.paymentMethods.join(', ') || null],
+            ['Trading model', identity.accountModel],
+            ['Payout frequency', identity.payoutFrequency],
+          ].filter(([, v]) => Boolean(v)) as [string, string][]
+          if (entrees.length === 0) return null
+          return (
+            <div className="max-w-6xl mx-auto mt-5 pt-4 border-t border-gray-800 flex flex-wrap gap-x-8 gap-y-2">
+              {entrees.map(([label, valeur]) => (
+                <span key={label} className="text-sm">
+                  <span className="text-gray-500">{label} : </span>
+                  <span className="text-gray-200">{valeur}</span>
+                </span>
+              ))}
+            </div>
+          )
+        })()}
+
         {/* Les faits de firme, uniquement ceux vrais partout. Deux sur les
             quatre d'avant : la structure refuse les autres. */}
         {firmFacts.length > 0 && (
@@ -369,21 +398,43 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
                   </div>
                 )}
 
+                {/* Ce que le visiteur doit savoir AVANT de payer, pris sur
+                    la phase qui le concerne : ce qu'il affronte d'abord pour
+                    les regles d'entree, le compte finance pour ce qu'il
+                    gagnera. Aucune valeur n'est recalculee ici, elles sont
+                    toutes dans le modele.
+                    Une ligne sans valeur ne s'affiche pas : une liste de
+                    « Not stated » n'aide personne a decider. */}
                 <dl className="space-y-1.5 mb-4 text-sm">
-                  {plan.phases.map((ph) => (
-                    <div key={ph.phase} className="flex justify-between gap-3">
-                      <dt className="text-gray-500">
-                        {ph.phase === 'sim_funded' ? 'Funded split' : 'Profit target'}
-                      </dt>
-                      <dd className="text-right">
-                        {ph.phase === 'sim_funded' ? (
-                          <Val v={pct(ph.profitSplit)} />
-                        ) : (
-                          <Val v={ph.profitTarget != null ? argent(ph.profitTarget) : null} />
-                        )}
-                      </dd>
-                    </div>
-                  ))}
+                  {(
+                    [
+                      ['Profit target', premierePhase?.profitTarget != null
+                        ? argent(premierePhase.profitTarget)
+                        : phaseFinancee && !phaseEvaluation
+                          ? 'No evaluation'
+                          : null],
+                      ['Maximum loss', premierePhase?.maximumLoss != null
+                        ? argent(premierePhase.maximumLoss) : null],
+                      ['Daily loss', premierePhase?.dailyLoss != null
+                        ? argent(premierePhase.dailyLoss)
+                        : premierePhase?.dailyLossStated ? 'None' : null],
+                      ['Drawdown', premierePhase?.drawdownType ?? null],
+                      ['Minimum trading days', premierePhase?.minimumTradingDays ?? null],
+                      ['Maximum contracts', premierePhase?.maxContracts ?? null],
+                      ['Funded profit split', pct(phaseFinancee?.profitSplit ?? null)],
+                      ['Payout cap', phaseFinancee?.payoutCap != null
+                        ? argent(phaseFinancee.payoutCap) : null],
+                    ] as [string, number | string | null][]
+                  )
+                    .filter(([, v]) => v !== null && v !== undefined)
+                    .map(([label, v]) => (
+                      <div key={label} className="flex justify-between gap-3">
+                        <dt className="text-gray-500">{label}</dt>
+                        <dd className="text-right">
+                          <Val v={v} />
+                        </dd>
+                      </div>
+                    ))}
                 </dl>
 
                 <a

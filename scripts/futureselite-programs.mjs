@@ -312,7 +312,10 @@ export const FUTURESELITE_RULES = [
   ['account', 'Inactivity', '30 consecutive days without trades may permanently close a live account.', 'hard_breach', 'verified', FAQ + '12291084-trader-rules-responsibilities'],
   ['account', 'Protective stops', 'A stop order is required on every open position on a live account.', 'restriction', 'verified', FAQ + '12291084-trader-rules-responsibilities'],
   ['account', 'Evaluation duration', 'No deadline to pass. One-time fee, no recurring monthly fee.', 'allowed', 'verified', FAQ + '16778908-is-the-challenge-fee-is-one-time'],
-  ['limits', 'Active funded accounts', 'Maximum 10 funded accounts overall; maximum 10 Prime; maximum 3 Nitro; maximum 5 combined across Elite, Custom, Instant and Nitro.', 'restriction', 'verified', FAQ_LIMITS],
+  // Le plafond Nitro chiffre est retire : la FAQ dit 3, le configurateur a
+  // affiche MAX 4. La regle suivante porte le conflit en detail ; celle-ci
+  // ne garde que ce que les sources confirment.
+  ['limits', 'Active funded accounts', 'Maximum 10 funded accounts overall; maximum 10 Prime; maximum 5 combined across Elite, Custom, Instant and Nitro. Nitro funded-account limit: not confirmed.', 'restriction', 'verified', FAQ_LIMITS],
   ['payout', 'Payout review', 'Average under 24 hours. Manual review may take longer.', 'payout_condition', 'verified', FAQ + '11949982-what-is-the-payout-process-like-on-futures-elite'],
   ['payout', 'Payment provider', 'Rise. The first payout requires a Rise account and KYC.', 'payout_condition', 'verified', FAQ + '11949985-how-are-payouts-processed'],
   ['payout', 'Bank transfer', '1 to 3 days after approval.', 'payout_condition', 'verified', FAQ + '11949985-how-are-payouts-processed'],

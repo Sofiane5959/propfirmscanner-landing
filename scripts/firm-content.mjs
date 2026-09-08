@@ -551,6 +551,8 @@ export const FUTURESELITE = {
     // sont signalees comme telles dans firm_platforms, pas ici.
     platforms: ['Tradovate', 'NinjaTrader', 'Quantower', 'ATAS', 'WealthCharts', 'DeepChart'],
     assets: ['Futures'],
+    // Verifie : la FAQ paiements documente Rise, avec KYC au premier retrait.
+    payout_methods: ['Rise'],
     included_items: [
       'Trading journal and analytics dashboard',
       'No activation fee on the funded account',
@@ -558,7 +560,7 @@ export const FUTURESELITE = {
     ],
     pros: [
       '90% profit split on Elite, Nitro and Prime; 80% on Instant',
-      'End-of-day drawdown on Elite, Nitro and Instant',
+      'Drawdown type differs by program and phase \u2014 see the rules table',
       'No daily loss limit on Elite, Nitro and Instant \u2014 Prime has one in both phases',
       'No funded consistency rule on Elite and Nitro',
       'No activation fee to unlock the funded account',
@@ -573,7 +575,7 @@ export const FUTURESELITE = {
     ],
     special_features: [
       'Profit split up to 90% — 80% on Instant',
-      'End-of-day drawdown on three of the four programs',
+      'Drawdown type is stated per program and per phase',
       'Prime carries a daily loss limit and a 40% funded consistency rule',
       'No activation fee on the funded account',
       'Bundle discounts: the fifth account is free',
@@ -587,7 +589,7 @@ export const FUTURESELITE = {
         'FuturesElite bets on generous terms once you are funded: up to a 90% split, daily payouts, and no funded consistency rule on Elite and Nitro. In exchange, the firm is young and is a proprietary trading company rather than a regulated broker.',
       points: [
         'A high split and frequent payouts, with no waiting period',
-        'An evaluation with no daily loss limit, which leaves room to breathe',
+        'Elite or Nitro evaluations without a daily loss limit, which leaves room to breathe',
         'A funded account that opens with no activation fee',
         'The option to stack up to ten accounts in parallel',
       ],

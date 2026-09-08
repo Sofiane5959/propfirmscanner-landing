@@ -342,6 +342,82 @@ console.log('-'.repeat(78))
     sansRegles.rules.critical.length > 0)
 }
 
+// -----------------------------------------------------------------------------
+// 8. Les six corrections factuelles du 8 septembre
+// -----------------------------------------------------------------------------
+console.log('')
+console.log('CORRECTIONS FACTUELLES')
+console.log('-'.repeat(78))
+{
+  // 1. Le marche vient d une table de libelles, pas d une capitalisation
+  //    improvisee. « cfd prop firm » etait le defaut de colonne devenu texte.
+  cas('le type de firme est « Futures prop firm »',
+    model.identity.firmType === 'Futures prop firm', String(model.identity.firmType))
+  cas('un marche inconnu ne produit aucun libelle', (() => {
+    const d = JSON.parse(JSON.stringify(programData))
+    d.programs.forEach((p) => { p.market = 'crypto' })
+    return buildFirmPageModel(firm, d, { now: Date.parse('2026-09-07T12:00:00Z') })
+      .identity.firmType === null
+  })())
+
+  // 2. Plus aucun plafond Nitro chiffre, mais le conflit reste explique.
+  const toutesRegles = model.rules.complete.map((r) => `${r.title} ${r.detail}`).join(' ')
+  cas('aucun « maximum 3 Nitro »', !/maximum 3 nitro/i.test(toutesRegles))
+  cas('le plafond Nitro est declare non confirme',
+    /not confirmed/i.test(toutesRegles))
+  // Le libelle exact de la regle est « caps Nitro at 3 funded accounts ». Le
+  // test cherchait « 3 active funded Nitro », qui vit sur le programme et non
+  // dans les regles : c'est le test qui etait faux, pas la donnee.
+  cas('le conflit 3 contre 4 reste explique',
+    /MAX 4 FUNDED/.test(toutesRegles) && /at 3 funded accounts/.test(toutesRegles))
+
+  // 3. Le drawdown se lit par programme ET par phase, jamais par deduction.
+  const dd = (slug, phase) => new Set(phases(slug, phase).map((p) => p.drawdownType))
+  cas('Instant : drawdown lu sur ses propres phases',
+    dd('instant', 'sim_funded').size === 1 && dd('instant', 'sim_funded').has('End of Day'),
+    Array.from(dd('instant', 'sim_funded')).join(','))
+  cas('Nitro evaluation et Nitro finance different',
+    Array.from(dd('nitro', 'evaluation'))[0] !== Array.from(dd('nitro', 'sim_funded'))[0])
+  const texteAtouts = model.narrative.strengths.join(' ') + ' ' + model.narrative.limits.join(' ')
+  cas('aucune affirmation de drawdown groupant plusieurs programmes',
+    !/drawdown on (elite|nitro|instant|prime)/i.test(texteAtouts), texteAtouts.slice(0, 100))
+
+  // 4. Le resume porte les huit valeurs structurees.
+  const p0 = model.programs.find((p) => p.slug === 'elite').plans[0]
+  const ev = p0.phases.find((x) => x.phase === 'evaluation')
+  const fi = p0.phases.find((x) => x.phase === 'sim_funded')
+  for (const [nom, v] of [
+    ['objectif', ev?.profitTarget], ['perte max', ev?.maximumLoss],
+    ['drawdown', ev?.drawdownType], ['jours min', ev?.minimumTradingDays],
+    ['contrats max', ev?.maxContracts], ['split finance', fi?.profitSplit],
+    ['plafond de retrait', fi?.payoutCap],
+  ]) {
+    cas('le resume dispose de : ' + nom, v !== null && v !== undefined, String(v))
+  }
+
+  // 5. La bande d information.
+  cas('modele de compte derive des phases', model.identity.accountModel === 'Simulated',
+    String(model.identity.accountModel))
+  cas('prestataire de paiement present', model.catalogue.paymentMethods.includes('Rise'),
+    model.catalogue.paymentMethods.join(', '))
+  cas('frequence de retrait presente', Boolean(model.identity.payoutFrequency),
+    String(model.identity.payoutFrequency))
+  cas('un compte non simule ne serait pas annonce comme simule', (() => {
+    const d = JSON.parse(JSON.stringify(programData))
+    d.programs.forEach((p) => p.plans.forEach((pl) => {
+      if (pl.phase === 'sim_funded') pl.phase = 'live'
+    }))
+    return buildFirmPageModel(firm, d, { now: Date.parse('2026-09-07T12:00:00Z') })
+      .identity.accountModel === null
+  })())
+
+  // 6. Le verdict ne generalise plus l absence de limite journaliere.
+  const verdict = (model.narrative.verdict?.goodFit ?? []).join(' ')
+  cas('le verdict nomme Elite ou Nitro',
+    !/an evaluation with no daily loss limit/i.test(verdict) &&
+    /elite or nitro evaluations/i.test(verdict), verdict.slice(0, 120))
+}
+
 rmSync(dir, { recursive: true, force: true })
 console.log('')
 console.log('-'.repeat(78))
