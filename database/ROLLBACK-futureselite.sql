@@ -46,36 +46,56 @@ insert into firm_live_tiers      select * from fe_sauv_20260908_live_tiers;
 insert into prop_firm_challenges select * from fe_sauv_20260908_challenges;
 
 -- 3. Restaurer la ligne de `prop_firms`.
---    Un `delete` + `insert` casserait les cles etrangeres qui la referencent
---    (favoris, clics d'affiliation, comparaisons). On remet donc les colonnes
---    une par une, sur la ligne existante.
-update prop_firms f set
-  name = s.name, headline = s.headline, verdict = s.verdict,
-  description = s.description, category_badge = s.category_badge,
-  website_url = s.website_url, affiliate_url = s.affiliate_url,
-  logo_url = s.logo_url, headquarters = s.headquarters, country = s.country,
-  price_currency = s.price_currency, is_regulated = s.is_regulated,
-  regulation_details = s.regulation_details,
-  profit_split = s.profit_split, max_profit_split = s.max_profit_split,
-  min_price = s.min_price, max_price = s.max_price,
-  is_futures = s.is_futures, drawdown_type = s.drawdown_type,
-  time_limit = s.time_limit, payout_frequency = s.payout_frequency,
-  leverage_forex = s.leverage_forex,
-  platforms = s.platforms, assets = s.assets,
-  included_items = s.included_items, pros = s.pros, cons = s.cons,
-  special_features = s.special_features,
-  value_strip = s.value_strip, key_rules = s.key_rules,
-  journey = s.journey, cost_timeline = s.cost_timeline,
-  verdict_card = s.verdict_card, program_guide = s.program_guide,
-  translations = s.translations,
-  discount_code = s.discount_code, discount_percent = s.discount_percent,
-  discount_note = s.discount_note, discount_expires_at = s.discount_expires_at,
-  trustpilot_rating = s.trustpilot_rating, trustpilot_reviews = s.trustpilot_reviews,
-  data_verified_at = s.data_verified_at, data_verified_by = s.data_verified_by,
-  source_url = s.source_url,
-  updated_at = now()
-from fe_sauv_20260908_prop_firm s
-where f.slug = 'futureselite';
+--
+--    POURQUOI CE BLOC EST DYNAMIQUE
+--
+--    La version precedente listait les colonnes a la main. Elle en avait
+--    oublie une — `payout_methods` — parce que la migration en a gagne une
+--    apres l'ecriture du rollback. Une liste ecrite a la main derive
+--    fatalement de la migration qu'elle est censee annuler.
+--
+--    Ce bloc lit donc les colonnes REELLEMENT communes aux deux tables et les
+--    restaure toutes. Il ne peut plus rater une colonne ajoutee plus tard.
+--
+--    `id`, `slug` et `created_at` sont exclus : ils identifient la ligne. Un
+--    `delete` + `insert` aurait ete plus simple mais casserait les cles
+--    etrangeres qui referencent cette firme — favoris, clics d'affiliation,
+--    comparaisons enregistrees. Un retour en arriere ne doit pas couter plus
+--    cher que le probleme qu'il repare.
+do $$
+declare
+  colonnes text;
+begin
+  select string_agg(format('%I = s.%I', c.column_name, c.column_name), ', ')
+    into colonnes
+  from   information_schema.columns c
+  join   information_schema.columns b
+         on  b.table_name   = 'fe_sauv_20260908_prop_firm'
+         and b.table_schema = 'public'
+         and b.column_name  = c.column_name
+  where  c.table_name   = 'prop_firms'
+    and  c.table_schema = 'public'
+    -- `updated_at` est EXCLUE de la liste dynamique parce qu'elle est
+    -- assignee explicitement plus bas. Sans cette exclusion, Postgres voit
+    -- deux affectations de la meme colonne et refuse la requete :
+    --   42601 multiple assignments to same column "updated_at"
+    --
+    -- On la met a `now()` plutot que de restaurer l'ancienne valeur : la
+    -- ligne vient reellement d'etre modifiee, et le dire est plus utile
+    -- que de faire croire qu'elle n'a pas bouge depuis la migration.
+    and  c.column_name not in ('id', 'slug', 'created_at', 'updated_at');
+
+  if colonnes is null then
+    raise exception 'Aucune colonne commune trouvee. Sauvegarde incomplete : rien restaure.';
+  end if;
+
+  execute format(
+    'update prop_firms f set %s, updated_at = now() from fe_sauv_20260908_prop_firm s where f.slug = %L',
+    colonnes, 'futureselite'
+  );
+
+  raise notice 'prop_firms restauree.';
+end $$;
 
 -- 4. Controle : ces compteurs doivent redonner EXACTEMENT ceux notes lors de
 --    la sauvegarde.
