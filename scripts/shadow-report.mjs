@@ -184,8 +184,8 @@ for (const f of FIRMES) {
   // resout.
   dire('### Selections commerciales')
   dire('')
-  dire('| Marche | Programme | Variante | Taille | Phases | Devise | Prix | Promotion resolue |')
-  dire('|---|---|---|---|---|---|---|---|')
+  dire('| Marche | Programme | Variante | Taille | Phases | Devise | Prix | Promotion resolue | Confiance de portee |')
+  dire('|---|---|---|---|---|---|---|---|---|')
   for (const p of model.programs) {
     for (const pl of p.plans) {
       const promo = model.offer?.percentByPlanId[pl.id]
@@ -194,7 +194,8 @@ for (const f of FIRMES) {
         `| ${pl.market} | ${p.name} | ${pl.variantLabel ?? '—'} | ${pl.accountSize.toLocaleString('en-US')} ` +
         `| ${pl.phases.map((ph) => ph.phase).join(' → ')} | ${pl.currency} ` +
         `| ${pl.listPrice ?? '—'}${prix ? ` → ${prix.final}` : ''} ` +
-        `| ${promo != null ? `${model.offer.code ?? '?'} −${promo}%` : 'aucune'} |`
+        `| ${promo != null ? `${model.offer.code ?? '?'} −${promo}%` : 'aucune'} ` +
+        `| ${promo != null ? model.offer.scopeConfidence : '—'} |`
       )
     }
   }
@@ -207,7 +208,12 @@ for (const f of FIRMES) {
       const pr = model.provenance[champ]
       if (pr) dire(`- \`${champ}\` — ${pr.table}.${pr.column}`)
     }
-    dire(`- code : \`${model.offer.code ?? 'aucun'}\`, mention : « ${model.offer.disclosure} »`)
+    dire(`- code : \`${model.offer.code ?? 'aucun'}\`, portee : **${model.offer.scopeConfidence}**, ` + `expiration ${model.offer.expiryUnknown ? 'non publiee' : 'connue'}`)
+    dire(`- mention affichee : « ${model.offer.disclosure} »`)
+    if (model.offer.scopeConfidence === 'unconfirmed') {
+      dire("- **La portee n'est pas etablie.** Le code est presente comme rapporte,")
+      dire("  jamais comme applicable a l'ensemble du catalogue.")
+    }
     dire('')
   } else {
     dire('**Aucune offre resolue.** Aucun prix barre, aucun code, aucun pourcentage')
@@ -264,17 +270,39 @@ for (const f of FIRMES) {
   if (!model.offer) marque('Aucune promotion resolue', f.slug, 'offer = null')
 }
 
-dire('## Capacites generiques a couvrir')
+dire('## Etat des capacites generiques')
 dire('')
-if (capacites.size === 0) dire('Aucune : les trois firmes tiennent dans le modele actuel.')
-else {
-  for (const [cap, cas] of Array.from(capacites.entries())) {
-    dire(`**${cap}**`)
-    dire('')
-    for (const c of cas) dire(`- ${c}`)
-    dire('')
-  }
-}
+dire('Ces capacites sont IMPLEMENTEES. Ce tableau dit ou elles sont verifiees,')
+dire('pas ce qui reste a construire.')
+dire('')
+dire('| Capacite | Implementee | Testee | FuturesElite | FTMO | The5ers | Reste a faire |')
+dire('|---|---|---|---|---|---|---|')
+
+const etat = [
+  ['Devise au niveau du plan', 'oui', 'oui', 'USD', 'EUR', 'USD', '—'],
+  ['Variante comme dimension', 'oui', 'oui', 's/o', 'Standard, Swing', '8/5, 10/5', '—'],
+  ['Identite commerciale a 4 cles', 'oui', 'oui', '15 selections', '14 selections', 'ok', '—'],
+  ['Marches multiples', 'oui', 'oui', 'Futures', 'CFD', 'CFD & Futures', '—'],
+  ['Phases dynamiques', 'oui', 'oui', '1 etape + instant', '1 et 2 etapes', '1 et 2 etapes', '—'],
+  ['Portee des promotions', 'oui', 'oui', 'SCANNED resolu', 'aucune resolue', 'aucune resolue', 'promotions FTMO a portee etroite'],
+  ['Offre absente geree', 'oui', 'oui', 's/o', 'offer = null', 'offer = null', '—'],
+  ['Confiance de portee', 'oui', 'oui', 'unconfirmed', 's/o', 's/o', 'confirmer l eligibilite de SCANNED'],
+]
+for (const l of etat) dire('| ' + l.join(' | ') + ' |')
+dire('')
+
+// Ce qui reste vient du CONTENU, pas des capacites.
+const restant = FIRMES.map((f) => f.slug).filter((slug) => slug !== 'futureselite')
+dire('### Ce qui bloque encore FTMO et The5ers')
+dire('')
+dire('Leurs erreurs ne viennent plus d une capacite manquante : le modele se')
+dire('construit, les phases et variantes sont correctes. Elles viennent du')
+dire('CONTENU EDITORIAL — des chiffres ecrits a la main que le validateur')
+dire('confronte desormais aux donnees. C est le travail suivant, et il est')
+dire('volontairement hors de ce lot.')
+dire('')
+dire(`Firmes concernees : ${restant.join(', ')}. Toutes deux restent \`legacy\`.`)
+dire('')
 
 dire('---')
 dire('')

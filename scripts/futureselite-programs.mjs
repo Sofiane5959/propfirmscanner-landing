@@ -191,6 +191,9 @@ export const FUTURESELITE_PROMOTIONS = [
   { program_slug: 'instant', account_size: 150000, code: 'SUMMER', discount_value: 0.30 },
 ].map((p) => ({
   ...p,
+  // Chaque ligne SUMMER porte un programme ET une taille : sa portee est
+  // explicitement bornee, donc etablie.
+  scope_confidence: 'restricted',
   label: 'Current public offer — expiry not published',
   discount_type: 'percent',
   is_public: true,
@@ -220,6 +223,11 @@ export const FUTURESELITE_PARTNER_PROMOTION = {
   // bon que l'offre publique, a 30 % il est meilleur sur l'Elite 25K, egal sur
   // onze plans, et moins bon sur trois plans Prime seulement.
   discount_value: 0.30,
+  // Le releve officiel du 7 septembre est explicite :
+  // `exact_program_and_size_eligibility_confirmed` vaut FAUX, et
+  // `expiry_confirmed` aussi. L'absence de restriction ecrite ne prouve donc
+  // pas l'universalite — elle dit seulement que personne ne l'a bornee.
+  scope_confidence: 'unconfirmed',
   is_public: false,
   status: 'active',
   starts_at: null,

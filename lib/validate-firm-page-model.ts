@@ -304,6 +304,32 @@ export function validateFirmPageModel(model: FirmPageModel): ValidationResult {
     if (!model.offer.code) {
       warnings.push({ code: 'PROMO_SCOPE_UNCONFIRMED', field: 'offer.code', message: 'Remise sans code identifiable.' })
     }
+    // Une portee non etablie n'est pas une portee universelle. L'offre reste
+    // affichable comme code RAPPORTE ; elle ne peut pas etre presentee comme
+    // applicable a tout le catalogue.
+    if (model.offer.scopeConfidence === 'unconfirmed') {
+      warnings.push({
+        code: 'PROMO_SCOPE_UNCONFIRMED', field: 'offer.scopeConfidence',
+        message: 'Portee de la promotion non confirmee : ne pas revendiquer une applicabilite generale.',
+        evidence: model.offer.code,
+      })
+    }
+    if (model.offer.expiryUnknown) {
+      warnings.push({
+        code: 'PROMO_EXPIRY_UNKNOWN', field: 'offer.expiryUnknown',
+        message: 'Aucune date de fin publiee : ne jamais presenter l offre comme permanente.',
+      })
+    }
+    // Les formulations interdites tant que la portee n'est pas etablie.
+    const texteOffre = `${model.offer.label ?? ''} ${model.offer.disclosure}`
+    if (model.offer.scopeConfidence !== 'universal_verified' &&
+        /applies to all|all programs|best deal|best price|lowest price/i.test(texteOffre)) {
+      errors.push({
+        code: 'UNKNOWN_AS_CONFIRMED', field: 'offer.label',
+        message: 'L offre revendique une portee ou un rang que la donnee ne soutient pas.',
+        evidence: texteOffre,
+      })
+    }
     if (/pre-?fill|automatic/i.test(model.offer.disclosure)) {
       errors.push({
         code: 'UNKNOWN_AS_CONFIRMED', field: 'offer.disclosure',

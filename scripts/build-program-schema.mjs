@@ -285,6 +285,13 @@ function buildData() {
   L.push('-- =============================================================================')
   L.push('')
   L.push('')
+  // La colonne peut ne pas exister si RUN-04 n'est pas encore passe. On la
+  // cree defensivement plutot que d'imposer un ordre entre deux fichiers
+  // qui, sinon, seraient interchangeables.
+  L.push('-- 0. Colonne de confiance de portee, si RUN-04 n a pas encore ete passe')
+  L.push("alter table firm_promotions add column if not exists scope_confidence text not null default 'unconfirmed';")
+  L.push('')
+  L.push('')
   L.push('-- 1. Table rase pour cette firme uniquement')
   L.push(`delete from firm_program_plans where program_id in (select id from firm_programs where firm_slug = ${S(F)});`)
   for (const t of ['firm_programs', 'firm_promotions', 'firm_program_bundles', 'firm_platforms', 'firm_rules', 'firm_live_tiers']) {
@@ -350,9 +357,12 @@ function buildData() {
   const promos = [...FUTURESELITE_PROMOTIONS, FUTURESELITE_PARTNER_PROMOTION]
   L.push('insert into firm_promotions (firm_slug, program_slug, account_size, code, label,')
   L.push('  discount_type, discount_value, starts_at, expires_at, verified_at, source_url,')
-  L.push('  status, is_public, editorial_note) values')
+  // `scope_confidence` est ecrite explicitement : sans elle, un rejeu de ce
+  // fichier APRES RUN-04 remettrait toutes les lignes au defaut
+  // `unconfirmed` et ferait perdre le classement des promotions bornees.
+  L.push('  status, is_public, scope_confidence, editorial_note) values')
   L.push(promos.map((p) =>
-    `  (${S(F)}, ${S(p.program_slug)}, ${N(p.account_size)}, ${S(p.code)}, ${S(p.label)}, ${S(p.discount_type)}, ${N(p.discount_value)}, ${D(p.starts_at)}, ${D(p.expires_at)}, ${D(p.verified_at)}, ${S(p.source_url)}, ${S(p.status)}, ${B(p.is_public)}, ${S(p.editorial_note)})`
+    `  (${S(F)}, ${S(p.program_slug)}, ${N(p.account_size)}, ${S(p.code)}, ${S(p.label)}, ${S(p.discount_type)}, ${N(p.discount_value)}, ${D(p.starts_at)}, ${D(p.expires_at)}, ${D(p.verified_at)}, ${S(p.source_url)}, ${S(p.status)}, ${B(p.is_public)}, ${S(p.scope_confidence ?? 'unconfirmed')}, ${S(p.editorial_note)})`
   ).join(',\n') + ';')
   L.push('')
   L.push('')

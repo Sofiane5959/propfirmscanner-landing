@@ -124,6 +124,19 @@ export interface Promotion {
   source_url: string | null
   status: string
   is_public: boolean
+  /**
+   * L'absence de restriction a-t-elle ete VERIFIEE ?
+   *
+   * 'universal_verified' : oui, la source confirme que la promotion couvre
+   *                        tout le catalogue.
+   * 'restricted'         : la portee est bornee par un champ explicite.
+   * 'unconfirmed'        : la portee n'est pas etablie. Defaut, et etat le
+   *                        plus frequent : un champ nul veut dire « rien
+   *                        d'ecrit », pas « verifie comme universel ».
+   *
+   * Optionnel : la colonne peut ne pas exister avant RUN-04.
+   */
+  scope_confidence?: string | null
   editorial_note: string | null
 }
 

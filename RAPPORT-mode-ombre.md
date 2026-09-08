@@ -17,36 +17,41 @@ Genere le 2026-09-08 par `npm run shadow:report`.
 | Regles detaillees | 33 |
 | Code promo | SCANNED |
 | **Erreurs bloquantes** | **0** |
-| Avertissements | 6 |
+| Avertissements | 8 |
 
 ### Selections commerciales
 
-| Marche | Programme | Variante | Taille | Phases | Devise | Prix | Promotion resolue |
-|---|---|---|---|---|---|---|---|
-| futures | Elite | — | 25,000 | evaluation → sim_funded | USD | 95 → 66.5 | SCANNED −30% |
-| futures | Elite | — | 50,000 | evaluation → sim_funded | USD | 153 → 107.1 | SCANNED −30% |
-| futures | Elite | — | 100,000 | evaluation → sim_funded | USD | 293 → 205.1 | SCANNED −30% |
-| futures | Elite | — | 150,000 | evaluation → sim_funded | USD | 353 → 247.1 | SCANNED −30% |
-| futures | Nitro | — | 25,000 | evaluation → sim_funded | USD | 129 → 90.3 | SCANNED −30% |
-| futures | Nitro | — | 50,000 | evaluation → sim_funded | USD | 138 → 96.6 | SCANNED −30% |
-| futures | Nitro | — | 100,000 | evaluation → sim_funded | USD | 218 → 152.6 | SCANNED −30% |
-| futures | Nitro | — | 150,000 | evaluation → sim_funded | USD | 298 → 208.6 | SCANNED −30% |
-| futures | Prime | — | 25,000 | evaluation → sim_funded | USD | 96 → 67.2 | SCANNED −30% |
-| futures | Prime | — | 50,000 | evaluation → sim_funded | USD | 179 → 125.3 | SCANNED −30% |
-| futures | Prime | — | 100,000 | evaluation → sim_funded | USD | 279 → 195.3 | SCANNED −30% |
-| futures | Prime | — | 150,000 | evaluation → sim_funded | USD | 369 → 258.3 | SCANNED −30% |
-| futures | Instant | — | 50,000 | sim_funded | USD | 349 → 244.3 | SCANNED −30% |
-| futures | Instant | — | 100,000 | sim_funded | USD | 469 → 328.3 | SCANNED −30% |
-| futures | Instant | — | 150,000 | sim_funded | USD | 569 → 398.3 | SCANNED −30% |
+| Marche | Programme | Variante | Taille | Phases | Devise | Prix | Promotion resolue | Confiance de portee |
+|---|---|---|---|---|---|---|---|---|
+| futures | Elite | — | 25,000 | evaluation → sim_funded | USD | 95 → 66.5 | SCANNED −30% | unconfirmed |
+| futures | Elite | — | 50,000 | evaluation → sim_funded | USD | 153 → 107.1 | SCANNED −30% | unconfirmed |
+| futures | Elite | — | 100,000 | evaluation → sim_funded | USD | 293 → 205.1 | SCANNED −30% | unconfirmed |
+| futures | Elite | — | 150,000 | evaluation → sim_funded | USD | 353 → 247.1 | SCANNED −30% | unconfirmed |
+| futures | Nitro | — | 25,000 | evaluation → sim_funded | USD | 129 → 90.3 | SCANNED −30% | unconfirmed |
+| futures | Nitro | — | 50,000 | evaluation → sim_funded | USD | 138 → 96.6 | SCANNED −30% | unconfirmed |
+| futures | Nitro | — | 100,000 | evaluation → sim_funded | USD | 218 → 152.6 | SCANNED −30% | unconfirmed |
+| futures | Nitro | — | 150,000 | evaluation → sim_funded | USD | 298 → 208.6 | SCANNED −30% | unconfirmed |
+| futures | Prime | — | 25,000 | evaluation → sim_funded | USD | 96 → 67.2 | SCANNED −30% | unconfirmed |
+| futures | Prime | — | 50,000 | evaluation → sim_funded | USD | 179 → 125.3 | SCANNED −30% | unconfirmed |
+| futures | Prime | — | 100,000 | evaluation → sim_funded | USD | 279 → 195.3 | SCANNED −30% | unconfirmed |
+| futures | Prime | — | 150,000 | evaluation → sim_funded | USD | 369 → 258.3 | SCANNED −30% | unconfirmed |
+| futures | Instant | — | 50,000 | sim_funded | USD | 349 → 244.3 | SCANNED −30% | unconfirmed |
+| futures | Instant | — | 100,000 | sim_funded | USD | 469 → 328.3 | SCANNED −30% | unconfirmed |
+| futures | Instant | — | 150,000 | sim_funded | USD | 569 → 398.3 | SCANNED −30% | unconfirmed |
 
 Provenance de l offre :
 
 - `offer` — firm_promotions.code,discount_value,is_public,status,starts_at,expires_at
 - `priceRanges` — firm_program_plans.regular_price,currency
-- code : `SCANNED`, mention : « Check the selected plan and enter SCANNED at checkout. »
+- code : `SCANNED`, portee : **unconfirmed**, expiration non publiee
+- mention affichee : « Code SCANNED is reported to work; eligibility per program and size is not confirmed. Check the total at checkout. »
+- **La portee n'est pas etablie.** Le code est presente comme rapporte,
+  jamais comme applicable a l'ensemble du catalogue.
 
 Avertissements :
 
+- `PROMO_SCOPE_UNCONFIRMED` **offer.scopeConfidence** — Portee de la promotion non confirmee : ne pas revendiquer une applicabilite generale.
+- `PROMO_EXPIRY_UNKNOWN` **offer.expiryUnknown** — Aucune date de fin publiee : ne jamais presenter l offre comme permanente.
 - `SOURCE_CONFLICT_OPEN` **rules.complete.Scalping** — Conflit de sources officielles encore ouvert.
 - `SOURCE_CONFLICT_OPEN` **rules.complete.News trading, funded** — Conflit de sources officielles encore ouvert.
 - `SOURCE_CONFLICT_OPEN` **rules.complete.Prime 150K maximum loss** — Conflit de sources officielles encore ouvert.
@@ -73,22 +78,22 @@ Avertissements :
 
 ### Selections commerciales
 
-| Marche | Programme | Variante | Taille | Phases | Devise | Prix | Promotion resolue |
-|---|---|---|---|---|---|---|---|
-| cfd | FTMO Challenge 1-Step | Standard | 10,000 | evaluation → sim_funded | EUR | 79 | aucune |
-| cfd | FTMO Challenge 1-Step | Standard | 25,000 | evaluation → sim_funded | EUR | 199 | aucune |
-| cfd | FTMO Challenge 1-Step | Standard | 50,000 | evaluation → sim_funded | EUR | 319 | aucune |
-| cfd | FTMO Challenge 1-Step | Standard | 100,000 | evaluation → sim_funded | EUR | 499 | aucune |
-| cfd | FTMO Challenge 1-Step | Standard | 200,000 | evaluation → sim_funded | EUR | 999 | aucune |
-| cfd | FTMO Challenge 2-Step | Standard | 10,000 | evaluation → evaluation_2 → sim_funded | EUR | 89 | aucune |
-| cfd | FTMO Challenge 2-Step | Swing | 10,000 | evaluation → evaluation_2 → sim_funded | EUR | 99 | aucune |
-| cfd | FTMO Challenge 2-Step | Standard | 25,000 | evaluation → evaluation_2 → sim_funded | EUR | 250 | aucune |
-| cfd | FTMO Challenge 2-Step | Swing | 25,000 | evaluation → evaluation_2 → sim_funded | EUR | 279 | aucune |
-| cfd | FTMO Challenge 2-Step | Standard | 50,000 | evaluation → evaluation_2 → sim_funded | EUR | 345 | aucune |
-| cfd | FTMO Challenge 2-Step | Swing | 50,000 | evaluation → evaluation_2 → sim_funded | EUR | 379 | aucune |
-| cfd | FTMO Challenge 2-Step | Standard | 100,000 | evaluation → evaluation_2 → sim_funded | EUR | 540 | aucune |
-| cfd | FTMO Challenge 2-Step | Swing | 100,000 | evaluation → evaluation_2 → sim_funded | EUR | 599 | aucune |
-| cfd | FTMO Challenge 2-Step | Standard | 200,000 | evaluation → evaluation_2 → sim_funded | EUR | 1080 | aucune |
+| Marche | Programme | Variante | Taille | Phases | Devise | Prix | Promotion resolue | Confiance de portee |
+|---|---|---|---|---|---|---|---|---|
+| cfd | FTMO Challenge 1-Step | Standard | 10,000 | evaluation → sim_funded | EUR | 79 | aucune | — |
+| cfd | FTMO Challenge 1-Step | Standard | 25,000 | evaluation → sim_funded | EUR | 199 | aucune | — |
+| cfd | FTMO Challenge 1-Step | Standard | 50,000 | evaluation → sim_funded | EUR | 319 | aucune | — |
+| cfd | FTMO Challenge 1-Step | Standard | 100,000 | evaluation → sim_funded | EUR | 499 | aucune | — |
+| cfd | FTMO Challenge 1-Step | Standard | 200,000 | evaluation → sim_funded | EUR | 999 | aucune | — |
+| cfd | FTMO Challenge 2-Step | Standard | 10,000 | evaluation → evaluation_2 → sim_funded | EUR | 89 | aucune | — |
+| cfd | FTMO Challenge 2-Step | Swing | 10,000 | evaluation → evaluation_2 → sim_funded | EUR | 99 | aucune | — |
+| cfd | FTMO Challenge 2-Step | Standard | 25,000 | evaluation → evaluation_2 → sim_funded | EUR | 250 | aucune | — |
+| cfd | FTMO Challenge 2-Step | Swing | 25,000 | evaluation → evaluation_2 → sim_funded | EUR | 279 | aucune | — |
+| cfd | FTMO Challenge 2-Step | Standard | 50,000 | evaluation → evaluation_2 → sim_funded | EUR | 345 | aucune | — |
+| cfd | FTMO Challenge 2-Step | Swing | 50,000 | evaluation → evaluation_2 → sim_funded | EUR | 379 | aucune | — |
+| cfd | FTMO Challenge 2-Step | Standard | 100,000 | evaluation → evaluation_2 → sim_funded | EUR | 540 | aucune | — |
+| cfd | FTMO Challenge 2-Step | Swing | 100,000 | evaluation → evaluation_2 → sim_funded | EUR | 599 | aucune | — |
+| cfd | FTMO Challenge 2-Step | Standard | 200,000 | evaluation → evaluation_2 → sim_funded | EUR | 1080 | aucune | — |
 
 **Aucune offre resolue.** Aucun prix barre, aucun code, aucun pourcentage
 ne sera affiche ; le CTA reste neutre et suivi.
@@ -134,17 +139,17 @@ Erreurs :
 
 ### Selections commerciales
 
-| Marche | Programme | Variante | Taille | Phases | Devise | Prix | Promotion resolue |
-|---|---|---|---|---|---|---|---|
-| cfd | Summer Plan CFD 1-Step | — | 100,000 | evaluation → sim_funded | USD | 249 | aucune |
-| cfd | Summer Plan CFD 2-Step | 8/5 | 100,000 | evaluation → evaluation_2 → sim_funded | USD | 179 | aucune |
-| cfd | Summer Plan CFD 2-Step | 10/5 | 100,000 | evaluation → evaluation_2 → sim_funded | USD | 149 | aucune |
-| cfd | Summer Plan CFD 2-Step | 8/5 | 200,000 | evaluation → evaluation_2 → sim_funded | USD | 279 | aucune |
-| cfd | Summer Plan CFD 2-Step | 10/5 | 200,000 | evaluation → evaluation_2 → sim_funded | USD | 249 | aucune |
-| futures | Summer Plan Futures | — | 25,000 | evaluation → sim_funded | USD | 69 | aucune |
-| futures | Summer Plan Futures | — | 50,000 | evaluation → sim_funded | USD | 120 | aucune |
-| futures | Summer Plan Futures | — | 100,000 | evaluation → sim_funded | USD | 189 | aucune |
-| futures | Summer Plan Futures | — | 150,000 | evaluation → sim_funded | USD | 219 | aucune |
+| Marche | Programme | Variante | Taille | Phases | Devise | Prix | Promotion resolue | Confiance de portee |
+|---|---|---|---|---|---|---|---|---|
+| cfd | Summer Plan CFD 1-Step | — | 100,000 | evaluation → sim_funded | USD | 249 | aucune | — |
+| cfd | Summer Plan CFD 2-Step | 8/5 | 100,000 | evaluation → evaluation_2 → sim_funded | USD | 179 | aucune | — |
+| cfd | Summer Plan CFD 2-Step | 10/5 | 100,000 | evaluation → evaluation_2 → sim_funded | USD | 149 | aucune | — |
+| cfd | Summer Plan CFD 2-Step | 8/5 | 200,000 | evaluation → evaluation_2 → sim_funded | USD | 279 | aucune | — |
+| cfd | Summer Plan CFD 2-Step | 10/5 | 200,000 | evaluation → evaluation_2 → sim_funded | USD | 249 | aucune | — |
+| futures | Summer Plan Futures | — | 25,000 | evaluation → sim_funded | USD | 69 | aucune | — |
+| futures | Summer Plan Futures | — | 50,000 | evaluation → sim_funded | USD | 120 | aucune | — |
+| futures | Summer Plan Futures | — | 100,000 | evaluation → sim_funded | USD | 189 | aucune | — |
+| futures | Summer Plan Futures | — | 150,000 | evaluation → sim_funded | USD | 219 | aucune | — |
 
 **Aucune offre resolue.** Aucun prix barre, aucun code, aucun pourcentage
 ne sera affiche ; le CTA reste neutre et suivi.
@@ -176,45 +181,31 @@ Erreurs :
 - `EDITORIAL_CONTRADICTS_DATA` **narrative.verdict.goodFit[3]** — « 100% » ne correspond a aucune valeur canonique.
 - `FACT_NOT_UNIVERSAL_IN_TEXT` **narrative.verdict.goodFit[4]** — « consistency rule » est propre a un programme et le texte n'en nomme aucun.
 
-## Capacites generiques a couvrir
+## Etat des capacites generiques
 
-**Structures d evaluation multiples**
+Ces capacites sont IMPLEMENTEES. Ce tableau dit ou elles sont verifiees,
+pas ce qui reste a construire.
 
-- futureselite : evaluation/1, instant/?
-- ftmo : evaluation/1, evaluation/2
-- the5ers : evaluation/1, evaluation/2
+| Capacite | Implementee | Testee | FuturesElite | FTMO | The5ers | Reste a faire |
+|---|---|---|---|---|---|---|
+| Devise au niveau du plan | oui | oui | USD | EUR | USD | — |
+| Variante comme dimension | oui | oui | s/o | Standard, Swing | 8/5, 10/5 | — |
+| Identite commerciale a 4 cles | oui | oui | 15 selections | 14 selections | ok | — |
+| Marches multiples | oui | oui | Futures | CFD | CFD & Futures | — |
+| Phases dynamiques | oui | oui | 1 etape + instant | 1 et 2 etapes | 1 et 2 etapes | — |
+| Portee des promotions | oui | oui | SCANNED resolu | aucune resolue | aucune resolue | promotions FTMO a portee etroite |
+| Offre absente geree | oui | oui | s/o | offer = null | offer = null | — |
+| Confiance de portee | oui | oui | unconfirmed | s/o | s/o | confirmer l eligibilite de SCANNED |
 
-**Devise non USD**
+### Ce qui bloque encore FTMO et The5ers
 
-- ftmo : EUR
+Leurs erreurs ne viennent plus d une capacite manquante : le modele se
+construit, les phases et variantes sont correctes. Elles viennent du
+CONTENU EDITORIAL — des chiffres ecrits a la main que le validateur
+confronte desormais aux donnees. C est le travail suivant, et il est
+volontairement hors de ce lot.
 
-**Variantes commerciales**
-
-- ftmo : 14 plans portent une variante (standard, swing)
-- the5ers : 4 plans portent une variante (8-5, 10-5)
-
-**Plusieurs variantes pour une meme taille**
-
-- ftmo : ftmo-cfd-2-step : 10000 x2, 25000 x2, 50000 x2, 100000 x2
-- the5ers : t5-summer-cfd-2-step : 100000 x2, 200000 x2
-
-**Marche non futures**
-
-- ftmo : cfd
-
-**Seconde phase d evaluation**
-
-- ftmo : evaluation_2 presente
-- the5ers : evaluation_2 presente
-
-**Aucune promotion resolue**
-
-- ftmo : offer = null
-- the5ers : offer = null
-
-**Marches multiples dans une firme**
-
-- the5ers : cfd, futures
+Firmes concernees : ftmo, the5ers. Toutes deux restent `legacy`.
 
 ---
 

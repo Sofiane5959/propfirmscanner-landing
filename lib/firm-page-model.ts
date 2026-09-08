@@ -119,6 +119,16 @@ export interface OfferRow {
   code: string | null
   label: string | null
   trackingPlacement: string
+  /**
+   * 'universal_verified' | 'restricted' | 'unconfirmed'.
+   *
+   * `unconfirmed` ne retire pas l'offre : le code est reel et rapporte. Il
+   * interdit d'AFFIRMER qu'il s'applique a tous les plans, et il interdit
+   * « best deal » comme « applies to all programs ».
+   */
+  scopeConfidence: string
+  /** `true` quand aucune date de fin n'est publiee. */
+  expiryUnknown: boolean
   /** Ce que le visiteur doit faire. Jamais une promesse de preremplissage. */
   disclosure: string
   percentByPlanId: Record<string, number>
@@ -741,6 +751,8 @@ export function buildFirmPageModel(
     const codes = new Set<string>()
     let label: string | null = null
     const ambiguites: { planId: string; promotions: Promotion[] }[] = []
+    const confiances = new Set<string>()
+    let expiryInconnue = false
 
     for (const plan of tousLesPlans) {
       const { partenaire, publique, ambigues } = promotionsFor(
@@ -759,6 +771,10 @@ export function buildFirmPageModel(
       if (!partenaire) continue
       if (partenaire.code) codes.add(partenaire.code)
       label = label ?? partenaire.label
+      // Le defaut est `unconfirmed` : sans RUN-04 la colonne n'existe pas, et
+      // supposer l'universalite serait exactement l'erreur a eviter.
+      confiances.add(partenaire.scope_confidence ?? 'unconfirmed')
+      if (!partenaire.expires_at) expiryInconnue = true
       percentByPlanId[plan.id] = Math.round(partenaire.discount_value * 100)
       if (plan.listPrice != null) {
         priceByPlanId[plan.id] = {
@@ -783,14 +799,29 @@ export function buildFirmPageModel(
           codes: a.promotions.map((p) => `${p.code ?? 'sans code'} @ ${Math.round(p.discount_value * 100)}%`),
         })
       }
+      // Plusieurs confiances differentes entre plans : on retient la plus
+      // faible. Une offre n'est confirmee que si elle l'est partout.
+      const scopeConfidence = confiances.has('unconfirmed')
+        ? 'unconfirmed'
+        : confiances.has('restricted')
+          ? 'restricted'
+          : 'universal_verified'
+
       offer = {
         code,
         label,
         trackingPlacement: 'hero',
+        scopeConfidence,
+        expiryUnknown: expiryInconnue,
         // Aucune promesse de preremplissage : le lien atterrit sur l'entree de
         // l'application, la persistance du coupon n'est pas verifiee.
+        // La mention dit ce qui est etabli. « Reported » plutot que
+        // « confirme » quand la portee ne l'est pas : le visiteur doit savoir
+        // qu'il verifie, pas qu'il constate.
         disclosure: code
-          ? `Check the selected plan and enter ${code} at checkout.`
+          ? scopeConfidence === 'unconfirmed'
+            ? `Code ${code} is reported to work; eligibility per program and size is not confirmed. Check the total at checkout.`
+            : `Check the selected plan and enter ${code} at checkout.`
           : 'Check the selected plan before paying.',
         percentByPlanId,
         priceByPlanId,
