@@ -301,6 +301,10 @@ console.log('')
 console.log('19. Les six formulations refusees ne reviennent nulle part')
 {
   const { execSync } = await import('node:child_process')
+  // Quatre fichiers citent ces phrases comme MATIERE et non comme contenu :
+  // les DIAGNOSTIC-*.sql les cherchent, ce fichier les liste, et le
+  // validateur comme ses fixtures les rejouent pour prouver qu'elles
+  // bloquent. Les y interdire reviendrait a interdire de s'en proteger.
   // Les fichiers DIAGNOSTIC-*.sql et ce fichier de test citent ces phrases
   // comme PREDICATS de detection : les y interdire reviendrait a interdire
   // de les chercher. Seul le contenu rendu est concerne.
@@ -323,7 +327,7 @@ console.log('19. Les six formulations refusees ne reviennent nulle part')
     let trouve = ''
     try {
       trouve = execSync(
-        `grep -rlni ${JSON.stringify(phrase)} --include=*.mjs --include=*.tsx --include=*.ts --include=*.sql . 2>/dev/null | grep -v node_modules | grep -v '[.]next' | grep -v test-program-selection | grep -v DIAGNOSTIC- || true`,
+        `grep -rlni ${JSON.stringify(phrase)} --include=*.mjs --include=*.tsx --include=*.ts --include=*.sql . 2>/dev/null | grep -v node_modules | grep -v '[.]next' | grep -v test-program-selection | grep -v DIAGNOSTIC- | grep -v validate-firm-page-model | grep -v validator-regressions || true`,
         { encoding: 'utf8', shell: 'bash' }
       ).trim()
     } catch { trouve = '' }

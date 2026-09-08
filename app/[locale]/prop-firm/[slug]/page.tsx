@@ -7,13 +7,26 @@ import { buildFirmPageModel } from '@/lib/firm-page-model'
 import { buildAffiliateUrl } from '@/lib/affiliate'
 
 /**
- * Fiches servies par le modele unifie.
+ * Une fiche est-elle servie par le modele unifie ?
  *
- * Liste volontairement explicite plutot qu'un drapeau global : la bascule
- * se decide firme par firme, et une regression ne peut toucher que les
- * slugs enumeres ici.
+ * La decision vit EN BASE, dans `prop_firms.page_model_status`, et plus dans
+ * une liste de slugs codee ici. Trois consequences :
+ *
+ *   - basculer ou annuler une fiche ne demande plus de deploiement ;
+ *   - le retour en arriere est un UPDATE d'une ligne ;
+ *   - `legacy` est le defaut de colonne, donc une firme nouvellement creee ne
+ *     change pas de rendu par accident.
+ *
+ * `active` est le SEUL etat qui rend par le nouveau composant. `validated`
+ * signifie « prete, pas encore basculee » : c'est ce qui permet de preparer
+ * une fiche sans l'exposer.
+ *
+ * La colonne peut ne pas exister encore — RUN-03 est additif et peut ne pas
+ * avoir ete passe. On retombe alors sur `legacy`, donc sur l'ancien rendu.
  */
-const PILOTE_MODELE = new Set(['futureselite'])
+function servieParLeModele(firm: { page_model_status?: string | null }): boolean {
+  return firm.page_model_status === 'active'
+}
 import { generateDynamicAlternates, localeHref } from '@/lib/seo'
 import { resolvePromotion } from '@/lib/promotion'
 import { loadFirmPrograms } from '@/lib/firm-programs'
@@ -425,13 +438,14 @@ export default async function PropFirmPage({ params }: Props) {
       />
 
       {/* PHASE PILOTE.
-          Le nouveau rendu ne s'active que pour les slugs listes ici. Les ~349
-          autres fiches continuent d'emprunter le chemin actuel, inchange.
+          Le nouveau rendu s'active par `prop_firms.page_model_status = 'active'`,
+          pas par une liste dans le code. Les fiches `legacy` — le defaut —
+          continuent d'emprunter le chemin actuel, inchange.
           `FirmPage` est GENERIQUE : aucun code n'y branche sur une firme, et
           elargir le pilote se fait en ajoutant un slug a cette liste.
           Le modele est construit COTE SERVEUR : le composant recoit un objet
           complet et n'interroge plus aucune table. */}
-      {PILOTE_MODELE.has(firm.slug) ? (
+      {servieParLeModele(firm) ? (
         <FirmPage
           model={buildFirmPageModel(firm as never, programData)}
           ctaHref={buildAffiliateUrl(firm.slug, { placement: 'hero', locale })}
