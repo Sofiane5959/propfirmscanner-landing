@@ -77,11 +77,29 @@ export interface PhaseRow {
 export interface PlanRow {
   id: string
   programSlug: string
+  /** Recopie du programme : le plan se suffit a lui-meme pour etre cible. */
+  market: string
   variantKey: string | null
+  /** Prete a afficher. `null` quand le programme n'a qu'une variante. */
+  variantLabel: string | null
   accountSize: number
+  /** Devise NATIVE du plan. Jamais supposee, jamais convertie. */
   currency: string
   listPrice: number | null
   phases: PhaseRow[]
+}
+
+/**
+ * Une fourchette de prix par devise.
+ *
+ * Melanger 95 USD et 155 EUR dans un meme intervalle produirait un nombre qui
+ * ne veut rien dire. Tant qu'aucun taux de change n'est une donnee verifiee du
+ * projet, les devises restent separees.
+ */
+export interface PriceRange {
+  currency: string
+  min: number
+  max: number
 }
 
 export interface ProgramRow {
@@ -132,6 +150,17 @@ export interface FirmPageModel {
     accountModel: string | null
     /** Frequence de retrait au niveau firme, quand elle est renseignee. */
     payoutFrequency: string | null
+    /** Les marches actifs, tries. Une firme peut en avoir plusieurs. */
+    markets: string[]
+    /**
+     * `prop_firms.is_futures` est-elle d'accord avec les marches des programmes ?
+     *
+     * `null` quand la colonne est vide. `false` est un vrai desaccord — une
+     * fiche marquee futures dont tous les programmes sont CFD — et bloque la
+     * publication. Vendre PLUSIEURS marches n'est pas un desaccord : c'est une
+     * offre produit legitime, et The5ers en est une.
+     */
+    marketMetadataAgrees: boolean | null
   }
   /** Faits vrais pour TOUS les programmes achetables. Voir `universalFact`. */
   firmFacts: { label: string; detail: string | null }[]
@@ -145,7 +174,11 @@ export interface FirmPageModel {
   }
   programs: ProgramRow[]
   defaultPlanId: string | null
+  /** Une entree par devise presente. Jamais agregees entre elles. */
+  priceRanges: PriceRange[]
   offer: OfferRow | null
+  /** Selections pour lesquelles deux promotions s'appliquent a egalite. */
+  promotionAmbiguities: { planId: string; codes: string[] }[]
   rules: {
     critical: { category: string; title: string; detail: string; severity: string }[]
     complete: {
@@ -174,8 +207,44 @@ export interface FirmPageModel {
 // OUTILS
 // -----------------------------------------------------------------------------
 
-export function planId(programSlug: string, variantKey: string | null, size: number): string {
-  return `${programSlug}|${variantKey ?? ''}|${size}`
+/**
+ * L'identite d'une SELECTION COMMERCIALE.
+ *
+ * La taille de compte seule n'identifie rien : The5ers vend le Summer 100K en
+ * 8/5 et en 10/5, a des prix differents, et FTMO le 2-Step 100K en Standard
+ * et en Swing. Deux boutons « 100K » cote a cote, sans variante, laissaient le
+ * visiteur choisir a l'aveugle.
+ *
+ * Le marche entre aussi dans la cle : The5ers vend du CFD et du futures, et
+ * deux programmes de marches differents peuvent porter le meme slug ailleurs.
+ *
+ * `firm_promotions` sait deja cibler ces quatre dimensions — `program_slug`,
+ * `account_size`, `eligible_variants`, `eligible_markets` — donc aucun
+ * changement de schema n'est necessaire pour viser une selection precise.
+ */
+export function planId(
+  market: string,
+  programSlug: string,
+  variantKey: string | null,
+  size: number
+): string {
+  return `${market}|${programSlug}|${variantKey ?? ''}|${size}`
+}
+
+export function parsePlanId(
+  id: string
+): { market: string; programSlug: string; variantKey: string | null; size: number } | null {
+  const p = id.split('|')
+  if (p.length !== 4) return null
+  const size = Number(p[3])
+  if (!Number.isFinite(size)) return null
+  return { market: p[0], programSlug: p[1], variantKey: p[2] || null, size }
+}
+
+/** « 8-5 » -> « 8/5 ». La cle est technique, l'etiquette est pour l'ecran. */
+export function variantLabel(variantKey: string | null): string | null {
+  if (!variantKey) return null
+  return variantKey.replace(/-/g, '/').replace(/\b\w/g, (c) => c.toUpperCase())
 }
 
 /**
@@ -261,30 +330,93 @@ function phaseDe(plan: ProgramPlan): PhaseRow {
   }
 }
 
-/** La promotion applicable a un plan, partenaire et publique separees. */
+/** La selection commerciale contre laquelle une promotion se resout. */
+export interface Selection {
+  market: string
+  programSlug: string
+  variantKey: string | null
+  accountSize: number
+}
+
+export interface PromotionMatch {
+  promotion: Promotion
+  /** Plus le score est haut, plus la portee est etroite. */
+  specificity: number
+}
+
+/**
+ * La promotion qui s'applique a UNE selection precise.
+ *
+ * Une promotion visant le 1-Step Standard 100K ne doit pas s'etendre au Swing
+ * ni au 200K. Chaque champ de portee non nul RESTREINT ; un champ nul veut
+ * dire « toutes ». La specificite compte les restrictions, et la plus etroite
+ * l'emporte.
+ *
+ * Deux promotions de meme specificite qui s'appliquent toutes deux sont une
+ * AMBIGUITE : le modele ne choisit pas a la place de l'editeur, il signale.
+ */
+export function promotionForSelection(
+  selection: Selection,
+  promotions: Promotion[],
+  now: number
+): { match: PromotionMatch | null; ambiguous: Promotion[] } {
+  const candidats: PromotionMatch[] = []
+
+  for (const p of promotions) {
+    if (p.status !== 'active') continue
+    if (p.starts_at && new Date(p.starts_at).getTime() > now) continue
+    // Une date absente vaut « sans echeance publiee », jamais « expiree ».
+    if (p.expires_at && new Date(p.expires_at).getTime() <= now) continue
+
+    let specificity = 0
+    if (p.program_slug !== null) {
+      if (p.program_slug !== selection.programSlug) continue
+      specificity += 4
+    }
+    if (p.account_size !== null) {
+      if (p.account_size !== selection.accountSize) continue
+      specificity += 3
+    }
+    if (p.eligible_variants && p.eligible_variants.length > 0) {
+      // `null` cote selection = variante unique, que l'on nomme 'standard'
+      // par convention dans les donnees de promotion.
+      if (!p.eligible_variants.includes(selection.variantKey ?? 'standard')) continue
+      specificity += 2
+    }
+    if (p.eligible_markets && p.eligible_markets.length > 0) {
+      if (!p.eligible_markets.includes(selection.market)) continue
+      specificity += 1
+    }
+    candidats.push({ promotion: p, specificity })
+  }
+
+  if (candidats.length === 0) return { match: null, ambiguous: [] }
+
+  const maxSpec = Math.max(...candidats.map((c) => c.specificity))
+  const meilleurs = candidats.filter((c) => c.specificity === maxSpec)
+
+  // A specificite egale, une remise plus forte n'est pas « plus juste » : deux
+  // promotions egalement applicables signalent une donnee a trancher.
+  const distinctes = new Set(meilleurs.map((m) => `${m.promotion.code ?? ''}|${m.promotion.discount_value}`))
+  if (distinctes.size > 1) {
+    return { match: null, ambiguous: meilleurs.map((m) => m.promotion) }
+  }
+
+  return { match: meilleurs[0], ambiguous: [] }
+}
+
+/** Partenaire et publique, chacune resolue separement sur la meme selection. */
 function promotionsFor(
   promotions: Promotion[],
-  programSlug: string,
-  variantKey: string | null,
-  size: number,
-  maintenant: number
-): { partenaire: Promotion | null; publique: Promotion | null } {
-  const applicable = (p: Promotion) => {
-    if (p.status !== 'active') return false
-    if (p.program_slug !== null && p.program_slug !== programSlug) return false
-    if (p.account_size !== null && p.account_size !== size) return false
-    if (p.eligible_variants && !p.eligible_variants.includes(variantKey ?? 'standard')) return false
-    if (p.starts_at && new Date(p.starts_at).getTime() > maintenant) return false
-    // Une date absente vaut « sans echeance publiee », jamais « expiree ».
-    if (p.expires_at && new Date(p.expires_at).getTime() <= maintenant) return false
-    return true
-  }
-  const meilleure = (liste: Promotion[]) =>
-    liste.reduce<Promotion | null>((b, p) => (!b || p.discount_value > b.discount_value ? p : b), null)
-  const retenues = promotions.filter(applicable)
+  selection: Selection,
+  now: number
+): { partenaire: Promotion | null; publique: Promotion | null; ambigues: Promotion[] } {
+  const priv = promotionForSelection(selection, promotions.filter((p) => !p.is_public), now)
+  const pub = promotionForSelection(selection, promotions.filter((p) => p.is_public), now)
   return {
-    partenaire: meilleure(retenues.filter((p) => !p.is_public)),
-    publique: meilleure(retenues.filter((p) => p.is_public)),
+    partenaire: priv.match?.promotion ?? null,
+    publique: pub.match?.promotion ?? null,
+    ambigues: [...priv.ambiguous, ...pub.ambiguous],
   }
 }
 
@@ -375,6 +507,8 @@ export function buildFirmPageModel(
     firmType: null as string | null,
     accountModel: null as string | null,
     payoutFrequency: firm.payout_frequency ?? null,
+    markets: [] as string[],
+    marketMetadataAgrees: null as boolean | null,
   }
 
   // --- Programmes, plans, phases -------------------------------------------
@@ -385,7 +519,7 @@ export function buildFirmPageModel(
     .map((p) => {
       const combos = new Map<string, ProgramPlan[]>()
       for (const plan of p.plans) {
-        const cle = planId(p.slug, plan.variant_key ?? null, plan.account_size)
+        const cle = planId(p.market, p.slug, plan.variant_key ?? null, plan.account_size)
         combos.set(cle, [...(combos.get(cle) ?? []), plan])
       }
       const plans: PlanRow[] = Array.from(combos.entries())
@@ -397,6 +531,8 @@ export function buildFirmPageModel(
           return {
             id,
             programSlug: p.slug,
+            market: p.market,
+            variantLabel: variantLabel(premiere.variant_key ?? null),
             variantKey: premiere.variant_key ?? null,
             accountSize: premiere.account_size,
             currency: premiere.currency || firm.price_currency || 'USD',
@@ -435,14 +571,26 @@ export function buildFirmPageModel(
   // « futures » a la main et laissait passer « cfd prop firm » en minuscules
   // pour tout autre marche : le defaut de la colonne devenait du texte visible.
   // Un marche inconnu ne produit AUCUN libelle plutot qu'un mot brut.
-  const LIBELLE_MARCHE: Record<string, string> = {
-    futures: 'Futures prop firm',
-    cfd: 'CFD prop firm',
-    stocks: 'Stock prop firm',
-  }
-  const marchesProgrammes = new Set(programmes.map((p) => p.market))
+  // Une firme peut legitimement vendre plusieurs marches : The5ers propose du
+  // CFD et du futures. La version precedente rendait `null` dans ce cas, et la
+  // fiche perdait toute mention de marche. On compose le libelle a la place.
+  const NOM_MARCHE: Record<string, string> = { futures: 'Futures', cfd: 'CFD', stocks: 'Stock' }
+  const marchesProgrammes = new Set(
+    programmes.filter((p) => p.status === 'active' || p.status === 'promotional').map((p) => p.market)
+  )
+  const nomsMarches = Array.from(marchesProgrammes)
+    .map((m) => NOM_MARCHE[m])
+    .filter(Boolean)
+    .sort()
   identity.firmType =
-    marchesProgrammes.size === 1 ? LIBELLE_MARCHE[Array.from(marchesProgrammes)[0]] ?? null : null
+    nomsMarches.length === 0 ? null : `${nomsMarches.join(' & ')} prop firm`
+  identity.markets = Array.from(marchesProgrammes).sort()
+  identity.marketMetadataAgrees =
+    firm.is_futures === null || firm.is_futures === undefined || marchesProgrammes.size === 0
+      ? null
+      : firm.is_futures === true
+        ? marchesProgrammes.has('futures')
+        : !marchesProgrammes.has('futures') || marchesProgrammes.size > 1
 
   // « Simulated » n'est affirme que si TOUTES les phases financees le sont.
   const phasesFinancees = programmes.flatMap((p) =>
@@ -455,6 +603,18 @@ export function buildFirmPageModel(
 
   const tousLesPlans = programmes.flatMap((p) => p.plans)
   const defaultPlanId = tousLesPlans[0]?.id ?? null
+
+  // Une fourchette PAR DEVISE. Melanger 95 USD et 155 EUR donnerait un nombre
+  // sans signification, et aucun taux de change n'est une donnee verifiee ici.
+  note('priceRanges', 'firm_program_plans', 'regular_price,currency')
+  const parDevise = new Map<string, number[]>()
+  for (const plan of tousLesPlans) {
+    if (plan.listPrice == null) continue
+    parDevise.set(plan.currency, [...(parDevise.get(plan.currency) ?? []), plan.listPrice])
+  }
+  const priceRanges: PriceRange[] = Array.from(parDevise.entries())
+    .map(([currency, prix]) => ({ currency, min: Math.min(...prix), max: Math.max(...prix) }))
+    .sort((a, b) => a.currency.localeCompare(b.currency))
 
   // --- Faits de firme : uniquement ce qui vaut pour TOUS les programmes ----
   note('firmFacts', 'firm_program_plans', 'derive par universalFact')
@@ -525,9 +685,12 @@ export function buildFirmPageModel(
           : firm.is_futures === false
             ? marcheUnique !== 'futures'
             : false
+    // « Futures only » n'a de sens que si la firme ne vend QUE cela. Sur une
+    // firme multi-marches, le fait n'existe pas — c'est le libelle de type qui
+    // porte l'information.
     if (marcheUnique && accordFirme) {
       firmFacts.push({
-        label: `${marcheUnique === 'futures' ? 'Futures' : marcheUnique} only`,
+        label: `${NOM_MARCHE[marcheUnique] ?? marcheUnique} only`,
         detail: 'Confirmed by every program and by the firm record',
       })
     } else {
@@ -570,21 +733,29 @@ export function buildFirmPageModel(
   // --- Offre, resolue PAR PLAN ---------------------------------------------
   note('offer', 'firm_promotions', 'code,discount_value,is_public,status,starts_at,expires_at')
   let offer: OfferRow | null = null
+  const promotionAmbiguities: { planId: string; codes: string[] }[] = []
   if (programData && programData.promotions.length > 0 && tousLesPlans.length > 0) {
     const percentByPlanId: Record<string, number> = {}
     const priceByPlanId: Record<string, { list: number; final: number }> = {}
     const betterPublicOfferByPlanId: Record<string, string> = {}
     const codes = new Set<string>()
     let label: string | null = null
+    const ambiguites: { planId: string; promotions: Promotion[] }[] = []
 
     for (const plan of tousLesPlans) {
-      const { partenaire, publique } = promotionsFor(
+      const { partenaire, publique, ambigues } = promotionsFor(
         programData.promotions,
-        plan.programSlug,
-        plan.variantKey,
-        plan.accountSize,
+        {
+          market: plan.market,
+          programSlug: plan.programSlug,
+          variantKey: plan.variantKey,
+          accountSize: plan.accountSize,
+        },
         maintenant
       )
+      // Deux promotions egalement applicables : le modele ne tranche pas a la
+      // place de l'editeur. Le validateur bloquera la publication.
+      if (ambigues.length > 0) ambiguites.push({ planId: plan.id, promotions: ambigues })
       if (!partenaire) continue
       if (partenaire.code) codes.add(partenaire.code)
       label = label ?? partenaire.label
@@ -606,6 +777,12 @@ export function buildFirmPageModel(
 
     if (Object.keys(percentByPlanId).length > 0) {
       const code = codes.size === 1 ? Array.from(codes)[0] : null
+      for (const a of ambiguites) {
+        promotionAmbiguities.push({
+          planId: a.planId,
+          codes: a.promotions.map((p) => `${p.code ?? 'sans code'} @ ${Math.round(p.discount_value * 100)}%`),
+        })
+      }
       offer = {
         code,
         label,
@@ -801,7 +978,9 @@ export function buildFirmPageModel(
     },
     programs: programmes,
     defaultPlanId,
+    priceRanges,
     offer,
+    promotionAmbiguities,
     rules,
     bundles,
     liveTiers,

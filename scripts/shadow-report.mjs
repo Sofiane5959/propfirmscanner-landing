@@ -166,16 +166,62 @@ for (const f of FIRMES) {
   dire(`| | |`)
   dire(`|---|---|`)
   dire(`| Programmes | ${model.programs.length} |`)
-  dire(`| Plans | ${nbPlans} |`)
-  dire(`| Phases | ${nbPhases} |`)
-  dire(`| Marche | ${model.identity.firmType ?? '—'} |`)
+  dire(`| **Selections commerciales** | **${nbPlans}** |`)
+  dire(`| Lignes de phase | ${nbPhases} |`)
+  dire(`| Marches | ${model.identity.markets.join(', ') || '—'} |`)
+  dire(`| Type de firme | ${model.identity.firmType ?? '—'} |`)
+  dire(`| Devises | ${model.priceRanges.map((r) => `${r.currency} ${r.min}–${r.max}`).join(' · ') || '—'} |`)
   dire(`| Faits de firme | ${model.firmFacts.length} |`)
   dire(`| Plateformes | ${model.catalogue.platforms.length} |`)
   dire(`| Regles detaillees | ${model.rules.complete.length} |`)
-  dire(`| Code promo | ${model.offer?.code ?? '—'} |`)
+  dire(`| Code promo | ${model.offer?.code ?? 'aucun'} |`)
   dire(`| **Erreurs bloquantes** | **${v.errors.length}** |`)
   dire(`| Avertissements | ${v.warnings.length} |`)
   dire('')
+
+  // Le detail par SELECTION COMMERCIALE, pas par ligne de phase : c'est ce
+  // que le visiteur choisit, et la seule granularite ou une promotion se
+  // resout.
+  dire('### Selections commerciales')
+  dire('')
+  dire('| Marche | Programme | Variante | Taille | Phases | Devise | Prix | Promotion resolue |')
+  dire('|---|---|---|---|---|---|---|---|')
+  for (const p of model.programs) {
+    for (const pl of p.plans) {
+      const promo = model.offer?.percentByPlanId[pl.id]
+      const prix = model.offer?.priceByPlanId[pl.id]
+      dire(
+        `| ${pl.market} | ${p.name} | ${pl.variantLabel ?? '—'} | ${pl.accountSize.toLocaleString('en-US')} ` +
+        `| ${pl.phases.map((ph) => ph.phase).join(' → ')} | ${pl.currency} ` +
+        `| ${pl.listPrice ?? '—'}${prix ? ` → ${prix.final}` : ''} ` +
+        `| ${promo != null ? `${model.offer.code ?? '?'} −${promo}%` : 'aucune'} |`
+      )
+    }
+  }
+  dire('')
+
+  if (model.offer) {
+    dire('Provenance de l offre :')
+    dire('')
+    for (const champ of ['offer', 'priceRanges']) {
+      const pr = model.provenance[champ]
+      if (pr) dire(`- \`${champ}\` — ${pr.table}.${pr.column}`)
+    }
+    dire(`- code : \`${model.offer.code ?? 'aucun'}\`, mention : « ${model.offer.disclosure} »`)
+    dire('')
+  } else {
+    dire('**Aucune offre resolue.** Aucun prix barre, aucun code, aucun pourcentage')
+    dire('ne sera affiche ; le CTA reste neutre et suivi.')
+    dire('')
+  }
+
+  if (v.warnings.length > 0) {
+    dire('Avertissements :')
+    dire('')
+    for (const w of v.warnings.slice(0, 8)) dire(`- \`${w.code}\` **${w.field}** — ${w.message}`)
+    if (v.warnings.length > 8) dire(`- … et ${v.warnings.length - 8} autres`)
+    dire('')
+  }
 
   if (v.errors.length > 0) {
     dire('Erreurs :')

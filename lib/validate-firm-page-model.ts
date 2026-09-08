@@ -239,11 +239,32 @@ export function validateFirmPageModel(model: FirmPageModel): ValidationResult {
   }
 
   // --- Classification de marche --------------------------------------------
-  const marches = new Set(model.programs.map((p) => p.market))
-  if (marches.size > 1) {
+  //
+  // Vendre plusieurs marches n'est PAS une erreur : The5ers propose du CFD et
+  // du futures, et c'est une offre produit deliberee. Le vrai defaut est le
+  // desaccord entre les programmes et la metadonnee de firme — une fiche
+  // marquee futures dont aucun programme ne l'est.
+  if (model.identity.marketMetadataAgrees === false) {
     errors.push({
-      code: 'MARKET_MISMATCH', field: 'programs[].market',
-      message: 'Les programmes ne partagent pas le meme marche.', evidence: Array.from(marches),
+      code: 'MARKET_MISMATCH', field: 'identity.markets',
+      message: 'prop_firms.is_futures contredit le marche des programmes.',
+      evidence: model.identity.markets,
+    })
+  }
+  if (model.identity.markets.length > 1) {
+    notices.push({
+      code: 'MULTI_MARKET', field: 'identity.markets',
+      message: 'Firme multi-marches : aucun fait « X only » ne sera produit.',
+      evidence: model.identity.markets,
+    })
+  }
+
+  // --- Promotions ambigues --------------------------------------------------
+  for (const a of model.promotionAmbiguities) {
+    errors.push({
+      code: 'PROMO_AMBIGUOUS', field: `offer.${a.planId}`,
+      message: 'Deux promotions s appliquent a egalite sur cette selection.',
+      evidence: a.codes,
     })
   }
 

@@ -124,6 +124,8 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
   const prix = plan ? offer?.priceByPlanId[plan.id] ?? null : null
   const remise = plan ? offer?.percentByPlanId[plan.id] ?? null : null
   const avertissement = plan ? offer?.betterPublicOfferByPlanId[plan.id] ?? null : null
+  // La devise vient du PLAN. FTMO facture en EUR : afficher un dollar sur ses
+  // prix serait une autre affirmation, pas un detail de mise en forme.
   const devise = plan?.currency ?? 'USD'
   const argent = (n: number) => formatMoney(n, locale, '', devise)
 
@@ -134,7 +136,34 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
   const phaseFinancee = plan?.phases.find((p) => p.phase === 'sim_funded') ?? null
   const premierePhase = phaseEvaluation ?? phaseFinancee
 
-  const taille = (n: number) => (n >= 1000 ? `$${n / 1000}K` : `$${n}`)
+  // La taille est un LIBELLE, pas un prix : elle garde son notation courte
+  // quelle que soit la devise du plan.
+  const taille = (n: number) => (n >= 1000 ? `${n / 1000}K` : String(n))
+
+  // Les dimensions de selection, dans l'ordre generique. Chaque selecteur ne
+  // s'affiche que s'il offre un vrai choix : un seul marche, une seule
+  // variante, et le selecteur disparait.
+  const marches = useMemo(
+    () => Array.from(new Set(programs.map((p) => p.market))).sort(),
+    [programs]
+  )
+  const marcheActif = plan?.market ?? marches[0] ?? null
+  const programmesDuMarche = useMemo(
+    () => programs.filter((p) => p.market === marcheActif),
+    [programs, marcheActif]
+  )
+  const variantesDuProgramme = useMemo(() => {
+    if (!programme) return []
+    const vues = new Map<string, string | null>()
+    for (const pl of programme.plans) {
+      if (!vues.has(pl.variantKey ?? '')) vues.set(pl.variantKey ?? '', pl.variantLabel)
+    }
+    return Array.from(vues.entries()).map(([cle, label]) => ({ cle: cle || null, label }))
+  }, [programme])
+  const taillesDeLaVariante = useMemo(() => {
+    if (!programme || !plan) return []
+    return programme.plans.filter((pl) => (pl.variantKey ?? '') === (plan.variantKey ?? ''))
+  }, [programme, plan])
 
   return (
     <div className="min-h-screen bg-gray-950 print:min-h-0">
@@ -318,8 +347,37 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
 
             <div className="grid lg:grid-cols-[minmax(0,1fr)_340px] gap-6 items-start">
               <div className="min-w-0 space-y-5">
+                {/* 1. Marche — seulement si la firme en vend plusieurs. */}
+                {marches.length > 1 && (
+                  <div role="radiogroup" aria-label="Market" className="flex flex-wrap gap-2">
+                    {marches.map((m) => {
+                      const actif = m === marcheActif
+                      return (
+                        <button
+                          key={m}
+                          type="button"
+                          role="radio"
+                          aria-checked={actif}
+                          onClick={() => {
+                            const premier = programs.find((p) => p.market === m)
+                            if (premier) setPlanId(premier.plans[0].id)
+                          }}
+                          className={`min-h-[44px] px-4 rounded-lg border text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
+                            actif
+                              ? 'border-emerald-500 bg-emerald-500/10 text-white'
+                              : 'border-gray-800 bg-gray-900/50 text-gray-400 hover:border-gray-700'
+                          }`}
+                        >
+                          {m === 'futures' ? 'Futures' : m === 'cfd' ? 'CFD' : m}
+                        </button>
+                      )
+                    })}
+                  </div>
+                )}
+
+                {/* 2. Programme, filtre par le marche choisi. */}
                 <div role="radiogroup" aria-label="Program" className="grid sm:grid-cols-2 gap-3">
-                  {programs.map((p) => {
+                  {programmesDuMarche.map((p) => {
                     const actif = p.slug === programme?.slug
                     return (
                       <button
@@ -345,9 +403,42 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
                   })}
                 </div>
 
+                {/* 3. Variante — seulement si le programme en a plusieurs.
+                       Sans ce selecteur, The5ers affichait deux boutons
+                       « 100K » identiques a des prix differents. */}
+                {variantesDuProgramme.length > 1 && programme && (
+                  <div role="radiogroup" aria-label="Variant" className="flex flex-wrap gap-2">
+                    {variantesDuProgramme.map((v) => {
+                      const actif = (plan?.variantKey ?? '') === (v.cle ?? '')
+                      return (
+                        <button
+                          key={v.cle ?? 'standard'}
+                          type="button"
+                          role="radio"
+                          aria-checked={actif}
+                          onClick={() => {
+                            const premier = programme.plans.find(
+                              (pl) => (pl.variantKey ?? '') === (v.cle ?? '')
+                            )
+                            if (premier) setPlanId(premier.id)
+                          }}
+                          className={`min-h-[44px] px-4 rounded-lg border text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
+                            actif
+                              ? 'border-emerald-500 bg-emerald-500/10 text-white'
+                              : 'border-gray-800 bg-gray-900/50 text-gray-400 hover:border-gray-700'
+                          }`}
+                        >
+                          {v.label ?? 'Standard'}
+                        </button>
+                      )
+                    })}
+                  </div>
+                )}
+
+                {/* 4. Taille, dans la variante choisie. */}
                 {programme && (
                   <div role="radiogroup" aria-label="Account size" className="flex flex-wrap gap-2">
-                    {programme.plans.map((p) => (
+                    {taillesDeLaVariante.map((p) => (
                       <button
                         key={p.id}
                         type="button"
