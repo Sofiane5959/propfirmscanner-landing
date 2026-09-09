@@ -524,7 +524,12 @@ export const FUTURESELITE = {
     // palier au-dessus de 90 : max = base.
     max_profit_split: 90,
     min_price: 95,
-    max_price: 353,
+    // 569 et non 353 : 353 etait le plus cher des quatre plans ELITE, seuls
+    // presents dans `prop_firm_challenges`. La gamme reelle va jusqu'a
+    // l'Instant 150K a 569 USD. La projection heritee annoncait donc un
+    // plafond inferieur au catalogue, et /compare classait la firme dessus.
+    // Verifie contre les 27 lignes normalisees : min 95, max 569.
+    max_price: 569,
     is_futures: true,
     // Herite du seed et sans objet ici : l'exposition d'un compte futures se
     // mesure en contrats, pas en levier forex. Le composant ne rend plus la
@@ -604,24 +609,21 @@ export const FUTURESELITE = {
         'You need a guaranteed route to live trading: it is a risk-team decision, not an entitlement.',
       ],
     },
-    program_guide: {
-      title: 'Four programmes',
-      intro:
-        'Four programmes are sold: Elite, Nitro, Prime and Instant. Their prices and rules differ, and the configurator above shows each one.',
-      options: [
-        {
-          name: 'Elite',
-          summary:
-            'A one-step evaluation, an end-of-day drawdown, no daily loss limit, and a 90% split once funded.',
-          points: [
-            '5% profit target',
-            'No daily loss limit',
-            '3 minimum trading days',
-            'No activation fee',
-          ],
-        },
-      ],
-    },
+    // RETIRE, le temps que la version immuable prenne le relais.
+    //
+    // Le bloc annoncait « Four programmes are sold » puis n'en decrivait
+    // qu'UN, Elite — et lui pretait « no daily loss limit », ce qui est faux
+    // de Prime, qui en porte une aux deux phases.
+    //
+    // Le completer a la main pour les quatre reconstituerait au niveau firme
+    // ce que `firm_programs` et `firm_program_plans` portent deja par
+    // programme et par phase : une cinquieme source a tenir a jour, et une
+    // cinquieme occasion de diverger.
+    //
+    // La colonne nulle fait disparaitre la section proprement, et le nouveau
+    // modele la reconstruit depuis les tables normalisees.
+    program_guide: null,
+
     // Quatre faits qui font ecarter ou retenir la firme en deux secondes.
     // Chacun porte sa qualification : « aucune limite journaliere » sans
     // « la perte maximale reste » se lirait comme une absence de risque.
@@ -713,27 +715,22 @@ export const FUTURESELITE = {
         'Exchange market data and commissions are the trader\u2019s cost on a live account',
       ],
     },
-    journey: {
-      title: 'What happens after you pay',
-      intro: 'A single evaluation step, then the funded account opens immediately.',
-      steps: [
-        {
-          title: 'Evaluation',
-          detail:
-            'Hit the profit target without breaching the Maximum Loss Limit, across at least 3 trading days. No time limit.',
-        },
-        {
-          title: 'Funded account',
-          detail:
-            'Opened as soon as you pass, with no activation fee. The consistency rule disappears at this stage.',
-        },
-        {
-          title: 'Payouts',
-          detail:
-            'Available every day, after 6 trading days, within the per-request cap: $1,000 on a 25K, up to $3,000 on a 150K.',
-        },
-      ],
-    },
+    // RETIRE, pour deux affirmations qui ne sont vraies d'aucun programme
+    // pris dans son ensemble :
+    //
+    //   « A single evaluation step, then the funded account opens
+    //     immediately » — Instant n'a AUCUNE evaluation, le compte est vivant
+    //     des l'achat.
+    //   « The consistency rule disappears at this stage » — Prime conserve une
+    //     regle de regularite une fois finance.
+    //
+    // Les jours de trading minimum different aussi par programme, alors que le
+    // bloc en citait trois comme s'ils valaient partout.
+    //
+    // Un parcours par programme se rend depuis les phases normalisees, ou il
+    // suit la selection du visiteur. Ecrit ici, il serait fige sur Elite.
+    journey: null,
+
     // Retiree : les frais reels vivent desormais dans le resume de
     // selection et dans les regles par phase, ou ils suivent le programme
     // choisi. Cette section les repetait au niveau firme, donc figes sur
@@ -919,17 +916,71 @@ export const FUTURESELITE = {
       ],
     },
   },
+  // TROIS CORRECTIONS SUR CES QUATRE LIGNES, toutes contre les donnees
+  // normalisees de `firm_programs` / `firm_program_plans`.
+  //
+  // 1. LE PARTAGE. Le 13e element porte le partage FINANCE de la ligne. Il
+  //    etait absent, donc le generateur retombait sur `scalars.profit_split`,
+  //    c'est-a-dire 80 — le taux de la FIRME, pas celui d'Elite. Or les quatre
+  //    phases `sim_funded` d'Elite portent 0,9, et le texte de payout de ces
+  //    memes lignes dit deja « Once funded: 90% split ». La colonne
+  //    contredisait sa propre ligne.
+  //
+  // 2. LA LANGUE. « Fin de journee » etait du francais dans une colonne de
+  //    base, que ce fichier declare pourtant tenir en anglais.
+  //
+  // 3. LA CONTRADICTION. `drawdown_type` disait « fin de journee » et
+  //    `max_loss_type` disait « Trailing » — deux affirmations ecrites
+  //    independamment, dont notre propre vocabulaire normalise fait deux
+  //    categories distinctes : Elite est « End of Day » aux deux phases, Nitro
+  //    finance est « Trailing Equity ». Les deux colonnes refletent desormais
+  //    la MEME donnee. C'est redondant, et c'est le prix pour qu'elles ne
+  //    puissent plus diverger.
   challenges: [
-    ['futureselite-elite-25k', 'Elite $25K', '$25K', '1 step', 1000, null, 1250, null, 'Fin de journée', 'Trailing', 95, null],
-    ['futureselite-elite-50k', 'Elite $50K', '$50K', '1 step', 2000, null, 3000, null, 'Fin de journée', 'Trailing', 153, null],
-    ['futureselite-elite-100k', 'Elite $100K', '$100K', '1 step', 3000, null, 6000, null, 'Fin de journée', 'Trailing', 293, null],
-    ['futureselite-elite-150k', 'Elite $150K', '$150K', '1 step', 4500, null, 9000, null, 'Fin de journée', 'Trailing', 353, null],
+    ['futureselite-elite-25k', 'Elite $25K', '$25K', '1 step', 1000, null, 1250, null, 'End of Day', 'End of Day', 95, null, 90],
+    ['futureselite-elite-50k', 'Elite $50K', '$50K', '1 step', 2000, null, 3000, null, 'End of Day', 'End of Day', 153, null, 90],
+    ['futureselite-elite-100k', 'Elite $100K', '$100K', '1 step', 3000, null, 6000, null, 'End of Day', 'End of Day', 293, null, 90],
+    ['futureselite-elite-150k', 'Elite $150K', '$150K', '1 step', 4500, null, 9000, null, 'End of Day', 'End of Day', 353, null, 90],
   ],
+
+  // LES TROIS BOOLEENS D'AUTORISATION
+  //
+  // Le generateur ecrivait `true, true, true` en dur pour toutes les firmes.
+  // Sur FuturesElite les trois etaient faux au regard de `firm_rules` — mais
+  // faux de trois manieres DIFFERENTES, et c'est ce qui compte :
+  //
+  //   ea        « Fully automated AI or bots are not permitted. » Sans
+  //             reserve. -> false, c'est une interdiction etablie.
+  //   scalping  le configurateur affiche « No » sans definir le terme ni
+  //             donner de seuil de duree, et le conflit de sources reste
+  //             ouvert. -> null, on ne SAIT pas.
+  //   news      « Yes » en evaluation, « With restrictions » une fois finance,
+  //             sans fenetre d'evenement precisee. -> null, cela DEPEND de la
+  //             phase, et la colonne n'a pas de phase.
+  //
+  // Mettre `false` partout serait le mensonge symetrique de `true` partout :
+  // « news trading interdit » est aussi faux que « news trading autorise ».
+  // NULL est la seule valeur qui dise « cette colonne ne peut pas porter
+  // l'information ». Le detail vit dans `consistency`, qui sait nuancer.
+  //
+  // La nullabilite reelle des deux colonnes est verifiee EN BASE par le
+  // controle avant du correctif : si l'une est NOT NULL, le script s'arrete en
+  // le disant plutot que de retomber sur une valeur inventee.
+  permissions: { ea: false, scalping: null, news: null },
+
+  // Les traductions sont mises de cote le temps de stabiliser l'anglais.
+  // Voir le commentaire de `clearTranslations` dans build-firm-content.mjs.
+  clearTranslations: true,
   // En anglais : ces colonnes vivent dans prop_firm_challenges, que le bundle
   // translations ne couvre pas. Elles suivent donc la langue de base.
   consistency: {
+    // Ce texte porte ce que les booleens ne savent pas dire. `scalping` et
+    // `news` valent NULL parce que la colonne n'a ni nuance ni phase ; la
+    // phrase, elle, distingue « interdit » de « conditionnel » et de
+    // « non defini ».
     '1 step':
-      'Minimum trading days, consistency rule, daily loss limit and funded consistency all differ by program. Select a program above to see the rules that apply to it.',
+      'Minimum trading days, consistency rule, daily loss limit and funded consistency all differ by program. Select a program above to see the rules that apply to it. ' +
+      'Fully automated trading and bots are not permitted. The configurator lists scalping as not allowed, without defining it. News trading is allowed during the evaluation and restricted once funded, without a stated event window.',
   },
   payout: {
     'futureselite-elite-25k':

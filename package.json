@@ -16,7 +16,8 @@
     "shadow:report": "node scripts/shadow-report.mjs",
     "test:capabilities": "node scripts/capability-tests.mjs",
     "publication:candidate": "node scripts/publication-candidate.mjs",
-    "test:readers": "node scripts/publication-reader-tests.mjs"
+    "test:readers": "node scripts/publication-reader-tests.mjs",
+    "build:correctif": "node scripts/build-correctif-futureselite.mjs"
   },
   "dependencies": {
     "@supabase/auth-helpers-nextjs": "^0.10.0",

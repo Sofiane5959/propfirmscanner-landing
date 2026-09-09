@@ -3,7 +3,7 @@
   "firm_slug": "futureselite",
   "version_number": 1,
   "status": "validated",
-  "source_hash": "sha256:619df46ff9217fc5f81b50c1398237fd2ee7b8ebee288911139a85f39830123a",
+  "source_hash": "sha256:d561d4febbc7e1b1e241b5baf0e360ebe8cac810a1b3a147ba366eaf6015b8d7",
   "model_schema_version": 1,
   "verified_at": "2026-09-07",
   "page_model_json": {
@@ -1565,20 +1565,7 @@
           "You need a guaranteed route to live trading: it is a risk-team decision, not an entitlement."
         ]
       },
-      "journey": [
-        {
-          "title": "Evaluation",
-          "detail": "Hit the profit target without breaching the Maximum Loss Limit, across at least 3 trading days. No time limit."
-        },
-        {
-          "title": "Funded account",
-          "detail": "Opened as soon as you pass, with no activation fee. The consistency rule disappears at this stage."
-        },
-        {
-          "title": "Payouts",
-          "detail": "Available every day, after 6 trading days, within the per-request cap: $1,000 on a 25K, up to $3,000 on a 150K."
-        }
-      ],
+      "journey": [],
       "faq": [
         {
           "question": "What profit split does FuturesElite pay?",

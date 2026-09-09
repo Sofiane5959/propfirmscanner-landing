@@ -25,6 +25,26 @@ const J = (o) => "'" + JSON.stringify(o).replace(/'/g, "''") + "'"
 const S = (s) => s === null || s === undefined ? 'null' : "'" + String(s).replace(/'/g, "''") + "'"
 const N = (n) => n === null || n === undefined ? 'null' : String(n)
 
+/**
+ * Un booleen d'autorisation.
+ *
+ * Le defaut est `true` parce que c'est ce que le generateur ecrivait en dur
+ * pour toutes les firmes : une firme qui ne declare pas `permissions` produit
+ * donc exactement le meme SQL qu'avant. C'est ce qui permet de corriger
+ * FuturesElite sans toucher FTMO ni The5ers.
+ *
+ * Trois valeurs, trois sens distincts :
+ *
+ *   undefined  la firme ne declare rien -> `true`, le comportement historique
+ *   false      la regle est INTERDITE, sans reserve
+ *   null       la regle est conditionnelle ou non etablie ; la colonne ne sait
+ *              pas la porter, et `false` mentirait autant que `true`
+ *
+ * Une firme qui emet `null` exige des colonnes nullables. C'est verifie en
+ * base par le controle avant du correctif, pas suppose ici.
+ */
+const B = (v) => (v === undefined ? 'true' : v === null ? 'null' : String(Boolean(v)))
+
 
 // Types reels des colonnes, releves dans information_schema.columns.
 // Ils ne sont pas homogenes et c est le piege : assets, pros, cons,
@@ -109,7 +129,14 @@ function build(firm) {
     sets.push(`  ${k.padEnd(20)} = ${typeof v === 'number' ? N(v) : typeof v === 'boolean' ? String(v) : S(v)}`)
   }
   for (const [k, v] of Object.entries(firm.arrays)) sets.push(`  ${k.padEnd(20)} = ${listLiteral(k, v)}`)
-  for (const [k, v] of Object.entries(firm.json)) sets.push(`  ${k.padEnd(20)} = ${J(v)}::jsonb`)
+  // `J(null)` produirait `'null'::jsonb`, qui est un JSON null — PAS un NULL
+  // SQL. La nuance n'est pas theorique : `cost_timeline is null` repondait
+  // faux, donc tout controle SQL sur une section retiree passait a cote, et
+  // `program_guide is null` aurait fait de meme. Une section absente doit
+  // l'etre pour la base autant que pour le rendu.
+  for (const [k, v] of Object.entries(firm.json)) {
+    sets.push(`  ${k.padEnd(20)} = ${v === null || v === undefined ? 'null' : `${J(v)}::jsonb`}`)
+  }
   // translations : les colonnes de base portent l ANGLAIS, et translations.<locale>
   // vient se superposer par-dessus (PropFirmPageClient fusionne le bundle en une
   // fois). Ecrire du francais dans les colonnes de base, comme la version
@@ -119,13 +146,32 @@ function build(firm) {
   // Le francais vit dans firm-content.mjs (bloc `fr`), les autres langues
   // dans scripts/firm-translations/<locale>.mjs — un fichier par langue, pour
   // qu ajouter une langue soit un fichier et non une refonte.
-  const bundles = {}
-  if (firm.fr) bundles.fr = firm.fr
-  for (const [loc, parSlug] of Object.entries(BUNDLES)) {
-    if (parSlug[firm.slug]) bundles[loc] = parSlug[firm.slug]
-  }
-  if (Object.keys(bundles).length) {
-    sets.push(`  ${'translations'.padEnd(20)} = ${J(bundles)}::jsonb`)
+  //
+  // `clearTranslations` VIDE la colonne au lieu de republier les bundles.
+  //
+  // Les six traductions de FuturesElite — fr, de, es, pt, ar, hi — ont ete
+  // ecrites avant les corrections du 7 septembre. Elles affirment encore sept
+  // plateformes, 90 % pour les quatre programmes, aucune limite journaliere,
+  // et d'anciens prix. Les republier reinjecterait dans cinq langues ce qu'on
+  // vient de corriger en anglais.
+  //
+  // `translations = null` fait retomber CHAQUE locale sur les colonnes de
+  // base, donc sur l'anglais corrige. Une page anglaise dans une locale
+  // francaise est un manque ; une page francaise qui affirme des chiffres faux
+  // est une erreur. On garde le manque.
+  //
+  // A retirer le jour ou les bundles sont retraduits depuis l'anglais stabilise.
+  if (firm.clearTranslations) {
+    sets.push(`  ${'translations'.padEnd(20)} = null`)
+  } else {
+    const bundles = {}
+    if (firm.fr) bundles.fr = firm.fr
+    for (const [loc, parSlug] of Object.entries(BUNDLES)) {
+      if (parSlug[firm.slug]) bundles[loc] = parSlug[firm.slug]
+    }
+    if (Object.keys(bundles).length) {
+      sets.push(`  ${'translations'.padEnd(20)} = ${J(bundles)}::jsonb`)
+    }
   }
   // La date etait figee au 3 septembre pour TOUTES les firmes. La deplacer
   // globalement au 7 aurait affirme que les quatre ont ete revues ce jour-la.
@@ -181,7 +227,9 @@ function build(firm) {
     return '  (' + [
       'gen_random_uuid()', S(slug), S(name), S(firm.scalars.name), S(firm.slug), S(size), S(steps),
       N(maxDd), N(dailyDd), N(t1), N(t2), S(ddType), S(lossType), N(split), N(price), N(disc),
-      S(payout), S(firm.consistency[steps] ?? null), 'true', 'true', 'true', "'one-time'", S(firm.riskUnit),
+      S(payout), S(firm.consistency[steps] ?? null),
+      B(firm.permissions?.ea), B(firm.permissions?.scalping), B(firm.permissions?.news),
+      "'one-time'", S(firm.riskUnit),
     ].join(', ') + ')'
   })
   L.push(rows.join(',\n') + ';')

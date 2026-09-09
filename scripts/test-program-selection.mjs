@@ -305,6 +305,11 @@ console.log('19. Les six formulations refusees ne reviennent nulle part')
   // les DIAGNOSTIC-*.sql les cherchent, ce fichier les liste, et le
   // validateur comme ses fixtures les rejouent pour prouver qu'elles
   // bloquent. Les y interdire reviendrait a interdire de s'en proteger.
+  // `RUN-06-correctif-*.sql` et son generateur entrent dans la meme categorie :
+  // leur en-tete nomme les textes qu'ils SUPPRIMENT, et leur controle final les
+  // cherche pour prouver qu'ils ont disparu. Verifie a la main le 9 septembre
+  // 2026 : dans ces deux fichiers, aucune des phrases n'apparait dans une
+  // donnee ecrite, seulement en commentaire et dans la liste de controle.
   // Les fichiers DIAGNOSTIC-*.sql et ce fichier de test citent ces phrases
   // comme PREDICATS de detection : les y interdire reviendrait a interdire
   // de les chercher. Seul le contenu rendu est concerne.
@@ -327,7 +332,7 @@ console.log('19. Les six formulations refusees ne reviennent nulle part')
     let trouve = ''
     try {
       trouve = execSync(
-        `grep -rlni ${JSON.stringify(phrase)} --include=*.mjs --include=*.tsx --include=*.ts --include=*.sql . 2>/dev/null | grep -v node_modules | grep -v '[.]next' | grep -v test-program-selection | grep -v -E 'DIAGNOSTIC-|PREFLIGHT-|POSTFLIGHT-' | grep -v validate-firm-page-model | grep -v validator-regressions || true`,
+        `grep -rlni ${JSON.stringify(phrase)} --include=*.mjs --include=*.tsx --include=*.ts --include=*.sql . 2>/dev/null | grep -v node_modules | grep -v '[.]next' | grep -v test-program-selection | grep -v -E 'DIAGNOSTIC-|PREFLIGHT-|POSTFLIGHT-|RUN-06-correctif|build-correctif' | grep -v validate-firm-page-model | grep -v validator-regressions || true`,
         { encoding: 'utf8', shell: 'bash' }
       ).trim()
     } catch { trouve = '' }
@@ -585,6 +590,62 @@ console.log('15. Gabarit generique — ordre, unicite et accessibilite')
   // le brief le repete. Une URL partenaire en dur contournerait le tracking.
   const enDur = page.match(/href=\"https?:\/\/(?!www\.propfirmscanner)/g) || []
   cas('aucune URL partenaire en dur dans la fiche', enDur.length === 0, String(enDur.length))
+}
+
+
+console.log('')
+console.log('21. Le format d un RAISE est un litteral, jamais une concatenation')
+{
+  // Aucun Postgres n'est installe sur cette machine : le SQL est relu, pas
+  // execute. Cette classe d'erreur ne se voit donc qu'au moment ou Sofiane
+  // colle le fichier dans Supabase, et c'est trop tard.
+  //
+  // plpgsql exige que le FORMAT d'un `raise` soit un litteral. Un `||` a cet
+  // endroit produit un « 42601: syntax error at or near || » qui ne dit pas
+  // pourquoi. Les ARGUMENTS qui suivent la virgule, eux, peuvent etre des
+  // expressions quelconques — c'est bien le format seul qui est contraint.
+  const { readdirSync, readFileSync } = await import('node:fs')
+
+  // Lit du `raise ...` jusqu'a la premiere virgule ou `;` hors chaine, puis
+  // retire les litteraux : ce qui reste ne doit contenir aucun `||`.
+  const formatsInvalides = (sql) => {
+    const pbs = []
+    const re = /\braise\s+(exception|notice|warning)\b/gi
+    let m
+    while ((m = re.exec(sql)) !== null) {
+      let i = m.index + m[0].length
+      let dansUneChaine = false
+      let buf = ''
+      while (i < sql.length) {
+        const c = sql[i]
+        if (c === "'") {
+          if (dansUneChaine && sql[i + 1] === "'") { buf += "''"; i += 2; continue }
+          dansUneChaine = !dansUneChaine
+        } else if (!dansUneChaine && (c === ',' || c === ';')) break
+        buf += c
+        i++
+      }
+      if (buf.replace(/'(?:[^']|'')*'/g, '').includes('||')) {
+        pbs.push(sql.slice(0, m.index).split('\n').length)
+      }
+    }
+    return pbs
+  }
+
+  const fichiers = readdirSync('database').filter((f) => f.endsWith('.sql'))
+  let fautifs = []
+  for (const f of fichiers) {
+    const lignes = formatsInvalides(readFileSync(`database/${f}`, 'utf8'))
+    for (const l of lignes) fautifs.push(`${f}:${l}`)
+  }
+  cas(`aucun format de raise concatene (${fichiers.length} fichiers)`,
+    fautifs.length === 0, fautifs.join(', '))
+
+  // Le controle se controle lui-meme : sur un cas fabrique, il doit mordre.
+  cas('le controle detecte bien un format concatene',
+    formatsInvalides("raise exception 'a' || 'b', x;").length === 1)
+  cas('un argument concatene apres la virgule reste permis',
+    formatsInvalides("raise exception 'a %', x || y;").length === 0)
 }
 
 
