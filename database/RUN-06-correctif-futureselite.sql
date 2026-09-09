@@ -1,7 +1,20 @@
 -- =============================================================================
--- CORRECTIF FUTURESELITE — MIGRATION DES DONNEES, CONSOLIDEE
+-- CORRECTIF FUTURESELITE — VERSION 6
 -- =============================================================================
 -- GENERE PAR scripts/build-correctif-futureselite.mjs. NE PAS EDITER A LA MAIN.
+--
+-- COMMENT IDENTIFIER CE FICHIER
+--
+--   version         6
+--   empreinte       5e939ccd86c51403fc9fd8eae3edd26129dc429955b7d82292e5371ca7beed9f
+--
+-- L empreinte couvre le CORPS — de `begin;` jusqu a la fin —, pas l en-tete,
+-- qui la contient et ne peut donc pas se hacher lui-meme. La verifier :
+--
+--   sed -n '/^begin;/,$p' RUN-06-correctif-futureselite.sql | sha256sum
+--
+-- Une empreinte differente de celle ci-dessus signifie un fichier different.
+-- Ne pas l executer sans avoir demande lequel fait autorite.
 --
 -- Un seul fichier a passer. Il assemble, dans cet ordre :
 --   database/RUN-futureselite-programs.sql   les programmes et leurs plans
@@ -434,6 +447,24 @@ begin
     end if;
   end loop;
 
+  -- LE PARTAGE PAR PROGRAMME, dans les tables normalisees.
+  --
+  -- « Elite a 90 » etait deja controle sur la projection heritee, mais rien
+  -- ne verifiait Instant. Or c'est precisement l'ecart que la page affirmait
+  -- a tort : « all four settle at a 90 % » alors qu Instant paie 80. Le
+  -- controle porte donc sur les deux, et sur la phase financee seule.
+  select count(*) into n from firm_program_plans pl
+    join firm_programs pr on pr.id = pl.program_id
+   where pr.firm_slug = 'futureselite' and pr.slug = 'instant'
+     and pl.phase = 'sim_funded' and pl.profit_split = 0.8;
+  if n <> 3 then ecarts := ecarts || format('Instant a 80 %% : %s phase(s) financee(s) sur 3', n); end if;
+
+  select count(*) into n from firm_program_plans pl
+    join firm_programs pr on pr.id = pl.program_id
+   where pr.firm_slug = 'futureselite' and pr.slug in ('elite', 'nitro', 'prime')
+     and pl.phase = 'sim_funded' and pl.profit_split is distinct from 0.9;
+  if n <> 0 then ecarts := ecarts || format('%s phase(s) financee(s) Elite/Nitro/Prime hors 90 %%', n); end if;
+
   -- LES PROJECTIONS HERITEES. Corriger les tables normalisees ne suffisait
   -- pas : ces colonnes-ci alimentent /compare, les cartes et le
   -- configurateur historique, et elles portaient leurs propres
@@ -560,6 +591,9 @@ select
     where slug = 'futureselite')                                                   as fourchette_heritee,
   (select count(*) from prop_firm_challenges
     where firm_slug = 'futureselite' and profit_split = 90)                        as elite_a_90,
+  (select count(*) from firm_program_plans pl join firm_programs pr on pr.id = pl.program_id
+    where pr.firm_slug = 'futureselite' and pr.slug = 'instant'
+      and pl.phase = 'sim_funded' and pl.profit_split = 0.8)                       as instant_a_80,
   (select case when translations is null then 'vide' else 'PRESENTE' end
      from prop_firms where slug = 'futureselite')                                  as traductions,
   (select distinct allows_ea::text || ' / '
@@ -583,6 +617,7 @@ select
 --   portee_scanned       unconfirmed
 --   fourchette_heritee   95-569
 --   elite_a_90            4
+--   instant_a_80          3
 --   traductions          vide
 --   ea_scalping_news     false / NULL / NULL
 --   guide_et_parcours    nuls

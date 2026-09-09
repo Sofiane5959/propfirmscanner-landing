@@ -31,7 +31,24 @@
 // =============================================================================
 
 import { execSync } from 'node:child_process'
+import { createHash } from 'node:crypto'
 import { readFileSync, writeFileSync } from 'node:fs'
+
+// -----------------------------------------------------------------------------
+// VERSION DU CORRECTIF
+// -----------------------------------------------------------------------------
+// A incrementer des que le SQL produit change. Le numero seul ne prouve rien —
+// c'est l'empreinte plus bas qui identifie le contenu — mais il donne un nom
+// court a une version, ce qu'une empreinte ne fait pas.
+//
+//   1  premier assemblage
+//   2  projections heritees : max_price, Elite a 90, End of Day, translations
+//   3  program_guide et journey a null, allows_* en false/null/null, garde de
+//      nullabilite, controles etendus
+//   4  format de `raise` remis en litteral (42601 sur la garde de nullabilite)
+//   5  en-tete : numero de version et empreinte du corps
+//   6  controle du partage par programme : Instant a 80, les trois autres a 90
+const VERSION = 6
 
 // -----------------------------------------------------------------------------
 // 1. Regenerer les deux sources, pour ne jamais consolider une version perimee
@@ -105,9 +122,22 @@ const p = (...l) => L.push(...l)
 
 p(
   '-- =============================================================================',
-  '-- CORRECTIF FUTURESELITE — MIGRATION DES DONNEES, CONSOLIDEE',
+  `-- CORRECTIF FUTURESELITE — VERSION ${VERSION}`,
   '-- =============================================================================',
   '-- GENERE PAR scripts/build-correctif-futureselite.mjs. NE PAS EDITER A LA MAIN.',
+  '--',
+  '-- COMMENT IDENTIFIER CE FICHIER',
+  '--',
+  `--   version         ${VERSION}`,
+  '--   empreinte       __SHA256_DU_CORPS__',
+  '--',
+  '-- L empreinte couvre le CORPS — de `begin;` jusqu a la fin —, pas l en-tete,',
+  '-- qui la contient et ne peut donc pas se hacher lui-meme. La verifier :',
+  '--',
+  "--   sed -n '/^begin;/,$p' RUN-06-correctif-futureselite.sql | sha256sum",
+  '--',
+  '-- Une empreinte differente de celle ci-dessus signifie un fichier different.',
+  '-- Ne pas l executer sans avoir demande lequel fait autorite.',
   '--',
   '-- Un seul fichier a passer. Il assemble, dans cet ordre :',
   '--   database/RUN-futureselite-programs.sql   les programmes et leurs plans',
@@ -341,6 +371,24 @@ p(
   '    end if;',
   '  end loop;',
   '',
+  '  -- LE PARTAGE PAR PROGRAMME, dans les tables normalisees.',
+  '  --',
+  "  -- « Elite a 90 » etait deja controle sur la projection heritee, mais rien",
+  "  -- ne verifiait Instant. Or c'est precisement l'ecart que la page affirmait",
+  '  -- a tort : « all four settle at a 90 % » alors qu Instant paie 80. Le',
+  '  -- controle porte donc sur les deux, et sur la phase financee seule.',
+  '  select count(*) into n from firm_program_plans pl',
+  '    join firm_programs pr on pr.id = pl.program_id',
+  "   where pr.firm_slug = 'futureselite' and pr.slug = 'instant'",
+  "     and pl.phase = 'sim_funded' and pl.profit_split = 0.8;",
+  "  if n <> 3 then ecarts := ecarts || format('Instant a 80 %% : %s phase(s) financee(s) sur 3', n); end if;",
+  '',
+  '  select count(*) into n from firm_program_plans pl',
+  '    join firm_programs pr on pr.id = pl.program_id',
+  "   where pr.firm_slug = 'futureselite' and pr.slug in ('elite', 'nitro', 'prime')",
+  "     and pl.phase = 'sim_funded' and pl.profit_split is distinct from 0.9;",
+  "  if n <> 0 then ecarts := ecarts || format('%s phase(s) financee(s) Elite/Nitro/Prime hors 90 %%', n); end if;",
+  '',
   '  -- LES PROJECTIONS HERITEES. Corriger les tables normalisees ne suffisait',
   '  -- pas : ces colonnes-ci alimentent /compare, les cartes et le',
   '  -- configurateur historique, et elles portaient leurs propres',
@@ -467,6 +515,9 @@ p(
   "    where slug = 'futureselite')                                                   as fourchette_heritee,",
   "  (select count(*) from prop_firm_challenges",
   "    where firm_slug = 'futureselite' and profit_split = 90)                        as elite_a_90,",
+  '  (select count(*) from firm_program_plans pl join firm_programs pr on pr.id = pl.program_id',
+  "    where pr.firm_slug = 'futureselite' and pr.slug = 'instant'",
+  "      and pl.phase = 'sim_funded' and pl.profit_split = 0.8)                       as instant_a_80,",
   "  (select case when translations is null then 'vide' else 'PRESENTE' end",
   "     from prop_firms where slug = 'futureselite')                                  as traductions,",
   "  (select distinct allows_ea::text || ' / '",
@@ -490,6 +541,7 @@ p(
   '--   portee_scanned       unconfirmed',
   '--   fourchette_heritee   95-569',
   '--   elite_a_90            4',
+  '--   instant_a_80          3',
   '--   traductions          vide',
   '--   ea_scalping_news     false / NULL / NULL',
   '--   guide_et_parcours    nuls',
@@ -499,12 +551,28 @@ p(
   '',
 )
 
+// -----------------------------------------------------------------------------
+// 4. Empreinte du corps, puis ecriture
+// -----------------------------------------------------------------------------
+// Le corps commence a `begin;`. Il ne contient ni date ni compteur, donc deux
+// generations des memes sources donnent la meme empreinte : c'est ce qui la
+// rend utile pour dire « ce fichier-ci, pas celui d avant ».
+const brut = L.join('\n')
+const debutDuCorps = brut.indexOf('\nbegin;\n')
+if (debutDuCorps < 0) {
+  console.error('Le corps ne commence pas par `begin;` : l empreinte serait fausse.')
+  process.exit(1)
+}
+const corps = brut.slice(debutDuCorps + 1)
+const empreinte = createHash('sha256').update(corps, 'utf8').digest('hex')
+
 const sortie = 'database/RUN-06-correctif-futureselite.sql'
-writeFileSync(sortie, L.join('\n'), 'utf8')
+writeFileSync(sortie, brut.replace('__SHA256_DU_CORPS__', empreinte), 'utf8')
 
 const nb = SOURCES.map(([c]) => instructionsEcrivantes(readFileSync(c, 'utf8')).length)
 console.log('')
-console.log(`${sortie}`)
+console.log(`${sortie}   version ${VERSION}`)
+console.log(`  empreinte du corps  ${empreinte}`)
 console.log(`  ${nb[0]} instructions depuis RUN-futureselite-programs.sql`)
 console.log(`  ${nb[1]} instructions depuis RUN-futureselite.sql`)
 console.log(`  ${readFileSync(sortie, 'utf8').split('\n').length} lignes, ` +
