@@ -304,6 +304,60 @@ cas('lien sortant tracke', ctaHref.startsWith('/api/go/'))
 cas('aucune generalisation sur le drawdown',
   !model.firmFacts.some((f) => /drawdown|daily loss/i.test(f.label + ' ' + (f.detail ?? ''))))
 
+// LES TROIS AFFIRMATIONS QUE LA PAGE PORTAIT, ET QUE LE MODELE DOIT REFUSER.
+//
+// Il ne suffit pas qu'elles soient absentes : elles doivent avoir ete ECARTEES,
+// avec la raison. Une absence peut venir d'une donnee manquante ; un rejet
+// motive prouve que la regle a joue.
+const texteDesFaits = model.firmFacts
+  .map((f) => `${f.label} ${f.detail ?? ''}`).join(' ')
+const ecarte = (motif) =>
+  model.firmFactsRejected.find((f) => new RegExp(motif, 'i').test(f.label))
+
+cas('aucun partage unique au niveau firme',
+  !/\b(80|90)\s*%/.test(texteDesFaits), texteDesFaits)
+cas('« profit split » est ecarte, avec sa raison',
+  !!ecarte('profit split')?.raison, JSON.stringify(ecarte('profit split') ?? null))
+cas('la raison nomme les deux valeurs divergentes',
+  /0\.9/.test(ecarte('profit split')?.raison ?? '') &&
+  /0\.8/.test(ecarte('profit split')?.raison ?? ''))
+
+cas('aucun fait « no daily loss limit »',
+  !/no daily loss/i.test(texteDesFaits))
+cas('« daily loss limit » est ecarte, avec sa raison',
+  !!ecarte('daily loss')?.raison, JSON.stringify(ecarte('daily loss') ?? null))
+
+cas('aucun fait « end-of-day drawdown »',
+  !/end.of.day|end of day/i.test(texteDesFaits))
+cas('« drawdown » est ecarte, avec sa raison',
+  !!ecarte('drawdown')?.raison, JSON.stringify(ecarte('drawdown') ?? null))
+cas('la raison du drawdown nomme les deux types',
+  /End of Day/i.test(ecarte('drawdown')?.raison ?? '') &&
+  /Trailing/i.test(ecarte('drawdown')?.raison ?? ''))
+
+// CE QUE LA PAGE AFFICHERA POUR L'ELITE 25K.
+//
+// Les ingredients sont controles ici ; le gabarit qui les assemble est relu
+// dans le composant, pour qu'un changement de formulation d'un cote sans
+// l'autre se voie.
+{
+  const id = 'futures|elite||25000'
+  const prix = model.offer?.priceByPlanId[id]
+  cas('Elite 25K : tarif 95, estimation 66.50, marquee estimee',
+    prix?.list === 95 && prix?.final === 66.5 && prix?.estimated === true,
+    JSON.stringify(prix ?? null))
+  cas('la remise appliquee est bien 30 %',
+    model.offer?.percentByPlanId[id] === 30)
+
+  const { readFileSync } = await import('node:fs')
+  const composant = readFileSync('components/prop-firm/FirmPage.tsx', 'utf8')
+  cas('le composant rend « estimate, verify at checkout » sur une estimation',
+    /prix\.estimated \? \(/.test(composant) &&
+    composant.includes('— estimate, verify at checkout'))
+  cas('le prix barre est reserve au cas NON estime',
+    composant.indexOf('prix.estimated ? (') < composant.indexOf('<s className='))
+}
+
 // POINT 4 — UNE PROMOTION `unconfirmed` NE DEVIENT PAS UNIVERSELLE
 const lignesPrix = Object.values(model.offer?.priceByPlanId ?? {})
 cas('les 15 prix remises sont marques comme estimations',
