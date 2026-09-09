@@ -297,25 +297,58 @@ titre('8. NON-REGRESSION DE FUTURESELITE')
     v.errors.map((e) => `${e.code} @ ${e.field}`).join(' | '))
 }
 
-titre('9. REPLI SANS `page_model_status`')
+titre('9. LA SEULE PORTE EST LA VERSION IMMUABLE')
 {
-  // La colonne peut ne pas exister : RUN-03 est additif et peut ne pas avoir
-  // ete passe. Le code doit alors retomber sur `legacy`, jamais echouer.
-  const servie = (f) => f.page_model_status === 'active'
-  cas('colonne absente -> ancien rendu', servie({}) === false)
-  cas('colonne nulle -> ancien rendu', servie({ page_model_status: null }) === false)
-  cas('legacy -> ancien rendu', servie({ page_model_status: 'legacy' }) === false)
-  cas('validated -> ancien rendu, la fiche est prete mais pas basculee',
-    servie({ page_model_status: 'validated' }) === false)
-  cas('active -> nouveau rendu', servie({ page_model_status: 'active' }) === true)
-
-  // Et la requete elle-meme : `select('*')` ne nomme aucune colonne, donc
-  // l'absence de `page_model_status` ne peut pas la faire echouer.
+  // Ce bloc testait l'ancienne porte, `page_model_status === 'active'`. Il
+  // passait, et il ne prouvait plus rien : la colonne est MUTABLE, donc la
+  // mettre a `active` n'affirmait rien sur ce que la page servirait a la
+  // requete suivante — le modele etait reconstruit a chaque fois depuis huit
+  // tables vivantes. C'est exactement la regression que la couche de
+  // publication supprime, et un test qui la valide serait pire qu'absent.
   const { readFileSync } = await import('node:fs')
   const page = readFileSync('app/[locale]/prop-firm/[slug]/page.tsx', 'utf8')
-  cas('la requete ne nomme pas page_model_status',
-    !/select\([^)]*page_model_status/.test(page))
+
+  cas('la fiche lit une version active, pas un statut',
+    /readActiveFirmPage\(/.test(page))
+  cas('page_model_status n autorise plus le rendu',
+    !/page_model_status\s*===/.test(page))
+  cas('le modele n est plus construit au rendu',
+    !/buildFirmPageModel\(/.test(page))
+  cas('sans version active, le rendu historique prend la main',
+    /versionActive \?/.test(page) && /PropFirmPageClient/.test(page))
+
+  // `select('*')` ne nomme aucune colonne : une colonne encore absente ne peut
+  // pas faire echouer la requete. La lecon du 42703 sur `scope_confidence`.
+  cas('la requete ne nomme aucune colonne optionnelle',
+    !/select\([^)]*(page_model_status|active_page_version_id)/.test(page))
   cas('le CTA passe par /api/go', /buildAffiliateUrl\(/.test(page))
+
+  // Le lecteur ne doit JAMAIS reconstruire : ce serait relire la donnee
+  // vivante, et perdre la garantie en silence.
+  const lecteur = readFileSync('lib/publication/read.ts', 'utf8')
+  cas('le lecteur ne reconstruit aucun modele',
+    !/buildFirmPageModel\(|summaryFromPageModel\(/.test(lecteur))
+  cas('le lecteur part de active_page_version_id',
+    /active_page_version_id/.test(lecteur))
+  cas('un brouillon exige un client de service',
+    /isServiceRole/.test(lecteur))
+
+  // La transaction : l'activation est la DERNIERE etape, apres tout ce qui
+  // peut echouer.
+  const pub = readFileSync('lib/publication/publish.ts', 'utf8')
+  cas('l activation est deleguee a une fonction atomique',
+    /rpc\(\s*'activate_firm_version'/.test(pub))
+  cas('la validation precede l ecriture',
+    pub.indexOf('validateFirmPageModel(model)') < pub.indexOf("from('firm_page_versions')"))
+  cas('l ecriture precede l activation',
+    pub.indexOf("from('firm_page_versions')") < pub.indexOf("'activate_firm_version'"))
+  // `acceptWarnings` ne doit porter QUE sur les avertissements. Le refus sur
+  // erreur est teste ligne a ligne : aucune ligne ne peut mentionner les deux.
+  cas('aucune derogation sur les erreurs bloquantes',
+    pub.includes('if (!validation.publishable)') &&
+    !pub.split('\n').some((l) => l.includes('publishable') && l.includes('acceptWarnings')))
+  cas('la version est ecrite en validated, jamais en published',
+    /status: 'validated'/.test(pub) && !/status: 'published'/.test(pub))
 }
 
 rmSync(dir, { recursive: true, force: true })

@@ -3,30 +3,29 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
 import PropFirmPageClient from './PropFirmPageClient'
 import FirmPage from '@/components/prop-firm/FirmPage'
-import { buildFirmPageModel } from '@/lib/firm-page-model'
 import { buildAffiliateUrl } from '@/lib/affiliate'
 
-/**
- * Une fiche est-elle servie par le modele unifie ?
+import { readActiveFirmPage, PublicationUnavailableError } from '@/lib/publication/read'
+
+/*
+ * CE QUI AUTORISE UNE FICHE A ETRE SERVIE PAR LE NOUVEAU RENDU
  *
- * La decision vit EN BASE, dans `prop_firms.page_model_status`, et plus dans
- * une liste de slugs codee ici. Trois consequences :
+ * Une seule chose : `prop_firms.active_page_version_id` designe une version
+ * `published` dans `firm_page_versions`.
  *
- *   - basculer ou annuler une fiche ne demande plus de deploiement ;
- *   - le retour en arriere est un UPDATE d'une ligne ;
- *   - `legacy` est le defaut de colonne, donc une firme nouvellement creee ne
- *     change pas de rendu par accident.
+ * `page_model_status` ne decide plus. Il reste en base comme metadonnee de
+ * migration — il dit ou en est le chantier — mais c'est une colonne MUTABLE :
+ * la mettre a `active` ne disait rien sur ce que la page servirait ensuite,
+ * puisque le modele etait reconstruit a chaque requete depuis huit tables
+ * vivantes. Une fiche validee lundi pouvait regresser mercredi parce qu'une
+ * ligne avait bouge, sans que personne n'ait publie quoi que ce soit.
  *
- * `active` est le SEUL etat qui rend par le nouveau composant. `validated`
- * signifie « prete, pas encore basculee » : c'est ce qui permet de preparer
- * une fiche sans l'exposer.
+ * Une version, elle, est immuable. Elle rend ce qu'elle rendait le jour de sa
+ * validation, et son rapport de validation est fige avec elle.
  *
- * La colonne peut ne pas exister encore — RUN-03 est additif et peut ne pas
- * avoir ete passe. On retombe alors sur `legacy`, donc sur l'ancien rendu.
+ * Sans version active, la fiche emprunte le chemin historique, inchange. C'est
+ * le cas de 349 firmes sur 350, et ce n'est pas un etat degrade.
  */
-function servieParLeModele(firm: { page_model_status?: string | null }): boolean {
-  return firm.page_model_status === 'active'
-}
 import { generateDynamicAlternates, localeHref } from '@/lib/seo'
 import { resolvePromotion } from '@/lib/promotion'
 import { loadFirmPrograms } from '@/lib/firm-programs'
@@ -318,6 +317,40 @@ export default async function PropFirmPage({ params }: Props) {
   // 27 plans importes.
   const programData = await loadFirmPrograms(supabase, params.slug)
 
+  // La version immuable. TROIS issues, jamais deux.
+  //
+  //   `none`        aucun identifiant actif -> rendu historique, legitime
+  //   `ok`          la version est servie
+  //   `unreadable`  identifiant actif mais version absente, incoherente ou de
+  //                 schema non supporte -> on LEVE
+  //
+  // Le repli sur le rendu historique dans le troisieme cas serait le pire des
+  // comportements : la fiche reviendrait aux donnees MUTABLES le jour ou la
+  // couche compte, et le ferait sans que rien ne le signale. Toute cette
+  // couche existe pour empecher cela.
+  //
+  // Lever produit un 500 non mis en cache. C'est le meme choix, et pour la
+  // meme raison, que pour une panne Supabase quelques lignes plus haut : une
+  // page fausse mise en cache coute plus cher qu'une erreur franche. Un 404
+  // serait un soft 404, un rendu historique serait un mensonge.
+  const lecture = await readActiveFirmPage(
+    supabase,
+    firm as { slug: string; active_page_version_id?: string | null }
+  )
+  if (lecture.kind === 'unreadable') {
+    const erreur = new PublicationUnavailableError(lecture)
+    // Journalise AVANT de lever : la trace doit nommer la firme, la version et
+    // la cause, sinon le 500 n'apprend rien a personne.
+    console.error('[publication]', {
+      slug: lecture.firmSlug,
+      versionId: lecture.versionId,
+      cause: lecture.cause,
+      detail: lecture.detail,
+    })
+    throw erreur
+  }
+  const versionActive = lecture.kind === 'ok' ? lecture.version : null
+
   // Structured data must quote the price actually on sale today. A promotion
   // that has expired no longer discounts anything, so the schema falls back to
   // the list price rather than advertising a figure the checkout will not honour.
@@ -437,17 +470,13 @@ export default async function PropFirmPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
 
-      {/* PHASE PILOTE.
-          Le nouveau rendu s'active par `prop_firms.page_model_status = 'active'`,
-          pas par une liste dans le code. Les fiches `legacy` — le defaut —
-          continuent d'emprunter le chemin actuel, inchange.
-          `FirmPage` est GENERIQUE : aucun code n'y branche sur une firme, et
-          elargir le pilote se fait en ajoutant un slug a cette liste.
-          Le modele est construit COTE SERVEUR : le composant recoit un objet
-          complet et n'interroge plus aucune table. */}
-      {servieParLeModele(firm) ? (
+      {/* Le modele n'est PAS construit ici : il est lu tel quel dans la version
+          active. Reconstruire a chaque requete, c'est relire la donnee vivante,
+          et donc pouvoir regresser entre deux visites. `FirmPage` reste
+          generique : aucun code n'y branche sur une firme. */}
+      {versionActive ? (
         <FirmPage
-          model={buildFirmPageModel(firm as never, programData)}
+          model={versionActive.model}
           ctaHref={buildAffiliateUrl(firm.slug, { placement: 'hero', locale })}
           locale={locale}
         />

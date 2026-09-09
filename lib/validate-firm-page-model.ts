@@ -320,6 +320,48 @@ export function validateFirmPageModel(model: FirmPageModel): ValidationResult {
         message: 'Aucune date de fin publiee : ne jamais presenter l offre comme permanente.',
       })
     }
+
+    // UN PRIX REMISE NON GARANTI NE PEUT PAS SE PRESENTER COMME UN PRIX
+    //
+    // Le drapeau `estimated` est ce qui fait ecrire « environ » a la place d'un
+    // tarif barre. Une version qui porterait un prix ferme alors que la portee
+    // du code n'est pas etablie promettrait au visiteur ce que le partenaire ne
+    // garantit pas — et le validateur est le seul endroit ou cela se voit avant
+    // publication.
+    for (const [id, prix] of Object.entries(model.offer.priceByPlanId)) {
+      if (!prix.estimated && model.offer.scopeConfidence !== 'universal_verified') {
+        errors.push({
+          code: 'PROMO_PRICE_NOT_GUARANTEED', field: `offer.priceByPlanId.${id}`,
+          message:
+            `Prix remise presente comme ferme alors que la portee du code est ` +
+            `« ${model.offer.scopeConfidence} ». Il doit etre marque comme estimation.`,
+          evidence: { planId: id, final: prix.final, scope: model.offer.scopeConfidence },
+        })
+      }
+    }
+    // Coherence du resume : `priceBasis` doit decrire les lignes, pas les
+    // contredire. Une bande « verified » sur des lignes estimees serait pire
+    // qu'une absence de bande.
+    const lignes = Object.values(model.offer.priceByPlanId)
+    if (lignes.length > 0) {
+      const attendu = lignes.every((p) => p.estimated) ? 'estimated'
+        : lignes.some((p) => p.estimated) ? 'mixed' : 'verified'
+      if (model.offer.priceBasis !== attendu) {
+        errors.push({
+          code: 'PROMO_PRICE_NOT_GUARANTEED', field: 'offer.priceBasis',
+          message: `priceBasis vaut « ${model.offer.priceBasis} » alors que les lignes disent « ${attendu} ».`,
+        })
+      }
+    }
+    // Tant qu'un seul prix est une estimation, la mention doit le dire.
+    if (model.offer.priceBasis !== 'verified' &&
+        !/estimate|approximate|verify at checkout|check the total/i.test(model.offer.disclosure)) {
+      errors.push({
+        code: 'PROMO_PRICE_NOT_GUARANTEED', field: 'offer.disclosure',
+        message: 'Des prix sont estimes mais la mention ne l indique pas au visiteur.',
+        evidence: model.offer.disclosure,
+      })
+    }
     // Les formulations interdites tant que la portee n'est pas etablie.
     const texteOffre = `${model.offer.label ?? ''} ${model.offer.disclosure}`
     if (model.offer.scopeConfidence !== 'universal_verified' &&

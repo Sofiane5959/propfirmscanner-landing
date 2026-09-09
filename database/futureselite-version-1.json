@@ -1,0 +1,1853 @@
+{
+  "_lisez_moi": "Contenu que publishFirmVersion ecrirait dans firm_page_versions pour futureselite. Produit par scripts/publication-candidate.mjs. Ne pas editer a la main : un candidat modifie ne correspondrait plus a ce que la transaction ecrira.",
+  "firm_slug": "futureselite",
+  "version_number": 1,
+  "status": "validated",
+  "source_hash": "sha256:619df46ff9217fc5f81b50c1398237fd2ee7b8ebee288911139a85f39830123a",
+  "model_schema_version": 1,
+  "verified_at": "2026-09-07",
+  "page_model_json": {
+    "identity": {
+      "slug": "futureselite",
+      "name": "FuturesElite",
+      "headline": "Four routes to a funded futures account, evaluation or instant",
+      "intro": "A futures prop firm built around choice: Elite and Prime run classic evaluations, Nitro targets faster payouts, and Instant funds you the day you buy. Each program carries its own loss limits, consistency rule and payout conditions, so the right one depends less on price than on how you actually trade.",
+      "marketBadge": "Futures only",
+      "logoUrl": "https://www.google.com/s2/favicons?domain=futureselite.com&sz=128",
+      "websiteUrl": "https://futureselite.com",
+      "verifiedAt": "2026-09-07",
+      "rating": null,
+      "foundedYear": null,
+      "country": "Italy",
+      "firmType": "Futures prop firm",
+      "accountModel": "Simulated",
+      "payoutFrequency": "on demand, daily once funded",
+      "markets": [
+        "futures"
+      ],
+      "marketMetadataAgrees": true
+    },
+    "firmFacts": [
+      {
+        "label": "No activation fee",
+        "detail": "Explicitly zero on every purchasable plan"
+      },
+      {
+        "label": "Futures only",
+        "detail": "Confirmed by every program and by the firm record"
+      }
+    ],
+    "firmFactsRejected": [
+      {
+        "label": "profit split",
+        "raison": "valeurs divergentes : 0.9, 0.8"
+      },
+      {
+        "label": "drawdown",
+        "raison": "valeurs divergentes : \"End of Day\", \"Trailing Equity\""
+      },
+      {
+        "label": "No daily loss limit",
+        "raison": "valeurs divergentes : true, false"
+      }
+    ],
+    "catalogue": {
+      "platforms": [
+        {
+          "name": "Tradovate",
+          "selectable": true,
+          "note": null
+        },
+        {
+          "name": "NinjaTrader",
+          "selectable": true,
+          "note": "Potential external licence cost in live trading"
+        },
+        {
+          "name": "Quantower",
+          "selectable": true,
+          "note": null
+        },
+        {
+          "name": "ATAS",
+          "selectable": true,
+          "note": null
+        },
+        {
+          "name": "WealthCharts",
+          "selectable": true,
+          "note": null
+        },
+        {
+          "name": "DeepChart",
+          "selectable": true,
+          "note": "Dashboard provides credentials and a Dxfeed agreement flow"
+        },
+        {
+          "name": "Volumetrica",
+          "selectable": false,
+          "note": "Listed on the official homepage but not exposed in the purchase configurator"
+        },
+        {
+          "name": "DeepCharts",
+          "selectable": false,
+          "note": "Listed on the official homepage but not exposed in the purchase configurator"
+        }
+      ],
+      "assets": [
+        "Futures"
+      ],
+      "dataFeeds": [],
+      "paymentMethods": [
+        "Rise"
+      ]
+    },
+    "programs": [
+      {
+        "slug": "elite",
+        "name": "Elite",
+        "kind": "evaluation",
+        "market": "futures",
+        "evaluationSteps": 1,
+        "differentiator": "One-step evaluation, end-of-day drawdown and no daily loss limit. The only programme whose payout amount rule is documented in detail.",
+        "status": "active",
+        "maxFundedAccounts": 5,
+        "maxFundedNote": "Counts towards the shared cap of 5 funded accounts across Elite, Custom, Instant and Nitro.",
+        "plans": [
+          {
+            "id": "futures|elite||25000",
+            "programSlug": "elite",
+            "market": "futures",
+            "variantLabel": null,
+            "variantKey": null,
+            "accountSize": 25000,
+            "currency": "USD",
+            "listPrice": 95,
+            "phases": [
+              {
+                "phase": "evaluation",
+                "profitTarget": 1250,
+                "maximumLoss": 1000,
+                "dailyLoss": null,
+                "dailyLossStated": true,
+                "drawdownType": "End of Day",
+                "consistencyRule": 0.4,
+                "maxContracts": 2,
+                "minimumTradingDays": 3,
+                "profitSplit": null,
+                "payoutCap": null,
+                "minimumPayout": null,
+                "daysBetweenPayouts": null,
+                "buffer": null,
+                "bufferStatus": "not_stated",
+                "resetFee": 79,
+                "activationFee": 0,
+                "currency": "USD",
+                "confidence": null
+              },
+              {
+                "phase": "sim_funded",
+                "profitTarget": null,
+                "maximumLoss": 1000,
+                "dailyLoss": null,
+                "dailyLossStated": true,
+                "drawdownType": "End of Day",
+                "consistencyRule": null,
+                "maxContracts": 2,
+                "minimumTradingDays": 6,
+                "profitSplit": 0.9,
+                "payoutCap": 1000,
+                "minimumPayout": 500,
+                "daysBetweenPayouts": 1,
+                "buffer": null,
+                "bufferStatus": "none",
+                "resetFee": null,
+                "activationFee": 0,
+                "currency": "USD",
+                "confidence": null
+              }
+            ]
+          },
+          {
+            "id": "futures|elite||50000",
+            "programSlug": "elite",
+            "market": "futures",
+            "variantLabel": null,
+            "variantKey": null,
+            "accountSize": 50000,
+            "currency": "USD",
+            "listPrice": 153,
+            "phases": [
+              {
+                "phase": "evaluation",
+                "profitTarget": 3000,
+                "maximumLoss": 2000,
+                "dailyLoss": null,
+                "dailyLossStated": true,
+                "drawdownType": "End of Day",
+                "consistencyRule": 0.4,
+                "maxContracts": 4,
+                "minimumTradingDays": 3,
+                "profitSplit": null,
+                "payoutCap": null,
+                "minimumPayout": null,
+                "daysBetweenPayouts": null,
+                "buffer": null,
+                "bufferStatus": "not_stated",
+                "resetFee": 89,
+                "activationFee": 0,
+                "currency": "USD",
+                "confidence": null
+              },
+              {
+                "phase": "sim_funded",
+                "profitTarget": null,
+                "maximumLoss": 2000,
+                "dailyLoss": null,
+                "dailyLossStated": true,
+                "drawdownType": "End of Day",
+                "consistencyRule": null,
+                "maxContracts": 4,
+                "minimumTradingDays": 6,
+                "profitSplit": 0.9,
+                "payoutCap": 2000,
+                "minimumPayout": 500,
+                "daysBetweenPayouts": 1,
+                "buffer": null,
+                "bufferStatus": "none",
+                "resetFee": null,
+                "activationFee": 0,
+                "currency": "USD",
+                "confidence": null
+              }
+            ]
+          },
+          {
+            "id": "futures|elite||100000",
+            "programSlug": "elite",
+            "market": "futures",
+            "variantLabel": null,
+            "variantKey": null,
+            "accountSize": 100000,
+            "currency": "USD",
+            "listPrice": 293,
+            "phases": [
+              {
+                "phase": "evaluation",
+                "profitTarget": 6000,
+                "maximumLoss": 3000,
+                "dailyLoss": null,
+                "dailyLossStated": true,
+                "drawdownType": "End of Day",
+                "consistencyRule": 0.4,
+                "maxContracts": 8,
+                "minimumTradingDays": 3,
+                "profitSplit": null,
+                "payoutCap": null,
+                "minimumPayout": null,
+                "daysBetweenPayouts": null,
+                "buffer": null,
+                "bufferStatus": "not_stated",
+                "resetFee": 159,
+                "activationFee": 0,
+                "currency": "USD",
+                "confidence": null
+              },
+              {
+                "phase": "sim_funded",
+                "profitTarget": null,
+                "maximumLoss": 3000,
+                "dailyLoss": null,
+                "dailyLossStated": true,
+                "drawdownType": "End of Day",
+                "consistencyRule": null,
+                "maxContracts": 8,
+                "minimumTradingDays": 6,
+                "profitSplit": 0.9,
+                "payoutCap": 2500,
+                "minimumPayout": 500,
+                "daysBetweenPayouts": 1,
+                "buffer": null,
+                "bufferStatus": "none",
+                "resetFee": null,
+                "activationFee": 0,
+                "currency": "USD",
+                "confidence": null
+              }
+            ]
+          },
+          {
+            "id": "futures|elite||150000",
+            "programSlug": "elite",
+            "market": "futures",
+            "variantLabel": null,
+            "variantKey": null,
+            "accountSize": 150000,
+            "currency": "USD",
+            "listPrice": 353,
+            "phases": [
+              {
+                "phase": "evaluation",
+                "profitTarget": 9000,
+                "maximumLoss": 4500,
+                "dailyLoss": null,
+                "dailyLossStated": true,
+                "drawdownType": "End of Day",
+                "consistencyRule": 0.4,
+                "maxContracts": 12,
+                "minimumTradingDays": 3,
+                "profitSplit": null,
+                "payoutCap": null,
+                "minimumPayout": null,
+                "daysBetweenPayouts": null,
+                "buffer": null,
+                "bufferStatus": "not_stated",
+                "resetFee": 229,
+                "activationFee": 0,
+                "currency": "USD",
+                "confidence": null
+              },
+              {
+                "phase": "sim_funded",
+                "profitTarget": null,
+                "maximumLoss": 4500,
+                "dailyLoss": null,
+                "dailyLossStated": true,
+                "drawdownType": "End of Day",
+                "consistencyRule": null,
+                "maxContracts": 12,
+                "minimumTradingDays": 6,
+                "profitSplit": 0.9,
+                "payoutCap": 3000,
+                "minimumPayout": 500,
+                "daysBetweenPayouts": 1,
+                "buffer": null,
+                "bufferStatus": "none",
+                "resetFee": null,
+                "activationFee": 0,
+                "currency": "USD",
+                "confidence": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "slug": "nitro",
+        "name": "Nitro",
+        "kind": "evaluation",
+        "market": "futures",
+        "evaluationSteps": 1,
+        "differentiator": "One-step evaluation with the lowest minimum trading days. Once funded it switches to a trailing-equity drawdown with a buffer.",
+        "status": "active",
+        "maxFundedAccounts": null,
+        "maxFundedNote": "Unresolved: the official FAQ states 3 active funded Nitro accounts, while configurator cross-sell copy displayed MAX 4 FUNDED. Confirm with the firm before relying on either figure.",
+        "plans": [
+          {
+            "id": "futures|nitro||25000",
+            "programSlug": "nitro",
+            "market": "futures",
+            "variantLabel": null,
+            "variantKey": null,
+            "accountSize": 25000,
+            "currency": "USD",
+            "listPrice": 129,
+            "phases": [
+              {
+                "phase": "evaluation",
+                "profitTarget": 1250,
+                "maximumLoss": 1000,
+                "dailyLoss": null,
+                "dailyLossStated": true,
+                "drawdownType": "End of Day",
+                "consistencyRule": 0.5,
+                "maxContracts": 2,
+                "minimumTradingDays": 2,
+                "profitSplit": null,
+                "payoutCap": null,
+                "minimumPayout": null,
+                "daysBetweenPayouts": null,
+                "buffer": null,
+                "bufferStatus": "not_stated",
+                "resetFee": 89,
+                "activationFee": 0,
+                "currency": "USD",
+                "confidence": null
+              },
+              {
+                "phase": "sim_funded",
+                "profitTarget": null,
+                "maximumLoss": 1000,
+                "dailyLoss": null,
+                "dailyLossStated": true,
+                "drawdownType": "Trailing Equity",
+                "consistencyRule": null,
+                "maxContracts": 2,
+                "minimumTradingDays": 1,
+                "profitSplit": 0.9,
+                "payoutCap": 1000,
+                "minimumPayout": null,
+                "daysBetweenPayouts": 1,
+                "buffer": 1100,
+                "bufferStatus": "amount",
+                "resetFee": null,
+                "activationFee": 0,
+                "currency": "USD",
+                "confidence": null
+              }
+            ]
+          },
+          {
+            "id": "futures|nitro||50000",
+            "programSlug": "nitro",
+            "market": "futures",
+            "variantLabel": null,
+            "variantKey": null,
+            "accountSize": 50000,
+            "currency": "USD",
+            "listPrice": 138,
+            "phases": [
+              {
+                "phase": "evaluation",
+                "profitTarget": 3000,
+                "maximumLoss": 2000,
+                "dailyLoss": null,
+                "dailyLossStated": true,
+                "drawdownType": "End of Day",
+                "consistencyRule": 0.5,
+                "maxContracts": 5,
+                "minimumTradingDays": 2,
+                "profitSplit": null,
+                "payoutCap": null,
+                "minimumPayout": null,
+                "daysBetweenPayouts": null,
+                "buffer": null,
+                "bufferStatus": "not_stated",
+                "resetFee": 99,
+                "activationFee": 0,
+                "currency": "USD",
+                "confidence": null
+              },
+              {
+                "phase": "sim_funded",
+                "profitTarget": null,
+                "maximumLoss": 2000,
+                "dailyLoss": null,
+                "dailyLossStated": true,
+                "drawdownType": "Trailing Equity",
+                "consistencyRule": null,
+                "maxContracts": 5,
+                "minimumTradingDays": 1,
+                "profitSplit": 0.9,
+                "payoutCap": 2000,
+                "minimumPayout": null,
+                "daysBetweenPayouts": 1,
+                "buffer": 2100,
+                "bufferStatus": "amount",
+                "resetFee": null,
+                "activationFee": 0,
+                "currency": "USD",
+                "confidence": null
+              }
+            ]
+          },
+          {
+            "id": "futures|nitro||100000",
+            "programSlug": "nitro",
+            "market": "futures",
+            "variantLabel": null,
+            "variantKey": null,
+            "accountSize": 100000,
+            "currency": "USD",
+            "listPrice": 218,
+            "phases": [
+              {
+                "phase": "evaluation",
+                "profitTarget": 6000,
+                "maximumLoss": 3000,
+                "dailyLoss": null,
+                "dailyLossStated": true,
+                "drawdownType": "End of Day",
+                "consistencyRule": 0.5,
+                "maxContracts": 8,
+                "minimumTradingDays": 2,
+                "profitSplit": null,
+                "payoutCap": null,
+                "minimumPayout": null,
+                "daysBetweenPayouts": null,
+                "buffer": null,
+                "bufferStatus": "not_stated",
+                "resetFee": 149,
+                "activationFee": 0,
+                "currency": "USD",
+                "confidence": null
+              },
+              {
+                "phase": "sim_funded",
+                "profitTarget": null,
+                "maximumLoss": 3000,
+                "dailyLoss": null,
+                "dailyLossStated": true,
+                "drawdownType": "Trailing Equity",
+                "consistencyRule": null,
+                "maxContracts": 8,
+                "minimumTradingDays": 1,
+                "profitSplit": 0.9,
+                "payoutCap": 2500,
+                "minimumPayout": null,
+                "daysBetweenPayouts": 1,
+                "buffer": 3100,
+                "bufferStatus": "amount",
+                "resetFee": null,
+                "activationFee": 0,
+                "currency": "USD",
+                "confidence": null
+              }
+            ]
+          },
+          {
+            "id": "futures|nitro||150000",
+            "programSlug": "nitro",
+            "market": "futures",
+            "variantLabel": null,
+            "variantKey": null,
+            "accountSize": 150000,
+            "currency": "USD",
+            "listPrice": 298,
+            "phases": [
+              {
+                "phase": "evaluation",
+                "profitTarget": 9000,
+                "maximumLoss": 4500,
+                "dailyLoss": null,
+                "dailyLossStated": true,
+                "drawdownType": "End of Day",
+                "consistencyRule": 0.5,
+                "maxContracts": 10,
+                "minimumTradingDays": 2,
+                "profitSplit": null,
+                "payoutCap": null,
+                "minimumPayout": null,
+                "daysBetweenPayouts": null,
+                "buffer": null,
+                "bufferStatus": "not_stated",
+                "resetFee": 219,
+                "activationFee": 0,
+                "currency": "USD",
+                "confidence": null
+              },
+              {
+                "phase": "sim_funded",
+                "profitTarget": null,
+                "maximumLoss": 4500,
+                "dailyLoss": null,
+                "dailyLossStated": true,
+                "drawdownType": "Trailing Equity",
+                "consistencyRule": null,
+                "maxContracts": 10,
+                "minimumTradingDays": 1,
+                "profitSplit": 0.9,
+                "payoutCap": 2800,
+                "minimumPayout": null,
+                "daysBetweenPayouts": 1,
+                "buffer": 4600,
+                "bufferStatus": "amount",
+                "resetFee": null,
+                "activationFee": 0,
+                "currency": "USD",
+                "confidence": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "slug": "prime",
+        "name": "Prime",
+        "kind": "evaluation",
+        "market": "futures",
+        "evaluationSteps": 1,
+        "differentiator": "The only programme with a daily loss limit in both phases. It also carries the longest bundle ladder, up to ten accounts.",
+        "status": "active",
+        "maxFundedAccounts": 10,
+        "maxFundedNote": "Prime has its own cap: 10 active funded accounts.",
+        "plans": [
+          {
+            "id": "futures|prime||25000",
+            "programSlug": "prime",
+            "market": "futures",
+            "variantLabel": null,
+            "variantKey": null,
+            "accountSize": 25000,
+            "currency": "USD",
+            "listPrice": 96,
+            "phases": [
+              {
+                "phase": "evaluation",
+                "profitTarget": 1250,
+                "maximumLoss": 1000,
+                "dailyLoss": 600,
+                "dailyLossStated": false,
+                "drawdownType": "End of Day",
+                "consistencyRule": null,
+                "maxContracts": 2,
+                "minimumTradingDays": 1,
+                "profitSplit": null,
+                "payoutCap": null,
+                "minimumPayout": null,
+                "daysBetweenPayouts": null,
+                "buffer": null,
+                "bufferStatus": "not_stated",
+                "resetFee": 89,
+                "activationFee": 0,
+                "currency": "USD",
+                "confidence": null
+              },
+              {
+                "phase": "sim_funded",
+                "profitTarget": null,
+                "maximumLoss": 1000,
+                "dailyLoss": 600,
+                "dailyLossStated": false,
+                "drawdownType": "End of Day",
+                "consistencyRule": 0.4,
+                "maxContracts": 2,
+                "minimumTradingDays": 3,
+                "profitSplit": 0.9,
+                "payoutCap": 1000,
+                "minimumPayout": null,
+                "daysBetweenPayouts": 1,
+                "buffer": 1100,
+                "bufferStatus": "amount",
+                "resetFee": null,
+                "activationFee": 0,
+                "currency": "USD",
+                "confidence": null
+              }
+            ]
+          },
+          {
+            "id": "futures|prime||50000",
+            "programSlug": "prime",
+            "market": "futures",
+            "variantLabel": null,
+            "variantKey": null,
+            "accountSize": 50000,
+            "currency": "USD",
+            "listPrice": 179,
+            "phases": [
+              {
+                "phase": "evaluation",
+                "profitTarget": 3000,
+                "maximumLoss": 2000,
+                "dailyLoss": 1200,
+                "dailyLossStated": false,
+                "drawdownType": "End of Day",
+                "consistencyRule": null,
+                "maxContracts": 4,
+                "minimumTradingDays": 1,
+                "profitSplit": null,
+                "payoutCap": null,
+                "minimumPayout": null,
+                "daysBetweenPayouts": null,
+                "buffer": null,
+                "bufferStatus": "not_stated",
+                "resetFee": 109,
+                "activationFee": 0,
+                "currency": "USD",
+                "confidence": null
+              },
+              {
+                "phase": "sim_funded",
+                "profitTarget": null,
+                "maximumLoss": 2000,
+                "dailyLoss": 1200,
+                "dailyLossStated": false,
+                "drawdownType": "End of Day",
+                "consistencyRule": 0.4,
+                "maxContracts": 4,
+                "minimumTradingDays": 3,
+                "profitSplit": 0.9,
+                "payoutCap": 2000,
+                "minimumPayout": null,
+                "daysBetweenPayouts": 1,
+                "buffer": 2100,
+                "bufferStatus": "amount",
+                "resetFee": null,
+                "activationFee": 0,
+                "currency": "USD",
+                "confidence": null
+              }
+            ]
+          },
+          {
+            "id": "futures|prime||100000",
+            "programSlug": "prime",
+            "market": "futures",
+            "variantLabel": null,
+            "variantKey": null,
+            "accountSize": 100000,
+            "currency": "USD",
+            "listPrice": 279,
+            "phases": [
+              {
+                "phase": "evaluation",
+                "profitTarget": 6000,
+                "maximumLoss": 3000,
+                "dailyLoss": 1800,
+                "dailyLossStated": false,
+                "drawdownType": "End of Day",
+                "consistencyRule": null,
+                "maxContracts": 6,
+                "minimumTradingDays": 1,
+                "profitSplit": null,
+                "payoutCap": null,
+                "minimumPayout": null,
+                "daysBetweenPayouts": null,
+                "buffer": null,
+                "bufferStatus": "not_stated",
+                "resetFee": 159,
+                "activationFee": 0,
+                "currency": "USD",
+                "confidence": null
+              },
+              {
+                "phase": "sim_funded",
+                "profitTarget": null,
+                "maximumLoss": 3000,
+                "dailyLoss": 1800,
+                "dailyLossStated": false,
+                "drawdownType": "End of Day",
+                "consistencyRule": 0.4,
+                "maxContracts": 6,
+                "minimumTradingDays": 3,
+                "profitSplit": 0.9,
+                "payoutCap": 2500,
+                "minimumPayout": null,
+                "daysBetweenPayouts": 1,
+                "buffer": 3100,
+                "bufferStatus": "amount",
+                "resetFee": null,
+                "activationFee": 0,
+                "currency": "USD",
+                "confidence": null
+              }
+            ]
+          },
+          {
+            "id": "futures|prime||150000",
+            "programSlug": "prime",
+            "market": "futures",
+            "variantLabel": null,
+            "variantKey": null,
+            "accountSize": 150000,
+            "currency": "USD",
+            "listPrice": 369,
+            "phases": [
+              {
+                "phase": "evaluation",
+                "profitTarget": 9000,
+                "maximumLoss": 4500,
+                "dailyLoss": 2700,
+                "dailyLossStated": false,
+                "drawdownType": "End of Day",
+                "consistencyRule": null,
+                "maxContracts": 10,
+                "minimumTradingDays": 1,
+                "profitSplit": null,
+                "payoutCap": null,
+                "minimumPayout": null,
+                "daysBetweenPayouts": null,
+                "buffer": null,
+                "bufferStatus": "not_stated",
+                "resetFee": 209,
+                "activationFee": 0,
+                "currency": "USD",
+                "confidence": null
+              },
+              {
+                "phase": "sim_funded",
+                "profitTarget": null,
+                "maximumLoss": 4500,
+                "dailyLoss": 2700,
+                "dailyLossStated": false,
+                "drawdownType": "End of Day",
+                "consistencyRule": 0.4,
+                "maxContracts": 10,
+                "minimumTradingDays": 3,
+                "profitSplit": 0.9,
+                "payoutCap": 3000,
+                "minimumPayout": null,
+                "daysBetweenPayouts": 1,
+                "buffer": 4600,
+                "bufferStatus": "amount",
+                "resetFee": null,
+                "activationFee": 0,
+                "currency": "USD",
+                "confidence": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "slug": "instant",
+        "name": "Instant",
+        "kind": "instant",
+        "market": "futures",
+        "evaluationSteps": null,
+        "differentiator": "No evaluation: the account is live from purchase. Payout eligibility still requires 10 trading days and a 20% consistency rule.",
+        "status": "active",
+        "maxFundedAccounts": 5,
+        "maxFundedNote": "Counts towards the shared cap of 5 funded accounts across Elite, Custom, Instant and Nitro.",
+        "plans": [
+          {
+            "id": "futures|instant||50000",
+            "programSlug": "instant",
+            "market": "futures",
+            "variantLabel": null,
+            "variantKey": null,
+            "accountSize": 50000,
+            "currency": "USD",
+            "listPrice": 349,
+            "phases": [
+              {
+                "phase": "sim_funded",
+                "profitTarget": null,
+                "maximumLoss": 1800,
+                "dailyLoss": null,
+                "dailyLossStated": true,
+                "drawdownType": "End of Day",
+                "consistencyRule": 0.2,
+                "maxContracts": 4,
+                "minimumTradingDays": 10,
+                "profitSplit": 0.8,
+                "payoutCap": 1500,
+                "minimumPayout": null,
+                "daysBetweenPayouts": 1,
+                "buffer": null,
+                "bufferStatus": "none",
+                "resetFee": null,
+                "activationFee": 0,
+                "currency": "USD",
+                "confidence": null
+              }
+            ]
+          },
+          {
+            "id": "futures|instant||100000",
+            "programSlug": "instant",
+            "market": "futures",
+            "variantLabel": null,
+            "variantKey": null,
+            "accountSize": 100000,
+            "currency": "USD",
+            "listPrice": 469,
+            "phases": [
+              {
+                "phase": "sim_funded",
+                "profitTarget": null,
+                "maximumLoss": 3000,
+                "dailyLoss": null,
+                "dailyLossStated": true,
+                "drawdownType": "End of Day",
+                "consistencyRule": 0.2,
+                "maxContracts": 8,
+                "minimumTradingDays": 10,
+                "profitSplit": 0.8,
+                "payoutCap": 2500,
+                "minimumPayout": null,
+                "daysBetweenPayouts": 1,
+                "buffer": null,
+                "bufferStatus": "none",
+                "resetFee": null,
+                "activationFee": 0,
+                "currency": "USD",
+                "confidence": null
+              }
+            ]
+          },
+          {
+            "id": "futures|instant||150000",
+            "programSlug": "instant",
+            "market": "futures",
+            "variantLabel": null,
+            "variantKey": null,
+            "accountSize": 150000,
+            "currency": "USD",
+            "listPrice": 569,
+            "phases": [
+              {
+                "phase": "sim_funded",
+                "profitTarget": null,
+                "maximumLoss": 4500,
+                "dailyLoss": null,
+                "dailyLossStated": true,
+                "drawdownType": "End of Day",
+                "consistencyRule": 0.2,
+                "maxContracts": 12,
+                "minimumTradingDays": 10,
+                "profitSplit": 0.8,
+                "payoutCap": 3500,
+                "minimumPayout": null,
+                "daysBetweenPayouts": 1,
+                "buffer": null,
+                "bufferStatus": "none",
+                "resetFee": null,
+                "activationFee": 0,
+                "currency": "USD",
+                "confidence": null
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "defaultPlanId": "futures|elite||25000",
+    "priceRanges": [
+      {
+        "currency": "USD",
+        "min": 95,
+        "max": 569
+      }
+    ],
+    "offer": {
+      "code": "SCANNED",
+      "label": "30% with code SCANNED — eligibility and best-price status pending confirmation",
+      "trackingPlacement": "hero",
+      "scopeConfidence": "unconfirmed",
+      "expiryUnknown": true,
+      "disclosure": "Code SCANNED is reported to work; eligibility per program and size is not confirmed. Discounted figures on this page are estimates — check the total at checkout.",
+      "priceBasis": "estimated",
+      "percentByPlanId": {
+        "futures|elite||25000": 30,
+        "futures|elite||50000": 30,
+        "futures|elite||100000": 30,
+        "futures|elite||150000": 30,
+        "futures|nitro||25000": 30,
+        "futures|nitro||50000": 30,
+        "futures|nitro||100000": 30,
+        "futures|nitro||150000": 30,
+        "futures|prime||25000": 30,
+        "futures|prime||50000": 30,
+        "futures|prime||100000": 30,
+        "futures|prime||150000": 30,
+        "futures|instant||50000": 30,
+        "futures|instant||100000": 30,
+        "futures|instant||150000": 30
+      },
+      "priceByPlanId": {
+        "futures|elite||25000": {
+          "list": 95,
+          "final": 66.5,
+          "estimated": true
+        },
+        "futures|elite||50000": {
+          "list": 153,
+          "final": 107.1,
+          "estimated": true
+        },
+        "futures|elite||100000": {
+          "list": 293,
+          "final": 205.1,
+          "estimated": true
+        },
+        "futures|elite||150000": {
+          "list": 353,
+          "final": 247.1,
+          "estimated": true
+        },
+        "futures|nitro||25000": {
+          "list": 129,
+          "final": 90.3,
+          "estimated": true
+        },
+        "futures|nitro||50000": {
+          "list": 138,
+          "final": 96.6,
+          "estimated": true
+        },
+        "futures|nitro||100000": {
+          "list": 218,
+          "final": 152.6,
+          "estimated": true
+        },
+        "futures|nitro||150000": {
+          "list": 298,
+          "final": 208.6,
+          "estimated": true
+        },
+        "futures|prime||25000": {
+          "list": 96,
+          "final": 67.2,
+          "estimated": true
+        },
+        "futures|prime||50000": {
+          "list": 179,
+          "final": 125.3,
+          "estimated": true
+        },
+        "futures|prime||100000": {
+          "list": 279,
+          "final": 195.3,
+          "estimated": true
+        },
+        "futures|prime||150000": {
+          "list": 369,
+          "final": 258.3,
+          "estimated": true
+        },
+        "futures|instant||50000": {
+          "list": 349,
+          "final": 244.3,
+          "estimated": true
+        },
+        "futures|instant||100000": {
+          "list": 469,
+          "final": 328.3,
+          "estimated": true
+        },
+        "futures|instant||150000": {
+          "list": 569,
+          "final": 398.3,
+          "estimated": true
+        }
+      },
+      "betterPublicOfferByPlanId": {
+        "futures|prime||50000": "The firm currently advertises 35% publicly on this plan, above this code. Check the checkout total before paying.",
+        "futures|prime||100000": "The firm currently advertises 35% publicly on this plan, above this code. Check the checkout total before paying.",
+        "futures|prime||150000": "The firm currently advertises 35% publicly on this plan, above this code. Check the checkout total before paying."
+      }
+    },
+    "promotionAmbiguities": [],
+    "rules": {
+      "critical": [
+        {
+          "category": "Account-failure rules",
+          "title": "Overnight holding",
+          "detail": "Not allowed. Automatic liquidation may occur.",
+          "severity": "hard_breach"
+        },
+        {
+          "category": "Account-failure rules",
+          "title": "Automated trading",
+          "detail": "Fully automated AI or bots are not permitted.",
+          "severity": "hard_breach"
+        },
+        {
+          "category": "Account-failure rules",
+          "title": "Order fills",
+          "detail": "Multiple limit orders at the same price to manipulate fills are prohibited.",
+          "severity": "hard_breach"
+        },
+        {
+          "category": "Passing or payout blockers",
+          "title": "Payout review",
+          "detail": "Average under 24 hours. Manual review may take longer.",
+          "severity": "payout_condition"
+        },
+        {
+          "category": "Passing or payout blockers",
+          "title": "Payment provider",
+          "detail": "Rise. The first payout requires a Rise account and KYC.",
+          "severity": "payout_condition"
+        },
+        {
+          "category": "Passing or payout blockers",
+          "title": "Bank transfer",
+          "detail": "1 to 3 days after approval.",
+          "severity": "payout_condition"
+        },
+        {
+          "category": "Trading restrictions",
+          "title": "Trading hours",
+          "detail": "18:00 EST to 16:55 EST the following day. All positions must close before 16:55 EST.",
+          "severity": "restriction"
+        },
+        {
+          "category": "Trading restrictions",
+          "title": "Weekend",
+          "detail": "Market closed Friday 16:55 EST to Sunday 18:00 EST. Holiday closures may differ.",
+          "severity": "restriction"
+        },
+        {
+          "category": "Trading restrictions",
+          "title": "KYC",
+          "detail": "Veriff. Buyer, KYC holder and account operator must be the same person. Reviewed at upgrades.",
+          "severity": "restriction"
+        }
+      ],
+      "complete": [
+        {
+          "scope": "session",
+          "title": "Trading hours",
+          "detail": "18:00 EST to 16:55 EST the following day. All positions must close before 16:55 EST.",
+          "severity": "restriction",
+          "confidence": "verified",
+          "sourceUrl": "https://faq.futureselite.com/en/articles/11949421-futures-trading-hours-and-guidelines"
+        },
+        {
+          "scope": "session",
+          "title": "Overnight holding",
+          "detail": "Not allowed. Automatic liquidation may occur.",
+          "severity": "hard_breach",
+          "confidence": "verified",
+          "sourceUrl": "https://faq.futureselite.com/en/articles/11949421-futures-trading-hours-and-guidelines"
+        },
+        {
+          "scope": "session",
+          "title": "Weekend",
+          "detail": "Market closed Friday 16:55 EST to Sunday 18:00 EST. Holiday closures may differ.",
+          "severity": "restriction",
+          "confidence": "verified",
+          "sourceUrl": "https://faq.futureselite.com/en/articles/11949421-futures-trading-hours-and-guidelines"
+        },
+        {
+          "scope": "conduct",
+          "title": "Automated trading",
+          "detail": "Fully automated AI or bots are not permitted.",
+          "severity": "hard_breach",
+          "confidence": "verified",
+          "sourceUrl": "https://faq.futureselite.com/en/articles/11949446-what-is-allowed-and-not-allowed-with-us-fair-play-and-prohibited-trading-practices"
+        },
+        {
+          "scope": "conduct",
+          "title": "Order fills",
+          "detail": "Multiple limit orders at the same price to manipulate fills are prohibited.",
+          "severity": "hard_breach",
+          "confidence": "verified",
+          "sourceUrl": "https://faq.futureselite.com/en/articles/11949446-what-is-allowed-and-not-allowed-with-us-fair-play-and-prohibited-trading-practices"
+        },
+        {
+          "scope": "conduct",
+          "title": "Market gaps",
+          "detail": "Exploiting isolated fills in gapped or illiquid markets is prohibited.",
+          "severity": "hard_breach",
+          "confidence": "verified",
+          "sourceUrl": "https://faq.futureselite.com/en/articles/11949446-what-is-allowed-and-not-allowed-with-us-fair-play-and-prohibited-trading-practices"
+        },
+        {
+          "scope": "conduct",
+          "title": "Account flipping",
+          "detail": "Payout, breach and repeat patterns are prohibited.",
+          "severity": "hard_breach",
+          "confidence": "verified",
+          "sourceUrl": "https://faq.futureselite.com/en/articles/11949446-what-is-allowed-and-not-allowed-with-us-fair-play-and-prohibited-trading-practices"
+        },
+        {
+          "scope": "conduct",
+          "title": "Scalping",
+          "detail": "The configurator displays \"No\" on every current plan, with no definition or duration threshold.",
+          "severity": "needs_confirmation",
+          "confidence": "needs_confirmation",
+          "sourceUrl": "https://futureselite.com/#pricing"
+        },
+        {
+          "scope": "conduct",
+          "title": "News trading, evaluation",
+          "detail": "The configurator displays \"Yes\".",
+          "severity": "allowed",
+          "confidence": "verified",
+          "sourceUrl": "https://futureselite.com/#pricing"
+        },
+        {
+          "scope": "conduct",
+          "title": "News trading, funded",
+          "detail": "The configurator displays \"With restrictions\" without stating the event window.",
+          "severity": "needs_confirmation",
+          "confidence": "needs_confirmation",
+          "sourceUrl": "https://futureselite.com/#pricing"
+        },
+        {
+          "scope": "account",
+          "title": "KYC",
+          "detail": "Veriff. Buyer, KYC holder and account operator must be the same person. Reviewed at upgrades.",
+          "severity": "restriction",
+          "confidence": "verified",
+          "sourceUrl": "https://faq.futureselite.com/en/articles/11948842-know-your-customer-kyc-policy"
+        },
+        {
+          "scope": "account",
+          "title": "Inactivity",
+          "detail": "30 consecutive days without trades may permanently close a live account.",
+          "severity": "hard_breach",
+          "confidence": "verified",
+          "sourceUrl": "https://faq.futureselite.com/en/articles/12291084-trader-rules-responsibilities"
+        },
+        {
+          "scope": "account",
+          "title": "Protective stops",
+          "detail": "A stop order is required on every open position on a live account.",
+          "severity": "restriction",
+          "confidence": "verified",
+          "sourceUrl": "https://faq.futureselite.com/en/articles/12291084-trader-rules-responsibilities"
+        },
+        {
+          "scope": "account",
+          "title": "Evaluation duration",
+          "detail": "No deadline to pass. One-time fee, no recurring monthly fee.",
+          "severity": "allowed",
+          "confidence": "verified",
+          "sourceUrl": "https://faq.futureselite.com/en/articles/16778908-is-the-challenge-fee-is-one-time"
+        },
+        {
+          "scope": "limits",
+          "title": "Active funded accounts",
+          "detail": "Maximum 10 funded accounts overall; maximum 10 Prime; maximum 5 combined across Elite, Custom, Instant and Nitro. Nitro funded-account limit: not confirmed.",
+          "severity": "restriction",
+          "confidence": "verified",
+          "sourceUrl": "https://faq.futureselite.com/en/articles/11949051-how-many-accounts-can-i-have-with-futureselite"
+        },
+        {
+          "scope": "payout",
+          "title": "Payout review",
+          "detail": "Average under 24 hours. Manual review may take longer.",
+          "severity": "payout_condition",
+          "confidence": "verified",
+          "sourceUrl": "https://faq.futureselite.com/en/articles/11949982-what-is-the-payout-process-like-on-futures-elite"
+        },
+        {
+          "scope": "payout",
+          "title": "Payment provider",
+          "detail": "Rise. The first payout requires a Rise account and KYC.",
+          "severity": "payout_condition",
+          "confidence": "verified",
+          "sourceUrl": "https://faq.futureselite.com/en/articles/11949985-how-are-payouts-processed"
+        },
+        {
+          "scope": "payout",
+          "title": "Bank transfer",
+          "detail": "1 to 3 days after approval.",
+          "severity": "payout_condition",
+          "confidence": "verified",
+          "sourceUrl": "https://faq.futureselite.com/en/articles/11949985-how-are-payouts-processed"
+        },
+        {
+          "scope": "payout",
+          "title": "Direct crypto",
+          "detail": "Maximum $500 per request. Above that, standard Rise methods apply.",
+          "severity": "payout_condition",
+          "confidence": "verified",
+          "sourceUrl": "https://faq.futureselite.com/en/articles/11949985-how-are-payouts-processed"
+        },
+        {
+          "scope": "payout",
+          "title": "Elite maximum request",
+          "detail": "Elite accounts bought from 2026-06-25 15:00 CET: 50% of total profit remaining, capped by account size. Older Elite accounts use 50% of current-cycle profit. Documented for Elite only.",
+          "severity": "payout_condition",
+          "confidence": "verified",
+          "sourceUrl": "https://faq.futureselite.com/en/articles/16387630-how-much-can-i-request"
+        },
+        {
+          "scope": "payout",
+          "title": "What counts as a profitable day",
+          "detail": "Elite requires 6 profitable days per payout, and a day only qualifies above a size-specific minimum: $100 on a 25K, $150 on a 50K, $250 on a 100K, $350 on a 150K.",
+          "severity": "payout_condition",
+          "confidence": "verified",
+          "sourceUrl": "https://futureselite.com/#pricing"
+        },
+        {
+          "scope": "account",
+          "title": "Prime 150K maximum loss",
+          "detail": "Unresolved: the Prime overview and the live configurator show $4,500, while a detailed official MLL article has shown $4,000. The configurator value is used here.",
+          "severity": "hard_breach",
+          "confidence": "needs_confirmation",
+          "sourceUrl": "https://futureselite.com/#pricing"
+        },
+        {
+          "scope": "account",
+          "title": "Instant 25K availability",
+          "detail": "Documented in the official Instant FAQ but not currently purchasable: the live configurator exposes only 50K, 100K and 150K.",
+          "severity": "restriction",
+          "confidence": "needs_confirmation",
+          "sourceUrl": "https://faq.futureselite.com/en/articles/12901358-how-do-payout-works-on-the-new-instant-challenges"
+        },
+        {
+          "scope": "limits",
+          "title": "Nitro funded accounts",
+          "detail": "Unresolved: the FAQ caps Nitro at 3 funded accounts while configurator cross-sell copy displayed MAX 4 FUNDED. No exact figure is published here until the firm confirms one.",
+          "severity": "restriction",
+          "confidence": "needs_confirmation",
+          "sourceUrl": "https://faq.futureselite.com/en/articles/11949051-how-many-accounts-can-i-have-with-futureselite"
+        },
+        {
+          "scope": "account",
+          "title": "Prime evaluation length",
+          "detail": "Can be passed in one trading day. A separate FAQ article describes no minimum; the configurator states one day.",
+          "severity": "allowed",
+          "confidence": "needs_confirmation",
+          "sourceUrl": "https://futureselite.com/#pricing"
+        },
+        {
+          "scope": "live",
+          "title": "Transition to live",
+          "detail": "A risk-team decision. The fifth payout is a ceiling, not an automatic entitlement.",
+          "severity": "payout_condition",
+          "confidence": "verified",
+          "sourceUrl": "https://faq.futureselite.com/en/articles/15899069-live-trading-program"
+        },
+        {
+          "scope": "live",
+          "title": "Live starting balance",
+          "detail": "Starts at $0 with a loss floor based on account size. 50K example: $2,000 loss floor and $1,000 cushion.",
+          "severity": "restriction",
+          "confidence": "verified",
+          "sourceUrl": "https://faq.futureselite.com/en/articles/15899069-live-trading-program"
+        },
+        {
+          "scope": "live",
+          "title": "Live cushion unlock",
+          "detail": "15 profitable days meeting the size-specific daily minimum. Days need not be consecutive.",
+          "severity": "payout_condition",
+          "confidence": "verified",
+          "sourceUrl": "https://faq.futureselite.com/en/articles/15899069-live-trading-program"
+        },
+        {
+          "scope": "live",
+          "title": "Live payout",
+          "detail": "Daily, $200 minimum, on profits above the cushion or unlocked reserve.",
+          "severity": "payout_condition",
+          "confidence": "verified",
+          "sourceUrl": "https://faq.futureselite.com/en/articles/15899069-live-trading-program"
+        },
+        {
+          "scope": "live",
+          "title": "Market data",
+          "detail": "Exchange market data is the trader’s responsibility on a live account. Amount not specified.",
+          "severity": "restriction",
+          "confidence": "verified",
+          "sourceUrl": "https://faq.futureselite.com/en/articles/12291073-market-data-costs"
+        },
+        {
+          "scope": "live",
+          "title": "Commissions",
+          "detail": "Commissions and exchange fees are charged per instrument on each executed trade. The official FAQ still labels some exchange fees as 2024 rates.",
+          "severity": "restriction",
+          "confidence": "verified",
+          "sourceUrl": "https://faq.futureselite.com/en/articles/12291021-what-are-the-costs-fees"
+        },
+        {
+          "scope": "live",
+          "title": "Platform licence",
+          "detail": "A paid platform licence may apply depending on the selected platform.",
+          "severity": "restriction",
+          "confidence": "verified",
+          "sourceUrl": "https://faq.futureselite.com/en/articles/12291021-what-are-the-costs-fees"
+        },
+        {
+          "scope": "live",
+          "title": "Maintenance fee",
+          "detail": "No hidden administrative maintenance fee is stated: $0.",
+          "severity": "allowed",
+          "confidence": "verified",
+          "sourceUrl": "https://faq.futureselite.com/en/articles/12291021-what-are-the-costs-fees"
+        }
+      ]
+    },
+    "bundles": [
+      {
+        "programSlug": "elite",
+        "accountNumber": 1,
+        "discountPercent": 0.3,
+        "note": null
+      },
+      {
+        "programSlug": "elite",
+        "accountNumber": 2,
+        "discountPercent": 0.35,
+        "note": null
+      },
+      {
+        "programSlug": "elite",
+        "accountNumber": 3,
+        "discountPercent": 0.4,
+        "note": null
+      },
+      {
+        "programSlug": "elite",
+        "accountNumber": 4,
+        "discountPercent": 0.5,
+        "note": null
+      },
+      {
+        "programSlug": "elite",
+        "accountNumber": 5,
+        "discountPercent": 1,
+        "note": "Fifth account displayed as free"
+      },
+      {
+        "programSlug": "nitro",
+        "accountNumber": 1,
+        "discountPercent": 0.3,
+        "note": null
+      },
+      {
+        "programSlug": "nitro",
+        "accountNumber": 2,
+        "discountPercent": 0.35,
+        "note": null
+      },
+      {
+        "programSlug": "nitro",
+        "accountNumber": 3,
+        "discountPercent": 0.4,
+        "note": null
+      },
+      {
+        "programSlug": "nitro",
+        "accountNumber": 4,
+        "discountPercent": 0.45,
+        "note": "Beyond the official limit of 3 active funded Nitro accounts"
+      },
+      {
+        "programSlug": "nitro",
+        "accountNumber": 5,
+        "discountPercent": 1,
+        "note": "Beyond the official limit of 3 active funded Nitro accounts"
+      },
+      {
+        "programSlug": "prime",
+        "accountNumber": 1,
+        "discountPercent": 0.35,
+        "note": null
+      },
+      {
+        "programSlug": "prime",
+        "accountNumber": 2,
+        "discountPercent": 0.4,
+        "note": null
+      },
+      {
+        "programSlug": "prime",
+        "accountNumber": 3,
+        "discountPercent": 0.42,
+        "note": null
+      },
+      {
+        "programSlug": "prime",
+        "accountNumber": 4,
+        "discountPercent": 0.45,
+        "note": null
+      },
+      {
+        "programSlug": "prime",
+        "accountNumber": 5,
+        "discountPercent": 1,
+        "note": "Fifth account displayed as free"
+      },
+      {
+        "programSlug": "prime",
+        "accountNumber": 6,
+        "discountPercent": 0.4,
+        "note": null
+      },
+      {
+        "programSlug": "prime",
+        "accountNumber": 7,
+        "discountPercent": 0.45,
+        "note": null
+      },
+      {
+        "programSlug": "prime",
+        "accountNumber": 8,
+        "discountPercent": 0.5,
+        "note": null
+      },
+      {
+        "programSlug": "prime",
+        "accountNumber": 9,
+        "discountPercent": 0.53,
+        "note": null
+      },
+      {
+        "programSlug": "prime",
+        "accountNumber": 10,
+        "discountPercent": 1,
+        "note": "Tenth account displayed as free"
+      },
+      {
+        "programSlug": "instant",
+        "accountNumber": 1,
+        "discountPercent": 0.3,
+        "note": null
+      },
+      {
+        "programSlug": "instant",
+        "accountNumber": 2,
+        "discountPercent": 0.35,
+        "note": null
+      },
+      {
+        "programSlug": "instant",
+        "accountNumber": 3,
+        "discountPercent": 0.4,
+        "note": null
+      },
+      {
+        "programSlug": "instant",
+        "accountNumber": 4,
+        "discountPercent": 0.45,
+        "note": null
+      },
+      {
+        "programSlug": "instant",
+        "accountNumber": 5,
+        "discountPercent": 1,
+        "note": "Fifth account displayed as free"
+      }
+    ],
+    "liveTiers": [
+      {
+        "accountSize": 25000,
+        "conversionCap": 6000,
+        "lossFloor": 1000,
+        "cushion": 500
+      },
+      {
+        "accountSize": 50000,
+        "conversionCap": 12000,
+        "lossFloor": 2000,
+        "cushion": 1000
+      },
+      {
+        "accountSize": 75000,
+        "conversionCap": 14000,
+        "lossFloor": 2500,
+        "cushion": 1250
+      },
+      {
+        "accountSize": 100000,
+        "conversionCap": 16000,
+        "lossFloor": 3000,
+        "cushion": 1500
+      },
+      {
+        "accountSize": 150000,
+        "conversionCap": 20000,
+        "lossFloor": 4500,
+        "cushion": 2250
+      }
+    ],
+    "narrative": {
+      "about": [
+        "FuturesElite sells simulated futures accounts across four programs. Elite and Prime are evaluation routes with a one-time fee and no deadline to pass. Nitro and Instant shorten or remove the evaluation entirely, Instant funding you from purchase with no objective to reach. Elite, Nitro and Prime settle at a 90% profit split; Instant pays 80%. Payouts can be requested daily once an account is funded, subject to each program’s own minimum days.",
+        "It suits futures traders who already have a method and want to choose the rule set that fits it, rather than accept one. Loss limits are dollar amounts rather than percentages, drawdown is calculated at the end of the day on the evaluation programs, and six platforms are selectable at purchase, including Tradovate, NinjaTrader and Quantower.",
+        "The caveat matters more than the pricing. Quantum SRL holds no financial regulator licence, and every account is simulated: performance is hypothetical throughout. The live trading program exists but is a risk-team decision, not an entitlement earned at a fixed number of payouts."
+      ],
+      "strengths": [
+        "90% profit split on Elite, Nitro and Prime; 80% on Instant",
+        "Drawdown type differs by program and phase — see the rules table",
+        "No daily loss limit on Elite, Nitro and Instant — Prime has one in both phases",
+        "No funded consistency rule on Elite and Nitro",
+        "No activation fee to unlock the funded account",
+        "Payouts available every day once funded",
+        "Bundle discounts: the fifth account is free"
+      ],
+      "limits": [
+        "No financial regulator licence",
+        "Demo accounts, hypothetical performance",
+        "Minimum days differ by program; Elite needs 6 profitable days above a size-based threshold before a payout",
+        "Per-request payout cap, from $1,000 to $3,000 by account size"
+      ],
+      "verdict": {
+        "body": "FuturesElite bets on generous terms once you are funded: up to a 90% split, daily payouts, and no funded consistency rule on Elite and Nitro. In exchange, the firm is young and is a proprietary trading company rather than a regulated broker.",
+        "goodFit": [
+          "A high split and frequent payouts, with no waiting period",
+          "Elite or Nitro evaluations without a daily loss limit, which leaves room to breathe",
+          "A funded account that opens with no activation fee",
+          "The option to stack up to ten accounts in parallel"
+        ],
+        "poorFit": [
+          "You want a regulated broker: Quantum SRL holds no financial regulator licence.",
+          "You want real capital: every account is simulated, and performance stays hypothetical.",
+          "You run fully automated systems: AI and bots are prohibited.",
+          "You want to withdraw a whole balance at once: each request is capped by account size.",
+          "You need a guaranteed route to live trading: it is a risk-team decision, not an entitlement."
+        ]
+      },
+      "journey": [
+        {
+          "title": "Evaluation",
+          "detail": "Hit the profit target without breaching the Maximum Loss Limit, across at least 3 trading days. No time limit."
+        },
+        {
+          "title": "Funded account",
+          "detail": "Opened as soon as you pass, with no activation fee. The consistency rule disappears at this stage."
+        },
+        {
+          "title": "Payouts",
+          "detail": "Available every day, after 6 trading days, within the per-request cap: $1,000 on a 25K, up to $3,000 on a 150K."
+        }
+      ],
+      "faq": [
+        {
+          "question": "What profit split does FuturesElite pay?",
+          "answer": "80% to 90% depending on the program. Select one above to see its exact split."
+        },
+        {
+          "question": "How much does a FuturesElite account cost?",
+          "answer": "List prices run from 95 to 569 USD, one-time. Code SCANNED reduces that at checkout."
+        },
+        {
+          "question": "Which platforms can I choose at purchase?",
+          "answer": "6: Tradovate, NinjaTrader, Quantower, ATAS, WealthCharts, DeepChart."
+        },
+        {
+          "question": "Is there a program without an evaluation?",
+          "answer": "Yes. Instant funds you from purchase, with no profit objective to reach."
+        }
+      ]
+    },
+    "provenance": {
+      "identity.name": {
+        "table": "prop_firms",
+        "column": "name",
+        "verifiedAt": null
+      },
+      "identity.headline": {
+        "table": "prop_firms",
+        "column": "headline",
+        "verifiedAt": null
+      },
+      "identity.intro": {
+        "table": "prop_firms",
+        "column": "verdict",
+        "verifiedAt": null
+      },
+      "identity.verifiedAt": {
+        "table": "prop_firms",
+        "column": "data_verified_at",
+        "verifiedAt": null
+      },
+      "programs": {
+        "table": "firm_programs",
+        "column": "slug,name,kind,market,evaluation_steps,summary",
+        "verifiedAt": null
+      },
+      "programs[].plans[].phases[]": {
+        "table": "firm_program_plans",
+        "column": "*",
+        "verifiedAt": null
+      },
+      "priceRanges": {
+        "table": "firm_program_plans",
+        "column": "regular_price,currency",
+        "verifiedAt": null
+      },
+      "firmFacts": {
+        "table": "firm_program_plans",
+        "column": "derive par universalFact",
+        "verifiedAt": null
+      },
+      "catalogue.platforms": {
+        "table": "firm_platforms",
+        "column": "name,configurator_status,note",
+        "verifiedAt": null
+      },
+      "catalogue.assets": {
+        "table": "prop_firms",
+        "column": "assets",
+        "verifiedAt": null
+      },
+      "catalogue.paymentMethods": {
+        "table": "prop_firms",
+        "column": "payout_methods",
+        "verifiedAt": null
+      },
+      "identity.foundedYear": {
+        "table": "prop_firms",
+        "column": "founded,founded_year,year_founded",
+        "verifiedAt": null
+      },
+      "identity.country": {
+        "table": "prop_firms",
+        "column": "country",
+        "verifiedAt": null
+      },
+      "identity.firmType": {
+        "table": "firm_programs",
+        "column": "market (derive)",
+        "verifiedAt": null
+      },
+      "identity.accountModel": {
+        "table": "firm_program_plans",
+        "column": "phase (derive)",
+        "verifiedAt": null
+      },
+      "identity.payoutFrequency": {
+        "table": "prop_firms",
+        "column": "payout_frequency",
+        "verifiedAt": null
+      },
+      "catalogue.dataFeeds": {
+        "table": "prop_firms",
+        "column": "checkout_options",
+        "verifiedAt": null
+      },
+      "offer": {
+        "table": "firm_promotions",
+        "column": "code,discount_value,is_public,status,starts_at,expires_at",
+        "verifiedAt": null
+      },
+      "rules.critical": {
+        "table": "firm_rules",
+        "column": "severity,scope,sort_order (derive)",
+        "verifiedAt": null
+      },
+      "rules.complete": {
+        "table": "firm_rules",
+        "column": "scope,title,detail,severity,confidence,source_url",
+        "verifiedAt": null
+      },
+      "bundles": {
+        "table": "firm_program_bundles",
+        "column": "program_slug,account_number,discount_percent,note",
+        "verifiedAt": null
+      },
+      "liveTiers": {
+        "table": "firm_live_tiers",
+        "column": "account_size,conversion_cap,loss_floor,cushion",
+        "verifiedAt": null
+      },
+      "narrative.about": {
+        "table": "prop_firms",
+        "column": "description",
+        "verifiedAt": null
+      },
+      "narrative.strengths": {
+        "table": "prop_firms",
+        "column": "pros",
+        "verifiedAt": null
+      },
+      "narrative.limits": {
+        "table": "prop_firms",
+        "column": "cons",
+        "verifiedAt": null
+      },
+      "narrative.verdict": {
+        "table": "prop_firms",
+        "column": "verdict_card",
+        "verifiedAt": null
+      },
+      "narrative.journey": {
+        "table": "prop_firms",
+        "column": "journey",
+        "verifiedAt": null
+      }
+    }
+  },
+  "summary_model_json": {
+    "slug": "futureselite",
+    "name": "FuturesElite",
+    "logoUrl": "https://www.google.com/s2/favicons?domain=futureselite.com&sz=128",
+    "market": "futures",
+    "priceRange": {
+      "min": 95,
+      "max": 569,
+      "currency": "USD"
+    },
+    "profitSplit": {
+      "min": 80,
+      "max": 90
+    },
+    "offer": null,
+    "platformCount": 6,
+    "programCount": 4,
+    "rating": null,
+    "ctaHref": "/api/go/futureselite?placement=hero&locale=en",
+    "canonical": true,
+    "provenance": {
+      "market": {
+        "table": "firm_page_versions",
+        "column": "page_model_json",
+        "verifiedAt": "2026-09-07"
+      },
+      "priceRange": {
+        "table": "firm_page_versions",
+        "column": "page_model_json",
+        "verifiedAt": "2026-09-07"
+      },
+      "profitSplit": {
+        "table": "firm_page_versions",
+        "column": "page_model_json",
+        "verifiedAt": "2026-09-07"
+      },
+      "offer": {
+        "table": "firm_promotions",
+        "column": "code,discount_value,is_public,status,starts_at,expires_at",
+        "verifiedAt": null
+      },
+      "platformCount": {
+        "table": "firm_page_versions",
+        "column": "page_model_json",
+        "verifiedAt": "2026-09-07"
+      }
+    }
+  },
+  "validation_report_json": {
+    "errors": [],
+    "warnings": [
+      {
+        "code": "PROMO_SCOPE_UNCONFIRMED",
+        "field": "offer.scopeConfidence",
+        "message": "Portee de la promotion non confirmee : ne pas revendiquer une applicabilite generale.",
+        "evidence": "SCANNED"
+      },
+      {
+        "code": "PROMO_EXPIRY_UNKNOWN",
+        "field": "offer.expiryUnknown",
+        "message": "Aucune date de fin publiee : ne jamais presenter l offre comme permanente."
+      },
+      {
+        "code": "SOURCE_CONFLICT_OPEN",
+        "field": "rules.complete.Scalping",
+        "message": "Conflit de sources officielles encore ouvert."
+      },
+      {
+        "code": "SOURCE_CONFLICT_OPEN",
+        "field": "rules.complete.News trading, funded",
+        "message": "Conflit de sources officielles encore ouvert."
+      },
+      {
+        "code": "SOURCE_CONFLICT_OPEN",
+        "field": "rules.complete.Prime 150K maximum loss",
+        "message": "Conflit de sources officielles encore ouvert."
+      },
+      {
+        "code": "SOURCE_CONFLICT_OPEN",
+        "field": "rules.complete.Instant 25K availability",
+        "message": "Conflit de sources officielles encore ouvert."
+      },
+      {
+        "code": "SOURCE_CONFLICT_OPEN",
+        "field": "rules.complete.Nitro funded accounts",
+        "message": "Conflit de sources officielles encore ouvert."
+      },
+      {
+        "code": "SOURCE_CONFLICT_OPEN",
+        "field": "rules.complete.Prime evaluation length",
+        "message": "Conflit de sources officielles encore ouvert."
+      }
+    ],
+    "notices": [
+      {
+        "code": "FACT_REJECTED",
+        "field": "firmFacts",
+        "message": "« profit split » ecarte : valeurs divergentes : 0.9, 0.8"
+      },
+      {
+        "code": "FACT_REJECTED",
+        "field": "firmFacts",
+        "message": "« drawdown » ecarte : valeurs divergentes : \"End of Day\", \"Trailing Equity\""
+      },
+      {
+        "code": "FACT_REJECTED",
+        "field": "firmFacts",
+        "message": "« No daily loss limit » ecarte : valeurs divergentes : true, false"
+      }
+    ],
+    "publishable": true,
+    "generatedAt": "2026-09-07T12:00:00.000Z",
+    "acceptedWarnings": false
+  }
+}

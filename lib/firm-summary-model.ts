@@ -23,7 +23,7 @@
 // `regular_price`.
 // =============================================================================
 
-import type { Provenance } from '@/lib/firm-page-model'
+import type { FirmPageModel, Provenance } from '@/lib/firm-page-model'
 
 export interface FirmSummaryModel {
   slug: string
@@ -205,6 +205,84 @@ export function buildFirmSummaryModel(row: SummaryRow, ctaHref: string): FirmSum
         : null,
     ctaHref,
     canonical,
+    provenance: prov,
+  }
+}
+
+// -----------------------------------------------------------------------------
+// LE RESUME DERIVE DU MODELE FIGE
+// -----------------------------------------------------------------------------
+/**
+ * Construit le resume depuis un `FirmPageModel` deja construit.
+ *
+ * `buildFirmSummaryModel` ci-dessus lit la base VIVANTE : c'est ce qu'il faut
+ * pour une firme non migree. Mais une version publiee doit figer la carte et
+ * la fiche dans le meme geste, sinon `/compare` peut annoncer un prix que la
+ * fiche ne montre plus — le defaut exact que la couche de publication existe
+ * pour supprimer.
+ *
+ * Les deux fonctions coexistent donc sans se concurrencer :
+ *   pas de version active -> `buildFirmSummaryModel`, donnee vivante ;
+ *   version active        -> ce resume, lu tel quel dans `summary_model_json`.
+ *
+ * La fourchette de prix retient la devise MAJORITAIRE parmi les plans. Le
+ * modele detaille garde les devises separees ; une carte n'a qu'une ligne, et
+ * afficher « 95–1 100 » en melangeant USD et EUR serait faux. La provenance le
+ * dit, et la fiche reste la source complete.
+ */
+export function summaryFromPageModel(model: FirmPageModel, ctaHref: string): FirmSummaryModel {
+  const plans = model.programs
+    .filter((p) => p.status === 'active' || p.status === 'promotional')
+    .flatMap((p) => p.plans)
+
+  const parDevise = new Map<string, number>()
+  for (const plan of plans) {
+    if (plan.listPrice == null) continue
+    parDevise.set(plan.currency, (parDevise.get(plan.currency) ?? 0) + 1)
+  }
+  const devise = Array.from(parDevise.entries()).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null
+  const fourchette = devise ? model.priceRanges.find((r) => r.currency === devise) ?? null : null
+
+  const splits = plans
+    .flatMap((p) => p.phases)
+    .map((ph) => ph.profitSplit)
+    .filter((v): v is number => v != null)
+
+  const prov: Record<string, Provenance> = {}
+  for (const champ of ['market', 'priceRange', 'profitSplit', 'offer', 'platformCount']) {
+    prov[champ] = model.provenance[champ] ?? { table: 'firm_page_versions', column: 'page_model_json', verifiedAt: model.identity.verifiedAt }
+  }
+
+  // Le pourcentage affiche sur une carte doit etre celui d'une offre dont la
+  // portee est etablie. `unconfirmed` reste visible sur la fiche, avec sa
+  // reserve ; une carte n'a pas la place de porter cette reserve, donc elle
+  // n'annonce rien.
+  const offre =
+    model.offer && model.offer.code && model.offer.scopeConfidence !== 'unconfirmed'
+      ? {
+          code: model.offer.code,
+          percent: Math.round(
+            (Object.values(model.offer.percentByPlanId)[0] ?? 0) * 100
+          ),
+        }
+      : null
+
+  return {
+    slug: model.identity.slug,
+    name: model.identity.name,
+    logoUrl: model.identity.logoUrl,
+    market: model.identity.markets[0] ?? null,
+    priceRange: fourchette ? { min: fourchette.min, max: fourchette.max, currency: fourchette.currency } : null,
+    profitSplit:
+      splits.length > 0
+        ? { min: Math.round(Math.min(...splits) * 100), max: Math.round(Math.max(...splits) * 100) }
+        : null,
+    offer: offre && offre.percent > 0 ? offre : null,
+    platformCount: model.catalogue.platforms.filter((p) => p.selectable).length,
+    programCount: model.programs.length,
+    rating: model.identity.rating,
+    ctaHref,
+    canonical: true,
     provenance: prov,
   }
 }

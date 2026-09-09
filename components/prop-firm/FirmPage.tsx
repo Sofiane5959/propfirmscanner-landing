@@ -222,10 +222,25 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
                   </p>
                 )}
                 {prix && (
-                  <p className="mb-4">
-                    <s className="text-gray-600 text-sm mr-2">{argent(prix.list)}</s>
-                    <span className="text-white text-xl font-semibold">{argent(prix.final)}</span>
-                  </p>
+                  // Un prix ESTIME ne se met pas en forme comme un prix acquis.
+                  // Le tarif barre a cote d'un montant net dit « voici ce que
+                  // vous paierez » ; tant que l'eligibilite du code sur cette
+                  // selection n'est pas confirmee, la page ne peut pas le dire.
+                  // Le tarif public reste affiche — il est certain, lui —, le
+                  // montant remise devient une approximation nommee.
+                  prix.estimated ? (
+                    <p className="mb-4">
+                      <span className="text-white text-xl font-semibold">{argent(prix.list)}</span>
+                      <span className="block text-gray-400 text-sm mt-1">
+                        ≈ {argent(prix.final)} with {offer.code} — estimate, verify at checkout
+                      </span>
+                    </p>
+                  ) : (
+                    <p className="mb-4">
+                      <s className="text-gray-600 text-sm mr-2">{argent(prix.list)}</s>
+                      <span className="text-white text-xl font-semibold">{argent(prix.final)}</span>
+                    </p>
+                  )
                 )}
 
                 <a
@@ -472,13 +487,26 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
                 </p>
 
                 {prix ? (
-                  <p className="mb-3">
-                    <s className="text-gray-600 text-sm mr-2">{argent(prix.list)}</s>
-                    <span className="text-emerald-400 text-xl font-semibold">{argent(prix.final)}</span>
-                    {remise !== null && (
-                      <span className="text-gray-500 text-xs ml-2">−{remise}%</span>
-                    )}
-                  </p>
+                  // Meme regle que dans le bloc d'offre : tant que l'eligibilite
+                  // du code sur cette selection n'est pas confirmee, le montant
+                  // remise est une estimation et ne prend pas la place du prix.
+                  prix.estimated ? (
+                    <p className="mb-3">
+                      <span className="text-white text-xl font-semibold">{argent(prix.list)}</span>
+                      <span className="block text-gray-400 text-sm mt-1">
+                        ≈ {argent(prix.final)}
+                        {remise !== null ? ` with −${remise}%` : ''} — estimate, verify at checkout
+                      </span>
+                    </p>
+                  ) : (
+                    <p className="mb-3">
+                      <s className="text-gray-600 text-sm mr-2">{argent(prix.list)}</s>
+                      <span className="text-emerald-400 text-xl font-semibold">{argent(prix.final)}</span>
+                      {remise !== null && (
+                        <span className="text-gray-500 text-xs ml-2">−{remise}%</span>
+                      )}
+                    </p>
+                  )
                 ) : plan.listPrice != null ? (
                   <p className="text-white text-xl font-semibold mb-3">{argent(plan.listPrice)}</p>
                 ) : null}

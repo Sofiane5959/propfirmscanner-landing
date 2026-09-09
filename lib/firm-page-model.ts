@@ -131,8 +131,22 @@ export interface OfferRow {
   expiryUnknown: boolean
   /** Ce que le visiteur doit faire. Jamais une promesse de preremplissage. */
   disclosure: string
+  /**
+   * `verified` quand TOUS les prix remises sont garantis, `estimated` quand
+   * aucun ne l'est, `mixed` entre les deux.
+   *
+   * Un prix remise n'est un PRIX que si l'on sait que le code s'applique a
+   * cette selection. Tant que la portee est `unconfirmed`, multiplier le tarif
+   * par 0,7 produit une ESTIMATION, et l'afficher barre a cote d'un montant
+   * net revenait a promettre au visiteur ce que le partenaire ne garantit pas.
+   */
+  priceBasis: 'verified' | 'estimated' | 'mixed'
   percentByPlanId: Record<string, number>
-  priceByPlanId: Record<string, { list: number; final: number }>
+  /**
+   * `estimated` par selection : la portee peut etre confirmee sur un plan et
+   * pas sur un autre, donc le drapeau est porte par la ligne, pas par l'offre.
+   */
+  priceByPlanId: Record<string, { list: number; final: number; estimated: boolean }>
   betterPublicOfferByPlanId: Record<string, string>
 }
 
@@ -746,7 +760,7 @@ export function buildFirmPageModel(
   const promotionAmbiguities: { planId: string; codes: string[] }[] = []
   if (programData && programData.promotions.length > 0 && tousLesPlans.length > 0) {
     const percentByPlanId: Record<string, number> = {}
-    const priceByPlanId: Record<string, { list: number; final: number }> = {}
+    const priceByPlanId: Record<string, { list: number; final: number; estimated: boolean }> = {}
     const betterPublicOfferByPlanId: Record<string, string> = {}
     const codes = new Set<string>()
     let label: string | null = null
@@ -777,9 +791,23 @@ export function buildFirmPageModel(
       if (!partenaire.expires_at) expiryInconnue = true
       percentByPlanId[plan.id] = Math.round(partenaire.discount_value * 100)
       if (plan.listPrice != null) {
+        // Un prix n'est GARANTI que si deux choses sont etablies pour cette
+        // selection precise : que le code s'y applique (`scope_confidence`), et
+        // que le tunnel de paiement l'a rendu (`checkout_verified`). Les deux
+        // colonnes disent des choses differentes, et il faut les deux.
+        //
+        // Sinon le montant reste calculable — il est reel, il vient du tarif et
+        // de la remise rapportee — mais c'est une ESTIMATION, et la page doit
+        // le dire. Presenter les quinze prix remises comme acquis alors que
+        // l'eligibilite par programme et par taille n'est pas confirmee, c'est
+        // exactement promettre ce que le partenaire ne garantit pas.
+        const garanti =
+          partenaire.scope_confidence === 'universal_verified' &&
+          partenaire.checkout_verified === true
         priceByPlanId[plan.id] = {
           list: plan.listPrice,
           final: Math.round(plan.listPrice * (1 - partenaire.discount_value) * 100) / 100,
+          estimated: !garanti,
         }
       }
       // Nomme le plan concerne. Un avertissement global serait faux partout
@@ -820,9 +848,17 @@ export function buildFirmPageModel(
         // qu'il verifie, pas qu'il constate.
         disclosure: code
           ? scopeConfidence === 'unconfirmed'
-            ? `Code ${code} is reported to work; eligibility per program and size is not confirmed. Check the total at checkout.`
+            ? `Code ${code} is reported to work; eligibility per program and size is not confirmed. ` +
+              `Discounted figures on this page are estimates — check the total at checkout.`
             : `Check the selected plan and enter ${code} at checkout.`
           : 'Check the selected plan before paying.',
+        priceBasis: (() => {
+          const lignes = Object.values(priceByPlanId)
+          if (lignes.length === 0) return 'verified' as const
+          if (lignes.every((p) => p.estimated)) return 'estimated' as const
+          if (lignes.some((p) => p.estimated)) return 'mixed' as const
+          return 'verified' as const
+        })(),
         percentByPlanId,
         priceByPlanId,
         betterPublicOfferByPlanId,

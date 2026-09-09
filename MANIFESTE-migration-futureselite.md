@@ -2,7 +2,23 @@
 
 9 septembre 2026. **Aucun SQL exécuté. Aucun déploiement.**
 
-Ce document remplace toutes les listes d'exécution antérieures.
+Ce document remplace toutes les listes d'exécution antérieures **pour remplir
+les tables**.
+
+> Il ne suffit plus à lui seul. Il mène à une fiche *validée à un instant*, pas
+> à une fiche *qui reste validée* : le rendu se reconstruisait à chaque requête
+> depuis huit tables vivantes, donc une ligne modifiée pouvait faire régresser
+> une fiche que personne n'avait republiée.
+>
+> La séquence complète — et la place de ces étapes dans celle-ci — vit désormais
+> dans **`LIVRAISON-publication-immuable.md`**, §11. Les étapes ci-dessous y
+> deviennent les étapes 1 à 10 ; `RUN-05` et le test de retour en arrière
+> viennent après.
+>
+> `RUN-03` n'est plus le dernier fichier avant déploiement, et
+> `page_model_status` n'autorise plus rien seul : c'est une colonne mutable, et
+> la mettre à `active` n'affirmait rien sur ce que la page servirait ensuite.
+> Elle reste en base comme métadonnée de migration.
 
 ---
 
