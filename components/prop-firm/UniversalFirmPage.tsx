@@ -4,15 +4,21 @@
 // PAGE UNIVERSELLE D'UNE PROP FIRM   components/prop-firm/UniversalFirmPage.tsx
 // =============================================================================
 // Reproduit le gabarit HTML « Universal Prop Firm Page » fourni par Sofiane,
-// complete en fin de page par trois blocs de l'ancienne fiche qu'il a demande
-// de retablir : strengths and things to know, Ready to pick your program?,
-// Similar firms. L'avertissement de risque de l'ancienne fiche n'est pas repris.
+// avec les ajustements qu'il a demandes :
+//   - logo cliquable, par le tunnel d'affiliation (code promo pre-rempli) ;
+//   - le nom seul en titre, sans etiquette de marche au-dessus ;
+//   - le configurateur de compte construit comme celui de la fiche Earn2Trade
+//     (ChallengeSelector) : etapes numerotees, cartes, selection a droite ;
+//   - en fin de page : strengths and things to know, Ready to pick your
+//     program?, Similar firms. Pas d'avertissement de risque.
 //
 // Le composant recoit la fiche de la firme (data/firms/<slug>.json) et, depuis
-// la route, les firmes similaires. Aucune logique propre a une firme.
+// la route, les liens sortants et les firmes similaires. Aucune logique propre
+// a une firme.
 // =============================================================================
 
 import { useState } from 'react'
+import { ExternalLink } from 'lucide-react'
 
 import s from './UniversalFirmPage.module.css'
 import {
@@ -28,6 +34,7 @@ import {
   offerApplies,
   orderedPhases,
   pct,
+  programmeTagline,
   promoSelection,
   ruleRows,
   sizeLabel,
@@ -39,6 +46,7 @@ const TIRET = '—'
 
 const cx = (...classes: (string | false | null | undefined)[]) => classes.filter(Boolean).join(' ')
 const unique = <T,>(valeurs: T[]): T[] => Array.from(new Set(valeurs))
+const pluriel = (n: number, mot: string) => `${n} ${mot}${n > 1 ? 's' : ''}`
 
 function CopyButton({ code, label }: { code: string; label: string }) {
   const [texte, setTexte] = useState(label)
@@ -61,9 +69,10 @@ function CopyButton({ code, label }: { code: string; label: string }) {
   )
 }
 
-interface Selecteur {
+interface Etape {
   titre: string
-  options: { key: string; label: string }[]
+  compacte: boolean
+  options: { key: string; label: string; accroche?: string; detail?: string }[]
   actif: string
   choisir: (key: string) => void
 }
@@ -71,10 +80,12 @@ interface Selecteur {
 export default function UniversalFirmPage({
   sheet,
   ctaHref,
+  logoHref,
   similarFirms = [],
 }: {
   sheet: FirmSheet
   ctaHref: string
+  logoHref: string
   similarFirms?: SimilarFirm[]
 }) {
   const programmes = sheet.programmes.filter((p) => p.plans.length > 0)
@@ -115,6 +126,11 @@ export default function UniversalFirmPage({
     ['CEO / Founder', sheet.ceoFondateur ?? TIRET],
     ['Firm type', sheet.marches.length > 0 ? firmType(sheet.marches) : TIRET],
   ]
+  // Une ligne vide dans la cellule du tableur separe deux paragraphes.
+  const paragraphes = (sheet.presentation ?? '')
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean)
 
   // --- Bande : les quatre cartes restent, meme vides ---------------------------
   const bande: [string, string[]][] = [
@@ -124,44 +140,71 @@ export default function UniversalFirmPage({
     ['Trading profile', [`Leverage ${sheet.levier ?? TIRET}`, ...sheet.stylesTrading]],
   ]
 
-  // --- Selecteurs : un niveau a un seul choix n'est pas affiche ---------------
-  const selecteurs: Selecteur[] = (
+  // --- Configurateur : une etape a un seul choix n'est pas affichee -------------
+  const etapes: Etape[] = (
     [
       {
-        titre: 'Choose a market',
-        options: marches.map((m) => ({ key: m, label: marketsLabel([m]) })),
+        titre: 'Choose your market',
+        compacte: false,
+        options: marches.map((m) => ({
+          key: m,
+          label: marketsLabel([m]),
+          detail: pluriel(programmes.filter((p) => p.marche === m).length, 'programme'),
+        })),
         actif: programme?.marche ?? '',
         choisir: setMarche,
       },
       {
-        titre: 'Choose a programme',
-        options: programmesVisibles.map((p) => ({ key: p.slug, label: p.nom })),
+        titre: 'How do you want to be funded?',
+        compacte: false,
+        options: programmesVisibles.map((p) => {
+          const prix = p.plans.map((pl) => pl.prix).filter((x): x is number => x != null)
+          const tailles = unique(p.plans.map((pl) => pl.taille)).length
+          return {
+            key: p.slug,
+            label: p.nom,
+            accroche: programmeTagline(p),
+            detail:
+              pluriel(tailles, 'size') +
+              (prix.length > 0 ? ` · from ${money(Math.min(...prix), p.plans[0]?.devise ?? 'USD')}` : ''),
+          }
+        }),
         actif: programme?.slug ?? '',
         choisir: setProgramme,
       },
       {
-        titre: 'Choose a variant',
-        options: variantes.map((v) => ({ key: v, label: v || 'Standard' })),
+        titre: 'Choose your variant',
+        compacte: false,
+        options: variantes.map((v) => ({
+          key: v,
+          label: v || 'Standard',
+          detail: pluriel(programme?.plans.filter((pl) => (pl.variante ?? '') === v).length ?? 0, 'size'),
+        })),
         actif: variante,
         choisir: setVariante,
       },
       {
-        titre: 'Choose an account size',
-        options: plansDeVariante.map((pl) => ({ key: String(pl.taille), label: sizeLabel(pl.taille, pl.devise) })),
+        titre: 'Pick your account size',
+        compacte: true,
+        options: plansDeVariante.map((pl) => ({
+          key: String(pl.taille),
+          label: sizeLabel(pl.taille, pl.devise),
+          detail: pl.prix != null ? money(pl.prix, pl.devise) : undefined,
+        })),
         actif: plan ? String(plan.taille) : '',
         choisir: setTaille,
       },
-    ] as Selecteur[]
-  ).filter((sel) => sel.options.length > 1)
+    ] as Etape[]
+  ).filter((e) => e.options.length > 1)
 
-  // --- Metriques du resume ----------------------------------------------------
+  // --- Lignes de la selection --------------------------------------------------
   const phaseEvaluation = plan?.phases.find((ph) => ph.phase === 'evaluation') ?? null
   const phaseFinancee = plan?.phases.find((ph) => ph.phase === 'funded') ?? null
   const premierePhase = phases[0] ?? null
-  const metriques = (
+  const lignesSelection = (
     [
       ['Profit target', phaseEvaluation?.objectifProfit != null ? money(phaseEvaluation.objectifProfit, devise) : null],
-      ['Maximum loss', premierePhase?.perteMax != null ? money(premierePhase.perteMax, devise) : null],
+      ['Max drawdown', premierePhase?.perteMax != null ? money(premierePhase.perteMax, devise) : null],
       [
         'Daily loss',
         premierePhase?.perteJour == null
@@ -170,9 +213,10 @@ export default function UniversalFirmPage({
             ? 'None'
             : money(premierePhase.perteJour, devise),
       ],
+      ['Max contracts', premierePhase?.maxContrats != null ? String(premierePhase.maxContrats) : null],
       ['Profit split', phaseFinancee?.partage != null ? pct(phaseFinancee.partage) : null],
     ] as [string, string | null][]
-  ).filter((m): m is [string, string] => Boolean(m[1]))
+  ).filter((l): l is [string, string] => Boolean(l[1]))
 
   const lignesRegles = phase ? ruleRows(phase, devise) : []
 
@@ -194,22 +238,29 @@ export default function UniversalFirmPage({
         <div className={cx(s.wrap, s.grid2, offre ? s.heroGrid : s.single)}>
           <article className={cx(s.card, s.heroLeft)}>
             <div className={s.identity}>
-              <div className={s.logo}>
+              {/* Le logo passe par le tunnel d'affiliation : le visiteur arrive
+                  chez la firme avec notre lien, et le code quand elle le prend
+                  en parametre. */}
+              <a
+                href={logoHref}
+                {...AFFILIATE_LINK_PROPS}
+                className={s.logo}
+                aria-label={offre ? `Visit ${sheet.nom} with code ${offre.code}` : `Visit ${sheet.nom}`}
+              >
                 {sheet.logoUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={sheet.logoUrl} alt={`${sheet.nom} logo`} />
+                  <img src={sheet.logoUrl} alt="" />
                 ) : (
                   sheet.nom.charAt(0)
                 )}
-              </div>
-              <div>
-                {sheet.marches.length > 0 && (
-                  <span className={s.eyebrow}>{marketsLabel(sheet.marches)} prop firm</span>
-                )}
-                <h1 className={s.h1}>{sheet.nom}</h1>
-              </div>
+              </a>
+              <h1 className={s.h1}>{sheet.nom}</h1>
             </div>
-            {sheet.presentation && <p className={s.lead}>{sheet.presentation}</p>}
+            {paragraphes.map((texte, i) => (
+              <p key={i} className={i === 0 ? s.lead : s.leadMore}>
+                {texte}
+              </p>
+            ))}
             <div className={s.facts}>
               {faits.map(([label, valeur]) => (
                 <div key={label} className={s.fact}>
@@ -262,51 +313,60 @@ export default function UniversalFirmPage({
         </div>
       </section>
 
-      {/* ===================================================== BUILD YOUR ACCOUNT */}
+      {/* ================================================ ACCOUNT CONFIGURATOR */}
       {programme && plan && (
         <section className={cx(s.section, s.anchor)} id="accounts">
           <div className={s.wrap}>
             <div className={s.head}>
               <div>
-                <span className={s.eyebrow}>Account selection</span>
-                <h2>Build your account</h2>
-                <p>Selections update the summary, price and applicable rules.</p>
+                <span className={s.eyebrow}>Account configurator</span>
+                <h2>Find the program that fits you</h2>
+                <p>Start with your goal. Price and rules update as you choose.</p>
               </div>
             </div>
-            <div className={cx(s.config, selecteurs.length === 0 && s.single)}>
-              {selecteurs.length > 0 && (
-                <div className={cx(s.card, s.selectorsGrid)}>
-                  {selecteurs.map((sel, i) => (
-                    <div key={sel.titre}>
-                      <div className={s.selectorTitle}>
-                        {i + 1}. {sel.titre}
-                      </div>
-                      <div className={s.options}>
-                        {sel.options.map((o) => (
+
+            <div className={cx(s.configurator, etapes.length === 0 && s.single)}>
+              {etapes.length > 0 && (
+                <div className={s.steps}>
+                  {etapes.map((etape, i) => (
+                    <fieldset key={etape.titre} className={s.step}>
+                      <legend className={s.legend}>
+                        <span className={s.stepNum}>{i + 1}</span>
+                        {etape.titre}
+                      </legend>
+                      <div className={cx(s.choices, etape.compacte && s.choicesCompact)}>
+                        {etape.options.map((o) => (
                           <button
                             key={o.key}
                             type="button"
-                            aria-pressed={o.key === sel.actif}
-                            className={cx(s.option, o.key === sel.actif && s.active)}
-                            onClick={() => sel.choisir(o.key)}
+                            aria-pressed={o.key === etape.actif}
+                            className={cx(
+                              s.choice,
+                              etape.compacte && s.choiceCompact,
+                              o.key === etape.actif && s.choiceActive
+                            )}
+                            onClick={() => etape.choisir(o.key)}
                           >
-                            {o.label}
+                            {o.accroche && <span className={s.choiceTagline}>{o.accroche}</span>}
+                            <span className={s.choiceName}>{o.label}</span>
+                            {o.detail && <span className={s.choiceDetail}>{o.detail}</span>}
                           </button>
                         ))}
                       </div>
-                    </div>
+                    </fieldset>
                   ))}
                 </div>
               )}
 
-              <aside className={cx(s.card, s.summary)} aria-live="polite">
+              <aside className={s.selection} aria-live="polite">
                 <span className={s.eyebrow}>Your selection</span>
-                <h2>
-                  {programme.nom} · {sizeLabel(plan.taille, plan.devise)}
+                <h3 className={s.selectionTitle}>
+                  {programme.nom} {sizeLabel(plan.taille, plan.devise)}
                   {variante ? ` · ${variante}` : ''}
-                </h2>
+                </h3>
+
                 {plan.prix != null && (
-                  <div>
+                  <div className={s.selectionPrice}>
                     {offre && prixRemise != null ? (
                       <>
                         <span className={s.price}>
@@ -324,15 +384,15 @@ export default function UniversalFirmPage({
                   </div>
                 )}
 
-                {metriques.length > 0 && (
-                  <div className={s.metrics}>
-                    {metriques.map(([label, valeur]) => (
-                      <div key={label} className={s.metric}>
-                        <span className={s.label}>{label}</span>
-                        <strong>{valeur}</strong>
+                {lignesSelection.length > 0 && (
+                  <dl className={s.rows}>
+                    {lignesSelection.map(([label, valeur]) => (
+                      <div key={label} className={s.rowItem}>
+                        <dt>{label}</dt>
+                        <dd>{valeur}</dd>
                       </div>
                     ))}
-                  </div>
+                  </dl>
                 )}
 
                 {offre && offreAppliquee && (
@@ -341,11 +401,11 @@ export default function UniversalFirmPage({
                     <CopyButton code={offre.code} label="Copy" />
                   </div>
                 )}
-                {/* Au moment de choisir, le bouton nomme le benefice quand un
-                    code s'applique — le meme libelle que la carte promo — et
-                    la destination sinon. */}
+                {/* Le bouton nomme le benefice quand un code s'applique — le meme
+                    libelle que la carte promo — et la destination sinon. */}
                 <a href={ctaHref} {...AFFILIATE_LINK_PROPS} className={cx(s.btn, s.primary, s.full)}>
-                  {offre && offreAppliquee ? 'Claim deal →' : `Continue to ${sheet.nom} →`}
+                  {offre && offreAppliquee ? 'Claim deal' : `Continue to ${sheet.nom}`}
+                  <ExternalLink className={s.icon} aria-hidden="true" />
                 </a>
                 {offre && !offreAppliquee && (
                   <p className={s.fine}>Code {offre.code} is not listed for this selection.</p>

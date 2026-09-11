@@ -39,9 +39,16 @@ export interface SheetPlan {
 export interface SheetProgramme {
   slug: string
   nom: string
+  /** Petite phrase au-dessus du nom, dans « How do you want to be funded? ». */
+  accroche: string | null
   marche: string
   type: 'evaluation' | 'instant'
   plans: SheetPlan[]
+}
+
+/** L'accroche d'un programme : celle du tableur, sinon son type. Jamais une promesse. */
+export function programmeTagline(programme: SheetProgramme): string {
+  return programme.accroche ?? (programme.type === 'instant' ? 'No evaluation' : 'Evaluation')
 }
 
 export interface SheetOffre {

@@ -5,12 +5,19 @@
   "marches": [
     "futures"
   ],
-  "presentation": "FuturesElite sells simulated futures accounts across four programs. Elite and Prime are evaluation routes with a one-time fee and no deadline to pass.",
-  "anneeCreation": null,
+  "presentation": "FuturesElite sells simulated futures accounts across four programs. Elite and Prime are evaluation routes with a one-time fee and no deadline to pass. Nitro and Instant shorten or remove the evaluation entirely, Instant funding you from purchase with no objective to reach. Elite, Nitro and Prime settle at a 90% profit split; Instant pays 80%. Payouts can be requested daily once an account is funded, subject to each program’s own minimum days.\n\nIt suits futures traders who already have a method and want to choose the rule set that fits it, rather than accept one. Loss limits are dollar amounts rather than percentages, drawdown is calculated at the end of the day on the evaluation programs, and six platforms are selectable at purchase, including Tradovate, NinjaTrader and Quantower.\n\nThe caveat matters more than the pricing. Quantum SRL holds no financial regulator licence, and every account is simulated: performance is hypothetical throughout. The live trading program exists but is a risk-team decision, not an entitlement earned at a fixed number of payouts.",
+  "anneeCreation": 2024,
   "pays": "Italy",
-  "ceoFondateur": null,
+  "ceoFondateur": "Christian Habibi",
   "actifs": [
-    "Futures"
+    "Futures",
+    "Forex",
+    "Metals",
+    "Indices",
+    "Energy",
+    "Crypto",
+    "Bonds",
+    "Agricultural Products"
   ],
   "plateformes": [
     "Tradovate",
@@ -20,13 +27,17 @@
     "WealthCharts",
     "DeepChart"
   ],
-  "moyensPaiement": [],
+  "moyensPaiement": [
+    "Credit/Debit Card",
+    "Crypto"
+  ],
   "levier": null,
   "stylesTrading": [],
   "programmes": [
     {
       "slug": "elite",
       "nom": "Elite",
+      "accroche": null,
       "marche": "futures",
       "type": "evaluation",
       "plans": [
@@ -159,6 +170,7 @@
     {
       "slug": "nitro",
       "nom": "Nitro",
+      "accroche": null,
       "marche": "futures",
       "type": "evaluation",
       "plans": [
@@ -291,6 +303,7 @@
     {
       "slug": "prime",
       "nom": "Prime",
+      "accroche": null,
       "marche": "futures",
       "type": "evaluation",
       "plans": [
@@ -423,6 +436,7 @@
     {
       "slug": "instant",
       "nom": "Instant",
+      "accroche": null,
       "marche": "futures",
       "type": "instant",
       "plans": [

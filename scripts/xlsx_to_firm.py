@@ -108,10 +108,11 @@ def convertir(chemin):
 
     # --- Programmes, plans, phases ------------------------------------------
     programmes = []
-    for s_, nom_p, marche, type_, statut in lignes(wb["Programmes"], 5):
+    for s_, nom_p, marche, type_, statut, accroche in lignes(wb["Programmes"], 6):
         if (txt(statut) or "active") not in ("active", "promotional"):
             continue
-        programmes.append({"slug": txt(s_), "nom": txt(nom_p) or txt(s_), "marche": txt(marche) or "",
+        programmes.append({"slug": txt(s_), "nom": txt(nom_p) or txt(s_), "accroche": txt(accroche),
+                           "marche": txt(marche) or "",
                            "type": "instant" if txt(type_) == "instant" else "evaluation", "plans": []})
     par_slug = {p["slug"]: p for p in programmes}
 

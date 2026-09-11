@@ -235,8 +235,9 @@ export default async function PropFirmPage({ params }: Props) {
   const SIMILAR_LIMIT = 3
 
   // Une alternative proposee ici doit etre actionnable : un lien d'affiliation
-  // qui fonctionne ET une remise verifiee encore valable. Sans les deux, la
-  // ligne est une impasse pour le visiteur et un lien mort pour le site.
+  // qui fonctionne OU une remise verifiee encore valable (decision du 11
+  // septembre 2026). L'ancienne regle exigeait les deux, et la section restait
+  // vide sur toutes les fiches. Sans l'un ni l'autre, la ligne est une impasse.
   //
   // La date est evaluee a chaque rendu, pas figee a la construction : une
   // offre expiree hier disparait d'elle-meme au lieu d'etre servie jusqu'a la
@@ -245,10 +246,13 @@ export default async function PropFirmPage({ params }: Props) {
     if (!(f.name && f.slug && f.logo_url && f.trustpilot_rating && f.min_price && f.profit_split)) {
       return false
     }
-    if (!f.affiliate_url || !f.discount_code || !f.discount_percent) return false
+    const lienAffilie = Boolean(f.affiliate_url) && f.affiliate_url !== '#'
     const fin = f.discount_expires_at ? new Date(String(f.discount_expires_at)) : null
     // Une date absente signifie « sans echeance publiee », pas « expiree ».
-    return !fin || Number.isNaN(fin.getTime()) || fin.getTime() > Date.now()
+    const codeValable =
+      Boolean(f.discount_code && f.discount_percent) &&
+      (!fin || Number.isNaN(fin.getTime()) || fin.getTime() > Date.now())
+    return lienAffilie || codeValable
   }
   const isFutures = firm.is_futures === true
 
@@ -483,6 +487,7 @@ export default async function PropFirmPage({ params }: Props) {
         <UniversalFirmPage
           sheet={FIRM_SHEETS[firm.slug]}
           ctaHref={buildAffiliateUrl(firm.slug, { placement: 'hero', locale })}
+          logoHref={buildAffiliateUrl(firm.slug, { placement: 'logo', locale })}
           similarFirms={similarFirms.map((sf) => ({
             id: sf.id,
             name: sf.name,
