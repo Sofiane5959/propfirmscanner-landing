@@ -1,0 +1,523 @@
+{
+  "slug": "futureselite",
+  "nom": "FuturesElite",
+  "logoUrl": "https://www.google.com/s2/favicons?domain=futureselite.com&sz=128",
+  "marches": [
+    "futures"
+  ],
+  "presentation": "FuturesElite sells simulated futures accounts across four programs. Elite and Prime are evaluation routes with a one-time fee and no deadline to pass.",
+  "anneeCreation": null,
+  "pays": "Italy",
+  "ceoFondateur": null,
+  "actifs": [
+    "Futures"
+  ],
+  "plateformes": [
+    "Tradovate",
+    "NinjaTrader",
+    "Quantower",
+    "ATAS",
+    "WealthCharts",
+    "DeepChart"
+  ],
+  "moyensPaiement": [],
+  "levier": null,
+  "stylesTrading": [],
+  "programmes": [
+    {
+      "slug": "elite",
+      "nom": "Elite",
+      "marche": "futures",
+      "type": "evaluation",
+      "plans": [
+        {
+          "taille": 25000,
+          "variante": null,
+          "devise": "USD",
+          "prix": 95,
+          "cartePromo": false,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 1250,
+              "perteMax": 1000,
+              "typePerteMax": "End of Day",
+              "perteJour": "aucune",
+              "joursMin": 3,
+              "regularite": 0.4,
+              "maxContrats": 2,
+              "partage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 1000,
+              "typePerteMax": "End of Day",
+              "perteJour": "aucune",
+              "joursMin": 6,
+              "regularite": "aucune",
+              "maxContrats": 2,
+              "partage": 0.9
+            }
+          ]
+        },
+        {
+          "taille": 50000,
+          "variante": null,
+          "devise": "USD",
+          "prix": 153,
+          "cartePromo": false,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 3000,
+              "perteMax": 2000,
+              "typePerteMax": "End of Day",
+              "perteJour": "aucune",
+              "joursMin": 3,
+              "regularite": 0.4,
+              "maxContrats": 4,
+              "partage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 2000,
+              "typePerteMax": "End of Day",
+              "perteJour": "aucune",
+              "joursMin": 6,
+              "regularite": "aucune",
+              "maxContrats": 4,
+              "partage": 0.9
+            }
+          ]
+        },
+        {
+          "taille": 100000,
+          "variante": null,
+          "devise": "USD",
+          "prix": 293,
+          "cartePromo": false,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 6000,
+              "perteMax": 3000,
+              "typePerteMax": "End of Day",
+              "perteJour": "aucune",
+              "joursMin": 3,
+              "regularite": 0.4,
+              "maxContrats": 8,
+              "partage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 3000,
+              "typePerteMax": "End of Day",
+              "perteJour": "aucune",
+              "joursMin": 6,
+              "regularite": "aucune",
+              "maxContrats": 8,
+              "partage": 0.9
+            }
+          ]
+        },
+        {
+          "taille": 150000,
+          "variante": null,
+          "devise": "USD",
+          "prix": 353,
+          "cartePromo": false,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 9000,
+              "perteMax": 4500,
+              "typePerteMax": "End of Day",
+              "perteJour": "aucune",
+              "joursMin": 3,
+              "regularite": 0.4,
+              "maxContrats": 12,
+              "partage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 4500,
+              "typePerteMax": "End of Day",
+              "perteJour": "aucune",
+              "joursMin": 6,
+              "regularite": "aucune",
+              "maxContrats": 12,
+              "partage": 0.9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "nitro",
+      "nom": "Nitro",
+      "marche": "futures",
+      "type": "evaluation",
+      "plans": [
+        {
+          "taille": 25000,
+          "variante": null,
+          "devise": "USD",
+          "prix": 129,
+          "cartePromo": false,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 1250,
+              "perteMax": 1000,
+              "typePerteMax": "End of Day",
+              "perteJour": "aucune",
+              "joursMin": 2,
+              "regularite": 0.5,
+              "maxContrats": 2,
+              "partage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 1000,
+              "typePerteMax": "Trailing Equity",
+              "perteJour": null,
+              "joursMin": 1,
+              "regularite": "aucune",
+              "maxContrats": 2,
+              "partage": 0.9
+            }
+          ]
+        },
+        {
+          "taille": 50000,
+          "variante": null,
+          "devise": "USD",
+          "prix": 138,
+          "cartePromo": false,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 3000,
+              "perteMax": 2000,
+              "typePerteMax": "End of Day",
+              "perteJour": "aucune",
+              "joursMin": 2,
+              "regularite": 0.5,
+              "maxContrats": 5,
+              "partage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 2000,
+              "typePerteMax": "Trailing Equity",
+              "perteJour": null,
+              "joursMin": 1,
+              "regularite": "aucune",
+              "maxContrats": 5,
+              "partage": 0.9
+            }
+          ]
+        },
+        {
+          "taille": 100000,
+          "variante": null,
+          "devise": "USD",
+          "prix": 218,
+          "cartePromo": false,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 6000,
+              "perteMax": 3000,
+              "typePerteMax": "End of Day",
+              "perteJour": "aucune",
+              "joursMin": 2,
+              "regularite": 0.5,
+              "maxContrats": 8,
+              "partage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 3000,
+              "typePerteMax": "Trailing Equity",
+              "perteJour": null,
+              "joursMin": 1,
+              "regularite": "aucune",
+              "maxContrats": 8,
+              "partage": 0.9
+            }
+          ]
+        },
+        {
+          "taille": 150000,
+          "variante": null,
+          "devise": "USD",
+          "prix": 298,
+          "cartePromo": false,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 9000,
+              "perteMax": 4500,
+              "typePerteMax": "End of Day",
+              "perteJour": "aucune",
+              "joursMin": 2,
+              "regularite": 0.5,
+              "maxContrats": 10,
+              "partage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 4500,
+              "typePerteMax": "Trailing Equity",
+              "perteJour": null,
+              "joursMin": 1,
+              "regularite": "aucune",
+              "maxContrats": 10,
+              "partage": 0.9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "prime",
+      "nom": "Prime",
+      "marche": "futures",
+      "type": "evaluation",
+      "plans": [
+        {
+          "taille": 25000,
+          "variante": null,
+          "devise": "USD",
+          "prix": 96,
+          "cartePromo": false,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 1250,
+              "perteMax": 1000,
+              "typePerteMax": "End of Day",
+              "perteJour": 600,
+              "joursMin": 1,
+              "regularite": null,
+              "maxContrats": 2,
+              "partage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 1000,
+              "typePerteMax": "End of Day",
+              "perteJour": 600,
+              "joursMin": 3,
+              "regularite": 0.4,
+              "maxContrats": 2,
+              "partage": 0.9
+            }
+          ]
+        },
+        {
+          "taille": 50000,
+          "variante": null,
+          "devise": "USD",
+          "prix": 179,
+          "cartePromo": false,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 3000,
+              "perteMax": 2000,
+              "typePerteMax": "End of Day",
+              "perteJour": 1200,
+              "joursMin": 1,
+              "regularite": null,
+              "maxContrats": 4,
+              "partage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 2000,
+              "typePerteMax": "End of Day",
+              "perteJour": 1200,
+              "joursMin": 3,
+              "regularite": 0.4,
+              "maxContrats": 4,
+              "partage": 0.9
+            }
+          ]
+        },
+        {
+          "taille": 100000,
+          "variante": null,
+          "devise": "USD",
+          "prix": 279,
+          "cartePromo": false,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 6000,
+              "perteMax": 3000,
+              "typePerteMax": "End of Day",
+              "perteJour": 1800,
+              "joursMin": 1,
+              "regularite": null,
+              "maxContrats": 6,
+              "partage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 3000,
+              "typePerteMax": "End of Day",
+              "perteJour": 1800,
+              "joursMin": 3,
+              "regularite": 0.4,
+              "maxContrats": 6,
+              "partage": 0.9
+            }
+          ]
+        },
+        {
+          "taille": 150000,
+          "variante": null,
+          "devise": "USD",
+          "prix": 369,
+          "cartePromo": false,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 9000,
+              "perteMax": 4500,
+              "typePerteMax": "End of Day",
+              "perteJour": 2700,
+              "joursMin": 1,
+              "regularite": null,
+              "maxContrats": 10,
+              "partage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 4500,
+              "typePerteMax": "End of Day",
+              "perteJour": 2700,
+              "joursMin": 3,
+              "regularite": 0.4,
+              "maxContrats": 10,
+              "partage": 0.9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "instant",
+      "nom": "Instant",
+      "marche": "futures",
+      "type": "instant",
+      "plans": [
+        {
+          "taille": 50000,
+          "variante": null,
+          "devise": "USD",
+          "prix": 349,
+          "cartePromo": false,
+          "phases": [
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 1800,
+              "typePerteMax": "End of Day",
+              "perteJour": null,
+              "joursMin": 10,
+              "regularite": 0.2,
+              "maxContrats": 4,
+              "partage": 0.8
+            }
+          ]
+        },
+        {
+          "taille": 100000,
+          "variante": null,
+          "devise": "USD",
+          "prix": 469,
+          "cartePromo": false,
+          "phases": [
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 3000,
+              "typePerteMax": "End of Day",
+              "perteJour": null,
+              "joursMin": 10,
+              "regularite": 0.2,
+              "maxContrats": 8,
+              "partage": 0.8
+            }
+          ]
+        },
+        {
+          "taille": 150000,
+          "variante": null,
+          "devise": "USD",
+          "prix": 569,
+          "cartePromo": false,
+          "phases": [
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 4500,
+              "typePerteMax": "End of Day",
+              "perteJour": null,
+              "joursMin": 10,
+              "regularite": 0.2,
+              "maxContrats": 12,
+              "partage": 0.8
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "offre": {
+    "code": "SCANNED",
+    "remise": 0.3,
+    "portee": "non_confirmee",
+    "checkoutVerifie": false,
+    "programmesEligibles": [],
+    "taillesEligibles": [],
+    "expireLe": null
+  },
+  "conditions": {
+    "trading": "Overnight holding is not allowed; automatic liquidation may occur. Market closed Friday 16:55 EST to Sunday 18:00 EST. Fully automated AI or bots are not permitted. The configurator lists scalping as not allowed, without defining it. News trading is allowed in evaluation and restricted once funded, without a stated event window.",
+    "commission": "Commissions and exchange fees are charged per instrument on each executed trade.",
+    "retraits": "Payout requests are reviewed in under 24 hours on average. Provider: Rise. KYC via Veriff: buyer, KYC holder and account operator must be the same person. Elite 25K funded: 90% split, $1,000 cap per request, $500 minimum."
+  },
+  "verdict": {
+    "texte": "FuturesElite bets on generous terms once you are funded: up to a 90% split, daily payouts, and no funded consistency rule on Elite and Nitro. In exchange, the firm is young and is a proprietary trading company rather than a regulated broker.",
+    "pourQui": [
+      "A high split and frequent payouts, with no waiting period",
+      "Elite or Nitro evaluations without a daily loss limit, which leaves room to breathe",
+      "A funded account that opens with no activation fee",
+      "The option to stack up to ten accounts in parallel"
+    ],
+    "pasPour": [
+      "You want a regulated broker: Quantum SRL holds no financial regulator licence.",
+      "You want real capital: every account is simulated, and performance stays hypothetical.",
+      "You run fully automated systems: AI and bots are prohibited.",
+      "You want to withdraw a whole balance at once: each request is capped by account size.",
+      "You need a guaranteed route to live trading: it is a risk-team decision, not an entitlement."
+    ]
+  },
+  "faq": []
+}

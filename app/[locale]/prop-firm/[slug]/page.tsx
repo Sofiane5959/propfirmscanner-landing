@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
 import PropFirmPageClient from './PropFirmPageClient'
 import FirmPage from '@/components/prop-firm/FirmPage'
+import UniversalFirmPage from '@/components/prop-firm/UniversalFirmPage'
+import { FIRM_SHEETS } from '@/data/firms'
 import { buildAffiliateUrl } from '@/lib/affiliate'
 
 import { readActiveFirmPage, PublicationUnavailableError } from '@/lib/publication/read'
@@ -474,7 +476,15 @@ export default async function PropFirmPage({ params }: Props) {
           active. Reconstruire a chaque requete, c'est relire la donnee vivante,
           et donc pouvoir regresser entre deux visites. `FirmPage` reste
           generique : aucun code n'y branche sur une firme. */}
-      {versionActive ? (
+      {/* Une firme qui a sa fiche (data/firms/<slug>.json, issue de son tableur)
+          est rendue par la page universelle, a partir de ce seul fichier. Les
+          autres firmes gardent leur rendu actuel. */}
+      {FIRM_SHEETS[firm.slug] ? (
+        <UniversalFirmPage
+          sheet={FIRM_SHEETS[firm.slug]}
+          ctaHref={buildAffiliateUrl(firm.slug, { placement: 'hero', locale })}
+        />
+      ) : versionActive ? (
         <FirmPage
           model={versionActive.model}
           ctaHref={buildAffiliateUrl(firm.slug, { placement: 'hero', locale })}
