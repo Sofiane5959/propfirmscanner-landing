@@ -5,8 +5,8 @@
 // partir du tableur MODELE-propfirm.xlsx rempli pour une firme.
 //
 // C'est la SEULE source de la page universelle. Les fonctions ici mettent en
-// forme ce que contient la fiche, ou le recombinent (FAQ) ; aucune n'ajoute
-// une information qui n'y serait pas.
+// forme ce que contient la fiche, ou le recombinent (FAQ, meta description) ;
+// aucune n'ajoute une information qui n'y serait pas.
 // =============================================================================
 
 export type PhaseKey = 'evaluation' | 'evaluation_2' | 'funded'
@@ -41,14 +41,11 @@ export interface SheetProgramme {
   nom: string
   /** Petite phrase au-dessus du nom, dans « How do you want to be funded? ». */
   accroche: string | null
+  /** Une phrase vraie de CE programme, dans « Which program fits you? ». */
+  resume: string | null
   marche: string
   type: 'evaluation' | 'instant'
   plans: SheetPlan[]
-}
-
-/** L'accroche d'un programme : celle du tableur, sinon son type. Jamais une promesse. */
-export function programmeTagline(programme: SheetProgramme): string {
-  return programme.accroche ?? (programme.type === 'instant' ? 'No evaluation' : 'Evaluation')
 }
 
 export interface SheetOffre {
@@ -67,6 +64,9 @@ export interface FirmSheet {
   nom: string
   logoUrl: string | null
   marches: string[]
+  /** 1 a 2 phrases, en haut de page sous le nom. */
+  resume: string | null
+  /** Le texte developpe, dans la section « About [Firm] ». */
   presentation: string | null
   anneeCreation: number | null
   pays: string | null
@@ -99,6 +99,10 @@ export interface SimilarFirm {
   logoUrl: string | null
   rating: number | null
   minPrice: number | null
+  /** Code promo actif, s'il y en a un. */
+  code: string | null
+  /** Remise du code, en pourcentage entier (20 = 20 %), comme prop_firms.discount_percent. */
+  remise: number | null
 }
 
 // -----------------------------------------------------------------------------
@@ -130,6 +134,15 @@ export function marketsLabel(marches: string[]): string {
 /** « Firm type » : deduit des marches, jamais saisi a part. */
 export const firmType = marketsLabel
 
+/**
+ * Le titre de la carte des actifs. Chez une firme 100 % futures, « Forex » ou
+ * « Crypto » designent des contrats futures ; « Tradable assets » laissait
+ * croire a du forex au comptant.
+ */
+export function assetsLabel(marches: string[]): string {
+  return marches.length === 1 && marches[0] === 'futures' ? 'Futures markets' : 'Tradable assets'
+}
+
 export function money(n: number, devise: string): string {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -155,6 +168,29 @@ export function pct(fraction: number): string {
 
 export function withFirmName(texte: string, nom: string): string {
   return texte.replace(/\[Firm\]/g, nom)
+}
+
+/** Les paragraphes d'un texte saisi dans une cellule : une ligne vide les separe. */
+export function paragraphs(texte: string | null): string[] {
+  return (texte ?? '')
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean)
+}
+
+/**
+ * La meta description d'une firme servie par sa fiche : la premiere phrase de
+ * sa presentation, puis ce que la page couvre. 160 caracteres au plus — au-dela
+ * Google coupe, et l'ancien verdict en faisait pres de 400.
+ */
+export function sheetMetaDescription(sheet: FirmSheet): string {
+  const source = sheet.presentation ?? sheet.resume ?? ''
+  const premiere = source.match(/^[\s\S]*?[.!?](\s|$)/)?.[0].trim() ?? ''
+  const suite = `Fees, trading rules, profit split and promo codes for ${sheet.nom}.`
+  const texte = premiere ? `${premiere} ${suite}` : suite
+  if (texte.length <= 160) return texte
+  const coupe = texte.slice(0, 157)
+  return `${coupe.slice(0, coupe.lastIndexOf(' '))}…`
 }
 
 // -----------------------------------------------------------------------------
@@ -184,6 +220,11 @@ export function promoSelection(
     if (plan) return { programme, plan }
   }
   return null
+}
+
+/** L'accroche d'un programme : celle du tableur, sinon son type. Jamais une promesse. */
+export function programmeTagline(programme: SheetProgramme): string {
+  return programme.accroche ?? (programme.type === 'instant' ? 'No evaluation' : 'Evaluation')
 }
 
 // -----------------------------------------------------------------------------
@@ -298,11 +339,13 @@ function fourchette(valeurs: number[], formater: (n: number) => string): string 
 function reponsesRecomposees(sheet: FirmSheet): Record<string, string | null> {
   const programmes = sheet.programmes.filter((p) => p.plans.length > 0)
 
+  // « the account configurator above » : la section s'appelait « Build your
+  // account » dans une version precedente, et la FAQ y renvoyait encore.
   const debutants =
     programmes.length > 0
       ? `${sheet.nom} offers ${programmes.length} programme${programmes.length > 1 ? 's' : ''}: ` +
         `${programmes.map((p) => p.nom).join(', ')}. Their rules and costs differ, so compare them in ` +
-        `“Build your account” and see who we recommend ${sheet.nom} for above.`
+        `the account configurator above and see who we recommend ${sheet.nom} for.`
       : null
 
   const couts = programmes

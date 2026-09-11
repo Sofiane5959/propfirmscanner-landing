@@ -5,6 +5,7 @@ import PropFirmPageClient from './PropFirmPageClient'
 import FirmPage from '@/components/prop-firm/FirmPage'
 import UniversalFirmPage from '@/components/prop-firm/UniversalFirmPage'
 import { FIRM_SHEETS } from '@/data/firms'
+import { sheetMetaDescription } from '@/lib/firm-sheet'
 import { buildAffiliateUrl } from '@/lib/affiliate'
 
 import { readActiveFirmPage, PublicationUnavailableError } from '@/lib/publication/read'
@@ -90,6 +91,31 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // date is one of the first things a reader uses to judge whether a review is
   // maintained, and Google reads it too.
   const year = new Date().getFullYear()
+
+  // Une firme servie par sa fiche (data/firms/<slug>.json) a une page en
+  // anglais, quelle que soit la locale : son titre et sa description le sont
+  // aussi. Sinon /fr affichait « Avis FuturesElite… » au-dessus d'un contenu
+  // anglais. La description vient de la fiche, plus de l'ancien verdict
+  // (pres de 400 caracteres, coupe par Google). La canonique designe la
+  // version anglaise, seule declaree.
+  const ficheMeta = FIRM_SHEETS[firm.slug]
+  if (ficheMeta) {
+    const titreFiche = `${firm.name} Review ${year} — Fees, Rules & Promo Codes`
+    const descriptionFiche = sheetMetaDescription(ficheMeta)
+    return {
+      title: titreFiche,
+      description: descriptionFiche,
+      ...generateDynamicAlternates(locale, `/prop-firm/${firm.slug}`, ['en']),
+      openGraph: {
+        title: titreFiche,
+        description: descriptionFiche,
+        url: localeHref('en', `/prop-firm/${firm.slug}`),
+        type: 'article',
+        locale: 'en_GB',
+      },
+      twitter: { card: 'summary_large_image', title: titreFiche, description: descriptionFiche },
+    }
+  }
 
   // Les sept langues. La version precedente n'avait que deux branches,
   // `locale === 'fr' ? ... : ...`, si bien que /de, /es, /pt, /ar et /hi
@@ -232,7 +258,7 @@ export default async function PropFirmPage({ params }: Props) {
   // un `+`, elle devient un `string` quelconque et la requete revient typee
   // `GenericStringError[]`.
   const SIMILAR_COLUMNS = 'id, name, slug, logo_url, trustpilot_rating, min_price, profit_split, affiliate_url, discount_code, discount_percent, discount_expires_at'
-  const SIMILAR_LIMIT = 3
+  const SIMILAR_LIMIT = 4
 
   // Une alternative proposee ici doit etre actionnable : un lien d'affiliation
   // qui fonctionne OU une remise verifiee encore valable (decision du 11
@@ -242,17 +268,22 @@ export default async function PropFirmPage({ params }: Props) {
   // La date est evaluee a chaque rendu, pas figee a la construction : une
   // offre expiree hier disparait d'elle-meme au lieu d'etre servie jusqu'a la
   // prochaine revalidation manuelle.
-  const isComplete = (f: Record<string, unknown>) => {
-    if (!(f.name && f.slug && f.logo_url && f.trustpilot_rating && f.min_price && f.profit_split)) {
-      return false
-    }
-    const lienAffilie = Boolean(f.affiliate_url) && f.affiliate_url !== '#'
+  // Un code n'est proposable que tant qu'il n'a pas expire. Une date absente
+  // signifie « sans echeance publiee », pas « expiree ».
+  const codeActif = (f: Record<string, unknown>) => {
     const fin = f.discount_expires_at ? new Date(String(f.discount_expires_at)) : null
-    // Une date absente signifie « sans echeance publiee », pas « expiree ».
-    const codeValable =
+    return (
       Boolean(f.discount_code && f.discount_percent) &&
       (!fin || Number.isNaN(fin.getTime()) || fin.getTime() > Date.now())
-    return lienAffilie || codeValable
+    )
+  }
+  // Seuls le nom et le slug sont exiges : une carte sait se passer d'un logo
+  // ou d'une note. Exiger aussi note, logo, prix et partage ne laissait qu'une
+  // seule firme sur la fiche FuturesElite.
+  const isComplete = (f: Record<string, unknown>) => {
+    if (!(f.name && f.slug)) return false
+    const lienAffilie = Boolean(f.affiliate_url) && f.affiliate_url !== '#'
+    return lienAffilie || codeActif(f)
   }
   const isFutures = firm.is_futures === true
 
@@ -376,12 +407,20 @@ export default async function PropFirmPage({ params }: Props) {
   // Fourchette de prix verifiee, tous programmes confondus. Elle agrege les
   // challenges historiques ET les plans de la structure normalisee, pour que
   // le balisage reste juste quelle que soit la source qui alimente la fiche.
-  const allPrices: number[] = [
-    ...challengeRows.map((c) => (promotion.isActive ? c.discounted_price ?? c.price : c.price)),
-    ...(programData?.programs ?? []).flatMap((p) =>
-      p.plans.map((pl) => (pl.regular_price === null ? null : Number(pl.regular_price)))
-    ),
-  ].filter((p): p is number => p !== null && p > 0)
+  // Une firme servie par sa fiche : ses prix, et seulement eux. Additionner
+  // les anciens challenges comptait les plans Elite deux fois (19 offres
+  // annoncees pour 15 plans).
+  const ficheDonnees = FIRM_SHEETS[firm.slug]
+  const allPrices: number[] = (
+    ficheDonnees
+      ? ficheDonnees.programmes.flatMap((p) => p.plans.map((pl) => pl.prix))
+      : [
+          ...challengeRows.map((c) => (promotion.isActive ? c.discounted_price ?? c.price : c.price)),
+          ...(programData?.programs ?? []).flatMap((p) =>
+            p.plans.map((pl) => (pl.regular_price === null ? null : Number(pl.regular_price)))
+          ),
+        ]
+  ).filter((p): p is number => p !== null && p > 0)
 
   const priceRange = {
     low: allPrices.length ? Math.min(...allPrices) : offerPrice,
@@ -495,6 +534,8 @@ export default async function PropFirmPage({ params }: Props) {
             logoUrl: sf.logo_url,
             rating: sf.trustpilot_rating,
             minPrice: sf.min_price,
+            code: codeActif(sf) ? sf.discount_code : null,
+            remise: codeActif(sf) ? sf.discount_percent : null,
           }))}
         />
       ) : versionActive ? (

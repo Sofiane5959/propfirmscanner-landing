@@ -3,14 +3,14 @@
 // =============================================================================
 // PAGE UNIVERSELLE D'UNE PROP FIRM   components/prop-firm/UniversalFirmPage.tsx
 // =============================================================================
-// Reproduit le gabarit HTML « Universal Prop Firm Page » fourni par Sofiane,
-// avec les ajustements qu'il a demandes :
-//   - logo cliquable, par le tunnel d'affiliation (code promo pre-rempli) ;
-//   - le nom seul en titre, sans etiquette de marche au-dessus ;
-//   - le configurateur de compte construit comme celui de la fiche Earn2Trade
-//     (ChallengeSelector) : etapes numerotees, cartes, selection a droite ;
-//   - en fin de page : strengths and things to know, Ready to pick your
-//     program?, Similar firms. Pas d'avertissement de risque.
+// Le gabarit HTML « Universal Prop Firm Page » fourni par Sofiane, construit
+// comme la fiche Earn2Trade (PropFirmPageClient + ChallengeSelector), qu'il a
+// demande de prendre pour modele :
+//   - en-tete court : nom, 1 a 2 phrases, faits cles en rang, deux boutons ;
+//   - configurateur a etapes, puis « Which program fits you? » ;
+//   - la presentation complete dans « About », pas en haut de page ;
+//   - barre fixe sur mobile : la selection, son prix, le bouton ;
+//   - fin de page : About, strengths, verdict, FAQ, Ready to pick, Similar.
 //
 // Le composant recoit la fiche de la firme (data/firms/<slug>.json) et, depuis
 // la route, les liens sortants et les firmes similaires. Aucune logique propre
@@ -25,6 +25,7 @@ import {
   type FirmSheet,
   type SimilarFirm,
   PHASE_LABEL,
+  assetsLabel,
   discounted,
   faqItems,
   firmType,
@@ -33,6 +34,7 @@ import {
   money,
   offerApplies,
   orderedPhases,
+  paragraphs,
   pct,
   programmeTagline,
   promoSelection,
@@ -118,23 +120,26 @@ export default function UniversalFirmPage({
   const offreAppliquee = Boolean(offre && programme && plan && offerApplies(offre, programme.slug, plan.taille))
   const prixRemise =
     offre && offreAppliquee && plan?.prix != null ? discounted(plan.prix, offre.remise) : null
+  const libelleCta = offre && offreAppliquee ? 'Claim deal' : `Continue to ${sheet.nom}`
 
-  // --- Carte d'identite : les quatre cases restent, meme vides ---------------
+  // --- En-tete : court, comme la fiche Earn2Trade ------------------------------
+  // Le resume est en haut ; la presentation complete va dans « About ». Sans
+  // resume saisi, le premier paragraphe de la presentation en tient lieu, et
+  // n'est alors pas repete dans « About ».
+  const paragraphesPresentation = paragraphs(sheet.presentation)
+  const intro = sheet.resume ?? paragraphesPresentation[0] ?? null
+  const paragraphesAbout = sheet.resume ? paragraphesPresentation : paragraphesPresentation.slice(1)
+
   const faits: [string, string][] = [
     ['Founded', sheet.anneeCreation != null ? String(sheet.anneeCreation) : TIRET],
     ['Country', sheet.pays ?? TIRET],
     ['CEO / Founder', sheet.ceoFondateur ?? TIRET],
     ['Firm type', sheet.marches.length > 0 ? firmType(sheet.marches) : TIRET],
   ]
-  // Une ligne vide dans la cellule du tableur separe deux paragraphes.
-  const paragraphes = (sheet.presentation ?? '')
-    .split(/\n\s*\n/)
-    .map((p) => p.trim())
-    .filter(Boolean)
 
   // --- Bande : les quatre cartes restent, meme vides ---------------------------
   const bande: [string, string[]][] = [
-    ['Tradable assets', sheet.actifs.length > 0 ? sheet.actifs : [TIRET]],
+    [assetsLabel(sheet.marches), sheet.actifs.length > 0 ? sheet.actifs : [TIRET]],
     ['Platforms', sheet.plateformes.length > 0 ? sheet.plateformes : [TIRET]],
     ['Payment methods', sheet.moyensPaiement.length > 0 ? sheet.moyensPaiement : [TIRET]],
     ['Trading profile', [`Leverage ${sheet.levier ?? TIRET}`, ...sheet.stylesTrading]],
@@ -231,12 +236,23 @@ export default function UniversalFirmPage({
   const faq = faqItems(sheet)
   const { pointsForts, limites } = sheet.verdict
 
+  /** Le prix de la selection, tel qu'il s'affiche partout sur la page. */
+  const prixSelection =
+    plan?.prix == null ? null : offre && prixRemise != null ? (
+      <>
+        {isEstimate(offre) ? '≈ ' : ''}
+        {money(prixRemise, devise)}
+      </>
+    ) : (
+      money(plan.prix, devise)
+    )
+
   return (
-    <div className={s.root}>
-      {/* ===================================================== CARTE D'IDENTITE */}
-      <section className={s.section}>
-        <div className={cx(s.wrap, s.grid2, offre ? s.heroGrid : s.single)}>
-          <article className={cx(s.card, s.heroLeft)}>
+    <div className={cx(s.root, programme && plan && s.withMobileBar)}>
+      {/* ============================================================ EN-TETE */}
+      <section className={s.sectionFirst}>
+        <div className={cx(s.wrap, s.hero, !offre && s.single)}>
+          <article className={cx(s.card, s.identityCard)}>
             <div className={s.identity}>
               {/* Le logo passe par le tunnel d'affiliation : le visiteur arrive
                   chez la firme avec notre lien, et le code quand elle le prend
@@ -254,20 +270,28 @@ export default function UniversalFirmPage({
                   sheet.nom.charAt(0)
                 )}
               </a>
-              <h1 className={s.h1}>{sheet.nom}</h1>
+              <div className={s.identityText}>
+                <h1 className={s.h1}>{sheet.nom}</h1>
+                {intro && <p className={s.lead}>{intro}</p>}
+              </div>
             </div>
-            {paragraphes.map((texte, i) => (
-              <p key={i} className={i === 0 ? s.lead : s.leadMore}>
-                {texte}
-              </p>
-            ))}
-            <div className={s.facts}>
+
+            <dl className={s.factsRow}>
               {faits.map(([label, valeur]) => (
                 <div key={label} className={s.fact}>
-                  <small>{label}</small>
-                  <strong>{valeur}</strong>
+                  <dt>{label}</dt>
+                  <dd>{valeur}</dd>
                 </div>
               ))}
+            </dl>
+
+            <div className={s.heroActions}>
+              <a href="#accounts" className={cx(s.btn, s.primary)}>
+                Choose your program
+              </a>
+              <a href="#rules" className={cx(s.btn, s.ghost)}>
+                See the key rules
+              </a>
             </div>
           </article>
 
@@ -296,10 +320,10 @@ export default function UniversalFirmPage({
       </section>
 
       {/* ================================================================ BANDE */}
-      <section className={cx(s.section, s.sectionTight)}>
+      <section className={s.sectionTight}>
         <div className={cx(s.wrap, s.strip)}>
           {bande.map(([label, chips]) => (
-            <div key={label} className={s.card}>
+            <div key={label} className={cx(s.card, s.stripCard)}>
               <span className={s.label}>{label}</span>
               <div className={s.chips}>
                 {chips.map((chip, i) => (
@@ -367,19 +391,14 @@ export default function UniversalFirmPage({
 
                 {plan.prix != null && (
                   <div className={s.selectionPrice}>
-                    {offre && prixRemise != null ? (
+                    <span className={s.price}>{prixSelection}</span>
+                    {offre && prixRemise != null && (
                       <>
-                        <span className={s.price}>
-                          {isEstimate(offre) ? '≈ ' : ''}
-                          {money(prixRemise, devise)}
-                        </span>
                         <span className={s.old}>{money(plan.prix, devise)}</span>
                         <div className={s.saving}>
                           {pct(offre.remise)} with {offre.code}
                         </div>
                       </>
-                    ) : (
-                      <span className={s.price}>{money(plan.prix, devise)}</span>
                     )}
                   </div>
                 )}
@@ -404,7 +423,7 @@ export default function UniversalFirmPage({
                 {/* Le bouton nomme le benefice quand un code s'applique — le meme
                     libelle que la carte promo — et la destination sinon. */}
                 <a href={ctaHref} {...AFFILIATE_LINK_PROPS} className={cx(s.btn, s.primary, s.full)}>
-                  {offre && offreAppliquee ? 'Claim deal' : `Continue to ${sheet.nom}`}
+                  {libelleCta}
                   <ExternalLink className={s.icon} aria-hidden="true" />
                 </a>
                 {offre && !offreAppliquee && (
@@ -412,6 +431,31 @@ export default function UniversalFirmPage({
                 )}
               </aside>
             </div>
+
+            {/* Comme sur la fiche Earn2Trade : un rappel des differences, pas une
+                seconde decision. Le programme se choisit dans le configurateur ;
+                la carte signale seulement celui qui est selectionne. */}
+            {programmesVisibles.length > 1 && (
+              <div className={s.compare}>
+                <h3 className={s.compareTitle}>Which program fits you?</h3>
+                <p className={s.compareIntro}>
+                  A comparison, not a second decision — the configurator above already has your choice.
+                </p>
+                <div className={s.compareGrid}>
+                  {programmesVisibles.map((p) => {
+                    const actif = p.slug === programme.slug
+                    return (
+                      <article key={p.slug} className={cx(s.compareCard, actif && s.compareActive)}>
+                        <span className={s.compareBadge}>{programmeTagline(p)}</span>
+                        <h4>{p.nom}</h4>
+                        {p.resume && <p>{p.resume}</p>}
+                        {actif && <span className={s.picked}>✓ Selected</span>}
+                      </article>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         </section>
       )}
@@ -447,26 +491,24 @@ export default function UniversalFirmPage({
                   ))}
                 </div>
               )}
-              <div className={s.tableWrap}>
-                <table className={s.table}>
-                  <thead>
-                    <tr>
-                      <th>Rule</th>
-                      <th>{PHASE_LABEL[phase.phase]} value</th>
-                      <th>Meaning</th>
+              <table className={s.table}>
+                <thead>
+                  <tr>
+                    <th>Rule</th>
+                    <th>{PHASE_LABEL[phase.phase]} value</th>
+                    <th>Meaning</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {lignesRegles.map((ligne) => (
+                    <tr key={ligne.label}>
+                      <td data-label="Rule">{ligne.label}</td>
+                      <td data-label={`${PHASE_LABEL[phase.phase]} value`}>{ligne.value}</td>
+                      <td data-label="Meaning">{ligne.meaning}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {lignesRegles.map((ligne) => (
-                      <tr key={ligne.label}>
-                        <td>{ligne.label}</td>
-                        <td>{ligne.value}</td>
-                        <td>{ligne.meaning}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         </section>
@@ -495,6 +537,61 @@ export default function UniversalFirmPage({
         </section>
       )}
 
+      {/* ================================================================ ABOUT */}
+      {paragraphesAbout.length > 0 && (
+        <section className={cx(s.section, s.anchor)} id="about">
+          <div className={s.wrap}>
+            <div className={s.head}>
+              <div>
+                <h2>About {sheet.nom}</h2>
+              </div>
+            </div>
+            <div className={cx(s.card, s.about)}>
+              {paragraphesAbout.map((texte, i) => (
+                <p key={i}>{texte}</p>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ======================================= STRENGTHS AND THINGS TO KNOW */}
+      {(pointsForts.length > 0 || limites.length > 0) && (
+        <section className={cx(s.section, s.anchor)} id="strengths">
+          <div className={s.wrap}>
+            <div className={s.head}>
+              <div>
+                <span className={s.eyebrow}>Honest view</span>
+                <h2>{sheet.nom}: strengths and things to know</h2>
+                <p>Our independent analysis, based on verified official rules and documents.</p>
+              </div>
+            </div>
+            <div className={cx(s.prosCons, (pointsForts.length === 0 || limites.length === 0) && s.single)}>
+              {pointsForts.length > 0 && (
+                <article className={cx(s.card, s.pros)}>
+                  <h3>Strengths</h3>
+                  <ul className={s.list}>
+                    {pointsForts.map((point) => (
+                      <li key={point}>{point}</li>
+                    ))}
+                  </ul>
+                </article>
+              )}
+              {limites.length > 0 && (
+                <article className={cx(s.card, s.cons)}>
+                  <h3>Things to know</h3>
+                  <ul className={cx(s.list, s.info)}>
+                    {limites.map((point) => (
+                      <li key={point}>{point}</li>
+                    ))}
+                  </ul>
+                </article>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ============================================================== VERDICT */}
       {(sheet.verdict.texte || sheet.verdict.pourQui.length > 0 || sheet.verdict.pasPour.length > 0) && (
         <section className={cx(s.section, s.anchor)} id="verdict">
@@ -509,7 +606,7 @@ export default function UniversalFirmPage({
               {(sheet.verdict.texte || sheet.verdict.pourQui.length > 0) && (
                 <article className={s.card}>
                   <h3>Our verdict</h3>
-                  {sheet.verdict.texte && <p className={s.lead}>{sheet.verdict.texte}</p>}
+                  {sheet.verdict.texte && <p className={s.verdictText}>{sheet.verdict.texte}</p>}
                   {sheet.verdict.pourQui.length > 0 && (
                     <ul className={s.list}>
                       {sheet.verdict.pourQui.map((raison) => (
@@ -556,68 +653,32 @@ export default function UniversalFirmPage({
         </section>
       )}
 
-      {/* ======================================= STRENGTHS AND THINGS TO KNOW */}
-      {(pointsForts.length > 0 || limites.length > 0) && (
-        <section className={cx(s.section, s.anchor)} id="strengths">
-          <div className={s.wrap}>
-            <div className={s.head}>
-              <div>
-                <span className={s.eyebrow}>Honest view</span>
-                <h2>{sheet.nom}: strengths and things to know</h2>
-                <p>Our independent analysis, based on verified official rules and documents.</p>
-              </div>
-            </div>
-            <div className={cx(s.prosCons, (pointsForts.length === 0 || limites.length === 0) && s.single)}>
-              {pointsForts.length > 0 && (
-                <article className={cx(s.card, s.pros)}>
-                  <h3>Strengths</h3>
-                  <ul className={s.list}>
-                    {pointsForts.map((point) => (
-                      <li key={point}>{point}</li>
-                    ))}
-                  </ul>
-                </article>
-              )}
-              {limites.length > 0 && (
-                <article className={cx(s.card, s.cons)}>
-                  <h3>Things to know</h3>
-                  <ul className={cx(s.list, s.info)}>
-                    {limites.map((point) => (
-                      <li key={point}>{point}</li>
-                    ))}
-                  </ul>
-                </article>
-              )}
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* ========================================== READY TO PICK YOUR PROGRAM? */}
       {programme && plan && (
         <section className={s.section}>
           <div className={s.wrap}>
             <div className={cx(s.card, s.ready)}>
-              <h2>Ready to pick your program?</h2>
-              <p>Configure your account and check the rules one last time before payment.</p>
-              <div className={s.readyLine}>
-                <span>
-                  {programme.nom} · {sizeLabel(plan.taille, plan.devise)}
-                </span>
-                {plan.prix != null &&
-                  (offre && prixRemise != null ? (
-                    <span>
-                      <span className={s.oldInline}>{money(plan.prix, devise)}</span>
-                      {isEstimate(offre) ? '≈ ' : ''}
-                      {money(prixRemise, devise)}
-                    </span>
-                  ) : (
-                    <span>{money(plan.prix, devise)}</span>
-                  ))}
+              <div>
+                <h2>Ready to pick your program?</h2>
+                <p>Configure your account and check the rules one last time before payment.</p>
               </div>
-              <a href="#accounts" className={cx(s.btn, s.primary)}>
-                Configure my account
-              </a>
+              <div className={s.readyAction}>
+                <span className={s.readyLine}>
+                  {programme.nom} · {sizeLabel(plan.taille, plan.devise)}
+                  {prixSelection != null && (
+                    <>
+                      {' · '}
+                      {offre && prixRemise != null && plan.prix != null && (
+                        <span className={s.oldInline}>{money(plan.prix, devise)}</span>
+                      )}
+                      {prixSelection}
+                    </>
+                  )}
+                </span>
+                <a href="#accounts" className={cx(s.btn, s.primary)}>
+                  Configure my account
+                </a>
+              </div>
             </div>
           </div>
         </section>
@@ -645,13 +706,19 @@ export default function UniversalFirmPage({
                   </div>
                   <div className={s.similarText}>
                     <div className={s.similarName}>{f.name}</div>
+                    {/* Pas de prix : une firme a abonnement mensuel et une firme a
+                        paiement unique ne se comparent pas sur un « from $X ». On
+                        affiche pourquoi elle est proposee : son code, ou notre lien. */}
                     <div className={s.similarMeta}>
-                      {[
-                        f.rating != null && f.rating > 0 ? `★ ${f.rating.toFixed(1)}` : null,
-                        f.minPrice ? `from $${f.minPrice}` : null,
-                      ]
-                        .filter(Boolean)
-                        .join(' · ')}
+                      {f.rating != null && f.rating > 0 && <span>★ {f.rating.toFixed(1)}</span>}
+                      {f.code ? (
+                        <span className={s.similarCode}>
+                          {f.code}
+                          {f.remise ? ` · −${f.remise}%` : ''}
+                        </span>
+                      ) : (
+                        <span>Partner link</span>
+                      )}
                     </div>
                   </div>
                   <span className={s.chevron} aria-hidden="true">
@@ -662,6 +729,24 @@ export default function UniversalFirmPage({
             </div>
           </div>
         </section>
+      )}
+
+      {/* ===================================================== BARRE MOBILE */}
+      {/* Comme sur la fiche Earn2Trade : sur mobile, la selection, son prix et le
+          bouton restent sous le pouce pendant toute la lecture. */}
+      {programme && plan && (
+        <div className={s.mobileBar}>
+          <div className={s.mobileBarText}>
+            <span className={s.mobileBarLabel}>
+              {programme.nom} · {sizeLabel(plan.taille, plan.devise)}
+            </span>
+            {prixSelection != null && <span className={s.mobileBarPrice}>{prixSelection}</span>}
+          </div>
+          <a href={ctaHref} {...AFFILIATE_LINK_PROPS} className={cx(s.btn, s.primary)}>
+            {offre && offreAppliquee ? 'Claim deal' : 'Continue'}
+            <ExternalLink className={s.icon} aria-hidden="true" />
+          </a>
+        </div>
       )}
     </div>
   )

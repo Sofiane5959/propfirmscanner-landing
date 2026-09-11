@@ -108,10 +108,10 @@ def convertir(chemin):
 
     # --- Programmes, plans, phases ------------------------------------------
     programmes = []
-    for s_, nom_p, marche, type_, statut, accroche in lignes(wb["Programmes"], 6):
+    for s_, nom_p, marche, type_, statut, accroche, resume_p in lignes(wb["Programmes"], 7):
         if (txt(statut) or "active") not in ("active", "promotional"):
             continue
-        programmes.append({"slug": txt(s_), "nom": txt(nom_p) or txt(s_), "accroche": txt(accroche),
+        programmes.append({"slug": txt(s_), "nom": txt(nom_p) or txt(s_), "accroche": txt(accroche), "resume": txt(resume_p),
                            "marche": txt(marche) or "",
                            "type": "instant" if txt(type_) == "instant" else "evaluation", "plans": []})
     par_slug = {p["slug"]: p for p in programmes}
@@ -192,6 +192,7 @@ def convertir(chemin):
         "nom": nom,
         "logoUrl": txt(f.get("logo_url")),
         "marches": liste(f.get("marches")),
+        "resume": txt(f.get("resume")),
         "presentation": txt(f.get("presentation")),
         "anneeCreation": nombre(f.get("annee_creation")),
         "pays": txt(f.get("pays")),

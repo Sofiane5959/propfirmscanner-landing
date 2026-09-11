@@ -1,11 +1,12 @@
 {
   "slug": "futureselite",
   "nom": "FuturesElite",
-  "logoUrl": "https://www.google.com/s2/favicons?domain=futureselite.com&sz=128",
+  "logoUrl": "https://cdn.prod.website-files.com/690a53b4dc85f8bf1d3328d4/690a53b4dc85f8bf1d332987_Webclip.svg",
   "marches": [
     "futures"
   ],
-  "presentation": "FuturesElite sells simulated futures accounts across four programs. Elite and Prime are evaluation routes with a one-time fee and no deadline to pass. Nitro and Instant shorten or remove the evaluation entirely, Instant funding you from purchase with no objective to reach. Elite, Nitro and Prime settle at a 90% profit split; Instant pays 80%. Payouts can be requested daily once an account is funded, subject to each program’s own minimum days.\n\nIt suits futures traders who already have a method and want to choose the rule set that fits it, rather than accept one. Loss limits are dollar amounts rather than percentages, drawdown is calculated at the end of the day on the evaluation programs, and six platforms are selectable at purchase, including Tradovate, NinjaTrader and Quantower.\n\nThe caveat matters more than the pricing. Quantum SRL holds no financial regulator licence, and every account is simulated: performance is hypothetical throughout. The live trading program exists but is a risk-team decision, not an entitlement earned at a fixed number of payouts.",
+  "resume": "FuturesElite sells simulated futures accounts across four programs. Elite, Nitro and Prime settle at a 90% profit split; Instant pays 80%.",
+  "presentation": "It suits futures traders who already have a method and want to choose the rule set that fits it, rather than accept one. Loss limits are dollar amounts rather than percentages, drawdown is calculated at the end of the day on the evaluation programs, and six platforms are selectable at purchase, including Tradovate, NinjaTrader and Quantower.\n\nThe caveat matters more than the pricing. Quantum SRL holds no financial regulator licence, and every account is simulated: performance is hypothetical throughout. The live trading program exists but is a risk-team decision, not an entitlement earned at a fixed number of payouts.",
   "anneeCreation": 2024,
   "pays": "Italy",
   "ceoFondateur": "Christian Habibi",
@@ -25,19 +26,22 @@
     "Quantower",
     "ATAS",
     "WealthCharts",
-    "DeepChart"
+    "DeepChart",
+    "Volumetrica",
+    "DeepCharts"
   ],
   "moyensPaiement": [
     "Credit/Debit Card",
     "Crypto"
   ],
-  "levier": null,
+  "levier": "N/A (futures contracts)",
   "stylesTrading": [],
   "programmes": [
     {
       "slug": "elite",
       "nom": "Elite",
-      "accroche": null,
+      "accroche": "One-step evaluation",
+      "resume": "One-step evaluation, end-of-day drawdown and no daily loss limit.",
       "marche": "futures",
       "type": "evaluation",
       "plans": [
@@ -170,7 +174,8 @@
     {
       "slug": "nitro",
       "nom": "Nitro",
-      "accroche": null,
+      "accroche": "Lowest minimum trading days",
+      "resume": "One-step evaluation with the lowest minimum trading days. Once funded it switches to a trailing-equity drawdown with a buffer.",
       "marche": "futures",
       "type": "evaluation",
       "plans": [
@@ -303,7 +308,8 @@
     {
       "slug": "prime",
       "nom": "Prime",
-      "accroche": null,
+      "accroche": "Up to 10 funded accounts",
+      "resume": "The only programme with a daily loss limit in both phases. It also carries the longest bundle ladder, up to ten accounts.",
       "marche": "futures",
       "type": "evaluation",
       "plans": [
@@ -436,7 +442,8 @@
     {
       "slug": "instant",
       "nom": "Instant",
-      "accroche": null,
+      "accroche": "Live from purchase",
+      "resume": "No evaluation: the account is live from purchase. Payout eligibility still requires 10 trading days and a 20% consistency rule.",
       "marche": "futures",
       "type": "instant",
       "plans": [
