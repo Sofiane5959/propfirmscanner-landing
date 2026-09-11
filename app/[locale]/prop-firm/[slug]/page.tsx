@@ -483,6 +483,14 @@ export default async function PropFirmPage({ params }: Props) {
         <UniversalFirmPage
           sheet={FIRM_SHEETS[firm.slug]}
           ctaHref={buildAffiliateUrl(firm.slug, { placement: 'hero', locale })}
+          similarFirms={similarFirms.map((sf) => ({
+            id: sf.id,
+            name: sf.name,
+            href: localeHref(locale, `/prop-firm/${sf.slug}`),
+            logoUrl: sf.logo_url,
+            rating: sf.trustpilot_rating,
+            minPrice: sf.min_price,
+          }))}
         />
       ) : versionActive ? (
         <FirmPage

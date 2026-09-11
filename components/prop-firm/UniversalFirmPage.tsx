@@ -3,11 +3,13 @@
 // =============================================================================
 // PAGE UNIVERSELLE D'UNE PROP FIRM   components/prop-firm/UniversalFirmPage.tsx
 // =============================================================================
-// Reproduit le gabarit HTML « Universal Prop Firm Page » fourni par Sofiane.
+// Reproduit le gabarit HTML « Universal Prop Firm Page » fourni par Sofiane,
+// complete en fin de page par trois blocs de l'ancienne fiche qu'il a demande
+// de retablir : strengths and things to know, Ready to pick your program?,
+// Similar firms. L'avertissement de risque de l'ancienne fiche n'est pas repris.
 //
-// Le composant recoit UNE chose : la fiche de la firme, data/firms/<slug>.json.
-// Aucune logique propre a une firme. Un champ vide fait disparaitre son
-// emplacement ; rien n'est complete.
+// Le composant recoit la fiche de la firme (data/firms/<slug>.json) et, depuis
+// la route, les firmes similaires. Aucune logique propre a une firme.
 // =============================================================================
 
 import { useState } from 'react'
@@ -15,22 +17,25 @@ import { useState } from 'react'
 import s from './UniversalFirmPage.module.css'
 import {
   type FirmSheet,
+  type SimilarFirm,
   PHASE_LABEL,
   discounted,
+  faqItems,
   firmType,
   isEstimate,
   marketsLabel,
   money,
   offerApplies,
-  offerNotice,
   orderedPhases,
   pct,
   promoSelection,
   ruleRows,
   sizeLabel,
-  withFirmName,
 } from '@/lib/firm-sheet'
 import { AFFILIATE_LINK_PROPS } from '@/lib/affiliate'
+
+/** Affiche a la place d'une information que la fiche ne donne pas encore. */
+const TIRET = '—'
 
 const cx = (...classes: (string | false | null | undefined)[]) => classes.filter(Boolean).join(' ')
 const unique = <T,>(valeurs: T[]): T[] => Array.from(new Set(valeurs))
@@ -63,11 +68,19 @@ interface Selecteur {
   choisir: (key: string) => void
 }
 
-export default function UniversalFirmPage({ sheet, ctaHref }: { sheet: FirmSheet; ctaHref: string }) {
+export default function UniversalFirmPage({
+  sheet,
+  ctaHref,
+  similarFirms = [],
+}: {
+  sheet: FirmSheet
+  ctaHref: string
+  similarFirms?: SimilarFirm[]
+}) {
   const programmes = sheet.programmes.filter((p) => p.plans.length > 0)
   const promo = promoSelection(programmes)
 
-  // La selection de depart est le plan de la carte promo quand il y en a un.
+  // La selection de depart est le plan « MOST POPULAR PLAN » quand il y en a un.
   const [marcheKey, setMarche] = useState(promo?.programme.marche ?? programmes[0]?.marche ?? '')
   const [programmeKey, setProgramme] = useState(promo?.programme.slug ?? '')
   const [varianteKey, setVariante] = useState(promo?.plan.variante ?? '')
@@ -91,30 +104,25 @@ export default function UniversalFirmPage({ sheet, ctaHref }: { sheet: FirmSheet
   const devise = plan?.devise ?? 'USD'
 
   const offre = sheet.offre
-  const nomsProgrammes = Object.fromEntries(programmes.map((p) => [p.slug, p.nom]))
-  const mention = offre ? offerNotice(offre, nomsProgrammes) : null
   const offreAppliquee = Boolean(offre && programme && plan && offerApplies(offre, programme.slug, plan.taille))
+  const prixRemise =
+    offre && offreAppliquee && plan?.prix != null ? discounted(plan.prix, offre.remise) : null
 
-  // --- Carte d'identite -----------------------------------------------------
-  const faits: [string, string][] = (
-    [
-      ['Founded', sheet.anneeCreation != null ? String(sheet.anneeCreation) : null],
-      ['Country', sheet.pays],
-      ['CEO / Founder', sheet.ceoFondateur],
-      ['Firm type', sheet.marches.length > 0 ? firmType(sheet.marches) : null],
-    ] as [string, string | null][]
-  ).filter((f): f is [string, string] => Boolean(f[1]))
+  // --- Carte d'identite : les quatre cases restent, meme vides ---------------
+  const faits: [string, string][] = [
+    ['Founded', sheet.anneeCreation != null ? String(sheet.anneeCreation) : TIRET],
+    ['Country', sheet.pays ?? TIRET],
+    ['CEO / Founder', sheet.ceoFondateur ?? TIRET],
+    ['Firm type', sheet.marches.length > 0 ? firmType(sheet.marches) : TIRET],
+  ]
 
-  // --- Bande ----------------------------------------------------------------
-  const profil = [...(sheet.levier ? [`Leverage ${sheet.levier}`] : []), ...sheet.stylesTrading]
-  const bande = (
-    [
-      ['Tradable assets', sheet.actifs],
-      ['Platforms', sheet.plateformes],
-      ['Payment methods', sheet.moyensPaiement],
-      ['Trading profile', profil],
-    ] as [string, string[]][]
-  ).filter(([, chips]) => chips.length > 0)
+  // --- Bande : les quatre cartes restent, meme vides ---------------------------
+  const bande: [string, string[]][] = [
+    ['Tradable assets', sheet.actifs.length > 0 ? sheet.actifs : [TIRET]],
+    ['Platforms', sheet.plateformes.length > 0 ? sheet.plateformes : [TIRET]],
+    ['Payment methods', sheet.moyensPaiement.length > 0 ? sheet.moyensPaiement : [TIRET]],
+    ['Trading profile', [`Leverage ${sheet.levier ?? TIRET}`, ...sheet.stylesTrading]],
+  ]
 
   // --- Selecteurs : un niveau a un seul choix n'est pas affiche ---------------
   const selecteurs: Selecteur[] = (
@@ -176,13 +184,14 @@ export default function UniversalFirmPage({ sheet, ctaHref }: { sheet: FirmSheet
     ] as [string, string, string | null][]
   ).filter((c): c is [string, string, string] => Boolean(c[2]))
 
-  const faq = sheet.faq.filter((q) => q.reponse)
+  const faq = faqItems(sheet)
+  const { pointsForts, limites } = sheet.verdict
 
   return (
     <div className={s.root}>
       {/* ===================================================== CARTE D'IDENTITE */}
       <section className={s.section}>
-        <div className={cx(s.wrap, s.grid2, !offre && s.single)}>
+        <div className={cx(s.wrap, s.grid2, offre ? s.heroGrid : s.single)}>
           <article className={cx(s.card, s.heroLeft)}>
             <div className={s.identity}>
               <div className={s.logo}>
@@ -201,16 +210,14 @@ export default function UniversalFirmPage({ sheet, ctaHref }: { sheet: FirmSheet
               </div>
             </div>
             {sheet.presentation && <p className={s.lead}>{sheet.presentation}</p>}
-            {faits.length > 0 && (
-              <div className={s.facts}>
-                {faits.map(([label, valeur]) => (
-                  <div key={label} className={s.fact}>
-                    <small>{label}</small>
-                    <strong>{valeur}</strong>
-                  </div>
-                ))}
-              </div>
-            )}
+            <div className={s.facts}>
+              {faits.map(([label, valeur]) => (
+                <div key={label} className={s.fact}>
+                  <small>{label}</small>
+                  <strong>{valeur}</strong>
+                </div>
+              ))}
+            </div>
           </article>
 
           {offre && (
@@ -232,31 +239,28 @@ export default function UniversalFirmPage({ sheet, ctaHref }: { sheet: FirmSheet
               <a href={ctaHref} {...AFFILIATE_LINK_PROPS} className={cx(s.btn, s.primary, s.full)}>
                 Claim deal →
               </a>
-              {mention && <p className={s.fine}>{mention}</p>}
             </aside>
           )}
         </div>
       </section>
 
       {/* ================================================================ BANDE */}
-      {bande.length > 0 && (
-        <section className={cx(s.section, s.sectionTight)}>
-          <div className={cx(s.wrap, s.strip)}>
-            {bande.map(([label, chips]) => (
-              <div key={label} className={s.card}>
-                <span className={s.label}>{label}</span>
-                <div className={s.chips}>
-                  {chips.map((chip) => (
-                    <span key={chip} className={s.chip}>
-                      {chip}
-                    </span>
-                  ))}
-                </div>
+      <section className={cx(s.section, s.sectionTight)}>
+        <div className={cx(s.wrap, s.strip)}>
+          {bande.map(([label, chips]) => (
+            <div key={label} className={s.card}>
+              <span className={s.label}>{label}</span>
+              <div className={s.chips}>
+                {chips.map((chip, i) => (
+                  <span key={`${chip}-${i}`} className={s.chip}>
+                    {chip}
+                  </span>
+                ))}
               </div>
-            ))}
-          </div>
-        </section>
-      )}
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* ===================================================== BUILD YOUR ACCOUNT */}
       {programme && plan && (
@@ -303,11 +307,11 @@ export default function UniversalFirmPage({ sheet, ctaHref }: { sheet: FirmSheet
                 </h2>
                 {plan.prix != null && (
                   <div>
-                    {offre && offreAppliquee ? (
+                    {offre && prixRemise != null ? (
                       <>
                         <span className={s.price}>
                           {isEstimate(offre) ? '≈ ' : ''}
-                          {money(discounted(plan.prix, offre.remise), devise)}
+                          {money(prixRemise, devise)}
                         </span>
                         <span className={s.old}>{money(plan.prix, devise)}</span>
                         <div className={s.saving}>
@@ -337,13 +341,14 @@ export default function UniversalFirmPage({ sheet, ctaHref }: { sheet: FirmSheet
                     <CopyButton code={offre.code} label="Copy" />
                   </div>
                 )}
+                {/* Au moment de choisir, le bouton nomme le benefice quand un
+                    code s'applique — le meme libelle que la carte promo — et
+                    la destination sinon. */}
                 <a href={ctaHref} {...AFFILIATE_LINK_PROPS} className={cx(s.btn, s.primary, s.full)}>
-                  Continue to {sheet.nom} →
+                  {offre && offreAppliquee ? 'Claim deal →' : `Continue to ${sheet.nom} →`}
                 </a>
-                {offre && (
-                  <p className={s.fine}>
-                    {offreAppliquee ? mention : `Code ${offre.code} is not listed for this selection.`}
-                  </p>
+                {offre && !offreAppliquee && (
+                  <p className={s.fine}>Code {offre.code} is not listed for this selection.</p>
                 )}
               </aside>
             </div>
@@ -482,9 +487,117 @@ export default function UniversalFirmPage({ sheet, ctaHref }: { sheet: FirmSheet
             <div className={cx(s.card, s.faq)}>
               {faq.map((q, i) => (
                 <details key={q.question} open={i === 0}>
-                  <summary>{withFirmName(q.question, sheet.nom)}</summary>
-                  <p>{withFirmName(q.reponse, sheet.nom)}</p>
+                  <summary>{q.question}</summary>
+                  <p>{q.reponse}</p>
                 </details>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ======================================= STRENGTHS AND THINGS TO KNOW */}
+      {(pointsForts.length > 0 || limites.length > 0) && (
+        <section className={cx(s.section, s.anchor)} id="strengths">
+          <div className={s.wrap}>
+            <div className={s.head}>
+              <div>
+                <span className={s.eyebrow}>Honest view</span>
+                <h2>{sheet.nom}: strengths and things to know</h2>
+                <p>Our independent analysis, based on verified official rules and documents.</p>
+              </div>
+            </div>
+            <div className={cx(s.prosCons, (pointsForts.length === 0 || limites.length === 0) && s.single)}>
+              {pointsForts.length > 0 && (
+                <article className={cx(s.card, s.pros)}>
+                  <h3>Strengths</h3>
+                  <ul className={s.list}>
+                    {pointsForts.map((point) => (
+                      <li key={point}>{point}</li>
+                    ))}
+                  </ul>
+                </article>
+              )}
+              {limites.length > 0 && (
+                <article className={cx(s.card, s.cons)}>
+                  <h3>Things to know</h3>
+                  <ul className={cx(s.list, s.info)}>
+                    {limites.map((point) => (
+                      <li key={point}>{point}</li>
+                    ))}
+                  </ul>
+                </article>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ========================================== READY TO PICK YOUR PROGRAM? */}
+      {programme && plan && (
+        <section className={s.section}>
+          <div className={s.wrap}>
+            <div className={cx(s.card, s.ready)}>
+              <h2>Ready to pick your program?</h2>
+              <p>Configure your account and check the rules one last time before payment.</p>
+              <div className={s.readyLine}>
+                <span>
+                  {programme.nom} · {sizeLabel(plan.taille, plan.devise)}
+                </span>
+                {plan.prix != null &&
+                  (offre && prixRemise != null ? (
+                    <span>
+                      <span className={s.oldInline}>{money(plan.prix, devise)}</span>
+                      {isEstimate(offre) ? '≈ ' : ''}
+                      {money(prixRemise, devise)}
+                    </span>
+                  ) : (
+                    <span>{money(plan.prix, devise)}</span>
+                  ))}
+              </div>
+              <a href="#accounts" className={cx(s.btn, s.primary)}>
+                Configure my account
+              </a>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ========================================================= SIMILAR FIRMS */}
+      {similarFirms.length > 0 && (
+        <section className={s.section}>
+          <div className={s.wrap}>
+            <div className={s.head}>
+              <div>
+                <h2>Similar firms</h2>
+              </div>
+            </div>
+            <div className={s.similarGrid}>
+              {similarFirms.map((f) => (
+                <a key={f.id} href={f.href} className={cx(s.card, s.similarCard)}>
+                  <div className={s.similarLogo}>
+                    {f.logoUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={f.logoUrl} alt="" />
+                    ) : (
+                      f.name.charAt(0)
+                    )}
+                  </div>
+                  <div className={s.similarText}>
+                    <div className={s.similarName}>{f.name}</div>
+                    <div className={s.similarMeta}>
+                      {[
+                        f.rating != null && f.rating > 0 ? `★ ${f.rating.toFixed(1)}` : null,
+                        f.minPrice ? `from $${f.minPrice}` : null,
+                      ]
+                        .filter(Boolean)
+                        .join(' · ')}
+                    </div>
+                  </div>
+                  <span className={s.chevron} aria-hidden="true">
+                    ›
+                  </span>
+                </a>
               ))}
             </div>
           </div>

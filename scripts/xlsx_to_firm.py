@@ -170,16 +170,17 @@ def convertir(chemin):
 
     c = formulaire(wb["Conditions"])
 
-    verdict = {"texte": None, "pourQui": [], "pasPour": []}
+    verdict = {"texte": None, "pourQui": [], "pasPour": [], "pointsForts": [], "limites": []}
+    listes_verdict = {"pour_qui": "pourQui", "pas_pour": "pasPour", "point_fort": "pointsForts", "limite": "limites"}
     for type_, ordre, texte in sorted(lignes(wb["Verdict"], 3), key=lambda l: (str(l[0]), nombre(l[1]) or 0)):
         if not txt(texte):
             continue
         if type_ == "verdict":
             verdict["texte"] = txt(texte)
-        elif type_ == "pour_qui":
-            verdict["pourQui"].append(txt(texte))
-        elif type_ == "pas_pour":
-            verdict["pasPour"].append(txt(texte))
+        elif type_ in listes_verdict:
+            verdict[listes_verdict[type_]].append(txt(texte))
+        else:
+            avertissements.append(f"Verdict : type « {type_} » inconnu, ligne ignoree.")
 
     faq = [{"question": txt(q), "reponse": txt(r)}
            for _, q, r in sorted(lignes(wb["FAQ"], 3), key=lambda l: nombre(l[0]) or 0)

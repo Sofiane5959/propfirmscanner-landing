@@ -4,8 +4,9 @@
 // La forme de data/firms/<slug>.json, produit par scripts/xlsx_to_firm.py a
 // partir du tableur MODELE-propfirm.xlsx rempli pour une firme.
 //
-// C'est la SEULE source de la page universelle : ce qui n'est pas dans la
-// fiche ne s'affiche pas, et aucune fonction ici ne complete un vide.
+// C'est la SEULE source de la page universelle. Les fonctions ici mettent en
+// forme ce que contient la fiche, ou le recombinent (FAQ) ; aucune n'ajoute
+// une information qui n'y serait pas.
 // =============================================================================
 
 export type PhaseKey = 'evaluation' | 'evaluation_2' | 'funded'
@@ -71,8 +72,26 @@ export interface FirmSheet {
   programmes: SheetProgramme[]
   offre: SheetOffre | null
   conditions: { trading: string | null; commission: string | null; retraits: string | null }
-  verdict: { texte: string | null; pourQui: string[]; pasPour: string[] }
+  verdict: {
+    texte: string | null
+    pourQui: string[]
+    pasPour: string[]
+    /** « Strengths » */
+    pointsForts: string[]
+    /** « Things to know » */
+    limites: string[]
+  }
   faq: { question: string; reponse: string }[]
+}
+
+/** Une firme proposee en fin de page. Construite par la route, depuis la base. */
+export interface SimilarFirm {
+  id: string
+  name: string
+  href: string
+  logoUrl: string | null
+  rating: number | null
+  minPrice: number | null
 }
 
 // -----------------------------------------------------------------------------
@@ -148,28 +167,6 @@ export function offerApplies(offre: SheetOffre, programmeSlug: string, taille: n
     offre.programmesEligibles.length === 0 || offre.programmesEligibles.includes(programmeSlug)
   const tailleOk = offre.taillesEligibles.length === 0 || offre.taillesEligibles.includes(taille)
   return programmeOk && tailleOk
-}
-
-/** La mention sous le code. Elle dit ce qui est etabli, et seulement cela. */
-export function offerNotice(offre: SheetOffre, nomsProgrammes: Record<string, string>): string {
-  const parties: string[] = []
-  parties.push(isEstimate(offre) ? 'Estimated price — verify at checkout.' : 'Discount verified at checkout.')
-
-  if (offre.portee === 'universelle_verifiee') {
-    parties.push('Valid on every account.')
-  } else if (
-    offre.portee === 'restreinte' &&
-    (offre.programmesEligibles.length > 0 || offre.taillesEligibles.length > 0)
-  ) {
-    const programmes = offre.programmesEligibles.map((slug) => nomsProgrammes[slug] ?? slug).join(', ')
-    const tailles = offre.taillesEligibles.map((t) => `${t / 1000}K`).join(', ')
-    parties.push(`Valid on ${[programmes, tailles].filter(Boolean).join(' · ')} only.`)
-  } else {
-    parties.push('Eligibility by programme and account size is not confirmed.')
-  }
-
-  parties.push(offre.expireLe ? `Expires ${offre.expireLe}.` : 'No published expiry.')
-  return parties.join(' ')
 }
 
 export function promoSelection(
@@ -265,4 +262,103 @@ export function ruleRows(phase: SheetPhase, devise: string): RuleRow[] {
     },
   ]
   return lignes.filter((l): l is RuleRow => l.value != null)
+}
+
+// -----------------------------------------------------------------------------
+// FAQ
+// -----------------------------------------------------------------------------
+// Les cinq questions du gabarit HTML. Une reponse saisie dans le tableur est
+// toujours prioritaire. Sans reponse saisie, elle est RECOMPOSEE a partir des
+// autres onglets, comme le gabarit l'indique (« Answer using the selected
+// programme and native currency », « Answer that preserves programme
+// differences »…). Rien n'est ajoute : une question dont les donnees manquent
+// n'est pas affichee.
+export const QUESTIONS_GABARIT = [
+  'Is [Firm] suitable for beginners?',
+  'How much does [Firm] cost?',
+  'What profit split does [Firm] offer?',
+  'How do payouts work?',
+  'Does the promotional code apply to every account?',
+]
+
+function fourchette(valeurs: number[], formater: (n: number) => string): string | null {
+  if (valeurs.length === 0) return null
+  const min = Math.min(...valeurs)
+  const max = Math.max(...valeurs)
+  return min === max ? formater(min) : `${formater(min)} to ${formater(max)}`
+}
+
+function reponsesRecomposees(sheet: FirmSheet): Record<string, string | null> {
+  const programmes = sheet.programmes.filter((p) => p.plans.length > 0)
+
+  const debutants =
+    programmes.length > 0
+      ? `${sheet.nom} offers ${programmes.length} programme${programmes.length > 1 ? 's' : ''}: ` +
+        `${programmes.map((p) => p.nom).join(', ')}. Their rules and costs differ, so compare them in ` +
+        `“Build your account” and see who we recommend ${sheet.nom} for above.`
+      : null
+
+  const couts = programmes
+    .map((p) => {
+      const devise = p.plans[0]?.devise ?? 'USD'
+      const prix = p.plans.map((pl) => pl.prix).filter((x): x is number => x != null)
+      const f = fourchette(prix, (n) => money(n, devise))
+      return f ? `${p.nom}: ${f}` : null
+    })
+    .filter((x): x is string => x != null)
+
+  const partages = programmes
+    .map((p) => {
+      const valeurs = p.plans
+        .flatMap((pl) => pl.phases)
+        .filter((ph) => ph.phase === 'funded' && ph.partage != null)
+        .map((ph) => ph.partage as number)
+      const f = fourchette(valeurs, pct)
+      return f ? `${p.nom}: ${f}` : null
+    })
+    .filter((x): x is string => x != null)
+
+  const o = sheet.offre
+  let promo: string | null = null
+  if (o) {
+    if (o.portee === 'universelle_verifiee') {
+      promo = `Yes. Code ${o.code} gives ${pct(o.remise)} off every account.`
+    } else if (o.portee === 'restreinte' && (o.programmesEligibles.length > 0 || o.taillesEligibles.length > 0)) {
+      const noms = o.programmesEligibles
+        .map((slug) => programmes.find((p) => p.slug === slug)?.nom ?? slug)
+        .join(', ')
+      const tailles = o.taillesEligibles.map((t) => `${t / 1000}K`).join(', ')
+      promo = `No. Code ${o.code} gives ${pct(o.remise)} off ${[noms, tailles].filter(Boolean).join(' · ')} only.`
+    } else {
+      promo =
+        `Code ${o.code} gives ${pct(o.remise)} off. Its eligibility on each programme and account size is not ` +
+        `confirmed, so check the total at checkout before paying.`
+    }
+  }
+
+  return {
+    [QUESTIONS_GABARIT[0]]: debutants,
+    [QUESTIONS_GABARIT[1]]: couts.length > 0 ? `Before any discount — ${couts.join('; ')}.` : null,
+    [QUESTIONS_GABARIT[2]]: partages.length > 0 ? `Once funded — ${partages.join('; ')}.` : null,
+    [QUESTIONS_GABARIT[3]]: sheet.conditions.retraits,
+    [QUESTIONS_GABARIT[4]]: promo,
+  }
+}
+
+export function faqItems(sheet: FirmSheet): { question: string; reponse: string }[] {
+  const recomposees = reponsesRecomposees(sheet)
+  const saisies = new Map(sheet.faq.map((q) => [q.question, q.reponse]))
+  const items: { question: string; reponse: string }[] = []
+
+  for (const question of QUESTIONS_GABARIT) {
+    const reponse = saisies.get(question) || recomposees[question]
+    if (reponse) items.push({ question: withFirmName(question, sheet.nom), reponse: withFirmName(reponse, sheet.nom) })
+  }
+  // Les questions ajoutees dans le tableur, apres celles du gabarit.
+  for (const q of sheet.faq) {
+    if (!QUESTIONS_GABARIT.includes(q.question) && q.reponse) {
+      items.push({ question: withFirmName(q.question, sheet.nom), reponse: withFirmName(q.reponse, sheet.nom) })
+    }
+  }
+  return items
 }

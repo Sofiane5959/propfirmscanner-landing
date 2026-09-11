@@ -97,7 +97,7 @@
           "variante": null,
           "devise": "USD",
           "prix": 293,
-          "cartePromo": false,
+          "cartePromo": true,
           "phases": [
             {
               "phase": "evaluation",
@@ -185,7 +185,7 @@
               "objectifProfit": null,
               "perteMax": 1000,
               "typePerteMax": "Trailing Equity",
-              "perteJour": null,
+              "perteJour": "aucune",
               "joursMin": 1,
               "regularite": "aucune",
               "maxContrats": 2,
@@ -216,7 +216,7 @@
               "objectifProfit": null,
               "perteMax": 2000,
               "typePerteMax": "Trailing Equity",
-              "perteJour": null,
+              "perteJour": "aucune",
               "joursMin": 1,
               "regularite": "aucune",
               "maxContrats": 5,
@@ -247,7 +247,7 @@
               "objectifProfit": null,
               "perteMax": 3000,
               "typePerteMax": "Trailing Equity",
-              "perteJour": null,
+              "perteJour": "aucune",
               "joursMin": 1,
               "regularite": "aucune",
               "maxContrats": 8,
@@ -278,7 +278,7 @@
               "objectifProfit": null,
               "perteMax": 4500,
               "typePerteMax": "Trailing Equity",
-              "perteJour": null,
+              "perteJour": "aucune",
               "joursMin": 1,
               "regularite": "aucune",
               "maxContrats": 10,
@@ -438,7 +438,7 @@
               "objectifProfit": null,
               "perteMax": 1800,
               "typePerteMax": "End of Day",
-              "perteJour": null,
+              "perteJour": "aucune",
               "joursMin": 10,
               "regularite": 0.2,
               "maxContrats": 4,
@@ -458,7 +458,7 @@
               "objectifProfit": null,
               "perteMax": 3000,
               "typePerteMax": "End of Day",
-              "perteJour": null,
+              "perteJour": "aucune",
               "joursMin": 10,
               "regularite": 0.2,
               "maxContrats": 8,
@@ -478,7 +478,7 @@
               "objectifProfit": null,
               "perteMax": 4500,
               "typePerteMax": "End of Day",
-              "perteJour": null,
+              "perteJour": "aucune",
               "joursMin": 10,
               "regularite": 0.2,
               "maxContrats": 12,
@@ -517,6 +517,21 @@
       "You run fully automated systems: AI and bots are prohibited.",
       "You want to withdraw a whole balance at once: each request is capped by account size.",
       "You need a guaranteed route to live trading: it is a risk-team decision, not an entitlement."
+    ],
+    "pointsForts": [
+      "90% profit split on Elite, Nitro and Prime; 80% on Instant",
+      "Drawdown type differs by program and phase — see the rules table",
+      "No daily loss limit on Elite, Nitro and Instant — Prime has one in both phases",
+      "No funded consistency rule on Elite and Nitro",
+      "No activation fee to unlock the funded account",
+      "Payouts available every day once funded",
+      "Bundle discounts: the fifth account is free"
+    ],
+    "limites": [
+      "No financial regulator licence",
+      "Demo accounts, hypothetical performance",
+      "Minimum days differ by program; Elite needs 6 profitable days above a size-based threshold before a payout",
+      "Per-request payout cap, from $1,000 to $3,000 by account size"
     ]
   },
   "faq": []
