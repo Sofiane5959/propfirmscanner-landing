@@ -59,6 +59,26 @@ export interface SheetOffre {
   expireLe: string | null
 }
 
+/** Une etape de « From evaluation to your first payout ». */
+export interface SheetEtape {
+  etape: 'evaluation' | 'funded' | 'payout'
+  titre: string
+  texte: string
+}
+
+/** Une ligne de « What you will actually pay ». Le montant est un texte : « $95 – $569 », « None ». */
+export interface SheetCout {
+  libelle: string
+  montant: string | null
+  note: string | null
+}
+
+export const ETAPE_LABEL: Record<SheetEtape['etape'], string> = {
+  evaluation: 'Evaluation',
+  funded: 'Funded',
+  payout: 'Payout',
+}
+
 export interface FirmSheet {
   slug: string
   nom: string
@@ -78,6 +98,9 @@ export interface FirmSheet {
   stylesTrading: string[]
   programmes: SheetProgramme[]
   offre: SheetOffre | null
+  /** Onglets facultatifs : vides, leurs sections n'existent pas. */
+  parcours: SheetEtape[]
+  couts: SheetCout[]
   conditions: { trading: string | null; commission: string | null; retraits: string | null }
   verdict: {
     texte: string | null

@@ -53,6 +53,10 @@
 .logo { width: 72px; height: 72px; border-radius: 16px; display: grid; place-items: center; background: #fff; color: #172033; font-weight: 900; font-size: 28px; overflow: hidden; flex: none; text-decoration: none; transition: box-shadow 0.15s ease, transform 0.15s ease; }
 .logo:hover { box-shadow: 0 0 0 3px rgba(255, 122, 0, 0.5); transform: translateY(-1px); }
 .logo img { width: 100%; height: 100%; object-fit: contain; }
+.identityTop { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 8px; }
+.badge { border: 1px solid var(--line); background: rgba(255, 255, 255, 0.04); color: var(--muted); border-radius: 99px; padding: 3px 10px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+.rating { color: var(--brand2); font-weight: 800; font-size: 13px; }
+.ratingExt { color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; font-size: 11px; }
 .h1 { font-size: clamp(30px, 4.4vw, 42px); line-height: 1.08; margin: 0; text-wrap: balance; }
 .lead { color: #c5cfde; font-size: 16px; max-width: 700px; margin: 8px 0 0; }
 
@@ -134,12 +138,30 @@
 .compareTitle { font-size: 20px; }
 .compareIntro { color: var(--muted); margin: 2px 0 10px; font-size: 14px; }
 .compareGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
-.compareCard { border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; background: rgba(13, 23, 40, 0.75); display: flex; flex-direction: column; gap: 4px; }
-.compareActive { border-color: var(--brand); background: rgba(255, 122, 0, 0.07); }
+.compareCard { text-align: left; color: var(--text); cursor: pointer; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; background: rgba(13, 23, 40, 0.75); display: flex; flex-direction: column; gap: 4px; transition: border-color 0.15s ease, background 0.15s ease; }
+.compareCard:hover { border-color: #3d4d6a; }
+.compareCard:focus-visible { outline: 2px solid var(--brand2); outline-offset: 2px; }
+.compareActive, .compareActive:hover { border-color: var(--brand); background: rgba(255, 122, 0, 0.07); }
 .compareBadge { font-size: 12px; font-weight: 800; color: var(--brand2); text-transform: uppercase; letter-spacing: 0.06em; }
 .compareCard h4 { font-size: 18px; }
 .compareCard p { color: var(--muted); font-size: 14px; margin: 0; }
-.picked { margin-top: auto; padding-top: 6px; color: var(--green); font-weight: 800; font-size: 13px; }
+.picked { margin-top: auto; padding-top: 6px; color: var(--muted); font-weight: 800; font-size: 13px; }
+.compareActive .picked { color: var(--green); }
+
+/* ------------------------------------------------------------- parcours --- */
+.journey { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin: 0; padding: 0; }
+.journeyStep { position: relative; padding-top: 22px; }
+.journeyNum { position: absolute; top: -14px; left: 20px; width: 30px; height: 30px; border-radius: 50%; background: var(--brand); color: #fff; font-weight: 900; display: grid; place-items: center; }
+.journeyStep h3 { font-size: 18px; margin: 4px 0 6px; }
+.journeyStep p { color: var(--muted); margin: 0; }
+
+/* ------------------------------------------------- full specifications --- */
+.specs { padding: 0; }
+.specs summary { cursor: pointer; padding: 18px 20px; font-size: 19px; font-weight: 800; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; }
+.specs summary .label { display: inline; font-weight: 500; }
+.specsBody { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; padding: 0 20px 20px; }
+.spec h3 { font-size: 17px; margin: 8px 0 6px; }
+.spec p { color: var(--muted); margin: 0; }
 
 /* ------------------------------------------------------ rules by phase --- */
 .tabs { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }

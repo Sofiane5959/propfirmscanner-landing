@@ -27,6 +27,7 @@ import {
   PHASE_LABEL,
   assetsLabel,
   discounted,
+  ETAPE_LABEL,
   faqItems,
   firmType,
   isEstimate,
@@ -83,11 +84,14 @@ export default function UniversalFirmPage({
   sheet,
   ctaHref,
   logoHref,
+  rating = null,
   similarFirms = [],
 }: {
   sheet: FirmSheet
   ctaHref: string
   logoHref: string
+  /** Note Trustpilot, depuis la base. Pas dans la fiche : elle bouge sans la firme. */
+  rating?: number | null
   similarFirms?: SimilarFirm[]
 }) {
   const programmes = sheet.programmes.filter((p) => p.plans.length > 0)
@@ -130,11 +134,11 @@ export default function UniversalFirmPage({
   const intro = sheet.resume ?? paragraphesPresentation[0] ?? null
   const paragraphesAbout = sheet.resume ? paragraphesPresentation : paragraphesPresentation.slice(1)
 
+  // Trois reperes, pas plus : le type de firme est passe dans le badge du titre.
   const faits: [string, string][] = [
     ['Founded', sheet.anneeCreation != null ? String(sheet.anneeCreation) : TIRET],
     ['Country', sheet.pays ?? TIRET],
     ['CEO / Founder', sheet.ceoFondateur ?? TIRET],
-    ['Firm type', sheet.marches.length > 0 ? firmType(sheet.marches) : TIRET],
   ]
 
   // --- Bande : les quatre cartes restent, meme vides ---------------------------
@@ -271,6 +275,18 @@ export default function UniversalFirmPage({
                 )}
               </a>
               <div className={s.identityText}>
+                <div className={s.identityTop}>
+                  {sheet.marches.length > 0 && (
+                    <span className={s.badge}>{firmType(sheet.marches)} prop firm</span>
+                  )}
+                  {/* La note vient de Trustpilot, pas de nous : elle est datee de
+                      leur cote et le dire evite de la faire passer pour la notre. */}
+                  {rating != null && rating > 0 && (
+                    <span className={s.rating}>
+                      ★ {rating.toFixed(1)} Trustpilot <span className={s.ratingExt}>external</span>
+                    </span>
+                  )}
+                </div>
                 <h1 className={s.h1}>{sheet.nom}</h1>
                 {intro && <p className={s.lead}>{intro}</p>}
               </div>
@@ -439,18 +455,28 @@ export default function UniversalFirmPage({
               <div className={s.compare}>
                 <h3 className={s.compareTitle}>Which program fits you?</h3>
                 <p className={s.compareIntro}>
-                  A comparison, not a second decision — the configurator above already has your choice.
+                  A comparison, not a second decision — choosing here updates the configurator above.
                 </p>
                 <div className={s.compareGrid}>
                   {programmesVisibles.map((p) => {
                     const actif = p.slug === programme.slug
+                    // La carte pilote le configurateur : on ne choisit jamais deux fois.
                     return (
-                      <article key={p.slug} className={cx(s.compareCard, actif && s.compareActive)}>
+                      <button
+                        key={p.slug}
+                        type="button"
+                        aria-pressed={actif}
+                        onClick={() => {
+                          setMarche(p.marche)
+                          setProgramme(p.slug)
+                        }}
+                        className={cx(s.compareCard, actif && s.compareActive)}
+                      >
                         <span className={s.compareBadge}>{programmeTagline(p)}</span>
                         <h4>{p.nom}</h4>
                         {p.resume && <p>{p.resume}</p>}
-                        {actif && <span className={s.picked}>✓ Selected</span>}
-                      </article>
+                        <span className={s.picked}>{actif ? '✓ Selected' : 'Choose this program'}</span>
+                      </button>
                     )
                   })}
                 </div>
@@ -514,24 +540,60 @@ export default function UniversalFirmPage({
         </section>
       )}
 
-      {/* ============================================ TRADING AND PAYOUT CONDITIONS */}
-      {conditions.length > 0 && (
+      {/* =============================================================== PARCOURS */}
+      {sheet.parcours.length > 0 && (
         <section className={s.section}>
           <div className={s.wrap}>
             <div className={s.head}>
               <div>
-                <span className={s.eyebrow}>More details</span>
-                <h2>Trading and payout conditions</h2>
+                <span className={s.eyebrow}>How it works</span>
+                <h2>From evaluation to your first payout</h2>
               </div>
             </div>
-            <div className={s.rulesGrid}>
-              {conditions.map(([pastille, titre, texte]) => (
-                <article key={pastille} className={cx(s.card, s.rule)}>
-                  <span className={s.pill}>{pastille}</span>
-                  <h3>{titre}</h3>
-                  <p>{texte}</p>
-                </article>
+            <ol className={s.journey}>
+              {sheet.parcours.map((etape, i) => (
+                <li key={etape.titre} className={cx(s.card, s.journeyStep)}>
+                  <span className={s.journeyNum}>{i + 1}</span>
+                  <span className={s.label}>{ETAPE_LABEL[etape.etape]}</span>
+                  <h3>{etape.titre}</h3>
+                  <p>{etape.texte}</p>
+                </li>
               ))}
+            </ol>
+          </div>
+        </section>
+      )}
+
+      {/* ================================================================= COUTS */}
+      {sheet.couts.length > 0 && (
+        <section className={s.section}>
+          <div className={s.wrap}>
+            <div className={s.head}>
+              <div>
+                <span className={s.eyebrow}>Costs</span>
+                <h2>What you will actually pay</h2>
+                <p>Every fee tied to one account, in the order you meet it.</p>
+              </div>
+            </div>
+            <div className={s.card}>
+              <table className={s.table}>
+                <thead>
+                  <tr>
+                    <th>Fee</th>
+                    <th>Amount</th>
+                    <th>When it applies</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sheet.couts.map((cout) => (
+                    <tr key={cout.libelle}>
+                      <td data-label="Fee">{cout.libelle}</td>
+                      <td data-label="Amount">{cout.montant ?? TIRET}</td>
+                      <td data-label="When it applies">{cout.note ?? ''}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         </section>
@@ -627,6 +689,30 @@ export default function UniversalFirmPage({
                 </article>
               )}
             </div>
+          </div>
+        </section>
+      )}
+
+      {/* ================================================== FULL SPECIFICATIONS */}
+      {/* Repliee : le detail existe pour qui le cherche, sans allonger la page. */}
+      {conditions.length > 0 && (
+        <section className={s.section}>
+          <div className={s.wrap}>
+            <details className={cx(s.card, s.specs)}>
+              <summary>
+                Full specifications
+                <span className={s.label}>Trading rules, commissions and payout policy</span>
+              </summary>
+              <div className={s.specsBody}>
+                {conditions.map(([pastille, titre, texte]) => (
+                  <div key={pastille} className={s.spec}>
+                    <span className={s.pill}>{pastille}</span>
+                    <h3>{titre}</h3>
+                    <p>{texte}</p>
+                  </div>
+                ))}
+              </div>
+            </details>
           </div>
         </section>
       )}

@@ -527,6 +527,7 @@ export default async function PropFirmPage({ params }: Props) {
           sheet={FIRM_SHEETS[firm.slug]}
           ctaHref={buildAffiliateUrl(firm.slug, { placement: 'hero', locale })}
           logoHref={buildAffiliateUrl(firm.slug, { placement: 'logo', locale })}
+          rating={firm.trustpilot_rating ?? null}
           similarFirms={similarFirms.map((sf) => ({
             id: sf.id,
             name: sf.name,

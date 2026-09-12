@@ -18,7 +18,7 @@ import os
 import re
 import sys
 
-from openpyxl import load_workbook
+from openpyxl import Workbook, load_workbook
 
 RACINE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOSSIER = os.path.join(RACINE, "data", "firms")
@@ -96,6 +96,11 @@ def lignes(ws, nb_colonnes):
 
 
 PHASES = {"evaluation": "evaluation", "evaluation_2": "evaluation_2", "funded": "funded", "sim_funded": "funded"}
+
+
+def feuille(wb, nom):
+    """L'onglet, ou un onglet vide s'il n'existe pas dans ce tableur."""
+    return wb[nom] if nom in wb.sheetnames else Workbook().active
 
 
 def convertir(chemin):
@@ -183,6 +188,23 @@ def convertir(chemin):
         else:
             avertissements.append(f"Verdict : type « {type_} » inconnu, ligne ignoree.")
 
+    # --- Parcours et couts ----------------------------------------------------
+    # Onglets facultatifs : une firme dont ils sont vides n'affiche simplement
+    # pas les sections correspondantes.
+    etapes_connues = ("evaluation", "funded", "payout")
+    parcours = []
+    for ordre, etape, titre, texte in sorted(lignes(feuille(wb, "Parcours"), 4), key=lambda l: nombre(l[0]) or 0):
+        if not (txt(titre) and txt(texte)):
+            continue
+        if txt(etape) not in etapes_connues:
+            avertissements.append(f"Parcours : etape « {txt(etape)} » inconnue, ligne ignoree.")
+            continue
+        parcours.append({"etape": txt(etape), "titre": txt(titre), "texte": txt(texte)})
+
+    couts = [{"libelle": txt(libelle), "montant": txt(montant), "note": txt(note)}
+             for _, libelle, montant, note in sorted(lignes(feuille(wb, "Couts"), 4), key=lambda l: nombre(l[0]) or 0)
+             if txt(libelle)]
+
     faq = [{"question": txt(q), "reponse": txt(r)}
            for _, q, r in sorted(lignes(wb["FAQ"], 3), key=lambda l: nombre(l[0]) or 0)
            if txt(q) and txt(r)]
@@ -206,6 +228,8 @@ def convertir(chemin):
         "offre": offre,
         "conditions": {"trading": txt(c.get("trading")), "commission": txt(c.get("commission")),
                        "retraits": txt(c.get("retraits"))},
+        "parcours": parcours,
+        "couts": couts,
         "verdict": verdict,
         "faq": faq,
     }

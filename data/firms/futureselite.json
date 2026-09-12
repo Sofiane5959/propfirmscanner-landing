@@ -524,6 +524,50 @@
     "commission": "Commissions and exchange fees are charged per instrument on each executed trade.",
     "retraits": "Payout requests are reviewed in under 24 hours on average. Provider: Rise. KYC via Veriff: buyer, KYC holder and account operator must be the same person. Elite 25K funded: 90% split, $1,000 cap per request, $500 minimum."
   },
+  "parcours": [
+    {
+      "etape": "evaluation",
+      "titre": "Pass the evaluation",
+      "texte": "One phase on Elite, Nitro and Prime: reach the profit objective without breaching the maximum loss. There is no deadline to pass. Minimum trading days differ by programme, and Instant has no evaluation at all."
+    },
+    {
+      "etape": "funded",
+      "titre": "Get the funded account",
+      "texte": "The simulated funded account opens with no activation fee. Drawdown type and contract scaling change with the programme, so the rules table above is the one that applies."
+    },
+    {
+      "etape": "payout",
+      "titre": "Request your first payout",
+      "texte": "Requests can be made every day and are reviewed in under 24 hours on average, then paid through Rise once KYC is done with Veriff. Each request is capped by account size, and minimum trading days apply first."
+    }
+  ],
+  "couts": [
+    {
+      "libelle": "Account purchase",
+      "montant": "$95 – $569",
+      "note": "One-time fee per account, no monthly subscription. The price depends on the programme and the account size."
+    },
+    {
+      "libelle": "Reset after a breach",
+      "montant": "$79 – $229",
+      "note": "Optional, on the evaluation programmes only. Buying a new account instead is always possible."
+    },
+    {
+      "libelle": "Funded account activation",
+      "montant": "None",
+      "note": "No activation fee once the evaluation is passed."
+    },
+    {
+      "libelle": "Trading costs",
+      "montant": "Per contract",
+      "note": "Commissions and exchange fees are charged per instrument on each executed trade."
+    },
+    {
+      "libelle": "First payout",
+      "montant": "$500 minimum on Elite",
+      "note": "Requests are capped from $1,000 to $3,500 by account size. Elite asks for 6 trading days first."
+    }
+  ],
   "verdict": {
     "texte": "FuturesElite bets on generous terms once you are funded: up to a 90% split, daily payouts, and no funded consistency rule on Elite and Nitro. In exchange, the firm is young and is a proprietary trading company rather than a regulated broker.",
     "pourQui": [
