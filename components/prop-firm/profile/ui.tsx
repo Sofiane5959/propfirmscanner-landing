@@ -50,7 +50,7 @@ export function Section({
   labelledBy?: string
 }) {
   return (
-    <section id={id} aria-labelledby={labelledBy} className={cx('py-7 sm:py-9', id && 'scroll-mt-24', className)}>
+    <section id={id} aria-labelledby={labelledBy} className={cx('py-7 sm:py-9', id && 'scroll-mt-36', className)}>
       <Container>{children}</Container>
     </section>
   )

@@ -35,7 +35,8 @@
 .section { padding: 18px 0; }
 .sectionFirst { padding: 20px 0 12px; }
 .sectionTight { padding: 0 0 6px; }
-.anchor { scroll-margin-top: 80px; }
+/* Menu (64px) + bandeau des offres (53px). */
+.anchor { scroll-margin-top: 136px; }
 .single { grid-template-columns: minmax(0, 1fr) !important; }
 
 .card { background: linear-gradient(145deg, var(--panel), #0a1424); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
@@ -119,7 +120,7 @@
 .choiceActive .choiceName { color: var(--brand2); }
 .choiceDetail { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
 
-.selection { position: sticky; top: 88px; background: linear-gradient(145deg, var(--panel), #0a1424); border: 1px solid rgba(255, 122, 0, 0.45); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+.selection { position: sticky; top: 136px; background: linear-gradient(145deg, var(--panel), #0a1424); border: 1px solid rgba(255, 122, 0, 0.45); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
 .selectionTitle { font-size: 22px; line-height: 1.2; margin: 4px 0 0 !important; }
 .selectionPrice { margin: 10px 0 2px; }
 .price { font-size: 42px; font-weight: 950; line-height: 1.1; font-variant-numeric: tabular-nums; }

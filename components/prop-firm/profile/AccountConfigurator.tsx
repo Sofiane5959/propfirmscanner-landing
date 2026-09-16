@@ -170,7 +170,7 @@ export function AccountConfigurator({
           ))}
         </div>
 
-        <aside data-check="selection" aria-live="polite" className={cx(CARD, 'p-5 lg:sticky lg:top-24')}>
+        <aside data-check="selection" aria-live="polite" className={cx(CARD, 'p-5 lg:sticky lg:top-36')}>
           <p className={EYEBROW}>{COPY.configurator.selection}</p>
           <h3 className="mt-1 font-display text-xl font-bold">
             {programme.nom} {sizeLabel(plan.taille, plan.devise)}

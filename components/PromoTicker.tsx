@@ -160,15 +160,13 @@ const DealPill = ({ deal }: { deal: PromoDeal }) => {
 // MAIN PROMO TICKER
 // =====================================================
 export default function PromoTicker({ deals: initialDeals = [] }: PromoTickerProps) {
-  // Le bandeau ne s'affiche pas sur une fiche firme : il y proposait le code
-  // promo d'une AUTRE firme, avec son propre bouton, juste au-dessus de
-  // l'offre de la firme qu'on est en train de lire. Deux offres concurrentes
-  // a trois centimetres l'une de l'autre.
-  //
-  // Le filtre porte sur la route, pas sur une firme : toutes les fiches sont
-  // concernees, et le bandeau reste sur le reste du site.
+  // Sur une fiche firme, le bandeau reste mais sans la firme de la page : son
+  // offre est deja dans la fiche, la repeter juste au-dessus ferait doublon.
+  // (Du 8 au 16 septembre 2026 il etait masque sur toutes les fiches ; Sofiane
+  // a demande son retour.) Le filtre lit le slug de la route, jamais une firme
+  // ecrite en dur.
   const chemin = usePathname()
-  const surUneFicheFirme = /\/prop-firm\//.test(chemin ?? '')
+  const ficheCourante = chemin?.match(/\/prop-firm\/([^/?#]+)/)?.[1] ?? null
 
   const [deals, setDeals] = useState<PromoDeal[]>(initialDeals)
   const [isLoading, setIsLoading] = useState(initialDeals.length === 0)
@@ -278,12 +276,12 @@ export default function PromoTicker({ deals: initialDeals = [] }: PromoTickerPro
   
   // Hide ticker while loading or if no deals
   // Apres tous les hooks : React exige qu'ils soient appeles sans condition.
-  if (surUneFicheFirme) return null
   if (isLoading) return null
-  if (!deals || deals.length === 0) return null
-  
+  const visibles = (deals ?? []).filter((d) => d.slug !== ficheCourante)
+  if (visibles.length === 0) return null
+
   // Double the deals for seamless loop
-  const duplicatedDeals = [...deals, ...deals]
+  const duplicatedDeals = [...visibles, ...visibles]
   
   return (
     <div
