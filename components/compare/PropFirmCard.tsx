@@ -90,7 +90,7 @@ const PlatformLogo = ({ platform, size = 'sm' }: { platform: string; size?: 'sm'
 
 // Market/Asset colors
 const marketColors: Record<string, string> = {
-  'Forex': 'bg-accent/20 text-accent border-accent/30',
+  'Forex': 'bg-accent/10 text-accent border-accent/30',
   'Indices': 'bg-blue-500/20 text-blue-400 border-blue-500/30',
   'Metals': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
   'Crypto': 'bg-orange-500/20 text-orange-400 border-orange-500/30',

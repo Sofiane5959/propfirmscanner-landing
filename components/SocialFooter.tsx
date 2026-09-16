@@ -145,7 +145,7 @@ export default function SocialFooter() {
                   >
                     {link.name}
                     {link.badge && (
-                      <span className="px-1.5 py-0.5 bg-accent/20 text-accent text-xs rounded">
+                      <span className="px-1.5 py-0.5 bg-accent/10 text-accent text-xs rounded">
                         {link.badge}
                       </span>
                     )}
@@ -167,7 +167,7 @@ export default function SocialFooter() {
                   >
                     {link.name}
                     {link.badge && (
-                      <span className="px-1.5 py-0.5 bg-accent/20 text-accent text-xs rounded">
+                      <span className="px-1.5 py-0.5 bg-accent/10 text-accent text-xs rounded">
                         {link.badge}
                       </span>
                     )}

@@ -116,7 +116,7 @@ export default function AccountOverview({ account, balanceHistory = [] }: Accoun
               onClick={() => setChartType('balance')}
               className={`px-3 py-1 rounded-lg text-sm transition-colors ${
                 chartType === 'balance'
-                  ? 'bg-accent/20 text-accent'
+                  ? 'bg-accent/10 text-accent'
                   : 'bg-dark-700 text-text-secondary hover:text-white'
               }`}
             >

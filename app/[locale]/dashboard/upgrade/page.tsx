@@ -584,7 +584,7 @@ function UpgradePageInner() {
             {message && (
               <div className={`p-4 rounded-xl ${
                 message.type === 'success'
-                  ? 'bg-accent/20 text-accent border border-accent/30'
+                  ? 'bg-accent/10 text-accent border border-accent/30'
                   : 'bg-red-500/20 text-red-400 border border-red-500/30'
               }`}>
                 {message.text}

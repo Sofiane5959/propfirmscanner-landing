@@ -80,7 +80,7 @@ export function UpdatePnlModal({ account, onClose }: UpdatePnlModalProps) {
               key={amt}
               onClick={() => setPnl((parseFloat(pnl) || 0 + amt).toString())}
               className={`flex-1 py-2 text-sm rounded-lg transition-colors ${
-                amt < 0 ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30' : 'bg-accent/20 text-accent hover:bg-accent/30'
+                amt < 0 ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30' : 'bg-accent/10 text-accent hover:bg-accent/30'
               }`}
             >
               {amt > 0 ? '+' : ''}${Math.abs(amt)}

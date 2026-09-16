@@ -85,7 +85,7 @@ export function AddToAccountsButton({
     return (
       <button
         disabled
-        className={`flex items-center justify-center gap-2 px-4 py-2 bg-accent/20 text-accent font-medium rounded-lg ${className}`}
+        className={`flex items-center justify-center gap-2 px-4 py-2 bg-accent/10 text-accent font-medium rounded-lg ${className}`}
       >
         <Check className="w-4 h-4" />
         Added!

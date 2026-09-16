@@ -892,7 +892,7 @@ const TrustBadge = ({ status }: { status: string }) => {
 }
 
 const FilterChip = ({ label, onRemove }: { label: string; onRemove: () => void }) => (
-  <span className="inline-flex items-center gap-1 px-2 py-1 bg-accent/20 text-accent text-xs rounded-lg border border-accent/30">
+  <span className="inline-flex items-center gap-1 px-2 py-1 bg-accent/10 text-accent text-xs rounded-lg border border-accent/30">
     {label}
     <button onClick={onRemove} className="hover:text-white" aria-label={`Remove ${label} filter`}><X className="w-3 h-3" /></button>
   </span>
@@ -1358,7 +1358,7 @@ const PropFirmCard = ({
             <div className="flex items-center gap-2">
               <Link href={`/prop-firm/${firm.slug}`} className="font-semibold text-white hover:text-accent truncate text-sm flex-1 min-w-0 transition-colors">{firm.name}</Link>
               {isTopPick && (
-                <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-accent/15 text-accent border border-accent/30 text-[9px] font-semibold tracking-wider uppercase flex-shrink-0">
+                <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-accent/10 text-accent border border-accent/30 text-[9px] font-semibold tracking-wider uppercase flex-shrink-0">
                   <Star className="w-2 h-2 fill-emerald-400" />
                   Top
                 </span>
@@ -1401,7 +1401,7 @@ const PropFirmCard = ({
               hasDiscount
                 ? 'bg-accent-hover hover:brightness-110 text-white'
                 : firm.affiliate_url
-                ? 'bg-accent/15 hover:bg-accent/25 text-accent border border-accent/30'
+                ? 'bg-accent/10 hover:bg-accent/25 text-accent border border-accent/30'
                 : 'bg-dark-700 hover:bg-dark-600 text-text-secondary border border-border'
             }`}>
               {hasDiscount ? `Get -${firm.discount_percent}%` : t.visit} <ExternalLink className="w-3 h-3" />
@@ -1433,7 +1433,7 @@ const PropFirmCard = ({
       
       {/* Top Pick badge (editor's choice — priority_tier = 1) */}
       {isTopPick && (
-        <div className="absolute top-3 left-3 z-10 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-accent/15 text-accent border border-accent/30 text-[10px] font-semibold tracking-wider uppercase">
+        <div className="absolute top-3 left-3 z-10 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-accent/10 text-accent border border-accent/30 text-[10px] font-semibold tracking-wider uppercase">
           <Star className="w-2.5 h-2.5 fill-emerald-400" />
           Top Pick
         </div>
@@ -1549,7 +1549,7 @@ const PropFirmCard = ({
             hasDiscount
               ? 'bg-accent-hover hover:brightness-110 text-white'
               : firm.affiliate_url
-              ? 'bg-accent/15 hover:bg-accent/25 text-accent border border-accent/30'
+              ? 'bg-accent/10 hover:bg-accent/25 text-accent border border-accent/30'
               : 'bg-dark-700 hover:bg-dark-600 text-text-secondary border border-border'
           }`}
         >
@@ -2184,15 +2184,15 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
             <div>
               <div className="flex items-center gap-3 mb-1">
                 <h1 className="text-h3 sm:text-h2 text-white font-display">{t.pageTitle}</h1>
-                <span className="px-2 py-0.5 bg-accent/15 text-accent border border-accent/30 text-[11px] font-medium uppercase tracking-wider rounded-md flex items-center gap-1"><BadgeCheck className="w-3 h-3" />Verified</span>
+                <span className="px-2 py-0.5 bg-accent/10 text-accent border border-accent/30 text-[11px] font-medium uppercase tracking-wider rounded-md flex items-center gap-1"><BadgeCheck className="w-3 h-3" />Verified</span>
               </div>
               <p className="text-small text-text-muted">Every prop firm. One place. <span className="text-text-muted">·</span> <span className="text-text-secondary">Last updated: {formatMonthYear(new Date())}</span></p>
             </div>
             <div className="flex items-center gap-2">
-              <button onClick={() => setViewMode('grid')} aria-label="Grid view" aria-pressed={viewMode === 'grid'} className={`p-2 rounded-md border transition-colors ${viewMode === 'grid' ? 'bg-accent/15 text-accent border-accent/30' : 'bg-dark-700 text-text-secondary border-border hover:border-border-hover'}`}>
+              <button onClick={() => setViewMode('grid')} aria-label="Grid view" aria-pressed={viewMode === 'grid'} className={`p-2 rounded-md border transition-colors ${viewMode === 'grid' ? 'bg-accent/10 text-accent border-accent/30' : 'bg-dark-700 text-text-secondary border-border hover:border-border-hover'}`}>
                 <Grid3X3 className="w-4 h-4" />
               </button>
-              <button onClick={() => setViewMode('list')} aria-label="List view" aria-pressed={viewMode === 'list'} className={`p-2 rounded-md border transition-colors ${viewMode === 'list' ? 'bg-accent/15 text-accent border-accent/30' : 'bg-dark-700 text-text-secondary border-border hover:border-border-hover'}`}>
+              <button onClick={() => setViewMode('list')} aria-label="List view" aria-pressed={viewMode === 'list'} className={`p-2 rounded-md border transition-colors ${viewMode === 'list' ? 'bg-accent/10 text-accent border-accent/30' : 'bg-dark-700 text-text-secondary border-border hover:border-border-hover'}`}>
                 <List className="w-4 h-4" />
               </button>
             </div>
@@ -2336,7 +2336,7 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
                     <p className="text-white font-medium text-sm">Not sure which firm to pick?</p>
-                    <span className="px-1.5 py-0.5 bg-accent/15 text-accent text-[10px] font-medium rounded border border-accent/30 uppercase tracking-wider">Free</span>
+                    <span className="px-1.5 py-0.5 bg-accent/10 text-accent text-[10px] font-medium rounded border border-accent/30 uppercase tracking-wider">Free</span>
                   </div>
                   <p className="text-text-secondary text-xs">Discover the prop firm that fits your trading style in under 60 seconds</p>
                 </div>

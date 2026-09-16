@@ -165,27 +165,27 @@ export function FilterSidebar({ onFilterChange, filters }: FilterSidebarProps) {
           <p className="text-sm text-text-secondary mb-2">Active filters:</p>
           <div className="flex flex-wrap gap-2">
             {localFilters.maxPrice && (
-              <span className="px-2 py-1 bg-accent/20 text-accent text-xs rounded-full">
+              <span className="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">
                 Under ${localFilters.maxPrice}
               </span>
             )}
             {localFilters.challengeType && (
-              <span className="px-2 py-1 bg-accent/20 text-accent text-xs rounded-full">
+              <span className="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">
                 {localFilters.challengeType}
               </span>
             )}
             {localFilters.tradingStyle && (
-              <span className="px-2 py-1 bg-accent/20 text-accent text-xs rounded-full">
+              <span className="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">
                 {localFilters.tradingStyle}
               </span>
             )}
             {localFilters.platform && (
-              <span className="px-2 py-1 bg-accent/20 text-accent text-xs rounded-full">
+              <span className="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">
                 {localFilters.platform}
               </span>
             )}
             {localFilters.minProfitSplit && (
-              <span className="px-2 py-1 bg-accent/20 text-accent text-xs rounded-full">
+              <span className="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">
                 {localFilters.minProfitSplit}%+ split
               </span>
             )}

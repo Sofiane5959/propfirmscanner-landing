@@ -606,7 +606,7 @@ function FirmCard({ firm, score, isWinner, rank }: { firm: PropFirm; score: numb
 
       <div className="flex flex-wrap gap-1 mb-4">
         {firm.allows_scalping && (
-          <span className="px-2 py-0.5 bg-accent/20 text-accent text-[10px] rounded-full">Scalping</span>
+          <span className="px-2 py-0.5 bg-accent/10 text-accent text-[10px] rounded-full">Scalping</span>
         )}
         {firm.allows_news_trading && (
           <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 text-[10px] rounded-full">News</span>

@@ -172,7 +172,7 @@ export default function MyPropFirmPage() {
                     <Icon className="w-5 h-5 text-accent" />
                   </div>
                   {feature.badge && (
-                    <span className="px-2 py-0.5 bg-accent/20 text-accent text-xs font-medium rounded-full">
+                    <span className="px-2 py-0.5 bg-accent/10 text-accent text-xs font-medium rounded-full">
                       {feature.badge}
                     </span>
                   )}

@@ -179,7 +179,7 @@ export default async function CategoryPage({ params }: Props) {
             <p className="text-xl text-text-secondary max-w-3xl">
               {category.description}
             </p>
-            <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-accent/20 rounded-full text-accent">
+            <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-accent/10 rounded-full text-accent">
               <span className="font-semibold">{firms.length}</span> firms match this criteria
             </div>
           </div>

@@ -432,7 +432,7 @@ export default function QuizClient() {
                     <div className="flex items-center justify-between mb-4">
                       <span className="text-xs font-medium text-text-muted">{badges[i]}</span>
                       {i === 0 && (
-                        <span className="px-2 py-0.5 bg-accent/20 text-accent text-[10px] font-bold rounded-full uppercase tracking-wide">
+                        <span className="px-2 py-0.5 bg-accent/10 text-accent text-[10px] font-bold rounded-full uppercase tracking-wide">
                           Top Pick
                         </span>
                       )}

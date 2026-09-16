@@ -127,7 +127,7 @@ export function CompareFiltersPanel({ filters, onChange, resultCount }: CompareF
             <Filter className="w-5 h-5 text-accent" />
             <span className="font-semibold text-white">Filters</span>
             {activeFilterCount > 0 && (
-              <span className="px-2 py-0.5 bg-accent/20 text-accent text-xs rounded-full">
+              <span className="px-2 py-0.5 bg-accent/10 text-accent text-xs rounded-full">
                 {activeFilterCount} active
               </span>
             )}
@@ -451,7 +451,7 @@ function TriStateToggle({ label, icon: Icon, value, onChange }: TriStateTogglePr
       </div>
       <span className={`px-2 py-0.5 rounded text-xs font-medium ${
         value === true
-          ? 'bg-accent/20 text-accent'
+          ? 'bg-accent/10 text-accent'
           : value === false
             ? 'bg-red-500/20 text-red-400'
             : 'bg-dark-600 text-text-secondary'

@@ -218,7 +218,7 @@ export function ProBadge({ isPro, expiresAt, size = 'md' }: ProBadgeProps) {
     <span className={`inline-flex items-center gap-1 font-semibold rounded-full ${sizeClasses[size]} ${
       isExpiringSoon 
         ? 'bg-yellow-500/20 text-yellow-400' 
-        : 'bg-accent/20 text-accent'
+        : 'bg-accent/10 text-accent'
     }`}>
       <Crown className={size === 'sm' ? 'w-3 h-3' : size === 'md' ? 'w-4 h-4' : 'w-5 h-5'} />
       PRO

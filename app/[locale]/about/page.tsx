@@ -172,7 +172,7 @@ export default function AboutPage() {
             {TIMELINE.map((item, index) => (
               <div key={index} className="flex gap-4">
                 <div className="flex flex-col items-center">
-                  <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold text-sm">
+                  <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center text-accent font-bold text-sm">
                     {item.year}
                   </div>
                   {index < TIMELINE.length - 1 && (

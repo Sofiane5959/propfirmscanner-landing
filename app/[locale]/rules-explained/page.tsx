@@ -131,7 +131,7 @@ function PropFirmCard({ firm }: { firm: typeof propFirms[0] }) {
       <div className="flex items-center justify-between mb-4">
         <span className={`px-2 py-1 text-xs font-medium rounded-full ${
           firm.difficulty === 'Easy' 
-            ? 'bg-accent/20 text-accent'
+            ? 'bg-accent/10 text-accent'
             : firm.difficulty === 'Medium'
             ? 'bg-yellow-500/20 text-yellow-400'
             : 'bg-red-500/20 text-red-400'

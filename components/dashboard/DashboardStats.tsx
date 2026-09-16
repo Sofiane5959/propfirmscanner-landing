@@ -207,7 +207,7 @@ export default function DashboardStats() {
                   </div>
                   <div className="text-right">
                     {alert.is_triggered ? (
-                      <span className="px-2 py-1 bg-accent/20 text-accent text-xs font-medium rounded-full">
+                      <span className="px-2 py-1 bg-accent/10 text-accent text-xs font-medium rounded-full">
                         Triggered ✓
                       </span>
                     ) : alert.is_active ? (

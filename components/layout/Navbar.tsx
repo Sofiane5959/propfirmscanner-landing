@@ -41,7 +41,7 @@ export function Navbar() {
                   href={item.href}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all
                     ${isActive 
-                      ? 'bg-accent/20 text-accent' 
+                      ? 'bg-accent/10 text-accent' 
                       : 'text-text-secondary hover:text-white hover:bg-white/5'
                     }`}
                 >
@@ -66,7 +66,7 @@ export function Navbar() {
               href="/dashboard"
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all
                 ${isMyPropFirmsActive 
-                  ? 'bg-accent/20 text-accent' 
+                  ? 'bg-accent/10 text-accent' 
                   : 'text-text-secondary hover:text-white hover:bg-white/5'
                 }`}
             >
@@ -114,7 +114,7 @@ export function Navbar() {
                   onClick={() => setMobileMenuOpen(false)}
                   className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all
                     ${isActive 
-                      ? 'bg-accent/20 text-accent' 
+                      ? 'bg-accent/10 text-accent' 
                       : 'text-text-secondary hover:text-white hover:bg-white/5'
                     }`}
                 >
@@ -141,7 +141,7 @@ export function Navbar() {
               onClick={() => setMobileMenuOpen(false)}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all
                 ${isMyPropFirmsActive 
-                  ? 'bg-accent/20 text-accent' 
+                  ? 'bg-accent/10 text-accent' 
                   : 'text-text-secondary hover:text-white hover:bg-white/5'
                 }`}
             >

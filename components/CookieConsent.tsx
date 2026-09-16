@@ -99,7 +99,7 @@ export default function CookieConsent() {
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <h3 className="text-white font-medium">Essential Cookies</h3>
-                  <span className="px-2 py-0.5 bg-accent/20 text-accent text-xs rounded">Required</span>
+                  <span className="px-2 py-0.5 bg-accent/10 text-accent text-xs rounded">Required</span>
                 </div>
                 <p className="text-text-secondary text-sm mt-1">
                   Required for the website to function. Cannot be disabled.

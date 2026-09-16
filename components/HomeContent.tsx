@@ -704,7 +704,7 @@ export default function HomeContent() {
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-white font-bold text-lg leading-tight">{t.quizTitle}</span>
-                    <span className="px-2 py-0.5 bg-accent/20 text-accent text-[10px] font-bold rounded-full uppercase tracking-wide border border-accent/30">Free</span>
+                    <span className="px-2 py-0.5 bg-accent/10 text-accent text-[10px] font-bold rounded-full uppercase tracking-wide border border-accent/30">Free</span>
                   </div>
                   <p className="text-text-secondary text-sm max-w-md">{t.quizSubtitle}</p>
                 </div>

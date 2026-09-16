@@ -261,7 +261,7 @@ function CopyCodeButton({ code, label }: { code: string; label: { copy: string; 
     <button
       onClick={handle}
       className={`p-2 rounded-lg transition-colors ${
-        copied ? 'bg-accent/20 text-accent' : 'bg-dark-600 hover:bg-dark-500 text-text-secondary'
+        copied ? 'bg-accent/10 text-accent' : 'bg-dark-600 hover:bg-dark-500 text-text-secondary'
       }`}
       title={copied ? label.copied : label.copy}
       aria-label={copied ? label.copied : label.copy}

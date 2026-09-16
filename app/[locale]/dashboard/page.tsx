@@ -381,7 +381,7 @@ function TradingIdeasLocked({ locale }: { locale: string }) {
         {ideas.map((idea, i) => (
           <div key={i} className="flex items-center justify-between p-2.5 bg-dark-700/50 rounded-lg">
             <div className="flex items-center gap-2">
-              <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${idea.direction === 'LONG' ? 'bg-accent/20 text-accent' : 'bg-red-500/20 text-red-400'}`}>
+              <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${idea.direction === 'LONG' ? 'bg-accent/10 text-accent' : 'bg-red-500/20 text-red-400'}`}>
                 {idea.direction}
               </span>
               <span className="text-sm text-white">{idea.pair}</span>

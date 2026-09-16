@@ -202,7 +202,7 @@ export function AccountCard({ account }: AccountCardProps) {
           )}
           <span className={`inline-flex items-center gap-1 px-2 py-1 text-xs rounded-lg ${
             account.allows_news 
-              ? 'bg-accent/20 text-accent' 
+              ? 'bg-accent/10 text-accent' 
               : 'bg-red-500/20 text-red-400'
           }`}>
             <Newspaper className="w-3 h-3" />
@@ -210,7 +210,7 @@ export function AccountCard({ account }: AccountCardProps) {
           </span>
           <span className={`inline-flex items-center gap-1 px-2 py-1 text-xs rounded-lg ${
             account.allows_weekend 
-              ? 'bg-accent/20 text-accent' 
+              ? 'bg-accent/10 text-accent' 
               : 'bg-red-500/20 text-red-400'
           }`}>
             <Moon className="w-3 h-3" />

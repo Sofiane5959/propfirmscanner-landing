@@ -441,7 +441,7 @@ export default function AnalyticsPage() {
                               : r.destination_type === 'affiliate_coupon'
                               ? 'bg-indigo-500/20 text-indigo-300'
                               : r.destination_type === 'affiliate'
-                              ? 'bg-accent/20 text-accent'
+                              ? 'bg-accent/10 text-accent'
                               : 'bg-dark-600 text-text-secondary'
                           }`}
                         >

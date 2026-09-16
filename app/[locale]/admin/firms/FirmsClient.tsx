@@ -37,7 +37,7 @@ interface PropFirm {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  scanned: 'bg-accent/20 text-accent border-accent/30',
+  scanned: 'bg-accent/10 text-accent border-accent/30',
   unverified: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
   not_recommended: 'bg-red-500/20 text-red-400 border-red-500/30',
 }
@@ -288,7 +288,7 @@ export default function AdminFirmsPage() {
                     </span>
                     <span className={`px-2 py-0.5 rounded text-xs font-medium border ${
                       firm.listing_status === 'listed'
-                        ? 'bg-accent/20 text-accent border-accent/30'
+                        ? 'bg-accent/10 text-accent border-accent/30'
                         : 'bg-dark-600 text-text-secondary border-border-hover'
                     }`}>
                       {firm.listing_status}
@@ -311,7 +311,7 @@ export default function AdminFirmsPage() {
                       onClick={() => quickToggle(firm.slug, 'listing_status', firm.listing_status === 'listed' ? 'unlisted' : 'listed')}
                       className={`px-2 py-1 rounded text-xs font-medium transition-all ${
                         firm.listing_status === 'listed'
-                          ? 'bg-accent/20 text-accent hover:bg-red-500/20 hover:text-red-400'
+                          ? 'bg-accent/10 text-accent hover:bg-red-500/20 hover:text-red-400'
                           : 'bg-dark-600 text-text-secondary hover:bg-accent/20 hover:text-accent'
                       }`}
                     >

@@ -115,13 +115,13 @@ export function UpdatePnlModal({ account, onClose }: UpdatePnlModalProps) {
           </button>
           <button
             onClick={() => handleQuickSet(100)}
-            className="flex-1 py-2 text-sm bg-accent/20 text-accent hover:bg-accent/30 rounded-lg transition-colors"
+            className="flex-1 py-2 text-sm bg-accent/10 text-accent hover:bg-accent/30 rounded-lg transition-colors"
           >
             +$100
           </button>
           <button
             onClick={() => handleQuickSet(500)}
-            className="flex-1 py-2 text-sm bg-accent/20 text-accent hover:bg-accent/30 rounded-lg transition-colors"
+            className="flex-1 py-2 text-sm bg-accent/10 text-accent hover:bg-accent/30 rounded-lg transition-colors"
           >
             +$500
           </button>

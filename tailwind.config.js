@@ -69,7 +69,9 @@ module.exports = {
         text: {
           primary: '#F1F5F9',
           secondary: '#CBD5E1',
-          muted: '#94A3B8',
+          // #94A3B8 du handoff, eclairci : il tombait a 4,0:1 sur les surfaces
+          // dark-700 et sur les cartes selectionnees. #A3B1C4 tient 4,75:1 minimum.
+          muted: '#A3B1C4',
         },
         accent: {
           DEFAULT: '#34D399', // texte, chiffres, liens

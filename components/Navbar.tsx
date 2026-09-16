@@ -446,7 +446,7 @@ export function Navbar() {
                   key={item.href}
                   href={item.href}
                   className={`flex items-center gap-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-all
-                    ${isActive ? 'bg-accent/20 text-accent' : 'text-text-secondary hover:text-white hover:bg-white/5'}`}
+                    ${isActive ? 'bg-accent/10 text-accent' : 'text-text-secondary hover:text-white hover:bg-white/5'}`}
                 >
                   <Icon className="w-4 h-4" />
                   {item.name}
@@ -464,7 +464,7 @@ export function Navbar() {
                   key={item.href}
                   href={item.href}
                   className={`flex items-center gap-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-all
-                    ${isActive ? 'bg-accent/20 text-accent' : 'text-text-secondary hover:text-white hover:bg-white/5'}`}
+                    ${isActive ? 'bg-accent/10 text-accent' : 'text-text-secondary hover:text-white hover:bg-white/5'}`}
                 >
                   <Icon className="w-4 h-4" />
                   {item.name}
@@ -482,7 +482,7 @@ export function Navbar() {
             <Link 
               href="/guide" 
               className={`flex items-center gap-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-all
-                ${pathname === '/guide' ? 'bg-accent/20 text-accent' : 'bg-accent/10 text-accent hover:bg-accent/20'}`}
+                ${pathname === '/guide' ? 'bg-accent/10 text-accent' : 'bg-accent/10 text-accent hover:bg-accent/20'}`}
             >
               <BookOpen className="w-4 h-4" />
               {t.freeGuide}
@@ -532,7 +532,7 @@ export function Navbar() {
                   href={item.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all
-                    ${isActive ? 'bg-accent/20 text-accent' : 'text-text-secondary hover:text-white hover:bg-white/5'}`}
+                    ${isActive ? 'bg-accent/10 text-accent' : 'text-text-secondary hover:text-white hover:bg-white/5'}`}
                 >
                   <Icon className="w-5 h-5" />
                   {item.name}
@@ -551,7 +551,7 @@ export function Navbar() {
                     href={item.href}
                     onClick={() => setMobileMenuOpen(false)}
                     className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all
-                      ${isActive ? 'bg-accent/20 text-accent' : 'text-text-secondary hover:text-white hover:bg-white/5'}`}
+                      ${isActive ? 'bg-accent/10 text-accent' : 'text-text-secondary hover:text-white hover:bg-white/5'}`}
                   >
                     <Icon className="w-5 h-5" />
                     {item.name}
@@ -588,7 +588,7 @@ export function Navbar() {
                         switchLocale(pathname, locale);
                       }}
                       className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
-                        isActive ? 'bg-accent/20 text-accent' : 'text-text-secondary hover:bg-white/5'
+                        isActive ? 'bg-accent/10 text-accent' : 'text-text-secondary hover:bg-white/5'
                       }`}
                     >
                       <span>{localeFlags[locale]}</span>
