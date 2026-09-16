@@ -259,7 +259,7 @@ function LanguageSelector({ currentLocale, pathname }: { currentLocale: Locale; 
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1 px-2 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+        className="flex items-center gap-1 px-2 py-2 text-sm text-text-secondary hover:text-white hover:bg-white/5 rounded-lg transition-colors"
       >
         <Globe className="w-4 h-4" />
         <span className="uppercase text-xs">{currentLocale}</span>
@@ -267,18 +267,18 @@ function LanguageSelector({ currentLocale, pathname }: { currentLocale: Locale; 
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-40 bg-gray-900 border border-gray-800 rounded-xl shadow-xl z-[60] py-1 max-h-80 overflow-y-auto">
+        <div className="absolute right-0 mt-2 w-40 bg-bg-elevated border border-border rounded-xl shadow-xl z-[60] py-1 max-h-80 overflow-y-auto">
           {locales.map((locale) => (
             <button
               key={locale}
               onClick={() => handleSwitch(locale)}
-              className={`w-full flex items-center gap-3 px-4 py-2 text-sm text-left hover:bg-gray-800 transition-colors ${
-                currentLocale === locale ? 'text-emerald-400 bg-gray-800/50' : 'text-gray-300'
+              className={`w-full flex items-center gap-3 px-4 py-2 text-sm text-left hover:bg-dark-700 transition-colors ${
+                currentLocale === locale ? 'text-accent bg-dark-700/50' : 'text-text-secondary'
               }`}
             >
               <span>{localeFlags[locale]}</span>
               <span>{localeNames[locale]}</span>
-              {currentLocale === locale && <span className="ml-auto text-emerald-400">✓</span>}
+              {currentLocale === locale && <span className="ml-auto text-accent">✓</span>}
             </button>
           ))}
         </div>
@@ -324,41 +324,41 @@ function UserDropdown({ t }: { t: Record<string, string> }) {
         {avatarUrl ? (
           <img src={avatarUrl} alt={displayName} className="w-8 h-8 rounded-full" referrerPolicy="no-referrer" />
         ) : (
-          <div className="w-8 h-8 bg-emerald-500/20 rounded-full flex items-center justify-center">
-            <span className="text-sm font-medium text-emerald-400">{initials}</span>
+          <div className="w-8 h-8 bg-accent/20 rounded-full flex items-center justify-center">
+            <span className="text-sm font-medium text-accent">{initials}</span>
           </div>
         )}
-        <span className="text-sm text-gray-300 hidden sm:block max-w-[100px] truncate">{displayName}</span>
-        <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <span className="text-sm text-text-secondary hidden sm:block max-w-[100px] truncate">{displayName}</span>
+        <ChevronDown className={`w-4 h-4 text-text-muted transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 bg-gray-900 border border-gray-800 rounded-xl shadow-xl z-[60] py-2">
-          <div className="px-4 py-3 border-b border-gray-800">
+        <div className="absolute right-0 mt-2 w-56 bg-bg-elevated border border-border rounded-xl shadow-xl z-[60] py-2">
+          <div className="px-4 py-3 border-b border-border">
             <p className="text-sm font-medium text-white truncate">{displayName}</p>
-            <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+            <p className="text-xs text-text-muted truncate">{user?.email}</p>
           </div>
 
           <div className="py-2">
-            <Link href="/dashboard" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
+            <Link href="/dashboard" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-text-secondary hover:bg-dark-700 hover:text-white transition-colors">
               <Shield className="w-4 h-4" />
               {t.dashboard}
             </Link>
-            <Link href="/education/fundamentals" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
+            <Link href="/education/fundamentals" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-text-secondary hover:bg-dark-700 hover:text-white transition-colors">
               <GraduationCap className="w-4 h-4" />
               My Courses
             </Link>
-            <Link href="/dashboard/favorites" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
+            <Link href="/dashboard/favorites" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-text-secondary hover:bg-dark-700 hover:text-white transition-colors">
               <Star className="w-4 h-4" />
               {t.favorites}
             </Link>
-            <Link href="/dashboard/settings" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
+            <Link href="/dashboard/settings" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-text-secondary hover:bg-dark-700 hover:text-white transition-colors">
               <Settings className="w-4 h-4" />
               {t.settings}
             </Link>
           </div>
 
-          <div className="border-t border-gray-800 pt-2">
+          <div className="border-t border-border pt-2">
             <button onClick={() => { setIsOpen(false); signOut(); }} className="flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 w-full transition-colors">
               <LogOut className="w-4 h-4" />
               {t.signOut}
@@ -412,7 +412,7 @@ export function Navbar() {
       href: '/mypropfirm', 
       icon: Crown,
       badge: 'Pro',
-      badgeColor: 'bg-emerald-500',
+      badgeColor: 'bg-accent-hover',
     },
   ];
 
@@ -428,11 +428,11 @@ export function Navbar() {
           
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2 flex-shrink-0">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-accent flex items-center justify-center">
               <span className="text-white font-bold text-sm">P</span>
             </div>
             <span className="text-white font-bold text-lg hidden sm:block">
-              PropFirm<span className="text-emerald-400">Scanner</span>
+              PropFirm<span className="text-accent">Scanner</span>
             </span>
           </Link>
 
@@ -446,7 +446,7 @@ export function Navbar() {
                   key={item.href}
                   href={item.href}
                   className={`flex items-center gap-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-all
-                    ${isActive ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:text-white hover:bg-white/5'}`}
+                    ${isActive ? 'bg-accent/20 text-accent' : 'text-text-secondary hover:text-white hover:bg-white/5'}`}
                 >
                   <Icon className="w-4 h-4" />
                   {item.name}
@@ -454,7 +454,7 @@ export function Navbar() {
               );
             })}
 
-            <div className="w-px h-5 bg-gray-700 mx-1" />
+            <div className="w-px h-5 bg-dark-600 mx-1" />
 
             {productLinks.map((item) => {
               const Icon = item.icon;
@@ -464,7 +464,7 @@ export function Navbar() {
                   key={item.href}
                   href={item.href}
                   className={`flex items-center gap-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-all
-                    ${isActive ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:text-white hover:bg-white/5'}`}
+                    ${isActive ? 'bg-accent/20 text-accent' : 'text-text-secondary hover:text-white hover:bg-white/5'}`}
                 >
                   <Icon className="w-4 h-4" />
                   {item.name}
@@ -477,16 +477,16 @@ export function Navbar() {
               );
             })}
 
-            <div className="w-px h-5 bg-gray-700 mx-1" />
+            <div className="w-px h-5 bg-dark-600 mx-1" />
 
             <Link 
               href="/guide" 
               className={`flex items-center gap-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-all
-                ${pathname === '/guide' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'}`}
+                ${pathname === '/guide' ? 'bg-accent/20 text-accent' : 'bg-accent/10 text-accent hover:bg-accent/20'}`}
             >
               <BookOpen className="w-4 h-4" />
               {t.freeGuide}
-              <span className="px-1 py-0.5 bg-emerald-500 text-white text-[9px] font-bold rounded">{t.free}</span>
+              <span className="px-1 py-0.5 bg-accent-hover text-white text-[9px] font-bold rounded">{t.free}</span>
             </Link>
           </div>
 
@@ -495,13 +495,13 @@ export function Navbar() {
             <LanguageSelector currentLocale={currentLocale} pathname={pathname} />
             
             {isLoading ? (
-              <Loader2 className="w-5 h-5 text-gray-500 animate-spin" />
+              <Loader2 className="w-5 h-5 text-text-muted animate-spin" />
             ) : user ? (
               <UserDropdown t={t} />
             ) : (
               <Link
                 href="/auth/login"
-                className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors whitespace-nowrap"
+                className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-white bg-accent-hover hover:brightness-110 rounded-lg transition-colors whitespace-nowrap"
               >
                 <GoogleIcon className="w-4 h-4" />
                 {t.signIn}
@@ -512,7 +512,7 @@ export function Navbar() {
           {/* Mobile menu button */}
           <button 
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
-            className="lg:hidden p-2 text-gray-400 hover:text-white"
+            className="lg:hidden p-2 text-text-secondary hover:text-white"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -521,7 +521,7 @@ export function Navbar() {
 
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-gray-900/95 backdrop-blur-lg border-t border-gray-800">
+        <div className="lg:hidden bg-bg-elevated/95 backdrop-blur-lg border-t border-border">
           <div className="px-4 py-4 space-y-2">
             {mainNavigation.map((item) => {
               const Icon = item.icon;
@@ -532,7 +532,7 @@ export function Navbar() {
                   href={item.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all
-                    ${isActive ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:text-white hover:bg-white/5'}`}
+                    ${isActive ? 'bg-accent/20 text-accent' : 'text-text-secondary hover:text-white hover:bg-white/5'}`}
                 >
                   <Icon className="w-5 h-5" />
                   {item.name}
@@ -540,8 +540,8 @@ export function Navbar() {
               );
             })}
 
-            <div className="pt-2 border-t border-gray-800">
-              <p className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">{t.products}</p>
+            <div className="pt-2 border-t border-border">
+              <p className="px-4 py-2 text-xs font-semibold text-text-muted uppercase tracking-wider">{t.products}</p>
               {productLinks.map((item) => {
                 const Icon = item.icon;
                 const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
@@ -551,7 +551,7 @@ export function Navbar() {
                     href={item.href}
                     onClick={() => setMobileMenuOpen(false)}
                     className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all
-                      ${isActive ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:text-white hover:bg-white/5'}`}
+                      ${isActive ? 'bg-accent/20 text-accent' : 'text-text-secondary hover:text-white hover:bg-white/5'}`}
                   >
                     <Icon className="w-5 h-5" />
                     {item.name}
@@ -568,15 +568,15 @@ export function Navbar() {
             <Link 
               href="/guide" 
               onClick={() => setMobileMenuOpen(false)} 
-              className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium bg-emerald-500/10 text-emerald-400"
+              className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium bg-accent/10 text-accent"
             >
               <BookOpen className="w-5 h-5" />
               {t.freeGuide}
-              <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded ml-auto">{t.free}</span>
+              <span className="px-1.5 py-0.5 bg-accent-hover text-white text-xs rounded ml-auto">{t.free}</span>
             </Link>
 
-            <div className="pt-2 border-t border-gray-800">
-              <p className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">{t.language}</p>
+            <div className="pt-2 border-t border-border">
+              <p className="px-4 py-2 text-xs font-semibold text-text-muted uppercase tracking-wider">{t.language}</p>
               <div className="grid grid-cols-2 gap-2 px-2">
                 {locales.map((locale) => {
                   const isActive = currentLocale === locale;
@@ -588,7 +588,7 @@ export function Navbar() {
                         switchLocale(pathname, locale);
                       }}
                       className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
-                        isActive ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-300 hover:bg-white/5'
+                        isActive ? 'bg-accent/20 text-accent' : 'text-text-secondary hover:bg-white/5'
                       }`}
                     >
                       <span>{localeFlags[locale]}</span>
@@ -599,10 +599,10 @@ export function Navbar() {
               </div>
             </div>
 
-            <div className="pt-4 border-t border-gray-800 space-y-2">
+            <div className="pt-4 border-t border-border space-y-2">
               {isLoading ? (
                 <div className="flex justify-center py-3">
-                  <Loader2 className="w-5 h-5 text-gray-500 animate-spin" />
+                  <Loader2 className="w-5 h-5 text-text-muted animate-spin" />
                 </div>
               ) : user ? (
                 <>
@@ -610,25 +610,25 @@ export function Navbar() {
                     {user.user_metadata?.avatar_url ? (
                       <img src={user.user_metadata.avatar_url} alt="" className="w-10 h-10 rounded-full" referrerPolicy="no-referrer" />
                     ) : (
-                      <div className="w-10 h-10 bg-emerald-500/20 rounded-full flex items-center justify-center">
-                        <User className="w-5 h-5 text-emerald-400" />
+                      <div className="w-10 h-10 bg-accent/20 rounded-full flex items-center justify-center">
+                        <User className="w-5 h-5 text-accent" />
                       </div>
                     )}
                     <div>
                       <p className="text-sm font-medium text-white">{user.user_metadata?.full_name || user.email?.split('@')[0]}</p>
-                      <p className="text-xs text-gray-500">{user.email}</p>
+                      <p className="text-xs text-text-muted">{user.email}</p>
                     </div>
                   </div>
 
-                  <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:bg-white/5">
+                  <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-text-secondary hover:bg-white/5">
                     <Shield className="w-5 h-5" />
                     {t.dashboard}
                   </Link>
-                  <Link href="/dashboard/favorites" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:bg-white/5">
+                  <Link href="/dashboard/favorites" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-text-secondary hover:bg-white/5">
                     <Star className="w-5 h-5" />
                     {t.favorites}
                   </Link>
-                  <Link href="/dashboard/settings" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:bg-white/5">
+                  <Link href="/dashboard/settings" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-text-secondary hover:bg-white/5">
                     <Settings className="w-5 h-5" />
                     {t.settings}
                   </Link>
@@ -644,7 +644,7 @@ export function Navbar() {
                 <Link
                   href="/auth/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center gap-2 w-full px-4 py-3 text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg"
+                  className="flex items-center justify-center gap-2 w-full px-4 py-3 text-sm font-medium text-white bg-accent-hover hover:brightness-110 rounded-lg"
                 >
                   <GoogleIcon className="w-4 h-4" />
                   {t.signIn}

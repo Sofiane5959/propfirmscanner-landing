@@ -45,13 +45,13 @@ const CATEGORIES = [
 // Mini Prop Firm Card
 const MiniCard = ({ firm, rank }: { firm: PropFirm, rank: number }) => (
   <Link href={`/prop-firm/${firm.slug}`}>
-    <div className="group relative bg-gray-800/50 hover:bg-gray-800 border border-gray-700/50 hover:border-emerald-500/30 rounded-xl p-4 transition-all duration-300">
+    <div className="group relative bg-dark-700/50 hover:bg-dark-700 border border-border/50 hover:border-accent/30 rounded-xl p-4 transition-all duration-300">
       {/* Rank Badge */}
       <div className={`absolute -top-2 -left-2 w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold ${
         rank === 1 ? 'bg-yellow-500 text-yellow-900' :
         rank === 2 ? 'bg-gray-400 text-gray-900' :
         rank === 3 ? 'bg-orange-500 text-orange-900' :
-        'bg-gray-700 text-gray-300'
+        'bg-dark-600 text-text-secondary'
       }`}>
         {rank}
       </div>
@@ -65,41 +65,41 @@ const MiniCard = ({ firm, rank }: { firm: PropFirm, rank: number }) => (
       
       <div className="flex items-center gap-3 mb-3">
         {/* Logo */}
-        <div className="w-10 h-10 rounded-lg bg-gray-900 flex items-center justify-center overflow-hidden flex-shrink-0">
+        <div className="w-10 h-10 rounded-lg bg-bg-elevated flex items-center justify-center overflow-hidden flex-shrink-0">
           {firm.logo_url ? (
             <Image src={firm.logo_url} alt={firm.name} width={40} height={40} className="object-contain" />
           ) : (
-            <span className="text-lg font-bold text-emerald-400">{firm.name.charAt(0)}</span>
+            <span className="text-lg font-bold text-accent">{firm.name.charAt(0)}</span>
           )}
         </div>
         
         <div className="min-w-0">
-          <h3 className="font-semibold text-white truncate group-hover:text-emerald-400 transition-colors">
+          <h3 className="font-semibold text-white truncate group-hover:text-accent transition-colors">
             {firm.name}
           </h3>
           <div className="flex items-center gap-1">
             <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
-            <span className="text-sm text-gray-400">{firm.trustpilot_rating?.toFixed(1) || 'N/A'}</span>
+            <span className="text-sm text-text-secondary">{firm.trustpilot_rating?.toFixed(1) || 'N/A'}</span>
           </div>
         </div>
       </div>
       
       {/* Quick Stats */}
       <div className="grid grid-cols-2 gap-2 text-sm">
-        <div className="bg-gray-900/50 rounded-lg p-2">
-          <p className="text-gray-500 text-xs">From</p>
+        <div className="bg-bg-elevated/50 rounded-lg p-2">
+          <p className="text-text-muted text-xs">From</p>
           <p className="text-white font-semibold">${firm.min_price}</p>
         </div>
-        <div className="bg-gray-900/50 rounded-lg p-2">
-          <p className="text-gray-500 text-xs">Split</p>
-          <p className="text-emerald-400 font-semibold">{firm.max_profit_split}%</p>
+        <div className="bg-bg-elevated/50 rounded-lg p-2">
+          <p className="text-text-muted text-xs">Split</p>
+          <p className="text-accent font-semibold">{firm.max_profit_split}%</p>
         </div>
       </div>
       
       {/* Features Tags */}
       <div className="flex flex-wrap gap-1 mt-3">
         {firm.allows_scalping && (
-          <span className="px-1.5 py-0.5 bg-emerald-500/10 text-emerald-400 text-xs rounded">Scalping</span>
+          <span className="px-1.5 py-0.5 bg-accent/10 text-accent text-xs rounded">Scalping</span>
         )}
         {firm.has_instant_funding && (
           <span className="px-1.5 py-0.5 bg-yellow-500/10 text-yellow-400 text-xs rounded">Instant</span>
@@ -150,14 +150,14 @@ export default function QuickCompareWidget({ firms }: QuickCompareProps) {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-400 text-sm mb-4">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 border border-accent/20 rounded-full text-accent text-sm mb-4">
             <Sparkles className="w-4 h-4" />
             Quick Compare
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Find Your Perfect Prop Firm
           </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">
+          <p className="text-text-secondary max-w-2xl mx-auto">
             Compare top prop firms at a glance. Filter by category to find the best match for your trading style.
           </p>
         </div>
@@ -170,8 +170,8 @@ export default function QuickCompareWidget({ firms }: QuickCompareProps) {
               onClick={() => setSelectedCategory(cat.id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
                 selectedCategory === cat.id
-                  ? 'bg-emerald-500 text-white'
-                  : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'
+                  ? 'bg-accent-hover text-white'
+                  : 'bg-dark-700 text-text-secondary hover:bg-dark-600 hover:text-white'
               }`}
             >
               <cat.icon className="w-4 h-4" />
@@ -191,7 +191,7 @@ export default function QuickCompareWidget({ firms }: QuickCompareProps) {
         <div className="text-center">
           <Link 
             href="/compare"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold rounded-xl transition-all"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-accent to-accent hover:from-accent hover:to-emerald-700 text-white font-semibold rounded-xl transition-all"
           >
             Compare All {firms.length}+ Firms
             <ArrowRight className="w-5 h-5" />
@@ -206,21 +206,21 @@ export default function QuickCompareWidget({ firms }: QuickCompareProps) {
 export function HeroStats({ totalFirms, avgRating }: { totalFirms: number, avgRating: number }) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-      <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-4 text-center">
+      <div className="bg-dark-700/50 backdrop-blur-sm border border-border/50 rounded-xl p-4 text-center">
         <p className="text-3xl font-bold text-white">{totalFirms}+</p>
-        <p className="text-sm text-gray-500">Prop Firms</p>
+        <p className="text-sm text-text-muted">Prop Firms</p>
       </div>
-      <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-4 text-center">
+      <div className="bg-dark-700/50 backdrop-blur-sm border border-border/50 rounded-xl p-4 text-center">
         <p className="text-3xl font-bold text-yellow-400">{avgRating}</p>
-        <p className="text-sm text-gray-500">Avg. Rating</p>
+        <p className="text-sm text-text-muted">Avg. Rating</p>
       </div>
-      <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-4 text-center">
-        <p className="text-3xl font-bold text-emerald-400">2025</p>
-        <p className="text-sm text-gray-500">Updated</p>
+      <div className="bg-dark-700/50 backdrop-blur-sm border border-border/50 rounded-xl p-4 text-center">
+        <p className="text-3xl font-bold text-accent">2025</p>
+        <p className="text-sm text-text-muted">Updated</p>
       </div>
-      <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-4 text-center">
+      <div className="bg-dark-700/50 backdrop-blur-sm border border-border/50 rounded-xl p-4 text-center">
         <p className="text-3xl font-bold text-purple-400">Free</p>
-        <p className="text-sm text-gray-500">To Use</p>
+        <p className="text-sm text-text-muted">To Use</p>
       </div>
     </div>
   )
@@ -231,26 +231,26 @@ export function FeatureComparisonTable({ firms }: { firms: PropFirm[] }) {
   const topFirms = firms.slice(0, 5)
   
   return (
-    <section className="py-16 px-4 bg-gray-800/30">
+    <section className="py-16 px-4 bg-dark-700/30">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-10">
           <h2 className="text-3xl font-bold text-white mb-4">Side-by-Side Comparison</h2>
-          <p className="text-gray-400">Compare key features of top prop firms</p>
+          <p className="text-text-secondary">Compare key features of top prop firms</p>
         </div>
         
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-gray-700">
-                <th className="text-left py-4 px-4 text-gray-500 font-medium">Feature</th>
+              <tr className="border-b border-border">
+                <th className="text-left py-4 px-4 text-text-muted font-medium">Feature</th>
                 {topFirms.map(firm => (
                   <th key={firm.id} className="py-4 px-4 text-center">
-                    <Link href={`/prop-firm/${firm.slug}`} className="hover:text-emerald-400">
-                      <div className="w-10 h-10 rounded-lg bg-gray-800 flex items-center justify-center mx-auto mb-2">
+                    <Link href={`/prop-firm/${firm.slug}`} className="hover:text-accent">
+                      <div className="w-10 h-10 rounded-lg bg-dark-700 flex items-center justify-center mx-auto mb-2">
                         {firm.logo_url ? (
                           <Image src={firm.logo_url} alt="" width={40} height={40} className="object-contain" />
                         ) : (
-                          <span className="text-emerald-400 font-bold">{firm.name.charAt(0)}</span>
+                          <span className="text-accent font-bold">{firm.name.charAt(0)}</span>
                         )}
                       </div>
                       <span className="text-white font-medium text-sm">{firm.name}</span>
@@ -260,8 +260,8 @@ export function FeatureComparisonTable({ firms }: { firms: PropFirm[] }) {
               </tr>
             </thead>
             <tbody className="text-sm">
-              <tr className="border-b border-gray-800">
-                <td className="py-3 px-4 text-gray-400">Rating</td>
+              <tr className="border-b border-border">
+                <td className="py-3 px-4 text-text-secondary">Rating</td>
                 {topFirms.map(firm => (
                   <td key={firm.id} className="py-3 px-4 text-center">
                     <span className="inline-flex items-center gap-1 text-yellow-400">
@@ -271,60 +271,60 @@ export function FeatureComparisonTable({ firms }: { firms: PropFirm[] }) {
                   </td>
                 ))}
               </tr>
-              <tr className="border-b border-gray-800">
-                <td className="py-3 px-4 text-gray-400">Starting Price</td>
+              <tr className="border-b border-border">
+                <td className="py-3 px-4 text-text-secondary">Starting Price</td>
                 {topFirms.map(firm => (
                   <td key={firm.id} className="py-3 px-4 text-center text-white font-medium">
                     ${firm.min_price}
                   </td>
                 ))}
               </tr>
-              <tr className="border-b border-gray-800">
-                <td className="py-3 px-4 text-gray-400">Max Profit Split</td>
+              <tr className="border-b border-border">
+                <td className="py-3 px-4 text-text-secondary">Max Profit Split</td>
                 {topFirms.map(firm => (
-                  <td key={firm.id} className="py-3 px-4 text-center text-emerald-400 font-medium">
+                  <td key={firm.id} className="py-3 px-4 text-center text-accent font-medium">
                     {firm.max_profit_split}%
                   </td>
                 ))}
               </tr>
-              <tr className="border-b border-gray-800">
-                <td className="py-3 px-4 text-gray-400">Max Drawdown</td>
+              <tr className="border-b border-border">
+                <td className="py-3 px-4 text-text-secondary">Max Drawdown</td>
                 {topFirms.map(firm => (
                   <td key={firm.id} className="py-3 px-4 text-center text-white">
                     {firm.max_total_drawdown}%
                   </td>
                 ))}
               </tr>
-              <tr className="border-b border-gray-800">
-                <td className="py-3 px-4 text-gray-400">Scalping</td>
+              <tr className="border-b border-border">
+                <td className="py-3 px-4 text-text-secondary">Scalping</td>
                 {topFirms.map(firm => (
                   <td key={firm.id} className="py-3 px-4 text-center">
                     {firm.allows_scalping ? (
-                      <Check className="w-5 h-5 text-emerald-400 mx-auto" />
+                      <Check className="w-5 h-5 text-accent mx-auto" />
                     ) : (
                       <X className="w-5 h-5 text-red-400 mx-auto" />
                     )}
                   </td>
                 ))}
               </tr>
-              <tr className="border-b border-gray-800">
-                <td className="py-3 px-4 text-gray-400">News Trading</td>
+              <tr className="border-b border-border">
+                <td className="py-3 px-4 text-text-secondary">News Trading</td>
                 {topFirms.map(firm => (
                   <td key={firm.id} className="py-3 px-4 text-center">
                     {firm.allows_news_trading ? (
-                      <Check className="w-5 h-5 text-emerald-400 mx-auto" />
+                      <Check className="w-5 h-5 text-accent mx-auto" />
                     ) : (
                       <X className="w-5 h-5 text-red-400 mx-auto" />
                     )}
                   </td>
                 ))}
               </tr>
-              <tr className="border-b border-gray-800">
-                <td className="py-3 px-4 text-gray-400">EAs Allowed</td>
+              <tr className="border-b border-border">
+                <td className="py-3 px-4 text-text-secondary">EAs Allowed</td>
                 {topFirms.map(firm => (
                   <td key={firm.id} className="py-3 px-4 text-center">
                     {firm.allows_ea ? (
-                      <Check className="w-5 h-5 text-emerald-400 mx-auto" />
+                      <Check className="w-5 h-5 text-accent mx-auto" />
                     ) : (
                       <X className="w-5 h-5 text-red-400 mx-auto" />
                     )}
@@ -332,11 +332,11 @@ export function FeatureComparisonTable({ firms }: { firms: PropFirm[] }) {
                 ))}
               </tr>
               <tr>
-                <td className="py-3 px-4 text-gray-400">Instant Funding</td>
+                <td className="py-3 px-4 text-text-secondary">Instant Funding</td>
                 {topFirms.map(firm => (
                   <td key={firm.id} className="py-3 px-4 text-center">
                     {firm.has_instant_funding ? (
-                      <Check className="w-5 h-5 text-emerald-400 mx-auto" />
+                      <Check className="w-5 h-5 text-accent mx-auto" />
                     ) : (
                       <X className="w-5 h-5 text-red-400 mx-auto" />
                     )}
@@ -389,7 +389,7 @@ export function TradingStyleCards() {
   ]
   
   const colorClasses = {
-    emerald: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+    emerald: 'bg-accent/10 text-accent border-accent/20',
     blue: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
     purple: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
     orange: 'bg-orange-500/10 text-orange-400 border-orange-500/20',
@@ -400,7 +400,7 @@ export function TradingStyleCards() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-10">
           <h2 className="text-3xl font-bold text-white mb-4">Find by Trading Style</h2>
-          <p className="text-gray-400">Discover prop firms that match how you trade</p>
+          <p className="text-text-secondary">Discover prop firms that match how you trade</p>
         </div>
         
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -408,7 +408,7 @@ export function TradingStyleCards() {
             <Link key={i} href={style.link}>
               <div className={`h-full border rounded-2xl p-6 transition-all hover:scale-105 ${colorClasses[style.color as keyof typeof colorClasses]}`}>
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${
-                  style.color === 'emerald' ? 'bg-emerald-500/20' :
+                  style.color === 'emerald' ? 'bg-accent/20' :
                   style.color === 'blue' ? 'bg-blue-500/20' :
                   style.color === 'purple' ? 'bg-purple-500/20' :
                   'bg-orange-500/20'
@@ -416,10 +416,10 @@ export function TradingStyleCards() {
                   <style.icon className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-2">{style.title}</h3>
-                <p className="text-gray-400 text-sm mb-4">{style.description}</p>
+                <p className="text-text-secondary text-sm mb-4">{style.description}</p>
                 <ul className="space-y-1">
                   {style.features.map((feature, j) => (
-                    <li key={j} className="flex items-center gap-2 text-sm text-gray-300">
+                    <li key={j} className="flex items-center gap-2 text-sm text-text-secondary">
                       <Check className="w-4 h-4 text-current" />
                       {feature}
                     </li>

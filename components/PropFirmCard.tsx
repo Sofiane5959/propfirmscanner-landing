@@ -127,7 +127,7 @@ export function PropFirmCard({ firm, compact = false }: PropFirmCardProps) {
             {logo ? (
               <img src={logo} alt={firm.name} className="w-14 h-14 rounded-xl object-contain bg-white/10 p-1 grayscale" />
             ) : (
-              <div className="w-14 h-14 rounded-xl bg-gray-700 flex items-center justify-center text-white font-bold text-lg">
+              <div className="w-14 h-14 rounded-xl bg-dark-600 flex items-center justify-center text-white font-bold text-lg">
                 {firm.name.charAt(0)}
               </div>
             )}
@@ -157,7 +157,7 @@ export function PropFirmCard({ firm, compact = false }: PropFirmCardProps) {
     return (
       <Link
         href={`/prop-firm/${firm.slug}`}
-        className="block bg-gray-800/50 border border-gray-700 rounded-xl p-4 hover:border-emerald-500/30 transition-all"
+        className="block bg-dark-700/50 border border-border rounded-xl p-4 hover:border-accent/30 transition-all"
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -177,12 +177,12 @@ export function PropFirmCard({ firm, compact = false }: PropFirmCardProps) {
                   </span>
                 )}
                 {priceFrom && (
-                  <span className="text-gray-400">From ${priceFrom}</span>
+                  <span className="text-text-secondary">From ${priceFrom}</span>
                 )}
               </div>
             </div>
           </div>
-          <ExternalLink className="w-4 h-4 text-gray-500" />
+          <ExternalLink className="w-4 h-4 text-text-muted" />
         </div>
       </Link>
     )
@@ -190,12 +190,12 @@ export function PropFirmCard({ firm, compact = false }: PropFirmCardProps) {
 
   // Full card version
   return (
-    <div className={`bg-gray-800/50 border rounded-xl overflow-hidden ${
-      firm.featured ? 'border-emerald-500/30 ring-1 ring-emerald-500/10' : 'border-gray-700'
+    <div className={`bg-dark-700/50 border rounded-xl overflow-hidden ${
+      firm.featured ? 'border-accent/30 ring-1 ring-accent/10' : 'border-border'
     }`}>
       {/* Featured Badge */}
       {firm.featured && (
-        <div className="bg-emerald-500 text-white text-xs font-bold py-1 px-3 text-center">
+        <div className="bg-accent-hover text-white text-xs font-bold py-1 px-3 text-center">
           ⭐ FEATURED
         </div>
       )}
@@ -207,7 +207,7 @@ export function PropFirmCard({ firm, compact = false }: PropFirmCardProps) {
             {logo ? (
               <img src={logo} alt={firm.name} className="w-14 h-14 rounded-xl object-contain bg-white p-1" />
             ) : (
-              <div className="w-14 h-14 rounded-xl bg-gray-700 flex items-center justify-center text-white font-bold text-lg">
+              <div className="w-14 h-14 rounded-xl bg-dark-600 flex items-center justify-center text-white font-bold text-lg">
                 {firm.name.charAt(0)}
               </div>
             )}
@@ -224,7 +224,7 @@ export function PropFirmCard({ firm, compact = false }: PropFirmCardProps) {
                 <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
                 <span className="text-white font-bold text-lg">{rating.toFixed(1)}</span>
               </div>
-              <div className="text-gray-500 text-xs">
+              <div className="text-text-muted text-xs">
                 {reviews ? `${reviews.toLocaleString()} reviews` : 'Not tracked'}
               </div>
             </div>
@@ -251,20 +251,20 @@ export function PropFirmCard({ firm, compact = false }: PropFirmCardProps) {
 
         {/* Quick Stats */}
         <div className="grid grid-cols-3 gap-3 mb-4">
-          <div className="bg-gray-900/50 rounded-lg p-3 text-center">
-            <div className="text-gray-400 text-xs mb-1">From</div>
+          <div className="bg-bg-elevated/50 rounded-lg p-3 text-center">
+            <div className="text-text-secondary text-xs mb-1">From</div>
             <div className="text-white font-semibold">
               {priceFrom ? `$${priceFrom}` : 'N/A'}
             </div>
           </div>
-          <div className="bg-gray-900/50 rounded-lg p-3 text-center">
-            <div className="text-gray-400 text-xs mb-1">Split</div>
-            <div className="text-emerald-400 font-semibold">
+          <div className="bg-bg-elevated/50 rounded-lg p-3 text-center">
+            <div className="text-text-secondary text-xs mb-1">Split</div>
+            <div className="text-accent font-semibold">
               {profitSplit ? `${profitSplit}%` : 'N/A'}
             </div>
           </div>
-          <div className="bg-gray-900/50 rounded-lg p-3 text-center">
-            <div className="text-gray-400 text-xs mb-1">Max DD</div>
+          <div className="bg-bg-elevated/50 rounded-lg p-3 text-center">
+            <div className="text-text-secondary text-xs mb-1">Max DD</div>
             <div className="text-white font-semibold">
               {maxDrawdown ? `${maxDrawdown}%` : 'N/A'}
             </div>
@@ -291,7 +291,7 @@ export function PropFirmCard({ firm, compact = false }: PropFirmCardProps) {
           {(firm.drawdownType || firm.drawdown_type) && (
             <span className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium ${
               (firm.drawdownType || firm.drawdown_type) === 'static' 
-                ? 'bg-emerald-500/10 text-emerald-400' 
+                ? 'bg-accent/10 text-accent' 
                 : 'bg-yellow-500/10 text-yellow-400'
             }`}>
               <TrendingDown className="w-3 h-3" />
@@ -304,12 +304,12 @@ export function PropFirmCard({ firm, compact = false }: PropFirmCardProps) {
         {toArray(firm.platforms).length > 0 && (
           <div className="flex flex-wrap gap-1 mb-4">
             {toArray(firm.platforms).slice(0, 4).map(platform => (
-              <span key={platform} className="px-2 py-0.5 bg-gray-700 text-gray-300 text-xs rounded">
+              <span key={platform} className="px-2 py-0.5 bg-dark-600 text-text-secondary text-xs rounded">
                 {platform}
               </span>
             ))}
             {toArray(firm.platforms).length > 4 && (
-              <span className="px-2 py-0.5 bg-gray-700 text-gray-400 text-xs rounded">
+              <span className="px-2 py-0.5 bg-dark-600 text-text-secondary text-xs rounded">
                 +{toArray(firm.platforms).length - 4}
               </span>
             )}
@@ -318,8 +318,8 @@ export function PropFirmCard({ firm, compact = false }: PropFirmCardProps) {
 
         {/* Last Verified */}
         {firm.lastVerified && (
-          <div className="flex items-center gap-1 text-xs text-gray-500 mb-4">
-            <CheckCircle className="w-3 h-3 text-emerald-400" />
+          <div className="flex items-center gap-1 text-xs text-text-muted mb-4">
+            <CheckCircle className="w-3 h-3 text-accent" />
             Last verified: {new Date(firm.lastVerified).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
           </div>
         )}
@@ -327,7 +327,7 @@ export function PropFirmCard({ firm, compact = false }: PropFirmCardProps) {
         {/* CTA */}
         <Link
           href={`/prop-firm/${firm.slug}`}
-          className="block w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-lg text-center transition-colors"
+          className="block w-full py-3 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-lg text-center transition-colors"
         >
           View Details
         </Link>
@@ -342,7 +342,7 @@ export function PropFirmCard({ firm, compact = false }: PropFirmCardProps) {
 function RuleBadge({ icon: Icon, label, allowed }: { icon: typeof Newspaper; label: string; allowed?: boolean | null }) {
   if (allowed === null || allowed === undefined) {
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-700/50 text-gray-400 rounded text-xs">
+      <span className="inline-flex items-center gap-1 px-2 py-1 bg-dark-600/50 text-text-secondary rounded text-xs">
         <Icon className="w-3 h-3" />
         {label}: ?
       </span>
@@ -352,7 +352,7 @@ function RuleBadge({ icon: Icon, label, allowed }: { icon: typeof Newspaper; lab
   return (
     <span className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium ${
       allowed 
-        ? 'bg-emerald-500/10 text-emerald-400' 
+        ? 'bg-accent/10 text-accent' 
         : 'bg-red-500/10 text-red-400'
     }`}>
       <Icon className="w-3 h-3" />

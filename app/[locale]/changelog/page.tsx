@@ -116,49 +116,49 @@ const CHANGELOG: ChangelogEntry[] = [
 ]
 
 const TYPE_CONFIG = {
-  feature: { icon: Plus, color: 'text-emerald-400 bg-emerald-500/10' },
+  feature: { icon: Plus, color: 'text-accent bg-accent/10' },
   improvement: { icon: Zap, color: 'text-blue-400 bg-blue-500/10' },
   fix: { icon: Bug, color: 'text-yellow-400 bg-yellow-500/10' },
   security: { icon: Shield, color: 'text-purple-400 bg-purple-500/10' },
 }
 
 const CHANGE_TYPE_CONFIG = {
-  new: { label: 'New', color: 'bg-emerald-500/10 text-emerald-400' },
+  new: { label: 'New', color: 'bg-accent/10 text-accent' },
   improved: { label: 'Improved', color: 'bg-blue-500/10 text-blue-400' },
   fixed: { label: 'Fixed', color: 'bg-yellow-500/10 text-yellow-400' },
 }
 
 export default function ChangelogPage() {
   return (
-    <div className="min-h-screen bg-gray-900 py-24 px-4">
+    <div className="min-h-screen bg-bg-elevated py-24 px-4">
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-400 text-sm mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 border border-accent/20 rounded-full text-accent text-sm mb-6">
             <Clock className="w-4 h-4" />
             Changelog
           </div>
           <h1 className="text-4xl font-bold text-white mb-4">What&apos;s New</h1>
-          <p className="text-xl text-gray-400">
+          <p className="text-xl text-text-secondary">
             Latest updates, features, and improvements to PropFirm Scanner
           </p>
         </div>
 
         {/* Subscribe to Updates */}
-        <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 mb-12">
+        <div className="bg-dark-700/50 border border-border rounded-xl p-6 mb-12">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
-              <Bell className="w-6 h-6 text-emerald-400" />
+            <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
+              <Bell className="w-6 h-6 text-accent" />
             </div>
             <div className="flex-1">
               <h2 className="text-white font-semibold mb-1">Stay Updated</h2>
-              <p className="text-gray-400 text-sm">
+              <p className="text-text-secondary text-sm">
                 Get notified when we add new features or prop firms.
               </p>
             </div>
             <Link
               href="/guide"
-              className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-lg text-sm"
+              className="px-4 py-2 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-lg text-sm"
             >
               Subscribe
             </Link>
@@ -174,7 +174,7 @@ export default function ChangelogPage() {
             return (
               <article
                 key={entry.version}
-                className="relative pl-8 pb-8 border-l-2 border-gray-700 last:border-l-0 last:pb-0"
+                className="relative pl-8 pb-8 border-l-2 border-border last:border-l-0 last:pb-0"
               >
                 {/* Timeline Dot */}
                 <div className={`absolute -left-3 w-6 h-6 rounded-full flex items-center justify-center ${typeConfig.color}`}>
@@ -183,10 +183,10 @@ export default function ChangelogPage() {
 
                 {/* Version Badge */}
                 <div className="flex items-center gap-3 mb-3">
-                  <span className="px-3 py-1 bg-gray-800 text-white font-mono text-sm rounded-lg">
+                  <span className="px-3 py-1 bg-dark-700 text-white font-mono text-sm rounded-lg">
                     v{entry.version}
                   </span>
-                  <span className="text-gray-500 text-sm">
+                  <span className="text-text-muted text-sm">
                     {new Date(entry.date).toLocaleDateString('en-US', {
                       year: 'numeric',
                       month: 'long',
@@ -194,7 +194,7 @@ export default function ChangelogPage() {
                     })}
                   </span>
                   {index === 0 && (
-                    <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 text-xs rounded-full">
+                    <span className="px-2 py-0.5 bg-accent/10 text-accent text-xs rounded-full">
                       Latest
                     </span>
                   )}
@@ -212,7 +212,7 @@ export default function ChangelogPage() {
                         <span className={`px-2 py-0.5 rounded text-xs font-medium flex-shrink-0 ${changeConfig.color}`}>
                           {changeConfig.label}
                         </span>
-                        <span className="text-gray-300 text-sm">{change.description}</span>
+                        <span className="text-text-secondary text-sm">{change.description}</span>
                       </li>
                     )
                   })}
@@ -224,12 +224,12 @@ export default function ChangelogPage() {
 
         {/* Footer CTA */}
         <div className="mt-12 text-center">
-          <p className="text-gray-400 mb-4">
+          <p className="text-text-secondary mb-4">
             Have a feature request or found a bug?
           </p>
           <Link
             href="/contact"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-xl border border-gray-700"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-dark-700 hover:bg-dark-600 text-white font-semibold rounded-xl border border-border"
           >
             Contact Us
             <ArrowUpRight className="w-4 h-4" />

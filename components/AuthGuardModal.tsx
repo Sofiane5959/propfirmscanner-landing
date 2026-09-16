@@ -60,18 +60,18 @@ export function AuthGuardModal({ isOpen, onClose, action }: AuthGuardModalProps)
       />
       
       {/* Modal */}
-      <div className="relative bg-gray-900 rounded-2xl border border-gray-800 p-8 max-w-md w-full shadow-2xl">
+      <div className="relative bg-bg-elevated rounded-2xl border border-border p-8 max-w-md w-full shadow-2xl">
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 text-gray-500 hover:text-white transition-colors"
+          className="absolute top-4 right-4 p-2 text-text-muted hover:text-white transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Icon */}
-        <div className="w-16 h-16 bg-emerald-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
-          <Shield className="w-8 h-8 text-emerald-400" />
+        <div className="w-16 h-16 bg-accent/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+          <Shield className="w-8 h-8 text-accent" />
         </div>
 
         {/* Title */}
@@ -79,7 +79,7 @@ export function AuthGuardModal({ isOpen, onClose, action }: AuthGuardModalProps)
           Créez un compte gratuit
         </h2>
         
-        <p className="text-gray-400 text-center mb-8">
+        <p className="text-text-secondary text-center mb-8">
           Pour {actionText}, connectez-vous avec Google. C'est gratuit et prend 5 secondes.
         </p>
 
@@ -98,23 +98,23 @@ export function AuthGuardModal({ isOpen, onClose, action }: AuthGuardModalProps)
         </button>
 
         {/* Benefits */}
-        <div className="mt-8 pt-6 border-t border-gray-800">
-          <p className="text-xs text-gray-600 text-center mb-4">CE QUE VOUS DÉBLOQUEZ</p>
+        <div className="mt-8 pt-6 border-t border-border">
+          <p className="text-xs text-text-muted text-center mb-4">CE QUE VOUS DÉBLOQUEZ</p>
           <div className="grid grid-cols-2 gap-3">
-            <div className="flex items-center gap-2 text-sm text-gray-400">
-              <Zap className="w-4 h-4 text-emerald-400" />
+            <div className="flex items-center gap-2 text-sm text-text-secondary">
+              <Zap className="w-4 h-4 text-accent" />
               Sauvegarder vos comptes
             </div>
-            <div className="flex items-center gap-2 text-sm text-gray-400">
-              <Zap className="w-4 h-4 text-emerald-400" />
+            <div className="flex items-center gap-2 text-sm text-text-secondary">
+              <Zap className="w-4 h-4 text-accent" />
               Simuler des trades
             </div>
-            <div className="flex items-center gap-2 text-sm text-gray-400">
-              <Zap className="w-4 h-4 text-emerald-400" />
+            <div className="flex items-center gap-2 text-sm text-text-secondary">
+              <Zap className="w-4 h-4 text-accent" />
               Alertes drawdown
             </div>
-            <div className="flex items-center gap-2 text-sm text-gray-400">
-              <Zap className="w-4 h-4 text-emerald-400" />
+            <div className="flex items-center gap-2 text-sm text-text-secondary">
+              <Zap className="w-4 h-4 text-accent" />
               Guidance quotidienne
             </div>
           </div>

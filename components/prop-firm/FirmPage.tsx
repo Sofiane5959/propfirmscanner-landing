@@ -55,10 +55,10 @@ function Section({
     <section id={id} className="scroll-mt-28 print:scroll-mt-0">
       <div className="mb-5">
         {eyebrow && (
-          <p className="text-xs uppercase tracking-wider font-semibold text-emerald-400 mb-2">{eyebrow}</p>
+          <p className="text-xs uppercase tracking-wider font-semibold text-accent mb-2">{eyebrow}</p>
         )}
         <h2 className="text-2xl md:text-3xl font-bold text-white">{title}</h2>
-        {intro && <p className="text-gray-400 mt-2 max-w-2xl">{intro}</p>}
+        {intro && <p className="text-text-secondary mt-2 max-w-2xl">{intro}</p>}
       </div>
       {children}
     </section>
@@ -81,10 +81,10 @@ function CopyCode({ code }: { code: string }) {
         navigator.clipboard?.writeText(code).then(() => setFait(true)).catch(() => {})
       }}
       aria-label={`Copy code ${code}`}
-      className="inline-flex items-center gap-2 min-h-[44px] px-3 rounded-lg border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 font-mono font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+      className="inline-flex items-center gap-2 min-h-[44px] px-3 rounded-lg border border-accent/40 bg-accent/10 text-accent font-mono font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
     >
       {code}
-      <span className="font-sans text-xs text-emerald-400/80 inline-flex items-center gap-1">
+      <span className="font-sans text-xs text-accent/80 inline-flex items-center gap-1">
         {fait ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
         {fait ? 'Copied' : 'Copy code'}
       </span>
@@ -94,9 +94,9 @@ function CopyCode({ code }: { code: string }) {
 
 /** Une valeur absente s'ecrit, elle ne se devine pas. */
 function Val({ v, unit }: { v: number | string | null | undefined; unit?: string }) {
-  if (v === null || v === undefined) return <span className="text-gray-600">Not stated</span>
+  if (v === null || v === undefined) return <span className="text-text-muted">Not stated</span>
   return (
-    <span className="text-gray-200">
+    <span className="text-text-primary">
       {typeof v === 'number' ? v.toLocaleString('en-US') : v}
       {unit ?? ''}
     </span>
@@ -166,11 +166,11 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
   }, [programme, plan])
 
   return (
-    <div className="min-h-screen bg-gray-950 print:min-h-0">
+    <div className="min-h-screen bg-bg-base print:min-h-0">
       {/* ==================================================================== */}
       {/* 1. HERO — identite a gauche, offre a droite                          */}
       {/* ==================================================================== */}
-      <section className="border-b border-gray-800 px-4 py-8">
+      <section className="border-b border-border px-4 py-8">
         <div className="max-w-6xl mx-auto grid lg:grid-cols-[minmax(0,1fr)_340px] gap-6 items-start">
           <div className="min-w-0">
             {/* Logo et nom UNE fois. Le H1 porte la proposition de valeur. */}
@@ -181,7 +181,7 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
               <div className="min-w-0">
                 <p className="text-white font-semibold leading-tight">{identity.name}</p>
                 {identity.marketBadge && (
-                  <p className="text-emerald-400 text-xs font-medium">{identity.marketBadge}</p>
+                  <p className="text-accent text-xs font-medium">{identity.marketBadge}</p>
                 )}
               </div>
             </div>
@@ -190,28 +190,28 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
               {identity.headline}
             </h1>
             {identity.intro && (
-              <p className="text-gray-300 leading-relaxed mb-4 max-w-2xl">{identity.intro}</p>
+              <p className="text-text-secondary leading-relaxed mb-4 max-w-2xl">{identity.intro}</p>
             )}
 
             {/* Fondation, pays, type : trois faits d'etat civil, pas un bloc. */}
-            <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm text-gray-400">
+            <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm text-text-secondary">
               {identity.foundedYear && <span>Founded {identity.foundedYear}</span>}
               {identity.country && <span>{identity.country}</span>}
               {identity.firmType && <span>{identity.firmType}</span>}
             </div>
             {identity.verifiedAt && (
-              <p className="text-gray-600 text-xs mt-3">
+              <p className="text-text-muted text-xs mt-3">
                 Firm information reviewed on {identity.verifiedAt.slice(0, 10)}
               </p>
             )}
           </div>
 
           {/* --- L'offre --- */}
-          <aside className="bg-gray-900/70 border border-emerald-500/30 rounded-2xl p-5">
+          <aside className="bg-bg-elevated/70 border border-accent/30 rounded-2xl p-5">
             {offer && offer.code && remise !== null ? (
               <>
-                <p className="text-3xl font-bold text-emerald-400 leading-none mb-1">{remise}% OFF</p>
-                <p className="text-gray-500 text-xs mb-4">with code</p>
+                <p className="text-3xl font-bold text-accent leading-none mb-1">{remise}% OFF</p>
+                <p className="text-text-muted text-xs mb-4">with code</p>
                 <div className="mb-4">
                   <CopyCode code={offer.code} />
                 </div>
@@ -231,13 +231,13 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
                   prix.estimated ? (
                     <p className="mb-4">
                       <span className="text-white text-xl font-semibold">{argent(prix.list)}</span>
-                      <span className="block text-gray-400 text-sm mt-1">
+                      <span className="block text-text-secondary text-sm mt-1">
                         ≈ {argent(prix.final)} with {offer.code} — estimate, verify at checkout
                       </span>
                     </p>
                   ) : (
                     <p className="mb-4">
-                      <s className="text-gray-600 text-sm mr-2">{argent(prix.list)}</s>
+                      <s className="text-text-muted text-sm mr-2">{argent(prix.list)}</s>
                       <span className="text-white text-xl font-semibold">{argent(prix.final)}</span>
                     </p>
                   )
@@ -246,7 +246,7 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
                 <a
                   href={ctaHref}
                   {...AFFILIATE_LINK_PROPS}
-                  className="w-full inline-flex items-center justify-center gap-2 min-h-[44px] px-5 bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-semibold rounded-lg transition-colors"
+                  className="w-full inline-flex items-center justify-center gap-2 min-h-[44px] px-5 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-lg transition-colors"
                 >
                   Claim deal
                   <ExternalLink className="w-4 h-4" />
@@ -255,13 +255,13 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
                 {avertissement && (
                   <p className="text-amber-400/80 text-xs mt-2">{avertissement}</p>
                 )}
-                <p className="text-gray-500 text-xs mt-2">{offer.disclosure}</p>
+                <p className="text-text-muted text-xs mt-2">{offer.disclosure}</p>
               </>
             ) : (
               <a
                 href={ctaHref}
                 {...AFFILIATE_LINK_PROPS}
-                className="w-full inline-flex items-center justify-center gap-2 min-h-[44px] px-5 bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-semibold rounded-lg transition-colors"
+                className="w-full inline-flex items-center justify-center gap-2 min-h-[44px] px-5 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-lg transition-colors"
               >
                 Visit {identity.name}
                 <ExternalLink className="w-4 h-4" />
@@ -274,7 +274,7 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
       {/* ==================================================================== */}
       {/* 2. BANDE COMPACTE — ce qui disqualifie en deux secondes              */}
       {/* ==================================================================== */}
-      <section className="border-b border-gray-800 px-4 py-5">
+      <section className="border-b border-border px-4 py-5">
         <div className="max-w-6xl mx-auto grid sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-4">
           {[
             { label: 'Tradable assets', values: catalogue.assets },
@@ -290,14 +290,14 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
             .filter((g) => g.values.length > 0)
             .map((g) => (
               <div key={g.label}>
-                <p className="text-xs uppercase tracking-wider font-semibold text-gray-500 mb-2">
+                <p className="text-xs uppercase tracking-wider font-semibold text-text-muted mb-2">
                   {g.label}
                 </p>
                 <ul className="flex flex-wrap gap-1.5">
                   {g.values.map((v) => (
                     <li
                       key={v}
-                      className="px-2.5 py-1 rounded-md bg-gray-900/60 border border-gray-800 text-gray-300 text-xs"
+                      className="px-2.5 py-1 rounded-md bg-bg-elevated/60 border border-border text-text-secondary text-xs"
                     >
                       {v}
                     </li>
@@ -318,11 +318,11 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
           ].filter(([, v]) => Boolean(v)) as [string, string][]
           if (entrees.length === 0) return null
           return (
-            <div className="max-w-6xl mx-auto mt-5 pt-4 border-t border-gray-800 flex flex-wrap gap-x-8 gap-y-2">
+            <div className="max-w-6xl mx-auto mt-5 pt-4 border-t border-border flex flex-wrap gap-x-8 gap-y-2">
               {entrees.map(([label, valeur]) => (
                 <span key={label} className="text-sm">
-                  <span className="text-gray-500">{label} : </span>
-                  <span className="text-gray-200">{valeur}</span>
+                  <span className="text-text-muted">{label} : </span>
+                  <span className="text-text-primary">{valeur}</span>
                 </span>
               ))}
             </div>
@@ -332,12 +332,12 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
         {/* Les faits de firme, uniquement ceux vrais partout. Deux sur les
             quatre d'avant : la structure refuse les autres. */}
         {firmFacts.length > 0 && (
-          <div className="max-w-6xl mx-auto mt-5 pt-4 border-t border-gray-800 flex flex-wrap gap-x-6 gap-y-2">
+          <div className="max-w-6xl mx-auto mt-5 pt-4 border-t border-border flex flex-wrap gap-x-6 gap-y-2">
             {firmFacts.map((f) => (
               <span key={f.label} className="text-sm">
-                <Check className="w-3.5 h-3.5 text-emerald-400 inline mr-1.5 -mt-0.5" />
+                <Check className="w-3.5 h-3.5 text-accent inline mr-1.5 -mt-0.5" />
                 <span className="text-white font-medium">{f.label}</span>
-                {f.detail && <span className="text-gray-500"> — {f.detail}</span>}
+                {f.detail && <span className="text-text-muted"> — {f.detail}</span>}
               </span>
             ))}
           </div>
@@ -377,10 +377,10 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
                             const premier = programs.find((p) => p.market === m)
                             if (premier) setPlanId(premier.plans[0].id)
                           }}
-                          className={`min-h-[44px] px-4 rounded-lg border text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
+                          className={`min-h-[44px] px-4 rounded-lg border text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                             actif
-                              ? 'border-emerald-500 bg-emerald-500/10 text-white'
-                              : 'border-gray-800 bg-gray-900/50 text-gray-400 hover:border-gray-700'
+                              ? 'border-accent bg-accent/10 text-white'
+                              : 'border-border bg-bg-elevated/50 text-text-secondary hover:border-border-hover'
                           }`}
                         >
                           {m === 'futures' ? 'Futures' : m === 'cfd' ? 'CFD' : m}
@@ -401,14 +401,14 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
                         role="radio"
                         aria-checked={actif}
                         onClick={() => setPlanId(p.plans[0].id)}
-                        className={`min-h-[44px] text-left p-4 rounded-xl border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
+                        className={`min-h-[44px] text-left p-4 rounded-xl border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                           actif
-                            ? 'border-emerald-500 bg-emerald-500/10'
-                            : 'border-gray-800 bg-gray-900/50 hover:border-gray-700'
+                            ? 'border-accent bg-accent/10'
+                            : 'border-border bg-bg-elevated/50 hover:border-border-hover'
                         }`}
                       >
                         <span className="block text-white font-semibold">{p.name}</span>
-                        <span className="block text-gray-400 text-xs mt-1">
+                        <span className="block text-text-secondary text-xs mt-1">
                           {p.kind === 'instant'
                             ? 'Funded from purchase, no evaluation'
                             : `${p.evaluationSteps ?? 1}-step evaluation`}
@@ -437,10 +437,10 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
                             )
                             if (premier) setPlanId(premier.id)
                           }}
-                          className={`min-h-[44px] px-4 rounded-lg border text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
+                          className={`min-h-[44px] px-4 rounded-lg border text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                             actif
-                              ? 'border-emerald-500 bg-emerald-500/10 text-white'
-                              : 'border-gray-800 bg-gray-900/50 text-gray-400 hover:border-gray-700'
+                              ? 'border-accent bg-accent/10 text-white'
+                              : 'border-border bg-bg-elevated/50 text-text-secondary hover:border-border-hover'
                           }`}
                         >
                           {v.label ?? 'Standard'}
@@ -460,10 +460,10 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
                         role="radio"
                         aria-checked={p.id === plan.id}
                         onClick={() => setPlanId(p.id)}
-                        className={`min-h-[44px] px-4 rounded-lg border text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
+                        className={`min-h-[44px] px-4 rounded-lg border text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                           p.id === plan.id
-                            ? 'border-emerald-500 bg-emerald-500/10 text-white'
-                            : 'border-gray-800 bg-gray-900/50 text-gray-400 hover:border-gray-700'
+                            ? 'border-accent bg-accent/10 text-white'
+                            : 'border-border bg-bg-elevated/50 text-text-secondary hover:border-border-hover'
                         }`}
                       >
                         {taille(p.accountSize)}
@@ -473,13 +473,13 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
                 )}
 
                 {programme?.differentiator && (
-                  <p className="text-gray-400 text-sm leading-relaxed">{programme.differentiator}</p>
+                  <p className="text-text-secondary text-sm leading-relaxed">{programme.differentiator}</p>
                 )}
               </div>
 
               {/* Resume : meme hauteur que la colonne de gauche, collant. */}
-              <aside className="lg:sticky lg:top-20 bg-gray-900/70 border border-emerald-500/25 rounded-xl p-5">
-                <p className="text-xs uppercase tracking-wider font-semibold text-gray-500 mb-3">
+              <aside className="lg:sticky lg:top-20 bg-bg-elevated/70 border border-accent/25 rounded-xl p-5">
+                <p className="text-xs uppercase tracking-wider font-semibold text-text-muted mb-3">
                   Your selection
                 </p>
                 <p className="text-white font-semibold mb-3">
@@ -493,17 +493,17 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
                   prix.estimated ? (
                     <p className="mb-3">
                       <span className="text-white text-xl font-semibold">{argent(prix.list)}</span>
-                      <span className="block text-gray-400 text-sm mt-1">
+                      <span className="block text-text-secondary text-sm mt-1">
                         ≈ {argent(prix.final)}
                         {remise !== null ? ` with −${remise}%` : ''} — estimate, verify at checkout
                       </span>
                     </p>
                   ) : (
                     <p className="mb-3">
-                      <s className="text-gray-600 text-sm mr-2">{argent(prix.list)}</s>
-                      <span className="text-emerald-400 text-xl font-semibold">{argent(prix.final)}</span>
+                      <s className="text-text-muted text-sm mr-2">{argent(prix.list)}</s>
+                      <span className="text-accent text-xl font-semibold">{argent(prix.final)}</span>
                       {remise !== null && (
-                        <span className="text-gray-500 text-xs ml-2">−{remise}%</span>
+                        <span className="text-text-muted text-xs ml-2">−{remise}%</span>
                       )}
                     </p>
                   )
@@ -548,7 +548,7 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
                     .filter(([, v]) => v !== null && v !== undefined)
                     .map(([label, v]) => (
                       <div key={label} className="flex justify-between gap-3">
-                        <dt className="text-gray-500">{label}</dt>
+                        <dt className="text-text-muted">{label}</dt>
                         <dd className="text-right">
                           <Val v={v} />
                         </dd>
@@ -559,13 +559,13 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
                 <a
                   href={ctaHref}
                   {...AFFILIATE_LINK_PROPS}
-                  className="w-full inline-flex items-center justify-center gap-2 min-h-[44px] px-5 bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-semibold rounded-lg transition-colors"
+                  className="w-full inline-flex items-center justify-center gap-2 min-h-[44px] px-5 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-lg transition-colors"
                 >
                   Claim deal
                   <ExternalLink className="w-4 h-4" />
                 </a>
                 {avertissement && <p className="text-amber-400/80 text-xs mt-2">{avertissement}</p>}
-                {offer && <p className="text-gray-500 text-xs mt-2">{offer.disclosure}</p>}
+                {offer && <p className="text-text-muted text-xs mt-2">{offer.disclosure}</p>}
               </aside>
             </div>
           </Section>
@@ -581,17 +581,17 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
             title={`${programme.name}: rules by phase`}
             intro="Only the phases this program actually has."
           >
-            <div className="rounded-xl border border-gray-800 bg-gray-900/40 overflow-x-auto">
+            <div className="rounded-xl border border-border bg-bg-elevated/40 overflow-x-auto">
               <table className="w-full text-sm min-w-[520px]">
                 <thead>
-                  <tr className="border-b border-gray-800">
-                    <th className="text-left px-5 py-3 text-xs uppercase tracking-wider text-gray-500 font-semibold">
+                  <tr className="border-b border-border">
+                    <th className="text-left px-5 py-3 text-xs uppercase tracking-wider text-text-muted font-semibold">
                       Rule
                     </th>
                     {plan.phases.map((ph) => (
                       <th
                         key={ph.phase}
-                        className="text-left px-5 py-3 text-xs uppercase tracking-wider text-gray-500 font-semibold"
+                        className="text-left px-5 py-3 text-xs uppercase tracking-wider text-text-muted font-semibold"
                       >
                         {ph.phase === 'evaluation'
                           ? 'Evaluation'
@@ -602,7 +602,7 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-800">
+                <tbody className="divide-y divide-border">
                   {(
                     [
                       ['Profit target', (p: PhaseRow) => (p.profitTarget != null ? argent(p.profitTarget) : null)],
@@ -620,7 +620,7 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
                     ] as [string, (p: PhaseRow) => number | string | null][]
                   ).map(([label, lire]) => (
                     <tr key={label}>
-                      <td className="px-5 py-2.5 text-gray-400">{label}</td>
+                      <td className="px-5 py-2.5 text-text-secondary">{label}</td>
                       {plan.phases.map((ph) => (
                         <td key={ph.phase} className="px-5 py-2.5">
                           <Val v={lire(ph)} />
@@ -642,23 +642,23 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
                   }, new Map<string, typeof rules.critical>())
                 ).map(([categorie, liste]) => (
                   <div key={categorie}>
-                    <p className="text-xs uppercase tracking-wider font-semibold text-gray-500 mb-2.5">
+                    <p className="text-xs uppercase tracking-wider font-semibold text-text-muted mb-2.5">
                       {categorie}
                     </p>
                     <div className="grid sm:grid-cols-2 gap-3">
                       {liste.map((r) => (
                         <article
                           key={r.title}
-                          className={`bg-gray-900/50 border rounded-xl p-4 ${
+                          className={`bg-bg-elevated/50 border rounded-xl p-4 ${
                             r.severity === 'hard_breach'
                               ? 'border-red-500/30'
                               : r.severity === 'payout_condition'
                                 ? 'border-amber-500/25'
-                                : 'border-gray-800'
+                                : 'border-border'
                           }`}
                         >
                           <h3 className="text-white font-semibold text-sm mb-1">{r.title}</h3>
-                          <p className="text-gray-400 text-sm leading-relaxed">{r.detail}</p>
+                          <p className="text-text-secondary text-sm leading-relaxed">{r.detail}</p>
                         </article>
                       ))}
                     </div>
@@ -670,15 +670,15 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
             {/* Le detail exhaustif, replie. */}
             {rules.complete.length > 0 && (
               <details className="mt-6 group">
-                <summary className="min-h-[44px] inline-flex items-center gap-2 px-4 rounded-lg border border-gray-800 bg-gray-900/50 text-gray-300 text-sm cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400">
+                <summary className="min-h-[44px] inline-flex items-center gap-2 px-4 rounded-lg border border-border bg-bg-elevated/50 text-text-secondary text-sm cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-accent">
                   See all {rules.complete.length} permissions and restrictions
                   <ChevronDown className="w-4 h-4 transition-transform group-open:rotate-180" />
                 </summary>
                 <ul className="mt-3 space-y-2">
                   {rules.complete.map((r) => (
-                    <li key={r.title} className="bg-gray-900/50 border border-gray-800 rounded-lg p-3">
+                    <li key={r.title} className="bg-bg-elevated/50 border border-border rounded-lg p-3">
                       <p className="text-white text-sm font-medium">{r.title}</p>
-                      {r.detail && <p className="text-gray-400 text-sm mt-0.5">{r.detail}</p>}
+                      {r.detail && <p className="text-text-secondary text-sm mt-0.5">{r.detail}</p>}
                       {r.confidence === 'needs_confirmation' && (
                         <p className="text-amber-400/80 text-xs mt-1">Not confirmed</p>
                       )}
@@ -693,7 +693,7 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
               <div className="grid md:grid-cols-2 gap-6 mt-6">
                 {bundles.filter((b) => b.programSlug === programme.slug).length > 0 && (
                   <div>
-                    <p className="text-xs uppercase tracking-wider font-semibold text-gray-500 mb-2.5">
+                    <p className="text-xs uppercase tracking-wider font-semibold text-text-muted mb-2.5">
                       Bundle discounts
                     </p>
                     <ul className="space-y-1 text-sm">
@@ -701,8 +701,8 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
                         .filter((b) => b.programSlug === programme.slug)
                         .map((b) => (
                           <li key={b.accountNumber} className="flex justify-between gap-3">
-                            <span className="text-gray-400">Account {b.accountNumber}</span>
-                            <span className="text-gray-200">
+                            <span className="text-text-secondary">Account {b.accountNumber}</span>
+                            <span className="text-text-primary">
                               {b.discountPercent != null ? `−${Math.round(b.discountPercent * 100)}%` : '—'}
                             </span>
                           </li>
@@ -712,14 +712,14 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
                 )}
                 {liveTiers.length > 0 && (
                   <div>
-                    <p className="text-xs uppercase tracking-wider font-semibold text-gray-500 mb-2.5">
+                    <p className="text-xs uppercase tracking-wider font-semibold text-text-muted mb-2.5">
                       Live account progression
                     </p>
                     <ul className="space-y-1 text-sm">
                       {liveTiers.map((t) => (
                         <li key={t.accountSize} className="flex justify-between gap-3">
-                          <span className="text-gray-400">{taille(t.accountSize)}</span>
-                          <span className="text-gray-200">
+                          <span className="text-text-secondary">{taille(t.accountSize)}</span>
+                          <span className="text-text-primary">
                             {t.lossFloor != null ? `${argent(t.lossFloor)} loss floor` : '—'}
                             {t.cushion != null ? ` · ${argent(t.cushion)} cushion` : ''}
                           </span>
@@ -738,9 +738,9 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
         {/* ================================================================== */}
         {narrative.about.length > 0 && (
           <Section id="about" title={`About ${identity.name}`}>
-            <div className="bg-gray-900/40 border border-gray-800 rounded-xl p-5">
+            <div className="bg-bg-elevated/40 border border-border rounded-xl p-5">
               {narrative.about.map((p, i) => (
-                <p key={i} className={`text-gray-300 text-sm leading-relaxed ${i > 0 ? 'mt-3' : ''}`}>
+                <p key={i} className={`text-text-secondary text-sm leading-relaxed ${i > 0 ? 'mt-3' : ''}`}>
                   {p}
                 </p>
               ))}
@@ -752,16 +752,16 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
           <Section title={`${identity.name}: strengths and things to know`}>
             <div className="grid md:grid-cols-2 gap-4">
               {[
-                { titre: 'Strengths', items: narrative.strengths, couleur: 'text-emerald-400' },
+                { titre: 'Strengths', items: narrative.strengths, couleur: 'text-accent' },
                 { titre: 'Things to know', items: narrative.limits, couleur: 'text-amber-400' },
               ]
                 .filter((c) => c.items.length > 0)
                 .map((c) => (
-                  <div key={c.titre} className="bg-gray-900/40 border border-gray-800 rounded-xl p-5">
+                  <div key={c.titre} className="bg-bg-elevated/40 border border-border rounded-xl p-5">
                     <p className="text-white font-semibold text-sm mb-3">{c.titre}</p>
                     <ul className="space-y-2">
                       {c.items.map((it, i) => (
-                        <li key={i} className="text-gray-400 text-sm">
+                        <li key={i} className="text-text-secondary text-sm">
                           <span className={`${c.couleur} mr-1.5`}>·</span>
                           {it}
                         </li>
@@ -775,15 +775,15 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
 
         {narrative.verdict && (
           <Section id="verdict" eyebrow="PropFirmScanner verdict" title="Who we recommend it to">
-            <p className="text-gray-300 leading-relaxed mb-5 max-w-3xl">{narrative.verdict.body}</p>
+            <p className="text-text-secondary leading-relaxed mb-5 max-w-3xl">{narrative.verdict.body}</p>
             <div className="grid sm:grid-cols-2 gap-4">
               {narrative.verdict.goodFit.length > 0 && (
-                <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-5">
+                <div className="bg-bg-elevated/50 border border-border rounded-xl p-5">
                   <p className="text-white font-semibold text-sm mb-3">A good fit if you want</p>
                   <ul className="space-y-2">
                     {narrative.verdict.goodFit.map((p, i) => (
-                      <li key={i} className="flex items-start gap-2 text-gray-400 text-sm">
-                        <Check className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                      <li key={i} className="flex items-start gap-2 text-text-secondary text-sm">
+                        <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                         <span>{p}</span>
                       </li>
                     ))}
@@ -791,11 +791,11 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
                 </div>
               )}
               {narrative.verdict.poorFit.length > 0 && (
-                <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-5">
+                <div className="bg-bg-elevated/50 border border-border rounded-xl p-5">
                   <p className="text-white font-semibold text-sm mb-3">Consider another firm if you…</p>
                   <ul className="space-y-2">
                     {narrative.verdict.poorFit.map((p, i) => (
-                      <li key={i} className="flex items-start gap-2 text-gray-400 text-sm">
+                      <li key={i} className="flex items-start gap-2 text-text-secondary text-sm">
                         <span className="text-amber-400 mt-0.5 flex-shrink-0">·</span>
                         <span>{p}</span>
                       </li>
@@ -816,13 +816,13 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
               {narrative.faq.map((f) => (
                 <details
                   key={f.question}
-                  className="group bg-gray-900/40 border border-gray-800 rounded-xl px-4"
+                  className="group bg-bg-elevated/40 border border-border rounded-xl px-4"
                 >
-                  <summary className="min-h-[44px] flex items-center justify-between gap-3 text-white text-sm font-medium cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400">
+                  <summary className="min-h-[44px] flex items-center justify-between gap-3 text-white text-sm font-medium cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-accent">
                     {f.question}
-                    <ChevronDown className="w-4 h-4 text-gray-500 flex-shrink-0 transition-transform group-open:rotate-180" />
+                    <ChevronDown className="w-4 h-4 text-text-muted flex-shrink-0 transition-transform group-open:rotate-180" />
                   </summary>
-                  <p className="text-gray-400 text-sm leading-relaxed pb-4">{f.answer}</p>
+                  <p className="text-text-secondary text-sm leading-relaxed pb-4">{f.answer}</p>
                 </details>
               ))}
             </div>
@@ -836,7 +836,7 @@ export default function FirmPage({ model, ctaHref, locale = 'en' }: Props) {
             sans avertissement est une decision, pas un oubli. Il ne depend
             d'aucune donnee, donc il ne peut pas disparaitre avec une colonne
             vide. */}
-        <p className="text-gray-600 text-xs leading-relaxed border-t border-gray-800 pt-6">
+        <p className="text-text-muted text-xs leading-relaxed border-t border-border pt-6">
           Trading involves substantial risk of loss. Prop firm evaluations are
           simulated environments and performance shown is hypothetical. Only
           trade with capital you can afford to lose, and read the firm&rsquo;s

@@ -96,70 +96,70 @@ export default function PriceAlertModal({
       
       {/* Modal */}
       <div 
-        className={`relative bg-gray-900 rounded-2xl border border-gray-700 w-full max-w-md overflow-hidden transition-all duration-200 ${
+        className={`relative bg-bg-elevated rounded-2xl border border-border w-full max-w-md overflow-hidden transition-all duration-200 ${
           isVisible ? 'scale-100' : 'scale-95'
         }`}
       >
         {success ? (
           /* Success State */
           <div className="p-8 text-center">
-            <div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Check className="w-8 h-8 text-emerald-400" />
+            <div className="w-16 h-16 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Check className="w-8 h-8 text-accent" />
             </div>
             <h3 className="text-xl font-bold text-white mb-2">Alert Created!</h3>
-            <p className="text-gray-400">
-              We'll email you when <span className="text-white">{firmName}</span> drops to <span className="text-emerald-400">${targetPrice}</span>
+            <p className="text-text-secondary">
+              We'll email you when <span className="text-white">{firmName}</span> drops to <span className="text-accent">${targetPrice}</span>
             </p>
           </div>
         ) : (
           /* Form State */
           <>
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-800">
+            <div className="flex items-center justify-between p-6 border-b border-border">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-gradient-to-br from-accent to-accent rounded-xl flex items-center justify-center">
                   <BellRing className="w-5 h-5 text-white" />
                 </div>
                 <div>
                   <h3 className="font-bold text-white">Price Alert</h3>
-                  <p className="text-sm text-gray-400">{firmName}</p>
+                  <p className="text-sm text-text-secondary">{firmName}</p>
                 </div>
               </div>
               <button 
                 onClick={handleClose} 
-                className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+                className="p-2 hover:bg-dark-700 rounded-lg transition-colors"
               >
-                <X className="w-5 h-5 text-gray-400" />
+                <X className="w-5 h-5 text-text-secondary" />
               </button>
             </div>
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="p-6 space-y-5">
               {/* Current Price Display */}
-              <div className="flex items-center justify-between p-4 bg-gray-800/50 rounded-xl">
-                <span className="text-gray-400">Current price</span>
+              <div className="flex items-center justify-between p-4 bg-dark-700/50 rounded-xl">
+                <span className="text-text-secondary">Current price</span>
                 <span className="text-xl font-bold text-white">${currentPrice}</span>
               </div>
 
               {/* Target Price Input */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-text-secondary mb-2">
                   Alert me when price drops to
                 </label>
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg">$</span>
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted text-lg">$</span>
                   <input
                     type="number"
                     value={targetPrice}
                     onChange={(e) => setTargetPrice(Number(e.target.value))}
-                    className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white text-lg font-medium focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                    className="w-full pl-10 pr-4 py-3 bg-dark-700 border border-border rounded-xl text-white text-lg font-medium focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent"
                     min={1}
                     max={currentPrice - 1}
                     required
                   />
                 </div>
                 <div className="flex items-center justify-between mt-2">
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-text-muted">
                     {discountPercent > 0 ? `${discountPercent}% discount` : 'Set a lower price'}
                   </p>
                   {/* Quick select buttons */}
@@ -171,8 +171,8 @@ export default function PriceAlertModal({
                         onClick={() => setTargetPrice(Math.floor(currentPrice * (1 - pct / 100)))}
                         className={`px-2 py-1 text-xs rounded-md transition-colors ${
                           discountPercent === pct
-                            ? 'bg-emerald-500 text-white'
-                            : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
+                            ? 'bg-accent-hover text-white'
+                            : 'bg-dark-600 text-text-secondary hover:bg-dark-500'
                         }`}
                       >
                         -{pct}%
@@ -184,7 +184,7 @@ export default function PriceAlertModal({
 
               {/* Email Input */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-text-secondary mb-2">
                   Email for notification
                 </label>
                 <input
@@ -192,7 +192,7 @@ export default function PriceAlertModal({
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="your@email.com"
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                  className="w-full px-4 py-3 bg-dark-700 border border-border rounded-xl text-white placeholder-text-muted focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent"
                   required
                 />
               </div>
@@ -209,7 +209,7 @@ export default function PriceAlertModal({
               <button
                 type="submit"
                 disabled={isLoading || targetPrice >= currentPrice}
-                className="w-full py-3.5 bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
+                className="w-full py-3.5 bg-accent-hover hover:brightness-110 disabled:bg-dark-600 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
               >
                 {isLoading ? (
                   <>
@@ -225,7 +225,7 @@ export default function PriceAlertModal({
               </button>
 
               {/* Info */}
-              <p className="text-xs text-gray-500 text-center">
+              <p className="text-xs text-text-muted text-center">
                 We'll only email you when the price drops. No spam, ever.
               </p>
             </form>

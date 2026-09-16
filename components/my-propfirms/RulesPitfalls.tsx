@@ -93,16 +93,16 @@ export function RulesPitfalls({ account, onClose }: RulesPitfallsProps) {
       <div className="absolute inset-0 bg-black/70" onClick={onClose} />
 
       {/* Modal */}
-      <div className="relative bg-gray-900 rounded-t-xl sm:rounded-xl border border-gray-800 w-full sm:max-w-lg max-h-[85vh] overflow-y-auto">
+      <div className="relative bg-bg-elevated rounded-t-xl sm:rounded-xl border border-border w-full sm:max-w-lg max-h-[85vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-gray-900 border-b border-gray-800 p-4 flex items-center justify-between">
+        <div className="sticky top-0 bg-bg-elevated border-b border-border p-4 flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold text-white">Rules & Pitfalls</h2>
-            <p className="text-sm text-gray-500">{account.prop_firm} · {account.stage}</p>
+            <p className="text-sm text-text-muted">{account.prop_firm} · {account.stage}</p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg"
+            className="p-2 text-text-secondary hover:text-white hover:bg-dark-700 rounded-lg"
           >
             <X className="w-5 h-5" />
           </button>
@@ -111,32 +111,32 @@ export function RulesPitfalls({ account, onClose }: RulesPitfallsProps) {
         <div className="p-4 space-y-6">
           {/* KEY RULES */}
           <section>
-            <h3 className="flex items-center gap-2 text-sm font-medium text-gray-400 mb-3">
+            <h3 className="flex items-center gap-2 text-sm font-medium text-text-secondary mb-3">
               <BookOpen className="w-4 h-4" />
               Key Rules
             </h3>
             
             <div className="space-y-3">
               {/* Daily DD */}
-              <div className="bg-gray-800 rounded-lg p-3">
+              <div className="bg-dark-700 rounded-lg p-3">
                 <div className="flex justify-between mb-1">
                   <span className="text-sm text-white">Daily Drawdown</span>
-                  <span className="text-sm text-emerald-400">{account.daily_dd_percent}%</span>
+                  <span className="text-sm text-accent">{account.daily_dd_percent}%</span>
                 </div>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-text-muted">
                   Max {formatUSD(dailyDDUsd)} loss per day from starting balance
                 </p>
               </div>
 
               {/* Max DD */}
-              <div className="bg-gray-800 rounded-lg p-3">
+              <div className="bg-dark-700 rounded-lg p-3">
                 <div className="flex justify-between mb-1">
                   <span className="text-sm text-white">Max Drawdown</span>
-                  <span className={`text-sm ${account.max_dd_type === 'static' ? 'text-emerald-400' : 'text-purple-400'}`}>
+                  <span className={`text-sm ${account.max_dd_type === 'static' ? 'text-accent' : 'text-purple-400'}`}>
                     {account.max_dd_percent}% {account.max_dd_type !== 'static' && '(trailing)'}
                   </span>
                 </div>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-text-muted">
                   {account.max_dd_type === 'static'
                     ? `Floor at ${formatUSD(account.account_size - maxDDUsd)} — does not change`
                     : `Floor moves up with profits — currently trails your high watermark`
@@ -145,14 +145,14 @@ export function RulesPitfalls({ account, onClose }: RulesPitfallsProps) {
               </div>
 
               {/* Basis */}
-              <div className="bg-gray-800 rounded-lg p-3">
+              <div className="bg-dark-700 rounded-lg p-3">
                 <div className="flex justify-between mb-1">
                   <span className="text-sm text-white">DD Calculation Basis</span>
-                  <span className="text-sm text-gray-300">
+                  <span className="text-sm text-text-secondary">
                     {account.health.max.basisUsed === 'balance' ? 'Balance' : 'Equity'}
                   </span>
                 </div>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-text-muted">
                   {account.health.max.basisUsed === 'balance'
                     ? 'Only closed P&L counts toward drawdown'
                     : 'Floating (unrealized) losses count toward drawdown'
@@ -162,42 +162,42 @@ export function RulesPitfalls({ account, onClose }: RulesPitfallsProps) {
 
               {/* Min Days */}
               {account.min_trading_days > 0 && (
-                <div className="bg-gray-800 rounded-lg p-3">
+                <div className="bg-dark-700 rounded-lg p-3">
                   <div className="flex justify-between mb-1">
                     <span className="text-sm text-white">Minimum Trading Days</span>
-                    <span className="text-sm text-gray-300">{account.min_trading_days} days</span>
+                    <span className="text-sm text-text-secondary">{account.min_trading_days} days</span>
                   </div>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-text-muted">
                     You must trade on at least {account.min_trading_days} separate days to pass
                   </p>
                 </div>
               )}
 
               {/* News */}
-              <div className="bg-gray-800 rounded-lg p-3">
+              <div className="bg-dark-700 rounded-lg p-3">
                 <div className="flex justify-between mb-1">
                   <span className="text-sm text-white">News Trading</span>
-                  <span className={`text-sm ${account.allows_news ? 'text-emerald-400' : 'text-red-400'}`}>
+                  <span className={`text-sm ${account.allows_news ? 'text-accent' : 'text-red-400'}`}>
                     {account.allows_news ? 'Allowed' : 'Not Allowed'}
                   </span>
                 </div>
                 {!account.allows_news && (
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-text-muted">
                     No trading 2-5 minutes before/after high-impact news
                   </p>
                 )}
               </div>
 
               {/* Weekend */}
-              <div className="bg-gray-800 rounded-lg p-3">
+              <div className="bg-dark-700 rounded-lg p-3">
                 <div className="flex justify-between mb-1">
                   <span className="text-sm text-white">Weekend Holding</span>
-                  <span className={`text-sm ${account.allows_weekend ? 'text-emerald-400' : 'text-red-400'}`}>
+                  <span className={`text-sm ${account.allows_weekend ? 'text-accent' : 'text-red-400'}`}>
                     {account.allows_weekend ? 'Allowed' : 'Not Allowed'}
                   </span>
                 </div>
                 {!account.allows_weekend && (
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-text-muted">
                     All positions must be closed before Friday market close
                   </p>
                 )}
@@ -207,7 +207,7 @@ export function RulesPitfalls({ account, onClose }: RulesPitfallsProps) {
 
           {/* COMMON MISTAKES */}
           <section>
-            <h3 className="flex items-center gap-2 text-sm font-medium text-gray-400 mb-3">
+            <h3 className="flex items-center gap-2 text-sm font-medium text-text-secondary mb-3">
               <AlertTriangle className="w-4 h-4 text-yellow-500" />
               Common Mistakes
             </h3>

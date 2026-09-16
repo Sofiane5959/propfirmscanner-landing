@@ -106,14 +106,14 @@ function DemoBanner() {
             <p className="font-medium text-white">
               You&apos;re viewing demo data
             </p>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-text-secondary">
               Add your own account to see your real risk metrics and guidance.
             </p>
           </div>
         </div>
         <Link
           href="/dashboard/accounts/new"
-          className="flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors whitespace-nowrap"
+          className="flex items-center justify-center gap-2 px-4 py-2.5 bg-accent-hover hover:brightness-110 text-white text-sm font-medium rounded-lg transition-colors whitespace-nowrap"
         >
           <Plus className="w-4 h-4" />
           Add Your Account
@@ -145,15 +145,15 @@ export function WorkspaceTabs({
       {isDemo && <DemoBanner />}
 
       {/* Tab Navigation */}
-      <div className="flex gap-1 p-1 bg-gray-900 rounded-xl mb-6 overflow-x-auto">
+      <div className="flex gap-1 p-1 bg-bg-elevated rounded-xl mb-6 overflow-x-auto">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap
               ${activeTab === tab.id
-                ? 'bg-gray-800 text-white'
-                : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
+                ? 'bg-dark-700 text-white'
+                : 'text-text-secondary hover:text-white hover:bg-dark-700/50'
               }`}
           >
             <tab.icon className="w-4 h-4" />
@@ -236,16 +236,16 @@ function OverviewTab({
             ? 'bg-red-500/10 border-red-500/30'
             : hasRisk
               ? 'bg-yellow-500/10 border-yellow-500/30'
-              : 'bg-emerald-500/10 border-emerald-500/30'
+              : 'bg-accent/10 border-accent/30'
         }`}
       >
         {isDemo && (
-          <span className="absolute top-3 right-3 text-xs text-gray-500 bg-gray-800 px-2 py-0.5 rounded">
+          <span className="absolute top-3 right-3 text-xs text-text-muted bg-dark-700 px-2 py-0.5 rounded">
             Demo data
           </span>
         )}
         <p className={`text-lg font-medium pr-20 ${
-          hasDanger ? 'text-red-400' : hasRisk ? 'text-yellow-400' : 'text-emerald-400'
+          hasDanger ? 'text-red-400' : hasRisk ? 'text-yellow-400' : 'text-accent'
         }`}>
           {dailyGuidance}
         </p>
@@ -253,37 +253,37 @@ function OverviewTab({
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-gray-900 rounded-xl p-4 border border-gray-800 relative">
+        <div className="bg-bg-elevated rounded-xl p-4 border border-border relative">
           {isDemo && (
             <span className="absolute top-2 right-2 w-2 h-2 bg-yellow-500 rounded-full" title="Demo data" />
           )}
           <div className="flex items-center gap-2 mb-2">
-            <Activity className="w-4 h-4 text-gray-500" />
-            <span className="text-xs text-gray-500">Total Accounts</span>
+            <Activity className="w-4 h-4 text-text-muted" />
+            <span className="text-xs text-text-muted">Total Accounts</span>
           </div>
           <p className="text-3xl font-bold text-white">{totalAccounts}</p>
         </div>
 
-        <div className="bg-gray-900 rounded-xl p-4 border border-gray-800">
+        <div className="bg-bg-elevated rounded-xl p-4 border border-border">
           <div className="flex items-center gap-2 mb-2">
-            <CheckCircle className="w-4 h-4 text-emerald-500" />
-            <span className="text-xs text-gray-500">Safe to Trade</span>
+            <CheckCircle className="w-4 h-4 text-accent" />
+            <span className="text-xs text-text-muted">Safe to Trade</span>
           </div>
-          <p className="text-3xl font-bold text-emerald-400">{safeCount}</p>
+          <p className="text-3xl font-bold text-accent">{safeCount}</p>
         </div>
 
-        <div className="bg-gray-900 rounded-xl p-4 border border-gray-800">
+        <div className="bg-bg-elevated rounded-xl p-4 border border-border">
           <div className="flex items-center gap-2 mb-2">
             <AlertTriangle className="w-4 h-4 text-yellow-500" />
-            <span className="text-xs text-gray-500">At Risk</span>
+            <span className="text-xs text-text-muted">At Risk</span>
           </div>
           <p className="text-3xl font-bold text-yellow-400">{riskCount}</p>
         </div>
 
-        <div className="bg-gray-900 rounded-xl p-4 border border-gray-800">
+        <div className="bg-bg-elevated rounded-xl p-4 border border-border">
           <div className="flex items-center gap-2 mb-2">
             <XCircle className="w-4 h-4 text-red-500" />
-            <span className="text-xs text-gray-500">Do Not Trade</span>
+            <span className="text-xs text-text-muted">Do Not Trade</span>
           </div>
           <p className="text-3xl font-bold text-red-400">{dangerCount}</p>
         </div>
@@ -293,41 +293,41 @@ function OverviewTab({
       <div className="grid md:grid-cols-3 gap-4">
         <button
           onClick={() => onNavigate('accounts')}
-          className="p-4 bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded-xl text-left transition-colors"
+          className="p-4 bg-bg-elevated hover:bg-dark-700 border border-border rounded-xl text-left transition-colors"
         >
-          <Wallet className="w-5 h-5 text-emerald-400 mb-2" />
+          <Wallet className="w-5 h-5 text-accent mb-2" />
           <p className="font-medium text-white">View Accounts</p>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-text-muted">
             {isDemo ? 'See demo accounts' : 'See all your prop firm accounts'}
           </p>
         </button>
 
         <button
           onClick={() => onNavigate('simulation')}
-          className="p-4 bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded-xl text-left transition-colors"
+          className="p-4 bg-bg-elevated hover:bg-dark-700 border border-border rounded-xl text-left transition-colors"
         >
           <Play className="w-5 h-5 text-blue-400 mb-2" />
           <p className="font-medium text-white">Simulate Trade</p>
-          <p className="text-sm text-gray-500">Test before you risk</p>
+          <p className="text-sm text-text-muted">Test before you risk</p>
         </button>
 
         <button
           onClick={() => onNavigate('guidance')}
-          className="p-4 bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded-xl text-left transition-colors"
+          className="p-4 bg-bg-elevated hover:bg-dark-700 border border-border rounded-xl text-left transition-colors"
         >
           <Lightbulb className="w-5 h-5 text-yellow-400 mb-2" />
           <p className="font-medium text-white">Today&apos;s Guidance</p>
-          <p className="text-sm text-gray-500">What to do and avoid</p>
+          <p className="text-sm text-text-muted">What to do and avoid</p>
         </button>
       </div>
 
       {/* Accounts at Risk Preview */}
       {(hasDanger || hasRisk) && (
-        <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
+        <div className="bg-bg-elevated rounded-xl border border-border p-4">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-medium text-gray-400">Accounts Needing Attention</h3>
+            <h3 className="text-sm font-medium text-text-secondary">Accounts Needing Attention</h3>
             {isDemo && (
-              <span className="text-xs text-gray-500">Demo data</span>
+              <span className="text-xs text-text-muted">Demo data</span>
             )}
           </div>
           <div className="space-y-2">
@@ -345,7 +345,7 @@ function OverviewTab({
                 >
                   <div>
                     <p className="font-medium text-white">{account.prop_firm}</p>
-                    <p className="text-xs text-gray-400">{account.program}</p>
+                    <p className="text-xs text-text-secondary">{account.program}</p>
                   </div>
                   <span className={`text-sm font-medium ${
                     account.health.status === 'danger' ? 'text-red-400' : 'text-yellow-400'
@@ -360,16 +360,16 @@ function OverviewTab({
 
       {/* CTA for Demo Mode */}
       {isDemo && (
-        <div className="bg-gradient-to-r from-emerald-500/20 via-emerald-500/10 to-transparent border border-emerald-500/30 rounded-xl p-6 text-center">
+        <div className="bg-gradient-to-r from-accent/20 via-accent/10 to-transparent border border-accent/30 rounded-xl p-6 text-center">
           <h3 className="text-lg font-semibold text-white mb-2">
             Ready to track your real accounts?
           </h3>
-          <p className="text-gray-400 text-sm mb-4">
+          <p className="text-text-secondary text-sm mb-4">
             Add your prop firm accounts to see personalized risk tracking and guidance.
           </p>
           <Link
             href="/dashboard/accounts/new"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-lg transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-accent-hover hover:brightness-110 text-white font-medium rounded-lg transition-colors"
           >
             <Plus className="w-5 h-5" />
             Add Your First Account

@@ -986,11 +986,11 @@ export default function PropFirmPageClient({
     // bottom-right corner (back-to-top, reading progress). It used to clear a
     // fixed CTA bar; that bar no longer exists, but the widgets still do, so
     // the padding stays and the comment now says why.
-    <div className="min-h-screen bg-gray-950 pb-24 lg:pb-0 print:pb-0">
+    <div className="min-h-screen bg-bg-base pb-24 lg:pb-0 print:pb-0">
       {/* ================================================================ */}
       {/* 1. HERO — a benefit headline, proof, and the offer side by side  */}
       {/* ================================================================ */}
-      <section className="pt-8 pb-10 px-4 border-b border-gray-800">
+      <section className="pt-8 pb-10 px-4 border-b border-border">
         <div className="max-w-6xl mx-auto grid lg:grid-cols-[minmax(0,1fr)_340px] gap-8 items-start">
           {/* --- Copy --- */}
           <div>
@@ -999,9 +999,9 @@ export default function PropFirmPageClient({
                 href={logoUrl_}
                 {...AFFILIATE_LINK_PROPS}
                 aria-label={couponDeepLink ? t.officialOffer : t.visit(firm.name)}
-                className="relative w-14 h-14 bg-white rounded-xl overflow-hidden flex-shrink-0 border border-gray-200 hover:border-emerald-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+                className="relative w-14 h-14 bg-white rounded-xl overflow-hidden flex-shrink-0 border border-gray-200 hover:border-accent transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
               >
-                {/* bg-white, not bg-gray-800. Most firms ship a dark-ink logo on
+                {/* bg-white, not bg-dark-700. Most firms ship a dark-ink logo on
                     a transparent background: on a dark tile they render as an
                     empty square. Every other logo tile on the site (compare,
                     best-for, dashboard, admin, PromoTicker) is already white —
@@ -1012,7 +1012,7 @@ export default function PropFirmPageClient({
               <div className="flex-1 min-w-0">
                 <p className="text-white font-semibold">{firm.name}</p>
                 {(firm.category_badge || assets[0]) && (
-                  <p className="text-emerald-400 text-xs font-medium">
+                  <p className="text-accent text-xs font-medium">
                     {firm.category_badge || assets[0]}
                   </p>
                 )}
@@ -1024,7 +1024,7 @@ export default function PropFirmPageClient({
                   className={`p-2 rounded-lg border transition-colors ${
                     isFavorite
                       ? 'bg-red-500/10 border-red-500/30 text-red-400'
-                      : 'bg-gray-800 border-gray-700 text-gray-400 hover:text-white'
+                      : 'bg-dark-700 border-border text-text-secondary hover:text-white'
                   }`}
                   aria-label="Save"
                 >
@@ -1033,7 +1033,7 @@ export default function PropFirmPageClient({
                 <button
                   type="button"
                   onClick={handleShare}
-                  className="p-2 bg-gray-800 border border-gray-700 text-gray-400 hover:text-white rounded-lg transition-colors"
+                  className="p-2 bg-dark-700 border border-border text-text-secondary hover:text-white rounded-lg transition-colors"
                   aria-label="Share"
                 >
                   <Share2 className="w-4 h-4" />
@@ -1046,14 +1046,14 @@ export default function PropFirmPageClient({
             </h1>
 
             {firm.verdict && (
-              <p className="text-gray-300 text-lg leading-relaxed mb-5 max-w-2xl">{firm.verdict}</p>
+              <p className="text-text-secondary text-lg leading-relaxed mb-5 max-w-2xl">{firm.verdict}</p>
             )}
 
             {/* Proof — the numbers a sceptical reader looks for */}
             {proofStats.length > 0 && (
               <div className="flex flex-wrap gap-x-6 gap-y-2 mb-5">
                 {proofStats.map((s, i) => (
-                  <span key={i} className="text-sm text-gray-400">
+                  <span key={i} className="text-sm text-text-secondary">
                     <strong className="text-white font-semibold">{cleanMoneyLabel(s.value) ?? s.value}</strong>
                     {s.label ? ` ${s.label}` : ''}
                   </span>
@@ -1062,21 +1062,21 @@ export default function PropFirmPageClient({
             )}
 
             {verifiedText && (
-              <p className="text-gray-500 text-xs mb-3">{t.verifiedOn(verifiedText, firm.name)}</p>
+              <p className="text-text-muted text-xs mb-3">{t.verifiedOn(verifiedText, firm.name)}</p>
             )}
 
             <div className="flex flex-wrap gap-3 mb-4">
               {canConfigure && (
                 <a
                   href="#challenges"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-semibold rounded-lg transition-colors"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-lg transition-colors"
                 >
                   {t.chooseProgram}
                 </a>
               )}
               <a
                 href="#rules"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-white font-medium rounded-lg transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-dark-700 hover:bg-dark-600 border border-border text-white font-medium rounded-lg transition-colors"
               >
                 {t.seeRules}
               </a>
@@ -1085,7 +1085,7 @@ export default function PropFirmPageClient({
           </div>
 
           {/* --- Offer card --- */}
-          <aside className="bg-gray-900/70 border border-emerald-500/30 rounded-2xl p-5">
+          <aside className="bg-bg-elevated/70 border border-accent/30 rounded-2xl p-5">
             {/* L'offre d'abord, avant la note et le prix de depart : c'est
                 l'element qui decide du clic. Elle lit la MEME selection que le
                 configurateur plus bas, donc elle suit le programme et la
@@ -1093,12 +1093,12 @@ export default function PropFirmPageClient({
                 Aucun libelle « meilleure offre » : l'eligibilite par programme
                 et l'expiration ne sont pas confirmees. */}
             {offreMiseEnAvant && (
-              <div className="mb-4 pb-4 border-b border-gray-800">
+              <div className="mb-4 pb-4 border-b border-border">
                 <div className="flex items-baseline gap-2 mb-2">
-                  <span className="text-2xl font-bold text-emerald-400">
+                  <span className="text-2xl font-bold text-accent">
                     {offreMiseEnAvant.pourcent}% OFF
                   </span>
-                  <span className="text-gray-500 text-xs">{t.withCode}</span>
+                  <span className="text-text-muted text-xs">{t.withCode}</span>
                 </div>
 
                 <div className="mb-3">
@@ -1106,11 +1106,11 @@ export default function PropFirmPageClient({
                 </div>
 
                 {offreMiseEnAvant.ligne && (
-                  <p className="text-gray-400 text-sm mb-1">{offreMiseEnAvant.ligne}</p>
+                  <p className="text-text-secondary text-sm mb-1">{offreMiseEnAvant.ligne}</p>
                 )}
                 {offreMiseEnAvant.prix && (
                   <p className="mb-3">
-                    <s className="text-gray-600 text-sm mr-2">{offreMiseEnAvant.prix.avant}</s>
+                    <s className="text-text-muted text-sm mr-2">{offreMiseEnAvant.prix.avant}</s>
                     <span className="text-white text-lg font-semibold">
                       {offreMiseEnAvant.prix.apres}
                     </span>
@@ -1120,7 +1120,7 @@ export default function PropFirmPageClient({
                 <a
                   href={heroCtaUrl}
                   {...AFFILIATE_LINK_PROPS}
-                  className="w-full inline-flex items-center justify-center gap-2 min-h-[44px] px-5 bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-semibold rounded-lg transition-colors"
+                  className="w-full inline-flex items-center justify-center gap-2 min-h-[44px] px-5 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-lg transition-colors"
                 >
                   {t.claimDeal}
                 </a>
@@ -1134,12 +1134,12 @@ export default function PropFirmPageClient({
                 {/* On ne promet ni deep link ni persistance du coupon : le lien
                     atterrit sur l'entree de l'application, pas sur un panier
                     deja rempli. */}
-                <p className="text-gray-500 text-xs mt-2">{t.enterCodeAtCheckout(offreMiseEnAvant.code)}</p>
+                <p className="text-text-muted text-xs mt-2">{t.enterCodeAtCheckout(offreMiseEnAvant.code)}</p>
               </div>
             )}
 
             {firm.trustpilot_rating > 0 && (
-              <div className="flex items-center gap-2 mb-4 pb-4 border-b border-gray-800">
+              <div className="flex items-center gap-2 mb-4 pb-4 border-b border-border">
                 <div className="flex">
                   {[1, 2, 3, 4, 5].map((n) => (
                     <Star
@@ -1147,14 +1147,14 @@ export default function PropFirmPageClient({
                       className={`w-4 h-4 ${
                         n <= Math.round(firm.trustpilot_rating)
                           ? 'text-yellow-400 fill-yellow-400'
-                          : 'text-gray-600'
+                          : 'text-text-muted'
                       }`}
                     />
                   ))}
                 </div>
                 <span className="text-white font-semibold text-sm">{firm.trustpilot_rating.toFixed(1)}</span>
                 {firm.trustpilot_reviews > 0 && (
-                  <span className="text-gray-500 text-xs">
+                  <span className="text-text-muted text-xs">
                     ({formatNumber(firm.trustpilot_reviews, locale)} {t.onTrustpilot})
                   </span>
                 )}
@@ -1162,16 +1162,16 @@ export default function PropFirmPageClient({
                     Trustpilot from their reviewers; PropFirmScanner does not
                     gather ratings. The date says when we last read it. */}
                 {ratingCheckedText && (
-                  <span className="text-gray-600 text-[11px]">{t.ratingChecked(ratingCheckedText)}</span>
+                  <span className="text-text-muted text-[11px]">{t.ratingChecked(ratingCheckedText)}</span>
                 )}
               </div>
             )}
 
             {firm.min_price > 0 && (
               <div className="mb-3">
-                <p className="text-gray-500 text-sm">
+                <p className="text-text-muted text-sm">
                   {t.from}{' '}
-                  {hasVerifiedDeal && <s className="text-gray-600">{money(firm.min_price)}</s>}
+                  {hasVerifiedDeal && <s className="text-text-muted">{money(firm.min_price)}</s>}
                 </p>
                 <p className="text-white">
                   <span className="text-3xl font-bold">
@@ -1181,19 +1181,19 @@ export default function PropFirmPageClient({
                         : firm.min_price
                     )}
                   </span>
-                  {isSubscription && <span className="text-gray-500 text-base">{t.perMonth}</span>}
+                  {isSubscription && <span className="text-text-muted text-base">{t.perMonth}</span>}
                 </p>
               </div>
             )}
 
             {hasVerifiedDeal && (
-              <div className="mb-4 px-3 py-2.5 bg-emerald-500/10 border border-emerald-500/25 rounded-lg">
-                <p className="text-emerald-300 text-sm font-semibold flex items-center gap-1.5">
+              <div className="mb-4 px-3 py-2.5 bg-accent/10 border border-accent/25 rounded-lg">
+                <p className="text-accent text-sm font-semibold flex items-center gap-1.5">
                   <Zap className="w-3.5 h-3.5" />
                   {t.codeAuto(promotion.code as string)}
                 </p>
                 {expiryText && (
-                  <p className="text-gray-500 text-xs mt-1">{t.runsUntil(expiryText)}</p>
+                  <p className="text-text-muted text-xs mt-1">{t.runsUntil(expiryText)}</p>
                 )}
               </div>
             )}
@@ -1201,31 +1201,31 @@ export default function PropFirmPageClient({
             <a
               href={canConfigure ? '#challenges' : heroCtaUrl}
               {...(!canConfigure ? AFFILIATE_LINK_PROPS : {})}
-              className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-semibold rounded-lg transition-colors"
+              className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-lg transition-colors"
             >
               {canConfigure ? t.configure : t.visit(firm.name)}
               {!canConfigure && <ExternalLink className="w-4 h-4" />}
             </a>
 
             {(isSubscription ? t.billedMonthly : t.commission) && (
-              <p className="text-gray-600 text-[11px] mt-3 text-center leading-relaxed">
+              <p className="text-text-muted text-[11px] mt-3 text-center leading-relaxed">
                 {isSubscription ? t.billedMonthly : t.commission}
               </p>
             )}
 
-            <div className="mt-4 pt-4 border-t border-gray-800 space-y-1.5 text-xs">
+            <div className="mt-4 pt-4 border-t border-border space-y-1.5 text-xs">
               {foundedText && (
-                <p className="text-gray-500">
-                  {t.founded} <span className="text-gray-300">{foundedText}</span>
+                <p className="text-text-muted">
+                  {t.founded} <span className="text-text-secondary">{foundedText}</span>
                 </p>
               )}
               {firm.country && (
-                <p className="text-gray-500">
-                  {t.country} <span className="text-gray-300">{firm.country}</span>
+                <p className="text-text-muted">
+                  {t.country} <span className="text-text-secondary">{firm.country}</span>
                 </p>
               )}
               {firm.is_regulated && (
-                <p className="inline-flex items-center gap-1.5 text-emerald-400">
+                <p className="inline-flex items-center gap-1.5 text-accent">
                   <Shield className="w-3.5 h-3.5" /> {t.regulated}
                 </p>
               )}
@@ -1233,7 +1233,7 @@ export default function PropFirmPageClient({
                 <a
                   href={officialSiteUrl}
                   {...AFFILIATE_LINK_PROPS}
-                  className="inline-flex items-center gap-1.5 text-gray-500 hover:text-white transition-colors"
+                  className="inline-flex items-center gap-1.5 text-text-muted hover:text-white transition-colors"
                 >
                   {/* The label follows the destination: calling a checkout
                       page "official website" would be its own small lie. */}
@@ -1250,14 +1250,14 @@ export default function PropFirmPageClient({
       {/* 2. VALUE STRIP — four reasons, scannable in two seconds         */}
       {/* ================================================================ */}
       {valueStrip.length > 0 && (
-        <section className="px-4 py-6 border-b border-gray-800 bg-gray-900/30">
+        <section className="px-4 py-6 border-b border-border bg-bg-elevated/30">
           <div className="max-w-6xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-5">
             {valueStrip.map((v, i) => (
               <div key={i} className="flex items-start gap-2.5">
-                <Check className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="text-white text-sm font-semibold leading-tight">{v.title}</p>
-                  {v.sub && <p className="text-gray-500 text-xs mt-0.5">{v.sub}</p>}
+                  {v.sub && <p className="text-text-muted text-xs mt-0.5">{v.sub}</p>}
                 </div>
               </div>
             ))}
@@ -1277,7 +1277,7 @@ export default function PropFirmPageClient({
       {(platforms.length > 0 || assets.length > 0 || dataFeeds.length > 0) && (
         <section
           id="platforms"
-          className="px-4 py-6 border-b border-gray-800 scroll-mt-28 print:scroll-mt-0"
+          className="px-4 py-6 border-b border-border scroll-mt-28 print:scroll-mt-0"
         >
           <div className="max-w-6xl mx-auto grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-5">
             {[
@@ -1288,14 +1288,14 @@ export default function PropFirmPageClient({
               .filter((g) => g.values.length > 0)
               .map((g) => (
                 <div key={g.label}>
-                  <p className="text-xs uppercase tracking-wider font-semibold text-gray-500 mb-2">
+                  <p className="text-xs uppercase tracking-wider font-semibold text-text-muted mb-2">
                     {g.label}
                   </p>
                   <ul className="flex flex-wrap gap-1.5">
                     {g.values.map((v) => (
                       <li
                         key={v}
-                        className="px-2.5 py-1 rounded-md bg-gray-900/60 border border-gray-800 text-gray-300 text-xs"
+                        className="px-2.5 py-1 rounded-md bg-bg-elevated/60 border border-border text-text-secondary text-xs"
                       >
                         {v}
                       </li>
@@ -1361,12 +1361,12 @@ export default function PropFirmPageClient({
 
             <ol className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
               {journey.steps.map((step, i) => (
-                <li key={i} className="bg-gray-900/50 border border-gray-800 rounded-xl p-4">
-                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-emerald-500 text-gray-950 text-xs font-bold mb-2.5">
+                <li key={i} className="bg-bg-elevated/50 border border-border rounded-xl p-4">
+                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-accent-hover text-white text-xs font-bold mb-2.5">
                     {i + 1}
                   </span>
                   <p className="text-white font-semibold text-sm mb-1">{step.title}</p>
-                  <p className="text-gray-400 text-xs leading-relaxed">{step.detail}</p>
+                  <p className="text-text-secondary text-xs leading-relaxed">{step.detail}</p>
                 </li>
               ))}
             </ol>
@@ -1374,14 +1374,14 @@ export default function PropFirmPageClient({
             {journey.options && journey.options.length > 0 && (
               <div className="grid md:grid-cols-2 gap-4">
                 {journey.options.map((opt, i) => (
-                  <article key={i} className="bg-gray-900/50 border border-gray-800 rounded-xl p-5">
+                  <article key={i} className="bg-bg-elevated/50 border border-border rounded-xl p-5">
                     <h3 className="text-white font-bold mb-1">{opt.name}</h3>
-                    {opt.summary && <p className="text-gray-400 text-sm mb-4">{opt.summary}</p>}
+                    {opt.summary && <p className="text-text-secondary text-sm mb-4">{opt.summary}</p>}
                     {opt.specs && (
-                      <dl className="divide-y divide-gray-800/70">
+                      <dl className="divide-y divide-border/70">
                         {opt.specs.map((sp, si) => (
                           <div key={si} className="flex items-baseline justify-between gap-4 py-2">
-                            <dt className="text-gray-500 text-sm">{sp.label}</dt>
+                            <dt className="text-text-muted text-sm">{sp.label}</dt>
                             <dd className="text-white text-sm text-right">{cleanMoneyLabel(sp.value) ?? sp.value}</dd>
                           </div>
                         ))}
@@ -1419,18 +1419,18 @@ export default function PropFirmPageClient({
             />
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {costTimeline.steps.map((step, i) => (
-                <div key={i} className="bg-gray-900/50 border border-gray-800 rounded-xl p-4">
-                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-800 border border-gray-700 text-emerald-400 text-xs font-bold mb-2.5">
+                <div key={i} className="bg-bg-elevated/50 border border-border rounded-xl p-4">
+                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-dark-700 border border-border text-accent text-xs font-bold mb-2.5">
                     {i + 1}
                   </span>
                   {step.label && (
-                    <p className="text-xs uppercase tracking-wider font-semibold text-emerald-400 mb-1">
+                    <p className="text-xs uppercase tracking-wider font-semibold text-accent mb-1">
                       {step.label}
                     </p>
                   )}
                   {step.title && <p className="text-white font-semibold text-sm mb-1">{step.title}</p>}
                   {step.detail && (
-                    <p className="text-gray-400 text-xs leading-relaxed">{step.detail}</p>
+                    <p className="text-text-secondary text-xs leading-relaxed">{step.detail}</p>
                   )}
                 </div>
               ))}
@@ -1450,7 +1450,7 @@ export default function PropFirmPageClient({
                   {education.items.map((it, i) => (
                     <span
                       key={i}
-                      className="px-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-gray-300 text-sm"
+                      className="px-3 py-1.5 bg-dark-700 border border-border rounded-lg text-text-secondary text-sm"
                     >
                       {it}
                     </span>
@@ -1458,10 +1458,10 @@ export default function PropFirmPageClient({
                 </div>
               )}
             </div>
-            <div className="bg-emerald-500/5 border border-emerald-500/25 rounded-xl p-5 text-center">
-              <GraduationCap className="w-8 h-8 text-emerald-400 mx-auto mb-3" />
+            <div className="bg-accent/5 border border-accent/25 rounded-xl p-5 text-center">
+              <GraduationCap className="w-8 h-8 text-accent mx-auto mb-3" />
               <p className="text-white font-semibold mb-1">{t.freeWith}</p>
-              <p className="text-gray-400 text-sm">{t.freeWithSub}</p>
+              <p className="text-text-secondary text-sm">{t.freeWithSub}</p>
             </div>
           </section>
         ) : null}
@@ -1492,23 +1492,23 @@ export default function PropFirmPageClient({
                   }, new Map<string, NonNullable<typeof keyRules.rules>>())
                 ).map(([categorie, regles]) => (
                   <div key={categorie}>
-                    <p className="text-xs uppercase tracking-wider font-semibold text-gray-500 mb-2.5">
+                    <p className="text-xs uppercase tracking-wider font-semibold text-text-muted mb-2.5">
                       {categorie}
                     </p>
                     <div className="grid sm:grid-cols-2 gap-4">
                       {regles.map((r, i) => (
                         <article
                           key={i}
-                          className={`bg-gray-900/50 border rounded-xl p-5 ${
+                          className={`bg-bg-elevated/50 border rounded-xl p-5 ${
                             r.severity === 'hard_breach'
                               ? 'border-red-500/30'
                               : r.severity === 'payout_condition'
                                 ? 'border-amber-500/25'
-                                : 'border-gray-800'
+                                : 'border-border'
                           }`}
                         >
                           <h3 className="text-white font-semibold mb-1.5">{r.title}</h3>
-                          <p className="text-gray-400 text-sm leading-relaxed">{r.detail}</p>
+                          <p className="text-text-secondary text-sm leading-relaxed">{r.detail}</p>
                         </article>
                       ))}
                     </div>
@@ -1518,9 +1518,9 @@ export default function PropFirmPageClient({
             ) : (
               <div className="grid sm:grid-cols-2 gap-4 mb-4">
                 {keyRules.rules.map((r, i) => (
-                  <article key={i} className="bg-gray-900/50 border border-gray-800 rounded-xl p-5">
+                  <article key={i} className="bg-bg-elevated/50 border border-border rounded-xl p-5">
                     <h3 className="text-white font-semibold mb-1.5">{r.title}</h3>
-                    <p className="text-gray-400 text-sm leading-relaxed">{r.detail}</p>
+                    <p className="text-text-secondary text-sm leading-relaxed">{r.detail}</p>
                   </article>
                 ))}
               </div>
@@ -1530,8 +1530,8 @@ export default function PropFirmPageClient({
               <Disclosure summary={t.seeAll}>
                 <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-2">
                   {keyRules.more.map((m, i) => (
-                    <li key={i} className="flex items-start gap-2 text-gray-400 text-sm">
-                      <span className="text-emerald-500 mt-0.5">·</span>
+                    <li key={i} className="flex items-start gap-2 text-text-secondary text-sm">
+                      <span className="text-accent mt-0.5">·</span>
                       <span>{m}</span>
                     </li>
                   ))}
@@ -1547,15 +1547,15 @@ export default function PropFirmPageClient({
         {tiers?.rows?.length ? (
           <section id="progression" className="scroll-mt-28 print:scroll-mt-0">
             <SectionHeading eyebrow={t.scaling} title={tiers.title || 'Scaling plan'} intro={tiers.intro} />
-            <div className="overflow-x-auto rounded-xl border border-gray-800 bg-gray-900/40">
+            <div className="overflow-x-auto rounded-xl border border-border bg-bg-elevated/40">
               <table className="w-full text-sm">
                 {tiers.columns && (
                   <thead>
-                    <tr className="border-b border-gray-800">
+                    <tr className="border-b border-border">
                       {tiers.columns.map((col, i) => (
                         <th
                           key={col}
-                          className={`px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider whitespace-nowrap ${
+                          className={`px-4 py-3 font-medium text-text-muted text-xs uppercase tracking-wider whitespace-nowrap ${
                             i === 0 ? 'text-left' : 'text-right'
                           }`}
                         >
@@ -1571,15 +1571,15 @@ export default function PropFirmPageClient({
                     return (
                       <tr
                         key={ri}
-                        className={`border-b border-gray-800/60 last:border-0 ${isTop ? 'bg-emerald-500/5' : ''}`}
+                        className={`border-b border-border/60 last:border-0 ${isTop ? 'bg-accent/5' : ''}`}
                       >
                         {row.map((cell, ci) => (
                           <td
                             key={ci}
                             className={`px-4 py-3 whitespace-nowrap ${
                               ci === 0
-                                ? `text-left font-semibold ${isTop ? 'text-emerald-400' : 'text-white'}`
-                                : 'text-right text-gray-300'
+                                ? `text-left font-semibold ${isTop ? 'text-accent' : 'text-white'}`
+                                : 'text-right text-text-secondary'
                             }`}
                           >
                             {cell}
@@ -1591,7 +1591,7 @@ export default function PropFirmPageClient({
                 </tbody>
               </table>
             </div>
-            {tiers.note && <p className="text-gray-500 text-xs leading-relaxed mt-3">{tiers.note}</p>}
+            {tiers.note && <p className="text-text-muted text-xs leading-relaxed mt-3">{tiers.note}</p>}
           </section>
         ) : null}
 
@@ -1611,21 +1611,21 @@ export default function PropFirmPageClient({
             <SectionHeading eyebrow={t.about(firm.name)} title={t.about(firm.name)} />
             <div className="grid md:grid-cols-2 gap-6 items-stretch">
               {firm.description && (
-                <div className="bg-gray-900/40 border border-gray-800 rounded-xl p-5">
+                <div className="bg-bg-elevated/40 border border-border rounded-xl p-5">
                   {/* La colonne est ecrite en paragraphes ; on les respecte. */}
                   {firm.description.split('\n\n').map((para, i) => (
-                    <p key={i} className={`text-gray-300 text-sm leading-relaxed ${i > 0 ? 'mt-3' : ''}`}>
+                    <p key={i} className={`text-text-secondary text-sm leading-relaxed ${i > 0 ? 'mt-3' : ''}`}>
                       {para}
                     </p>
                   ))}
                 </div>
               )}
               {aboutFacts.length > 0 && (
-                <dl className="bg-gray-900/40 border border-gray-800 rounded-xl p-5 divide-y divide-gray-800">
+                <dl className="bg-bg-elevated/40 border border-border rounded-xl p-5 divide-y divide-border">
                   {aboutFacts.map((f) => (
                     <div key={f.label} className="flex justify-between gap-4 py-2 first:pt-0 last:pb-0">
-                      <dt className="text-gray-500 text-sm">{f.label}</dt>
-                      <dd className="text-gray-200 text-sm text-right">{f.value}</dd>
+                      <dt className="text-text-muted text-sm">{f.label}</dt>
+                      <dd className="text-text-primary text-sm text-right">{f.value}</dd>
                     </div>
                   ))}
                 </dl>
@@ -1648,16 +1648,16 @@ export default function PropFirmPageClient({
                 shorter card with empty space now that it holds four items. */}
             <div className="grid md:grid-cols-2 gap-4 items-start">
               {pros.length > 0 && (
-                <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl px-5 py-4">
+                <div className="bg-accent/5 border border-accent/20 rounded-2xl px-5 py-4">
                   <div className="flex items-center gap-2 mb-3">
-                    <ThumbsUp className="w-4 h-4 text-emerald-400" aria-hidden="true" />
+                    <ThumbsUp className="w-4 h-4 text-accent" aria-hidden="true" />
                     <h3 className="font-semibold text-white text-base">{t.strengths}</h3>
                   </div>
                   <ul className="space-y-2">
                     {pros.map((pro, i) => (
-                      <li key={i} className="flex items-start gap-2.5 text-gray-300 text-base leading-snug">
+                      <li key={i} className="flex items-start gap-2.5 text-text-secondary text-base leading-snug">
                         <Check
-                          className="w-4 h-4 text-emerald-400 mt-1 flex-shrink-0"
+                          className="w-4 h-4 text-accent mt-1 flex-shrink-0"
                           aria-hidden="true"
                         />
                         <span>{pro}</span>
@@ -1674,7 +1674,7 @@ export default function PropFirmPageClient({
                   </div>
                   <ul className="space-y-2">
                     {cons.map((con, i) => (
-                      <li key={i} className="flex items-start gap-2.5 text-gray-300 text-base leading-snug">
+                      <li key={i} className="flex items-start gap-2.5 text-text-secondary text-base leading-snug">
                         <Info
                           className="w-4 h-4 text-amber-400 mt-1 flex-shrink-0"
                           aria-hidden="true"
@@ -1695,7 +1695,7 @@ export default function PropFirmPageClient({
                           {restrictedCountries.map((country) => (
                             <li
                               key={country}
-                              className="text-gray-400 text-sm before:content-['·'] before:mr-3 before:text-gray-600 first:before:content-none first:before:mr-0"
+                              className="text-text-secondary text-sm before:content-['·'] before:mr-3 before:text-text-muted first:before:content-none first:before:mr-0"
                             >
                               {country}
                             </li>
@@ -1721,10 +1721,10 @@ export default function PropFirmPageClient({
                   <dl className="grid sm:grid-cols-2 gap-x-8">
                     {[specs.slice(0, Math.ceil(specs.length / 2)), specs.slice(Math.ceil(specs.length / 2))].map(
                       (column, ci) => (
-                        <div key={ci} className="divide-y divide-gray-800/70">
+                        <div key={ci} className="divide-y divide-border/70">
                           {column.map((s) => (
                             <div key={s.label} className="flex items-baseline justify-between gap-4 py-3">
-                              <dt className="text-gray-500 text-sm flex-shrink-0">{s.label}</dt>
+                              <dt className="text-text-muted text-sm flex-shrink-0">{s.label}</dt>
                               <dd className="text-white text-sm text-right">{cleanMoneyLabel(s.value) ?? s.value}</dd>
                             </div>
                           ))}
@@ -1736,12 +1736,12 @@ export default function PropFirmPageClient({
 
                 {platforms.length > 0 && (
                   <div>
-                    <p className="text-xs uppercase tracking-wider font-semibold text-gray-500 mb-2.5">
+                    <p className="text-xs uppercase tracking-wider font-semibold text-text-muted mb-2.5">
                       {t.platforms}
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {platforms.map((p) => (
-                        <span key={p} className="px-3 py-1.5 bg-gray-800 text-white text-sm rounded-lg">
+                        <span key={p} className="px-3 py-1.5 bg-dark-700 text-white text-sm rounded-lg">
                           {p}
                         </span>
                       ))}
@@ -1751,12 +1751,12 @@ export default function PropFirmPageClient({
 
                 {assets.length > 0 && (
                   <div>
-                    <p className="text-xs uppercase tracking-wider font-semibold text-gray-500 mb-2.5">
+                    <p className="text-xs uppercase tracking-wider font-semibold text-text-muted mb-2.5">
                       {t.assets}
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {assets.map((a) => (
-                        <span key={a} className="px-3 py-1.5 bg-gray-800 text-white text-sm rounded-lg">
+                        <span key={a} className="px-3 py-1.5 bg-dark-700 text-white text-sm rounded-lg">
                           {a}
                         </span>
                       ))}
@@ -1767,12 +1767,12 @@ export default function PropFirmPageClient({
                 {policies.length > 0 && (
                   <div className="grid md:grid-cols-2 gap-4">
                     {policies.map((p) => (
-                      <div key={p.title} className="bg-gray-900/50 border border-gray-800 rounded-xl p-4">
-                        <div className="flex items-center gap-2 mb-2 text-gray-500">
+                      <div key={p.title} className="bg-bg-elevated/50 border border-border rounded-xl p-4">
+                        <div className="flex items-center gap-2 mb-2 text-text-muted">
                           {p.icon}
                           <p className="text-xs uppercase tracking-wider font-semibold">{p.title}</p>
                         </div>
-                        <p className="text-gray-300 text-sm leading-relaxed">{p.body}</p>
+                        <p className="text-text-secondary text-sm leading-relaxed">{p.body}</p>
                       </div>
                     ))}
                   </div>
@@ -1780,10 +1780,10 @@ export default function PropFirmPageClient({
 
                 {firm.is_regulated && firm.regulation_details && (
                   <div>
-                    <p className="text-xs uppercase tracking-wider font-semibold text-gray-500 mb-2.5">
+                    <p className="text-xs uppercase tracking-wider font-semibold text-text-muted mb-2.5">
                       {t.regulation}
                     </p>
-                    <p className="text-gray-300 text-sm leading-relaxed">{firm.regulation_details}</p>
+                    <p className="text-text-secondary text-sm leading-relaxed">{firm.regulation_details}</p>
                   </div>
                 )}
               </div>
@@ -1801,7 +1801,7 @@ export default function PropFirmPageClient({
                 eyebrow={t.verdict}
                 title={verdictCard.title || `Who we recommend ${firm.name} to`}
               />
-              <p className="text-gray-300 leading-relaxed">{verdictCard.body}</p>
+              <p className="text-text-secondary leading-relaxed">{verdictCard.body}</p>
             </div>
             {/* Le corps du verdict decrit la FIRME et reste. Les points
                 « Good fit if you want » decrivent un PROGRAMME : ils
@@ -1813,12 +1813,12 @@ export default function PropFirmPageClient({
             {(verdictCard.points?.length || verdictCard.counterPoints?.length) && (
               <div className="grid sm:grid-cols-2 gap-4">
                 {verdictCard.points && verdictCard.points.length > 0 && (
-                  <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-5">
+                  <div className="bg-bg-elevated/50 border border-border rounded-xl p-5">
                     <p className="text-white font-semibold text-sm mb-3">{t.goodFit}</p>
                     <ul className="space-y-2">
                       {verdictCard.points.map((pt, i) => (
-                        <li key={i} className="flex items-start gap-2 text-gray-400 text-sm">
-                          <Check className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                        <li key={i} className="flex items-start gap-2 text-text-secondary text-sm">
+                          <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                           <span>{pt}</span>
                         </li>
                       ))}
@@ -1826,11 +1826,11 @@ export default function PropFirmPageClient({
                   </div>
                 )}
                 {verdictCard.counterPoints && verdictCard.counterPoints.length > 0 && (
-                  <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-5">
+                  <div className="bg-bg-elevated/50 border border-border rounded-xl p-5">
                     <p className="text-white font-semibold text-sm mb-3">{t.badFit}</p>
                     <ul className="space-y-2">
                       {verdictCard.counterPoints.map((pt, i) => (
-                        <li key={i} className="flex items-start gap-2 text-gray-400 text-sm">
+                        <li key={i} className="flex items-start gap-2 text-text-secondary text-sm">
                           {/* Ambre plutot que rouge : ce sont des criteres de
                               choix, pas des alertes. */}
                           <X className="w-4 h-4 text-amber-400 mt-0.5 flex-shrink-0" />
@@ -1869,16 +1869,16 @@ export default function PropFirmPageClient({
         {/* 14. FINAL CTA                                                  */}
         {/* ============================================================== */}
         {canConfigure && (
-          <section className="bg-gray-900/70 border border-emerald-500/25 rounded-2xl p-8 text-center">
+          <section className="bg-bg-elevated/70 border border-accent/25 rounded-2xl p-8 text-center">
             {expiryText && (
-              <p className="text-emerald-400 text-xs uppercase tracking-wider font-semibold mb-2">
+              <p className="text-accent text-xs uppercase tracking-wider font-semibold mb-2">
                 {t.runsUntil(expiryText)}
               </p>
             )}
             <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
               {t.readyTitle}
             </h2>
-            <p className="text-gray-400 mb-6 max-w-xl mx-auto">
+            <p className="text-text-secondary mb-6 max-w-xl mx-auto">
               {t.readyIntro}
             </p>
 
@@ -1890,13 +1890,13 @@ export default function PropFirmPageClient({
               <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 mb-5 text-sm">
                 <span className="text-white font-semibold">{ligneChoisie.name}</span>
                 {ligneChoisie.price != null && (
-                  <span className="text-gray-300">
+                  <span className="text-text-secondary">
                     {ligneChoisie.discounted_price != null ? (
                       <>
-                        <span className="text-gray-500 line-through mr-2">
+                        <span className="text-text-muted line-through mr-2">
                           {formatMoney(ligneChoisie.price, locale, '', configurateur?.currency || 'USD')}
                         </span>
-                        <span className="text-emerald-400 font-semibold">
+                        <span className="text-accent font-semibold">
                           {formatMoney(
                             ligneChoisie.discounted_price,
                             locale,
@@ -1921,12 +1921,12 @@ export default function PropFirmPageClient({
 
             <a
               href="#challenges"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-semibold rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-lg transition-colors"
             >
               {t.readyCta(firm.name)}
             </a>
             {hasVerifiedDeal && (
-              <p className="text-gray-600 text-xs mt-3">
+              <p className="text-text-muted text-xs mt-3">
                 {t.partnerLink(promotion.code as string)}
               </p>
             )}
@@ -1938,7 +1938,7 @@ export default function PropFirmPageClient({
       {/* 15. SIMILAR FIRMS                                                */}
       {/* ================================================================ */}
       {similarFirms.length > 0 && (
-        <section className="py-12 px-4 border-t border-gray-800">
+        <section className="py-12 px-4 border-t border-border">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-2xl font-bold text-white mb-6">{t.similar}</h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -1946,14 +1946,14 @@ export default function PropFirmPageClient({
                 <Link
                   key={sf.id}
                   href={`/prop-firm/${sf.slug}`}
-                  className="flex items-center gap-3 p-4 bg-gray-900/50 border border-gray-800 rounded-xl hover:border-emerald-500/30 transition-colors"
+                  className="flex items-center gap-3 p-4 bg-bg-elevated/50 border border-border rounded-xl hover:border-accent/30 transition-colors"
                 >
                   <div className="relative w-10 h-10 bg-white border border-gray-200 rounded-lg overflow-hidden flex-shrink-0">
                     <FirmLogo src={sf.logo_url} name={sf.name} size={40} padding="p-1" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-white font-medium truncate">{sf.name}</p>
-                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                    <div className="flex items-center gap-2 text-xs text-text-muted">
                       {sf.trustpilot_rating > 0 && (
                         <>
                           <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
@@ -1963,7 +1963,7 @@ export default function PropFirmPageClient({
                       {sf.min_price && <span>· from ${sf.min_price}</span>}
                     </div>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-gray-600" />
+                  <ChevronRight className="w-4 h-4 text-text-muted" />
                 </Link>
               ))}
             </div>
@@ -1980,7 +1980,7 @@ export default function PropFirmPageClient({
             <AlertTriangle className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
             <div>
               <p className="text-yellow-500 font-semibold mb-1">{t.riskTitle}</p>
-              <p className="text-gray-400 text-sm">
+              <p className="text-text-secondary text-sm">
                 {t.risk}
               </p>
             </div>
@@ -2017,11 +2017,11 @@ function CopyCode({ code, label, copied }: { code: string; label: string; copied
       onClick={() => {
         navigator.clipboard?.writeText(code).then(() => setFait(true)).catch(() => {})
       }}
-      className="min-h-[44px] inline-flex items-center gap-2 px-3 rounded-lg border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 text-sm font-mono focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+      className="min-h-[44px] inline-flex items-center gap-2 px-3 rounded-lg border border-accent/40 bg-accent/10 text-accent text-sm font-mono focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
       aria-label={`${label} ${code}`}
     >
       {code}
-      <span className="font-sans text-xs text-emerald-400/80">{fait ? copied : label}</span>
+      <span className="font-sans text-xs text-accent/80">{fait ? copied : label}</span>
     </button>
   )
 }
@@ -2038,10 +2038,10 @@ function SectionHeading({
   return (
     <div className="mb-6">
       {eyebrow && (
-        <p className="text-xs uppercase tracking-wider font-semibold text-emerald-400 mb-2">{eyebrow}</p>
+        <p className="text-xs uppercase tracking-wider font-semibold text-accent mb-2">{eyebrow}</p>
       )}
       <h2 className="text-2xl md:text-3xl font-bold text-white">{title}</h2>
-      {intro && <p className="text-gray-400 mt-2 max-w-2xl">{intro}</p>}
+      {intro && <p className="text-text-secondary mt-2 max-w-2xl">{intro}</p>}
     </div>
   )
 }
@@ -2049,12 +2049,12 @@ function SectionHeading({
 // Progressive disclosure is what keeps the page short without losing detail.
 function Disclosure({ summary, children }: { summary: string; children: React.ReactNode }) {
   return (
-    <details className="group bg-gray-900/40 border border-gray-800 rounded-xl overflow-hidden">
-      <summary className="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer list-none hover:bg-gray-800/30 transition-colors">
+    <details className="group bg-bg-elevated/40 border border-border rounded-xl overflow-hidden">
+      <summary className="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer list-none hover:bg-dark-700/30 transition-colors">
         <span className="text-white font-medium text-sm">{summary}</span>
-        <ChevronDown className="w-4 h-4 text-gray-500 flex-shrink-0 transition-transform group-open:rotate-180" />
+        <ChevronDown className="w-4 h-4 text-text-muted flex-shrink-0 transition-transform group-open:rotate-180" />
       </summary>
-      <div className="px-5 pb-5 pt-1 border-t border-gray-800">{children}</div>
+      <div className="px-5 pb-5 pt-1 border-t border-border">{children}</div>
     </details>
   )
 }
@@ -2062,19 +2062,19 @@ function Disclosure({ summary, children }: { summary: string; children: React.Re
 function FAQItem({ question, answer }: { question: string; answer: string }) {
   const [open, setOpen] = useState(false)
   return (
-    <div className="bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden">
+    <div className="bg-bg-elevated/50 border border-border rounded-xl overflow-hidden">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-between gap-4 p-4 text-left hover:bg-gray-800/30 transition-colors"
+        className="w-full flex items-center justify-between gap-4 p-4 text-left hover:bg-dark-700/30 transition-colors"
       >
         <span className="text-white font-medium">{question}</span>
         <ChevronDown
-          className={`w-5 h-5 text-gray-500 flex-shrink-0 transition-transform ${open ? 'rotate-180' : ''}`}
+          className={`w-5 h-5 text-text-muted flex-shrink-0 transition-transform ${open ? 'rotate-180' : ''}`}
         />
       </button>
       {open && (
-        <div className="px-4 pb-4 text-gray-400 text-sm leading-relaxed border-t border-gray-800 pt-3">
+        <div className="px-4 pb-4 text-text-secondary text-sm leading-relaxed border-t border-border pt-3">
           {answer}
         </div>
       )}

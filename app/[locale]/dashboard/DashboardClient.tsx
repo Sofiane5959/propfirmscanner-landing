@@ -93,34 +93,34 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 py-24 px-4">
+    <div className="min-h-screen bg-bg-elevated py-24 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center mx-auto mb-6">
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-accent to-emerald-700 flex items-center justify-center mx-auto mb-6">
             <LayoutDashboard className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-4xl font-bold text-white mb-4">Your Dashboard</h1>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+          <p className="text-xl text-text-secondary max-w-2xl mx-auto">
             We&apos;re building powerful tools to help you track and manage your prop trading journey.
           </p>
         </div>
 
         {/* Coming Soon Banner */}
-        <div className="bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border border-emerald-500/20 rounded-2xl p-8 mb-12">
+        <div className="bg-gradient-to-r from-accent/10 to-blue-500/10 border border-accent/20 rounded-2xl p-8 mb-12">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center">
-                <Clock className="w-6 h-6 text-emerald-400" />
+              <div className="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center">
+                <Clock className="w-6 h-6 text-accent" />
               </div>
               <div>
                 <h2 className="text-xl font-bold text-white">Dashboard Coming Soon!</h2>
-                <p className="text-gray-400">Get notified when we launch new features</p>
+                <p className="text-text-secondary">Get notified when we launch new features</p>
               </div>
             </div>
             
             {subscribed ? (
-              <div className="flex items-center gap-2 text-emerald-400">
+              <div className="flex items-center gap-2 text-accent">
                 <CheckCircle className="w-5 h-5" />
                 <span>You&apos;ll be notified!</span>
               </div>
@@ -131,11 +131,11 @@ export default function DashboardPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
-                  className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder:text-gray-500 focus:outline-none focus:border-emerald-500"
+                  className="px-4 py-2 bg-dark-700 border border-border rounded-lg text-white placeholder:text-text-muted focus:outline-none focus:border-accent"
                 />
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-lg transition-colors"
+                  className="px-6 py-2 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-lg transition-colors"
                 >
                   Notify Me
                 </button>
@@ -152,16 +152,16 @@ export default function DashboardPage() {
               <Link
                 key={index}
                 href={action.href}
-                className="group bg-gray-800/50 border border-gray-700 rounded-xl p-6 hover:border-emerald-500/30 transition-all"
+                className="group bg-dark-700/50 border border-border rounded-xl p-6 hover:border-accent/30 transition-all"
               >
                 <div className={`w-12 h-12 rounded-lg bg-${action.color}-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
                   <action.icon className={`w-6 h-6 text-${action.color}-400`} />
                 </div>
-                <h3 className="text-white font-semibold mb-1 group-hover:text-emerald-400 transition-colors">
+                <h3 className="text-white font-semibold mb-1 group-hover:text-accent transition-colors">
                   {action.title}
                 </h3>
-                <p className="text-gray-400 text-sm">{action.description}</p>
-                <div className="mt-4 flex items-center gap-1 text-emerald-400 text-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                <p className="text-text-secondary text-sm">{action.description}</p>
+                <div className="mt-4 flex items-center gap-1 text-accent text-sm opacity-0 group-hover:opacity-100 transition-opacity">
                   <span>Go to tool</span>
                   <ArrowRight className="w-4 h-4" />
                 </div>
@@ -177,19 +177,19 @@ export default function DashboardPage() {
             {UPCOMING_FEATURES.map((feature, index) => (
               <div
                 key={index}
-                className="bg-gray-800/30 border border-gray-700/50 rounded-xl p-6 opacity-75"
+                className="bg-dark-700/30 border border-border/50 rounded-xl p-6 opacity-75"
               >
                 <div className="flex items-start justify-between mb-4">
-                  <div className="w-10 h-10 rounded-lg bg-gray-700/50 flex items-center justify-center">
-                    <feature.icon className="w-5 h-5 text-gray-400" />
+                  <div className="w-10 h-10 rounded-lg bg-dark-600/50 flex items-center justify-center">
+                    <feature.icon className="w-5 h-5 text-text-secondary" />
                   </div>
-                  <span className="px-2 py-1 bg-gray-700/50 text-gray-400 rounded text-xs flex items-center gap-1">
+                  <span className="px-2 py-1 bg-dark-600/50 text-text-secondary rounded text-xs flex items-center gap-1">
                     <Lock className="w-3 h-3" />
                     Coming Soon
                   </span>
                 </div>
-                <h3 className="text-gray-300 font-semibold mb-1">{feature.title}</h3>
-                <p className="text-gray-500 text-sm">{feature.description}</p>
+                <h3 className="text-text-secondary font-semibold mb-1">{feature.title}</h3>
+                <p className="text-text-muted text-sm">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -197,23 +197,23 @@ export default function DashboardPage() {
 
         {/* What You Can Do Now */}
         <section>
-          <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-8">
+          <div className="bg-dark-700/50 border border-border rounded-xl p-8">
             <h2 className="text-2xl font-bold text-white mb-6 text-center">
               What You Can Do Right Now
             </h2>
             
             <div className="grid md:grid-cols-3 gap-6">
               <div className="text-center">
-                <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl font-bold text-emerald-400">1</span>
+                <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl font-bold text-accent">1</span>
                 </div>
                 <h3 className="text-white font-semibold mb-2">Compare Firms</h3>
-                <p className="text-gray-400 text-sm mb-4">
+                <p className="text-text-secondary text-sm mb-4">
                   Browse 90+ prop firms and find the best match for your trading style.
                 </p>
                 <Link
                   href="/compare"
-                  className="text-emerald-400 hover:underline text-sm inline-flex items-center gap-1"
+                  className="text-accent hover:underline text-sm inline-flex items-center gap-1"
                 >
                   Start Comparing
                   <ArrowRight className="w-4 h-4" />
@@ -221,16 +221,16 @@ export default function DashboardPage() {
               </div>
               
               <div className="text-center">
-                <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl font-bold text-emerald-400">2</span>
+                <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl font-bold text-accent">2</span>
                 </div>
                 <h3 className="text-white font-semibold mb-2">Track Your Challenge</h3>
-                <p className="text-gray-400 text-sm mb-4">
+                <p className="text-text-secondary text-sm mb-4">
                   Use our Rule Tracker to monitor your progress and stay within limits.
                 </p>
                 <Link
                   href="/tools/rule-tracker"
-                  className="text-emerald-400 hover:underline text-sm inline-flex items-center gap-1"
+                  className="text-accent hover:underline text-sm inline-flex items-center gap-1"
                 >
                   Open Rule Tracker
                   <ArrowRight className="w-4 h-4" />
@@ -238,16 +238,16 @@ export default function DashboardPage() {
               </div>
               
               <div className="text-center">
-                <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl font-bold text-emerald-400">3</span>
+                <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl font-bold text-accent">3</span>
                 </div>
                 <h3 className="text-white font-semibold mb-2">Get Discounts</h3>
-                <p className="text-gray-400 text-sm mb-4">
+                <p className="text-text-secondary text-sm mb-4">
                   Save money with exclusive discount codes on your next challenge.
                 </p>
                 <Link
                   href="/deals"
-                  className="text-emerald-400 hover:underline text-sm inline-flex items-center gap-1"
+                  className="text-accent hover:underline text-sm inline-flex items-center gap-1"
                 >
                   View Deals
                   <ArrowRight className="w-4 h-4" />

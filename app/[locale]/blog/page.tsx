@@ -289,8 +289,8 @@ interface BlogPost {
 
 const CATEGORY_COLORS: Record<string, { bg: string; gradient: string; accent: string }> = {
   'Guides': { 
-    bg: 'bg-emerald-500/20', 
-    gradient: 'from-emerald-600/40 via-emerald-500/30 to-teal-500/40',
+    bg: 'bg-accent/20', 
+    gradient: 'from-accent/40 via-accent/30 to-teal-500/40',
     accent: 'emerald'
   },
   'Rules Decoded': { 
@@ -561,12 +561,12 @@ const animationStyles = `
 function Breadcrumb({ t, locale }: { t: Record<string, string>; locale: Locale }) {
   return (
     <nav className="flex items-center gap-2 text-sm mb-6">
-      <Link href={`/${locale}`} className="text-gray-500 hover:text-white flex items-center gap-1 transition-colors">
+      <Link href={`/${locale}`} className="text-text-muted hover:text-white flex items-center gap-1 transition-colors">
         <Home className="w-4 h-4" />
         {t.home}
       </Link>
-      <span className="text-gray-600">/</span>
-      <span className="text-emerald-400">{t.blog}</span>
+      <span className="text-text-muted">/</span>
+      <span className="text-accent">{t.blog}</span>
     </nav>
   );
 }
@@ -579,7 +579,7 @@ function FeaturedCard({ post, locale, t }: { post: BlogPost; locale: Locale; t: 
   return (
     <Link 
       href={`/${locale}/blog/${post.slug}`}
-      className="group relative bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-gray-700 transition-all duration-300"
+      className="group relative bg-bg-elevated border border-border rounded-xl overflow-hidden hover:border-border-hover transition-all duration-300"
     >
       {/* Gradient overlay */}
       <div className={`absolute inset-0 bg-gradient-to-br ${colors.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
@@ -590,28 +590,28 @@ function FeaturedCard({ post, locale, t }: { post: BlogPost; locale: Locale; t: 
             <Icon className="w-3 h-3" />
             {categoryLabel}
           </span>
-          <span className="flex items-center gap-1 text-xs text-gray-500">
+          <span className="flex items-center gap-1 text-xs text-text-muted">
             <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
             Featured
           </span>
         </div>
         
-        <h3 className="text-lg font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors line-clamp-2">
+        <h3 className="text-lg font-bold text-white mb-2 group-hover:text-accent transition-colors line-clamp-2">
           {post.title}
         </h3>
         
-        <p className="text-gray-400 text-sm mb-4 line-clamp-2">
+        <p className="text-text-secondary text-sm mb-4 line-clamp-2">
           {post.description}
         </p>
         
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3 text-xs text-gray-500">
+          <div className="flex items-center gap-3 text-xs text-text-muted">
             <span className="flex items-center gap-1">
               <Clock className="w-3 h-3" />
               {post.readTime.replace('min read', t.minRead)}
             </span>
           </div>
-          <span className="text-emerald-400 text-sm font-medium flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <span className="text-accent text-sm font-medium flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             {t.readMore} <ArrowRight className="w-4 h-4" />
           </span>
         </div>
@@ -628,7 +628,7 @@ function ArticleCard({ post, locale, t }: { post: BlogPost; locale: Locale; t: R
   return (
     <Link 
       href={`/${locale}/blog/${post.slug}`}
-      className="group bg-gray-900/50 border border-gray-800 rounded-xl p-5 hover:border-gray-700 hover:bg-gray-900 transition-all duration-300"
+      className="group bg-bg-elevated/50 border border-border rounded-xl p-5 hover:border-border-hover hover:bg-bg-elevated transition-all duration-300"
     >
       <div className="flex items-center gap-2 mb-3">
         <span className={`flex items-center gap-1.5 px-2.5 py-1 ${colors.bg} rounded-full text-xs font-medium`}>
@@ -637,15 +637,15 @@ function ArticleCard({ post, locale, t }: { post: BlogPost; locale: Locale; t: R
         </span>
       </div>
       
-      <h3 className="text-base font-semibold text-white mb-2 group-hover:text-emerald-400 transition-colors line-clamp-2">
+      <h3 className="text-base font-semibold text-white mb-2 group-hover:text-accent transition-colors line-clamp-2">
         {post.title}
       </h3>
       
-      <p className="text-gray-500 text-sm mb-3 line-clamp-2">
+      <p className="text-text-muted text-sm mb-3 line-clamp-2">
         {post.description}
       </p>
       
-      <div className="flex items-center gap-3 text-xs text-gray-500">
+      <div className="flex items-center gap-3 text-xs text-text-muted">
         <span className="flex items-center gap-1">
           <Calendar className="w-3 h-3" />
           {post.date}
@@ -683,15 +683,15 @@ function NewsletterSignup({ t }: { t: Record<string, string> }) {
   };
 
   return (
-    <div className="bg-gradient-to-br from-emerald-500/10 to-blue-500/10 border border-emerald-500/20 rounded-xl p-5">
+    <div className="bg-gradient-to-br from-accent/10 to-blue-500/10 border border-accent/20 rounded-xl p-5">
       <div className="flex items-center gap-2 mb-3">
-        <Mail className="w-5 h-5 text-emerald-400" />
+        <Mail className="w-5 h-5 text-accent" />
         <h3 className="font-semibold text-white">{t.newsletter}</h3>
       </div>
-      <p className="text-gray-400 text-sm mb-4">{t.newsletterDesc}</p>
+      <p className="text-text-secondary text-sm mb-4">{t.newsletterDesc}</p>
       
       {status === 'success' ? (
-        <div className="flex items-center gap-2 text-emerald-400 text-sm">
+        <div className="flex items-center gap-2 text-accent text-sm">
           <Sparkles className="w-4 h-4" />
           {t.subscribed}
         </div>
@@ -702,12 +702,12 @@ function NewsletterSignup({ t }: { t: Record<string, string> }) {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder={t.emailPlaceholder}
-            className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm placeholder:text-gray-500 focus:outline-none focus:border-emerald-500"
+            className="flex-1 px-3 py-2 bg-dark-700 border border-border rounded-lg text-white text-sm placeholder:text-text-muted focus:outline-none focus:border-accent"
           />
           <button
             type="submit"
             disabled={status === 'loading'}
-            className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
+            className="px-4 py-2 bg-accent-hover hover:brightness-110 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
           >
             {status === 'loading' ? t.subscribing : t.subscribe}
           </button>
@@ -721,9 +721,9 @@ function PopularPosts({ posts, locale, t }: { posts: BlogPost[]; locale: Locale;
   const popular = posts.filter(p => p.featured).slice(0, 5);
   
   return (
-    <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-5">
+    <div className="bg-bg-elevated/50 border border-border rounded-xl p-5">
       <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
-        <TrendingUp className="w-4 h-4 text-emerald-400" />
+        <TrendingUp className="w-4 h-4 text-accent" />
         {t.popularArticles}
       </h3>
       <div className="space-y-3">
@@ -733,8 +733,8 @@ function PopularPosts({ posts, locale, t }: { posts: BlogPost[]; locale: Locale;
             href={`/${locale}/blog/${post.slug}`}
             className="flex items-start gap-3 group"
           >
-            <span className="text-emerald-400 font-bold text-sm mt-0.5">0{i + 1}</span>
-            <span className="text-gray-400 text-sm group-hover:text-white transition-colors line-clamp-2">
+            <span className="text-accent font-bold text-sm mt-0.5">0{i + 1}</span>
+            <span className="text-text-secondary text-sm group-hover:text-white transition-colors line-clamp-2">
               {post.title}
             </span>
           </Link>
@@ -757,13 +757,13 @@ function TagsCloud({ posts, t }: { posts: BlogPost[]; t: Record<string, string> 
     .map(([tag]) => tag);
 
   return (
-    <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-5">
+    <div className="bg-bg-elevated/50 border border-border rounded-xl p-5">
       <h3 className="font-semibold text-white mb-4">{t.popularTags}</h3>
       <div className="flex flex-wrap gap-2">
         {topTags.map(tag => (
           <span
             key={tag}
-            className="px-3 py-1 bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white text-xs rounded-full transition-colors cursor-pointer"
+            className="px-3 py-1 bg-dark-700 hover:bg-dark-600 text-text-secondary hover:text-white text-xs rounded-full transition-colors cursor-pointer"
           >
             #{tag}
           </span>
@@ -835,11 +835,11 @@ export default function BlogPage() {
       {/* Inject animation styles */}
       <style dangerouslySetInnerHTML={{ __html: animationStyles }} />
       
-      <div className="min-h-screen bg-gray-950">
+      <div className="min-h-screen bg-bg-base">
         {/* Hero Header */}
-        <header className="relative overflow-hidden bg-gradient-to-b from-gray-900 via-gray-900 to-gray-950 border-b border-gray-800">
+        <header className="relative overflow-hidden bg-gradient-to-b from-bg-elevated via-bg-elevated to-bg-base border-b border-border">
           <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl transform -translate-y-1/2" />
+            <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl transform -translate-y-1/2" />
             <div className="absolute top-1/2 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl transform -translate-y-1/2" />
           </div>
 
@@ -849,16 +849,16 @@ export default function BlogPage() {
             
             <div className="text-center">
               <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-                {t.blogTitle} <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-400">{t.blogTitleHighlight}</span>
+                {t.blogTitle} <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-blue-400">{t.blogTitleHighlight}</span>
               </h1>
-              <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-8">
+              <p className="text-xl text-text-secondary max-w-2xl mx-auto mb-8">
                 {t.blogSubtitle}
               </p>
 
               {/* Search Bar */}
               <div className="max-w-xl mx-auto">
                 <div className="relative">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
                   <input
                     type="text"
                     value={searchQuery}
@@ -867,7 +867,7 @@ export default function BlogPage() {
                       setCurrentPage(1);
                     }}
                     placeholder={t.searchPlaceholder}
-                    className="w-full pl-12 pr-4 py-3.5 bg-gray-900 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 transition-colors"
+                    className="w-full pl-12 pr-4 py-3.5 bg-bg-elevated border border-border rounded-xl text-white placeholder-text-muted focus:outline-none focus:border-accent transition-colors"
                   />
                 </div>
               </div>
@@ -891,16 +891,16 @@ export default function BlogPage() {
                   }}
                   className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                     activeCategory === cat
-                      ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/25'
-                      : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'
+                      ? 'bg-accent-hover text-white shadow-lg shadow-emerald-500/25'
+                      : 'bg-dark-700 text-text-secondary hover:bg-dark-600 hover:text-white'
                   }`}
                 >
                   {Icon && <Icon className="w-4 h-4" />}
                   {catLabel}
                   <span className={`px-1.5 py-0.5 rounded-full text-xs ${
                     activeCategory === cat
-                      ? 'bg-emerald-600 text-white'
-                      : 'bg-gray-700 text-gray-400'
+                      ? 'bg-accent-hover text-white'
+                      : 'bg-dark-600 text-text-secondary'
                   }`}>
                     {categoryCounts[cat] || 0}
                   </span>
@@ -954,7 +954,7 @@ export default function BlogPage() {
                         <button
                           onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                           disabled={currentPage === 1}
-                          className="px-4 py-2 bg-gray-800 text-gray-400 rounded-lg hover:bg-gray-700 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                          className="px-4 py-2 bg-dark-700 text-text-secondary rounded-lg hover:bg-dark-600 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
                           {t.previous}
                         </button>
@@ -965,8 +965,8 @@ export default function BlogPage() {
                               onClick={() => setCurrentPage(page)}
                               className={`w-10 h-10 rounded-lg font-medium transition-colors ${
                                 currentPage === page
-                                  ? 'bg-emerald-500 text-white'
-                                  : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'
+                                  ? 'bg-accent-hover text-white'
+                                  : 'bg-dark-700 text-text-secondary hover:bg-dark-600 hover:text-white'
                               }`}
                             >
                               {page}
@@ -976,7 +976,7 @@ export default function BlogPage() {
                         <button
                           onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                           disabled={currentPage === totalPages}
-                          className="px-4 py-2 bg-gray-800 text-gray-400 rounded-lg hover:bg-gray-700 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                          className="px-4 py-2 bg-dark-700 text-text-secondary rounded-lg hover:bg-dark-600 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
                           {t.next}
                         </button>
@@ -985,11 +985,11 @@ export default function BlogPage() {
                   </>
                 ) : (
                   <div className="text-center py-16">
-                    <div className="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Search className="w-8 h-8 text-gray-600" />
+                    <div className="w-16 h-16 bg-dark-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Search className="w-8 h-8 text-text-muted" />
                     </div>
                     <h3 className="text-white font-medium mb-2">{t.noArticlesFound}</h3>
-                    <p className="text-gray-500 text-sm">{t.tryDifferentSearch}</p>
+                    <p className="text-text-muted text-sm">{t.tryDifferentSearch}</p>
                   </div>
                 )}
               </section>
@@ -1002,14 +1002,14 @@ export default function BlogPage() {
               <TagsCloud posts={blogPosts} t={t} />
               
               {/* CTA Card */}
-              <div className="bg-gradient-to-br from-emerald-500/20 to-blue-500/20 border border-emerald-500/30 rounded-xl p-5">
+              <div className="bg-gradient-to-br from-accent/20 to-blue-500/20 border border-accent/30 rounded-xl p-5">
                 <h3 className="font-semibold text-white mb-2">{t.readyToGetFunded}</h3>
-                <p className="text-gray-400 text-sm mb-4">
+                <p className="text-text-secondary text-sm mb-4">
                   {t.compareDesc}
                 </p>
                 <Link
                   href={`/${locale}/compare`}
-                  className="flex items-center justify-center gap-2 w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors"
+                  className="flex items-center justify-center gap-2 w-full py-2.5 bg-accent-hover hover:brightness-110 text-white text-sm font-medium rounded-lg transition-colors"
                 >
                   {t.comparePropFirms}
                   <ChevronRight className="w-4 h-4" />

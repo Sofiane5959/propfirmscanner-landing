@@ -419,9 +419,9 @@ export default function RuleTrackerPage() {
   const isCompliant = violations.length === 0;
 
   return (
-    <div className="min-h-screen bg-gray-950 py-8">
+    <div className="min-h-screen bg-bg-base py-8">
       <div className="max-w-2xl mx-auto px-4">
-        <Link href={`/${locale}/tools`} className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6">
+        <Link href={`/${locale}/tools`} className="inline-flex items-center gap-2 text-text-secondary hover:text-white mb-6">
           <ArrowLeft className="w-4 h-4" />
           {t.allTools}
         </Link>
@@ -429,14 +429,14 @@ export default function RuleTrackerPage() {
         <DemoBanner toolName="rule checker" />
 
         <h1 className="text-3xl font-bold text-white mb-2">{t.title}</h1>
-        <p className="text-gray-400 mb-8">{t.subtitle}</p>
+        <p className="text-text-secondary mb-8">{t.subtitle}</p>
 
         {/* Quick Comparison Table */}
-        <div className="bg-gray-900 rounded-xl border border-gray-800 p-6 mb-6 overflow-x-auto">
+        <div className="bg-bg-elevated rounded-xl border border-border p-6 mb-6 overflow-x-auto">
           <h2 className="text-lg font-semibold text-white mb-4">{t.quickComparison}</h2>
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-left text-gray-500 border-b border-gray-800">
+              <tr className="text-left text-text-muted border-b border-border">
                 <th className="pb-2 pr-4">{t.firm}</th>
                 <th className="pb-2 px-2 text-center">{t.news}</th>
                 <th className="pb-2 px-2 text-center">{t.weekend}</th>
@@ -448,27 +448,27 @@ export default function RuleTrackerPage() {
               {firms.map((firm) => {
                 const r = propFirmRules[firm];
                 return (
-                  <tr key={firm} className="border-b border-gray-800/50">
+                  <tr key={firm} className="border-b border-border/50">
                     <td className="py-2 pr-4 text-white font-medium">{firm}</td>
                     <td className="py-2 px-2 text-center">
                       {r.newsTrading ? (
-                        <CheckCircle className="w-4 h-4 text-emerald-400 mx-auto" />
+                        <CheckCircle className="w-4 h-4 text-accent mx-auto" />
                       ) : (
                         <XCircle className="w-4 h-4 text-red-400 mx-auto" />
                       )}
                     </td>
                     <td className="py-2 px-2 text-center">
                       {r.weekendHolding ? (
-                        <CheckCircle className="w-4 h-4 text-emerald-400 mx-auto" />
+                        <CheckCircle className="w-4 h-4 text-accent mx-auto" />
                       ) : (
                         <XCircle className="w-4 h-4 text-red-400 mx-auto" />
                       )}
                     </td>
-                    <td className="py-2 px-2 text-center text-gray-400">
+                    <td className="py-2 px-2 text-center text-text-secondary">
                       {r.consistency ? `${r.consistency}%` : t.none}
                     </td>
                     <td className="py-2 pl-2 text-center">
-                      <span className={r.maxDDType === 'static' ? 'text-emerald-400' : 'text-purple-400'}>
+                      <span className={r.maxDDType === 'static' ? 'text-accent' : 'text-purple-400'}>
                         {r.maxDDType === 'static' ? t.static : t.trailing}
                       </span>
                     </td>
@@ -480,7 +480,7 @@ export default function RuleTrackerPage() {
         </div>
 
         {/* Firm Selector */}
-        <div className="bg-gray-900 rounded-xl border border-gray-800 p-6 mb-6">
+        <div className="bg-bg-elevated rounded-xl border border-border p-6 mb-6">
           <h2 className="text-lg font-semibold text-white mb-4">{t.selectPropFirm}</h2>
           <div className="flex flex-wrap gap-2">
             {firms.map((firm) => (
@@ -489,8 +489,8 @@ export default function RuleTrackerPage() {
                 onClick={() => setSelectedFirm(firm)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   selectedFirm === firm
-                    ? 'bg-emerald-500 text-white'
-                    : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                    ? 'bg-accent-hover text-white'
+                    : 'bg-dark-700 text-text-secondary hover:bg-dark-600'
                 }`}
               >
                 {firm}
@@ -500,70 +500,70 @@ export default function RuleTrackerPage() {
         </div>
 
         {/* Trade Plan Checkboxes */}
-        <div className="bg-gray-900 rounded-xl border border-gray-800 p-6 mb-6">
+        <div className="bg-bg-elevated rounded-xl border border-border p-6 mb-6">
           <h2 className="text-lg font-semibold text-white mb-4">{t.yourTradePlan}</h2>
-          <p className="text-sm text-gray-500 mb-4">{t.checkApplies}</p>
+          <p className="text-sm text-text-muted mb-4">{t.checkApplies}</p>
 
           <div className="space-y-3">
-            <label className="flex items-start gap-3 p-3 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700/50">
+            <label className="flex items-start gap-3 p-3 bg-dark-700 rounded-lg cursor-pointer hover:bg-dark-600/50">
               <input
                 type="checkbox"
                 checked={tradingNews}
                 onChange={(e) => setTradingNews(e.target.checked)}
-                className="mt-1 w-4 h-4 rounded border-gray-600 bg-gray-700 text-emerald-500 focus:ring-emerald-500"
+                className="mt-1 w-4 h-4 rounded border-border-hover bg-dark-600 text-accent focus:ring-accent"
               />
               <div>
                 <p className="text-white font-medium">{t.tradingAroundNews}</p>
-                <p className="text-xs text-gray-500">{t.highImpactEvents}</p>
+                <p className="text-xs text-text-muted">{t.highImpactEvents}</p>
               </div>
             </label>
 
-            <label className="flex items-start gap-3 p-3 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700/50">
+            <label className="flex items-start gap-3 p-3 bg-dark-700 rounded-lg cursor-pointer hover:bg-dark-600/50">
               <input
                 type="checkbox"
                 checked={holdingWeekend}
                 onChange={(e) => setHoldingWeekend(e.target.checked)}
-                className="mt-1 w-4 h-4 rounded border-gray-600 bg-gray-700 text-emerald-500 focus:ring-emerald-500"
+                className="mt-1 w-4 h-4 rounded border-border-hover bg-dark-600 text-accent focus:ring-accent"
               />
               <div>
                 <p className="text-white font-medium">{t.holdingWeekend}</p>
-                <p className="text-xs text-gray-500">{t.positionsOpenFriMon}</p>
+                <p className="text-xs text-text-muted">{t.positionsOpenFriMon}</p>
               </div>
             </label>
 
-            <label className="flex items-start gap-3 p-3 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700/50">
+            <label className="flex items-start gap-3 p-3 bg-dark-700 rounded-lg cursor-pointer hover:bg-dark-600/50">
               <input
                 type="checkbox"
                 checked={largeProfitDay}
                 onChange={(e) => setLargeProfitDay(e.target.checked)}
-                className="mt-1 w-4 h-4 rounded border-gray-600 bg-gray-700 text-emerald-500 focus:ring-emerald-500"
+                className="mt-1 w-4 h-4 rounded border-border-hover bg-dark-600 text-accent focus:ring-accent"
               />
               <div>
                 <p className="text-white font-medium">{t.largeProfitDay}</p>
-                <p className="text-xs text-gray-500">{t.expecting30}</p>
+                <p className="text-xs text-text-muted">{t.expecting30}</p>
               </div>
             </label>
 
-            <label className="flex items-start gap-3 p-3 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700/50">
+            <label className="flex items-start gap-3 p-3 bg-dark-700 rounded-lg cursor-pointer hover:bg-dark-600/50">
               <input
                 type="checkbox"
                 checked={usingHedging}
                 onChange={(e) => setUsingHedging(e.target.checked)}
-                className="mt-1 w-4 h-4 rounded border-gray-600 bg-gray-700 text-emerald-500 focus:ring-emerald-500"
+                className="mt-1 w-4 h-4 rounded border-border-hover bg-dark-600 text-accent focus:ring-accent"
               />
               <div>
                 <p className="text-white font-medium">{t.usingHedging}</p>
-                <p className="text-xs text-gray-500">{t.oppositePositions}</p>
+                <p className="text-xs text-text-muted">{t.oppositePositions}</p>
               </div>
             </label>
           </div>
         </div>
 
         {/* Results */}
-        <div className="bg-gray-900 rounded-xl border border-gray-800 p-6 mb-6">
+        <div className="bg-bg-elevated rounded-xl border border-border p-6 mb-6">
           <div className={`p-4 rounded-lg border ${
             isCompliant && warnings.length === 0
-              ? 'bg-emerald-500/10 border-emerald-500/30'
+              ? 'bg-accent/10 border-accent/30'
               : violations.length > 0
                 ? 'bg-red-500/10 border-red-500/30'
                 : 'bg-yellow-500/10 border-yellow-500/30'
@@ -571,8 +571,8 @@ export default function RuleTrackerPage() {
             <div className="flex items-center gap-3 mb-3">
               {isCompliant && warnings.length === 0 ? (
                 <>
-                  <CheckCircle className="w-6 h-6 text-emerald-400" />
-                  <p className="font-semibold text-emerald-400">{t.allClear}</p>
+                  <CheckCircle className="w-6 h-6 text-accent" />
+                  <p className="font-semibold text-accent">{t.allClear}</p>
                 </>
               ) : violations.length > 0 ? (
                 <>
@@ -604,53 +604,53 @@ export default function RuleTrackerPage() {
             )}
 
             {isCompliant && warnings.length === 0 && (
-              <p className="text-sm text-emerald-300">{t.planComplies} {selectedFirm} {t.rules}</p>
+              <p className="text-sm text-accent">{t.planComplies} {selectedFirm} {t.rules}</p>
             )}
           </div>
         </div>
 
         {/* Selected Firm Rules */}
-        <div className="bg-gray-900 rounded-xl border border-gray-800 p-6 mb-6">
+        <div className="bg-bg-elevated rounded-xl border border-border p-6 mb-6">
           <h3 className="text-lg font-semibold text-white mb-4">{selectedFirm} {t.firmRules}</h3>
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-gray-800 rounded-lg p-3">
-              <p className="text-xs text-gray-500">{t.newsTrading}</p>
-              <p className={`font-medium ${rules.newsTrading ? 'text-emerald-400' : 'text-red-400'}`}>
+            <div className="bg-dark-700 rounded-lg p-3">
+              <p className="text-xs text-text-muted">{t.newsTrading}</p>
+              <p className={`font-medium ${rules.newsTrading ? 'text-accent' : 'text-red-400'}`}>
                 {rules.newsTrading ? t.allowed : `${rules.newsBuffer}${t.minBuffer}`}
               </p>
             </div>
-            <div className="bg-gray-800 rounded-lg p-3">
-              <p className="text-xs text-gray-500">{t.weekendHolding}</p>
-              <p className={`font-medium ${rules.weekendHolding ? 'text-emerald-400' : 'text-red-400'}`}>
+            <div className="bg-dark-700 rounded-lg p-3">
+              <p className="text-xs text-text-muted">{t.weekendHolding}</p>
+              <p className={`font-medium ${rules.weekendHolding ? 'text-accent' : 'text-red-400'}`}>
                 {rules.weekendHolding ? t.allowed : t.notAllowed}
               </p>
             </div>
-            <div className="bg-gray-800 rounded-lg p-3">
-              <p className="text-xs text-gray-500">{t.consistencyRule}</p>
-              <p className="font-medium text-gray-300">
+            <div className="bg-dark-700 rounded-lg p-3">
+              <p className="text-xs text-text-muted">{t.consistencyRule}</p>
+              <p className="font-medium text-text-secondary">
                 {rules.consistency ? `${rules.consistency}%` : t.none}
               </p>
             </div>
-            <div className="bg-gray-800 rounded-lg p-3">
-              <p className="text-xs text-gray-500">{t.maxDDType}</p>
-              <p className={`font-medium ${rules.maxDDType === 'static' ? 'text-emerald-400' : 'text-purple-400'}`}>
+            <div className="bg-dark-700 rounded-lg p-3">
+              <p className="text-xs text-text-muted">{t.maxDDType}</p>
+              <p className={`font-medium ${rules.maxDDType === 'static' ? 'text-accent' : 'text-purple-400'}`}>
                 {rules.maxDDType === 'static' ? t.static : t.trailing}
               </p>
             </div>
-            <div className="bg-gray-800 rounded-lg p-3 col-span-2">
-              <p className="text-xs text-gray-500">{t.minTradingDays}</p>
-              <p className="font-medium text-gray-300">{rules.minTradingDays} {t.days}</p>
+            <div className="bg-dark-700 rounded-lg p-3 col-span-2">
+              <p className="text-xs text-text-muted">{t.minTradingDays}</p>
+              <p className="font-medium text-text-secondary">{rules.minTradingDays} {t.days}</p>
             </div>
           </div>
         </div>
 
         {/* CTA */}
-        <div className="bg-gradient-to-r from-emerald-500/20 to-gray-900 rounded-xl border border-emerald-500/30 p-6">
+        <div className="bg-gradient-to-r from-accent/20 to-bg-elevated rounded-xl border border-accent/30 p-6">
           <h3 className="text-lg font-semibold text-white mb-2">{t.ctaTitle}</h3>
-          <p className="text-gray-400 mb-4">{t.ctaDesc}</p>
+          <p className="text-text-secondary mb-4">{t.ctaDesc}</p>
           <Link
             href={`/${locale}/dashboard`}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-lg transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-accent-hover hover:brightness-110 text-white font-medium rounded-lg transition-colors"
           >
             <Shield className="w-5 h-5" />
             {t.tryFree}

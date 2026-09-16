@@ -84,34 +84,34 @@ function Breadcrumb({ title, category }: { title: string; category: string }) {
         <li>
           <Link 
             href="/" 
-            className="flex items-center gap-1 text-gray-400 hover:text-white transition-colors"
+            className="flex items-center gap-1 text-text-secondary hover:text-white transition-colors"
           >
             <Home className="w-4 h-4" />
             <span className="hidden sm:inline">Home</span>
           </Link>
         </li>
-        <li className="text-gray-600">
+        <li className="text-text-muted">
           <ChevronRight className="w-4 h-4" />
         </li>
         <li>
           <Link 
             href="/blog" 
-            className="text-gray-400 hover:text-white transition-colors"
+            className="text-text-secondary hover:text-white transition-colors"
           >
             Blog
           </Link>
         </li>
-        <li className="text-gray-600">
+        <li className="text-text-muted">
           <ChevronRight className="w-4 h-4" />
         </li>
         <li>
-          <span className="text-gray-400">{category}</span>
+          <span className="text-text-secondary">{category}</span>
         </li>
-        <li className="text-gray-600 hidden md:block">
+        <li className="text-text-muted hidden md:block">
           <ChevronRight className="w-4 h-4" />
         </li>
         <li className="hidden md:block">
-          <span className="text-emerald-400 font-medium line-clamp-1">{title}</span>
+          <span className="text-accent font-medium line-clamp-1">{title}</span>
         </li>
       </ol>
     </nav>
@@ -129,7 +129,7 @@ function ShareButtons({ title, slug }: { title: string; slug: string }) {
 
   return (
     <div className="flex items-center gap-3">
-      <span className="text-gray-500 text-sm flex items-center gap-1">
+      <span className="text-text-muted text-sm flex items-center gap-1">
         <Share2 className="w-4 h-4" />
         Share:
       </span>
@@ -137,7 +137,7 @@ function ShareButtons({ title, slug }: { title: string; slug: string }) {
         href={`https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="p-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-gray-400 hover:text-white transition-colors"
+        className="p-2 bg-dark-700 hover:bg-dark-600 rounded-lg text-text-secondary hover:text-white transition-colors"
         aria-label="Share on Twitter"
       >
         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -148,7 +148,7 @@ function ShareButtons({ title, slug }: { title: string; slug: string }) {
         href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="p-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-gray-400 hover:text-white transition-colors"
+        className="p-2 bg-dark-700 hover:bg-dark-600 rounded-lg text-text-secondary hover:text-white transition-colors"
         aria-label="Share on LinkedIn"
       >
         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -159,7 +159,7 @@ function ShareButtons({ title, slug }: { title: string; slug: string }) {
         href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="p-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-gray-400 hover:text-white transition-colors"
+        className="p-2 bg-dark-700 hover:bg-dark-600 rounded-lg text-text-secondary hover:text-white transition-colors"
         aria-label="Share on Facebook"
       >
         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -182,13 +182,13 @@ function TableOfContents({ content }: { content: string }) {
   if (tocItems.length < 3) return null;
 
   return (
-    <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 mb-8">
+    <div className="bg-bg-elevated/50 border border-border rounded-xl p-6 mb-8">
       <h2 className="text-lg font-semibold text-white mb-4">Table of Contents</h2>
       <ul className="space-y-2">
         {tocItems.map((item, index) => (
           <li key={index} className="flex items-start gap-2">
-            <span className="text-emerald-500 font-mono text-sm">{(index + 1).toString().padStart(2, '0')}</span>
-            <span className="text-gray-400 text-sm hover:text-white transition-colors cursor-pointer">
+            <span className="text-accent font-mono text-sm">{(index + 1).toString().padStart(2, '0')}</span>
+            <span className="text-text-secondary text-sm hover:text-white transition-colors cursor-pointer">
               {item}
             </span>
           </li>
@@ -217,16 +217,16 @@ function RelatedPosts({ currentSlug, category }: { currentSlug: string; category
             <Link
               key={related.slug}
               href={`/blog/${related.slug}`}
-              className="group bg-gray-800/50 border border-gray-700 rounded-xl p-5 hover:border-emerald-500/30 hover:bg-gray-800 transition-all"
+              className="group bg-dark-700/50 border border-border rounded-xl p-5 hover:border-accent/30 hover:bg-dark-700 transition-all"
             >
               <span className={`text-xs font-medium ${colors.text}`}>
                 {related.category}
               </span>
-              <h3 className="text-lg font-semibold text-white mt-2 mb-2 line-clamp-2 group-hover:text-emerald-400 transition-colors">
+              <h3 className="text-lg font-semibold text-white mt-2 mb-2 line-clamp-2 group-hover:text-accent transition-colors">
                 {related.title}
               </h3>
-              <p className="text-gray-400 text-sm line-clamp-2">{related.description}</p>
-              <div className="flex items-center gap-1 mt-3 text-emerald-400 text-sm font-medium">
+              <p className="text-text-secondary text-sm line-clamp-2">{related.description}</p>
+              <div className="flex items-center gap-1 mt-3 text-accent text-sm font-medium">
                 Read article <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </div>
             </Link>
@@ -247,17 +247,17 @@ function ArticleNavigation({ currentSlug }: { currentSlug: string }) {
   const nextPost = currentIndex < blogPosts.length - 1 ? blogPosts[currentIndex + 1] : null;
 
   return (
-    <div className="mt-12 pt-8 border-t border-gray-800">
+    <div className="mt-12 pt-8 border-t border-border">
       <div className="grid md:grid-cols-2 gap-4">
         {prevPost ? (
           <Link
             href={`/blog/${prevPost.slug}`}
-            className="group flex items-center gap-4 p-4 bg-gray-900/50 border border-gray-800 rounded-xl hover:border-emerald-500/30 transition-all"
+            className="group flex items-center gap-4 p-4 bg-bg-elevated/50 border border-border rounded-xl hover:border-accent/30 transition-all"
           >
-            <ArrowLeft className="w-5 h-5 text-gray-500 group-hover:text-emerald-400 group-hover:-translate-x-1 transition-all" />
+            <ArrowLeft className="w-5 h-5 text-text-muted group-hover:text-accent group-hover:-translate-x-1 transition-all" />
             <div className="flex-1 min-w-0">
-              <span className="text-xs text-gray-500">Previous Article</span>
-              <h4 className="text-white font-medium line-clamp-1 group-hover:text-emerald-400 transition-colors">
+              <span className="text-xs text-text-muted">Previous Article</span>
+              <h4 className="text-white font-medium line-clamp-1 group-hover:text-accent transition-colors">
                 {prevPost.title}
               </h4>
             </div>
@@ -269,15 +269,15 @@ function ArticleNavigation({ currentSlug }: { currentSlug: string }) {
         {nextPost ? (
           <Link
             href={`/blog/${nextPost.slug}`}
-            className="group flex items-center gap-4 p-4 bg-gray-900/50 border border-gray-800 rounded-xl hover:border-emerald-500/30 transition-all text-right"
+            className="group flex items-center gap-4 p-4 bg-bg-elevated/50 border border-border rounded-xl hover:border-accent/30 transition-all text-right"
           >
             <div className="flex-1 min-w-0">
-              <span className="text-xs text-gray-500">Next Article</span>
-              <h4 className="text-white font-medium line-clamp-1 group-hover:text-emerald-400 transition-colors">
+              <span className="text-xs text-text-muted">Next Article</span>
+              <h4 className="text-white font-medium line-clamp-1 group-hover:text-accent transition-colors">
                 {nextPost.title}
               </h4>
             </div>
-            <ArrowRight className="w-5 h-5 text-gray-500 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all" />
+            <ArrowRight className="w-5 h-5 text-text-muted group-hover:text-accent group-hover:translate-x-1 transition-all" />
           </Link>
         ) : (
           <div />
@@ -304,12 +304,12 @@ export default function BlogPostPage({ params }: Props) {
   // Process content to add styling classes to info boxes
   const processedContent = post.content
     .replace(/<div class="info-box warning">/g, '<div class="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-6 my-8">')
-    .replace(/<div class="info-box success">/g, '<div class="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-6 my-8">')
-    .replace(/<p class="lead">/g, '<p class="text-xl text-gray-300 leading-relaxed mb-8">')
+    .replace(/<div class="info-box success">/g, '<div class="bg-accent/10 border border-accent/30 rounded-xl p-6 my-8">')
+    .replace(/<p class="lead">/g, '<p class="text-xl text-text-secondary leading-relaxed mb-8">')
     .replace(/<table class="comparison-table">/g, '<table class="w-full border-collapse my-6">');
 
   return (
-    <div className="min-h-screen bg-gray-950 pt-20 pb-16">
+    <div className="min-h-screen bg-bg-base pt-20 pb-16">
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Breadcrumb */}
         <Breadcrumb title={post.title} category={post.category} />
@@ -317,7 +317,7 @@ export default function BlogPostPage({ params }: Props) {
         {/* Back Link */}
         <Link 
           href="/blog" 
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition-colors group"
+          className="inline-flex items-center gap-2 text-text-secondary hover:text-white mb-8 transition-colors group"
         >
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
           Back to Blog
@@ -341,11 +341,11 @@ export default function BlogPostPage({ params }: Props) {
             {post.title}
           </h1>
           
-          <p className="text-xl text-gray-400 mb-6">
+          <p className="text-xl text-text-secondary mb-6">
             {post.description}
           </p>
           
-          <div className="flex flex-wrap items-center gap-6 text-gray-500">
+          <div className="flex flex-wrap items-center gap-6 text-text-muted">
             <div className="flex items-center gap-2">
               <User className="w-4 h-4" />
               <span>PropFirm Scanner</span>
@@ -361,7 +361,7 @@ export default function BlogPostPage({ params }: Props) {
           </div>
 
           {/* Share Buttons */}
-          <div className="mt-6 pt-6 border-t border-gray-800">
+          <div className="mt-6 pt-6 border-t border-border">
             <ShareButtons title={post.title} slug={post.slug} />
           </div>
         </header>
@@ -374,26 +374,26 @@ export default function BlogPostPage({ params }: Props) {
           className="prose prose-invert prose-lg max-w-none
             prose-headings:text-white prose-headings:font-bold
             prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-6
-            prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-4 prose-h3:text-emerald-400
-            prose-p:text-gray-300 prose-p:leading-relaxed
-            prose-a:text-emerald-400 prose-a:no-underline hover:prose-a:underline
+            prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-4 prose-h3:text-accent
+            prose-p:text-text-secondary prose-p:leading-relaxed
+            prose-a:text-accent prose-a:no-underline hover:prose-a:underline
             prose-strong:text-white
-            prose-ul:text-gray-300 prose-ol:text-gray-300
-            prose-li:marker:text-emerald-500
-            prose-table:border-gray-700
-            prose-th:bg-gray-800 prose-th:text-white prose-th:p-3 prose-th:text-left
-            prose-td:border-gray-700 prose-td:p-3 prose-td:text-gray-300"
+            prose-ul:text-text-secondary prose-ol:text-text-secondary
+            prose-li:marker:text-accent
+            prose-table:border-border
+            prose-th:bg-dark-700 prose-th:text-white prose-th:p-3 prose-th:text-left
+            prose-td:border-border prose-td:p-3 prose-td:text-text-secondary"
           dangerouslySetInnerHTML={{ __html: processedContent }}
         />
 
         {/* Tags */}
-        <div className="mt-12 pt-8 border-t border-gray-800">
+        <div className="mt-12 pt-8 border-t border-border">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-gray-500 text-sm">Tags:</span>
+            <span className="text-text-muted text-sm">Tags:</span>
             {post.tags.map(tag => (
               <span 
                 key={tag}
-                className="px-3 py-1 bg-gray-800 text-gray-400 text-sm rounded-full capitalize"
+                className="px-3 py-1 bg-dark-700 text-text-secondary text-sm rounded-full capitalize"
               >
                 {tag}
               </span>
@@ -402,19 +402,19 @@ export default function BlogPostPage({ params }: Props) {
         </div>
 
         {/* CTA */}
-        <div className="mt-12 bg-gradient-to-r from-emerald-500/20 to-blue-500/20 border border-emerald-500/30 rounded-2xl p-8 text-center">
+        <div className="mt-12 bg-gradient-to-r from-accent/20 to-blue-500/20 border border-accent/30 rounded-2xl p-8 text-center">
           <h2 className="text-2xl font-bold text-white mb-3">Ready to Get Funded?</h2>
-          <p className="text-gray-400 mb-6">Compare 70+ prop firms and find the perfect match for your trading style.</p>
+          <p className="text-text-secondary mb-6">Compare 70+ prop firms and find the perfect match for your trading style.</p>
           <div className="flex flex-wrap gap-4 justify-center">
             <Link 
               href="/compare" 
-              className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors"
+              className="px-6 py-3 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-xl transition-colors"
             >
               Compare Prop Firms
             </Link>
             <Link 
               href="/deals" 
-              className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-xl transition-colors"
+              className="px-6 py-3 bg-dark-600 hover:bg-dark-500 text-white font-semibold rounded-xl transition-colors"
             >
               View Deals
             </Link>

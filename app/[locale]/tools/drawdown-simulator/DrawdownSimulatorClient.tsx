@@ -280,9 +280,9 @@ export default function DrawdownSimulatorClient() {
   }
 
   const quickTrades = [
-    { label: '+$2,000', value: 2000, color: 'bg-emerald-500 hover:bg-emerald-600' },
-    { label: '+$1,000', value: 1000, color: 'bg-emerald-500/80 hover:bg-emerald-600' },
-    { label: '+$500', value: 500, color: 'bg-emerald-500/60 hover:bg-emerald-600' },
+    { label: '+$2,000', value: 2000, color: 'bg-accent-hover hover:brightness-110' },
+    { label: '+$1,000', value: 1000, color: 'bg-accent/80 hover:brightness-110' },
+    { label: '+$500', value: 500, color: 'bg-accent/60 hover:brightness-110' },
     { label: '-$500', value: -500, color: 'bg-red-500/60 hover:bg-red-600' },
     { label: '-$1,000', value: -1000, color: 'bg-red-500/80 hover:bg-red-600' },
     { label: '-$2,000', value: -2000, color: 'bg-red-500 hover:bg-red-600' },
@@ -342,7 +342,7 @@ export default function DrawdownSimulatorClient() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 py-24 px-4">
+    <div className="min-h-screen bg-bg-elevated py-24 px-4">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
@@ -350,18 +350,18 @@ export default function DrawdownSimulatorClient() {
             <TrendingDown className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-white mb-2">{t.title}</h1>
-          <p className="text-gray-400">{t.subtitle}</p>
+          <p className="text-text-secondary">{t.subtitle}</p>
         </div>
 
         {/* Settings */}
-        <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 mb-6">
+        <div className="bg-dark-700/50 border border-border rounded-xl p-6 mb-6">
           <div className="grid md:grid-cols-4 gap-4">
             <div>
-              <label className="text-gray-400 text-sm mb-1 block">{t.accountSize}</label>
+              <label className="text-text-secondary text-sm mb-1 block">{t.accountSize}</label>
               <select
                 value={accountSize}
                 onChange={(e) => { setAccountSize(Number(e.target.value)); reset(); }}
-                className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white"
+                className="w-full px-3 py-2 bg-bg-elevated border border-border rounded-lg text-white"
               >
                 <option value={50000}>$50,000</option>
                 <option value={100000}>$100,000</option>
@@ -369,11 +369,11 @@ export default function DrawdownSimulatorClient() {
               </select>
             </div>
             <div>
-              <label className="text-gray-400 text-sm mb-1 block">{t.maxDrawdown}</label>
+              <label className="text-text-secondary text-sm mb-1 block">{t.maxDrawdown}</label>
               <select
                 value={maxDrawdown}
                 onChange={(e) => { setMaxDrawdown(Number(e.target.value)); reset(); }}
-                className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white"
+                className="w-full px-3 py-2 bg-bg-elevated border border-border rounded-lg text-white"
               >
                 <option value={8}>8%</option>
                 <option value={10}>10%</option>
@@ -381,11 +381,11 @@ export default function DrawdownSimulatorClient() {
               </select>
             </div>
             <div>
-              <label className="text-gray-400 text-sm mb-1 block">{t.dailyDrawdown}</label>
+              <label className="text-text-secondary text-sm mb-1 block">{t.dailyDrawdown}</label>
               <select
                 value={dailyDrawdown}
                 onChange={(e) => setDailyDrawdown(Number(e.target.value))}
-                className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white"
+                className="w-full px-3 py-2 bg-bg-elevated border border-border rounded-lg text-white"
               >
                 <option value={4}>4%</option>
                 <option value={5}>5%</option>
@@ -403,7 +403,7 @@ export default function DrawdownSimulatorClient() {
               </button>
               <button
                 onClick={reset}
-                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg"
+                className="px-4 py-2 bg-dark-600 hover:bg-dark-500 text-white rounded-lg"
               >
                 <RotateCcw className="w-4 h-4" />
               </button>
@@ -413,88 +413,88 @@ export default function DrawdownSimulatorClient() {
 
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Static DD */}
-          <div className={`bg-gray-800/50 border rounded-xl p-6 ${failed === 'static' ? 'border-red-500' : 'border-gray-700'}`}>
+          <div className={`bg-dark-700/50 border rounded-xl p-6 ${failed === 'static' ? 'border-red-500' : 'border-border'}`}>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-white">{t.staticDrawdown}</h2>
               {failed === 'static' ? (
                 <XCircle className="w-6 h-6 text-red-400" />
               ) : (
-                <CheckCircle className="w-6 h-6 text-emerald-400" />
+                <CheckCircle className="w-6 h-6 text-accent" />
               )}
             </div>
             
             <div className="mb-4">
               <div className="flex justify-between text-sm mb-1">
-                <span className="text-gray-400">{t.ddUsed}</span>
+                <span className="text-text-secondary">{t.ddUsed}</span>
                 <span className="text-white">{trades.length > 0 ? trades[trades.length - 1].staticDD.toFixed(2) : 0}%</span>
               </div>
-              <div className="h-3 bg-gray-700 rounded-full overflow-hidden">
+              <div className="h-3 bg-dark-600 rounded-full overflow-hidden">
                 <div 
-                  className="h-full bg-emerald-500 transition-all duration-300"
+                  className="h-full bg-accent-hover transition-all duration-300"
                   style={{ width: `${Math.min(100, trades.length > 0 ? (trades[trades.length - 1].staticDD / maxDrawdown) * 100 : 0)}%` }}
                 />
               </div>
-              <div className="flex justify-between text-xs text-gray-500 mt-1">
+              <div className="flex justify-between text-xs text-text-muted mt-1">
                 <span>0%</span>
                 <span>{maxDrawdown}% ({t.limit})</span>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-gray-900/50 rounded-lg p-3">
-                <div className="text-gray-400 text-xs">{t.limit}</div>
+              <div className="bg-bg-elevated/50 rounded-lg p-3">
+                <div className="text-text-secondary text-xs">{t.limit}</div>
                 <div className="text-white font-semibold">${staticLimit.toLocaleString()}</div>
               </div>
-              <div className="bg-gray-900/50 rounded-lg p-3">
-                <div className="text-gray-400 text-xs">{t.remaining}</div>
-                <div className="text-emerald-400 font-semibold">
+              <div className="bg-bg-elevated/50 rounded-lg p-3">
+                <div className="text-text-secondary text-xs">{t.remaining}</div>
+                <div className="text-accent font-semibold">
                   {trades.length > 0 ? trades[trades.length - 1].staticRemaining.toFixed(2) : maxDrawdown}%
                 </div>
               </div>
             </div>
 
-            <div className="mt-4 p-3 bg-emerald-500/10 rounded-lg">
-              <p className="text-emerald-400 text-sm">
+            <div className="mt-4 p-3 bg-accent/10 rounded-lg">
+              <p className="text-accent text-sm">
                 ✓ <strong>Static:</strong> {t.staticTip}
               </p>
             </div>
           </div>
 
           {/* Trailing DD */}
-          <div className={`bg-gray-800/50 border rounded-xl p-6 ${failed === 'trailing' ? 'border-red-500' : 'border-gray-700'}`}>
+          <div className={`bg-dark-700/50 border rounded-xl p-6 ${failed === 'trailing' ? 'border-red-500' : 'border-border'}`}>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-white">{t.trailingDrawdown}</h2>
               {failed === 'trailing' ? (
                 <XCircle className="w-6 h-6 text-red-400" />
               ) : (
-                <CheckCircle className="w-6 h-6 text-emerald-400" />
+                <CheckCircle className="w-6 h-6 text-accent" />
               )}
             </div>
             
             <div className="mb-4">
               <div className="flex justify-between text-sm mb-1">
-                <span className="text-gray-400">{t.ddUsed}</span>
+                <span className="text-text-secondary">{t.ddUsed}</span>
                 <span className="text-white">{trades.length > 0 ? trades[trades.length - 1].trailingDD.toFixed(2) : 0}%</span>
               </div>
-              <div className="h-3 bg-gray-700 rounded-full overflow-hidden">
+              <div className="h-3 bg-dark-600 rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-yellow-500 transition-all duration-300"
                   style={{ width: `${Math.min(100, trades.length > 0 ? (trades[trades.length - 1].trailingDD / maxDrawdown) * 100 : 0)}%` }}
                 />
               </div>
-              <div className="flex justify-between text-xs text-gray-500 mt-1">
+              <div className="flex justify-between text-xs text-text-muted mt-1">
                 <span>0%</span>
                 <span>{maxDrawdown}% ({t.limit})</span>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-gray-900/50 rounded-lg p-3">
-                <div className="text-gray-400 text-xs">{t.highWaterMark}</div>
+              <div className="bg-bg-elevated/50 rounded-lg p-3">
+                <div className="text-text-secondary text-xs">{t.highWaterMark}</div>
                 <div className="text-white font-semibold">${highWaterMark.toLocaleString()}</div>
               </div>
-              <div className="bg-gray-900/50 rounded-lg p-3">
-                <div className="text-gray-400 text-xs">{t.trailingLimit}</div>
+              <div className="bg-bg-elevated/50 rounded-lg p-3">
+                <div className="text-text-secondary text-xs">{t.trailingLimit}</div>
                 <div className="text-yellow-400 font-semibold">${Math.round(trailingLimit).toLocaleString()}</div>
               </div>
             </div>
@@ -508,7 +508,7 @@ export default function DrawdownSimulatorClient() {
         </div>
 
         {/* Quick Trade Buttons */}
-        <div className="mt-6 bg-gray-800/50 border border-gray-700 rounded-xl p-6">
+        <div className="mt-6 bg-dark-700/50 border border-border rounded-xl p-6">
           <h3 className="text-white font-semibold mb-4">{t.addTrade}</h3>
           <div className="flex flex-wrap gap-2">
             {quickTrades.map((trade) => (
@@ -522,37 +522,37 @@ export default function DrawdownSimulatorClient() {
               </button>
             ))}
           </div>
-          <p className="text-gray-500 text-sm mt-3">
+          <p className="text-text-muted text-sm mt-3">
             {t.currentBalance}: <span className="text-white font-semibold">${currentBalance.toLocaleString()}</span>
           </p>
         </div>
 
         {/* Trade History */}
         {trades.length > 0 && (
-          <div className="mt-6 bg-gray-800/50 border border-gray-700 rounded-xl p-6">
+          <div className="mt-6 bg-dark-700/50 border border-border rounded-xl p-6">
             <h3 className="text-white font-semibold mb-4">{t.tradeHistory}</h3>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-gray-700">
-                    <th className="text-left py-2 px-3 text-gray-400">#</th>
-                    <th className="text-right py-2 px-3 text-gray-400">{t.pnl}</th>
-                    <th className="text-right py-2 px-3 text-gray-400">{t.balance}</th>
-                    <th className="text-right py-2 px-3 text-gray-400">{t.hwm}</th>
-                    <th className="text-right py-2 px-3 text-gray-400">{t.staticDD}</th>
-                    <th className="text-right py-2 px-3 text-gray-400">{t.trailingDD}</th>
+                  <tr className="border-b border-border">
+                    <th className="text-left py-2 px-3 text-text-secondary">#</th>
+                    <th className="text-right py-2 px-3 text-text-secondary">{t.pnl}</th>
+                    <th className="text-right py-2 px-3 text-text-secondary">{t.balance}</th>
+                    <th className="text-right py-2 px-3 text-text-secondary">{t.hwm}</th>
+                    <th className="text-right py-2 px-3 text-text-secondary">{t.staticDD}</th>
+                    <th className="text-right py-2 px-3 text-text-secondary">{t.trailingDD}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {trades.map((trade) => (
-                    <tr key={trade.id} className="border-b border-gray-700/50">
-                      <td className="py-2 px-3 text-gray-300">{trade.id}</td>
-                      <td className={`py-2 px-3 text-right font-medium ${trade.pnl >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                    <tr key={trade.id} className="border-b border-border/50">
+                      <td className="py-2 px-3 text-text-secondary">{trade.id}</td>
+                      <td className={`py-2 px-3 text-right font-medium ${trade.pnl >= 0 ? 'text-accent' : 'text-red-400'}`}>
                         {trade.pnl >= 0 ? '+' : ''}${trade.pnl.toLocaleString()}
                       </td>
                       <td className="py-2 px-3 text-right text-white">${trade.balance.toLocaleString()}</td>
-                      <td className="py-2 px-3 text-right text-gray-300">${trade.highWater.toLocaleString()}</td>
-                      <td className="py-2 px-3 text-right text-emerald-400">{trade.staticDD.toFixed(2)}%</td>
+                      <td className="py-2 px-3 text-right text-text-secondary">${trade.highWater.toLocaleString()}</td>
+                      <td className="py-2 px-3 text-right text-accent">{trade.staticDD.toFixed(2)}%</td>
                       <td className="py-2 px-3 text-right text-yellow-400">{trade.trailingDD.toFixed(2)}%</td>
                     </tr>
                   ))}

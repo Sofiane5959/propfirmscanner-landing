@@ -33,7 +33,7 @@ const courses = [
     price: 69.99,
     originalPrice: 149.99,
     badge: 'Now Live 🚀',
-    badgeColor: 'bg-emerald-500',
+    badgeColor: 'bg-accent-hover',
     description: 'Everything you need to know to start your prop firm journey. Perfect for traders who are new to funded accounts.',
     duration: '~2 hours',
     lessons: 10,
@@ -49,8 +49,8 @@ const courses = [
       'Introduction to trading psychology',
       'Payout process explained',
     ],
-    gradient: 'from-emerald-500/20 to-teal-500/20',
-    borderColor: 'border-emerald-500/30',
+    gradient: 'from-accent/20 to-teal-500/20',
+    borderColor: 'border-accent/30',
     icon: BookOpen,
     live: true,
     courseUrl: '/education/fundamentals',
@@ -118,17 +118,17 @@ function PaymentSuccessBanner() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 pt-8">
-      <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-6 flex items-start gap-4">
-        <div className="w-12 h-12 bg-emerald-500/20 rounded-full flex items-center justify-center shrink-0">
-          <CheckCircle2 className="w-6 h-6 text-emerald-400" />
+      <div className="bg-accent/10 border border-accent/30 rounded-2xl p-6 flex items-start gap-4">
+        <div className="w-12 h-12 bg-accent/20 rounded-full flex items-center justify-center shrink-0">
+          <CheckCircle2 className="w-6 h-6 text-accent" />
         </div>
         <div>
           <h3 className="text-white font-bold text-lg mb-1">🎉 Payment confirmed!</h3>
-          <p className="text-gray-300 text-sm mb-2">
+          <p className="text-text-secondary text-sm mb-2">
             Your course is now unlocked. Start learning below!
           </p>
         </div>
-        <button onClick={() => setShow(false)} className="text-gray-500 hover:text-white ml-auto shrink-0 text-lg">✕</button>
+        <button onClick={() => setShow(false)} className="text-text-muted hover:text-white ml-auto shrink-0 text-lg">✕</button>
       </div>
     </div>
   );
@@ -168,7 +168,7 @@ function BuyButton({ productType }: { productType: string }) {
       <button
         onClick={handleBuy}
         disabled={loading}
-        className="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-60 text-white font-semibold rounded-xl transition-colors text-sm flex items-center gap-2"
+        className="px-6 py-3 bg-accent-hover hover:brightness-110 disabled:opacity-60 text-white font-semibold rounded-xl transition-colors text-sm flex items-center gap-2"
       >
         {loading
           ? <><Loader2 className="w-4 h-4 animate-spin" /> Processing...</>
@@ -188,7 +188,7 @@ function ContinueLearningButton({ courseUrl, locale }: { courseUrl: string; loca
   return (
     <Link
       href={fullUrl}
-      className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold rounded-xl transition-colors text-sm"
+      className="inline-flex items-center gap-2 px-6 py-3 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-xl transition-colors text-sm"
     >
       <Play className="w-4 h-4 fill-white" />
       Continue Learning →
@@ -222,11 +222,11 @@ function WaitlistInCard() {
 
   if (status === 'success') {
     return (
-      <div className="flex items-center gap-3 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
-        <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+      <div className="flex items-center gap-3 p-4 bg-accent/10 border border-accent/30 rounded-xl">
+        <CheckCircle2 className="w-5 h-5 text-accent flex-shrink-0" />
         <div>
-          <p className="text-emerald-400 font-semibold text-sm">You&apos;re on the list!</p>
-          <p className="text-gray-400 text-xs">We&apos;ll email you first at early bird price.</p>
+          <p className="text-accent font-semibold text-sm">You&apos;re on the list!</p>
+          <p className="text-text-secondary text-xs">We&apos;ll email you first at early bird price.</p>
         </div>
       </div>
     );
@@ -240,7 +240,7 @@ function WaitlistInCard() {
         onChange={(e) => setEmail(e.target.value)}
         placeholder="your@email.com"
         required
-        className="w-full px-4 py-2.5 bg-gray-900/80 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 text-sm"
+        className="w-full px-4 py-2.5 bg-bg-elevated/80 border border-border rounded-xl text-white placeholder-text-muted focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 text-sm"
         disabled={status === 'loading'}
       />
       <button
@@ -263,12 +263,12 @@ function WaitlistInCard() {
 // =============================================================================
 function ComingSoonOverlay() {
   return (
-    <div className="absolute inset-0 bg-gray-950/80 backdrop-blur-sm z-20 flex items-center justify-center rounded-2xl">
+    <div className="absolute inset-0 bg-bg-base/80 backdrop-blur-sm z-20 flex items-center justify-center rounded-2xl">
       <div className="text-center">
         <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full text-white font-bold text-lg mb-3 animate-pulse">
           <Lock className="w-5 h-5" /> Coming Soon
         </div>
-        <p className="text-gray-400 text-sm">Course launching soon. Join waitlist!</p>
+        <p className="text-text-secondary text-sm">Course launching soon. Join waitlist!</p>
       </div>
     </div>
   );
@@ -307,7 +307,7 @@ function CourseCard({
       {/* Owned badge */}
       {userOwns && (
         <div className="absolute top-4 left-4 z-10">
-          <span className="flex items-center gap-1 px-3 py-1 bg-emerald-500 text-white text-xs font-bold rounded-full">
+          <span className="flex items-center gap-1 px-3 py-1 bg-accent-hover text-white text-xs font-bold rounded-full">
             <CheckCircle2 className="w-3 h-3" /> Owned
           </span>
         </div>
@@ -320,18 +320,18 @@ function CourseCard({
             <Icon className="w-8 h-8 text-white" />
           </div>
           <div>
-            <p className="text-emerald-400 text-sm font-medium mb-1">{course.subtitle}</p>
+            <p className="text-accent text-sm font-medium mb-1">{course.subtitle}</p>
             <h3 className="text-2xl font-bold text-white">{course.title}</h3>
           </div>
         </div>
 
-        <p className="text-gray-400 mb-6">{course.description}</p>
+        <p className="text-text-secondary mb-6">{course.description}</p>
 
         {/* Stats */}
         <div className="flex items-center gap-6 mb-6 text-sm flex-wrap">
-          <div className="flex items-center gap-1.5 text-gray-400"><Clock className="w-4 h-4" />{course.duration}</div>
-          <div className="flex items-center gap-1.5 text-gray-400"><Play className="w-4 h-4" />{course.lessons} lessons</div>
-          <div className="flex items-center gap-1.5 text-gray-400"><Users className="w-4 h-4" />{course.students}</div>
+          <div className="flex items-center gap-1.5 text-text-secondary"><Clock className="w-4 h-4" />{course.duration}</div>
+          <div className="flex items-center gap-1.5 text-text-secondary"><Play className="w-4 h-4" />{course.lessons} lessons</div>
+          <div className="flex items-center gap-1.5 text-text-secondary"><Users className="w-4 h-4" />{course.students}</div>
           <div className="flex items-center gap-1.5 text-yellow-400"><Star className="w-4 h-4 fill-current" />{course.rating}</div>
         </div>
 
@@ -339,8 +339,8 @@ function CourseCard({
         <div className="space-y-3 mb-8">
           {course.features.map((feature, i) => (
             <div key={i} className="flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-              <span className="text-gray-300 text-sm">{feature}</span>
+              <CheckCircle2 className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
+              <span className="text-text-secondary text-sm">{feature}</span>
             </div>
           ))}
         </div>
@@ -350,9 +350,9 @@ function CourseCard({
           <div>
             <div className="flex items-baseline gap-2">
               <span className="text-3xl font-bold text-white">${course.price}</span>
-              <span className="text-gray-500 line-through">${course.originalPrice}</span>
+              <span className="text-text-muted line-through">${course.originalPrice}</span>
             </div>
-            <p className="text-emerald-400 text-sm">
+            <p className="text-accent text-sm">
               Save {Math.round((1 - course.price / course.originalPrice) * 100)}%
             </p>
           </div>
@@ -360,8 +360,8 @@ function CourseCard({
           {course.live && course.productType ? (
             <div className="flex flex-col gap-2 items-end">
               {authLoading ? (
-                <div className="px-6 py-3 bg-gray-700 rounded-xl">
-                  <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
+                <div className="px-6 py-3 bg-dark-600 rounded-xl">
+                  <Loader2 className="w-4 h-4 animate-spin text-text-secondary" />
                 </div>
               ) : userOwns ? (
                 <ContinueLearningButton courseUrl={course.courseUrl!} locale={locale} />
@@ -371,7 +371,7 @@ function CourseCard({
                   {course.courseUrl && (
                     <Link
                       href={`/${locale}${course.courseUrl}`}
-                      className="text-xs text-emerald-400 hover:text-emerald-300 underline underline-offset-2 transition-colors"
+                      className="text-xs text-accent hover:text-accent underline underline-offset-2 transition-colors"
                     >
                       Already purchased? Access here
                     </Link>
@@ -420,19 +420,19 @@ export default function EducationPage() {
   const isLoading = authLoading || profileLoading;
 
   return (
-    <div className="min-h-screen bg-gray-950">
+    <div className="min-h-screen bg-bg-base">
       <PaymentSuccessBanner />
 
       {/* HERO */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-gray-900 via-gray-900 to-gray-950 border-b border-gray-800">
+      <section className="relative overflow-hidden bg-gradient-to-b from-bg-elevated via-bg-elevated to-bg-base border-b border-border">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl -translate-y-1/2" />
+          <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl -translate-y-1/2" />
           <div className="absolute top-1/2 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl -translate-y-1/2" />
         </div>
         <div className="relative z-10 max-w-6xl mx-auto px-4 pt-6 pb-16">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-sm text-gray-400 mb-8">
-            <Link href="/" className="flex items-center gap-1 hover:text-emerald-400 transition-colors">
+          <nav className="flex items-center gap-2 text-sm text-text-secondary mb-8">
+            <Link href="/" className="flex items-center gap-1 hover:text-accent transition-colors">
               <Home className="w-4 h-4" /> Home
             </Link>
             <ChevronRight className="w-4 h-4" />
@@ -440,20 +440,20 @@ export default function EducationPage() {
           </nav>
 
           <div className="text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/30 rounded-full text-emerald-400 text-sm font-medium mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 border border-accent/30 rounded-full text-accent text-sm font-medium mb-6">
               <GraduationCap className="w-4 h-4" /> PropFirmScanner Academy
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
               Learn to Get{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-400">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-blue-400">
                 Funded
               </span>
             </h1>
-            <p className="text-xl text-gray-400 mb-8">
+            <p className="text-xl text-text-secondary mb-8">
               Master prop firm trading with our comprehensive courses. From beginner basics to advanced strategies.
             </p>
-            <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-400">
-              <div className="flex items-center gap-2"><Users className="w-5 h-5 text-emerald-400" /><span>3,000+ Students</span></div>
+            <div className="flex flex-wrap justify-center gap-6 text-sm text-text-secondary">
+              <div className="flex items-center gap-2"><Users className="w-5 h-5 text-accent" /><span>3,000+ Students</span></div>
               <div className="flex items-center gap-2"><Star className="w-5 h-5 text-yellow-400 fill-current" /><span>4.8 Average Rating</span></div>
               <div className="flex items-center gap-2"><Trophy className="w-5 h-5 text-purple-400" /><span>78% Pass Rate</span></div>
             </div>
@@ -464,19 +464,19 @@ export default function EducationPage() {
       {/* OWNED COURSE QUICK ACCESS — shown only if user owns fundamentals */}
       {!isLoading && hasFundamentals && (
         <div className="max-w-6xl mx-auto px-4 pt-8">
-          <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-5 flex items-center justify-between gap-4">
+          <div className="bg-accent/10 border border-accent/30 rounded-2xl p-5 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center shrink-0">
-                <BookOpen className="w-5 h-5 text-emerald-400" />
+              <div className="w-10 h-10 bg-accent/20 rounded-xl flex items-center justify-center shrink-0">
+                <BookOpen className="w-5 h-5 text-accent" />
               </div>
               <div>
                 <p className="text-white font-semibold text-sm">Prop Firm Fundamentals</p>
-                <p className="text-emerald-400 text-xs">You have access — pick up where you left off</p>
+                <p className="text-accent text-xs">You have access — pick up where you left off</p>
               </div>
             </div>
             <Link
               href={`/${locale}/education/fundamentals`}
-              className="shrink-0 flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold rounded-xl transition-colors text-sm"
+              className="shrink-0 flex items-center gap-2 px-4 py-2 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-xl transition-colors text-sm"
             >
               <Play className="w-4 h-4 fill-white" /> Continue <ArrowRight className="w-4 h-4" />
             </Link>
@@ -488,7 +488,7 @@ export default function EducationPage() {
       <section className="max-w-6xl mx-auto px-4 py-16">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-white mb-4">Choose Your Path</h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">
+          <p className="text-text-secondary max-w-2xl mx-auto">
             Whether you&apos;re just starting out or looking to scale your funded accounts, we have the right course for you.
           </p>
         </div>
@@ -506,22 +506,22 @@ export default function EducationPage() {
       </section>
 
       {/* WHAT'S INCLUDED */}
-      <section className="bg-gray-900/50 border-y border-gray-800">
+      <section className="bg-bg-elevated/50 border-y border-border">
         <div className="max-w-6xl mx-auto px-4 py-16">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-white mb-4">What&apos;s Included</h2>
-            <p className="text-gray-400">Every course comes with these premium features</p>
+            <p className="text-text-secondary">Every course comes with these premium features</p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {benefits.map((benefit, i) => {
               const Icon = benefit.icon;
               return (
-                <div key={i} className="bg-gray-900 rounded-xl border border-gray-800 p-6 text-center">
-                  <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-500/10 rounded-xl mb-4">
-                    <Icon className="w-6 h-6 text-emerald-400" />
+                <div key={i} className="bg-bg-elevated rounded-xl border border-border p-6 text-center">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-accent/10 rounded-xl mb-4">
+                    <Icon className="w-6 h-6 text-accent" />
                   </div>
                   <h3 className="text-white font-semibold mb-2">{benefit.title}</h3>
-                  <p className="text-gray-500 text-sm">{benefit.description}</p>
+                  <p className="text-text-muted text-sm">{benefit.description}</p>
                 </div>
               );
             })}
@@ -533,20 +533,20 @@ export default function EducationPage() {
       <section className="max-w-6xl mx-auto px-4 py-16">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-white mb-4">Student Success Stories</h2>
-          <p className="text-gray-400">Join thousands of traders who transformed their journey</p>
+          <p className="text-text-secondary">Join thousands of traders who transformed their journey</p>
         </div>
         <div className="grid md:grid-cols-3 gap-6">
           {testimonials.map((t, i) => (
-            <div key={i} className="bg-gray-900/50 rounded-xl border border-gray-800 p-6">
+            <div key={i} className="bg-bg-elevated/50 rounded-xl border border-border p-6">
               <div className="flex gap-1 mb-4">
                 {Array.from({ length: t.rating }).map((_, j) => (
                   <Star key={j} className="w-4 h-4 text-yellow-400 fill-current" />
                 ))}
               </div>
-              <p className="text-gray-300 mb-4">&quot;{t.content}&quot;</p>
+              <p className="text-text-secondary mb-4">&quot;{t.content}&quot;</p>
               <div>
                 <p className="text-white font-medium">{t.name}</p>
-                <p className="text-gray-500 text-sm">{t.role}</p>
+                <p className="text-text-muted text-sm">{t.role}</p>
               </div>
             </div>
           ))}
@@ -555,16 +555,16 @@ export default function EducationPage() {
 
       {/* CTA BOTTOM */}
       <section className="max-w-4xl mx-auto px-4 pb-16">
-        <div className="bg-gradient-to-r from-emerald-500/20 to-blue-500/20 rounded-2xl border border-emerald-500/30 p-8 md:p-12 text-center">
+        <div className="bg-gradient-to-r from-accent/20 to-blue-500/20 rounded-2xl border border-accent/30 p-8 md:p-12 text-center">
           <h2 className="text-3xl font-bold text-white mb-4">Ready to Get Funded?</h2>
-          <p className="text-gray-400 mb-6 max-w-xl mx-auto">
+          <p className="text-text-secondary mb-6 max-w-xl mx-auto">
             Start with Prop Firm Fundamentals and get your first funded account in 30 days.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             {!isLoading && hasFundamentals ? (
               <Link
                 href={`/${locale}/education/fundamentals`}
-                className="inline-flex items-center gap-2 px-8 py-3 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold rounded-xl transition-colors"
+                className="inline-flex items-center gap-2 px-8 py-3 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-xl transition-colors"
               >
                 <Play className="w-5 h-5 fill-white" /> Continue Learning
               </Link>
@@ -573,7 +573,7 @@ export default function EducationPage() {
             )}
             <Link
               href={`/${locale}/compare`}
-              className="px-8 py-3 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-xl transition-colors"
+              className="px-8 py-3 bg-dark-700 hover:bg-dark-600 text-white font-semibold rounded-xl transition-colors"
             >
               Browse Prop Firms
             </Link>

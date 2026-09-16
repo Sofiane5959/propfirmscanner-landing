@@ -176,11 +176,11 @@ export default function NewAccountPage() {
           <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${
             s === step ? "bg-blue-600 text-white ring-4 ring-blue-600/20"
             : s < step ? "bg-green-500 text-white"
-            : "bg-gray-700 text-gray-400"
+            : "bg-dark-600 text-text-secondary"
           }`}>
             {s < step ? "✓" : s}
           </div>
-          {s < 3 && <div className={`w-12 h-0.5 ${s < step ? "bg-green-500" : "bg-gray-700"}`} />}
+          {s < 3 && <div className={`w-12 h-0.5 ${s < step ? "bg-green-500" : "bg-dark-600"}`} />}
         </div>
       ))}
     </div>
@@ -189,23 +189,23 @@ export default function NewAccountPage() {
   const Step1 = () => (
     <div className="space-y-5">
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1.5">Account Name</label>
+        <label className="block text-sm font-medium text-text-secondary mb-1.5">Account Name</label>
         <input
           type="text" name="account_name" value={form.account_name}
           onChange={handleChange} placeholder="e.g. FTMO 100K Phase 1"
-          className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          className="w-full bg-dark-700 border border-border rounded-lg px-4 py-2.5 text-white placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1.5">
+        <label className="block text-sm font-medium text-text-secondary mb-1.5">
           Prop Firm
-          <span className="ml-2 text-xs text-gray-500">— {firmNames.length} firms, 764 real challenges</span>
+          <span className="ml-2 text-xs text-text-muted">— {firmNames.length} firms, 764 real challenges</span>
         </label>
         <select
           name="firm_name" value={form.firm_name}
           onChange={(e) => handleFirmChange(e.target.value)}
-          className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          className="w-full bg-dark-700 border border-border rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
         >
           <option value="">{loadingFirms ? "Loading…" : "Select a firm…"}</option>
           {firmNames.map((name) => (
@@ -217,11 +217,11 @@ export default function NewAccountPage() {
 
       {form.firm_name && form.firm_name !== "__other__" && accountSizes.length > 0 && (
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1.5">Account Size</label>
+          <label className="block text-sm font-medium text-text-secondary mb-1.5">Account Size</label>
           <select
             name="initial_balance" value={form.initial_balance}
             onChange={handleChange}
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            className="w-full bg-dark-700 border border-border rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
           >
             <option value="">Select size…</option>
             {accountSizes.map((size) => (
@@ -233,7 +233,7 @@ export default function NewAccountPage() {
 
       {form.firm_name === "__other__" && (
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1.5">Initial Balance</label>
+          <label className="block text-sm font-medium text-text-secondary mb-1.5">Initial Balance</label>
           <div className="relative">
             <input
               type="text"
@@ -242,23 +242,23 @@ export default function NewAccountPage() {
               value={form.initial_balance}
               onChange={handleChange}
               placeholder="100000"
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 pr-8 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+              className="w-full bg-dark-700 border border-border rounded-lg px-4 py-2.5 pr-8 text-white placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary text-sm">$</span>
           </div>
         </div>
       )}
 
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1.5">
-          Challenge End Date <span className="text-xs text-gray-500">(optional)</span>
+        <label className="block text-sm font-medium text-text-secondary mb-1.5">
+          Challenge End Date <span className="text-xs text-text-muted">(optional)</span>
         </label>
         <input
           type="date"
           name="challenge_end_date"
           value={form.challenge_end_date}
           onChange={handleChange}
-          className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition [color-scheme:dark]"
+          className="w-full bg-dark-700 border border-border rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition [color-scheme:dark]"
         />
       </div>
     </div>
@@ -268,9 +268,9 @@ export default function NewAccountPage() {
     <div className="space-y-5">
       {challenges.length > 0 && (
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-text-secondary mb-2">
             Select Challenge Type
-            <span className="ml-2 text-xs text-gray-500">— auto-fills rules</span>
+            <span className="ml-2 text-xs text-text-muted">— auto-fills rules</span>
           </label>
           <div className="grid gap-2 max-h-64 overflow-y-auto pr-1">
             {challenges.map((c) => (
@@ -280,11 +280,11 @@ export default function NewAccountPage() {
                 className={`text-left px-4 py-3 rounded-lg border transition text-sm ${
                   selectedChallenge?.id === c.id
                     ? "border-blue-500 bg-blue-900/30 text-white"
-                    : "border-gray-700 bg-gray-800 text-gray-300 hover:border-gray-600"
+                    : "border-border bg-dark-700 text-text-secondary hover:border-border-hover"
                 }`}
               >
                 <div className="font-medium truncate">{c.name}</div>
-                <div className="text-xs text-gray-400 mt-0.5 flex gap-3">
+                <div className="text-xs text-text-secondary mt-0.5 flex gap-3">
                   <span>{c.steps.replace("_", "-")}</span>
                   <span>DD {c.max_drawdown}%</span>
                   <span>Daily {c.max_daily_loss ?? "—"}%</span>
@@ -306,35 +306,35 @@ export default function NewAccountPage() {
       )}
 
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1.5">
-          Max Total Drawdown <span className="text-xs text-gray-500">%</span>
+        <label className="block text-sm font-medium text-text-secondary mb-1.5">
+          Max Total Drawdown <span className="text-xs text-text-muted">%</span>
         </label>
         <input
           type="text" inputMode="decimal" name="max_drawdown" value={form.max_drawdown}
           onChange={handleChange} placeholder="10"
-          className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          className="w-full bg-dark-700 border border-border rounded-lg px-4 py-2.5 text-white placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1.5">
-          Daily Loss Limit <span className="text-xs text-gray-500">% (0 = no limit)</span>
+        <label className="block text-sm font-medium text-text-secondary mb-1.5">
+          Daily Loss Limit <span className="text-xs text-text-muted">% (0 = no limit)</span>
         </label>
         <input
           type="text" inputMode="decimal" name="daily_loss_limit" value={form.daily_loss_limit}
           onChange={handleChange} placeholder="5"
-          className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          className="w-full bg-dark-700 border border-border rounded-lg px-4 py-2.5 text-white placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1.5">
-          Profit Target <span className="text-xs text-gray-500">% phase 1</span>
+        <label className="block text-sm font-medium text-text-secondary mb-1.5">
+          Profit Target <span className="text-xs text-text-muted">% phase 1</span>
         </label>
         <input
           type="text" inputMode="decimal" name="profit_target" value={form.profit_target}
           onChange={handleChange} placeholder="10"
-          className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          className="w-full bg-dark-700 border border-border rounded-lg px-4 py-2.5 text-white placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
         />
       </div>
     </div>
@@ -343,8 +343,8 @@ export default function NewAccountPage() {
   const Step3 = () => (
     <div className="space-y-5">
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1.5">
-          Current Balance <span className="text-xs text-gray-500">(blank = starting balance)</span>
+        <label className="block text-sm font-medium text-text-secondary mb-1.5">
+          Current Balance <span className="text-xs text-text-muted">(blank = starting balance)</span>
         </label>
         <div className="relative">
           <input
@@ -354,15 +354,15 @@ export default function NewAccountPage() {
             value={form.current_balance}
             onChange={handleChange}
             placeholder={form.initial_balance || "100000"}
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 pr-8 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            className="w-full bg-dark-700 border border-border rounded-lg px-4 py-2.5 pr-8 text-white placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
           />
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary text-sm">$</span>
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1.5">
-          Today&apos;s Loss So Far <span className="text-xs text-gray-500">$</span>
+        <label className="block text-sm font-medium text-text-secondary mb-1.5">
+          Today&apos;s Loss So Far <span className="text-xs text-text-muted">$</span>
         </label>
         <input
           type="text"
@@ -371,7 +371,7 @@ export default function NewAccountPage() {
           value={form.current_daily_loss}
           onChange={handleChange}
           placeholder="0"
-          className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          className="w-full bg-dark-700 border border-border rounded-lg px-4 py-2.5 text-white placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
         />
       </div>
 
@@ -381,8 +381,8 @@ export default function NewAccountPage() {
         </div>
       )}
 
-      <div className="bg-gray-800/60 rounded-lg p-4 text-sm space-y-1.5">
-        <p className="font-medium text-gray-300 mb-2">Summary</p>
+      <div className="bg-dark-700/60 rounded-lg p-4 text-sm space-y-1.5">
+        <p className="font-medium text-text-secondary mb-2">Summary</p>
         {[
           ["Firm", form.firm_name],
           ["Account", form.account_name],
@@ -391,7 +391,7 @@ export default function NewAccountPage() {
           ["Daily Loss", !form.daily_loss_limit || form.daily_loss_limit === "0" ? "No limit" : `${form.daily_loss_limit}%`],
           ["Profit Target", `${form.profit_target}%`],
         ].map(([label, value]) => (
-          <div key={label} className="flex justify-between text-gray-400">
+          <div key={label} className="flex justify-between text-text-secondary">
             <span>{label}</span>
             <span className="text-white">{value}</span>
           </div>
@@ -403,14 +403,14 @@ export default function NewAccountPage() {
   const stepLabels = ["General Info", "Challenge Rules", "Current Metrics"];
 
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-bg-base flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
           <h1 className="text-2xl font-bold text-white">Add Challenge Account</h1>
-          <p className="text-gray-400 text-sm mt-1">{stepLabels[step - 1]}</p>
+          <p className="text-text-secondary text-sm mt-1">{stepLabels[step - 1]}</p>
         </div>
         <StepIndicator />
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-xl">
+        <div className="bg-bg-elevated border border-border rounded-2xl p-6 shadow-xl">
           {step === 1 && <Step1 />}
           {step === 2 && <Step2 />}
           {step === 3 && <Step3 />}
@@ -418,7 +418,7 @@ export default function NewAccountPage() {
             {step > 1 && (
               <button
                 onClick={() => setStep((s) => s - 1)}
-                className="flex-1 py-2.5 rounded-lg border border-gray-700 text-gray-300 hover:bg-gray-800 transition font-medium"
+                className="flex-1 py-2.5 rounded-lg border border-border text-text-secondary hover:bg-dark-700 transition font-medium"
               >
                 Back
               </button>
@@ -443,7 +443,7 @@ export default function NewAccountPage() {
           </div>
         </div>
         <div className="text-center mt-4">
-          <button onClick={() => router.back()} className="text-sm text-gray-500 hover:text-gray-400 transition">
+          <button onClick={() => router.back()} className="text-sm text-text-muted hover:text-text-secondary transition">
             Cancel
           </button>
         </div>

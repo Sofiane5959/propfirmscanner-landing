@@ -351,11 +351,11 @@ export default function ProfitCalculatorPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 pt-20 pb-12">
+    <div className="min-h-screen bg-bg-elevated pt-20 pb-12">
       <div className="max-w-4xl mx-auto px-4">
         <Link
           href={`/${locale}/tools`}
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors"
+          className="inline-flex items-center gap-2 text-text-secondary hover:text-white mb-6 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           {t.allTools}
@@ -363,27 +363,27 @@ export default function ProfitCalculatorPage() {
 
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-3 bg-emerald-500/20 rounded-xl">
-              <DollarSign className="w-6 h-6 text-emerald-400" />
+            <div className="p-3 bg-accent/20 rounded-xl">
+              <DollarSign className="w-6 h-6 text-accent" />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-white">{t.title}</h1>
-              <p className="text-gray-400">{t.subtitle}</p>
+              <p className="text-text-secondary">{t.subtitle}</p>
             </div>
           </div>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Input Form */}
-          <div className="bg-gray-800 rounded-2xl p-6 border border-gray-700">
+          <div className="bg-dark-700 rounded-2xl p-6 border border-border">
             <h2 className="text-lg font-semibold text-white mb-4">{t.accountDetails}</h2>
 
             <div className="mb-4">
-              <label className="block text-sm text-gray-400 mb-2">{t.propFirm}</label>
+              <label className="block text-sm text-text-secondary mb-2">{t.propFirm}</label>
               <select
                 value={preset}
                 onChange={(e) => handlePresetChange(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white focus:outline-none focus:border-emerald-500"
+                className="w-full px-4 py-3 bg-bg-elevated border border-border rounded-xl text-white focus:outline-none focus:border-accent"
               >
                 {propFirmPresets.map((p) => (
                   <option key={p.name} value={p.name}>{p.name}</option>
@@ -392,12 +392,12 @@ export default function ProfitCalculatorPage() {
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm text-gray-400 mb-2">{t.accountSize}</label>
+              <label className="block text-sm text-text-secondary mb-2">{t.accountSize}</label>
               <input
                 type="number"
                 value={accountSize}
                 onChange={(e) => setAccountSize(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white focus:outline-none focus:border-emerald-500"
+                className="w-full px-4 py-3 bg-bg-elevated border border-border rounded-xl text-white focus:outline-none focus:border-accent"
               />
               <div className="flex gap-2 mt-2">
                 {[10000, 25000, 50000, 100000, 200000].map((size) => (
@@ -407,7 +407,7 @@ export default function ProfitCalculatorPage() {
                       setAccountSize(size.toString());
                       setCurrentBalance(size.toString());
                     }}
-                    className="px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-lg transition-colors"
+                    className="px-2 py-1 text-xs bg-dark-600 hover:bg-dark-500 text-text-secondary rounded-lg transition-colors"
                   >
                     ${(size / 1000)}K
                   </button>
@@ -416,17 +416,17 @@ export default function ProfitCalculatorPage() {
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm text-gray-400 mb-2">{t.currentBalance}</label>
+              <label className="block text-sm text-text-secondary mb-2">{t.currentBalance}</label>
               <input
                 type="number"
                 value={currentBalance}
                 onChange={(e) => setCurrentBalance(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white focus:outline-none focus:border-emerald-500"
+                className="w-full px-4 py-3 bg-bg-elevated border border-border rounded-xl text-white focus:outline-none focus:border-accent"
               />
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm text-gray-400 mb-2">{t.profitTarget}</label>
+              <label className="block text-sm text-text-secondary mb-2">{t.profitTarget}</label>
               <input
                 type="number"
                 value={profitTarget}
@@ -435,12 +435,12 @@ export default function ProfitCalculatorPage() {
                   setPreset('Custom');
                 }}
                 step="0.5"
-                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white focus:outline-none focus:border-emerald-500"
+                className="w-full px-4 py-3 bg-bg-elevated border border-border rounded-xl text-white focus:outline-none focus:border-accent"
               />
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm text-gray-400 mb-2">{t.profitSplit}</label>
+              <label className="block text-sm text-text-secondary mb-2">{t.profitSplit}</label>
               <input
                 type="number"
                 value={profitSplit}
@@ -448,7 +448,7 @@ export default function ProfitCalculatorPage() {
                   setProfitSplit(e.target.value);
                   setPreset('Custom');
                 }}
-                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white focus:outline-none focus:border-emerald-500"
+                className="w-full px-4 py-3 bg-bg-elevated border border-border rounded-xl text-white focus:outline-none focus:border-accent"
               />
               <div className="flex gap-2 mt-2">
                 {[70, 80, 85, 90].map((split) => (
@@ -458,7 +458,7 @@ export default function ProfitCalculatorPage() {
                       setProfitSplit(split.toString());
                       setPreset('Custom');
                     }}
-                    className="px-3 py-1 text-xs bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-lg transition-colors"
+                    className="px-3 py-1 text-xs bg-dark-600 hover:bg-dark-500 text-text-secondary rounded-lg transition-colors"
                   >
                     {split}%
                   </button>
@@ -467,13 +467,13 @@ export default function ProfitCalculatorPage() {
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm text-gray-400 mb-2">{t.estMonthlyReturn}</label>
+              <label className="block text-sm text-text-secondary mb-2">{t.estMonthlyReturn}</label>
               <input
                 type="number"
                 value={monthlyReturn}
                 onChange={(e) => setMonthlyReturn(e.target.value)}
                 step="0.5"
-                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white focus:outline-none focus:border-emerald-500"
+                className="w-full px-4 py-3 bg-bg-elevated border border-border rounded-xl text-white focus:outline-none focus:border-accent"
               />
             </div>
           </div>
@@ -481,20 +481,20 @@ export default function ProfitCalculatorPage() {
           {/* Results */}
           <div className="space-y-4">
             {/* Progress to Target */}
-            <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
+            <div className="bg-dark-700 rounded-xl p-5 border border-border">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm text-gray-400">{t.progressToTarget}</h3>
+                <h3 className="text-sm text-text-secondary">{t.progressToTarget}</h3>
                 <span className={`text-sm font-medium ${
-                  calculations.progressPct >= 100 ? 'text-emerald-400' : 'text-blue-400'
+                  calculations.progressPct >= 100 ? 'text-accent' : 'text-blue-400'
                 }`}>
                   {calculations.progressPct.toFixed(1)}%
                 </span>
               </div>
 
-              <div className="h-4 bg-gray-700 rounded-full overflow-hidden mb-4">
+              <div className="h-4 bg-dark-600 rounded-full overflow-hidden mb-4">
                 <div
                   className={`h-full transition-all ${
-                    calculations.progressPct >= 100 ? 'bg-emerald-500' : 'bg-blue-500'
+                    calculations.progressPct >= 100 ? 'bg-accent-hover' : 'bg-blue-500'
                   }`}
                   style={{ width: `${Math.min(100, calculations.progressPct)}%` }}
                 />
@@ -502,15 +502,15 @@ export default function ProfitCalculatorPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-xs text-gray-500">{t.currentProfit}</p>
+                  <p className="text-xs text-text-muted">{t.currentProfit}</p>
                   <p className={`text-lg font-semibold ${
-                    calculations.currentProfit >= 0 ? 'text-emerald-400' : 'text-red-400'
+                    calculations.currentProfit >= 0 ? 'text-accent' : 'text-red-400'
                   }`}>
                     {formatCurrency(calculations.currentProfit)}
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500">{t.remaining}</p>
+                  <p className="text-xs text-text-muted">{t.remaining}</p>
                   <p className="text-lg font-semibold text-white">
                     {formatCurrency(calculations.remainingToTarget)}
                   </p>
@@ -519,54 +519,54 @@ export default function ProfitCalculatorPage() {
             </div>
 
             {/* Payout Card */}
-            <div className="bg-gradient-to-br from-emerald-900/50 to-emerald-800/30 rounded-xl p-5 border border-emerald-500/30">
+            <div className="bg-gradient-to-br from-emerald-900/50 to-emerald-800/30 rounded-xl p-5 border border-accent/30">
               <div className="flex items-center gap-2 mb-4">
                 <Award className="w-5 h-5 text-yellow-400" />
-                <h3 className="text-sm text-emerald-400">{t.ifTargetReached}</h3>
+                <h3 className="text-sm text-accent">{t.ifTargetReached}</h3>
               </div>
 
               <div className="text-center mb-4">
                 <p className="text-3xl font-bold text-white mb-1">
                   {formatCurrency(calculations.potentialPayout)}
                 </p>
-                <p className="text-gray-400">{t.yourPayout} ({profitSplit}% {t.ofProfit})</p>
+                <p className="text-text-secondary">{t.yourPayout} ({profitSplit}% {t.ofProfit})</p>
               </div>
 
-              <div className="pt-4 border-t border-emerald-500/20">
+              <div className="pt-4 border-t border-accent/20">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-400">{t.totalProfitTarget}</span>
+                  <span className="text-text-secondary">{t.totalProfitTarget}</span>
                   <span className="text-white">{formatCurrency(calculations.targetProfit)}</span>
                 </div>
                 <div className="flex justify-between text-sm mt-1">
-                  <span className="text-gray-400">{t.firmKeeps}</span>
-                  <span className="text-gray-400">{formatCurrency(calculations.targetProfit - calculations.potentialPayout)}</span>
+                  <span className="text-text-secondary">{t.firmKeeps}</span>
+                  <span className="text-text-secondary">{formatCurrency(calculations.targetProfit - calculations.potentialPayout)}</span>
                 </div>
               </div>
             </div>
 
             {/* Monthly Projections */}
-            <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
+            <div className="bg-dark-700 rounded-xl p-5 border border-border">
               <div className="flex items-center gap-2 mb-4">
                 <TrendingUp className="w-5 h-5 text-blue-400" />
-                <h3 className="text-sm text-gray-400">{t.monthlyProjections}</h3>
+                <h3 className="text-sm text-text-secondary">{t.monthlyProjections}</h3>
               </div>
 
               <div className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-gray-400">{t.monthlyProfit}</span>
+                  <span className="text-text-secondary">{t.monthlyProfit}</span>
                   <span className="text-white font-medium">{formatCurrency(calculations.monthlyProfit)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">{t.monthlyPayout}</span>
-                  <span className="text-emerald-400 font-medium">{formatCurrency(calculations.monthlyPayout)}</span>
+                  <span className="text-text-secondary">{t.monthlyPayout}</span>
+                  <span className="text-accent font-medium">{formatCurrency(calculations.monthlyPayout)}</span>
                 </div>
-                <div className="flex justify-between pt-2 border-t border-gray-700">
-                  <span className="text-gray-400">{t.yearlyPayout}</span>
-                  <span className="text-emerald-400 font-bold">{formatCurrency(calculations.yearlyPayout)}</span>
+                <div className="flex justify-between pt-2 border-t border-border">
+                  <span className="text-text-secondary">{t.yearlyPayout}</span>
+                  <span className="text-accent font-bold">{formatCurrency(calculations.yearlyPayout)}</span>
                 </div>
                 {calculations.daysToTarget > 0 && calculations.remainingToTarget > 0 && (
-                  <div className="flex justify-between pt-2 border-t border-gray-700">
-                    <span className="text-gray-400">{t.estDaysToTarget}</span>
+                  <div className="flex justify-between pt-2 border-t border-border">
+                    <span className="text-text-secondary">{t.estDaysToTarget}</span>
                     <span className="text-blue-400 font-medium">{calculations.daysToTarget} {t.days}</span>
                   </div>
                 )}
@@ -581,7 +581,7 @@ export default function ProfitCalculatorPage() {
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-white mb-1">{t.trackRealProgress}</h3>
-                  <p className="text-sm text-gray-400 mb-3">{t.trackRealProgressDesc}</p>
+                  <p className="text-sm text-text-secondary mb-3">{t.trackRealProgressDesc}</p>
                   <Link
                     href={`/${locale}/dashboard`}
                     className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white text-sm font-medium rounded-lg transition-colors"
@@ -594,12 +594,12 @@ export default function ProfitCalculatorPage() {
             </div>
 
             {/* Pro Features */}
-            <div className="bg-gray-800 rounded-xl p-5 border border-gray-700 opacity-75">
+            <div className="bg-dark-700 rounded-xl p-5 border border-border opacity-75">
               <div className="flex items-center gap-2 mb-3">
-                <Lock className="w-4 h-4 text-gray-500" />
-                <span className="text-sm text-gray-400">{t.proFeatures}</span>
+                <Lock className="w-4 h-4 text-text-muted" />
+                <span className="text-sm text-text-secondary">{t.proFeatures}</span>
               </div>
-              <ul className="space-y-2 text-sm text-gray-500">
+              <ul className="space-y-2 text-sm text-text-muted">
                 <li className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4" />
                   {t.autoTrackDaily}

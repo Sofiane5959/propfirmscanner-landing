@@ -135,7 +135,7 @@ export function GuidanceTab({ accounts, isDemo = false, demoTips }: GuidanceTabP
           </div>
           <div>
             <h2 className="text-lg font-semibold text-white">Today&apos;s Guidance</h2>
-            <p className="text-sm text-gray-500">Actionable advice for your trading day</p>
+            <p className="text-sm text-text-muted">Actionable advice for your trading day</p>
           </div>
         </div>
         {isDemo && (
@@ -157,7 +157,7 @@ export function GuidanceTab({ accounts, isDemo = false, demoTips }: GuidanceTabP
                 item.type === 'warning'
                   ? 'bg-red-500/10 border-red-500/20'
                   : item.type === 'success'
-                    ? 'bg-emerald-500/10 border-emerald-500/20'
+                    ? 'bg-accent/10 border-accent/20'
                     : 'bg-yellow-500/10 border-yellow-500/20'
               }`}
             >
@@ -166,14 +166,14 @@ export function GuidanceTab({ accounts, isDemo = false, demoTips }: GuidanceTabP
                   item.type === 'warning'
                     ? 'text-red-400'
                     : item.type === 'success'
-                      ? 'text-emerald-400'
+                      ? 'text-accent'
                       : 'text-yellow-400'
                 }`} />
                 <p className={`text-sm ${
                   item.type === 'warning'
                     ? 'text-red-300'
                     : item.type === 'success'
-                      ? 'text-emerald-300'
+                      ? 'text-accent'
                       : 'text-yellow-300'
                 }`}>
                   {item.message}
@@ -185,48 +185,48 @@ export function GuidanceTab({ accounts, isDemo = false, demoTips }: GuidanceTabP
       </div>
 
       {/* Quick Stats Summary */}
-      <div className="bg-gray-900 rounded-xl border border-gray-800 p-5 mb-6">
-        <h3 className="text-sm font-medium text-gray-400 mb-4">Account Summary</h3>
+      <div className="bg-bg-elevated rounded-xl border border-border p-5 mb-6">
+        <h3 className="text-sm font-medium text-text-secondary mb-4">Account Summary</h3>
         <div className="grid grid-cols-3 gap-4">
           <div className="text-center">
-            <p className="text-2xl font-bold text-emerald-400">
+            <p className="text-2xl font-bold text-accent">
               {accounts.filter(a => a.health.status === 'safe').length}
             </p>
-            <p className="text-xs text-gray-500">Safe to trade</p>
+            <p className="text-xs text-text-muted">Safe to trade</p>
           </div>
           <div className="text-center">
             <p className="text-2xl font-bold text-yellow-400">
               {accounts.filter(a => a.health.status === 'warning').length}
             </p>
-            <p className="text-xs text-gray-500">Reduce size</p>
+            <p className="text-xs text-text-muted">Reduce size</p>
           </div>
           <div className="text-center">
             <p className="text-2xl font-bold text-red-400">
               {accounts.filter(a => a.health.status === 'danger').length}
             </p>
-            <p className="text-xs text-gray-500">Don&apos;t trade</p>
+            <p className="text-xs text-text-muted">Don&apos;t trade</p>
           </div>
         </div>
       </div>
 
       {/* General Tips */}
-      <div className="bg-gray-900 rounded-xl border border-gray-800 p-5">
-        <h3 className="text-sm font-medium text-gray-400 mb-4">Best Practices</h3>
+      <div className="bg-bg-elevated rounded-xl border border-border p-5">
+        <h3 className="text-sm font-medium text-text-secondary mb-4">Best Practices</h3>
         <ul className="space-y-3">
-          <li className="flex items-start gap-2 text-sm text-gray-300">
-            <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+          <li className="flex items-start gap-2 text-sm text-text-secondary">
+            <CheckCircle className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
             Check this dashboard before every trading session
           </li>
-          <li className="flex items-start gap-2 text-sm text-gray-300">
-            <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+          <li className="flex items-start gap-2 text-sm text-text-secondary">
+            <CheckCircle className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
             Update your P&L after each trading day
           </li>
-          <li className="flex items-start gap-2 text-sm text-gray-300">
-            <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+          <li className="flex items-start gap-2 text-sm text-text-secondary">
+            <CheckCircle className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
             Use the simulator before taking large positions
           </li>
-          <li className="flex items-start gap-2 text-sm text-gray-300">
-            <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+          <li className="flex items-start gap-2 text-sm text-text-secondary">
+            <CheckCircle className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
             Prioritize green accounts over risky ones
           </li>
         </ul>
@@ -234,13 +234,13 @@ export function GuidanceTab({ accounts, isDemo = false, demoTips }: GuidanceTabP
 
       {/* CTA for Demo Mode */}
       {isDemo && (
-        <div className="mt-6 bg-gradient-to-r from-emerald-500/10 to-transparent border border-emerald-500/20 rounded-xl p-5 text-center">
-          <p className="text-gray-400 text-sm mb-3">
+        <div className="mt-6 bg-gradient-to-r from-accent/10 to-transparent border border-accent/20 rounded-xl p-5 text-center">
+          <p className="text-text-secondary text-sm mb-3">
             Get personalized guidance based on your real accounts.
           </p>
           <Link
             href="/dashboard/accounts/new"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent-hover hover:brightness-110 text-white text-sm font-medium rounded-lg transition-colors"
           >
             <Plus className="w-4 h-4" />
             Add Your Account

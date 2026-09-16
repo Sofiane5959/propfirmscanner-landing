@@ -43,8 +43,8 @@ interface CompareModalProps {
 function BooleanCell({ value }: { value: boolean }) {
   return value ? (
     <div className="flex items-center justify-center">
-      <div className="w-6 h-6 bg-emerald-500/20 rounded-full flex items-center justify-center">
-        <Check className="w-4 h-4 text-emerald-400" />
+      <div className="w-6 h-6 bg-accent/20 rounded-full flex items-center justify-center">
+        <Check className="w-4 h-4 text-accent" />
       </div>
     </div>
   ) : (
@@ -102,7 +102,7 @@ export default function CompareModal({ firms, onClose, onRemove, onPriceAlert }:
           render: (f: PropFirm) => (
             <div className="flex items-center justify-center gap-1">
               <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-              <span className={f.id === bestRating ? 'text-emerald-400 font-bold' : ''}>
+              <span className={f.id === bestRating ? 'text-accent font-bold' : ''}>
                 {f.trustpilot_rating?.toFixed(1) || 'N/A'}
               </span>
             </div>
@@ -111,7 +111,7 @@ export default function CompareModal({ firms, onClose, onRemove, onPriceAlert }:
         { 
           label: 'Starting Price', 
           render: (f: PropFirm) => (
-            <span className={f.id === bestPrice ? 'text-emerald-400 font-bold' : ''}>
+            <span className={f.id === bestPrice ? 'text-accent font-bold' : ''}>
               ${f.min_price || 'N/A'}
               {f.discount_percent > 0 && (
                 <span className="ml-1 text-xs text-orange-400">(-{f.discount_percent}%)</span>
@@ -122,7 +122,7 @@ export default function CompareModal({ firms, onClose, onRemove, onPriceAlert }:
         { 
           label: 'Profit Split', 
           render: (f: PropFirm) => (
-            <span className={f.id === bestSplit ? 'text-emerald-400 font-bold' : ''}>
+            <span className={f.id === bestSplit ? 'text-accent font-bold' : ''}>
               {f.profit_split}
               {f.max_profit_split && f.max_profit_split > f.profit_split && `-${f.max_profit_split}`}%
             </span>
@@ -140,7 +140,7 @@ export default function CompareModal({ firms, onClose, onRemove, onPriceAlert }:
         { 
           label: 'Daily Drawdown', 
           render: (f: PropFirm) => (
-            <span className={f.id === bestDailyDD ? 'text-emerald-400 font-bold' : ''}>
+            <span className={f.id === bestDailyDD ? 'text-accent font-bold' : ''}>
               {f.max_daily_drawdown}%
             </span>
           )
@@ -148,7 +148,7 @@ export default function CompareModal({ firms, onClose, onRemove, onPriceAlert }:
         { 
           label: 'Total Drawdown', 
           render: (f: PropFirm) => (
-            <span className={f.id === bestTotalDD ? 'text-emerald-400 font-bold' : ''}>
+            <span className={f.id === bestTotalDD ? 'text-accent font-bold' : ''}>
               {f.max_total_drawdown}%
             </span>
           )
@@ -188,37 +188,37 @@ export default function CompareModal({ firms, onClose, onRemove, onPriceAlert }:
       <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={handleClose} />
       
       <div 
-        className={`relative bg-gray-900 rounded-2xl border border-gray-700 w-full max-w-6xl max-h-[90vh] overflow-hidden transition-transform duration-200 ${
+        className={`relative bg-bg-elevated rounded-2xl border border-border w-full max-w-6xl max-h-[90vh] overflow-hidden transition-transform duration-200 ${
           isVisible ? 'scale-100' : 'scale-95'
         }`}
       >
-        <div className="flex items-center justify-between p-6 border-b border-gray-800 bg-gray-900/80 backdrop-blur sticky top-0 z-10">
+        <div className="flex items-center justify-between p-6 border-b border-border bg-bg-elevated/80 backdrop-blur sticky top-0 z-10">
           <div>
             <h2 className="text-xl font-bold text-white">Compare Prop Firms</h2>
-            <p className="text-sm text-gray-400 mt-1">
+            <p className="text-sm text-text-secondary mt-1">
               Comparing {firms.length} firm{firms.length > 1 ? 's' : ''} • 
-              <span className="text-emerald-400"> Best values highlighted</span>
+              <span className="text-accent"> Best values highlighted</span>
             </p>
           </div>
-          <button onClick={handleClose} className="p-2 hover:bg-gray-800 rounded-lg transition-colors">
-            <X className="w-6 h-6 text-gray-400" />
+          <button onClick={handleClose} className="p-2 hover:bg-dark-700 rounded-lg transition-colors">
+            <X className="w-6 h-6 text-text-secondary" />
           </button>
         </div>
 
         <div className="overflow-auto max-h-[calc(90vh-88px)]">
           <table className="w-full">
-            <thead className="sticky top-0 bg-gray-900/95 backdrop-blur z-10">
-              <tr className="border-b border-gray-800">
-                <th className="p-4 text-left text-gray-500 font-medium text-sm w-44"></th>
+            <thead className="sticky top-0 bg-bg-elevated/95 backdrop-blur z-10">
+              <tr className="border-b border-border">
+                <th className="p-4 text-left text-text-muted font-medium text-sm w-44"></th>
                 {firms.map(firm => (
                   <th key={firm.id} className="p-4 text-center min-w-[180px]">
                     <div className="flex flex-col items-center gap-3">
                       <div className="relative group">
-                        <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center overflow-hidden p-2 border-2 border-gray-700 group-hover:border-gray-600 transition-colors">
+                        <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center overflow-hidden p-2 border-2 border-border group-hover:border-border-hover transition-colors">
                           {firm.logo_url ? (
                             <Image src={firm.logo_url} alt={firm.name} width={56} height={56} className="object-contain" />
                           ) : (
-                            <span className="text-2xl font-bold text-emerald-600">{firm.name.charAt(0)}</span>
+                            <span className="text-2xl font-bold text-accent-hover">{firm.name.charAt(0)}</span>
                           )}
                         </div>
                         <button
@@ -232,7 +232,7 @@ export default function CompareModal({ firms, onClose, onRemove, onPriceAlert }:
                       <div className="text-center">
                         <div className="flex items-center justify-center gap-1.5 mb-1">
                           <span className="font-semibold text-white">{firm.name}</span>
-                          {firm.trust_status === 'verified' && <Shield className="w-4 h-4 text-emerald-400" />}
+                          {firm.trust_status === 'verified' && <Shield className="w-4 h-4 text-accent" />}
                         </div>
                         {firm.discount_percent > 0 && (
                           <span className="inline-block px-2 py-0.5 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold rounded-full">
@@ -249,15 +249,15 @@ export default function CompareModal({ firms, onClose, onRemove, onPriceAlert }:
             <tbody>
               {comparisonSections.map((section, sIdx) => (
                 <>
-                  <tr key={`section-${sIdx}`} className="bg-gray-800/30">
-                    <td colSpan={firms.length + 1} className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                  <tr key={`section-${sIdx}`} className="bg-dark-700/30">
+                    <td colSpan={firms.length + 1} className="px-4 py-2 text-xs font-semibold text-text-secondary uppercase tracking-wider">
                       {section.title}
                     </td>
                   </tr>
                   
                   {section.rows.map((row, rIdx) => (
-                    <tr key={`${sIdx}-${rIdx}`} className="border-b border-gray-800/50 hover:bg-gray-800/30 transition-colors">
-                      <td className="p-4 text-sm text-gray-400">{row.label}</td>
+                    <tr key={`${sIdx}-${rIdx}`} className="border-b border-border/50 hover:bg-dark-700/30 transition-colors">
+                      <td className="p-4 text-sm text-text-secondary">{row.label}</td>
                       {firms.map(firm => (
                         <td key={firm.id} className="p-4 text-center text-white">{row.render(firm)}</td>
                       ))}
@@ -266,7 +266,7 @@ export default function CompareModal({ firms, onClose, onRemove, onPriceAlert }:
                 </>
               ))}
 
-              <tr className="bg-gray-800/20">
+              <tr className="bg-dark-700/20">
                 <td className="p-4"></td>
                 {firms.map(firm => (
                   <td key={firm.id} className="p-4">
@@ -274,7 +274,7 @@ export default function CompareModal({ firms, onClose, onRemove, onPriceAlert }:
                       {onPriceAlert && (
                         <button
                           onClick={() => onPriceAlert(firm)}
-                          className="w-full py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-1.5"
+                          className="w-full py-2 bg-dark-600 hover:bg-dark-500 text-text-secondary hover:text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-1.5"
                         >
                           <Bell className="w-4 h-4" />
                           Price Alert
@@ -283,7 +283,7 @@ export default function CompareModal({ firms, onClose, onRemove, onPriceAlert }:
                       
                       <Link
                         href={`/prop-firm/${firm.slug}`}
-                        className="w-full py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm font-medium rounded-lg transition-colors text-center"
+                        className="w-full py-2 bg-dark-600 hover:bg-dark-500 text-white text-sm font-medium rounded-lg transition-colors text-center"
                       >
                         View Details
                       </Link>
@@ -292,7 +292,7 @@ export default function CompareModal({ firms, onClose, onRemove, onPriceAlert }:
                         href={(firm.affiliate_url || firm.website_url) ? `/api/go/${firm.slug}?source=compare-modal` : '#'}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold rounded-lg transition-colors flex items-center justify-center gap-1.5"
+                        className="w-full py-2.5 bg-accent-hover hover:brightness-110 text-white text-sm font-semibold rounded-lg transition-colors flex items-center justify-center gap-1.5"
                       >
                         Visit Site
                         <ExternalLink className="w-4 h-4" />

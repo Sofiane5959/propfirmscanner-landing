@@ -277,7 +277,7 @@ export default function RiskCalculatorPage() {
   }
 
   const getResultStyles = () => {
-    if (classification === 'SAFE') return { bg: 'bg-emerald-500/10', border: 'border-emerald-500/30', text: 'text-emerald-400' };
+    if (classification === 'SAFE') return { bg: 'bg-accent/10', border: 'border-accent/30', text: 'text-accent' };
     if (classification === 'RISKY') return { bg: 'bg-yellow-500/10', border: 'border-yellow-500/30', text: 'text-yellow-400' };
     return { bg: 'bg-red-500/10', border: 'border-red-500/30', text: 'text-red-400' };
   };
@@ -287,9 +287,9 @@ export default function RiskCalculatorPage() {
   const statusText = classification === 'SAFE' ? t.safe : classification === 'RISKY' ? t.risky : t.violation;
 
   return (
-    <div className="min-h-screen bg-gray-950 py-8">
+    <div className="min-h-screen bg-bg-base py-8">
       <div className="max-w-2xl mx-auto px-4">
-        <Link href={`/${locale}/tools`} className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6">
+        <Link href={`/${locale}/tools`} className="inline-flex items-center gap-2 text-text-secondary hover:text-white mb-6">
           <ArrowLeft className="w-4 h-4" />
           {t.allTools}
         </Link>
@@ -297,20 +297,20 @@ export default function RiskCalculatorPage() {
         <DemoBanner toolName="risk calculator" />
 
         <h1 className="text-3xl font-bold text-white mb-2">{t.title}</h1>
-        <p className="text-gray-400 mb-8">{t.subtitle}</p>
+        <p className="text-text-secondary mb-8">{t.subtitle}</p>
 
-        <div className="bg-gray-900 rounded-xl border border-gray-800 p-6 mb-6">
+        <div className="bg-bg-elevated rounded-xl border border-border p-6 mb-6">
           <h2 className="text-lg font-semibold text-white mb-4">{t.tradeParams}</h2>
 
           <div className="mb-6">
-            <label className="block text-sm text-gray-400 mb-2">{t.accountBalance}</label>
+            <label className="block text-sm text-text-secondary mb-2">{t.accountBalance}</label>
             <div className="flex gap-2 flex-wrap">
               {presetBalances.map((b) => (
                 <button
                   key={b}
                   onClick={() => setBalance(b)}
                   className={`px-3 py-2 text-sm rounded-lg transition-colors ${
-                    balance === b ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                    balance === b ? 'bg-accent-hover text-white' : 'bg-dark-700 text-text-secondary hover:bg-dark-600'
                   }`}
                 >
                   ${(b / 1000)}K
@@ -320,14 +320,14 @@ export default function RiskCalculatorPage() {
           </div>
 
           <div className="mb-6">
-            <label className="block text-sm text-gray-400 mb-2">{t.riskPerTrade}</label>
+            <label className="block text-sm text-text-secondary mb-2">{t.riskPerTrade}</label>
             <div className="flex gap-2 flex-wrap">
               {presetRisks.map((r) => (
                 <button
                   key={r}
                   onClick={() => setRiskPercent(r)}
                   className={`px-3 py-2 text-sm rounded-lg transition-colors ${
-                    riskPercent === r ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                    riskPercent === r ? 'bg-accent-hover text-white' : 'bg-dark-700 text-text-secondary hover:bg-dark-600'
                   }`}
                 >
                   {r}%
@@ -337,14 +337,14 @@ export default function RiskCalculatorPage() {
           </div>
 
           <div className="mb-6">
-            <label className="block text-sm text-gray-400 mb-2">{t.stopLoss}</label>
+            <label className="block text-sm text-text-secondary mb-2">{t.stopLoss}</label>
             <div className="flex gap-2 flex-wrap">
               {presetStopLosses.map((sl) => (
                 <button
                   key={sl}
                   onClick={() => setStopLossPips(sl)}
                   className={`px-3 py-2 text-sm rounded-lg transition-colors ${
-                    stopLossPips === sl ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                    stopLossPips === sl ? 'bg-accent-hover text-white' : 'bg-dark-700 text-text-secondary hover:bg-dark-600'
                   }`}
                 >
                   {sl}
@@ -354,55 +354,55 @@ export default function RiskCalculatorPage() {
           </div>
 
           <div className="mb-6">
-            <label className="block text-sm text-gray-400 mb-2">{t.pipValue}</label>
+            <label className="block text-sm text-text-secondary mb-2">{t.pipValue}</label>
             <input
               type="number"
               value={pipValue}
               onChange={(e) => setPipValue(parseFloat(e.target.value) || 10)}
-              className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-emerald-500"
+              className="w-full px-4 py-2 bg-dark-700 border border-border rounded-lg text-white focus:outline-none focus:border-accent"
             />
-            <p className="text-xs text-gray-500 mt-1">{t.pipValueHint}</p>
+            <p className="text-xs text-text-muted mt-1">{t.pipValueHint}</p>
           </div>
 
           <div className="mb-6">
-            <label className="block text-sm text-gray-400 mb-2">{t.dailyDDLimit}</label>
+            <label className="block text-sm text-text-secondary mb-2">{t.dailyDDLimit}</label>
             <input
               type="number"
               value={dailyDDLimit}
               onChange={(e) => setDailyDDLimit(parseFloat(e.target.value) || 5)}
-              className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-emerald-500"
+              className="w-full px-4 py-2 bg-dark-700 border border-border rounded-lg text-white focus:outline-none focus:border-accent"
             />
           </div>
         </div>
 
-        <div className="bg-gray-900 rounded-xl border border-gray-800 p-6 mb-6">
+        <div className="bg-bg-elevated rounded-xl border border-border p-6 mb-6">
           <h2 className="text-lg font-semibold text-white mb-4">{t.positionSize}</h2>
 
           <div className="grid grid-cols-2 gap-4 mb-6">
-            <div className="bg-gray-800 rounded-lg p-4">
-              <p className="text-sm text-gray-400 mb-1">{t.positionSize}</p>
+            <div className="bg-dark-700 rounded-lg p-4">
+              <p className="text-sm text-text-secondary mb-1">{t.positionSize}</p>
               <p className="text-3xl font-bold text-white">{positionSize.toFixed(2)}</p>
-              <p className="text-xs text-gray-500">{t.standardLots}</p>
+              <p className="text-xs text-text-muted">{t.standardLots}</p>
             </div>
-            <div className="bg-gray-800 rounded-lg p-4">
-              <p className="text-sm text-gray-400 mb-1">{t.riskAmount}</p>
+            <div className="bg-dark-700 rounded-lg p-4">
+              <p className="text-sm text-text-secondary mb-1">{t.riskAmount}</p>
               <p className="text-3xl font-bold text-white">${riskAmount.toLocaleString()}</p>
-              <p className="text-xs text-gray-500">{t.miniLots}: {(positionSize * 10).toFixed(1)}</p>
+              <p className="text-xs text-text-muted">{t.miniLots}: {(positionSize * 10).toFixed(1)}</p>
             </div>
           </div>
 
-          <h3 className="text-sm font-medium text-gray-400 mb-3">{t.dailyDDContext}</h3>
-          <div className="bg-gray-800 rounded-lg p-4 mb-4">
+          <h3 className="text-sm font-medium text-text-secondary mb-3">{t.dailyDDContext}</h3>
+          <div className="bg-dark-700 rounded-lg p-4 mb-4">
             <div className="flex justify-between text-sm mb-2">
-              <span className="text-gray-400">{t.dailyDDLimitLabel}</span>
+              <span className="text-text-secondary">{t.dailyDDLimitLabel}</span>
               <span className="text-white">${dailyDDLimitUsd.toLocaleString()}</span>
             </div>
             <div className="flex justify-between text-sm mb-2">
-              <span className="text-gray-400">{t.thisTradeUses}</span>
+              <span className="text-text-secondary">{t.thisTradeUses}</span>
               <span className={`font-medium ${styles.text}`}>{tradeUsagePercent.toFixed(1)}% {t.ofDailyLimit}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-400">{t.maxLosingTrades}</span>
+              <span className="text-text-secondary">{t.maxLosingTrades}</span>
               <span className="text-white">{maxLosingTrades}</span>
             </div>
           </div>
@@ -412,18 +412,18 @@ export default function RiskCalculatorPage() {
               <ResultIcon className={`w-6 h-6 ${styles.text}`} />
               <div>
                 <p className={`font-semibold ${styles.text}`}>{statusText}</p>
-                <p className="text-sm text-gray-300">{message}</p>
+                <p className="text-sm text-text-secondary">{message}</p>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-gradient-to-r from-emerald-500/20 to-gray-900 rounded-xl border border-emerald-500/30 p-6">
+        <div className="bg-gradient-to-r from-accent/20 to-bg-elevated rounded-xl border border-accent/30 p-6">
           <h3 className="text-lg font-semibold text-white mb-2">{t.ctaTitle}</h3>
-          <p className="text-gray-400 mb-4">{t.ctaDesc}</p>
+          <p className="text-text-secondary mb-4">{t.ctaDesc}</p>
           <Link
             href={`/${locale}/dashboard`}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-lg transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-accent-hover hover:brightness-110 text-white font-medium rounded-lg transition-colors"
           >
             <Play className="w-5 h-5" />
             {t.tryFree}

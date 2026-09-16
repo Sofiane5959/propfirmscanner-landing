@@ -67,24 +67,24 @@ export default function AccountOverview({ account, balanceHistory = [] }: Accoun
   const getStatusColor = (percent: number) => {
     if (percent >= 95) return 'text-red-500';
     if (percent >= 80) return 'text-yellow-500';
-    return 'text-emerald-500';
+    return 'text-accent';
   };
 
   const getProgressColor = (percent: number) => {
     if (percent >= 95) return 'bg-red-500';
     if (percent >= 80) return 'bg-yellow-500';
-    return 'bg-emerald-500';
+    return 'bg-accent-hover';
   };
 
   return (
-    <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
+    <div className="bg-bg-elevated rounded-xl border border-border overflow-hidden">
       {/* Header */}
-      <div className="p-4 border-b border-gray-800 flex items-center justify-between">
+      <div className="p-4 border-b border-border flex items-center justify-between">
         <div>
           <h3 className="text-lg font-bold text-white">{account.account_name}</h3>
-          <p className="text-sm text-gray-400">{account.firm_name}</p>
+          <p className="text-sm text-text-secondary">{account.firm_name}</p>
         </div>
-        <div className={`flex items-center gap-2 ${isProfit ? 'text-emerald-500' : 'text-red-500'}`}>
+        <div className={`flex items-center gap-2 ${isProfit ? 'text-accent' : 'text-red-500'}`}>
           {isProfit ? <TrendingUp className="w-5 h-5" /> : <TrendingDown className="w-5 h-5" />}
           <span className="text-xl font-bold">
             {isProfit ? '+' : ''}{profitPercent.toFixed(2)}%
@@ -93,31 +93,31 @@ export default function AccountOverview({ account, balanceHistory = [] }: Accoun
       </div>
 
       {/* Balance & Profit */}
-      <div className="p-4 grid grid-cols-2 gap-4 border-b border-gray-800">
+      <div className="p-4 grid grid-cols-2 gap-4 border-b border-border">
         <div>
-          <p className="text-gray-400 text-sm">Current Balance</p>
+          <p className="text-text-secondary text-sm">Current Balance</p>
           <p className="text-2xl font-bold text-white">
             ${account.current_balance.toLocaleString()}
           </p>
         </div>
         <div>
-          <p className="text-gray-400 text-sm">Profit/Loss</p>
-          <p className={`text-2xl font-bold ${isProfit ? 'text-emerald-500' : 'text-red-500'}`}>
+          <p className="text-text-secondary text-sm">Profit/Loss</p>
+          <p className={`text-2xl font-bold ${isProfit ? 'text-accent' : 'text-red-500'}`}>
             {isProfit ? '+' : ''}${profit.toLocaleString()}
           </p>
         </div>
       </div>
 
       {/* Chart */}
-      <div className="p-4 border-b border-gray-800">
+      <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between mb-4">
           <div className="flex gap-2">
             <button
               onClick={() => setChartType('balance')}
               className={`px-3 py-1 rounded-lg text-sm transition-colors ${
                 chartType === 'balance'
-                  ? 'bg-emerald-500/20 text-emerald-500'
-                  : 'bg-gray-800 text-gray-400 hover:text-white'
+                  ? 'bg-accent/20 text-accent'
+                  : 'bg-dark-700 text-text-secondary hover:text-white'
               }`}
             >
               Balance
@@ -127,7 +127,7 @@ export default function AccountOverview({ account, balanceHistory = [] }: Accoun
               className={`px-3 py-1 rounded-lg text-sm transition-colors ${
                 chartType === 'drawdown'
                   ? 'bg-red-500/20 text-red-500'
-                  : 'bg-gray-800 text-gray-400 hover:text-white'
+                  : 'bg-dark-700 text-text-secondary hover:text-white'
               }`}
             >
               Drawdown
@@ -141,38 +141,38 @@ export default function AccountOverview({ account, balanceHistory = [] }: Accoun
               <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="balanceGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#34D399" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#34D399" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <XAxis dataKey="date" stroke="#6b7280" fontSize={12} />
-                <YAxis stroke="#6b7280" fontSize={12} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                <XAxis dataKey="date" stroke="#94A3B8" fontSize={12} />
+                <YAxis stroke="#94A3B8" fontSize={12} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#1f2937',
-                    border: '1px solid #374151',
+                    backgroundColor: '#273449',
+                    border: '1px solid #334155',
                     borderRadius: '8px',
                   }}
-                  labelStyle={{ color: '#9ca3af' }}
+                  labelStyle={{ color: '#CBD5E1' }}
                 />
                 <Area
                   type="monotone"
                   dataKey="balance"
-                  stroke="#10b981"
+                  stroke="#34D399"
                   fill="url(#balanceGradient)"
                   strokeWidth={2}
                 />
               </AreaChart>
             ) : (
               <LineChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <XAxis dataKey="date" stroke="#6b7280" fontSize={12} />
-                <YAxis stroke="#6b7280" fontSize={12} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                <XAxis dataKey="date" stroke="#94A3B8" fontSize={12} />
+                <YAxis stroke="#94A3B8" fontSize={12} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#1f2937',
-                    border: '1px solid #374151',
+                    backgroundColor: '#273449',
+                    border: '1px solid #334155',
                     borderRadius: '8px',
                   }}
                 />
@@ -196,19 +196,19 @@ export default function AccountOverview({ account, balanceHistory = [] }: Accoun
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <AlertTriangle className={`w-4 h-4 ${getStatusColor(drawdownPercent)}`} />
-              <span className="text-sm text-gray-400">Max Drawdown</span>
+              <span className="text-sm text-text-secondary">Max Drawdown</span>
             </div>
             <span className={`text-sm font-bold ${getStatusColor(drawdownPercent)}`}>
               {drawdownPercent.toFixed(1)}%
             </span>
           </div>
-          <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
+          <div className="h-2 bg-dark-700 rounded-full overflow-hidden">
             <div
               className={`h-full ${getProgressColor(drawdownPercent)} transition-all duration-500`}
               style={{ width: `${Math.min(100, drawdownPercent)}%` }}
             />
           </div>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-text-muted mt-1">
             ${currentDrawdown.toLocaleString()} / ${maxDrawdownAmount.toLocaleString()}
           </p>
         </div>
@@ -218,19 +218,19 @@ export default function AccountOverview({ account, balanceHistory = [] }: Accoun
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <TrendingDown className={`w-4 h-4 ${getStatusColor(dailyLossPercent)}`} />
-              <span className="text-sm text-gray-400">Daily Loss</span>
+              <span className="text-sm text-text-secondary">Daily Loss</span>
             </div>
             <span className={`text-sm font-bold ${getStatusColor(dailyLossPercent)}`}>
               {dailyLossPercent.toFixed(1)}%
             </span>
           </div>
-          <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
+          <div className="h-2 bg-dark-700 rounded-full overflow-hidden">
             <div
               className={`h-full ${getProgressColor(dailyLossPercent)} transition-all duration-500`}
               style={{ width: `${Math.min(100, dailyLossPercent)}%` }}
             />
           </div>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-text-muted mt-1">
             ${account.current_daily_loss.toLocaleString()} / ${account.daily_loss_limit.toLocaleString()}
           </p>
         </div>
@@ -239,30 +239,30 @@ export default function AccountOverview({ account, balanceHistory = [] }: Accoun
         <div>
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
-              <Target className="w-4 h-4 text-emerald-500" />
-              <span className="text-sm text-gray-400">Profit Target</span>
+              <Target className="w-4 h-4 text-accent" />
+              <span className="text-sm text-text-secondary">Profit Target</span>
             </div>
-            <span className="text-sm font-bold text-emerald-500">
+            <span className="text-sm font-bold text-accent">
               {Math.min(100, profitTargetPercent).toFixed(1)}%
             </span>
           </div>
-          <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
+          <div className="h-2 bg-dark-700 rounded-full overflow-hidden">
             <div
-              className="h-full bg-emerald-500 transition-all duration-500"
+              className="h-full bg-accent-hover transition-all duration-500"
               style={{ width: `${Math.min(100, profitTargetPercent)}%` }}
             />
           </div>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-text-muted mt-1">
             ${Math.max(0, profit).toLocaleString()} / ${profitTargetAmount.toLocaleString()}
           </p>
         </div>
 
         {/* Days Remaining */}
         {daysRemaining !== null && (
-          <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg mt-4">
+          <div className="flex items-center justify-between p-3 bg-dark-700/50 rounded-lg mt-4">
             <div className="flex items-center gap-2">
-              <Calendar className={`w-4 h-4 ${daysRemaining <= 7 ? 'text-yellow-500' : 'text-gray-400'}`} />
-              <span className="text-sm text-gray-400">Days Remaining</span>
+              <Calendar className={`w-4 h-4 ${daysRemaining <= 7 ? 'text-yellow-500' : 'text-text-secondary'}`} />
+              <span className="text-sm text-text-secondary">Days Remaining</span>
             </div>
             <span className={`text-lg font-bold ${daysRemaining <= 7 ? 'text-yellow-500' : 'text-white'}`}>
               {daysRemaining}

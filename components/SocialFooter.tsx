@@ -94,7 +94,7 @@ export function SocialIcons({ className = '' }: { className?: string }) {
             href={social.href}
             target="_blank"
             rel="noopener noreferrer"
-            className={`p-2 rounded-lg bg-gray-800 text-gray-400 transition-all duration-300 ${social.color}`}
+            className={`p-2 rounded-lg bg-dark-700 text-text-secondary transition-all duration-300 ${social.color}`}
             aria-label={social.name}
           >
             <Icon className="w-5 h-5" />
@@ -113,19 +113,19 @@ export default function SocialFooter() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-900 border-t border-gray-800">
+    <footer className="bg-bg-elevated border-t border-border">
       {/* Main Footer */}
       <div className="max-w-6xl mx-auto px-4 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
           {/* Brand Column */}
           <div className="col-span-2 md:col-span-4 lg:col-span-1 mb-6 lg:mb-0">
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-br from-accent to-blue-500 rounded-xl flex items-center justify-center">
                 <span className="text-white font-bold text-xl">P</span>
               </div>
               <span className="text-white font-bold text-lg">PropFirmScanner</span>
             </Link>
-            <p className="text-gray-500 text-sm mb-6">
+            <p className="text-text-muted text-sm mb-6">
               The ultimate platform to compare, analyze, and choose the best prop trading firms.
             </p>
             
@@ -141,11 +141,11 @@ export default function SocialFooter() {
                 <li key={link.name}>
                   <Link 
                     href={link.href}
-                    className="text-gray-400 hover:text-emerald-400 text-sm transition-colors flex items-center gap-2"
+                    className="text-text-secondary hover:text-accent text-sm transition-colors flex items-center gap-2"
                   >
                     {link.name}
                     {link.badge && (
-                      <span className="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-400 text-xs rounded">
+                      <span className="px-1.5 py-0.5 bg-accent/20 text-accent text-xs rounded">
                         {link.badge}
                       </span>
                     )}
@@ -163,11 +163,11 @@ export default function SocialFooter() {
                 <li key={link.name}>
                   <Link 
                     href={link.href}
-                    className="text-gray-400 hover:text-emerald-400 text-sm transition-colors flex items-center gap-2"
+                    className="text-text-secondary hover:text-accent text-sm transition-colors flex items-center gap-2"
                   >
                     {link.name}
                     {link.badge && (
-                      <span className="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-400 text-xs rounded">
+                      <span className="px-1.5 py-0.5 bg-accent/20 text-accent text-xs rounded">
                         {link.badge}
                       </span>
                     )}
@@ -185,7 +185,7 @@ export default function SocialFooter() {
                 <li key={link.name}>
                   <Link 
                     href={link.href}
-                    className="text-gray-400 hover:text-emerald-400 text-sm transition-colors"
+                    className="text-text-secondary hover:text-accent text-sm transition-colors"
                   >
                     {link.name}
                   </Link>
@@ -197,18 +197,18 @@ export default function SocialFooter() {
           {/* Newsletter */}
           <div className="col-span-2 md:col-span-2 lg:col-span-1">
             <h3 className="text-white font-semibold mb-4">Stay Updated</h3>
-            <p className="text-gray-500 text-sm mb-4">
+            <p className="text-text-muted text-sm mb-4">
               Get the latest deals and prop firm news.
             </p>
             <form className="space-y-2" onSubmit={(e) => e.preventDefault()}>
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:border-emerald-500 transition-colors"
+                className="w-full px-4 py-2.5 bg-dark-700 border border-border rounded-lg text-white text-sm placeholder-text-muted focus:outline-none focus:border-accent transition-colors"
               />
               <button
                 type="submit"
-                className="w-full px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors"
+                className="w-full px-4 py-2.5 bg-accent-hover hover:brightness-110 text-white text-sm font-medium rounded-lg transition-colors"
               >
                 Subscribe
               </button>
@@ -218,10 +218,10 @@ export default function SocialFooter() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-gray-800">
+      <div className="border-t border-border">
         <div className="max-w-6xl mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-1 text-gray-500 text-sm">
+            <div className="flex items-center gap-1 text-text-muted text-sm">
               <span>© {currentYear} PropFirmScanner. Made with</span>
               <Heart className="w-4 h-4 text-red-500 fill-current" />
               <span>for traders.</span>
@@ -230,13 +230,13 @@ export default function SocialFooter() {
             <div className="flex items-center gap-6 text-sm">
               <a 
                 href={`mailto:${socialLinks.email}`}
-                className="text-gray-500 hover:text-emerald-400 transition-colors flex items-center gap-1"
+                className="text-text-muted hover:text-accent transition-colors flex items-center gap-1"
               >
                 <Mail className="w-4 h-4" />
                 Contact
               </a>
               <span className="text-gray-700">|</span>
-              <span className="text-gray-500">
+              <span className="text-text-muted">
                 Not financial advice
               </span>
             </div>

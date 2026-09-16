@@ -171,25 +171,25 @@ export default async function ComparePage() {
 // Loading skeleton
 function CompareSkeleton() {
   return (
-    <div className="min-h-screen bg-gray-900 pt-20 px-4">
+    <div className="min-h-screen bg-bg-elevated pt-20 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header skeleton */}
         <div className="mb-8">
-          <div className="h-8 w-64 bg-gray-800 rounded animate-pulse mb-2" />
-          <div className="h-4 w-48 bg-gray-800 rounded animate-pulse" />
+          <div className="h-8 w-64 bg-dark-700 rounded animate-pulse mb-2" />
+          <div className="h-4 w-48 bg-dark-700 rounded animate-pulse" />
         </div>
         
         {/* Filters skeleton */}
         <div className="flex gap-2 mb-6">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-9 w-20 bg-gray-800 rounded-lg animate-pulse" />
+            <div key={i} className="h-9 w-20 bg-dark-700 rounded-lg animate-pulse" />
           ))}
         </div>
         
         {/* Cards skeleton */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="h-72 bg-gray-800 rounded-xl animate-pulse" />
+            <div key={i} className="h-72 bg-dark-700 rounded-xl animate-pulse" />
           ))}
         </div>
       </div>

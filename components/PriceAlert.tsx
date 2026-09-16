@@ -81,7 +81,7 @@ export function PriceAlertButton({
         className={`p-2 rounded-lg transition-colors ${
           hasAlert
             ? 'bg-yellow-500/20 text-yellow-400'
-            : 'bg-gray-800 text-gray-400 hover:text-yellow-400 hover:bg-yellow-500/10'
+            : 'bg-dark-700 text-text-secondary hover:text-yellow-400 hover:bg-yellow-500/10'
         }`}
         title={hasAlert ? 'Alert active' : 'Set price alert'}
       >
@@ -190,11 +190,11 @@ function PriceAlertModal({ firmId, firmName, firmSlug, currentPrice, onClose }: 
       />
 
       {/* Modal */}
-      <div className="relative bg-gray-900 rounded-2xl border border-gray-800 p-6 w-full max-w-md">
+      <div className="relative bg-bg-elevated rounded-2xl border border-border p-6 w-full max-w-md">
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-1 text-gray-500 hover:text-white transition-colors"
+          className="absolute top-4 right-4 p-1 text-text-muted hover:text-white transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
@@ -202,11 +202,11 @@ function PriceAlertModal({ firmId, firmName, firmSlug, currentPrice, onClose }: 
         {success ? (
           /* Success State */
           <div className="text-center py-6">
-            <div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Check className="w-8 h-8 text-emerald-400" />
+            <div className="w-16 h-16 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Check className="w-8 h-8 text-accent" />
             </div>
             <h3 className="text-xl font-bold text-white mb-2">Alert Created!</h3>
-            <p className="text-gray-400">
+            <p className="text-text-secondary">
               We'll notify you when {firmName} drops to ${targetPrice}
             </p>
           </div>
@@ -219,30 +219,30 @@ function PriceAlertModal({ firmId, firmName, firmSlug, currentPrice, onClose }: 
               </div>
               <div>
                 <h3 className="text-lg font-bold text-white">Set Price Alert</h3>
-                <p className="text-sm text-gray-400">{firmName}</p>
+                <p className="text-sm text-text-secondary">{firmName}</p>
               </div>
             </div>
 
             {/* Current Price */}
-            <div className="bg-gray-800/50 rounded-xl p-4 mb-4">
+            <div className="bg-dark-700/50 rounded-xl p-4 mb-4">
               <div className="flex items-center justify-between">
-                <span className="text-gray-400">Current Price</span>
+                <span className="text-text-secondary">Current Price</span>
                 <span className="text-white font-semibold">${currentPrice}</span>
               </div>
             </div>
 
             {/* Target Price Input */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-text-secondary mb-2">
                 Alert me when price drops to
               </label>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted">$</span>
                 <input
                   type="number"
                   value={targetPrice}
                   onChange={(e) => setTargetPrice(Number(e.target.value))}
-                  className="w-full pl-8 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white 
+                  className="w-full pl-8 pr-4 py-3 bg-dark-700 border border-border rounded-xl text-white 
                             focus:outline-none focus:border-yellow-500 transition-colors"
                   min={1}
                   max={currentPrice - 1}
@@ -252,9 +252,9 @@ function PriceAlertModal({ firmId, firmName, firmSlug, currentPrice, onClose }: 
 
             {/* Discount Preview */}
             {discount > 0 && (
-              <div className="flex items-center gap-2 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg mb-4">
-                <TrendingDown className="w-4 h-4 text-emerald-400" />
-                <span className="text-emerald-400 text-sm">
+              <div className="flex items-center gap-2 p-3 bg-accent/10 border border-accent/20 rounded-lg mb-4">
+                <TrendingDown className="w-4 h-4 text-accent" />
+                <span className="text-accent text-sm">
                   You'll be notified at {discount}% discount
                 </span>
               </div>
@@ -269,7 +269,7 @@ function PriceAlertModal({ firmId, firmName, firmSlug, currentPrice, onClose }: 
                   className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors ${
                     discount === pct
                       ? 'bg-yellow-500 text-white'
-                      : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                      : 'bg-dark-700 text-text-secondary hover:bg-dark-600'
                   }`}
                 >
                   -{pct}%
@@ -289,7 +289,7 @@ function PriceAlertModal({ firmId, firmName, firmSlug, currentPrice, onClose }: 
             <button
               onClick={handleSubmit}
               disabled={loading || targetPrice >= currentPrice}
-              className="w-full py-3 bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-700 
+              className="w-full py-3 bg-yellow-500 hover:bg-yellow-600 disabled:bg-dark-600 
                         text-white font-semibold rounded-xl transition-colors 
                         flex items-center justify-center gap-2"
             >
@@ -307,7 +307,7 @@ function PriceAlertModal({ firmId, firmName, firmSlug, currentPrice, onClose }: 
             </button>
 
             {/* Note */}
-            <p className="text-xs text-gray-500 text-center mt-4">
+            <p className="text-xs text-text-muted text-center mt-4">
               You'll receive an email when the price drops to your target
             </p>
           </>
@@ -361,7 +361,7 @@ export function MyAlertsList() {
   if (loading) {
     return (
       <div className="flex justify-center py-8">
-        <Loader2 className="w-6 h-6 text-emerald-500 animate-spin" />
+        <Loader2 className="w-6 h-6 text-accent animate-spin" />
       </div>
     );
   }
@@ -369,11 +369,11 @@ export function MyAlertsList() {
   if (alerts.length === 0) {
     return (
       <div className="text-center py-8">
-        <div className="w-12 h-12 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-3">
-          <BellOff className="w-6 h-6 text-gray-600" />
+        <div className="w-12 h-12 bg-dark-700 rounded-full flex items-center justify-center mx-auto mb-3">
+          <BellOff className="w-6 h-6 text-text-muted" />
         </div>
-        <p className="text-gray-400">No active alerts</p>
-        <p className="text-gray-500 text-sm mt-1">
+        <p className="text-text-secondary">No active alerts</p>
+        <p className="text-text-muted text-sm mt-1">
           Set alerts on prop firms to get notified of price drops
         </p>
       </div>
@@ -385,18 +385,18 @@ export function MyAlertsList() {
       {alerts.map(alert => (
         <div
           key={alert.id}
-          className="flex items-center justify-between p-4 bg-gray-800/50 rounded-xl"
+          className="flex items-center justify-between p-4 bg-dark-700/50 rounded-xl"
         >
           <div>
             <h4 className="font-medium text-white">{alert.firm_name}</h4>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-text-secondary">
               Alert at <span className="text-yellow-400">${alert.target_price}</span>
               {' '}(was ${alert.current_price_at_creation})
             </p>
           </div>
           <button
             onClick={() => deleteAlert(alert.id)}
-            className="p-2 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+            className="p-2 text-text-muted hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
           >
             <X className="w-4 h-4" />
           </button>

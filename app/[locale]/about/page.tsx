@@ -78,19 +78,19 @@ const TIMELINE = [
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-gray-900 py-24 px-4">
+    <div className="min-h-screen bg-bg-elevated py-24 px-4">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-400 text-sm mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 border border-accent/20 rounded-full text-accent text-sm mb-6">
             <Users className="w-4 h-4" />
             About Us
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Helping Traders Make
-            <span className="text-emerald-400"> Smarter Choices</span>
+            <span className="text-accent"> Smarter Choices</span>
           </h1>
-          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+          <p className="text-xl text-text-secondary max-w-3xl mx-auto">
             PropFirm Scanner is the leading prop firm comparison platform, built by traders 
             for traders. We&apos;re on a mission to bring transparency and clarity to the 
             prop trading industry.
@@ -102,24 +102,24 @@ export default function AboutPage() {
           {STATS.map((stat, index) => (
             <div 
               key={index}
-              className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 text-center"
+              className="bg-dark-700/50 border border-border rounded-xl p-6 text-center"
             >
-              <div className="text-3xl font-bold text-emerald-400 mb-1">{stat.value}</div>
-              <div className="text-gray-400 text-sm">{stat.label}</div>
+              <div className="text-3xl font-bold text-accent mb-1">{stat.value}</div>
+              <div className="text-text-secondary text-sm">{stat.label}</div>
             </div>
           ))}
         </div>
 
         {/* Mission */}
         <section className="mb-16">
-          <div className="bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border border-emerald-500/20 rounded-2xl p-8 md:p-12">
+          <div className="bg-gradient-to-r from-accent/10 to-blue-500/10 border border-accent/20 rounded-2xl p-8 md:p-12">
             <div className="flex items-start gap-4 mb-6">
-              <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                <Target className="w-6 h-6 text-emerald-400" />
+              <div className="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center flex-shrink-0">
+                <Target className="w-6 h-6 text-accent" />
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-white mb-2">Our Mission</h2>
-                <p className="text-gray-300 text-lg">
+                <p className="text-text-secondary text-lg">
                   To empower traders with accurate, unbiased information so they can find 
                   the right prop firm for their unique trading style and goals.
                 </p>
@@ -133,8 +133,8 @@ export default function AboutPage() {
                 'Save traders time and money',
                 'Maintain editorial independence',
               ].map((item, i) => (
-                <div key={i} className="flex items-center gap-2 text-gray-300">
-                  <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                <div key={i} className="flex items-center gap-2 text-text-secondary">
+                  <CheckCircle className="w-5 h-5 text-accent flex-shrink-0" />
                   <span>{item}</span>
                 </div>
               ))}
@@ -149,15 +149,15 @@ export default function AboutPage() {
             {VALUES.map((value, index) => (
               <div 
                 key={index}
-                className="bg-gray-800/50 border border-gray-700 rounded-xl p-6"
+                className="bg-dark-700/50 border border-border rounded-xl p-6"
               >
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-lg bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
-                    <value.icon className="w-6 h-6 text-emerald-400" />
+                  <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
+                    <value.icon className="w-6 h-6 text-accent" />
                   </div>
                   <div>
                     <h3 className="text-white font-semibold mb-2">{value.title}</h3>
-                    <p className="text-gray-400 text-sm">{value.description}</p>
+                    <p className="text-text-secondary text-sm">{value.description}</p>
                   </div>
                 </div>
               </div>
@@ -172,16 +172,16 @@ export default function AboutPage() {
             {TIMELINE.map((item, index) => (
               <div key={index} className="flex gap-4">
                 <div className="flex flex-col items-center">
-                  <div className="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold text-sm">
+                  <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold text-sm">
                     {item.year}
                   </div>
                   {index < TIMELINE.length - 1 && (
-                    <div className="w-0.5 h-full bg-gray-700 my-2" />
+                    <div className="w-0.5 h-full bg-dark-600 my-2" />
                   )}
                 </div>
-                <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-4 flex-1">
+                <div className="bg-dark-700/50 border border-border rounded-xl p-4 flex-1">
                   <h3 className="text-white font-semibold mb-1">{item.title}</h3>
-                  <p className="text-gray-400 text-sm">{item.description}</p>
+                  <p className="text-text-secondary text-sm">{item.description}</p>
                 </div>
               </div>
             ))}
@@ -192,24 +192,24 @@ export default function AboutPage() {
         <section className="mb-16">
           <h2 className="text-2xl font-bold text-white mb-8 text-center">What We Do</h2>
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 text-center">
-              <Globe className="w-10 h-10 text-emerald-400 mx-auto mb-4" />
+            <div className="bg-dark-700/50 border border-border rounded-xl p-6 text-center">
+              <Globe className="w-10 h-10 text-accent mx-auto mb-4" />
               <h3 className="text-white font-semibold mb-2">Track & Compare</h3>
-              <p className="text-gray-400 text-sm">
+              <p className="text-text-secondary text-sm">
                 We monitor 90+ prop firms and keep our data updated weekly.
               </p>
             </div>
-            <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 text-center">
-              <Award className="w-10 h-10 text-emerald-400 mx-auto mb-4" />
+            <div className="bg-dark-700/50 border border-border rounded-xl p-6 text-center">
+              <Award className="w-10 h-10 text-accent mx-auto mb-4" />
               <h3 className="text-white font-semibold mb-2">Verify & Review</h3>
-              <p className="text-gray-400 text-sm">
+              <p className="text-text-secondary text-sm">
                 We cross-reference data with official sources and Trustpilot reviews.
               </p>
             </div>
-            <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 text-center">
-              <TrendingUp className="w-10 h-10 text-emerald-400 mx-auto mb-4" />
+            <div className="bg-dark-700/50 border border-border rounded-xl p-6 text-center">
+              <TrendingUp className="w-10 h-10 text-accent mx-auto mb-4" />
               <h3 className="text-white font-semibold mb-2">Build Tools</h3>
-              <p className="text-gray-400 text-sm">
+              <p className="text-text-secondary text-sm">
                 We create free tools to help traders succeed in their challenges.
               </p>
             </div>
@@ -218,21 +218,21 @@ export default function AboutPage() {
 
         {/* CTA */}
         <section className="text-center">
-          <div className="bg-gray-800/50 border border-gray-700 rounded-2xl p-8">
+          <div className="bg-dark-700/50 border border-border rounded-2xl p-8">
             <h2 className="text-2xl font-bold text-white mb-4">Ready to Find Your Prop Firm?</h2>
-            <p className="text-gray-400 mb-6">
+            <p className="text-text-secondary mb-6">
               Use our tools to compare firms and find the perfect match for your trading style.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/compare"
-                className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors"
+                className="px-6 py-3 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-xl transition-colors"
               >
                 Compare Prop Firms
               </Link>
               <Link
                 href="/quick-match"
-                className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-xl transition-colors"
+                className="px-6 py-3 bg-dark-600 hover:bg-dark-500 text-white font-semibold rounded-xl transition-colors"
               >
                 Take the Quiz
               </Link>

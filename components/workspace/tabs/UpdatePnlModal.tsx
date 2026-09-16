@@ -51,25 +51,25 @@ export function UpdatePnlModal({ account, onClose }: UpdatePnlModalProps) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/70" onClick={onClose} />
 
-      <div className="relative bg-gray-900 rounded-xl border border-gray-800 w-full max-w-sm p-6">
+      <div className="relative bg-bg-elevated rounded-xl border border-border w-full max-w-sm p-6">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h2 className="text-lg font-semibold text-white">Update Today&apos;s P&L</h2>
-            <p className="text-sm text-gray-500">{account.prop_firm}</p>
+            <p className="text-sm text-text-muted">{account.prop_firm}</p>
           </div>
-          <button onClick={onClose} className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg">
+          <button onClick={onClose} className="p-2 text-text-secondary hover:text-white hover:bg-dark-700 rounded-lg">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm text-gray-400 mb-2">Today&apos;s P&L (USD)</label>
+          <label className="block text-sm text-text-secondary mb-2">Today&apos;s P&L (USD)</label>
           <input
             type="number"
             value={pnl}
             onChange={(e) => setPnl(e.target.value)}
             placeholder="0"
-            className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white text-lg placeholder-gray-600 focus:outline-none focus:border-emerald-500"
+            className="w-full px-4 py-3 bg-dark-700 border border-border rounded-lg text-white text-lg placeholder-text-muted focus:outline-none focus:border-accent"
             autoFocus
           />
         </div>
@@ -80,7 +80,7 @@ export function UpdatePnlModal({ account, onClose }: UpdatePnlModalProps) {
               key={amt}
               onClick={() => setPnl((parseFloat(pnl) || 0 + amt).toString())}
               className={`flex-1 py-2 text-sm rounded-lg transition-colors ${
-                amt < 0 ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30' : 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30'
+                amt < 0 ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30' : 'bg-accent/20 text-accent hover:bg-accent/30'
               }`}
             >
               {amt > 0 ? '+' : ''}${Math.abs(amt)}
@@ -93,7 +93,7 @@ export function UpdatePnlModal({ account, onClose }: UpdatePnlModalProps) {
         <button
           onClick={handleSave}
           disabled={isSaving}
-          className="w-full flex items-center justify-center gap-2 py-3 bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-700 disabled:text-gray-500 text-white font-medium rounded-lg transition-colors"
+          className="w-full flex items-center justify-center gap-2 py-3 bg-accent-hover hover:brightness-110 disabled:bg-dark-600 disabled:text-text-muted text-white font-medium rounded-lg transition-colors"
         >
           {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
           {isSaving ? 'Saving...' : 'Save P&L'}

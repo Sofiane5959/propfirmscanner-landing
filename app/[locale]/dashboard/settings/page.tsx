@@ -306,8 +306,8 @@ export default function SettingsPage() {
   // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
+      <div className="min-h-screen bg-bg-base flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-accent animate-spin" />
       </div>
     );
   }
@@ -317,12 +317,12 @@ export default function SettingsPage() {
   const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url;
 
   return (
-    <div className="min-h-screen bg-gray-950">
+    <div className="min-h-screen bg-bg-base">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Back Link */}
         <Link
           href={`/${locale}/dashboard`}
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors"
+          className="inline-flex items-center gap-2 text-text-secondary hover:text-white mb-6 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           {t.backToDashboard}
@@ -331,30 +331,30 @@ export default function SettingsPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Settings className="w-6 h-6 text-emerald-400" />
+            <Settings className="w-6 h-6 text-accent" />
             {t.accountSettings}
           </h1>
-          <p className="text-gray-400 mt-1">{t.manageProfile}</p>
+          <p className="text-text-secondary mt-1">{t.manageProfile}</p>
         </div>
 
         {/* Profile Section */}
-        <div className="bg-gray-900/50 rounded-2xl border border-gray-800 p-6 mb-6">
+        <div className="bg-bg-elevated/50 rounded-2xl border border-border p-6 mb-6">
           <h2 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
-            <User className="w-5 h-5 text-emerald-400" />
+            <User className="w-5 h-5 text-accent" />
             {t.profileInformation}
           </h2>
 
           {/* Avatar */}
-          <div className="flex items-center gap-4 mb-6 pb-6 border-b border-gray-800">
+          <div className="flex items-center gap-4 mb-6 pb-6 border-b border-border">
             {avatarUrl ? (
               <img src={avatarUrl} alt="Avatar" className="w-20 h-20 rounded-full" referrerPolicy="no-referrer" />
             ) : (
-              <div className="w-20 h-20 bg-emerald-500/20 rounded-full flex items-center justify-center">
-                <User className="w-10 h-10 text-emerald-400" />
+              <div className="w-20 h-20 bg-accent/20 rounded-full flex items-center justify-center">
+                <User className="w-10 h-10 text-accent" />
               </div>
             )}
             <div>
-              <p className="text-sm text-gray-400">{t.profilePictureSynced}</p>
+              <p className="text-sm text-text-secondary">{t.profilePictureSynced}</p>
             </div>
           </div>
 
@@ -362,21 +362,21 @@ export default function SettingsPage() {
           <div className="space-y-4">
             {/* Full Name */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-text-secondary mb-2">
                 {t.fullName}
               </label>
               <input
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
+                className="w-full px-4 py-3 bg-dark-700 border border-border rounded-lg text-white placeholder-text-muted focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors"
                 placeholder={t.enterYourName}
               />
             </div>
 
             {/* Email (read-only) */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-text-secondary mb-2">
                 {t.emailAddress}
               </label>
               <div className="flex items-center gap-3">
@@ -384,10 +384,10 @@ export default function SettingsPage() {
                   type="email"
                   value={user.email || ''}
                   disabled
-                  className="flex-1 px-4 py-3 bg-gray-800/50 border border-gray-700/50 rounded-lg text-gray-400 cursor-not-allowed"
+                  className="flex-1 px-4 py-3 bg-dark-700/50 border border-border/50 rounded-lg text-text-secondary cursor-not-allowed"
                 />
                 {user.email_confirmed_at ? (
-                  <div className="flex items-center gap-1 text-emerald-400 text-sm">
+                  <div className="flex items-center gap-1 text-accent text-sm">
                     <CheckCircle2 className="w-4 h-4" />
                     {t.verified}
                   </div>
@@ -398,7 +398,7 @@ export default function SettingsPage() {
                   </div>
                 )}
               </div>
-              <p className="text-xs text-gray-500 mt-1">{t.emailManagedByGoogle}</p>
+              <p className="text-xs text-text-muted mt-1">{t.emailManagedByGoogle}</p>
             </div>
 
             {/* Save Button */}
@@ -406,7 +406,7 @@ export default function SettingsPage() {
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 text-white rounded-lg transition-colors font-medium"
+                className="flex items-center gap-2 px-6 py-3 bg-accent-hover hover:brightness-110 disabled:bg-accent/50 text-white rounded-lg transition-colors font-medium"
               >
                 {saving ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -421,7 +421,7 @@ export default function SettingsPage() {
                 <div
                   className={`mt-4 p-3 rounded-lg flex items-center gap-2 ${
                     message.type === 'success'
-                      ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                      ? 'bg-accent/10 text-accent border border-accent/20'
                       : 'bg-red-500/10 text-red-400 border border-red-500/20'
                   }`}
                 >
@@ -438,29 +438,29 @@ export default function SettingsPage() {
         </div>
 
         {/* Account Info Section */}
-        <div className="bg-gray-900/50 rounded-2xl border border-gray-800 p-6 mb-6">
+        <div className="bg-bg-elevated/50 rounded-2xl border border-border p-6 mb-6">
           <h2 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
-            <Shield className="w-5 h-5 text-emerald-400" />
+            <Shield className="w-5 h-5 text-accent" />
             {t.accountInformation}
           </h2>
 
           <div className="space-y-4">
-            <div className="flex items-center justify-between py-3 border-b border-gray-800">
+            <div className="flex items-center justify-between py-3 border-b border-border">
               <div className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-gray-500" />
+                <Mail className="w-5 h-5 text-text-muted" />
                 <div>
                   <p className="text-sm font-medium text-white">{t.email}</p>
-                  <p className="text-sm text-gray-500">{user.email}</p>
+                  <p className="text-sm text-text-muted">{user.email}</p>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center justify-between py-3 border-b border-gray-800">
+            <div className="flex items-center justify-between py-3 border-b border-border">
               <div className="flex items-center gap-3">
-                <Calendar className="w-5 h-5 text-gray-500" />
+                <Calendar className="w-5 h-5 text-text-muted" />
                 <div>
                   <p className="text-sm font-medium text-white">{t.memberSince}</p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-text-muted">
                     {getLocaleDateString(user.created_at || new Date().toISOString())}
                   </p>
                 </div>
@@ -469,15 +469,15 @@ export default function SettingsPage() {
 
             <div className="flex items-center justify-between py-3">
               <div className="flex items-center gap-3">
-                <Shield className="w-5 h-5 text-gray-500" />
+                <Shield className="w-5 h-5 text-text-muted" />
                 <div>
                   <p className="text-sm font-medium text-white">{t.accountPlan}</p>
-                  <p className="text-sm text-gray-500">{t.freePlan}</p>
+                  <p className="text-sm text-text-muted">{t.freePlan}</p>
                 </div>
               </div>
               <Link
                 href={`/${locale}/mypropfirm`}
-                className="px-3 py-1.5 bg-emerald-500/10 text-emerald-400 text-sm rounded-lg hover:bg-emerald-500/20 transition-colors"
+                className="px-3 py-1.5 bg-accent/10 text-accent text-sm rounded-lg hover:bg-accent/20 transition-colors"
               >
                 {t.upgrade}
               </Link>
@@ -496,7 +496,7 @@ export default function SettingsPage() {
             <Trash2 className="w-5 h-5" />
             {t.dangerZone}
           </h2>
-          <p className="text-gray-400 text-sm mb-4">
+          <p className="text-text-secondary text-sm mb-4">
             {t.deleteAccountWarning}
           </p>
           <button className="px-4 py-2 bg-red-500/10 text-red-400 border border-red-500/30 rounded-lg hover:bg-red-500/20 transition-colors text-sm">

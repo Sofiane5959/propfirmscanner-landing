@@ -37,34 +37,34 @@ function ProgressBar({ label, used, max, unit = '%', color }: {
 }) {
   const pct = Math.min((Math.abs(used) / Math.abs(max)) * 100, 100);
   const colors = {
-    red: pct > 75 ? 'bg-red-500' : pct > 50 ? 'bg-yellow-500' : 'bg-emerald-500',
+    red: pct > 75 ? 'bg-red-500' : pct > 50 ? 'bg-yellow-500' : 'bg-accent-hover',
     yellow: pct > 75 ? 'bg-red-500' : pct > 50 ? 'bg-yellow-500' : 'bg-blue-500',
     blue: 'bg-blue-500',
-    green: pct >= 100 ? 'bg-emerald-400' : 'bg-purple-500',
+    green: pct >= 100 ? 'bg-accent' : 'bg-purple-500',
     purple: 'bg-purple-500',
   };
-  const textColor = pct > 75 ? 'text-red-400' : pct > 50 ? 'text-yellow-400' : 'text-gray-400';
+  const textColor = pct > 75 ? 'text-red-400' : pct > 50 ? 'text-yellow-400' : 'text-text-secondary';
 
   return (
     <div className="mb-5">
       <div className="flex justify-between items-center mb-2">
-        <span className="text-sm text-gray-300 font-medium">{label}</span>
+        <span className="text-sm text-text-secondary font-medium">{label}</span>
         <span className={`text-sm font-bold ${textColor}`}>
           {Math.abs(used).toFixed(2)}{unit} / {Math.abs(max)}{unit}
         </span>
       </div>
-      <div className="h-3 bg-gray-800 rounded-full overflow-hidden">
+      <div className="h-3 bg-dark-700 rounded-full overflow-hidden">
         <div
           className={`h-full rounded-full transition-all duration-500 ${colors[color]}`}
           style={{ width: `${pct}%` }}
         />
       </div>
       <div className="flex justify-between mt-1">
-        <span className="text-xs text-gray-600">0</span>
-        <span className={`text-xs font-medium ${pct > 75 ? 'text-red-400' : 'text-gray-500'}`}>
+        <span className="text-xs text-text-muted">0</span>
+        <span className={`text-xs font-medium ${pct > 75 ? 'text-red-400' : 'text-text-muted'}`}>
           {pct.toFixed(1)}% used
         </span>
-        <span className="text-xs text-gray-600">{Math.abs(max)}{unit}</span>
+        <span className="text-xs text-text-muted">{Math.abs(max)}{unit}</span>
       </div>
     </div>
   );
@@ -111,8 +111,8 @@ export default function AccountDetailPage() {
   };
 
   if (isLoading || loading) return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-      <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
+    <div className="min-h-screen bg-bg-base flex items-center justify-center">
+      <Loader2 className="w-8 h-8 text-accent animate-spin" />
     </div>
   );
   if (!account) return null;
@@ -131,18 +131,18 @@ export default function AccountDetailPage() {
     : null;
 
   return (
-    <div className="min-h-screen bg-gray-950">
+    <div className="min-h-screen bg-bg-base">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         {/* Back + Actions */}
         <div className="flex items-center justify-between mb-6">
           <Link href={`/${locale}/dashboard`}
-            className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm">
+            className="flex items-center gap-2 text-text-secondary hover:text-white transition-colors text-sm">
             <ChevronLeft className="w-4 h-4" /> Back to Dashboard
           </Link>
           <div className="flex items-center gap-2">
             <Link href={`/${locale}/dashboard/accounts/${account.id}/edit`}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors text-sm">
+              className="flex items-center gap-2 px-4 py-2 bg-dark-700 hover:bg-dark-600 text-white rounded-lg transition-colors text-sm">
               <Edit className="w-4 h-4" /> Edit
             </Link>
             <button onClick={() => setShowDeleteModal(true)}
@@ -164,17 +164,17 @@ export default function AccountDetailPage() {
         )}
 
         {/* Header Card */}
-        <div className="bg-gray-900/60 rounded-xl border border-gray-800 p-6 mb-6">
+        <div className="bg-bg-elevated/60 rounded-xl border border-border p-6 mb-6">
           <div className="flex items-start justify-between mb-4">
             <div>
               <h1 className="text-2xl font-bold text-white">{account.account_name}</h1>
-              <p className="text-gray-400">{account.firm_name} · ${account.initial_balance.toLocaleString()} account</p>
+              <p className="text-text-secondary">{account.firm_name} · ${account.initial_balance.toLocaleString()} account</p>
             </div>
             <div className="text-right">
-              <p className={`text-3xl font-bold ${pnl >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+              <p className={`text-3xl font-bold ${pnl >= 0 ? 'text-accent' : 'text-red-400'}`}>
                 {pnl >= 0 ? '+' : ''}${Math.round(pnl).toLocaleString()}
               </p>
-              <p className={`text-sm ${pnlPct >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+              <p className={`text-sm ${pnlPct >= 0 ? 'text-accent' : 'text-red-500'}`}>
                 {pnlPct >= 0 ? '+' : ''}{pnlPct.toFixed(2)}%
               </p>
             </div>
@@ -182,20 +182,20 @@ export default function AccountDetailPage() {
 
           {/* Quick Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div className="bg-gray-800/50 rounded-lg p-3">
-              <p className="text-xs text-gray-500 mb-1">Balance</p>
+            <div className="bg-dark-700/50 rounded-lg p-3">
+              <p className="text-xs text-text-muted mb-1">Balance</p>
               <p className="text-white font-semibold">${account.current_balance.toLocaleString()}</p>
             </div>
-            <div className="bg-gray-800/50 rounded-lg p-3">
-              <p className="text-xs text-gray-500 mb-1">Target</p>
+            <div className="bg-dark-700/50 rounded-lg p-3">
+              <p className="text-xs text-text-muted mb-1">Target</p>
               <p className="text-purple-400 font-semibold">{targetPct.toFixed(0)}% done</p>
             </div>
-            <div className={`rounded-lg p-3 ${isAtRisk ? 'bg-red-500/10' : 'bg-gray-800/50'}`}>
-              <p className="text-xs text-gray-500 mb-1">Drawdown</p>
+            <div className={`rounded-lg p-3 ${isAtRisk ? 'bg-red-500/10' : 'bg-dark-700/50'}`}>
+              <p className="text-xs text-text-muted mb-1">Drawdown</p>
               <p className={`font-semibold ${isAtRisk ? 'text-red-400' : 'text-white'}`}>{ddUsed.toFixed(2)}%</p>
             </div>
-            <div className="bg-gray-800/50 rounded-lg p-3">
-              <p className="text-xs text-gray-500 mb-1">Days left</p>
+            <div className="bg-dark-700/50 rounded-lg p-3">
+              <p className="text-xs text-text-muted mb-1">Days left</p>
               <p className={`font-semibold ${daysLeft !== null && daysLeft < 5 ? 'text-yellow-400' : 'text-white'}`}>
                 {daysLeft !== null ? `${daysLeft}d` : '—'}
               </p>
@@ -204,9 +204,9 @@ export default function AccountDetailPage() {
         </div>
 
         {/* Progress Bars */}
-        <div className="bg-gray-900/60 rounded-xl border border-gray-800 p-6 mb-6">
+        <div className="bg-bg-elevated/60 rounded-xl border border-border p-6 mb-6">
           <h2 className="text-base font-semibold text-white mb-5 flex items-center gap-2">
-            <Activity className="w-5 h-5 text-emerald-400" />
+            <Activity className="w-5 h-5 text-accent" />
             Challenge Progress
           </h2>
 
@@ -234,7 +234,7 @@ export default function AccountDetailPage() {
         </div>
 
         {/* Rules Summary */}
-        <div className="bg-gray-900/60 rounded-xl border border-gray-800 p-6 mb-6">
+        <div className="bg-bg-elevated/60 rounded-xl border border-border p-6 mb-6">
           <h2 className="text-base font-semibold text-white mb-4 flex items-center gap-2">
             <Shield className="w-5 h-5 text-blue-400" />
             Challenge Rules
@@ -248,10 +248,10 @@ export default function AccountDetailPage() {
               { label: 'End Date', value: account.challenge_end_date ? new Date(account.challenge_end_date).toLocaleDateString() : 'No limit', icon: Calendar },
               { label: 'Status', value: targetPct >= 100 ? '🎉 Target reached!' : isAtRisk ? '⚠️ At risk' : '✅ On track', icon: Target },
             ].map((item, i) => (
-              <div key={i} className="flex items-center gap-3 bg-gray-800/40 rounded-lg p-3">
-                <item.icon className="w-4 h-4 text-gray-500 shrink-0" />
+              <div key={i} className="flex items-center gap-3 bg-dark-700/40 rounded-lg p-3">
+                <item.icon className="w-4 h-4 text-text-muted shrink-0" />
                 <div>
-                  <p className="text-xs text-gray-500">{item.label}</p>
+                  <p className="text-xs text-text-muted">{item.label}</p>
                   <p className="text-sm text-white font-medium">{item.value}</p>
                 </div>
               </div>
@@ -260,7 +260,7 @@ export default function AccountDetailPage() {
         </div>
 
         {/* Risk Analysis */}
-        <div className="bg-gray-900/60 rounded-xl border border-gray-800 p-6">
+        <div className="bg-bg-elevated/60 rounded-xl border border-border p-6">
           <h2 className="text-base font-semibold text-white mb-4 flex items-center gap-2">
             <Target className="w-5 h-5 text-purple-400" />
             Risk Analysis
@@ -288,15 +288,15 @@ export default function AccountDetailPage() {
                 ok: ddPct < 75,
               },
             ].map((item, i) => (
-              <div key={i} className="flex items-center justify-between p-3 bg-gray-800/40 rounded-lg">
+              <div key={i} className="flex items-center justify-between p-3 bg-dark-700/40 rounded-lg">
                 <div className="flex items-center gap-2">
                   {item.ok
-                    ? <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    ? <CheckCircle2 className="w-4 h-4 text-accent" />
                     : <AlertTriangle className="w-4 h-4 text-yellow-400" />
                   }
-                  <span className="text-sm text-gray-300">{item.label}</span>
+                  <span className="text-sm text-text-secondary">{item.label}</span>
                 </div>
-                <span className={`text-sm font-bold ${item.ok ? 'text-emerald-400' : 'text-yellow-400'}`}>
+                <span className={`text-sm font-bold ${item.ok ? 'text-accent' : 'text-yellow-400'}`}>
                   {item.value}
                 </span>
               </div>
@@ -309,14 +309,14 @@ export default function AccountDetailPage() {
       {/* Delete Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-900 border border-gray-700 rounded-2xl p-6 max-w-sm w-full">
+          <div className="bg-bg-elevated border border-border rounded-2xl p-6 max-w-sm w-full">
             <h3 className="text-white font-bold text-lg mb-2">Delete Challenge?</h3>
-            <p className="text-gray-400 text-sm mb-6">
+            <p className="text-text-secondary text-sm mb-6">
               This will permanently delete <strong className="text-white">{account.account_name}</strong>. This cannot be undone.
             </p>
             <div className="flex gap-3">
               <button onClick={() => setShowDeleteModal(false)}
-                className="flex-1 py-2.5 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm transition-colors">
+                className="flex-1 py-2.5 bg-dark-700 hover:bg-dark-600 text-white rounded-lg text-sm transition-colors">
                 Cancel
               </button>
               <button onClick={handleDelete} disabled={deleting}

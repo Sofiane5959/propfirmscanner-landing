@@ -128,8 +128,8 @@ export default function FavoritesPage() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
+      <div className="min-h-screen bg-bg-base flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-accent animate-spin" />
       </div>
     );
   }
@@ -137,11 +137,11 @@ export default function FavoritesPage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gray-950">
+    <div className="min-h-screen bg-bg-base">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         {/* Back */}
-        <Link href={`/${locale}/dashboard`} className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors text-sm">
+        <Link href={`/${locale}/dashboard`} className="inline-flex items-center gap-2 text-text-secondary hover:text-white mb-6 transition-colors text-sm">
           <ArrowLeft className="w-4 h-4" /> Back to Dashboard
         </Link>
 
@@ -151,13 +151,13 @@ export default function FavoritesPage() {
             <h1 className="text-2xl font-bold text-white flex items-center gap-2">
               <Star className="w-6 h-6 text-yellow-400" /> My Favorites
             </h1>
-            <p className="text-gray-400 mt-1 text-sm">
+            <p className="text-text-secondary mt-1 text-sm">
               {favorites.length} saved prop firm{favorites.length !== 1 ? 's' : ''}
             </p>
           </div>
           <Link href={`/${locale}/compare`}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg transition-colors text-sm">
-            <BarChart3 className="w-4 h-4 text-emerald-400" /> Browse firms
+            className="flex items-center gap-2 px-4 py-2 bg-dark-700 hover:bg-dark-600 text-text-secondary rounded-lg transition-colors text-sm">
+            <BarChart3 className="w-4 h-4 text-accent" /> Browse firms
           </Link>
         </div>
 
@@ -171,20 +171,20 @@ export default function FavoritesPage() {
         {/* Loading */}
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
+            <Loader2 className="w-8 h-8 text-accent animate-spin" />
           </div>
 
         ) : favorites.length === 0 ? (
-          <div className="bg-gray-900/50 rounded-2xl border border-dashed border-gray-700 p-12 text-center">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800 flex items-center justify-center">
-              <Star className="w-8 h-8 text-gray-600" />
+          <div className="bg-bg-elevated/50 rounded-2xl border border-dashed border-border p-12 text-center">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-dark-700 flex items-center justify-center">
+              <Star className="w-8 h-8 text-text-muted" />
             </div>
             <h2 className="text-xl font-semibold text-white mb-2">No favorites yet</h2>
-            <p className="text-gray-400 mb-6 max-w-md mx-auto text-sm">
+            <p className="text-text-secondary mb-6 max-w-md mx-auto text-sm">
               Browse and compare prop firms, then save your favorites for easy access.
             </p>
             <Link href={`/${locale}/compare`}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors font-medium">
+              className="inline-flex items-center gap-2 px-6 py-3 bg-accent-hover hover:brightness-110 text-white rounded-lg transition-colors font-medium">
               <BarChart3 className="w-5 h-5" /> Compare Prop Firms
             </Link>
           </div>
@@ -194,11 +194,11 @@ export default function FavoritesPage() {
             {favorites.map((favorite) => {
               const firm = favorite.firm;
               if (!firm) return (
-                <div key={favorite.id} className="bg-gray-900/60 rounded-xl border border-gray-800 p-4">
+                <div key={favorite.id} className="bg-bg-elevated/60 rounded-xl border border-border p-4">
                   <div className="flex items-center justify-between">
-                    <p className="text-gray-500 text-sm">Firm data not found</p>
+                    <p className="text-text-muted text-sm">Firm data not found</p>
                     <button onClick={() => removeFavorite(favorite.id)}
-                      className="p-2 text-gray-600 hover:text-red-400 rounded-lg transition-colors">
+                      className="p-2 text-text-muted hover:text-red-400 rounded-lg transition-colors">
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
@@ -211,19 +211,19 @@ export default function FavoritesPage() {
 
               return (
                 <div key={favorite.id}
-                  className="bg-gray-900/60 rounded-xl border border-gray-800 hover:border-gray-700 transition-colors p-4">
+                  className="bg-bg-elevated/60 rounded-xl border border-border hover:border-border-hover transition-colors p-4">
                   <div className="flex items-center gap-4">
                     <a
                       href={firmUrl ? `/api/go/${firm.slug}?source=dashboard-favorites-logo` : '#'}
                       target={firmUrl ? '_blank' : undefined}
                       rel="noopener noreferrer"
                       onClick={firmUrl ? undefined : (e) => e.preventDefault()}
-                      className={`w-12 h-12 rounded-xl bg-white flex items-center justify-center overflow-hidden shrink-0 border border-gray-200 p-1 transition-all ${firmUrl ? 'hover:ring-2 hover:ring-emerald-400 hover:scale-105' : 'cursor-default'}`}
+                      className={`w-12 h-12 rounded-xl bg-white flex items-center justify-center overflow-hidden shrink-0 border border-gray-200 p-1 transition-all ${firmUrl ? 'hover:ring-2 hover:ring-accent hover:scale-105' : 'cursor-default'}`}
                     >
                       {logoUrl ? (
                         <img src={logoUrl} alt={firm.name} className="w-full h-full object-contain" />
                       ) : (
-                        <span className="text-lg font-bold text-gray-500">{firm.name?.charAt(0)}</span>
+                        <span className="text-lg font-bold text-text-muted">{firm.name?.charAt(0)}</span>
                       )}
                     </a>
 
@@ -231,14 +231,14 @@ export default function FavoritesPage() {
                       <div className="flex items-center gap-2 flex-wrap">
                         {firmUrl ? (
                           <a href={`/api/go/${firm.slug}?source=dashboard-favorites-name`} target="_blank" rel="noopener noreferrer"
-                            className="font-semibold text-white hover:text-emerald-400 transition-colors">
+                            className="font-semibold text-white hover:text-accent transition-colors">
                             {firm.name}
                           </a>
                         ) : (
                           <h3 className="font-semibold text-white">{firm.name}</h3>
                         )}
                         {firm.country && (
-                          <span className="text-xs text-gray-500">{COUNTRY_FLAGS[firm.country] || ''} {firm.country}</span>
+                          <span className="text-xs text-text-muted">{COUNTRY_FLAGS[firm.country] || ''} {firm.country}</span>
                         )}
                       </div>
                       <div className="flex items-center gap-4 mt-1 flex-wrap">
@@ -246,20 +246,20 @@ export default function FavoritesPage() {
                           <span className="flex items-center gap-1 text-xs text-yellow-400">
                             <Star className="w-3 h-3 fill-yellow-400" /> {score.toFixed(1)}
                             {firm.trustpilot_reviews
-                              ? <span className="text-gray-500">({firm.trustpilot_reviews.toLocaleString()})</span>
+                              ? <span className="text-text-muted">({firm.trustpilot_reviews.toLocaleString()})</span>
                               : null}
                           </span>
                         )}
                         {firm.min_price && (
-                          <span className="text-xs text-gray-400">From ${firm.min_price}</span>
+                          <span className="text-xs text-text-secondary">From ${firm.min_price}</span>
                         )}
                         {firm.max_profit_split && (
-                          <span className="text-xs text-emerald-400 flex items-center gap-1">
+                          <span className="text-xs text-accent flex items-center gap-1">
                             <TrendingUp className="w-3 h-3" /> Up to {firm.max_profit_split}%
                           </span>
                         )}
                         {toArray(firm.challenge_types).slice(0, 3).map((t) => (
-                          <span key={t} className="text-xs bg-gray-800 text-gray-400 px-1.5 py-0.5 rounded">
+                          <span key={t} className="text-xs bg-dark-700 text-text-secondary px-1.5 py-0.5 rounded">
                             {t.replace('_Steps', '-Step').replace('_', ' ')}
                           </span>
                         ))}
@@ -269,14 +269,14 @@ export default function FavoritesPage() {
                     <div className="flex items-center gap-1 shrink-0">
                       {firm.affiliate_url && (
                         <a href={`/api/go/${firm.slug}?source=dashboard-favorites-button`} target="_blank" rel="noopener noreferrer"
-                          className="p-2 text-gray-400 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition-colors"
+                          className="p-2 text-text-secondary hover:text-accent hover:bg-accent/10 rounded-lg transition-colors"
                           title="Visit firm">
                           <ExternalLink className="w-4 h-4" />
                         </a>
                       )}
                       <button onClick={() => removeFavorite(favorite.id)}
                         disabled={removing === favorite.id}
-                        className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
+                        className="p-2 text-text-secondary hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
                         title="Remove from favorites">
                         {removing === favorite.id
                           ? <Loader2 className="w-4 h-4 animate-spin" />
@@ -288,14 +288,14 @@ export default function FavoritesPage() {
               );
             })}
 
-            <div className="mt-6 p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-xl">
+            <div className="mt-6 p-4 bg-accent/5 border border-accent/20 rounded-xl">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="font-medium text-white text-sm">Want to compare your favorites?</p>
-                  <p className="text-xs text-gray-400">See them side by side to make a decision</p>
+                  <p className="text-xs text-text-secondary">See them side by side to make a decision</p>
                 </div>
                 <Link href={`/${locale}/compare`}
-                  className="shrink-0 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors text-sm font-medium">
+                  className="shrink-0 px-4 py-2 bg-accent-hover hover:brightness-110 text-white rounded-lg transition-colors text-sm font-medium">
                   Compare Now →
                 </Link>
               </div>

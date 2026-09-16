@@ -65,24 +65,24 @@ export default function TableOfContents({
   if (items.length === 0) return null
 
   return (
-    <nav className="bg-gray-800/50 border border-gray-700 rounded-xl overflow-hidden">
+    <nav className="bg-dark-700/50 border border-border rounded-xl overflow-hidden">
       {/* Header */}
       <button
         onClick={() => collapsible && setIsOpen(!isOpen)}
         className={`w-full flex items-center justify-between p-4 ${
-          collapsible ? 'cursor-pointer hover:bg-gray-700/50' : ''
+          collapsible ? 'cursor-pointer hover:bg-dark-600/50' : ''
         }`}
         disabled={!collapsible}
       >
         <div className="flex items-center gap-2">
-          <List className="w-5 h-5 text-emerald-400" />
+          <List className="w-5 h-5 text-accent" />
           <span className="text-white font-semibold">Table of Contents</span>
         </div>
         {collapsible && (
           isOpen ? (
-            <ChevronUp className="w-5 h-5 text-gray-400" />
+            <ChevronUp className="w-5 h-5 text-text-secondary" />
           ) : (
-            <ChevronDown className="w-5 h-5 text-gray-400" />
+            <ChevronDown className="w-5 h-5 text-text-secondary" />
           )
         )}
       </button>
@@ -103,8 +103,8 @@ export default function TableOfContents({
                   onClick={() => scrollToSection(item.id)}
                   className={`w-full text-left py-1.5 px-3 rounded-lg text-sm transition-colors ${
                     activeId === item.id
-                      ? 'bg-emerald-500/10 text-emerald-400 font-medium'
-                      : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
+                      ? 'bg-accent/10 text-accent font-medium'
+                      : 'text-text-secondary hover:text-white hover:bg-dark-600/50'
                   }`}
                 >
                   {item.title}

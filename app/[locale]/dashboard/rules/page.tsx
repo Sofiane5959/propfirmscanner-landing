@@ -274,20 +274,20 @@ export default function RulesPage() {
   )
   
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-bg-elevated">
       {/* Header */}
-      <header className="border-b border-gray-800 bg-gray-900/95 backdrop-blur sticky top-0 z-50">
+      <header className="border-b border-border bg-bg-elevated/95 backdrop-blur sticky top-0 z-50">
         <div className="max-w-3xl mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
-            <Link href={`/${locale}/dashboard`} className="p-2 hover:bg-gray-800 rounded-lg transition-colors">
-              <ArrowLeft className="w-5 h-5 text-gray-400" />
+            <Link href={`/${locale}/dashboard`} className="p-2 hover:bg-dark-700 rounded-lg transition-colors">
+              <ArrowLeft className="w-5 h-5 text-text-secondary" />
             </Link>
             <div>
               <h1 className="text-lg font-bold text-white flex items-center gap-2">
                 <BookOpen className="w-5 h-5 text-purple-400" />
                 {t.rulesHiddenRisks}
               </h1>
-              <p className="text-sm text-gray-500">{t.avoidMistakes}</p>
+              <p className="text-sm text-text-muted">{t.avoidMistakes}</p>
             </div>
           </div>
         </div>
@@ -296,13 +296,13 @@ export default function RulesPage() {
       <main className="max-w-3xl mx-auto px-4 py-6">
         {/* Search */}
         <div className="relative mb-6">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t.searchPropFirms}
-            className="w-full pl-12 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder:text-gray-500 focus:outline-none focus:border-purple-500"
+            className="w-full pl-12 pr-4 py-3 bg-dark-700 border border-border rounded-xl text-white placeholder:text-text-muted focus:outline-none focus:border-purple-500"
           />
         </div>
         
@@ -311,12 +311,12 @@ export default function RulesPage() {
           {filteredFirms.map(firm => (
             <div 
               key={firm.slug}
-              className="bg-gray-800/50 border border-gray-700/50 rounded-xl overflow-hidden"
+              className="bg-dark-700/50 border border-border/50 rounded-xl overflow-hidden"
             >
               {/* Firm Header */}
               <button
                 onClick={() => setExpandedFirm(expandedFirm === firm.slug ? null : firm.slug)}
-                className="w-full p-4 flex items-center justify-between hover:bg-gray-800/50 transition-colors"
+                className="w-full p-4 flex items-center justify-between hover:bg-dark-700/50 transition-colors"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
@@ -325,9 +325,9 @@ export default function RulesPage() {
                   <span className="font-semibold text-white">{firm.name}</span>
                 </div>
                 {expandedFirm === firm.slug ? (
-                  <ChevronUp className="w-5 h-5 text-gray-400" />
+                  <ChevronUp className="w-5 h-5 text-text-secondary" />
                 ) : (
-                  <ChevronDown className="w-5 h-5 text-gray-400" />
+                  <ChevronDown className="w-5 h-5 text-text-secondary" />
                 )}
               </button>
               
@@ -336,14 +336,14 @@ export default function RulesPage() {
                 <div className="px-4 pb-4 space-y-4">
                   {/* Key Rules */}
                   <div>
-                    <h3 className="text-sm font-medium text-gray-400 uppercase tracking-wide mb-2">{t.keyRules}</h3>
-                    <div className="bg-gray-900/50 rounded-lg divide-y divide-gray-800">
+                    <h3 className="text-sm font-medium text-text-secondary uppercase tracking-wide mb-2">{t.keyRules}</h3>
+                    <div className="bg-bg-elevated/50 rounded-lg divide-y divide-border">
                       {firm.keyRules.map((item, i) => (
                         <div key={i} className="flex justify-between py-2 px-3 text-sm">
-                          <span className="text-gray-400">{item.rule}</span>
+                          <span className="text-text-secondary">{item.rule}</span>
                           <span className={
                             item.type === 'warning' ? 'text-yellow-400' :
-                            item.type === 'allowed' ? 'text-emerald-400' :
+                            item.type === 'allowed' ? 'text-accent' :
                             'text-white'
                           }>
                             {item.value}
@@ -362,7 +362,7 @@ export default function RulesPage() {
                     <div className="bg-yellow-500/5 border border-yellow-500/20 rounded-lg p-3">
                       <ul className="space-y-2">
                         {firm.hiddenRules.map((rule, i) => (
-                          <li key={i} className="flex items-start gap-2 text-sm text-gray-300">
+                          <li key={i} className="flex items-start gap-2 text-sm text-text-secondary">
                             <span className="text-yellow-400 mt-0.5">⚠️</span>
                             {rule}
                           </li>
@@ -380,7 +380,7 @@ export default function RulesPage() {
                     <div className="bg-red-500/5 border border-red-500/20 rounded-lg p-3">
                       <ul className="space-y-2">
                         {firm.commonMistakes.map((mistake, i) => (
-                          <li key={i} className="flex items-start gap-2 text-sm text-gray-300">
+                          <li key={i} className="flex items-start gap-2 text-sm text-text-secondary">
                             <span className="text-red-400 mt-0.5">✗</span>
                             {mistake}
                           </li>
@@ -392,15 +392,15 @@ export default function RulesPage() {
                   {/* Best For / Avoid If */}
                   <div className="grid md:grid-cols-2 gap-3">
                     <div>
-                      <h3 className="text-sm font-medium text-emerald-400 uppercase tracking-wide mb-2 flex items-center gap-2">
+                      <h3 className="text-sm font-medium text-accent uppercase tracking-wide mb-2 flex items-center gap-2">
                         <Check className="w-4 h-4" />
                         {t.bestFor}
                       </h3>
-                      <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-lg p-3">
+                      <div className="bg-accent/5 border border-accent/20 rounded-lg p-3">
                         <ul className="space-y-1">
                           {firm.bestFor.map((item, i) => (
-                            <li key={i} className="flex items-center gap-2 text-sm text-gray-300">
-                              <span className="text-emerald-400">✓</span>
+                            <li key={i} className="flex items-center gap-2 text-sm text-text-secondary">
+                              <span className="text-accent">✓</span>
                               {item}
                             </li>
                           ))}
@@ -415,7 +415,7 @@ export default function RulesPage() {
                       <div className="bg-red-500/5 border border-red-500/20 rounded-lg p-3">
                         <ul className="space-y-1">
                           {firm.avoidIf.map((item, i) => (
-                            <li key={i} className="flex items-center gap-2 text-sm text-gray-300">
+                            <li key={i} className="flex items-center gap-2 text-sm text-text-secondary">
                               <span className="text-red-400">✗</span>
                               {item}
                             </li>

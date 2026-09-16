@@ -328,8 +328,8 @@ export default function AccountsListPage() {
   // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
+      <div className="min-h-screen bg-bg-base flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-accent animate-spin" />
       </div>
     );
   }
@@ -338,7 +338,7 @@ export default function AccountsListPage() {
 
   
   return (
-    <div className="min-h-screen bg-gray-950">
+    <div className="min-h-screen bg-bg-base">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
         {/* Header */}
@@ -346,22 +346,22 @@ export default function AccountsListPage() {
           <div>
             <Link
               href={`/${locale}/dashboard`}
-              className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-4 transition-colors"
+              className="inline-flex items-center gap-2 text-text-secondary hover:text-white mb-4 transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
               {t.backToDashboard}
             </Link>
             <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-              <Shield className="w-6 h-6 text-emerald-400" />
+              <Shield className="w-6 h-6 text-accent" />
               {t.myAccounts}
             </h1>
-            <p className="text-gray-400 mt-1">
+            <p className="text-text-secondary mt-1">
               {t.manageAccounts}
             </p>
           </div>
           <Link
             href={`/${locale}/dashboard/accounts/new`}
-            className="flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-accent-hover hover:brightness-110 text-white rounded-lg transition-colors"
           >
             <Plus className="w-4 h-4" />
             {t.addAccount}
@@ -370,37 +370,37 @@ export default function AccountsListPage() {
 
         {/* Accounts List */}
         {loadingAccounts ? (
-          <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-12 flex items-center justify-center">
-            <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
+          <div className="bg-bg-elevated/50 rounded-xl border border-border p-12 flex items-center justify-center">
+            <Loader2 className="w-8 h-8 text-accent animate-spin" />
           </div>
         ) : accounts.length === 0 ? (
-          <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-12 text-center">
-            <div className="w-20 h-20 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Shield className="w-10 h-10 text-gray-600" />
+          <div className="bg-bg-elevated/50 rounded-xl border border-border p-12 text-center">
+            <div className="w-20 h-20 bg-dark-700 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Shield className="w-10 h-10 text-text-muted" />
             </div>
             <h2 className="text-xl font-bold text-white mb-2">{t.noAccountsYet}</h2>
-            <p className="text-gray-400 mb-6">
+            <p className="text-text-secondary mb-6">
               {t.startTracking}
             </p>
             <Link
               href={`/${locale}/dashboard/accounts/new`}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-accent-hover hover:brightness-110 text-white rounded-lg transition-colors"
             >
               <Plus className="w-4 h-4" />
               {t.addFirstAccount}
             </Link>
           </div>
         ) : (
-          <div className="bg-gray-900/50 rounded-xl border border-gray-800 overflow-hidden">
+          <div className="bg-bg-elevated/50 rounded-xl border border-border overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-800 bg-gray-900/50">
-                  <th className="text-left p-4 text-gray-400 font-medium">{t.account}</th>
-                  <th className="text-left p-4 text-gray-400 font-medium hidden md:table-cell">{t.firm}</th>
-                  <th className="text-right p-4 text-gray-400 font-medium">{t.balance}</th>
-                  <th className="text-right p-4 text-gray-400 font-medium hidden sm:table-cell">{t.pl}</th>
-                  <th className="text-right p-4 text-gray-400 font-medium hidden lg:table-cell">{t.drawdown}</th>
-                  <th className="text-center p-4 text-gray-400 font-medium w-20">{t.actions}</th>
+                <tr className="border-b border-border bg-bg-elevated/50">
+                  <th className="text-left p-4 text-text-secondary font-medium">{t.account}</th>
+                  <th className="text-left p-4 text-text-secondary font-medium hidden md:table-cell">{t.firm}</th>
+                  <th className="text-right p-4 text-text-secondary font-medium">{t.balance}</th>
+                  <th className="text-right p-4 text-text-secondary font-medium hidden sm:table-cell">{t.pl}</th>
+                  <th className="text-right p-4 text-text-secondary font-medium hidden lg:table-cell">{t.drawdown}</th>
+                  <th className="text-center p-4 text-text-secondary font-medium w-20">{t.actions}</th>
                 </tr>
               </thead>
               <tbody>
@@ -414,15 +414,15 @@ export default function AccountsListPage() {
                   const drawdownPercent = maxDrawdownAmount > 0 ? (currentDrawdown / maxDrawdownAmount) * 100 : 0;
                   
                   return (
-                    <tr key={account.id} className="border-b border-gray-800/50 hover:bg-gray-800/30 transition-colors">
+                    <tr key={account.id} className="border-b border-border/50 hover:bg-dark-700/30 transition-colors">
                       <td className="p-4">
                         <div>
                           <p className="font-medium text-white">{account.account_name}</p>
-                          <p className="text-sm text-gray-500 md:hidden">{account.firm_name}</p>
+                          <p className="text-sm text-text-muted md:hidden">{account.firm_name}</p>
                         </div>
                       </td>
                       <td className="p-4 hidden md:table-cell">
-                        <span className="text-gray-300">{account.firm_name}</span>
+                        <span className="text-text-secondary">{account.firm_name}</span>
                       </td>
                       <td className="p-4 text-right">
                         <span className="font-medium text-white">
@@ -430,7 +430,7 @@ export default function AccountsListPage() {
                         </span>
                       </td>
                       <td className="p-4 text-right hidden sm:table-cell">
-                        <div className={`flex items-center justify-end gap-1 ${isProfit ? 'text-emerald-500' : 'text-red-500'}`}>
+                        <div className={`flex items-center justify-end gap-1 ${isProfit ? 'text-accent' : 'text-red-500'}`}>
                           {isProfit ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
                           <span className="font-medium">
                             {isProfit ? '+' : ''}{profitPercent.toFixed(1)}%
@@ -440,7 +440,7 @@ export default function AccountsListPage() {
                       <td className="p-4 text-right hidden lg:table-cell">
                         <div className={`flex items-center justify-end gap-1 ${
                           drawdownPercent >= 80 ? 'text-red-500' : 
-                          drawdownPercent >= 50 ? 'text-yellow-500' : 'text-gray-400'
+                          drawdownPercent >= 50 ? 'text-yellow-500' : 'text-text-secondary'
                         }`}>
                           {drawdownPercent >= 80 && <AlertTriangle className="w-4 h-4" />}
                           <span>{drawdownPercent.toFixed(1)}%</span>
@@ -450,9 +450,9 @@ export default function AccountsListPage() {
                         <div className="relative flex justify-center">
                           <button
                             onClick={() => setMenuOpen(menuOpen === account.id ? null : account.id)}
-                            className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+                            className="p-2 hover:bg-dark-600 rounded-lg transition-colors"
                           >
-                            <MoreVertical className="w-4 h-4 text-gray-400" />
+                            <MoreVertical className="w-4 h-4 text-text-secondary" />
                           </button>
                           
                           {menuOpen === account.id && (
@@ -461,10 +461,10 @@ export default function AccountsListPage() {
                                 className="fixed inset-0 z-40" 
                                 onClick={() => setMenuOpen(null)}
                               />
-                              <div className="absolute right-0 top-full mt-1 w-36 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-50">
+                              <div className="absolute right-0 top-full mt-1 w-36 bg-dark-700 border border-border rounded-lg shadow-lg z-50">
                                 <Link
                                   href={`/${locale}/dashboard/accounts/${account.id}/edit`}
-                                  className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:bg-gray-700 transition-colors"
+                                  className="flex items-center gap-2 px-4 py-2 text-text-secondary hover:bg-dark-600 transition-colors"
                                   onClick={() => setMenuOpen(null)}
                                 >
                                   <Pencil className="w-4 h-4" />
@@ -476,7 +476,7 @@ export default function AccountsListPage() {
                                     setDeleteModalOpen(true);
                                     setMenuOpen(null);
                                   }}
-                                  className="flex items-center gap-2 px-4 py-2 text-red-400 hover:bg-gray-700 transition-colors w-full"
+                                  className="flex items-center gap-2 px-4 py-2 text-red-400 hover:bg-dark-600 transition-colors w-full"
                                 >
                                   <Trash2 className="w-4 h-4" />
                                   {t.delete}
@@ -497,35 +497,35 @@ export default function AccountsListPage() {
         {/* Stats Summary */}
         {accounts.length > 0 && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-            <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-4">
-              <p className="text-gray-400 text-sm">{t.totalAccounts}</p>
+            <div className="bg-bg-elevated/50 rounded-xl border border-border p-4">
+              <p className="text-text-secondary text-sm">{t.totalAccounts}</p>
               <p className="text-2xl font-bold text-white">{accounts.length}</p>
             </div>
-            <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-4">
-              <p className="text-gray-400 text-sm">{t.totalBalance}</p>
+            <div className="bg-bg-elevated/50 rounded-xl border border-border p-4">
+              <p className="text-text-secondary text-sm">{t.totalBalance}</p>
               <p className="text-2xl font-bold text-white">
                 ${accounts.reduce((sum, a) => sum + a.current_balance, 0).toLocaleString()}
               </p>
             </div>
-            <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-4">
-              <p className="text-gray-400 text-sm">{t.totalPL}</p>
+            <div className="bg-bg-elevated/50 rounded-xl border border-border p-4">
+              <p className="text-text-secondary text-sm">{t.totalPL}</p>
               {(() => {
                 const totalPL = accounts.reduce((sum, a) => sum + (a.current_balance - a.initial_balance), 0);
                 return (
-                  <p className={`text-2xl font-bold ${totalPL >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+                  <p className={`text-2xl font-bold ${totalPL >= 0 ? 'text-accent' : 'text-red-500'}`}>
                     {totalPL >= 0 ? '+' : ''}${totalPL.toLocaleString()}
                   </p>
                 );
               })()}
             </div>
-            <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-4">
-              <p className="text-gray-400 text-sm">{t.avgPL}</p>
+            <div className="bg-bg-elevated/50 rounded-xl border border-border p-4">
+              <p className="text-text-secondary text-sm">{t.avgPL}</p>
               {(() => {
                 const avgPL = accounts.reduce((sum, a) => {
                   return sum + ((a.current_balance - a.initial_balance) / a.initial_balance * 100);
                 }, 0) / accounts.length;
                 return (
-                  <p className={`text-2xl font-bold ${avgPL >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+                  <p className={`text-2xl font-bold ${avgPL >= 0 ? 'text-accent' : 'text-red-500'}`}>
                     {avgPL >= 0 ? '+' : ''}{avgPL.toFixed(1)}%
                   </p>
                 );
@@ -539,10 +539,10 @@ export default function AccountsListPage() {
       {deleteModalOpen && accountToDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/70" onClick={() => setDeleteModalOpen(false)} />
-          <div className="relative bg-gray-900 rounded-xl border border-gray-800 p-6 max-w-md w-full">
+          <div className="relative bg-bg-elevated rounded-xl border border-border p-6 max-w-md w-full">
             <button
               onClick={() => setDeleteModalOpen(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+              className="absolute top-4 right-4 text-text-secondary hover:text-white"
             >
               <X className="w-5 h-5" />
             </button>
@@ -552,7 +552,7 @@ export default function AccountsListPage() {
                 <Trash2 className="w-8 h-8 text-red-500" />
               </div>
               <h2 className="text-xl font-bold text-white mb-2">{t.deleteAccount}</h2>
-              <p className="text-gray-400 mb-6">
+              <p className="text-text-secondary mb-6">
                 {t.deleteConfirm} <strong className="text-white">{accountToDelete.account_name}</strong>? 
                 {t.deleteWarning}
               </p>
@@ -560,7 +560,7 @@ export default function AccountsListPage() {
               <div className="flex gap-3">
                 <button
                   onClick={() => setDeleteModalOpen(false)}
-                  className="flex-1 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors"
+                  className="flex-1 px-4 py-2 bg-dark-700 hover:bg-dark-600 text-white rounded-lg transition-colors"
                 >
                   {t.cancel}
                 </button>

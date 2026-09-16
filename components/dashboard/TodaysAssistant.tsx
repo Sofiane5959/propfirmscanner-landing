@@ -56,15 +56,15 @@ export function TodaysAssistant({ warnings }: TodaysAssistantProps) {
   return (
     <div className="space-y-4 sticky top-24">
       {/* Header */}
-      <div className="bg-gradient-to-br from-emerald-900/50 to-emerald-800/30 rounded-xl p-4 border border-emerald-500/20">
+      <div className="bg-gradient-to-br from-emerald-900/50 to-emerald-800/30 rounded-xl p-4 border border-accent/20">
         <h2 className="text-lg font-semibold text-white mb-1">Today's Assistant</h2>
-        <p className="text-sm text-emerald-300/80">{greeting}! Here's your trading brief.</p>
+        <p className="text-sm text-accent/80">{greeting}! Here's your trading brief.</p>
       </div>
 
       {/* Warnings Section */}
       {warnings.length > 0 ? (
-        <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-700 flex items-center justify-between">
+        <div className="bg-dark-700 rounded-xl border border-border overflow-hidden">
+          <div className="px-4 py-3 border-b border-border flex items-center justify-between">
             <h3 className="font-medium text-white flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 text-yellow-400" />
               Active Warnings
@@ -74,7 +74,7 @@ export function TodaysAssistant({ warnings }: TodaysAssistantProps) {
             </span>
           </div>
 
-          <div className="divide-y divide-gray-700">
+          <div className="divide-y divide-border">
             {warnings.map((warning, index) => (
               <div key={index} className="p-4">
                 <div className="flex items-start gap-3">
@@ -105,73 +105,73 @@ export function TodaysAssistant({ warnings }: TodaysAssistantProps) {
           </div>
         </div>
       ) : (
-        <div className="bg-gray-800 rounded-xl border border-gray-700 p-4">
+        <div className="bg-dark-700 rounded-xl border border-border p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-emerald-500/20 rounded-lg">
-              <CheckCircle className="w-5 h-5 text-emerald-400" />
+            <div className="p-2 bg-accent/20 rounded-lg">
+              <CheckCircle className="w-5 h-5 text-accent" />
             </div>
             <div>
               <h3 className="font-medium text-white">All Clear!</h3>
-              <p className="text-sm text-gray-400">No warnings at this time</p>
+              <p className="text-sm text-text-secondary">No warnings at this time</p>
             </div>
           </div>
         </div>
       )}
 
       {/* Quick Tip */}
-      <div className="bg-gray-800 rounded-xl border border-gray-700 p-4">
+      <div className="bg-dark-700 rounded-xl border border-border p-4">
         <div className="flex items-start gap-3">
           <div className="p-2 bg-purple-500/20 rounded-lg">
             <Lightbulb className="w-5 h-5 text-purple-400" />
           </div>
           <div>
             <h3 className="font-medium text-white">{randomTip.title}</h3>
-            <p className="text-sm text-gray-400 mt-1">{randomTip.tip}</p>
+            <p className="text-sm text-text-secondary mt-1">{randomTip.tip}</p>
           </div>
         </div>
       </div>
 
       {/* Quick Links */}
-      <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
-        <div className="px-4 py-3 border-b border-gray-700">
+      <div className="bg-dark-700 rounded-xl border border-border overflow-hidden">
+        <div className="px-4 py-3 border-b border-border">
           <h3 className="font-medium text-white">Quick Actions</h3>
         </div>
         <div className="p-2">
           <Link
             href="/dashboard/rules"
-            className="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors"
+            className="flex items-center gap-3 px-3 py-2 text-text-secondary hover:bg-dark-600 rounded-lg transition-colors"
           >
-            <Shield className="w-4 h-4 text-gray-500" />
+            <Shield className="w-4 h-4 text-text-muted" />
             <span className="text-sm">View All Rules</span>
           </Link>
           <Link
             href="/dashboard/accounts/new"
-            className="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors"
+            className="flex items-center gap-3 px-3 py-2 text-text-secondary hover:bg-dark-600 rounded-lg transition-colors"
           >
-            <TrendingUp className="w-4 h-4 text-gray-500" />
+            <TrendingUp className="w-4 h-4 text-text-muted" />
             <span className="text-sm">Add New Account</span>
           </Link>
         </div>
       </div>
 
       {/* Market Status (Simple) */}
-      <div className="bg-gray-800 rounded-xl border border-gray-700 p-4">
+      <div className="bg-dark-700 rounded-xl border border-border p-4">
         <h3 className="font-medium text-white mb-3 flex items-center gap-2">
-          <Clock className="w-4 h-4 text-gray-400" />
+          <Clock className="w-4 h-4 text-text-secondary" />
           Market Hours
         </h3>
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
-            <span className="text-gray-400">Forex</span>
-            <span className="text-emerald-400">Open 24/5</span>
+            <span className="text-text-secondary">Forex</span>
+            <span className="text-accent">Open 24/5</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-400">US Stocks</span>
-            <span className="text-gray-500">Check local time</span>
+            <span className="text-text-secondary">US Stocks</span>
+            <span className="text-text-muted">Check local time</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-400">Futures</span>
-            <span className="text-emerald-400">Open 23/5</span>
+            <span className="text-text-secondary">Futures</span>
+            <span className="text-accent">Open 23/5</span>
           </div>
         </div>
       </div>

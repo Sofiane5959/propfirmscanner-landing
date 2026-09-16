@@ -158,11 +158,11 @@ export default async function CategoryPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(categorySchema) }}
       />
       
-      <div className="min-h-screen bg-gray-900 pt-20 pb-16">
+      <div className="min-h-screen bg-bg-elevated pt-20 pb-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           
           {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-sm text-gray-400 mb-6">
+          <div className="flex items-center gap-2 text-sm text-text-secondary mb-6">
             <Link href="/compare" className="hover:text-white">Compare</Link>
             <span>/</span>
             <span className="text-white">{category.title}</span>
@@ -171,15 +171,15 @@ export default async function CategoryPage({ params }: Props) {
           {/* Header */}
           <div className="mb-12">
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-3 bg-emerald-500/20 rounded-xl">
-                <Filter className="w-6 h-6 text-emerald-400" />
+              <div className="p-3 bg-accent/20 rounded-xl">
+                <Filter className="w-6 h-6 text-accent" />
               </div>
               <h1 className="text-4xl md:text-5xl font-bold text-white">{category.title}</h1>
             </div>
-            <p className="text-xl text-gray-400 max-w-3xl">
+            <p className="text-xl text-text-secondary max-w-3xl">
               {category.description}
             </p>
-            <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/20 rounded-full text-emerald-400">
+            <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-accent/20 rounded-full text-accent">
               <span className="font-semibold">{firms.length}</span> firms match this criteria
             </div>
           </div>
@@ -190,7 +190,7 @@ export default async function CategoryPage({ params }: Props) {
               {firms.map((firm, index) => (
                 <div 
                   key={firm.id} 
-                  className="bg-gray-800/50 border border-gray-700 rounded-2xl p-6 hover:border-emerald-500/30 transition-all"
+                  className="bg-dark-700/50 border border-border rounded-2xl p-6 hover:border-accent/30 transition-all"
                 >
                   {index < 3 && (
                     <div className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-500/20 text-yellow-400 text-xs font-semibold rounded-full mb-4">
@@ -203,7 +203,7 @@ export default async function CategoryPage({ params }: Props) {
                       {firm.logo_url ? (
                         <img src={firm.logo_url} alt={firm.name} className="w-full h-full object-contain" />
                       ) : (
-                        <span className="text-xl font-bold text-emerald-500">{firm.name.charAt(0)}</span>
+                        <span className="text-xl font-bold text-accent">{firm.name.charAt(0)}</span>
                       )}
                     </div>
                     <div>
@@ -219,17 +219,17 @@ export default async function CategoryPage({ params }: Props) {
 
                   <div className="space-y-2 mb-4">
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">From</span>
+                      <span className="text-text-secondary">From</span>
                       <span className="text-white font-medium">${firm.min_price}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Profit Split</span>
-                      <span className="text-emerald-400 font-medium">
+                      <span className="text-text-secondary">Profit Split</span>
+                      <span className="text-accent font-medium">
                         {firm.profit_split ?? firm.max_profit_split}%
                       </span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Platforms</span>
+                      <span className="text-text-secondary">Platforms</span>
                       <span className="text-white text-xs">{toArray(firm.platforms).slice(0, 2).join(', ')}</span>
                     </div>
                   </div>
@@ -237,7 +237,7 @@ export default async function CategoryPage({ params }: Props) {
                   <div className="flex gap-2">
                     <Link
                       href={`/prop-firm/${firm.slug}`}
-                      className="flex-1 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm font-medium rounded-lg text-center transition-all"
+                      className="flex-1 py-2 bg-dark-600 hover:bg-dark-500 text-white text-sm font-medium rounded-lg text-center transition-all"
                     >
                       Details
                     </Link>
@@ -245,7 +245,7 @@ export default async function CategoryPage({ params }: Props) {
                       href={(firm.affiliate_url || firm.website_url) ? `/api/go/${firm.slug}?source=best-for-category` : '#'}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg text-center transition-all flex items-center justify-center gap-1"
+                      className="flex-1 py-2 bg-accent-hover hover:brightness-110 text-white text-sm font-medium rounded-lg text-center transition-all flex items-center justify-center gap-1"
                     >
                       Visit <ExternalLink className="w-3 h-3" />
                     </a>
@@ -255,12 +255,12 @@ export default async function CategoryPage({ params }: Props) {
             </div>
           ) : (
             <div className="text-center py-12">
-              <p className="text-gray-400">No firms found for this category.</p>
+              <p className="text-text-secondary">No firms found for this category.</p>
             </div>
           )}
 
           {/* Other Categories */}
-          <div className="bg-gray-800/50 border border-gray-700 rounded-2xl p-8">
+          <div className="bg-dark-700/50 border border-border rounded-2xl p-8">
             <h2 className="text-2xl font-bold text-white mb-6">Browse Other Categories</h2>
             <div className="flex flex-wrap gap-3">
               {Object.entries(categories)
@@ -269,7 +269,7 @@ export default async function CategoryPage({ params }: Props) {
                   <Link
                     key={key}
                     href={`/best-for/${key}`}
-                    className="px-4 py-2 bg-gray-700 hover:bg-emerald-500/20 hover:text-emerald-400 text-white rounded-lg transition-all text-sm"
+                    className="px-4 py-2 bg-dark-600 hover:bg-accent/20 hover:text-accent text-white rounded-lg transition-all text-sm"
                   >
                     {cat.title.replace('Best Prop Firms for ', '').replace(' Prop Firms', '')}
                   </Link>
@@ -282,7 +282,7 @@ export default async function CategoryPage({ params }: Props) {
           <div className="mt-12 text-center">
             <Link
               href="/compare"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-all"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-xl transition-all"
             >
               Compare All 55+ Prop Firms
               <ArrowRight className="w-5 h-5" />

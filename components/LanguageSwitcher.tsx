@@ -88,7 +88,7 @@ export default function LanguageSwitcher() {
       {/* Bouton principal */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700 hover:border-gray-600 transition-all duration-200 text-gray-300 hover:text-white"
+        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-dark-700/50 hover:bg-dark-600/50 border border-border hover:border-border-hover transition-all duration-200 text-text-secondary hover:text-white"
         aria-label="Select language"
       >
         <Globe className="w-4 h-4" />
@@ -99,7 +99,7 @@ export default function LanguageSwitcher() {
       
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-xl shadow-xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="absolute right-0 mt-2 w-48 bg-dark-700 border border-border rounded-xl shadow-xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="py-1">
             {languages.map((language) => (
               <button
@@ -107,8 +107,8 @@ export default function LanguageSwitcher() {
                 onClick={() => switchLanguage(language.code)}
                 className={`w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors ${
                   currentLocale === language.code
-                    ? 'bg-emerald-500/10 text-emerald-400'
-                    : 'text-gray-300 hover:bg-gray-700/50 hover:text-white'
+                    ? 'bg-accent/10 text-accent'
+                    : 'text-text-secondary hover:bg-dark-600/50 hover:text-white'
                 }`}
               >
                 <span className="flex items-center gap-3">
@@ -116,7 +116,7 @@ export default function LanguageSwitcher() {
                   <span>{language.name}</span>
                 </span>
                 {currentLocale === language.code && (
-                  <Check className="w-4 h-4 text-emerald-400" />
+                  <Check className="w-4 h-4 text-accent" />
                 )}
               </button>
             ))}
@@ -148,7 +148,7 @@ export function LanguageSwitcherCompact() {
     <select
       value={currentLocale}
       onChange={(e) => switchLanguage(e.target.value)}
-      className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-300 focus:outline-none focus:border-emerald-500"
+      className="bg-dark-700 border border-border rounded-lg px-3 py-2 text-sm text-text-secondary focus:outline-none focus:border-accent"
     >
       {languages.map((language) => (
         <option key={language.code} value={language.code}>
@@ -184,8 +184,8 @@ export function LanguageSwitcherFlags() {
           onClick={() => switchLanguage(language.code)}
           className={`p-1.5 rounded-md transition-all ${
             currentLocale === language.code
-              ? 'bg-emerald-500/20 ring-1 ring-emerald-500'
-              : 'hover:bg-gray-700/50'
+              ? 'bg-accent/20 ring-1 ring-accent'
+              : 'hover:bg-dark-600/50'
           }`}
           title={language.name}
         >

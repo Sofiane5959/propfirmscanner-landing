@@ -211,42 +211,42 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-900 border-t border-gray-800">
+    <footer className="bg-bg-elevated border-t border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
           
           {/* Brand */}
           <div className="col-span-2 md:col-span-4 lg:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-accent flex items-center justify-center">
                 <span className="text-white font-bold text-sm">P</span>
               </div>
               <span className="text-white font-bold text-lg">
-                PropFirm<span className="text-emerald-400">Scanner</span>
+                PropFirm<span className="text-accent">Scanner</span>
               </span>
             </Link>
-            <p className="text-gray-400 text-sm mb-4">
+            <p className="text-text-secondary text-sm mb-4">
               {t.description}
             </p>
             <div className="flex gap-2 flex-wrap">
               <a href="https://x.com/ScannerPropFirm" target="_blank" rel="noopener noreferrer"
-                className="p-2 bg-gray-800 hover:bg-gray-700 hover:text-white text-gray-400 rounded-lg transition-colors" aria-label="X / Twitter">
+                className="p-2 bg-dark-700 hover:bg-dark-600 hover:text-white text-text-secondary rounded-lg transition-colors" aria-label="X / Twitter">
                 <XIcon />
               </a>
               <a href="https://www.youtube.com/@PropFirmScannerOfficial" target="_blank" rel="noopener noreferrer"
-                className="p-2 bg-gray-800 hover:bg-red-600 hover:text-white text-gray-400 rounded-lg transition-colors" aria-label="YouTube">
+                className="p-2 bg-dark-700 hover:bg-red-600 hover:text-white text-text-secondary rounded-lg transition-colors" aria-label="YouTube">
                 <YouTubeIcon />
               </a>
               <a href="https://www.tiktok.com/@propfirmscanner" target="_blank" rel="noopener noreferrer"
-                className="p-2 bg-gray-800 hover:bg-gray-700 hover:text-white text-gray-400 rounded-lg transition-colors" aria-label="TikTok">
+                className="p-2 bg-dark-700 hover:bg-dark-600 hover:text-white text-text-secondary rounded-lg transition-colors" aria-label="TikTok">
                 <TikTokIcon />
               </a>
               <a href="https://discord.gg/propfirmscanner" target="_blank" rel="noopener noreferrer"
-                className="p-2 bg-gray-800 hover:bg-indigo-600 hover:text-white text-gray-400 rounded-lg transition-colors" aria-label="Discord">
+                className="p-2 bg-dark-700 hover:bg-indigo-600 hover:text-white text-text-secondary rounded-lg transition-colors" aria-label="Discord">
                 <DiscordIcon />
               </a>
               <a href="mailto:contact@propfirmscanner.org"
-                className="p-2 bg-gray-800 hover:bg-emerald-600 hover:text-white text-gray-400 rounded-lg transition-colors" aria-label="Email">
+                className="p-2 bg-dark-700 hover:brightness-110 hover:text-white text-text-secondary rounded-lg transition-colors" aria-label="Email">
                 <MailIcon />
               </a>
             </div>
@@ -257,22 +257,22 @@ export default function Footer() {
             <h3 className="text-white font-semibold mb-4">{t.product}</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/compare" className="text-gray-400 hover:text-emerald-400 text-sm transition-colors">
+                <Link href="/compare" className="text-text-secondary hover:text-accent text-sm transition-colors">
                   {t.compareFirms}
                 </Link>
               </li>
               <li>
-                <Link href="/deals" className="text-gray-400 hover:text-emerald-400 text-sm transition-colors">
+                <Link href="/deals" className="text-text-secondary hover:text-accent text-sm transition-colors">
                   {t.dealsPromos}
                 </Link>
               </li>
               <li>
-                <Link href="/guide" className="text-gray-400 hover:text-emerald-400 text-sm transition-colors">
+                <Link href="/guide" className="text-text-secondary hover:text-accent text-sm transition-colors">
                   {t.freeGuide}
                 </Link>
               </li>
               <li>
-                <Link href="/blog" className="text-gray-400 hover:text-emerald-400 text-sm transition-colors">
+                <Link href="/blog" className="text-text-secondary hover:text-accent text-sm transition-colors">
                   {t.blog}
                 </Link>
               </li>
@@ -284,22 +284,22 @@ export default function Footer() {
             <h3 className="text-white font-semibold mb-4">{t.resources}</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/blog/how-to-choose-right-prop-firm" className="text-gray-400 hover:text-emerald-400 text-sm transition-colors">
+                <Link href="/blog/how-to-choose-right-prop-firm" className="text-text-secondary hover:text-accent text-sm transition-colors">
                   {t.howToChoose}
                 </Link>
               </li>
               <li>
-                <Link href="/blog/best-prop-firms-2025" className="text-gray-400 hover:text-emerald-400 text-sm transition-colors">
+                <Link href="/blog/best-prop-firms-2025" className="text-text-secondary hover:text-accent text-sm transition-colors">
                   {t.bestFirms}
                 </Link>
               </li>
               <li>
-                <Link href="/blog/how-to-pass-prop-firm-challenge" className="text-gray-400 hover:text-emerald-400 text-sm transition-colors">
+                <Link href="/blog/how-to-pass-prop-firm-challenge" className="text-text-secondary hover:text-accent text-sm transition-colors">
                   {t.passChallenge}
                 </Link>
               </li>
               <li>
-                <Link href="/faq" className="text-gray-400 hover:text-emerald-400 text-sm transition-colors">
+                <Link href="/faq" className="text-text-secondary hover:text-accent text-sm transition-colors">
                   {t.faq}
                 </Link>
               </li>
@@ -311,22 +311,22 @@ export default function Footer() {
             <h3 className="text-white font-semibold mb-4">{t.popularFirms}</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/prop-firm/ftmo" className="text-gray-400 hover:text-emerald-400 text-sm transition-colors">
+                <Link href="/prop-firm/ftmo" className="text-text-secondary hover:text-accent text-sm transition-colors">
                   FTMO
                 </Link>
               </li>
               <li>
-                <Link href="/prop-firm/the5ers" className="text-gray-400 hover:text-emerald-400 text-sm transition-colors">
+                <Link href="/prop-firm/the5ers" className="text-text-secondary hover:text-accent text-sm transition-colors">
                   The5ers
                 </Link>
               </li>
               <li>
-                <Link href="/prop-firm/fundednext" className="text-gray-400 hover:text-emerald-400 text-sm transition-colors">
+                <Link href="/prop-firm/fundednext" className="text-text-secondary hover:text-accent text-sm transition-colors">
                   FundedNext
                 </Link>
               </li>
               <li>
-                <Link href="/prop-firm/myfundedfx" className="text-gray-400 hover:text-emerald-400 text-sm transition-colors">
+                <Link href="/prop-firm/myfundedfx" className="text-text-secondary hover:text-accent text-sm transition-colors">
                   MyFundedFX
                 </Link>
               </li>
@@ -338,22 +338,22 @@ export default function Footer() {
             <h3 className="text-white font-semibold mb-4">{t.legal}</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/privacy-policy" className="text-gray-400 hover:text-emerald-400 text-sm transition-colors">
+                <Link href="/privacy-policy" className="text-text-secondary hover:text-accent text-sm transition-colors">
                   {t.privacyPolicy}
                 </Link>
               </li>
               <li>
-                <Link href="/terms-of-service" className="text-gray-400 hover:text-emerald-400 text-sm transition-colors">
+                <Link href="/terms-of-service" className="text-text-secondary hover:text-accent text-sm transition-colors">
                   {t.termsOfService}
                 </Link>
               </li>
               <li>
-                <Link href="/disclaimer" className="text-gray-400 hover:text-emerald-400 text-sm transition-colors">
+                <Link href="/disclaimer" className="text-text-secondary hover:text-accent text-sm transition-colors">
                   {t.disclaimer}
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-gray-400 hover:text-emerald-400 text-sm transition-colors">
+                <Link href="/contact" className="text-text-secondary hover:text-accent text-sm transition-colors">
                   {t.contact}
                 </Link>
               </li>
@@ -363,13 +363,13 @@ export default function Footer() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-gray-800">
+      <div className="border-t border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-gray-500 text-sm">
+            <p className="text-text-muted text-sm">
               © {currentYear} {t.copyright}
             </p>
-            <p className="text-gray-600 text-xs text-center md:text-right max-w-xl">
+            <p className="text-text-muted text-xs text-center md:text-right max-w-xl">
               <Shield className="w-3 h-3 inline mr-1" />
               {t.affiliate}
             </p>

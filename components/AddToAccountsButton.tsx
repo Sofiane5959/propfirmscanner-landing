@@ -85,7 +85,7 @@ export function AddToAccountsButton({
     return (
       <button
         disabled
-        className={`flex items-center justify-center gap-2 px-4 py-2 bg-emerald-500/20 text-emerald-400 font-medium rounded-lg ${className}`}
+        className={`flex items-center justify-center gap-2 px-4 py-2 bg-accent/20 text-accent font-medium rounded-lg ${className}`}
       >
         <Check className="w-4 h-4" />
         Added!
@@ -98,7 +98,7 @@ export function AddToAccountsButton({
       <button
         onClick={handleAdd}
         disabled={isLoading}
-        className={`flex items-center justify-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-700 disabled:text-gray-500 text-white font-medium rounded-lg transition-colors ${className}`}
+        className={`flex items-center justify-center gap-2 px-4 py-2 bg-accent-hover hover:brightness-110 disabled:bg-dark-600 disabled:text-text-muted text-white font-medium rounded-lg transition-colors ${className}`}
       >
         {isLoading ? (
           <>

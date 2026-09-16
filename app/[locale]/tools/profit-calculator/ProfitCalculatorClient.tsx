@@ -244,7 +244,7 @@ export default function ProfitCalculatorClient() {
   const scalingProjection = calculateScalingProjection()
 
   return (
-    <div className="min-h-screen bg-gray-900 py-24 px-4">
+    <div className="min-h-screen bg-bg-elevated py-24 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
@@ -252,17 +252,17 @@ export default function ProfitCalculatorClient() {
             <PieChart className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-white mb-2">{t.title}</h1>
-          <p className="text-gray-400">{t.subtitle}</p>
+          <p className="text-text-secondary">{t.subtitle}</p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Input Section */}
-          <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
+          <div className="bg-dark-700/50 border border-border rounded-xl p-6">
             <h2 className="text-xl font-semibold text-white mb-6">{t.settings}</h2>
 
             {/* Account Size */}
             <div className="mb-6">
-              <label className="flex items-center gap-2 text-gray-300 mb-2">
+              <label className="flex items-center gap-2 text-text-secondary mb-2">
                 <DollarSign className="w-4 h-4 text-purple-400" />
                 {t.accountSize}
               </label>
@@ -274,7 +274,7 @@ export default function ProfitCalculatorClient() {
                     className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                       accountSize === size
                         ? 'bg-purple-500 text-white'
-                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                        : 'bg-dark-600 text-text-secondary hover:bg-dark-500'
                     }`}
                   >
                     ${(size / 1000)}K
@@ -285,7 +285,7 @@ export default function ProfitCalculatorClient() {
 
             {/* Monthly Return */}
             <div className="mb-6">
-              <label className="flex items-center gap-2 text-gray-300 mb-2">
+              <label className="flex items-center gap-2 text-text-secondary mb-2">
                 <TrendingUp className="w-4 h-4 text-purple-400" />
                 {t.monthlyReturn}: {monthlyReturn}%
               </label>
@@ -298,7 +298,7 @@ export default function ProfitCalculatorClient() {
                 onChange={(e) => setMonthlyReturn(Number(e.target.value))}
                 className="w-full accent-purple-500"
               />
-              <div className="flex justify-between text-xs text-gray-500 mt-1">
+              <div className="flex justify-between text-xs text-text-muted mt-1">
                 <span>1% ({t.conservative})</span>
                 <span>15% ({t.aggressive})</span>
               </div>
@@ -306,7 +306,7 @@ export default function ProfitCalculatorClient() {
 
             {/* Profit Split */}
             <div className="mb-6">
-              <label className="flex items-center gap-2 text-gray-300 mb-2">
+              <label className="flex items-center gap-2 text-text-secondary mb-2">
                 <Percent className="w-4 h-4 text-purple-400" />
                 {t.profitSplit}
               </label>
@@ -318,7 +318,7 @@ export default function ProfitCalculatorClient() {
                     className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                       profitSplit === split
                         ? 'bg-purple-500 text-white'
-                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                        : 'bg-dark-600 text-text-secondary hover:bg-dark-500'
                     }`}
                   >
                     {split}%
@@ -329,7 +329,7 @@ export default function ProfitCalculatorClient() {
 
             {/* Time Period */}
             <div className="mb-6">
-              <label className="flex items-center gap-2 text-gray-300 mb-2">
+              <label className="flex items-center gap-2 text-text-secondary mb-2">
                 <Calculator className="w-4 h-4 text-purple-400" />
                 {t.timePeriod}: {months} {t.months}
               </label>
@@ -352,14 +352,14 @@ export default function ProfitCalculatorClient() {
               
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-400">{t.grossProfit}</span>
+                  <span className="text-text-secondary">{t.grossProfit}</span>
                   <span className="text-white font-semibold">${grossProfit.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-400">{t.firmShare} ({100 - profitSplit}%)</span>
+                  <span className="text-text-secondary">{t.firmShare} ({100 - profitSplit}%)</span>
                   <span className="text-red-400">-${firmShare.toLocaleString()}</span>
                 </div>
-                <div className="border-t border-gray-700 pt-4">
+                <div className="border-t border-border pt-4">
                   <div className="flex justify-between items-center">
                     <span className="text-white font-semibold">{t.yourEarnings} ({profitSplit}%)</span>
                     <span className="text-2xl font-bold text-purple-400">${traderShare.toLocaleString()}</span>
@@ -369,21 +369,21 @@ export default function ProfitCalculatorClient() {
             </div>
 
             {/* Yearly Projection */}
-            <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
+            <div className="bg-dark-700/50 border border-border rounded-xl p-6">
               <h2 className="text-xl font-semibold text-white mb-4">{months}{t.monthProjection}</h2>
               
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-gray-900/50 rounded-lg p-4 text-center">
-                  <div className="text-gray-400 text-sm mb-1">{t.withoutScaling}</div>
+                <div className="bg-bg-elevated/50 rounded-lg p-4 text-center">
+                  <div className="text-text-secondary text-sm mb-1">{t.withoutScaling}</div>
                   <div className="text-2xl font-bold text-white">${yearlyTraderShare.toLocaleString()}</div>
                 </div>
-                <div className="bg-gray-900/50 rounded-lg p-4 text-center">
-                  <div className="text-gray-400 text-sm mb-1">{t.withScaling}</div>
-                  <div className="text-2xl font-bold text-emerald-400">${Math.round(scalingProjection).toLocaleString()}</div>
+                <div className="bg-bg-elevated/50 rounded-lg p-4 text-center">
+                  <div className="text-text-secondary text-sm mb-1">{t.withScaling}</div>
+                  <div className="text-2xl font-bold text-accent">${Math.round(scalingProjection).toLocaleString()}</div>
                 </div>
               </div>
               
-              <p className="text-gray-500 text-xs mt-4">
+              <p className="text-text-muted text-xs mt-4">
                 {t.scalingNote}
               </p>
             </div>
@@ -391,7 +391,7 @@ export default function ProfitCalculatorClient() {
             {/* Info Box */}
             <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 flex items-start gap-3">
               <Info className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
-              <div className="text-sm text-gray-300">
+              <div className="text-sm text-text-secondary">
                 <strong className="text-blue-400">Note:</strong> {t.infoNote}
               </div>
             </div>
@@ -399,16 +399,16 @@ export default function ProfitCalculatorClient() {
         </div>
 
         {/* Comparison Table */}
-        <div className="mt-8 bg-gray-800/50 border border-gray-700 rounded-xl p-6">
+        <div className="mt-8 bg-dark-700/50 border border-border rounded-xl p-6">
           <h2 className="text-xl font-semibold text-white mb-4">{t.accountComparison}</h2>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-700">
-                  <th className="text-left py-3 px-4 text-gray-400">{t.accountSize}</th>
-                  <th className="text-right py-3 px-4 text-gray-400">{t.monthly} ({monthlyReturn}%)</th>
-                  <th className="text-right py-3 px-4 text-gray-400">{t.yourShare} ({profitSplit}%)</th>
-                  <th className="text-right py-3 px-4 text-gray-400">{t.yearly}</th>
+                <tr className="border-b border-border">
+                  <th className="text-left py-3 px-4 text-text-secondary">{t.accountSize}</th>
+                  <th className="text-right py-3 px-4 text-text-secondary">{t.monthly} ({monthlyReturn}%)</th>
+                  <th className="text-right py-3 px-4 text-text-secondary">{t.yourShare} ({profitSplit}%)</th>
+                  <th className="text-right py-3 px-4 text-text-secondary">{t.yearly}</th>
                 </tr>
               </thead>
               <tbody>
@@ -419,12 +419,12 @@ export default function ProfitCalculatorClient() {
                   return (
                     <tr 
                       key={size} 
-                      className={`border-b border-gray-700/50 ${size === accountSize ? 'bg-purple-500/10' : ''}`}
+                      className={`border-b border-border/50 ${size === accountSize ? 'bg-purple-500/10' : ''}`}
                     >
                       <td className="py-3 px-4 text-white font-medium">${(size / 1000)}K</td>
-                      <td className="py-3 px-4 text-right text-gray-300">${monthly.toLocaleString()}</td>
+                      <td className="py-3 px-4 text-right text-text-secondary">${monthly.toLocaleString()}</td>
                       <td className="py-3 px-4 text-right text-purple-400 font-semibold">${share.toLocaleString()}</td>
-                      <td className="py-3 px-4 text-right text-emerald-400">${yearly.toLocaleString()}</td>
+                      <td className="py-3 px-4 text-right text-accent">${yearly.toLocaleString()}</td>
                     </tr>
                   )
                 })}

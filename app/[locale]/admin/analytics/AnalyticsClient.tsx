@@ -253,31 +253,31 @@ export default function AnalyticsPage() {
   const total7d = byFirm.reduce((s, r) => s + r.clicks_7d, 0)
 
   return (
-    <div className="min-h-screen bg-gray-900 pt-20 pb-12 px-4">
+    <div className="min-h-screen bg-bg-elevated pt-20 pb-12 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <Link href="/en/admin/firms" className="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-white mb-2">
+            <Link href="/en/admin/firms" className="inline-flex items-center gap-1 text-sm text-text-secondary hover:text-white mb-2">
               <ArrowLeft className="w-4 h-4" />
               Back to admin
             </Link>
             <h1 className="text-2xl font-bold text-white">Affiliate Analytics</h1>
-            <p className="text-sm text-gray-500">Click tracking on every outbound link</p>
+            <p className="text-sm text-text-muted">Click tracking on every outbound link</p>
           </div>
           <div className="flex items-center gap-3">
-            <label className="flex items-center gap-2 text-xs text-gray-400 cursor-pointer">
+            <label className="flex items-center gap-2 text-xs text-text-secondary cursor-pointer">
               <input
                 type="checkbox"
                 checked={includeBots}
                 onChange={e => setIncludeBots(e.target.checked)}
-                className="rounded border-gray-600 bg-gray-800"
+                className="rounded border-border-hover bg-dark-700"
               />
               Include bots
             </label>
             <button
               onClick={fetchData}
               disabled={refreshing}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm rounded-lg disabled:opacity-50"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-dark-700 hover:bg-dark-600 text-text-secondary text-sm rounded-lg disabled:opacity-50"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
               Refresh
@@ -321,26 +321,26 @@ export default function AnalyticsPage() {
         )}
 
         {loading ? (
-          <div className="text-center text-gray-500 py-12">Loading analytics…</div>
+          <div className="text-center text-text-muted py-12">Loading analytics…</div>
         ) : byFirm.length === 0 ? (
-          <div className="text-center py-16 bg-gray-800/30 border border-gray-700/50 rounded-xl">
-            <TrendingUp className="w-10 h-10 text-gray-600 mx-auto mb-3" />
-            <p className="text-gray-400 mb-1">No clicks tracked yet</p>
-            <p className="text-gray-500 text-sm">
+          <div className="text-center py-16 bg-dark-700/30 border border-border/50 rounded-xl">
+            <TrendingUp className="w-10 h-10 text-text-muted mx-auto mb-3" />
+            <p className="text-text-secondary mb-1">No clicks tracked yet</p>
+            <p className="text-text-muted text-sm">
               Once visitors click on affiliate links, data will appear here.
             </p>
           </div>
         ) : (
           <>
-            <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl overflow-hidden mb-6">
-              <div className="px-4 py-3 border-b border-gray-700/50 flex items-center justify-between">
+            <div className="bg-dark-700/50 border border-border/50 rounded-xl overflow-hidden mb-6">
+              <div className="px-4 py-3 border-b border-border/50 flex items-center justify-between">
                 <h2 className="text-sm font-semibold text-white">Clicks by firm</h2>
-                <span className="text-xs text-gray-500">{byFirm.length} firms tracked</span>
+                <span className="text-xs text-text-muted">{byFirm.length} firms tracked</span>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="text-xs text-gray-400 border-b border-gray-700/50">
+                    <tr className="text-xs text-text-secondary border-b border-border/50">
                       <th className="text-left px-4 py-2 font-medium">Firm</th>
                       <Th label="24h" sortKey="clicks_24h" current={sortKey} onClick={setSortKey} />
                       <Th label="7d" sortKey="clicks_7d" current={sortKey} onClick={setSortKey} />
@@ -357,32 +357,32 @@ export default function AnalyticsPage() {
                   </thead>
                   <tbody>
                     {sortedRows.map(row => (
-                      <tr key={row.firm_slug} className="border-b border-gray-700/30 hover:bg-gray-800/30">
+                      <tr key={row.firm_slug} className="border-b border-border/30 hover:bg-dark-700/30">
                         <td className="px-4 py-2.5">
-                          <Link href={`/en/prop-firm/${row.firm_slug}`} className="text-white hover:text-emerald-400 inline-flex items-center gap-1">
+                          <Link href={`/en/prop-firm/${row.firm_slug}`} className="text-white hover:text-accent inline-flex items-center gap-1">
                             {row.firm_name || row.firm_slug}
                             <ExternalLink className="w-3 h-3 opacity-60" />
                           </Link>
                         </td>
                         <td className="px-4 py-2.5 text-right tabular-nums">
-                          <span className={row.clicks_24h > 0 ? 'text-emerald-400 font-medium' : 'text-gray-600'}>
+                          <span className={row.clicks_24h > 0 ? 'text-accent font-medium' : 'text-text-muted'}>
                             {row.clicks_24h}
                           </span>
                         </td>
-                        <td className="px-4 py-2.5 text-right tabular-nums text-gray-300">{row.clicks_7d}</td>
-                        <td className="px-4 py-2.5 text-right tabular-nums text-gray-300">{row.clicks_30d}</td>
+                        <td className="px-4 py-2.5 text-right tabular-nums text-text-secondary">{row.clicks_7d}</td>
+                        <td className="px-4 py-2.5 text-right tabular-nums text-text-secondary">{row.clicks_30d}</td>
                         <td className="px-4 py-2.5 text-right tabular-nums text-white font-medium">{row.total_clicks}</td>
-                        <td className="px-4 py-2.5 text-right tabular-nums text-emerald-400">{row.affiliate_clicks}</td>
+                        <td className="px-4 py-2.5 text-right tabular-nums text-accent">{row.affiliate_clicks}</td>
                         <td className="px-4 py-2.5 text-right tabular-nums">
-                          <span className={row.deep_link_clicks > 0 ? 'text-sky-400 font-medium' : 'text-gray-600'}>
+                          <span className={row.deep_link_clicks > 0 ? 'text-sky-400 font-medium' : 'text-text-muted'}>
                             {row.deep_link_clicks}
                           </span>
                         </td>
-                        <td className="px-4 py-2.5 text-right tabular-nums text-gray-400">{row.website_clicks}</td>
+                        <td className="px-4 py-2.5 text-right tabular-nums text-text-secondary">{row.website_clicks}</td>
                         {totalOther > 0 && (
                           <td className="px-4 py-2.5 text-right tabular-nums text-amber-400">{row.other_clicks}</td>
                         )}
-                        <td className="px-4 py-2.5 text-gray-500 text-xs">{formatRelative(row.last_click_at)}</td>
+                        <td className="px-4 py-2.5 text-text-muted text-xs">{formatRelative(row.last_click_at)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -391,13 +391,13 @@ export default function AnalyticsPage() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl overflow-hidden">
-                <div className="px-4 py-3 border-b border-gray-700/50">
+              <div className="bg-dark-700/50 border border-border/50 rounded-xl overflow-hidden">
+                <div className="px-4 py-3 border-b border-border/50">
                   <h2 className="text-sm font-semibold text-white">Clicks by source (last 30d)</h2>
                 </div>
                 <div className="p-2">
                   {bySource.length === 0 ? (
-                    <p className="text-center text-gray-500 text-sm py-6">No data</p>
+                    <p className="text-center text-text-muted text-sm py-6">No data</p>
                   ) : (
                     bySource.map(s => {
                       const max = Math.max(...bySource.map(b => b.count))
@@ -405,11 +405,11 @@ export default function AnalyticsPage() {
                       return (
                         <div key={s.source} className="px-2 py-1.5">
                           <div className="flex items-center justify-between text-xs mb-1">
-                            <span className="text-gray-300 font-mono">{s.source}</span>
-                            <span className="text-gray-400 tabular-nums">{s.count}</span>
+                            <span className="text-text-secondary font-mono">{s.source}</span>
+                            <span className="text-text-secondary tabular-nums">{s.count}</span>
                           </div>
-                          <div className="h-1.5 bg-gray-700/50 rounded-full overflow-hidden">
-                            <div className="h-full bg-emerald-500/70" style={{ width: `${pct}%` }} />
+                          <div className="h-1.5 bg-dark-600/50 rounded-full overflow-hidden">
+                            <div className="h-full bg-accent/70" style={{ width: `${pct}%` }} />
                           </div>
                         </div>
                       )
@@ -418,21 +418,21 @@ export default function AnalyticsPage() {
                 </div>
               </div>
 
-              <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl overflow-hidden">
-                <div className="px-4 py-3 border-b border-gray-700/50">
+              <div className="bg-dark-700/50 border border-border/50 rounded-xl overflow-hidden">
+                <div className="px-4 py-3 border-b border-border/50">
                   <h2 className="text-sm font-semibold text-white">Recent activity</h2>
                 </div>
                 <div className="max-h-96 overflow-y-auto">
                   {recent.length === 0 ? (
-                    <p className="text-center text-gray-500 text-sm py-6">No clicks yet</p>
+                    <p className="text-center text-text-muted text-sm py-6">No clicks yet</p>
                   ) : (
                     recent.map(r => (
-                      <div key={r.id} className="px-4 py-2 border-b border-gray-700/30 text-xs flex items-center gap-2">
+                      <div key={r.id} className="px-4 py-2 border-b border-border/30 text-xs flex items-center gap-2">
                         <span title={r.country || ''}>{flagFor(r.country)}</span>
-                        <span className="text-gray-300 font-medium flex-1 truncate">
+                        <span className="text-text-secondary font-medium flex-1 truncate">
                           {r.firm_name || r.firm_slug}
                         </span>
-                        <span className="text-gray-500">{r.source || '—'}</span>
+                        <span className="text-text-muted">{r.source || '—'}</span>
                         <span
                           title={r.destination_type}
                           className={`px-1.5 py-0.5 rounded text-[10px] shrink-0 ${
@@ -441,8 +441,8 @@ export default function AnalyticsPage() {
                               : r.destination_type === 'affiliate_coupon'
                               ? 'bg-indigo-500/20 text-indigo-300'
                               : r.destination_type === 'affiliate'
-                              ? 'bg-emerald-500/20 text-emerald-400'
-                              : 'bg-gray-700 text-gray-400'
+                              ? 'bg-accent/20 text-accent'
+                              : 'bg-dark-600 text-text-secondary'
                           }`}
                         >
                           {r.destination_type === 'affiliate_challenge'
@@ -458,7 +458,7 @@ export default function AnalyticsPage() {
                             type="button"
                             onClick={() => copyClickId(r.click_id as string)}
                             title={`${r.click_id} — click to copy`}
-                            className="font-mono text-[10px] text-gray-500 hover:text-emerald-400 shrink-0 tabular-nums"
+                            className="font-mono text-[10px] text-text-muted hover:text-accent shrink-0 tabular-nums"
                           >
                             {copiedId === r.click_id ? 'copied ✓' : r.click_id}
                           </button>
@@ -471,7 +471,7 @@ export default function AnalyticsPage() {
                           </span>
                         )}
                         {r.is_bot && <span className="px-1 py-0.5 rounded bg-yellow-500/20 text-yellow-400 text-[10px]">bot</span>}
-                        <span className="text-gray-500 text-[10px] shrink-0">{formatRelative(r.created_at)}</span>
+                        <span className="text-text-muted text-[10px] shrink-0">{formatRelative(r.created_at)}</span>
                       </div>
                     ))
                   )}
@@ -487,11 +487,11 @@ export default function AnalyticsPage() {
 
 function StatCard({ label, value, sub, highlight }: { label: string; value: number; sub?: string; highlight?: boolean }) {
   return (
-    <div className={`bg-gray-800/50 border ${highlight ? 'border-emerald-500/40' : 'border-gray-700/50'} rounded-xl p-4`}>
-      <div className="text-xs text-gray-400 uppercase tracking-wide mb-1">{label}</div>
+    <div className={`bg-dark-700/50 border ${highlight ? 'border-accent/40' : 'border-border/50'} rounded-xl p-4`}>
+      <div className="text-xs text-text-secondary uppercase tracking-wide mb-1">{label}</div>
       <div className="flex items-baseline gap-2">
-        <span className={`text-2xl font-bold tabular-nums ${highlight ? 'text-emerald-400' : 'text-white'}`}>{value}</span>
-        {sub && <span className="text-xs text-gray-500">{sub}</span>}
+        <span className={`text-2xl font-bold tabular-nums ${highlight ? 'text-accent' : 'text-white'}`}>{value}</span>
+        {sub && <span className="text-xs text-text-muted">{sub}</span>}
       </div>
     </div>
   )
@@ -502,7 +502,7 @@ function Th({ label, sortKey, current, onClick }: { label: string; sortKey: keyo
   return (
     <th
       onClick={() => onClick(sortKey)}
-      className={`text-right px-4 py-2 font-medium cursor-pointer select-none ${active ? 'text-emerald-400' : 'hover:text-white'}`}
+      className={`text-right px-4 py-2 font-medium cursor-pointer select-none ${active ? 'text-accent' : 'hover:text-white'}`}
     >
       {label}{active && ' ↓'}
     </th>

@@ -343,72 +343,72 @@ export default function ContactPageClient() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 py-24 px-4">
+    <div className="min-h-screen bg-bg-elevated py-24 px-4">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
-            <Mail className="w-8 h-8 text-emerald-400" />
+          <div className="w-16 h-16 rounded-2xl bg-accent/20 flex items-center justify-center mx-auto mb-4">
+            <Mail className="w-8 h-8 text-accent" />
           </div>
           <h1 className="text-4xl font-bold text-white mb-4">{t.title}</h1>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">{t.subtitle}</p>
+          <p className="text-xl text-text-secondary max-w-2xl mx-auto">{t.subtitle}</p>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Contact Info */}
           <div className="lg:col-span-1 space-y-6">
-            <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
+            <div className="bg-dark-700/50 border border-border rounded-xl p-6">
               <h2 className="text-lg font-semibold text-white mb-4">{t.getInTouch}</h2>
               
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
-                    <Mail className="w-5 h-5 text-emerald-400" />
+                  <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
+                    <Mail className="w-5 h-5 text-accent" />
                   </div>
                   <div>
                     <div className="text-white font-medium">{t.email}</div>
-                    <a href="mailto:hello@propfirmscanner.org" className="text-gray-400 hover:text-emerald-400 text-sm">
+                    <a href="mailto:hello@propfirmscanner.org" className="text-text-secondary hover:text-accent text-sm">
                       hello@propfirmscanner.org
                     </a>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
-                    <Clock className="w-5 h-5 text-emerald-400" />
+                  <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
+                    <Clock className="w-5 h-5 text-accent" />
                   </div>
                   <div>
                     <div className="text-white font-medium">{t.responseTime}</div>
-                    <div className="text-gray-400 text-sm">{t.responseTimeValue}</div>
+                    <div className="text-text-secondary text-sm">{t.responseTimeValue}</div>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-5 h-5 text-emerald-400" />
+                  <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
+                    <MapPin className="w-5 h-5 text-accent" />
                   </div>
                   <div>
                     <div className="text-white font-medium">{t.location}</div>
-                    <div className="text-gray-400 text-sm">{t.locationValue}</div>
+                    <div className="text-text-secondary text-sm">{t.locationValue}</div>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Quick Links */}
-            <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
+            <div className="bg-dark-700/50 border border-border rounded-xl p-6">
               <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                <HelpCircle className="w-5 h-5 text-emerald-400" />
+                <HelpCircle className="w-5 h-5 text-accent" />
                 {t.quickLinks}
               </h2>
               <div className="space-y-2">
-                <Link href={`/${locale}/faq`} className="block text-gray-400 hover:text-emerald-400 text-sm">
+                <Link href={`/${locale}/faq`} className="block text-text-secondary hover:text-accent text-sm">
                   {t.faqLink}
                 </Link>
-                <Link href={`/${locale}/how-we-verify`} className="block text-gray-400 hover:text-emerald-400 text-sm">
+                <Link href={`/${locale}/how-we-verify`} className="block text-text-secondary hover:text-accent text-sm">
                   {t.verifyLink}
                 </Link>
-                <Link href={`/${locale}/how-we-make-money`} className="block text-gray-400 hover:text-emerald-400 text-sm">
+                <Link href={`/${locale}/how-we-make-money`} className="block text-text-secondary hover:text-accent text-sm">
                   {t.moneyLink}
                 </Link>
               </div>
@@ -417,17 +417,17 @@ export default function ContactPageClient() {
 
           {/* Contact Form */}
           <div className="lg:col-span-2">
-            <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-8">
+            <div className="bg-dark-700/50 border border-border rounded-xl p-8">
               {status === 'success' ? (
                 <div className="text-center py-12">
-                  <div className="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
-                    <CheckCircle className="w-8 h-8 text-emerald-400" />
+                  <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-4">
+                    <CheckCircle className="w-8 h-8 text-accent" />
                   </div>
                   <h3 className="text-2xl font-bold text-white mb-2">{t.messageSent}</h3>
-                  <p className="text-gray-400 mb-6">{t.thankYou}</p>
+                  <p className="text-text-secondary mb-6">{t.thankYou}</p>
                   <button
                     onClick={() => setStatus('idle')}
-                    className="px-6 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg"
+                    className="px-6 py-2 bg-dark-600 hover:bg-dark-500 text-white rounded-lg"
                   >
                     {t.sendAnother}
                   </button>
@@ -436,36 +436,36 @@ export default function ContactPageClient() {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-gray-300 mb-2">{t.name} *</label>
+                      <label className="block text-text-secondary mb-2">{t.name} *</label>
                       <input
                         type="text"
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
                         placeholder={t.namePlaceholder}
-                        className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder:text-gray-500 focus:outline-none focus:border-emerald-500"
+                        className="w-full px-4 py-3 bg-bg-elevated border border-border rounded-lg text-white placeholder:text-text-muted focus:outline-none focus:border-accent"
                       />
                     </div>
                     <div>
-                      <label className="block text-gray-300 mb-2">{t.email} *</label>
+                      <label className="block text-text-secondary mb-2">{t.email} *</label>
                       <input
                         type="email"
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
                         placeholder={t.emailPlaceholder}
-                        className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder:text-gray-500 focus:outline-none focus:border-emerald-500"
+                        className="w-full px-4 py-3 bg-bg-elevated border border-border rounded-lg text-white placeholder:text-text-muted focus:outline-none focus:border-accent"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-gray-300 mb-2">{t.subject} *</label>
+                    <label className="block text-text-secondary mb-2">{t.subject} *</label>
                     <select
                       name="subject"
                       value={formData.subject}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full px-4 py-3 bg-bg-elevated border border-border rounded-lg text-white focus:outline-none focus:border-accent"
                     >
                       <option value="">{t.selectSubject}</option>
                       {SUBJECT_OPTIONS.map(option => (
@@ -475,14 +475,14 @@ export default function ContactPageClient() {
                   </div>
 
                   <div>
-                    <label className="block text-gray-300 mb-2">{t.message} *</label>
+                    <label className="block text-text-secondary mb-2">{t.message} *</label>
                     <textarea
                       name="message"
                       value={formData.message}
                       onChange={handleChange}
                       placeholder={t.messagePlaceholder}
                       rows={6}
-                      className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder:text-gray-500 focus:outline-none focus:border-emerald-500 resize-none"
+                      className="w-full px-4 py-3 bg-bg-elevated border border-border rounded-lg text-white placeholder:text-text-muted focus:outline-none focus:border-accent resize-none"
                     />
                   </div>
 
@@ -496,7 +496,7 @@ export default function ContactPageClient() {
                   <button
                     type="submit"
                     disabled={status === 'loading'}
-                    className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
+                    className="w-full py-3 bg-accent-hover hover:brightness-110 disabled:bg-accent/50 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
                   >
                     {status === 'loading' ? (
                       <>

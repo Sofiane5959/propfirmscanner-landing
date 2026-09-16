@@ -130,21 +130,21 @@ export default function RuleTrackerClient() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 py-24 px-4">
+    <div className="min-h-screen bg-bg-elevated py-24 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-              <ClipboardCheck className="w-8 h-8 text-emerald-400" />
+              <ClipboardCheck className="w-8 h-8 text-accent" />
               Rule Tracker
             </h1>
-            <p className="text-gray-400 mt-2">Track your prop firm challenge progress and stay within the rules</p>
+            <p className="text-text-secondary mt-2">Track your prop firm challenge progress and stay within the rules</p>
           </div>
           <div className="flex gap-2">
             <button
               onClick={exportData}
-              className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 flex items-center gap-2"
+              className="px-4 py-2 bg-dark-600 text-white rounded-lg hover:bg-dark-500 flex items-center gap-2"
             >
               <Download className="w-4 h-4" />
               Export
@@ -160,57 +160,57 @@ export default function RuleTrackerClient() {
         </div>
 
         {/* Challenge Settings */}
-        <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 mb-8">
+        <div className="bg-dark-700/50 border border-border rounded-xl p-6 mb-8">
           <h2 className="text-xl font-semibold text-white mb-4">Challenge Settings</h2>
           <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-4">
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Account Size</label>
+              <label className="block text-sm text-text-secondary mb-1">Account Size</label>
               <input
                 type="number"
                 value={state.accountSize}
                 onChange={(e) => saveState({ ...state, accountSize: Number(e.target.value) })}
-                className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white"
+                className="w-full px-3 py-2 bg-bg-elevated border border-border rounded-lg text-white"
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Profit Target %</label>
+              <label className="block text-sm text-text-secondary mb-1">Profit Target %</label>
               <input
                 type="number"
                 value={state.profitTarget}
                 onChange={(e) => saveState({ ...state, profitTarget: Number(e.target.value) })}
-                className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white"
+                className="w-full px-3 py-2 bg-bg-elevated border border-border rounded-lg text-white"
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Daily DD %</label>
+              <label className="block text-sm text-text-secondary mb-1">Daily DD %</label>
               <input
                 type="number"
                 value={state.dailyDrawdown}
                 onChange={(e) => saveState({ ...state, dailyDrawdown: Number(e.target.value) })}
-                className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white"
+                className="w-full px-3 py-2 bg-bg-elevated border border-border rounded-lg text-white"
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Max DD %</label>
+              <label className="block text-sm text-text-secondary mb-1">Max DD %</label>
               <input
                 type="number"
                 value={state.maxDrawdown}
                 onChange={(e) => saveState({ ...state, maxDrawdown: Number(e.target.value) })}
-                className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white"
+                className="w-full px-3 py-2 bg-bg-elevated border border-border rounded-lg text-white"
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Min Trading Days</label>
+              <label className="block text-sm text-text-secondary mb-1">Min Trading Days</label>
               <input
                 type="number"
                 value={state.minTradingDays}
                 onChange={(e) => saveState({ ...state, minTradingDays: Number(e.target.value) })}
-                className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white"
+                className="w-full px-3 py-2 bg-bg-elevated border border-border rounded-lg text-white"
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Current Balance</label>
-              <div className="px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-emerald-400 font-mono">
+              <label className="block text-sm text-text-secondary mb-1">Current Balance</label>
+              <div className="px-3 py-2 bg-bg-elevated border border-border rounded-lg text-accent font-mono">
                 ${currentEquity.toLocaleString()}
               </div>
             </div>
@@ -220,30 +220,30 @@ export default function RuleTrackerClient() {
         {/* Status Cards */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {/* Profit Target */}
-          <div className={`p-4 rounded-xl border ${isProfitTargetMet ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-gray-800/50 border-gray-700'}`}>
+          <div className={`p-4 rounded-xl border ${isProfitTargetMet ? 'bg-accent/10 border-accent/30' : 'bg-dark-700/50 border-border'}`}>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-400 text-sm">Profit Target</span>
-              {isProfitTargetMet ? <CheckCircle className="w-5 h-5 text-emerald-400" /> : <Target className="w-5 h-5 text-gray-500" />}
+              <span className="text-text-secondary text-sm">Profit Target</span>
+              {isProfitTargetMet ? <CheckCircle className="w-5 h-5 text-accent" /> : <Target className="w-5 h-5 text-text-muted" />}
             </div>
             <div className="text-2xl font-bold text-white">{profitPercent.toFixed(2)}%</div>
-            <div className="text-sm text-gray-400">Target: {state.profitTarget}%</div>
-            <div className="mt-2 h-2 bg-gray-700 rounded-full overflow-hidden">
+            <div className="text-sm text-text-secondary">Target: {state.profitTarget}%</div>
+            <div className="mt-2 h-2 bg-dark-600 rounded-full overflow-hidden">
               <div 
-                className="h-full bg-emerald-500 transition-all"
+                className="h-full bg-accent-hover transition-all"
                 style={{ width: `${Math.min(progressPercent, 100)}%` }}
               />
             </div>
           </div>
 
           {/* Max Drawdown */}
-          <div className={`p-4 rounded-xl border ${isDrawdownBreached ? 'bg-red-500/10 border-red-500/30' : 'bg-gray-800/50 border-gray-700'}`}>
+          <div className={`p-4 rounded-xl border ${isDrawdownBreached ? 'bg-red-500/10 border-red-500/30' : 'bg-dark-700/50 border-border'}`}>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-400 text-sm">Max Drawdown</span>
-              {isDrawdownBreached ? <XCircle className="w-5 h-5 text-red-400" /> : <TrendingDown className="w-5 h-5 text-gray-500" />}
+              <span className="text-text-secondary text-sm">Max Drawdown</span>
+              {isDrawdownBreached ? <XCircle className="w-5 h-5 text-red-400" /> : <TrendingDown className="w-5 h-5 text-text-muted" />}
             </div>
             <div className="text-2xl font-bold text-white">{drawdownPercent.toFixed(2)}%</div>
-            <div className="text-sm text-gray-400">Limit: {state.maxDrawdown}%</div>
-            <div className="mt-2 h-2 bg-gray-700 rounded-full overflow-hidden">
+            <div className="text-sm text-text-secondary">Limit: {state.maxDrawdown}%</div>
+            <div className="mt-2 h-2 bg-dark-600 rounded-full overflow-hidden">
               <div 
                 className={`h-full transition-all ${drawdownPercent > state.maxDrawdown * 0.7 ? 'bg-red-500' : 'bg-yellow-500'}`}
                 style={{ width: `${Math.min((drawdownPercent / state.maxDrawdown) * 100, 100)}%` }}
@@ -252,14 +252,14 @@ export default function RuleTrackerClient() {
           </div>
 
           {/* Trading Days */}
-          <div className={`p-4 rounded-xl border ${isMinDaysMet ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-gray-800/50 border-gray-700'}`}>
+          <div className={`p-4 rounded-xl border ${isMinDaysMet ? 'bg-accent/10 border-accent/30' : 'bg-dark-700/50 border-border'}`}>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-400 text-sm">Trading Days</span>
-              {isMinDaysMet ? <CheckCircle className="w-5 h-5 text-emerald-400" /> : <Calendar className="w-5 h-5 text-gray-500" />}
+              <span className="text-text-secondary text-sm">Trading Days</span>
+              {isMinDaysMet ? <CheckCircle className="w-5 h-5 text-accent" /> : <Calendar className="w-5 h-5 text-text-muted" />}
             </div>
             <div className="text-2xl font-bold text-white">{tradingDaysCount}</div>
-            <div className="text-sm text-gray-400">Min required: {state.minTradingDays}</div>
-            <div className="mt-2 h-2 bg-gray-700 rounded-full overflow-hidden">
+            <div className="text-sm text-text-secondary">Min required: {state.minTradingDays}</div>
+            <div className="mt-2 h-2 bg-dark-600 rounded-full overflow-hidden">
               <div 
                 className="h-full bg-blue-500 transition-all"
                 style={{ width: `${Math.min((tradingDaysCount / state.minTradingDays) * 100, 100)}%` }}
@@ -272,23 +272,23 @@ export default function RuleTrackerClient() {
             isDrawdownBreached || hasDailyDrawdownBreach 
               ? 'bg-red-500/10 border-red-500/30' 
               : isProfitTargetMet && isMinDaysMet 
-                ? 'bg-emerald-500/10 border-emerald-500/30' 
-                : 'bg-gray-800/50 border-gray-700'
+                ? 'bg-accent/10 border-accent/30' 
+                : 'bg-dark-700/50 border-border'
           }`}>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-400 text-sm">Challenge Status</span>
-              <Clock className="w-5 h-5 text-gray-500" />
+              <span className="text-text-secondary text-sm">Challenge Status</span>
+              <Clock className="w-5 h-5 text-text-muted" />
             </div>
             <div className="text-xl font-bold">
               {isDrawdownBreached || hasDailyDrawdownBreach ? (
                 <span className="text-red-400">FAILED</span>
               ) : isProfitTargetMet && isMinDaysMet ? (
-                <span className="text-emerald-400">PASSED ✓</span>
+                <span className="text-accent">PASSED ✓</span>
               ) : (
                 <span className="text-yellow-400">IN PROGRESS</span>
               )}
             </div>
-            <div className="text-sm text-gray-400">
+            <div className="text-sm text-text-secondary">
               {remainingDays > 0 ? `${remainingDays} more days needed` : 'Min days met'}
             </div>
           </div>
@@ -300,7 +300,7 @@ export default function RuleTrackerClient() {
             <AlertTriangle className="w-6 h-6 text-red-400 flex-shrink-0" />
             <div>
               <div className="text-red-400 font-semibold">Warning!</div>
-              <div className="text-gray-300 text-sm">
+              <div className="text-text-secondary text-sm">
                 {hasDailyDrawdownBreach 
                   ? 'You have hit the daily drawdown limit. This may result in challenge failure.'
                   : 'You are approaching the maximum drawdown limit. Trade carefully!'}
@@ -310,46 +310,46 @@ export default function RuleTrackerClient() {
         )}
 
         {/* Add Trading Day */}
-        <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 mb-8">
+        <div className="bg-dark-700/50 border border-border rounded-xl p-6 mb-8">
           <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-            <Plus className="w-5 h-5 text-emerald-400" />
+            <Plus className="w-5 h-5 text-accent" />
             Add Trading Day
           </h2>
           <div className="grid md:grid-cols-5 gap-4">
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Date</label>
+              <label className="block text-sm text-text-secondary mb-1">Date</label>
               <input
                 type="date"
                 value={newDay.date}
                 onChange={(e) => setNewDay({ ...newDay, date: e.target.value })}
-                className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white"
+                className="w-full px-3 py-2 bg-bg-elevated border border-border rounded-lg text-white"
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Profit/Loss ($)</label>
+              <label className="block text-sm text-text-secondary mb-1">Profit/Loss ($)</label>
               <input
                 type="number"
                 value={newDay.profit}
                 onChange={(e) => setNewDay({ ...newDay, profit: Number(e.target.value) })}
                 placeholder="e.g. 500 or -200"
-                className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white"
+                className="w-full px-3 py-2 bg-bg-elevated border border-border rounded-lg text-white"
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Trades</label>
+              <label className="block text-sm text-text-secondary mb-1">Trades</label>
               <input
                 type="number"
                 value={newDay.trades}
                 onChange={(e) => setNewDay({ ...newDay, trades: Number(e.target.value) })}
-                className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white"
+                className="w-full px-3 py-2 bg-bg-elevated border border-border rounded-lg text-white"
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Daily DD Hit?</label>
+              <label className="block text-sm text-text-secondary mb-1">Daily DD Hit?</label>
               <select
                 value={newDay.drawdownHit ? 'yes' : 'no'}
                 onChange={(e) => setNewDay({ ...newDay, drawdownHit: e.target.value === 'yes' })}
-                className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white"
+                className="w-full px-3 py-2 bg-bg-elevated border border-border rounded-lg text-white"
               >
                 <option value="no">No</option>
                 <option value="yes">Yes</option>
@@ -358,7 +358,7 @@ export default function RuleTrackerClient() {
             <div className="flex items-end">
               <button
                 onClick={addTradingDay}
-                className="w-full px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 flex items-center justify-center gap-2"
+                className="w-full px-4 py-2 bg-accent-hover text-white rounded-lg hover:brightness-110 flex items-center justify-center gap-2"
               >
                 <Save className="w-4 h-4" />
                 Add Day
@@ -368,11 +368,11 @@ export default function RuleTrackerClient() {
         </div>
 
         {/* Trading History */}
-        <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
+        <div className="bg-dark-700/50 border border-border rounded-xl p-6">
           <h2 className="text-xl font-semibold text-white mb-4">Trading History</h2>
           
           {state.tradingDays.length === 0 ? (
-            <div className="text-center py-12 text-gray-400">
+            <div className="text-center py-12 text-text-secondary">
               <ClipboardCheck className="w-12 h-12 mx-auto mb-4 opacity-50" />
               <p>No trading days recorded yet.</p>
               <p className="text-sm">Add your first trading day above to start tracking.</p>
@@ -381,33 +381,33 @@ export default function RuleTrackerClient() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-gray-700">
-                    <th className="text-left py-3 px-4 text-gray-400 font-medium">Date</th>
-                    <th className="text-right py-3 px-4 text-gray-400 font-medium">P&L</th>
-                    <th className="text-right py-3 px-4 text-gray-400 font-medium">Trades</th>
-                    <th className="text-center py-3 px-4 text-gray-400 font-medium">DD Hit</th>
-                    <th className="text-right py-3 px-4 text-gray-400 font-medium">Balance</th>
-                    <th className="text-right py-3 px-4 text-gray-400 font-medium">Actions</th>
+                  <tr className="border-b border-border">
+                    <th className="text-left py-3 px-4 text-text-secondary font-medium">Date</th>
+                    <th className="text-right py-3 px-4 text-text-secondary font-medium">P&L</th>
+                    <th className="text-right py-3 px-4 text-text-secondary font-medium">Trades</th>
+                    <th className="text-center py-3 px-4 text-text-secondary font-medium">DD Hit</th>
+                    <th className="text-right py-3 px-4 text-text-secondary font-medium">Balance</th>
+                    <th className="text-right py-3 px-4 text-text-secondary font-medium">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {state.tradingDays.map((day, index) => {
                     const runningBalance = state.accountSize + state.tradingDays.slice(0, index + 1).reduce((sum, d) => sum + d.profit, 0)
                     return (
-                      <tr key={index} className="border-b border-gray-700/50 hover:bg-gray-700/20">
+                      <tr key={index} className="border-b border-border/50 hover:bg-dark-600/20">
                         <td className="py-3 px-4 text-white">{day.date}</td>
-                        <td className={`py-3 px-4 text-right font-mono ${day.profit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                        <td className={`py-3 px-4 text-right font-mono ${day.profit >= 0 ? 'text-accent' : 'text-red-400'}`}>
                           {day.profit >= 0 ? '+' : ''}{day.profit.toLocaleString()}
                         </td>
-                        <td className="py-3 px-4 text-right text-gray-300">{day.trades}</td>
+                        <td className="py-3 px-4 text-right text-text-secondary">{day.trades}</td>
                         <td className="py-3 px-4 text-center">
                           {day.drawdownHit ? (
                             <span className="px-2 py-1 bg-red-500/20 text-red-400 rounded text-xs">YES</span>
                           ) : (
-                            <span className="px-2 py-1 bg-gray-700 text-gray-400 rounded text-xs">NO</span>
+                            <span className="px-2 py-1 bg-dark-600 text-text-secondary rounded text-xs">NO</span>
                           )}
                         </td>
-                        <td className="py-3 px-4 text-right text-gray-300 font-mono">
+                        <td className="py-3 px-4 text-right text-text-secondary font-mono">
                           ${runningBalance.toLocaleString()}
                         </td>
                         <td className="py-3 px-4 text-right">
@@ -423,12 +423,12 @@ export default function RuleTrackerClient() {
                   })}
                 </tbody>
                 <tfoot>
-                  <tr className="bg-gray-700/30">
+                  <tr className="bg-dark-600/30">
                     <td className="py-3 px-4 text-white font-semibold">Total</td>
-                    <td className={`py-3 px-4 text-right font-mono font-semibold ${totalProfit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                    <td className={`py-3 px-4 text-right font-mono font-semibold ${totalProfit >= 0 ? 'text-accent' : 'text-red-400'}`}>
                       {totalProfit >= 0 ? '+' : ''}{totalProfit.toLocaleString()}
                     </td>
-                    <td className="py-3 px-4 text-right text-gray-300">
+                    <td className="py-3 px-4 text-right text-text-secondary">
                       {state.tradingDays.reduce((sum, d) => sum + d.trades, 0)}
                     </td>
                     <td></td>

@@ -69,16 +69,16 @@ export function UpdatePnlModal({ account, onClose }: UpdatePnlModalProps) {
       <div className="absolute inset-0 bg-black/70" onClick={onClose} />
 
       {/* Modal */}
-      <div className="relative bg-gray-900 rounded-xl border border-gray-800 w-full max-w-sm p-6">
+      <div className="relative bg-bg-elevated rounded-xl border border-border w-full max-w-sm p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
             <h2 className="text-lg font-semibold text-white">Update Today&apos;s P&L</h2>
-            <p className="text-sm text-gray-500">{account.prop_firm}</p>
+            <p className="text-sm text-text-muted">{account.prop_firm}</p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg"
+            className="p-2 text-text-secondary hover:text-white hover:bg-dark-700 rounded-lg"
           >
             <X className="w-5 h-5" />
           </button>
@@ -86,7 +86,7 @@ export function UpdatePnlModal({ account, onClose }: UpdatePnlModalProps) {
 
         {/* Input */}
         <div className="mb-4">
-          <label className="block text-sm text-gray-400 mb-2">
+          <label className="block text-sm text-text-secondary mb-2">
             Today&apos;s P&L (USD)
           </label>
           <input
@@ -94,7 +94,7 @@ export function UpdatePnlModal({ account, onClose }: UpdatePnlModalProps) {
             value={pnl}
             onChange={(e) => setPnl(e.target.value)}
             placeholder="0"
-            className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white text-lg placeholder-gray-600 focus:outline-none focus:border-emerald-500"
+            className="w-full px-4 py-3 bg-dark-700 border border-border rounded-lg text-white text-lg placeholder-text-muted focus:outline-none focus:border-accent"
             autoFocus
           />
         </div>
@@ -115,13 +115,13 @@ export function UpdatePnlModal({ account, onClose }: UpdatePnlModalProps) {
           </button>
           <button
             onClick={() => handleQuickSet(100)}
-            className="flex-1 py-2 text-sm bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 rounded-lg transition-colors"
+            className="flex-1 py-2 text-sm bg-accent/20 text-accent hover:bg-accent/30 rounded-lg transition-colors"
           >
             +$100
           </button>
           <button
             onClick={() => handleQuickSet(500)}
-            className="flex-1 py-2 text-sm bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 rounded-lg transition-colors"
+            className="flex-1 py-2 text-sm bg-accent/20 text-accent hover:bg-accent/30 rounded-lg transition-colors"
           >
             +$500
           </button>
@@ -136,7 +136,7 @@ export function UpdatePnlModal({ account, onClose }: UpdatePnlModalProps) {
         <button
           onClick={handleSave}
           disabled={isSaving}
-          className="w-full flex items-center justify-center gap-2 py-3 bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-700 disabled:text-gray-500 text-white font-medium rounded-lg transition-colors"
+          className="w-full flex items-center justify-center gap-2 py-3 bg-accent-hover hover:brightness-110 disabled:bg-dark-600 disabled:text-text-muted text-white font-medium rounded-lg transition-colors"
         >
           {isSaving ? (
             <>

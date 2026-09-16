@@ -1,4 +1,7 @@
-/* Gabarit « Universal Prop Firm Page » fourni par Sofiane, construit comme la
+/* Palette 2c (ardoise sombre, septembre 2026) : memes valeurs que les jetons
+   de tailwind.config.js. Page de retour arriere, remplacee par
+   components/prop-firm/profile/FirmProfilePage.
+   Gabarit « Universal Prop Firm Page » fourni par Sofiane, construit comme la
    fiche Earn2Trade qu'il a demande de prendre pour modele (11 septembre 2026) :
    - en-tete court : logo cliquable, nom, 1 a 2 phrases, faits en rang, deux
      boutons ; la carte promo, plus etroite, a la meme hauteur ;
@@ -9,15 +12,15 @@
    La barre de navigation du HTML n'est pas reprise : le site a la sienne. */
 
 .root {
-  --bg: #07101f;
-  --panel: #0d1728;
-  --panel2: #111d31;
-  --line: #26344b;
-  --text: #f5f7fb;
-  --muted: #9eabc0;
-  --brand: #ff7a00;
-  --brand2: #ffad45;
-  --green: #39dda2;
+  --bg: #1E293B;
+  --panel: #273449;
+  --panel2: #273449;
+  --line: #334155;
+  --text: #F1F5F9;
+  --muted: #CBD5E1;
+  --brand: #059669;
+  --brand2: #34D399;
+  --green: #34D399;
   --amber: #f5b547;
   --red: #ff6b78;
   --radius: 16px;
@@ -39,7 +42,7 @@
 .anchor { scroll-margin-top: 136px; }
 .single { grid-template-columns: minmax(0, 1fr) !important; }
 
-.card { background: linear-gradient(145deg, var(--panel), #0a1424); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+.card { background: linear-gradient(145deg, var(--panel), #273449); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
 
 .eyebrow { display: block; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--brand2); font-weight: 800; }
 .label { display: block; color: var(--muted); font-size: 12px; }
@@ -52,14 +55,14 @@
 .identity { display: flex; gap: 18px; align-items: flex-start; }
 .identityText { min-width: 0; }
 .logo { width: 72px; height: 72px; border-radius: 16px; display: grid; place-items: center; background: #fff; color: #172033; font-weight: 900; font-size: 28px; overflow: hidden; flex: none; text-decoration: none; transition: box-shadow 0.15s ease, transform 0.15s ease; }
-.logo:hover { box-shadow: 0 0 0 3px rgba(255, 122, 0, 0.5); transform: translateY(-1px); }
+.logo:hover { box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.5); transform: translateY(-1px); }
 .logo img { width: 100%; height: 100%; object-fit: contain; }
 .identityTop { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 8px; }
 .badge { border: 1px solid var(--line); background: rgba(255, 255, 255, 0.04); color: var(--muted); border-radius: 99px; padding: 3px 10px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
 .rating { color: var(--brand2); font-weight: 800; font-size: 13px; }
 .ratingExt { color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; font-size: 11px; }
 .h1 { font-size: clamp(30px, 4.4vw, 42px); line-height: 1.08; margin: 0; text-wrap: balance; }
-.lead { color: #c5cfde; font-size: 16px; max-width: 700px; margin: 8px 0 0; }
+.lead { color: #CBD5E1; font-size: 16px; max-width: 700px; margin: 8px 0 0; }
 
 .factsRow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 0; }
 .fact { padding: 9px 12px; border: 1px solid var(--line); border-radius: 11px; background: rgba(255, 255, 255, 0.02); min-width: 0; }
@@ -69,23 +72,23 @@
 .heroActions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: auto; }
 
 /* --------------------------------------------------------- carte promo --- */
-.deal { position: relative; overflow: hidden; display: flex; flex-direction: column; border-color: rgba(255, 122, 0, 0.55); }
-.deal::before { content: ""; position: absolute; width: 240px; height: 240px; border-radius: 50%; background: rgba(255, 122, 0, 0.16); filter: blur(20px); right: -100px; top: -100px; pointer-events: none; }
-.pill { display: inline-flex; align-self: flex-start; border: 1px solid rgba(57, 221, 162, 0.4); color: var(--green); background: rgba(57, 221, 162, 0.08); border-radius: 99px; padding: 4px 10px; font-size: 12px; font-weight: 800; }
+.deal { position: relative; overflow: hidden; display: flex; flex-direction: column; border-color: rgba(52, 211, 153, 0.55); }
+.deal::before { content: ""; position: absolute; width: 240px; height: 240px; border-radius: 50%; background: rgba(52, 211, 153, 0.16); filter: blur(20px); right: -100px; top: -100px; pointer-events: none; }
+.pill { display: inline-flex; align-self: flex-start; border: 1px solid rgba(52, 211, 153, 0.4); color: var(--green); background: rgba(52, 211, 153, 0.08); border-radius: 99px; padding: 4px 10px; font-size: 12px; font-weight: 800; }
 .deal h2 { margin: 10px 0 0; font-size: 21px; }
 .discount { font-size: 42px; font-weight: 950; color: var(--brand2); line-height: 1.1; margin: 4px 0 8px; }
 .deal .codeRow { margin: 6px 0 12px; }
 .deal .full { margin-top: auto; }
 
 .codeRow { display: flex; gap: 10px; align-items: stretch; margin: 12px 0; }
-.code { flex: 1; padding: 11px 14px; border: 1px dashed var(--brand2); border-radius: 12px; font-size: 20px; font-weight: 900; letter-spacing: 0.08em; background: #0a1321; }
+.code { flex: 1; padding: 11px 14px; border: 1px dashed var(--brand2); border-radius: 12px; font-size: 20px; font-weight: 900; letter-spacing: 0.08em; background: #1E293B; }
 
 .btn { border: 0; border-radius: 12px; padding: 11px 18px; min-height: 44px; font-weight: 850; cursor: pointer; display: inline-flex; justify-content: center; align-items: center; gap: 8px; text-decoration: none; color: inherit; }
 .primary { background: var(--brand); color: #fff; }
-.primary:hover { background: #ff8a1f; }
-.secondary { background: #17243a; color: #fff; border: 1px solid var(--line); }
+.primary:hover { background: #047857; }
+.secondary { background: #334155; color: #fff; border: 1px solid var(--line); }
 .ghost { background: transparent; color: var(--text); border: 1px solid var(--line); }
-.ghost:hover { border-color: #3d4d6a; }
+.ghost:hover { border-color: #475569; }
 .full { width: 100%; }
 .icon { width: 18px; height: 18px; }
 .btn:focus-visible, .choice:focus-visible, .tab:focus-visible, .similarCard:focus-visible, .logo:focus-visible { outline: 2px solid var(--brand2); outline-offset: 2px; }
@@ -95,7 +98,7 @@
 .strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
 .stripCard { padding: 14px 16px; box-shadow: none; }
 .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
-.chip { padding: 4px 9px; background: #162338; border: 1px solid #30405b; border-radius: 8px; font-size: 12px; }
+.chip { padding: 4px 9px; background: #1E293B; border: 1px solid #334155; border-radius: 8px; font-size: 12px; }
 
 .head { display: flex; justify-content: space-between; align-items: end; gap: 20px; margin-bottom: 12px; }
 .head h2 { font-size: 28px; line-height: 1.15; margin: 2px 0 0; text-wrap: balance; }
@@ -106,21 +109,21 @@
    gauche dans des cadres numerotes, selection collante a droite. */
 .configurator { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 16px; align-items: start; }
 .steps { display: grid; gap: 12px; min-width: 0; }
-.step { margin: 0; min-width: 0; border: 1px solid var(--line); border-radius: 14px; padding: 4px 16px 16px; background: rgba(13, 23, 40, 0.75); }
+.step { margin: 0; min-width: 0; border: 1px solid var(--line); border-radius: 14px; padding: 4px 16px 16px; background: rgba(30, 41, 59, 0.75); }
 .legend { display: flex; align-items: center; gap: 10px; padding: 0 8px; font-weight: 800; font-size: 17px; }
 .stepNum { width: 26px; height: 26px; border-radius: 50%; background: var(--brand); color: #fff; font-size: 13px; font-weight: 900; display: grid; place-items: center; flex: none; }
 .choices { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 10px; }
 .choicesCompact { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
-.choice { text-align: left; padding: 13px 16px; border-radius: 12px; border: 1px solid var(--line); background: #101b2d; color: var(--text); cursor: pointer; display: flex; flex-direction: column; gap: 2px; transition: border-color 0.15s ease, background 0.15s ease; }
-.choice:hover { border-color: #3d4d6a; }
+.choice { text-align: left; padding: 13px 16px; border-radius: 12px; border: 1px solid var(--line); background: #1E293B; color: var(--text); cursor: pointer; display: flex; flex-direction: column; gap: 2px; transition: border-color 0.15s ease, background 0.15s ease; }
+.choice:hover { border-color: #475569; }
 .choiceCompact { text-align: center; align-items: center; padding: 11px 8px; }
-.choiceActive, .choiceActive:hover { border-color: var(--brand); background: rgba(255, 122, 0, 0.09); }
+.choiceActive, .choiceActive:hover { border-color: var(--brand); background: rgba(52, 211, 153, 0.09); }
 .choiceTagline { font-size: 12.5px; color: var(--muted); font-weight: 600; }
 .choiceName { font-size: 19px; font-weight: 800; line-height: 1.2; }
 .choiceActive .choiceName { color: var(--brand2); }
 .choiceDetail { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
 
-.selection { position: sticky; top: 136px; background: linear-gradient(145deg, var(--panel), #0a1424); border: 1px solid rgba(255, 122, 0, 0.45); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+.selection { position: sticky; top: 136px; background: linear-gradient(145deg, var(--panel), #273449); border: 1px solid rgba(52, 211, 153, 0.45); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
 .selectionTitle { font-size: 22px; line-height: 1.2; margin: 4px 0 0 !important; }
 .selectionPrice { margin: 10px 0 2px; }
 .price { font-size: 42px; font-weight: 950; line-height: 1.1; font-variant-numeric: tabular-nums; }
@@ -139,10 +142,10 @@
 .compareTitle { font-size: 20px; }
 .compareIntro { color: var(--muted); margin: 2px 0 10px; font-size: 14px; }
 .compareGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
-.compareCard { text-align: left; color: var(--text); cursor: pointer; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; background: rgba(13, 23, 40, 0.75); display: flex; flex-direction: column; gap: 4px; transition: border-color 0.15s ease, background 0.15s ease; }
-.compareCard:hover { border-color: #3d4d6a; }
+.compareCard { text-align: left; color: var(--text); cursor: pointer; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; background: rgba(30, 41, 59, 0.75); display: flex; flex-direction: column; gap: 4px; transition: border-color 0.15s ease, background 0.15s ease; }
+.compareCard:hover { border-color: #475569; }
 .compareCard:focus-visible { outline: 2px solid var(--brand2); outline-offset: 2px; }
-.compareActive, .compareActive:hover { border-color: var(--brand); background: rgba(255, 122, 0, 0.07); }
+.compareActive, .compareActive:hover { border-color: var(--brand); background: rgba(52, 211, 153, 0.07); }
 .compareBadge { font-size: 12px; font-weight: 800; color: var(--brand2); text-transform: uppercase; letter-spacing: 0.06em; }
 .compareCard h4 { font-size: 18px; }
 .compareCard p { color: var(--muted); font-size: 14px; margin: 0; }
@@ -166,7 +169,7 @@
 
 /* ------------------------------------------------------ rules by phase --- */
 .tabs { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
-.tab { padding: 8px 13px; border-radius: 9px; border: 1px solid var(--line); background: #101a2b; color: var(--muted); cursor: pointer; }
+.tab { padding: 8px 13px; border-radius: 9px; border: 1px solid var(--line); background: #1E293B; color: var(--muted); cursor: pointer; }
 .tabActive { background: var(--brand); color: #fff; border-color: var(--brand); }
 /* color/font explicites : sans doctype, le navigateur ne les fait pas heriter aux tableaux. */
 .table { width: 100%; border-collapse: collapse; color: inherit; font: inherit; }
@@ -182,13 +185,13 @@
 .rule p { color: var(--muted); margin: 0; }
 
 /* --------------------------------------------------------------- about --- */
-.about p { color: #c5cfde; margin: 0; max-width: 900px; }
+.about p { color: #CBD5E1; margin: 0; max-width: 900px; }
 .about p + p { margin-top: 10px; }
 
 /* ------------------------------------------------------------- verdict --- */
 .verdict { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: stretch; }
 .verdict h3 { margin: 0 0 4px; font-size: 18px; }
-.verdictText { color: #c5cfde; margin: 6px 0 0; }
+.verdictText { color: #CBD5E1; margin: 6px 0 0; }
 .list { list-style: none; padding: 0; margin: 8px 0 0; }
 .list li { padding: 7px 0; border-bottom: 1px solid var(--line); }
 .list li:last-child { border-bottom: 0; }
@@ -203,14 +206,14 @@
 
 /* ------------------------------------- strengths and things to know --- */
 .prosCons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: stretch; }
-.pros { border-color: rgba(57, 221, 162, 0.28); }
+.pros { border-color: rgba(52, 211, 153, 0.28); }
 .cons { border-color: rgba(245, 181, 71, 0.3); }
 .pros h3, .cons h3 { font-size: 18px; }
 .info li::before { content: "i"; display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--amber); color: var(--amber); font-size: 11px; font-weight: 900; margin-right: 10px; }
 
 /* ------------------------------------------ ready to pick your program --- */
 /* Sur une ligne, comme le bandeau final de la fiche Earn2Trade. */
-.ready { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 24px; padding: 22px 24px; border-color: rgba(255, 122, 0, 0.35); }
+.ready { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 24px; padding: 22px 24px; border-color: rgba(52, 211, 153, 0.35); }
 .ready h2 { font-size: 26px; text-wrap: balance; }
 .ready p { color: var(--muted); margin: 4px 0 0; }
 .readyAction { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
@@ -220,7 +223,7 @@
 /* -------------------------------------------------------- similar firms --- */
 .similarGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
 .similarCard { display: flex; align-items: center; gap: 12px; padding: 12px 14px; text-decoration: none; color: inherit; box-shadow: none; }
-.similarCard:hover { border-color: rgba(255, 122, 0, 0.45); }
+.similarCard:hover { border-color: rgba(52, 211, 153, 0.45); }
 .similarLogo { width: 40px; height: 40px; border-radius: 10px; background: #fff; color: #172033; display: grid; place-items: center; font-weight: 900; overflow: hidden; flex: none; }
 .similarLogo img { width: 100%; height: 100%; object-fit: contain; }
 .similarText { min-width: 0; }
@@ -250,7 +253,7 @@
 
   /* Barre fixe : la selection, son prix, le bouton — comme sur la fiche Earn2Trade. */
   .withMobileBar { padding-bottom: 88px; }
-  .mobileBar { display: flex; align-items: center; gap: 12px; position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); background: rgba(7, 16, 31, 0.96); border-top: 1px solid var(--line); backdrop-filter: blur(8px); }
+  .mobileBar { display: flex; align-items: center; gap: 12px; position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); background: rgba(15, 23, 42, 0.96); border-top: 1px solid var(--line); backdrop-filter: blur(8px); }
   .mobileBarText { display: flex; flex-direction: column; min-width: 0; flex: 1; }
   .mobileBarLabel { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .mobileBarPrice { font-size: 20px; font-weight: 900; font-variant-numeric: tabular-nums; }

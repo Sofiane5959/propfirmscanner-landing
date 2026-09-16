@@ -52,9 +52,9 @@ const CopyButton = ({ code }: { code: string }) => {
       aria-label={copied ? 'Code copied' : `Copy promo code ${code}`}
     >
       {copied ? (
-        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+        <CheckCircle2 className="w-3.5 h-3.5 text-accent" />
       ) : (
-        <Copy className="w-3.5 h-3.5 text-gray-400 hover:text-white" />
+        <Copy className="w-3.5 h-3.5 text-text-secondary hover:text-white" />
       )}
     </button>
   )
@@ -79,7 +79,7 @@ const DealPill = ({ deal }: { deal: PromoDeal }) => {
   const hasCode = !!(deal.discount_code && deal.discount_code.trim().length > 0)
   
   const pillClass =
-    'flex-shrink-0 flex items-center gap-2 px-3 py-1.5 bg-gray-800/80 hover:bg-gray-700/80 border border-gray-700/50 hover:border-emerald-500/30 rounded-full transition-all group'
+    'flex-shrink-0 flex items-center gap-2 px-3 py-1.5 bg-dark-700/80 hover:bg-dark-600/80 border border-border/50 hover:border-accent/30 rounded-full transition-all group'
 
   const inner = (
     <>
@@ -89,18 +89,18 @@ const DealPill = ({ deal }: { deal: PromoDeal }) => {
           <Image src={deal.logo_url} alt={deal.name} width={20} height={20} className="object-contain" />
         </div>
       ) : (
-        <div className="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center">
-          <span className="text-[10px] font-bold text-emerald-400">{deal.name.charAt(0)}</span>
+        <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center">
+          <span className="text-[10px] font-bold text-accent">{deal.name.charAt(0)}</span>
         </div>
       )}
       
       {/* Name */}
-      <span className="text-xs font-medium text-white group-hover:text-emerald-400 transition-colors whitespace-nowrap">
+      <span className="text-xs font-medium text-white group-hover:text-accent transition-colors whitespace-nowrap">
         {deal.name}
       </span>
       
       {/* Verified Badge */}
-      <BadgeCheck className="w-3.5 h-3.5 text-emerald-400" />
+      <BadgeCheck className="w-3.5 h-3.5 text-accent" />
       
       {/* Discount Badge */}
       <span className="px-1.5 py-0.5 bg-gradient-to-r from-red-500 to-orange-500 text-white text-[10px] font-bold rounded">
@@ -110,7 +110,7 @@ const DealPill = ({ deal }: { deal: PromoDeal }) => {
       {hasCode ? (
         <>
           {/* Code */}
-          <code className="px-1.5 py-0.5 bg-gray-900 text-emerald-400 text-[10px] font-mono rounded">
+          <code className="px-1.5 py-0.5 bg-bg-elevated text-accent text-[10px] font-mono rounded">
             {deal.discount_code}
           </code>
           
@@ -119,7 +119,7 @@ const DealPill = ({ deal }: { deal: PromoDeal }) => {
         </>
       ) : (
         // No code needed — discount applied automatically via the affiliate link
-        <span className="px-1.5 py-0.5 bg-gray-900 text-gray-400 text-[10px] font-medium rounded inline-flex items-center gap-1">
+        <span className="px-1.5 py-0.5 bg-bg-elevated text-text-secondary text-[10px] font-medium rounded inline-flex items-center gap-1">
           <ExternalLink className="w-2.5 h-2.5" />
           via link
         </span>
@@ -288,18 +288,18 @@ export default function PromoTicker({ deals: initialDeals = [] }: PromoTickerPro
       data-collapsing-header
       // Sits at top: 4rem with its own height below that, so clearing the
       // viewport means travelling both.
-      className={`w-full bg-gray-900/95 border-b border-gray-800 backdrop-blur-sm sticky top-16 z-40 transition-transform duration-300 motion-reduce:transition-none ${
+      className={`w-full bg-bg-elevated/95 border-b border-border backdrop-blur-sm sticky top-16 z-40 transition-transform duration-300 motion-reduce:transition-none ${
         headerHidden ? '-translate-y-[calc(100%+4rem)]' : 'translate-y-0'
       }`}
     >
       <div className="max-w-[100vw] overflow-hidden">
         <div className="flex items-center">
           {/* Trust Label */}
-          <div className="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-emerald-500/20 to-transparent border-r border-gray-800">
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+          <div className="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-accent/20 to-transparent border-r border-border">
+            <ShieldCheck className="w-4 h-4 text-accent" />
             <div className="flex flex-col">
-              <span className="text-[10px] font-semibold text-emerald-400 uppercase tracking-wider">Verified Deals</span>
-              <span className="text-[9px] text-gray-500 hidden sm:block">Scanned & Trusted</span>
+              <span className="text-[10px] font-semibold text-accent uppercase tracking-wider">Verified Deals</span>
+              <span className="text-[9px] text-text-muted hidden sm:block">Scanned & Trusted</span>
             </div>
           </div>
           
@@ -333,7 +333,7 @@ export default function PromoTicker({ deals: initialDeals = [] }: PromoTickerPro
           {/* View All Link */}
           <Link
             href="/compare?deals=true"
-            className="flex-shrink-0 flex items-center gap-1 px-4 py-2 text-xs text-gray-400 hover:text-emerald-400 transition-colors border-l border-gray-800"
+            className="flex-shrink-0 flex items-center gap-1 px-4 py-2 text-xs text-text-secondary hover:text-accent transition-colors border-l border-border"
           >
             <span className="hidden sm:inline">All Deals</span>
             <ExternalLink className="w-3.5 h-3.5" />

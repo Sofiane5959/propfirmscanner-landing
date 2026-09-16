@@ -359,8 +359,8 @@ export default function EditAccountPage() {
 
   if (isLoading || loadingAccount) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
+      <div className="min-h-screen bg-bg-base flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-accent animate-spin" />
       </div>
     );
   }
@@ -371,16 +371,16 @@ export default function EditAccountPage() {
   
   if (!isAllowed) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+      <div className="min-h-screen bg-bg-base flex items-center justify-center">
         <div className="text-center">
           <div className="w-20 h-20 bg-purple-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
             <Shield className="w-10 h-10 text-purple-500" />
           </div>
           <h1 className="text-2xl font-bold text-white mb-2">{t.comingSoon}</h1>
-          <p className="text-gray-400 mb-6">{t.comingSoonDesc}</p>
+          <p className="text-text-secondary mb-6">{t.comingSoonDesc}</p>
           <Link
             href={`/${locale}/dashboard`}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-accent-hover hover:brightness-110 text-white rounded-lg transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
             {t.backToDashboard}
@@ -392,16 +392,16 @@ export default function EditAccountPage() {
 
   if (error === 'Account not found') {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+      <div className="min-h-screen bg-bg-base flex items-center justify-center">
         <div className="text-center">
           <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
             <AlertTriangle className="w-10 h-10 text-red-500" />
           </div>
           <h1 className="text-2xl font-bold text-white mb-2">{t.accountNotFound}</h1>
-          <p className="text-gray-400 mb-6">{t.accountNotFoundDesc}</p>
+          <p className="text-text-secondary mb-6">{t.accountNotFoundDesc}</p>
           <Link
             href={`/${locale}/dashboard/accounts`}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-accent-hover hover:brightness-110 text-white rounded-lg transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
             {t.backToAccounts}
@@ -412,21 +412,21 @@ export default function EditAccountPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950">
+    <div className="min-h-screen bg-bg-base">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <Link
             href={`/${locale}/dashboard/accounts`}
-            className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-4 transition-colors"
+            className="inline-flex items-center gap-2 text-text-secondary hover:text-white mb-4 transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
             {t.backToAccounts}
           </Link>
           <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Shield className="w-6 h-6 text-emerald-400" />
+            <Shield className="w-6 h-6 text-accent" />
             {t.editAccount}
           </h1>
-          <p className="text-gray-400 mt-1">{t.updateDetails}</p>
+          <p className="text-text-secondary mt-1">{t.updateDetails}</p>
         </div>
 
         <form onSubmit={handleSave} className="space-y-6">
@@ -438,28 +438,28 @@ export default function EditAccountPage() {
           )}
 
           {/* Account Info */}
-          <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-6">
+          <div className="bg-bg-elevated/50 rounded-xl border border-border p-6">
             <h2 className="text-lg font-semibold text-white mb-4">{t.accountInformation}</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-gray-400 mb-2">{t.accountName}</label>
+                <label className="block text-sm text-text-secondary mb-2">{t.accountName}</label>
                 <input
                   type="text"
                   value={form.account_name}
                   onChange={(e) => setForm({ ...form, account_name: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500"
+                  className="w-full px-4 py-2 bg-dark-700 border border-border rounded-lg text-white placeholder-text-muted focus:outline-none focus:border-accent"
                   placeholder={t.accountNamePlaceholder}
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-2">{t.firmName}</label>
+                <label className="block text-sm text-text-secondary mb-2">{t.firmName}</label>
                 <input
                   type="text"
                   value={form.firm_name}
                   onChange={(e) => setForm({ ...form, firm_name: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500"
+                  className="w-full px-4 py-2 bg-dark-700 border border-border rounded-lg text-white placeholder-text-muted focus:outline-none focus:border-accent"
                   placeholder={t.firmNamePlaceholder}
                   required
                 />
@@ -468,28 +468,28 @@ export default function EditAccountPage() {
           </div>
 
           {/* Balance */}
-          <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-6">
+          <div className="bg-bg-elevated/50 rounded-xl border border-border p-6">
             <h2 className="text-lg font-semibold text-white mb-4">{t.balance}</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-gray-400 mb-2">{t.initialBalance}</label>
+                <label className="block text-sm text-text-secondary mb-2">{t.initialBalance}</label>
                 <input
                   type="number"
                   value={form.initial_balance}
                   onChange={(e) => setForm({ ...form, initial_balance: parseFloat(e.target.value) || 0 })}
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500"
+                  className="w-full px-4 py-2 bg-dark-700 border border-border rounded-lg text-white placeholder-text-muted focus:outline-none focus:border-accent"
                   placeholder="100000"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-2">{t.currentBalance}</label>
+                <label className="block text-sm text-text-secondary mb-2">{t.currentBalance}</label>
                 <input
                   type="number"
                   value={form.current_balance}
                   onChange={(e) => setForm({ ...form, current_balance: parseFloat(e.target.value) || 0 })}
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500"
+                  className="w-full px-4 py-2 bg-dark-700 border border-border rounded-lg text-white placeholder-text-muted focus:outline-none focus:border-accent"
                   placeholder="102500"
                   required
                 />
@@ -498,40 +498,40 @@ export default function EditAccountPage() {
           </div>
 
           {/* Rules */}
-          <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-6">
+          <div className="bg-bg-elevated/50 rounded-xl border border-border p-6">
             <h2 className="text-lg font-semibold text-white mb-4">{t.challengeRules}</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm text-gray-400 mb-2">{t.maxDrawdown}</label>
+                <label className="block text-sm text-text-secondary mb-2">{t.maxDrawdown}</label>
                 <input
                   type="number"
                   step="0.1"
                   value={form.max_drawdown}
                   onChange={(e) => setForm({ ...form, max_drawdown: parseFloat(e.target.value) || 0 })}
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500"
+                  className="w-full px-4 py-2 bg-dark-700 border border-border rounded-lg text-white placeholder-text-muted focus:outline-none focus:border-accent"
                   placeholder="10"
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-2">{t.dailyLossLimit}</label>
+                <label className="block text-sm text-text-secondary mb-2">{t.dailyLossLimit}</label>
                 <input
                   type="number"
                   step="0.1"
                   value={form.daily_loss_limit}
                   onChange={(e) => setForm({ ...form, daily_loss_limit: parseFloat(e.target.value) || 0 })}
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500"
+                  className="w-full px-4 py-2 bg-dark-700 border border-border rounded-lg text-white placeholder-text-muted focus:outline-none focus:border-accent"
                   placeholder="5"
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-2">{t.profitTarget}</label>
+                <label className="block text-sm text-text-secondary mb-2">{t.profitTarget}</label>
                 <input
                   type="number"
                   step="0.1"
                   value={form.profit_target}
                   onChange={(e) => setForm({ ...form, profit_target: parseFloat(e.target.value) || 0 })}
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500"
+                  className="w-full px-4 py-2 bg-dark-700 border border-border rounded-lg text-white placeholder-text-muted focus:outline-none focus:border-accent"
                   placeholder="10"
                 />
               </div>
@@ -539,27 +539,27 @@ export default function EditAccountPage() {
           </div>
 
           {/* Daily Status */}
-          <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-6">
+          <div className="bg-bg-elevated/50 rounded-xl border border-border p-6">
             <h2 className="text-lg font-semibold text-white mb-4">{t.dailyStatus}</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-gray-400 mb-2">{t.currentDailyLoss}</label>
+                <label className="block text-sm text-text-secondary mb-2">{t.currentDailyLoss}</label>
                 <input
                   type="number"
                   value={form.current_daily_loss}
                   onChange={(e) => setForm({ ...form, current_daily_loss: parseFloat(e.target.value) || 0 })}
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500"
+                  className="w-full px-4 py-2 bg-dark-700 border border-border rounded-lg text-white placeholder-text-muted focus:outline-none focus:border-accent"
                   placeholder="0"
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-2">{t.challengeEndDate}</label>
+                <label className="block text-sm text-text-secondary mb-2">{t.challengeEndDate}</label>
                 <input
                   type="date"
                   value={form.challenge_end_date}
                   onChange={(e) => setForm({ ...form, challenge_end_date: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500"
+                  className="w-full px-4 py-2 bg-dark-700 border border-border rounded-lg text-white placeholder-text-muted focus:outline-none focus:border-accent"
                 />
               </div>
             </div>
@@ -569,14 +569,14 @@ export default function EditAccountPage() {
           <div className="flex gap-4">
             <Link
               href={`/${locale}/dashboard/accounts`}
-              className="flex-1 px-4 py-3 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors text-center"
+              className="flex-1 px-4 py-3 bg-dark-700 hover:bg-dark-600 text-white rounded-lg transition-colors text-center"
             >
               {t.cancel}
             </Link>
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 px-4 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              className="flex-1 px-4 py-3 bg-accent-hover hover:brightness-110 text-white rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {saving ? (
                 <>

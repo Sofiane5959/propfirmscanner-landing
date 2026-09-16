@@ -5,7 +5,7 @@ import { XCircle, ArrowLeft, HelpCircle } from 'lucide-react';
 
 export default function CheckoutCancelPage() {
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-bg-base flex items-center justify-center px-4">
       <div className="max-w-md w-full text-center">
         {/* Cancel Icon */}
         <div className="mb-8">
@@ -18,7 +18,7 @@ export default function CheckoutCancelPage() {
         <h1 className="text-3xl font-bold text-white mb-4">
           Payment Cancelled
         </h1>
-        <p className="text-gray-400 mb-8">
+        <p className="text-text-secondary mb-8">
           Your payment was cancelled. No charges were made to your account.
           If you have any questions, feel free to reach out to our support.
         </p>
@@ -27,7 +27,7 @@ export default function CheckoutCancelPage() {
         <div className="space-y-4">
           <Link
             href="/pricing"
-            className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors"
+            className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-xl transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Pricing
@@ -35,23 +35,23 @@ export default function CheckoutCancelPage() {
           
           <Link
             href="/"
-            className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-xl transition-colors"
+            className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-dark-700 hover:bg-dark-600 text-white font-semibold rounded-xl transition-colors"
           >
             Back to Home
           </Link>
         </div>
 
         {/* FAQ / Support */}
-        <div className="mt-8 p-4 bg-gray-900/50 rounded-xl border border-gray-800">
+        <div className="mt-8 p-4 bg-bg-elevated/50 rounded-xl border border-border">
           <div className="flex items-start gap-3 text-left">
             <HelpCircle className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm text-gray-300 font-medium mb-1">
+              <p className="text-sm text-text-secondary font-medium mb-1">
                 Having trouble?
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-text-muted">
                 If you experienced any issues during checkout, please{' '}
-                <Link href="/contact" className="text-emerald-400 hover:text-emerald-300">
+                <Link href="/contact" className="text-accent hover:text-accent">
                   contact us
                 </Link>{' '}
                 and we'll help you out.

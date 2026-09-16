@@ -167,7 +167,7 @@ function lignes(
 
 function Valeur({ c }: { c: Cellule }) {
   const couleur =
-    c.etat === 'valeur' ? 'text-white' : c.etat === 'absent' ? 'text-gray-500' : 'text-amber-400/90'
+    c.etat === 'valeur' ? 'text-white' : c.etat === 'absent' ? 'text-text-muted' : 'text-amber-400/90'
   return <span className={`text-sm ${couleur}`}>{c.texte}</span>
 }
 
@@ -199,7 +199,7 @@ export default function EvaluationVsFunded({ data, selection, currency }: Props)
   return (
     <section id="phases" className="scroll-mt-28 print:scroll-mt-0">
       <div className="mb-6">
-        <p className="text-xs uppercase tracking-wider font-semibold text-emerald-400 mb-2">
+        <p className="text-xs uppercase tracking-wider font-semibold text-accent mb-2">
           Rules by phase
         </p>
         <h2 className="text-2xl md:text-3xl font-bold text-white">
@@ -207,7 +207,7 @@ export default function EvaluationVsFunded({ data, selection, currency }: Props)
             ? `${programme.name}: the rules that apply from day one`
             : `${programme.name}: evaluation versus funded`}
         </h2>
-        <p className="text-gray-400 mt-2 max-w-2xl">
+        <p className="text-text-secondary mt-2 max-w-2xl">
           {sansEvaluation
             ? 'This program funds you at purchase, so there is no evaluation stage and no objective to reach. Only the funded column applies.'
             : 'The rules change once you pass. These are the ones that differ, for the program and size you selected.'}
@@ -224,10 +224,10 @@ export default function EvaluationVsFunded({ data, selection, currency }: Props)
               type="button"
               aria-selected={onglet === cle}
               onClick={() => setOnglet(cle)}
-              className={`min-h-[44px] px-4 rounded-lg border text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
+              className={`min-h-[44px] px-4 rounded-lg border text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                 onglet === cle
-                  ? 'border-emerald-500 bg-emerald-500/10 text-white'
-                  : 'border-gray-800 bg-gray-900/50 text-gray-400'
+                  ? 'border-accent bg-accent/10 text-white'
+                  : 'border-border bg-bg-elevated/50 text-text-secondary'
               }`}
             >
               {cle === 'evaluation' ? 'Evaluation' : 'Funded'}
@@ -236,17 +236,17 @@ export default function EvaluationVsFunded({ data, selection, currency }: Props)
         </div>
       )}
 
-      <div className="rounded-xl border border-gray-800 bg-gray-900/40 overflow-hidden">
+      <div className="rounded-xl border border-border bg-bg-elevated/40 overflow-hidden">
         {/* En-tete des colonnes, sur md et au-dessus seulement. */}
         {!sansEvaluation && (
-          <div className="hidden md:grid md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)] gap-4 px-5 py-3 border-b border-gray-800">
-            <span className="text-xs uppercase tracking-wider text-gray-500 font-semibold">Rule</span>
-            <span className="text-xs uppercase tracking-wider text-gray-500 font-semibold">Evaluation</span>
-            <span className="text-xs uppercase tracking-wider text-gray-500 font-semibold">Funded</span>
+          <div className="hidden md:grid md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)] gap-4 px-5 py-3 border-b border-border">
+            <span className="text-xs uppercase tracking-wider text-text-muted font-semibold">Rule</span>
+            <span className="text-xs uppercase tracking-wider text-text-muted font-semibold">Evaluation</span>
+            <span className="text-xs uppercase tracking-wider text-text-muted font-semibold">Funded</span>
           </div>
         )}
 
-        <div className="divide-y divide-gray-800">
+        <div className="divide-y divide-border">
           {rangs.map((r) => (
             <div
               key={r.label}
@@ -256,7 +256,7 @@ export default function EvaluationVsFunded({ data, selection, currency }: Props)
                   : 'grid grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)] gap-4 px-5 py-3'
               }
             >
-              <span className="text-gray-400 text-sm">{r.label}</span>
+              <span className="text-text-secondary text-sm">{r.label}</span>
               {sansEvaluation ? (
                 <Valeur c={r.fin} />
               ) : (
@@ -275,8 +275,8 @@ export default function EvaluationVsFunded({ data, selection, currency }: Props)
         </div>
       </div>
 
-      <p className="text-gray-500 text-xs mt-3">
-        <span className="text-gray-500">Not applicable</span> means the source states the rule does
+      <p className="text-text-muted text-xs mt-3">
+        <span className="text-text-muted">Not applicable</span> means the source states the rule does
         not exist for that phase. <span className="text-amber-400/90">Needs confirmation</span> means
         the official pages disagree or stay silent — never that the rule is absent.
       </p>

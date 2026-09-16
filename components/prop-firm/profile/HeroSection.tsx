@@ -46,7 +46,7 @@ export function HeroSection({
                 href={logoHref}
                 {...AFFILIATE_LINK_PROPS}
                 aria-label={COPY.hero.logoLabel(sheet.nom, sheet.offre?.code ?? null)}
-                className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-lg bg-text-primary font-display text-xl font-bold text-bg-base transition-shadow hover:ring-2 hover:ring-accent"
+                className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-lg bg-white p-1 font-display text-xl font-bold text-bg-base transition-shadow hover:ring-2 hover:ring-accent"
               >
                 {sheet.logoUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element

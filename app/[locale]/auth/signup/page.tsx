@@ -319,7 +319,7 @@ export default function SignupPage() {
           {/* Header */}
           <div className="text-center mb-8">
             <Link href={`/${locale}`} className="inline-flex items-center gap-2 mb-6">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-emerald-500 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-accent flex items-center justify-center">
                 <Target className="w-5 h-5 text-white" />
               </div>
               <span className="font-bold text-xl text-white">
@@ -340,9 +340,9 @@ export default function SignupPage() {
 
           {/* Success Message */}
           {success && (
-            <div className="mb-4 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-start gap-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-              <p className="text-emerald-400 text-sm">{success}</p>
+            <div className="mb-4 p-3 bg-accent/10 border border-accent/20 rounded-xl flex items-start gap-2">
+              <CheckCircle2 className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
+              <p className="text-accent text-sm">{success}</p>
             </div>
           )}
 
@@ -462,7 +462,7 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 font-semibold text-dark-900 bg-gradient-to-r from-brand-400 to-emerald-400 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full py-3 font-semibold text-dark-900 bg-gradient-to-r from-brand-400 to-accent rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-dark-900/30 border-t-dark-900 rounded-full animate-spin" />

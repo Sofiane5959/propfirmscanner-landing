@@ -102,34 +102,34 @@ export function PWAInstallPrompt() {
   if (!showPrompt || dismissed || !deferredPrompt) return null
 
   return (
-    <div className="print:hidden fixed bottom-20 left-4 right-4 md:left-auto md:right-4 md:w-96 bg-gray-800 border border-gray-700 rounded-xl p-4 shadow-2xl z-50">
+    <div className="print:hidden fixed bottom-20 left-4 right-4 md:left-auto md:right-4 md:w-96 bg-dark-700 border border-border rounded-xl p-4 shadow-2xl z-50">
       <button
         onClick={handleDismiss}
-        className="absolute top-2 right-2 p-1 text-gray-400 hover:text-white"
+        className="absolute top-2 right-2 p-1 text-text-secondary hover:text-white"
       >
         <X className="w-5 h-5" />
       </button>
 
       <div className="flex items-start gap-4">
-        <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
-          <Smartphone className="w-6 h-6 text-emerald-400" />
+        <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
+          <Smartphone className="w-6 h-6 text-accent" />
         </div>
         <div className="flex-1">
           <h3 className="text-white font-semibold mb-1">Install PropFirm Scanner</h3>
-          <p className="text-gray-400 text-sm mb-3">
+          <p className="text-text-secondary text-sm mb-3">
             Add to your home screen for quick access and offline support.
           </p>
           <div className="flex gap-2">
             <button
               onClick={handleInstall}
-              className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold rounded-lg flex items-center gap-2"
+              className="px-4 py-2 bg-accent-hover hover:brightness-110 text-white text-sm font-semibold rounded-lg flex items-center gap-2"
             >
               <Download className="w-4 h-4" />
               Install
             </button>
             <button
               onClick={handleDismiss}
-              className="px-4 py-2 text-gray-400 hover:text-white text-sm"
+              className="px-4 py-2 text-text-secondary hover:text-white text-sm"
             >
               Not now
             </button>
@@ -180,7 +180,7 @@ export function UpdatePrompt() {
   if (!showUpdate) return null
 
   return (
-    <div className="print:hidden fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-96 bg-emerald-500 text-white rounded-xl p-4 shadow-2xl z-50">
+    <div className="print:hidden fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-96 bg-accent-hover text-white rounded-xl p-4 shadow-2xl z-50">
       <div className="flex items-center justify-between">
         <div>
           <h3 className="font-semibold">Update Available</h3>
@@ -188,7 +188,7 @@ export function UpdatePrompt() {
         </div>
         <button
           onClick={handleUpdate}
-          className="px-4 py-2 bg-white text-emerald-600 font-semibold rounded-lg hover:bg-emerald-50"
+          className="px-4 py-2 bg-white text-accent font-semibold rounded-lg hover:bg-emerald-50"
         >
           Update
         </button>

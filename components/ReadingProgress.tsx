@@ -9,7 +9,7 @@ interface ReadingProgressProps {
 }
 
 export default function ReadingProgress({ 
-  color = '#10b981', 
+  color = '#34D399', 
   height = 3,
   showPercentage = false
 }: ReadingProgressProps) {
@@ -103,7 +103,7 @@ export function CircularReadingProgress({ size = 48, strokeWidth = 4 }: { size?:
           cy={size / 2}
           r={radius}
           fill="transparent"
-          stroke="#10b981"
+          stroke="#34D399"
           strokeWidth={strokeWidth}
           strokeDasharray={circumference}
           strokeDashoffset={offset}

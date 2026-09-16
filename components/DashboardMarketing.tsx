@@ -14,22 +14,22 @@ export function DashboardHero() {
     <section className="relative py-20 px-4 overflow-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-gradient-to-b from-emerald-900/20 to-transparent" />
-      <div className="absolute top-20 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl" />
+      <div className="absolute top-20 left-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl" />
       <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
       
       <div className="relative max-w-6xl mx-auto text-center">
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-400 text-sm mb-6">
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 border border-accent/20 rounded-full text-accent text-sm mb-6">
           <Zap className="w-4 h-4" />
           New: Control Center for Prop Traders
         </div>
         
         <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
           Stop Failing Challenges<br />
-          <span className="text-emerald-400">Because of Rules</span>
+          <span className="text-accent">Because of Rules</span>
         </h1>
         
-        <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-8">
+        <p className="text-xl text-text-secondary max-w-2xl mx-auto mb-8">
           Track all your prop firm accounts in one dashboard. Simulate trades before entering. 
           Get alerts before you violate rules. <span className="text-white">Never breach an account again.</span>
         </p>
@@ -37,29 +37,29 @@ export function DashboardHero() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
           <Link
             href="/dashboard"
-            className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold rounded-xl transition-all shadow-lg shadow-emerald-500/25"
+            className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-accent to-accent hover:from-accent hover:to-emerald-700 text-white font-semibold rounded-xl transition-all shadow-lg shadow-emerald-500/25"
           >
             Try Dashboard Free
             <ArrowRight className="w-5 h-5" />
           </Link>
-          <button className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-xl transition-colors border border-gray-700">
+          <button className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-dark-700 hover:bg-dark-600 text-white font-medium rounded-xl transition-colors border border-border">
             <Play className="w-5 h-5" />
             Watch Demo
           </button>
         </div>
         
         {/* Trust indicators */}
-        <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-gray-500">
+        <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-text-muted">
           <span className="flex items-center gap-2">
-            <Check className="w-4 h-4 text-emerald-400" />
+            <Check className="w-4 h-4 text-accent" />
             Free to start
           </span>
           <span className="flex items-center gap-2">
-            <Check className="w-4 h-4 text-emerald-400" />
+            <Check className="w-4 h-4 text-accent" />
             No credit card required
           </span>
           <span className="flex items-center gap-2">
-            <Check className="w-4 h-4 text-emerald-400" />
+            <Check className="w-4 h-4 text-accent" />
             Works with all prop firms
           </span>
         </div>
@@ -78,7 +78,7 @@ export function ProblemSolutionSection() {
   ]
   
   return (
-    <section className="py-20 px-4 bg-gray-800/30">
+    <section className="py-20 px-4 bg-dark-700/30">
       <div className="max-w-6xl mx-auto">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           {/* Problem */}
@@ -90,18 +90,18 @@ export function ProblemSolutionSection() {
               {problems.map((item, i) => (
                 <div key={i} className="flex items-start gap-4 p-4 bg-red-500/5 border border-red-500/20 rounded-xl">
                   <item.icon className="w-6 h-6 text-red-400 flex-shrink-0" />
-                  <p className="text-gray-300">{item.text}</p>
+                  <p className="text-text-secondary">{item.text}</p>
                 </div>
               ))}
             </div>
           </div>
           
           {/* Solution */}
-          <div className="bg-gradient-to-br from-emerald-900/30 to-gray-900 border border-emerald-500/20 rounded-2xl p-8">
+          <div className="bg-gradient-to-br from-emerald-900/30 to-bg-elevated border border-accent/20 rounded-2xl p-8">
             <h3 className="text-2xl font-bold text-white mb-4">
               There's a Better Way
             </h3>
-            <p className="text-gray-400 mb-6">
+            <p className="text-text-secondary mb-6">
               Our dashboard gives you complete clarity and control over all your prop firm accounts. 
               No more spreadsheets. No more mental math. Just peace of mind.
             </p>
@@ -112,7 +112,7 @@ export function ProblemSolutionSection() {
                 'Simulate trades before entering',
                 'Get alerts before violations',
               ].map((item, i) => (
-                <li key={i} className="flex items-center gap-3 text-emerald-400">
+                <li key={i} className="flex items-center gap-3 text-accent">
                   <Check className="w-5 h-5" />
                   {item}
                 </li>
@@ -155,7 +155,7 @@ export function FeaturesGrid() {
   ]
   
   const colorClasses = {
-    emerald: { bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', icon: 'text-emerald-400' },
+    emerald: { bg: 'bg-accent/10', border: 'border-accent/20', icon: 'text-accent' },
     blue: { bg: 'bg-blue-500/10', border: 'border-blue-500/20', icon: 'text-blue-400' },
     yellow: { bg: 'bg-yellow-500/10', border: 'border-yellow-500/20', icon: 'text-yellow-400' },
     purple: { bg: 'bg-purple-500/10', border: 'border-purple-500/20', icon: 'text-purple-400' },
@@ -166,9 +166,9 @@ export function FeaturesGrid() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Everything You Need to <span className="text-emerald-400">Protect Your Accounts</span>
+            Everything You Need to <span className="text-accent">Protect Your Accounts</span>
           </h2>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+          <p className="text-xl text-text-secondary max-w-2xl mx-auto">
             Four powerful tools that work together to keep you funded.
           </p>
         </div>
@@ -185,7 +185,7 @@ export function FeaturesGrid() {
                   <feature.icon className={`w-6 h-6 ${colors.icon}`} />
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-2">{feature.title}</h3>
-                <p className="text-gray-400">{feature.description}</p>
+                <p className="text-text-secondary">{feature.description}</p>
               </div>
             )
           })}
@@ -200,63 +200,63 @@ export function SimulatorPreview() {
   const [simResult, setSimResult] = useState<'safe' | 'warning' | 'danger' | null>(null)
   
   return (
-    <section className="py-20 px-4 bg-gray-800/30">
+    <section className="py-20 px-4 bg-dark-700/30">
       <div className="max-w-6xl mx-auto">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
             <h2 className="text-3xl font-bold text-white mb-4">
               Know Before You Trade
             </h2>
-            <p className="text-xl text-gray-400 mb-6">
+            <p className="text-xl text-text-secondary mb-6">
               Enter your risk amount and instantly see if your trade is safe. 
               No more guessing. No more surprise breaches.
             </p>
             
             <div className="space-y-4">
               <div className="flex items-start gap-4">
-                <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white font-bold text-sm">1</div>
+                <div className="w-8 h-8 rounded-full bg-accent-hover flex items-center justify-center text-white font-bold text-sm">1</div>
                 <div>
                   <h4 className="font-medium text-white">Select your account</h4>
-                  <p className="text-sm text-gray-500">Choose which prop firm account to simulate</p>
+                  <p className="text-sm text-text-muted">Choose which prop firm account to simulate</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white font-bold text-sm">2</div>
+                <div className="w-8 h-8 rounded-full bg-accent-hover flex items-center justify-center text-white font-bold text-sm">2</div>
                 <div>
                   <h4 className="font-medium text-white">Enter your risk</h4>
-                  <p className="text-sm text-gray-500">How much could you lose on this trade?</p>
+                  <p className="text-sm text-text-muted">How much could you lose on this trade?</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white font-bold text-sm">3</div>
+                <div className="w-8 h-8 rounded-full bg-accent-hover flex items-center justify-center text-white font-bold text-sm">3</div>
                 <div>
                   <h4 className="font-medium text-white">Get instant verdict</h4>
-                  <p className="text-sm text-gray-500">Safe, Warning, or Violation - before you trade</p>
+                  <p className="text-sm text-text-muted">Safe, Warning, or Violation - before you trade</p>
                 </div>
               </div>
             </div>
           </div>
           
           {/* Interactive Demo */}
-          <div className="bg-gray-900 border border-gray-700 rounded-2xl p-6">
+          <div className="bg-bg-elevated border border-border rounded-2xl p-6">
             <h3 className="font-medium text-white mb-4">Try it yourself</h3>
             
             <div className="space-y-4 mb-6">
               <div>
-                <label className="text-sm text-gray-400 block mb-2">Account</label>
-                <div className="px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white">
+                <label className="text-sm text-text-secondary block mb-2">Account</label>
+                <div className="px-4 py-3 bg-dark-700 border border-border rounded-xl text-white">
                   FTMO - Standard $100K (Balance: $102,450)
                 </div>
               </div>
               
               <div>
-                <label className="text-sm text-gray-400 block mb-2">Risk Amount</label>
+                <label className="text-sm text-text-secondary block mb-2">Risk Amount</label>
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted">$</span>
                   <input
                     type="number"
                     placeholder="500"
-                    className="w-full pl-8 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder:text-gray-600"
+                    className="w-full pl-8 pr-4 py-3 bg-dark-700 border border-border rounded-xl text-white placeholder:text-text-muted"
                   />
                 </div>
               </div>
@@ -265,19 +265,19 @@ export function SimulatorPreview() {
             <div className="flex gap-2 mb-6">
               <button 
                 onClick={() => setSimResult('safe')}
-                className="flex-1 py-2 bg-gray-800 hover:bg-emerald-500/20 border border-gray-700 hover:border-emerald-500/50 text-white text-sm rounded-lg transition-colors"
+                className="flex-1 py-2 bg-dark-700 hover:bg-accent/20 border border-border hover:border-accent/50 text-white text-sm rounded-lg transition-colors"
               >
                 $500 risk
               </button>
               <button 
                 onClick={() => setSimResult('warning')}
-                className="flex-1 py-2 bg-gray-800 hover:bg-yellow-500/20 border border-gray-700 hover:border-yellow-500/50 text-white text-sm rounded-lg transition-colors"
+                className="flex-1 py-2 bg-dark-700 hover:bg-yellow-500/20 border border-border hover:border-yellow-500/50 text-white text-sm rounded-lg transition-colors"
               >
                 $2,000 risk
               </button>
               <button 
                 onClick={() => setSimResult('danger')}
-                className="flex-1 py-2 bg-gray-800 hover:bg-red-500/20 border border-gray-700 hover:border-red-500/50 text-white text-sm rounded-lg transition-colors"
+                className="flex-1 py-2 bg-dark-700 hover:bg-red-500/20 border border-border hover:border-red-500/50 text-white text-sm rounded-lg transition-colors"
               >
                 $5,000 risk
               </button>
@@ -285,24 +285,24 @@ export function SimulatorPreview() {
             
             {simResult && (
               <div className={`p-4 rounded-xl ${
-                simResult === 'safe' ? 'bg-emerald-500/10 border border-emerald-500/30' :
+                simResult === 'safe' ? 'bg-accent/10 border border-accent/30' :
                 simResult === 'warning' ? 'bg-yellow-500/10 border border-yellow-500/30' :
                 'bg-red-500/10 border border-red-500/30'
               }`}>
                 <div className="flex items-center gap-3">
-                  {simResult === 'safe' && <Check className="w-6 h-6 text-emerald-400" />}
+                  {simResult === 'safe' && <Check className="w-6 h-6 text-accent" />}
                   {simResult === 'warning' && <AlertTriangle className="w-6 h-6 text-yellow-400" />}
                   {simResult === 'danger' && <AlertTriangle className="w-6 h-6 text-red-400" />}
                   <div>
                     <p className={`font-semibold ${
-                      simResult === 'safe' ? 'text-emerald-400' :
+                      simResult === 'safe' ? 'text-accent' :
                       simResult === 'warning' ? 'text-yellow-400' : 'text-red-400'
                     }`}>
                       {simResult === 'safe' && 'Trade is SAFE'}
                       {simResult === 'warning' && 'Proceed with CAUTION'}
                       {simResult === 'danger' && 'DO NOT TRADE'}
                     </p>
-                    <p className="text-sm text-gray-400">
+                    <p className="text-sm text-text-secondary">
                       {simResult === 'safe' && 'This trade respects all your limits'}
                       {simResult === 'warning' && 'You would use 65% of daily drawdown'}
                       {simResult === 'danger' && 'This would breach your account'}
@@ -327,16 +327,16 @@ export function PricingSection() {
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Start Free, Upgrade When Ready
           </h2>
-          <p className="text-xl text-gray-400">
+          <p className="text-xl text-text-secondary">
             No credit card required. Start protecting your accounts today.
           </p>
         </div>
         
         <div className="grid md:grid-cols-2 gap-6">
           {/* Free */}
-          <div className="bg-gray-800/50 border border-gray-700 rounded-2xl p-8">
+          <div className="bg-dark-700/50 border border-border rounded-2xl p-8">
             <h3 className="text-xl font-bold text-white mb-2">Free</h3>
-            <p className="text-gray-400 mb-4">Perfect to get started</p>
+            <p className="text-text-secondary mb-4">Perfect to get started</p>
             <p className="text-4xl font-bold text-white mb-6">$0</p>
             
             <ul className="space-y-3 mb-8">
@@ -346,8 +346,8 @@ export function PricingSection() {
                 'Basic alerts',
                 'Hidden rules access',
               ].map((item, i) => (
-                <li key={i} className="flex items-center gap-3 text-gray-300">
-                  <Check className="w-5 h-5 text-emerald-400" />
+                <li key={i} className="flex items-center gap-3 text-text-secondary">
+                  <Check className="w-5 h-5 text-accent" />
                   {item}
                 </li>
               ))}
@@ -355,22 +355,22 @@ export function PricingSection() {
             
             <Link
               href="/dashboard"
-              className="block w-full py-3 bg-gray-700 hover:bg-gray-600 text-white text-center font-medium rounded-xl transition-colors"
+              className="block w-full py-3 bg-dark-600 hover:bg-dark-500 text-white text-center font-medium rounded-xl transition-colors"
             >
               Get Started Free
             </Link>
           </div>
           
           {/* Pro */}
-          <div className="bg-gradient-to-br from-emerald-900/30 to-gray-900 border-2 border-emerald-500/50 rounded-2xl p-8 relative">
-            <div className="absolute -top-3 right-6 px-3 py-1 bg-emerald-500 text-white text-sm font-medium rounded-full">
+          <div className="bg-gradient-to-br from-emerald-900/30 to-bg-elevated border-2 border-accent/50 rounded-2xl p-8 relative">
+            <div className="absolute -top-3 right-6 px-3 py-1 bg-accent-hover text-white text-sm font-medium rounded-full">
               Most Popular
             </div>
             
             <h3 className="text-xl font-bold text-white mb-2">Pro</h3>
-            <p className="text-gray-400 mb-4">For serious traders</p>
+            <p className="text-text-secondary mb-4">For serious traders</p>
             <p className="text-4xl font-bold text-white mb-6">
-              $12<span className="text-lg text-gray-400">/month</span>
+              $12<span className="text-lg text-text-secondary">/month</span>
             </p>
             
             <ul className="space-y-3 mb-8">
@@ -382,8 +382,8 @@ export function PricingSection() {
                 'Advanced analytics',
                 'Priority support',
               ].map((item, i) => (
-                <li key={i} className="flex items-center gap-3 text-gray-300">
-                  <Check className="w-5 h-5 text-emerald-400" />
+                <li key={i} className="flex items-center gap-3 text-text-secondary">
+                  <Check className="w-5 h-5 text-accent" />
                   {item}
                 </li>
               ))}
@@ -391,7 +391,7 @@ export function PricingSection() {
             
             <Link
               href="/dashboard?upgrade=pro"
-              className="block w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white text-center font-semibold rounded-xl transition-colors"
+              className="block w-full py-3 bg-accent-hover hover:brightness-110 text-white text-center font-semibold rounded-xl transition-colors"
             >
               Start Pro Trial
             </Link>
@@ -407,23 +407,23 @@ export function FinalCTA() {
   return (
     <section className="py-20 px-4">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-gradient-to-br from-emerald-900/50 to-gray-900 border border-emerald-500/30 rounded-3xl p-8 md:p-12 text-center">
+        <div className="bg-gradient-to-br from-emerald-900/50 to-bg-elevated border border-accent/30 rounded-3xl p-8 md:p-12 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Ready to Stop Losing Accounts<br />to Rule Violations?
           </h2>
-          <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-text-secondary mb-8 max-w-2xl mx-auto">
             Join thousands of traders who use PropFirmScanner Dashboard to protect their funded accounts.
           </p>
           
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold rounded-xl transition-all shadow-lg shadow-emerald-500/25"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-accent to-accent hover:from-accent hover:to-emerald-700 text-white font-semibold rounded-xl transition-all shadow-lg shadow-emerald-500/25"
           >
             Start Free Dashboard
             <ArrowRight className="w-5 h-5" />
           </Link>
           
-          <p className="text-sm text-gray-500 mt-4">
+          <p className="text-sm text-text-muted mt-4">
             Free forever. No credit card required.
           </p>
         </div>

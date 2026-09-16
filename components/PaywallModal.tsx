@@ -73,11 +73,11 @@ export function PaywallModal({
       />
       
       {/* Modal */}
-      <div className="relative bg-gray-900 rounded-2xl border border-gray-800 p-8 max-w-md w-full shadow-2xl">
+      <div className="relative bg-bg-elevated rounded-2xl border border-border p-8 max-w-md w-full shadow-2xl">
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 text-gray-500 hover:text-white transition-colors"
+          className="absolute top-4 right-4 p-2 text-text-muted hover:text-white transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
@@ -95,7 +95,7 @@ export function PaywallModal({
         </h2>
         
         {/* Context */}
-        <p className="text-gray-400 text-center mb-6">
+        <p className="text-text-secondary text-center mb-6">
           {trigger === 'account_limit' ? (
             <>
               You're tracking <span className="text-white font-semibold">{currentAccountCount} prop firm account</span>.
@@ -115,10 +115,10 @@ export function PaywallModal({
         <div className="space-y-3 mb-8">
           {benefits.map((benefit, i) => (
             <div key={i} className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-emerald-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                <benefit.icon className="w-4 h-4 text-emerald-400" />
+              <div className="w-8 h-8 bg-accent/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                <benefit.icon className="w-4 h-4 text-accent" />
               </div>
-              <span className="text-sm text-gray-300">{benefit.text}</span>
+              <span className="text-sm text-text-secondary">{benefit.text}</span>
             </div>
           ))}
         </div>
@@ -129,9 +129,9 @@ export function PaywallModal({
             <span className="text-3xl font-bold text-white">
               {formatPrice(PRICING.pro.monthly)}
             </span>
-            <span className="text-gray-500">/month</span>
+            <span className="text-text-muted">/month</span>
           </div>
-          <p className="text-xs text-gray-600 mt-1">
+          <p className="text-xs text-text-muted mt-1">
             One avoided violation pays for months of Pro
           </p>
         </div>
@@ -155,7 +155,7 @@ export function PaywallModal({
           
           <button
             onClick={onClose}
-            className="w-full py-3 text-gray-400 hover:text-white text-sm font-medium transition-colors"
+            className="w-full py-3 text-text-secondary hover:text-white text-sm font-medium transition-colors"
           >
             {trigger === 'account_limit' 
               ? 'Continue with 1 account' 
@@ -221,10 +221,10 @@ export function ProFeatureGate({
       <div className="opacity-50 pointer-events-none">
         {children}
       </div>
-      <div className="absolute inset-0 flex items-center justify-center bg-gray-900/80 rounded-xl">
+      <div className="absolute inset-0 flex items-center justify-center bg-bg-elevated/80 rounded-xl">
         <div className="text-center p-4">
           <ProFeatureBadge feature={feature} onClick={onUpgradeClick} />
-          <p className="text-sm text-gray-400 mt-2">
+          <p className="text-sm text-text-secondary mt-2">
             {feature} is available on Pro
           </p>
           <button

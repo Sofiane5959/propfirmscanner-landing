@@ -65,7 +65,7 @@ export function ThemeToggle() {
   return (
     <button
       onClick={toggle}
-      className="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white transition-colors"
+      className="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 text-text-secondary hover:text-white transition-colors"
       aria-label="Toggle theme"
     >
       {resolvedTheme === 'dark' ? (
@@ -94,7 +94,7 @@ export function ThemeSelector() {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 transition-colors"
+        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-dark-700 hover:bg-dark-600 text-text-secondary transition-colors"
       >
         <currentOption.icon className="w-4 h-4" />
         <span className="text-sm">{currentOption.label}</span>
@@ -106,7 +106,7 @@ export function ThemeSelector() {
             className="fixed inset-0 z-40"
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute right-0 mt-2 w-36 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-50">
+          <div className="absolute right-0 mt-2 w-36 bg-dark-700 border border-border rounded-lg shadow-xl z-50">
             {options.map((option) => (
               <button
                 key={option.value}
@@ -116,8 +116,8 @@ export function ThemeSelector() {
                 }}
                 className={`w-full flex items-center gap-2 px-3 py-2 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg ${
                   theme === option.value
-                    ? 'bg-emerald-500/10 text-emerald-400'
-                    : 'text-gray-300 hover:bg-gray-700'
+                    ? 'bg-accent/10 text-accent'
+                    : 'text-text-secondary hover:bg-dark-600'
                 }`}
               >
                 <option.icon className="w-4 h-4" />
@@ -142,15 +142,15 @@ export function ThemeSegmentedControl() {
   ]
 
   return (
-    <div className="flex bg-gray-800 rounded-lg p-1">
+    <div className="flex bg-dark-700 rounded-lg p-1">
       {options.map((option) => (
         <button
           key={option.value}
           onClick={() => setTheme(option.value)}
           className={`p-2 rounded-md transition-colors ${
             theme === option.value
-              ? 'bg-gray-700 text-white'
-              : 'text-gray-400 hover:text-white'
+              ? 'bg-dark-600 text-white'
+              : 'text-text-secondary hover:text-white'
           }`}
           aria-label={`Set ${option.value} theme`}
         >

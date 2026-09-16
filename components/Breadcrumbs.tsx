@@ -47,24 +47,24 @@ export default function Breadcrumbs({ items, className = '' }: BreadcrumbsProps)
                   // Home icon for first item
                   <Link
                     href={item.href}
-                    className="text-gray-400 hover:text-emerald-400 transition-colors"
+                    className="text-text-secondary hover:text-accent transition-colors"
                     aria-label="Home"
                   >
                     <Home className="w-4 h-4" />
                   </Link>
                 ) : (
                   <>
-                    <ChevronRight className="w-4 h-4 text-gray-600" />
+                    <ChevronRight className="w-4 h-4 text-text-muted" />
                     {isLast ? (
                       // Current page (not a link)
-                      <span className="text-gray-300" aria-current="page">
+                      <span className="text-text-secondary" aria-current="page">
                         {item.label}
                       </span>
                     ) : (
                       // Link to parent page
                       <Link
                         href={item.href}
-                        className="text-gray-400 hover:text-emerald-400 transition-colors"
+                        className="text-text-secondary hover:text-accent transition-colors"
                       >
                         {item.label}
                       </Link>

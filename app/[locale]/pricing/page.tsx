@@ -112,18 +112,18 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="border-b border-gray-800 last:border-0">
+    <div className="border-b border-border last:border-0">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full py-5 flex items-center justify-between text-left"
       >
         <span className="font-medium text-white">{question}</span>
         <ChevronDown 
-          className={`w-5 h-5 text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} 
+          className={`w-5 h-5 text-text-muted transition-transform ${isOpen ? 'rotate-180' : ''}`} 
         />
       </button>
       {isOpen && (
-        <p className="pb-5 text-gray-400 text-sm leading-relaxed">
+        <p className="pb-5 text-text-secondary text-sm leading-relaxed">
           {answer}
         </p>
       )}
@@ -145,11 +145,11 @@ function FreePlanCard({
   onSelect: () => void;
 }) {
   return (
-    <div className="relative bg-gray-900 rounded-2xl border border-gray-800 p-8 flex flex-col">
+    <div className="relative bg-bg-elevated rounded-2xl border border-border p-8 flex flex-col">
       {/* Header */}
       <div className="mb-6">
         <h3 className="text-xl font-bold text-white mb-2">{plan.name}</h3>
-        <p className="text-sm text-gray-500">{plan.description}</p>
+        <p className="text-sm text-text-muted">{plan.description}</p>
       </div>
 
       {/* Price */}
@@ -162,11 +162,11 @@ function FreePlanCard({
         {plan.features.map((feature, i) => (
           <li key={i} className="flex items-start gap-3">
             {feature.included ? (
-              <Check className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+              <Check className="w-5 h-5 text-accent flex-shrink-0" />
             ) : (
               <X className="w-5 h-5 text-gray-700 flex-shrink-0" />
             )}
-            <span className={`text-sm ${feature.included ? 'text-gray-300' : 'text-gray-600'}`}>
+            <span className={`text-sm ${feature.included ? 'text-text-secondary' : 'text-text-muted'}`}>
               {feature.text}
             </span>
           </li>
@@ -177,7 +177,7 @@ function FreePlanCard({
       <button
         onClick={onSelect}
         disabled={isCurrentPlan}
-        className={`w-full py-3.5 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 text-white ${
+        className={`w-full py-3.5 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 bg-dark-700 hover:bg-dark-600 text-white ${
           isCurrentPlan ? 'opacity-50 cursor-not-allowed' : ''
         }`}
       >
@@ -204,7 +204,7 @@ function ProPlanCard({
   onAuthRequired: () => void;
 }) {
   return (
-    <div className="relative bg-gray-900 rounded-2xl border border-amber-500/50 p-8 flex flex-col">
+    <div className="relative bg-bg-elevated rounded-2xl border border-amber-500/50 p-8 flex flex-col">
       {/* Badge */}
       {plan.badge && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
@@ -220,14 +220,14 @@ function ProPlanCard({
           <Crown className="w-5 h-5 text-amber-400" />
           <h3 className="text-xl font-bold text-white">{plan.name}</h3>
         </div>
-        <p className="text-sm text-gray-500">{plan.description}</p>
+        <p className="text-sm text-text-muted">{plan.description}</p>
       </div>
 
       {/* Price */}
       <div className="mb-6">
         <div className="flex items-baseline gap-1">
           <span className="text-4xl font-bold text-white">€{plan.price}</span>
-          <span className="text-gray-500">/month</span>
+          <span className="text-text-muted">/month</span>
         </div>
       </div>
 
@@ -235,8 +235,8 @@ function ProPlanCard({
       <ul className="space-y-3 mb-8 flex-1">
         {plan.features.map((feature, i) => (
           <li key={i} className="flex items-start gap-3">
-            <Check className={`w-5 h-5 flex-shrink-0 ${feature.highlight ? 'text-amber-400' : 'text-emerald-400'}`} />
-            <span className={`text-sm ${feature.highlight ? 'text-white font-medium' : 'text-gray-300'}`}>
+            <Check className={`w-5 h-5 flex-shrink-0 ${feature.highlight ? 'text-amber-400' : 'text-accent'}`} />
+            <span className={`text-sm ${feature.highlight ? 'text-white font-medium' : 'text-text-secondary'}`}>
               {feature.text}
             </span>
           </li>
@@ -247,7 +247,7 @@ function ProPlanCard({
       {isCurrentPlan ? (
         <button
           disabled
-          className="w-full py-3.5 rounded-xl font-semibold bg-gray-700 text-gray-400 cursor-not-allowed"
+          className="w-full py-3.5 rounded-xl font-semibold bg-dark-600 text-text-secondary cursor-not-allowed"
         >
           Current Plan
         </button>
@@ -301,11 +301,11 @@ function PricingContent() {
         <h1 className="text-3xl sm:text-4xl font-bold text-white mb-4">
           Trade with clarity.
           <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-cyan-400">
             Avoid breaking prop firm rules.
           </span>
         </h1>
-        <p className="text-gray-400 text-lg max-w-xl mx-auto">
+        <p className="text-text-secondary text-lg max-w-xl mx-auto">
           One avoided rule violation pays for months of Pro.
         </p>
       </div>
@@ -343,30 +343,30 @@ function PricingContent() {
           Why traders trust PropFirmScanner
         </h2>
         <div className="grid sm:grid-cols-3 gap-6">
-          <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center">
-            <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <Shield className="w-6 h-6 text-emerald-400" />
+          <div className="bg-bg-elevated/50 border border-border rounded-xl p-6 text-center">
+            <div className="w-12 h-12 bg-accent/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+              <Shield className="w-6 h-6 text-accent" />
             </div>
             <h3 className="font-semibold text-white mb-2">Avoid Costly Violations</h3>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-text-muted">
               Know exactly how much you can risk before breaking any rule
             </p>
           </div>
-          <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center">
-            <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <Calculator className="w-6 h-6 text-emerald-400" />
+          <div className="bg-bg-elevated/50 border border-border rounded-xl p-6 text-center">
+            <div className="w-12 h-12 bg-accent/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+              <Calculator className="w-6 h-6 text-accent" />
             </div>
             <h3 className="font-semibold text-white mb-2">Simulate Before Trading</h3>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-text-muted">
               Test your trade size before risking real capital
             </p>
           </div>
-          <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center">
-            <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <BarChart3 className="w-6 h-6 text-emerald-400" />
+          <div className="bg-bg-elevated/50 border border-border rounded-xl p-6 text-center">
+            <div className="w-12 h-12 bg-accent/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+              <BarChart3 className="w-6 h-6 text-accent" />
             </div>
             <h3 className="font-semibold text-white mb-2">Track All Accounts</h3>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-text-muted">
               FTMO, FundedNext, The5ers — all in one dashboard
             </p>
           </div>
@@ -378,7 +378,7 @@ function PricingContent() {
         <h2 className="text-xl font-bold text-white text-center mb-8">
           Frequently Asked Questions
         </h2>
-        <div className="bg-gray-900 border border-gray-800 rounded-xl px-6">
+        <div className="bg-bg-elevated border border-border rounded-xl px-6">
           {FAQ_ITEMS.map((item, i) => (
             <FAQItem key={i} question={item.question} answer={item.answer} />
           ))}
@@ -387,12 +387,12 @@ function PricingContent() {
 
       {/* Bottom CTA */}
       <div className="mt-16 text-center">
-        <p className="text-gray-500 mb-4">
+        <p className="text-text-muted mb-4">
           Ready to trade with confidence?
         </p>
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-xl transition-colors"
         >
           Go to Dashboard
           <ArrowRight className="w-4 h-4" />
@@ -415,11 +415,11 @@ function PricingContent() {
 
 export default function PricingPage() {
   return (
-    <div className="min-h-screen bg-gray-950 pt-20 pb-16">
+    <div className="min-h-screen bg-bg-base pt-20 pb-16">
       <div className="max-w-5xl mx-auto px-4">
         <Suspense fallback={
           <div className="text-center py-20">
-            <Loader2 className="w-8 h-8 text-emerald-400 animate-spin mx-auto" />
+            <Loader2 className="w-8 h-8 text-accent animate-spin mx-auto" />
           </div>
         }>
           <PricingContent />

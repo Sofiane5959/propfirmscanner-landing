@@ -527,31 +527,31 @@ export default function HowWeMakeMoneyPage() {
   const choices = [t.choice1, t.choice2, t.choice3];
 
   return (
-    <div className="min-h-screen bg-gray-900 py-24 px-4">
+    <div className="min-h-screen bg-bg-elevated py-24 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-400 text-sm mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 border border-accent/20 rounded-full text-accent text-sm mb-6">
             <Heart className="w-4 h-4" />
             {t.badge}
           </div>
           <h1 className="text-4xl font-bold text-white mb-4">{t.title}</h1>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">{t.subtitle}</p>
+          <p className="text-xl text-text-secondary max-w-2xl mx-auto">{t.subtitle}</p>
         </div>
 
         {/* Main Revenue Source */}
         <section className="mb-12">
-          <div className="bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border border-emerald-500/20 rounded-xl p-8">
+          <div className="bg-gradient-to-r from-accent/10 to-blue-500/10 border border-accent/20 rounded-xl p-8">
             <div className="flex items-start gap-4">
-              <div className="w-14 h-14 rounded-xl bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                <DollarSign className="w-7 h-7 text-emerald-400" />
+              <div className="w-14 h-14 rounded-xl bg-accent/20 flex items-center justify-center flex-shrink-0">
+                <DollarSign className="w-7 h-7 text-accent" />
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-white mb-3">{t.affiliateTitle}</h2>
-                <p className="text-gray-300 mb-4">{t.affiliateDesc}</p>
-                <p className="text-gray-400">
+                <p className="text-text-secondary mb-4">{t.affiliateDesc}</p>
+                <p className="text-text-secondary">
                   <strong className="text-white">{t.important}</strong> {t.affiliateNote}{' '}
-                  <span className="text-emerald-400">{t.less}</span> {t.thanksToCodes}
+                  <span className="text-accent">{t.less}</span> {t.thanksToCodes}
                 </p>
               </div>
             </div>
@@ -561,34 +561,34 @@ export default function HowWeMakeMoneyPage() {
         {/* What This Means */}
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-            <HelpCircle className="w-6 h-6 text-emerald-400" />
+            <HelpCircle className="w-6 h-6 text-accent" />
             {t.whatMeansTitle}
           </h2>
           
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
+            <div className="bg-dark-700/50 border border-border rounded-xl p-6">
               <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-emerald-400" />
+                <CheckCircle className="w-5 h-5 text-accent" />
                 {t.whatWeDo}
               </h3>
               <ul className="space-y-3">
                 {whatWeDo.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-gray-300">
-                    <CheckCircle className="w-4 h-4 text-emerald-400 mt-1 flex-shrink-0" />
+                  <li key={i} className="flex items-start gap-2 text-text-secondary">
+                    <CheckCircle className="w-4 h-4 text-accent mt-1 flex-shrink-0" />
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
             
-            <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
+            <div className="bg-dark-700/50 border border-border rounded-xl p-6">
               <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
                 <XCircle className="w-5 h-5 text-red-400" />
                 {t.whatWeDont}
               </h3>
               <ul className="space-y-3">
                 {whatWeDont.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-gray-300">
+                  <li key={i} className="flex items-start gap-2 text-text-secondary">
                     <XCircle className="w-4 h-4 text-red-400 mt-1 flex-shrink-0" />
                     <span>{item}</span>
                   </li>
@@ -601,23 +601,23 @@ export default function HowWeMakeMoneyPage() {
         {/* Editorial Independence */}
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-            <Scale className="w-6 h-6 text-emerald-400" />
+            <Scale className="w-6 h-6 text-accent" />
             {t.editorialTitle}
           </h2>
           
-          <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 space-y-4">
-            <p className="text-gray-300">{t.editorialDesc}</p>
+          <div className="bg-dark-700/50 border border-border rounded-xl p-6 space-y-4">
+            <p className="text-text-secondary">{t.editorialDesc}</p>
             
             <div className="grid md:grid-cols-3 gap-4">
               {criteria.map((item, i) => (
-                <div key={i} className="bg-gray-900/50 rounded-lg p-4">
+                <div key={i} className="bg-bg-elevated/50 rounded-lg p-4">
                   <div className="text-white font-medium">{item.label}</div>
-                  <div className="text-gray-500 text-sm">{item.desc}</div>
+                  <div className="text-text-muted text-sm">{item.desc}</div>
                 </div>
               ))}
             </div>
             
-            <p className="text-gray-400 text-sm">{t.editorialNote}</p>
+            <p className="text-text-secondary text-sm">{t.editorialNote}</p>
           </div>
         </section>
 
@@ -625,14 +625,14 @@ export default function HowWeMakeMoneyPage() {
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-white mb-6">{t.affiliateRelTitle}</h2>
           
-          <p className="text-gray-400 mb-6">{t.affiliateRelDesc}</p>
+          <p className="text-text-secondary mb-6">{t.affiliateRelDesc}</p>
           
-          <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
+          <div className="bg-dark-700/50 border border-border rounded-xl p-6">
             <h3 className="text-white font-semibold mb-4">{t.identifyTitle}</h3>
-            <ul className="space-y-3 text-gray-300">
+            <ul className="space-y-3 text-text-secondary">
               {identifyItems.map((item, i) => (
                 <li key={i} className="flex items-start gap-2">
-                  <span className="text-emerald-400 mt-1">•</span>
+                  <span className="text-accent mt-1">•</span>
                   <span>{item}</span>
                 </li>
               ))}
@@ -645,9 +645,9 @@ export default function HowWeMakeMoneyPage() {
           <h2 className="text-2xl font-bold text-white mb-6">{t.whyModelTitle}</h2>
           
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-6">
-              <h3 className="text-emerald-400 font-semibold mb-3">{t.benefitsYou}</h3>
-              <ul className="space-y-2 text-gray-300">
+            <div className="bg-accent/10 border border-accent/20 rounded-xl p-6">
+              <h3 className="text-accent font-semibold mb-3">{t.benefitsYou}</h3>
+              <ul className="space-y-2 text-text-secondary">
                 {benefitsYou.map((item, i) => (
                   <li key={i}>✓ {item}</li>
                 ))}
@@ -656,7 +656,7 @@ export default function HowWeMakeMoneyPage() {
             
             <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-6">
               <h3 className="text-blue-400 font-semibold mb-3">{t.benefitsUs}</h3>
-              <ul className="space-y-2 text-gray-300">
+              <ul className="space-y-2 text-text-secondary">
                 {benefitsUs.map((item, i) => (
                   <li key={i}>✓ {item}</li>
                 ))}
@@ -667,29 +667,29 @@ export default function HowWeMakeMoneyPage() {
 
         {/* Your Choice */}
         <section className="mb-12">
-          <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
+          <div className="bg-dark-700/50 border border-border rounded-xl p-6">
             <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-              <Shield className="w-6 h-6 text-emerald-400" />
+              <Shield className="w-6 h-6 text-accent" />
               {t.choiceTitle}
             </h2>
-            <p className="text-gray-300 mb-4">{t.choiceDesc}</p>
-            <ul className="space-y-2 text-gray-400">
+            <p className="text-text-secondary mb-4">{t.choiceDesc}</p>
+            <ul className="space-y-2 text-text-secondary">
               {choices.map((item, i) => (
                 <li key={i}>• {item}</li>
               ))}
             </ul>
-            <p className="text-gray-300 mt-4">{t.choiceNote}</p>
+            <p className="text-text-secondary mt-4">{t.choiceNote}</p>
           </div>
         </section>
 
         {/* Questions */}
         <section className="text-center">
-          <div className="bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border border-emerald-500/20 rounded-xl p-8">
+          <div className="bg-gradient-to-r from-accent/10 to-blue-500/10 border border-accent/20 rounded-xl p-8">
             <h2 className="text-2xl font-bold text-white mb-2">{t.questionsTitle}</h2>
-            <p className="text-gray-400 mb-6">{t.questionsDesc}</p>
+            <p className="text-text-secondary mb-6">{t.questionsDesc}</p>
             <a
               href="mailto:hello@propfirmscanner.org?subject=Question%20About%20Affiliates"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-xl transition-colors"
             >
               {t.contactUs}
               <ExternalLink className="w-4 h-4" />

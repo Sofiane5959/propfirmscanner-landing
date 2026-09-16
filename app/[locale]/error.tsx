@@ -85,7 +85,7 @@ export default function Error({
   }, [error])
 
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-bg-base flex items-center justify-center px-4">
       <div className="text-center max-w-md">
         {/* Error Icon */}
         <div className="mb-6">
@@ -98,7 +98,7 @@ export default function Error({
         <h1 className="text-2xl font-bold text-white mb-3">
           {t.title}
         </h1>
-        <p className="text-gray-400 mb-8">
+        <p className="text-text-secondary mb-8">
           {t.description}
         </p>
 
@@ -115,14 +115,14 @@ export default function Error({
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <button
             onClick={reset}
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-xl transition-colors"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-accent-hover hover:brightness-110 text-white font-medium rounded-xl transition-colors"
           >
             <RefreshCw className="w-4 h-4" />
             {t.tryAgain}
           </button>
           <Link
             href={`/${locale}`}
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-xl transition-colors"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-dark-700 hover:bg-dark-600 text-white font-medium rounded-xl transition-colors"
           >
             <Home className="w-4 h-4" />
             {t.goHome}

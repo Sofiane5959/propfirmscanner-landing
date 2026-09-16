@@ -37,7 +37,7 @@ interface PropFirm {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  scanned: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
+  scanned: 'bg-accent/20 text-accent border-accent/30',
   unverified: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
   not_recommended: 'bg-red-500/20 text-red-400 border-red-500/30',
 }
@@ -167,49 +167,49 @@ export default function AdminFirmsPage() {
 
   if (checkingAuth) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <div className="text-gray-500 text-sm">Checking access...</div>
+      <div className="min-h-screen bg-bg-base flex items-center justify-center">
+        <div className="text-text-muted text-sm">Checking access...</div>
       </div>
     )
   }
 
   if (!authorized) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+      <div className="min-h-screen bg-bg-base flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4">🔒</div>
           <h1 className="text-white font-bold text-xl mb-2">Access Denied</h1>
-          <p className="text-gray-500 text-sm">You must be signed in as an admin to access this page.</p>
+          <p className="text-text-muted text-sm">You must be signed in as an admin to access this page.</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
+    <div className="min-h-screen bg-bg-base text-white">
       {/* Header */}
-      <div className="border-b border-gray-800 bg-gray-900 px-6 py-4">
+      <div className="border-b border-border bg-bg-elevated px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold text-white">PropFirmScanner — Admin</h1>
-            <p className="text-gray-400 text-sm">Manage & audit all prop firms</p>
+            <p className="text-text-secondary text-sm">Manage & audit all prop firms</p>
           </div>
           <div className="flex gap-4 text-sm">
             <div className="text-center">
-              <div className="text-emerald-400 font-bold text-lg">{stats.listed}</div>
-              <div className="text-gray-500">Listed</div>
+              <div className="text-accent font-bold text-lg">{stats.listed}</div>
+              <div className="text-text-muted">Listed</div>
             </div>
             <div className="text-center">
               <div className="text-blue-400 font-bold text-lg">{stats.withAffiliate}</div>
-              <div className="text-gray-500">Affiliate</div>
+              <div className="text-text-muted">Affiliate</div>
             </div>
             <div className="text-center">
               <div className="text-purple-400 font-bold text-lg">{stats.withLogo}</div>
-              <div className="text-gray-500">With Logo</div>
+              <div className="text-text-muted">With Logo</div>
             </div>
             <div className="text-center">
               <div className="text-white font-bold text-lg">{stats.total}</div>
-              <div className="text-gray-500">Total</div>
+              <div className="text-text-muted">Total</div>
             </div>
           </div>
         </div>
@@ -218,7 +218,7 @@ export default function AdminFirmsPage() {
       {/* Toast */}
       {message && (
         <div className={`fixed top-4 right-4 z-50 px-4 py-2 rounded-lg text-sm font-medium ${
-          message.type === 'success' ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'
+          message.type === 'success' ? 'bg-accent-hover text-white' : 'bg-red-500 text-white'
         }`}>
           {message.text}
         </div>
@@ -232,7 +232,7 @@ export default function AdminFirmsPage() {
             placeholder="Search firms..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-sm text-white placeholder-gray-500 w-64 focus:outline-none focus:border-emerald-500"
+            className="bg-dark-700 border border-border rounded-lg px-4 py-2 text-sm text-white placeholder-text-muted w-64 focus:outline-none focus:border-accent"
           />
           {(['all', 'listed', 'unlisted', 'no_affiliate', 'no_logo'] as const).map(f => (
             <button
@@ -240,8 +240,8 @@ export default function AdminFirmsPage() {
               onClick={() => setFilter(f)}
               className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
                 filter === f
-                  ? 'bg-emerald-500 text-white'
-                  : 'bg-gray-800 text-gray-400 hover:text-white border border-gray-700'
+                  ? 'bg-accent-hover text-white'
+                  : 'bg-dark-700 text-text-secondary hover:text-white border border-border'
               }`}
             >
               {f === 'all' ? `All (${firms.length})` :
@@ -251,17 +251,17 @@ export default function AdminFirmsPage() {
                `No Logo (${firms.filter(f => !f.logo_url).length})`}
             </button>
           ))}
-          <span className="ml-auto text-gray-500 text-sm self-center">{filtered.length} firms</span>
+          <span className="ml-auto text-text-muted text-sm self-center">{filtered.length} firms</span>
         </div>
 
         {/* Table */}
         {loading ? (
-          <div className="text-center py-20 text-gray-500">Loading...</div>
+          <div className="text-center py-20 text-text-muted">Loading...</div>
         ) : (
           <div className="space-y-2">
             {filtered.map(firm => (
-              <div key={firm.slug} className={`bg-gray-900 border rounded-xl overflow-hidden transition-all ${
-                editingSlug === firm.slug ? 'border-emerald-500/50' : 'border-gray-800 hover:border-gray-700'
+              <div key={firm.slug} className={`bg-bg-elevated border rounded-xl overflow-hidden transition-all ${
+                editingSlug === firm.slug ? 'border-accent/50' : 'border-border hover:border-border-hover'
               }`}>
                 {/* Firm row */}
                 <div className="flex items-center gap-4 px-4 py-3">
@@ -271,14 +271,14 @@ export default function AdminFirmsPage() {
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={firm.logo_url} alt={firm.name} className="w-8 h-8 object-contain" />
                     ) : (
-                      <span className="text-sm font-bold text-emerald-600">{firm.name.charAt(0)}</span>
+                      <span className="text-sm font-bold text-accent">{firm.name.charAt(0)}</span>
                     )}
                   </div>
 
                   {/* Name + slug */}
                   <div className="flex-1 min-w-0">
                     <div className="font-semibold text-white text-sm">{firm.name}</div>
-                    <div className="text-gray-500 text-xs">{firm.slug}</div>
+                    <div className="text-text-muted text-xs">{firm.slug}</div>
                   </div>
 
                   {/* Status badges */}
@@ -288,8 +288,8 @@ export default function AdminFirmsPage() {
                     </span>
                     <span className={`px-2 py-0.5 rounded text-xs font-medium border ${
                       firm.listing_status === 'listed'
-                        ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
-                        : 'bg-gray-700 text-gray-400 border-gray-600'
+                        ? 'bg-accent/20 text-accent border-accent/30'
+                        : 'bg-dark-600 text-text-secondary border-border-hover'
                     }`}>
                       {firm.listing_status}
                     </span>
@@ -298,9 +298,9 @@ export default function AdminFirmsPage() {
                   {/* Quick data */}
                   <div className="hidden lg:flex items-center gap-4 text-sm flex-shrink-0">
                     <span className="text-white">${firm.min_price || '—'}</span>
-                    <span className="text-emerald-400">{firm.max_profit_split ? `${firm.max_profit_split}%` : '—'}</span>
+                    <span className="text-accent">{firm.max_profit_split ? `${firm.max_profit_split}%` : '—'}</span>
                     <span className="text-yellow-400">{firm.trustpilot_rating?.toFixed(1) || '—'}</span>
-                    <span className={`text-xs ${firm.affiliate_url ? 'text-emerald-400' : 'text-gray-600'}`}>
+                    <span className={`text-xs ${firm.affiliate_url ? 'text-accent' : 'text-text-muted'}`}>
                       {firm.affiliate_url ? '🔗 aff' : '— aff'}
                     </span>
                   </div>
@@ -311,8 +311,8 @@ export default function AdminFirmsPage() {
                       onClick={() => quickToggle(firm.slug, 'listing_status', firm.listing_status === 'listed' ? 'unlisted' : 'listed')}
                       className={`px-2 py-1 rounded text-xs font-medium transition-all ${
                         firm.listing_status === 'listed'
-                          ? 'bg-emerald-500/20 text-emerald-400 hover:bg-red-500/20 hover:text-red-400'
-                          : 'bg-gray-700 text-gray-400 hover:bg-emerald-500/20 hover:text-emerald-400'
+                          ? 'bg-accent/20 text-accent hover:bg-red-500/20 hover:text-red-400'
+                          : 'bg-dark-600 text-text-secondary hover:bg-accent/20 hover:text-accent'
                       }`}
                     >
                       {firm.listing_status === 'listed' ? 'Unlist' : 'List'}
@@ -324,8 +324,8 @@ export default function AdminFirmsPage() {
                     onClick={() => editingSlug === firm.slug ? cancelEdit() : startEdit(firm)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex-shrink-0 ${
                       editingSlug === firm.slug
-                        ? 'bg-gray-700 text-gray-300'
-                        : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'
+                        ? 'bg-dark-600 text-text-secondary'
+                        : 'bg-dark-700 text-text-secondary hover:bg-dark-600 hover:text-white'
                     }`}
                   >
                     {editingSlug === firm.slug ? '✕ Cancel' : '✎ Edit'}
@@ -337,7 +337,7 @@ export default function AdminFirmsPage() {
                       href={firm.website_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-gray-500 hover:text-white text-xs flex-shrink-0"
+                      className="text-text-muted hover:text-white text-xs flex-shrink-0"
                     >
                       ↗
                     </a>
@@ -346,82 +346,82 @@ export default function AdminFirmsPage() {
 
                 {/* Edit panel */}
                 {editingSlug === firm.slug && (
-                  <div className="border-t border-gray-800 bg-gray-950 p-4">
+                  <div className="border-t border-border bg-bg-base p-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {/* Basic Info */}
                       <div className="space-y-3">
-                        <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Basic Info</h4>
+                        <h4 className="text-xs font-semibold text-text-secondary uppercase tracking-wider">Basic Info</h4>
                         <div>
-                          <label className="text-xs text-gray-500 mb-1 block">Name</label>
+                          <label className="text-xs text-text-muted mb-1 block">Name</label>
                           <input value={editData.name || ''} onChange={e => setEditData(p => ({ ...p, name: e.target.value }))}
-                            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                            className="w-full bg-dark-700 border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent" />
                         </div>
                         <div>
-                          <label className="text-xs text-gray-500 mb-1 block">Website URL</label>
+                          <label className="text-xs text-text-muted mb-1 block">Website URL</label>
                           <input value={editData.website_url || ''} onChange={e => setEditData(p => ({ ...p, website_url: e.target.value }))}
-                            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" placeholder="https://..." />
+                            className="w-full bg-dark-700 border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent" placeholder="https://..." />
                         </div>
                         <div>
-                          <label className="text-xs text-gray-500 mb-1 block">Logo URL</label>
+                          <label className="text-xs text-text-muted mb-1 block">Logo URL</label>
                           <input value={editData.logo_url || ''} onChange={e => setEditData(p => ({ ...p, logo_url: e.target.value }))}
-                            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" placeholder="https://..." />
+                            className="w-full bg-dark-700 border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent" placeholder="https://..." />
                         </div>
                         <div>
-                          <label className="text-xs text-gray-500 mb-1 block">Country</label>
+                          <label className="text-xs text-text-muted mb-1 block">Country</label>
                           <input value={editData.country || ''} onChange={e => setEditData(p => ({ ...p, country: e.target.value }))}
-                            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" placeholder="AE, GB, US..." />
+                            className="w-full bg-dark-700 border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent" placeholder="AE, GB, US..." />
                         </div>
                       </div>
 
                       {/* Affiliate & Deals */}
                       <div className="space-y-3">
-                        <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Affiliate & Deals</h4>
+                        <h4 className="text-xs font-semibold text-text-secondary uppercase tracking-wider">Affiliate & Deals</h4>
                         <div>
-                          <label className="text-xs text-gray-500 mb-1 block">Affiliate URL 🔗</label>
+                          <label className="text-xs text-text-muted mb-1 block">Affiliate URL 🔗</label>
                           <input value={editData.affiliate_url || ''} onChange={e => setEditData(p => ({ ...p, affiliate_url: e.target.value }))}
-                            className="w-full bg-gray-800 border border-emerald-700/50 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" placeholder="https://..." />
+                            className="w-full bg-dark-700 border border-emerald-700/50 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent" placeholder="https://..." />
                         </div>
                         <div>
-                          <label className="text-xs text-gray-500 mb-1 block">Discount Code</label>
+                          <label className="text-xs text-text-muted mb-1 block">Discount Code</label>
                           <input value={editData.discount_code || ''} onChange={e => setEditData(p => ({ ...p, discount_code: e.target.value }))}
-                            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" placeholder="CODE20" />
+                            className="w-full bg-dark-700 border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent" placeholder="CODE20" />
                         </div>
                         <div>
-                          <label className="text-xs text-gray-500 mb-1 block">Discount %</label>
+                          <label className="text-xs text-text-muted mb-1 block">Discount %</label>
                           <input type="number" value={editData.discount_percent || ''} onChange={e => setEditData(p => ({ ...p, discount_percent: Number(e.target.value) }))}
-                            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" placeholder="20" />
+                            className="w-full bg-dark-700 border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent" placeholder="20" />
                         </div>
                         <div className="grid grid-cols-2 gap-2">
                           <div>
-                            <label className="text-xs text-gray-500 mb-1 block">Min Price $</label>
+                            <label className="text-xs text-text-muted mb-1 block">Min Price $</label>
                             <input type="number" value={editData.min_price || ''} onChange={e => setEditData(p => ({ ...p, min_price: Number(e.target.value) }))}
-                              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                              className="w-full bg-dark-700 border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent" />
                           </div>
                           <div>
-                            <label className="text-xs text-gray-500 mb-1 block">Max Split %</label>
+                            <label className="text-xs text-text-muted mb-1 block">Max Split %</label>
                             <input type="number" value={editData.max_profit_split || ''} onChange={e => setEditData(p => ({ ...p, max_profit_split: Number(e.target.value) }))}
-                              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                              className="w-full bg-dark-700 border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent" />
                           </div>
                         </div>
                       </div>
 
                       {/* Status & Trading Rules */}
                       <div className="space-y-3">
-                        <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Status & Rules</h4>
+                        <h4 className="text-xs font-semibold text-text-secondary uppercase tracking-wider">Status & Rules</h4>
                         <div className="grid grid-cols-2 gap-2">
                           <div>
-                            <label className="text-xs text-gray-500 mb-1 block">Trust Status</label>
+                            <label className="text-xs text-text-muted mb-1 block">Trust Status</label>
                             <select value={editData.trust_status || ''} onChange={e => setEditData(p => ({ ...p, trust_status: e.target.value }))}
-                              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                              className="w-full bg-dark-700 border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent">
                               <option value="scanned">scanned</option>
                               <option value="unverified">unverified</option>
                               <option value="not_recommended">not_recommended</option>
                             </select>
                           </div>
                           <div>
-                            <label className="text-xs text-gray-500 mb-1 block">Listing</label>
+                            <label className="text-xs text-text-muted mb-1 block">Listing</label>
                             <select value={editData.listing_status || ''} onChange={e => setEditData(p => ({ ...p, listing_status: e.target.value }))}
-                              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                              className="w-full bg-dark-700 border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent">
                               <option value="listed">listed</option>
                               <option value="unlisted">unlisted</option>
                             </select>
@@ -429,14 +429,14 @@ export default function AdminFirmsPage() {
                         </div>
                         <div className="grid grid-cols-2 gap-2">
                           <div>
-                            <label className="text-xs text-gray-500 mb-1 block">TP Rating</label>
+                            <label className="text-xs text-text-muted mb-1 block">TP Rating</label>
                             <input type="number" step="0.1" max="5" value={editData.trustpilot_rating || ''} onChange={e => setEditData(p => ({ ...p, trustpilot_rating: Number(e.target.value) }))}
-                              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                              className="w-full bg-dark-700 border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent" />
                           </div>
                           <div>
-                            <label className="text-xs text-gray-500 mb-1 block">TP Reviews</label>
+                            <label className="text-xs text-text-muted mb-1 block">TP Reviews</label>
                             <input type="number" value={editData.trustpilot_reviews || ''} onChange={e => setEditData(p => ({ ...p, trustpilot_reviews: Number(e.target.value) }))}
-                              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                              className="w-full bg-dark-700 border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent" />
                           </div>
                         </div>
                         <div className="grid grid-cols-2 gap-2 pt-1">
@@ -455,7 +455,7 @@ export default function AdminFirmsPage() {
                                 onChange={e => setEditData(p => ({ ...p, [field]: e.target.checked }))}
                                 className="w-4 h-4 rounded accent-emerald-500"
                               />
-                              <span className="text-xs text-gray-400">{label}</span>
+                              <span className="text-xs text-text-secondary">{label}</span>
                             </label>
                           ))}
                         </div>
@@ -463,14 +463,14 @@ export default function AdminFirmsPage() {
                     </div>
 
                     {/* Save button */}
-                    <div className="flex justify-end gap-3 mt-4 pt-4 border-t border-gray-800">
-                      <button onClick={cancelEdit} className="px-4 py-2 bg-gray-800 text-gray-400 rounded-lg text-sm hover:text-white transition-all">
+                    <div className="flex justify-end gap-3 mt-4 pt-4 border-t border-border">
+                      <button onClick={cancelEdit} className="px-4 py-2 bg-dark-700 text-text-secondary rounded-lg text-sm hover:text-white transition-all">
                         Cancel
                       </button>
                       <button
                         onClick={saveEdit}
                         disabled={saving}
-                        className="px-6 py-2 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold rounded-lg text-sm transition-all disabled:opacity-50"
+                        className="px-6 py-2 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-lg text-sm transition-all disabled:opacity-50"
                       >
                         {saving ? 'Saving...' : '✓ Save Changes'}
                       </button>

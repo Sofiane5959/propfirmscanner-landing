@@ -167,29 +167,29 @@ export default function DealsPageContent() {
   const { stats, loading } = useDealsStats();
 
   return (
-    <div className="min-h-screen bg-gray-950">
+    <div className="min-h-screen bg-bg-base">
       {/* Hero */}
-      <header className="relative overflow-hidden bg-gradient-to-b from-gray-900 via-gray-900 to-gray-950 border-b border-gray-800">
+      <header className="relative overflow-hidden bg-gradient-to-b from-bg-elevated via-bg-elevated to-bg-base border-b border-border">
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl transform -translate-y-1/2" />
+          <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl transform -translate-y-1/2" />
           <div className="absolute top-1/2 right-1/4 w-96 h-96 bg-yellow-500/5 rounded-full blur-3xl transform -translate-y-1/2" />
         </div>
 
         <div className="relative z-10 max-w-6xl mx-auto px-4 py-14">
           <div className="flex flex-col items-center text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/30 rounded-full mb-6">
-              <Shield className="w-4 h-4 text-emerald-400" />
-              <span className="text-emerald-400 text-sm font-medium">{t.badge}</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 border border-accent/30 rounded-full mb-6">
+              <Shield className="w-4 h-4 text-accent" />
+              <span className="text-accent text-sm font-medium">{t.badge}</span>
             </div>
 
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
               {t.title}{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-yellow-400">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-yellow-400">
                 {t.titleHighlight}
               </span>
             </h1>
 
-            <p className="text-gray-400 text-lg max-w-2xl mb-8">{t.description}</p>
+            <p className="text-text-secondary text-lg max-w-2xl mb-8">{t.description}</p>
 
             {/* Stats — computed live from the DB. We render stable placeholders
                 while loading so layout doesn't jump, but never invent numbers. */}
@@ -223,14 +223,14 @@ export default function DealsPageContent() {
 function Stat({ value, label, highlight = false }: { value: string; label: string; highlight?: boolean }) {
   return (
     <div className="flex flex-col items-center">
-      <span className={`text-3xl font-bold ${highlight ? 'text-emerald-400' : 'text-white'}`}>
+      <span className={`text-3xl font-bold ${highlight ? 'text-accent' : 'text-white'}`}>
         {value}
       </span>
-      <span className="text-gray-500 text-sm">{label}</span>
+      <span className="text-text-muted text-sm">{label}</span>
     </div>
   );
 }
 
 function Divider() {
-  return <div className="w-px h-12 bg-gray-800" />;
+  return <div className="w-px h-12 bg-dark-700" />;
 }

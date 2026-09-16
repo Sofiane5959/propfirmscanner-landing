@@ -24,7 +24,7 @@ import {
 function FirmLogoSimple({ logoUrl, logoFallback, color }: { logoUrl: string | null; logoFallback: string; color: string }) {
   if (logoUrl) {
     return (
-      <div className="w-12 h-12 rounded-xl bg-gray-800 flex items-center justify-center overflow-hidden">
+      <div className="w-12 h-12 rounded-xl bg-dark-700 flex items-center justify-center overflow-hidden">
         <img src={logoUrl} alt="" className="w-8 h-8 object-contain" />
       </div>
     );
@@ -550,7 +550,7 @@ const TOP_FIRMS = [
     reviews: '19K+',
     logoUrl: null,
     logoFallback: '5ers',
-    color: 'from-emerald-500 to-teal-500',
+    color: 'from-accent to-teal-500',
     startingPrice: '$95',
     profitSplit: '100%',
     promo: { code: null, discount: '5% OFF' },
@@ -636,18 +636,18 @@ export default function HomeContent() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-950">
+    <div className="min-h-screen bg-bg-base">
       
       {/* ========== HERO SECTION ========== */}
       <section className="relative pt-24 pb-16 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-900 via-gray-950 to-gray-950" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-emerald-500/5 rounded-full blur-3xl" />
+        <div className="absolute inset-0 bg-gradient-to-b from-bg-elevated via-bg-base to-bg-base" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-accent/5 rounded-full blur-3xl" />
         
         <div className="relative max-w-6xl mx-auto px-4">
           {/* Badge */}
           <div className="flex justify-center mb-6">
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-400 text-sm">
-              <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-accent/10 border border-accent/20 rounded-full text-accent text-sm">
+              <span className="w-1.5 h-1.5 bg-accent rounded-full animate-pulse" />
               {t.badge}
             </span>
           </div>
@@ -656,12 +656,12 @@ export default function HomeContent() {
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-center text-white leading-tight mb-6">
             {t.heroTitle1}
             <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-cyan-400">
               {t.heroTitle2}
             </span>
           </h1>
           
-          <p className="text-lg md:text-xl text-gray-400 text-center max-w-2xl mx-auto mb-8">
+          <p className="text-lg md:text-xl text-text-secondary text-center max-w-2xl mx-auto mb-8">
             {t.heroDescription} <span className="text-white font-medium">{t.smartDashboard}</span>.
           </p>
           
@@ -669,7 +669,7 @@ export default function HomeContent() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
             <Link
               href="/compare"
-              className="group flex items-center gap-2 px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold rounded-xl transition-all shadow-lg shadow-emerald-500/20"
+              className="group flex items-center gap-2 px-8 py-4 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-xl transition-all shadow-lg shadow-emerald-500/20"
             >
               <BarChart3 className="w-5 h-5" />
               {t.ctaCompare}
@@ -677,7 +677,7 @@ export default function HomeContent() {
             </Link>
             <Link
               href="/dashboard"
-              className="group flex items-center gap-2 px-8 py-4 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-xl border border-gray-700 transition-all"
+              className="group flex items-center gap-2 px-8 py-4 bg-dark-700 hover:bg-dark-600 text-white font-semibold rounded-xl border border-border transition-all"
             >
               <Target className="w-5 h-5" />
               {t.ctaTrack}
@@ -689,24 +689,24 @@ export default function HomeContent() {
       {/* ========== QUIZ CTA — RIGHT AFTER HERO ========== */}
       <section className="px-4 pb-10 -mt-2">
         <div className="max-w-6xl mx-auto">
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-950 via-gray-900 to-emerald-950 border border-emerald-500/30 shadow-2xl shadow-emerald-500/10">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-950 via-bg-elevated to-emerald-950 border border-accent/30 shadow-2xl shadow-emerald-500/10">
             {/* Animated glow orbs */}
-            <div className="absolute -top-20 -left-20 w-72 h-72 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute -bottom-20 -right-20 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
+            <div className="absolute -top-20 -left-20 w-72 h-72 bg-accent/15 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-20 -right-20 w-72 h-72 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent" />
 
             <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6 px-8 py-7">
               {/* Left */}
               <div className="flex items-center gap-5">
-                <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center flex-shrink-0">
-                  <Sparkles className="w-7 h-7 text-emerald-400" />
+                <div className="w-14 h-14 rounded-2xl bg-accent/20 border border-accent/30 flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="w-7 h-7 text-accent" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-white font-bold text-lg leading-tight">{t.quizTitle}</span>
-                    <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-[10px] font-bold rounded-full uppercase tracking-wide border border-emerald-500/30">Free</span>
+                    <span className="px-2 py-0.5 bg-accent/20 text-accent text-[10px] font-bold rounded-full uppercase tracking-wide border border-accent/30">Free</span>
                   </div>
-                  <p className="text-gray-400 text-sm max-w-md">{t.quizSubtitle}</p>
+                  <p className="text-text-secondary text-sm max-w-md">{t.quizSubtitle}</p>
                 </div>
               </div>
 
@@ -715,25 +715,25 @@ export default function HomeContent() {
                 <div className="hidden sm:flex items-center gap-5 text-center">
                   <div>
                     <p className="text-xl font-bold text-white">36</p>
-                    <p className="text-[10px] text-gray-500 mt-0.5">firms</p>
+                    <p className="text-[10px] text-text-muted mt-0.5">firms</p>
                   </div>
-                  <div className="w-px h-8 bg-gray-700" />
+                  <div className="w-px h-8 bg-dark-600" />
                   <div>
                     <p className="text-xl font-bold text-white">4</p>
-                    <p className="text-[10px] text-gray-500 mt-0.5">questions</p>
+                    <p className="text-[10px] text-text-muted mt-0.5">questions</p>
                   </div>
-                  <div className="w-px h-8 bg-gray-700" />
+                  <div className="w-px h-8 bg-dark-600" />
                   <div>
-                    <p className="text-xl font-bold text-emerald-400">60s</p>
-                    <p className="text-[10px] text-gray-500 mt-0.5">to match</p>
+                    <p className="text-xl font-bold text-accent">60s</p>
+                    <p className="text-[10px] text-text-muted mt-0.5">to match</p>
                   </div>
                 </div>
                 <Link
                   href="/en/quiz"
-                  className="relative inline-flex items-center gap-2 px-6 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-sm rounded-xl transition-all shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:-translate-y-0.5 whitespace-nowrap"
+                  className="relative inline-flex items-center gap-2 px-6 py-3.5 bg-accent-hover hover:brightness-110 text-white font-bold text-sm rounded-xl transition-all shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:-translate-y-0.5 whitespace-nowrap"
                 >
-                  <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-300 rounded-full animate-ping opacity-75" />
-                  <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full" />
+                  <span className="absolute -top-1 -right-1 w-3 h-3 bg-accent rounded-full animate-ping opacity-75" />
+                  <span className="absolute -top-1 -right-1 w-3 h-3 bg-accent rounded-full" />
                   {t.quizCta} →
                 </Link>
               </div>
@@ -743,21 +743,21 @@ export default function HomeContent() {
       </section>
 
       {/* ========== TOP FIRMS SECTION ========== */}
-      <section className="py-16 px-4 bg-gray-900/50">
+      <section className="py-16 px-4 bg-bg-elevated/50">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-10">
             <h2 className="text-2xl md:text-3xl font-bold text-white flex items-center justify-center gap-3 mb-2">
               <span className="text-2xl">🏆</span>
               {t.topFirmsTitle}
             </h2>
-            <p className="text-gray-500">{t.topFirmsSubtitle}</p>
+            <p className="text-text-muted">{t.topFirmsSubtitle}</p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {TOP_FIRMS.map((firm) => (
               <div
                 key={firm.slug}
-                className="relative group bg-gray-900 border border-gray-800 hover:border-gray-700 rounded-2xl p-5 transition-all"
+                className="relative group bg-bg-elevated border border-border hover:border-border-hover rounded-2xl p-5 transition-all"
               >
                 {/* Rank badge */}
                 <div className="absolute -top-3 -left-3 w-8 h-8 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center shadow-lg">
@@ -781,21 +781,21 @@ export default function HomeContent() {
                         <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
                         <span className="text-white">{firm.rating}</span>
                       </div>
-                      <span className="text-gray-600">•</span>
-                      <span className="text-gray-500">{firm.reviews} reviews</span>
+                      <span className="text-text-muted">•</span>
+                      <span className="text-text-muted">{firm.reviews} reviews</span>
                     </div>
                   </div>
                 </div>
                 
                 {/* Stats */}
                 <div className="grid grid-cols-2 gap-3 mb-4">
-                  <div className="bg-gray-800/50 rounded-lg p-2.5 text-center">
-                    <div className="text-gray-500 text-xs mb-0.5">{t.fromPrice}</div>
+                  <div className="bg-dark-700/50 rounded-lg p-2.5 text-center">
+                    <div className="text-text-muted text-xs mb-0.5">{t.fromPrice}</div>
                     <div className="text-white font-semibold">{firm.startingPrice}</div>
                   </div>
-                  <div className="bg-gray-800/50 rounded-lg p-2.5 text-center">
-                    <div className="text-gray-500 text-xs mb-0.5">{t.profitSplit}</div>
-                    <div className="text-emerald-400 font-semibold">{firm.profitSplit}</div>
+                  <div className="bg-dark-700/50 rounded-lg p-2.5 text-center">
+                    <div className="text-text-muted text-xs mb-0.5">{t.profitSplit}</div>
+                    <div className="text-accent font-semibold">{firm.profitSplit}</div>
                   </div>
                 </div>
                 
@@ -803,7 +803,7 @@ export default function HomeContent() {
                 <div className="flex gap-2">
                   <Link
                     href={`/prop-firm/${firm.slug}`}
-                    className="flex-1 py-2 text-center text-sm font-medium text-gray-300 hover:text-white bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors"
+                    className="flex-1 py-2 text-center text-sm font-medium text-text-secondary hover:text-white bg-dark-700 hover:bg-dark-600 rounded-lg transition-colors"
                   >
                     {t.viewDetails}
                   </Link>
@@ -812,7 +812,7 @@ export default function HomeContent() {
                       href={firm.affiliate}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 py-2 text-center text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-400 rounded-lg transition-colors flex items-center justify-center gap-1"
+                      className="flex-1 py-2 text-center text-sm font-medium text-white bg-accent-hover hover:brightness-110 rounded-lg transition-colors flex items-center justify-center gap-1"
                     >
                       {firm.promo?.code && <span>{t.useCode} {firm.promo.code}</span>}
                       {!firm.promo?.code && <ExternalLink className="w-3.5 h-3.5" />}
@@ -827,7 +827,7 @@ export default function HomeContent() {
           <div className="text-center mt-8">
             <Link
               href="/compare"
-              className="inline-flex items-center gap-2 px-6 py-3 text-emerald-400 hover:text-emerald-300 font-medium"
+              className="inline-flex items-center gap-2 px-6 py-3 text-accent hover:text-accent font-medium"
             >
               {t.viewAllFirms}
               <ArrowRight className="w-4 h-4" />
@@ -845,24 +845,24 @@ export default function HomeContent() {
               <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
                 {t.dashboardTitle}
               </h2>
-              <p className="text-gray-400 text-lg mb-6">
+              <p className="text-text-secondary text-lg mb-6">
                 {t.dashboardSubtitle}
               </p>
               
               <ul className="space-y-4 mb-8">
                 {[t.dashboardFeature1, t.dashboardFeature2, t.dashboardFeature3].map((feature, i) => (
                   <li key={i} className="flex items-center gap-3">
-                    <div className="w-6 h-6 bg-emerald-500/20 rounded-full flex items-center justify-center">
-                      <CheckCircle className="w-4 h-4 text-emerald-400" />
+                    <div className="w-6 h-6 bg-accent/20 rounded-full flex items-center justify-center">
+                      <CheckCircle className="w-4 h-4 text-accent" />
                     </div>
-                    <span className="text-gray-300">{feature}</span>
+                    <span className="text-text-secondary">{feature}</span>
                   </li>
                 ))}
               </ul>
               
               <Link
                 href="/dashboard"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold rounded-xl transition-all"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-xl transition-all"
               >
                 {t.dashboardCta}
                 <ArrowRight className="w-4 h-4" />
@@ -871,41 +871,41 @@ export default function HomeContent() {
             
             {/* Right: Mock Dashboard */}
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 rounded-3xl blur-3xl" />
-              <div className="relative bg-gray-900 border border-gray-800 rounded-2xl p-6">
+              <div className="absolute inset-0 bg-gradient-to-r from-accent/20 to-cyan-500/20 rounded-3xl blur-3xl" />
+              <div className="relative bg-bg-elevated border border-border rounded-2xl p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-white font-semibold">{t.dashboardMock}</h3>
                   <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 bg-emerald-400 rounded-full" />
-                    <div className="text-emerald-400 font-bold">Safe</div>
+                    <span className="w-2 h-2 bg-accent rounded-full" />
+                    <div className="text-accent font-bold">Safe</div>
                   </div>
                 </div>
                 
                 <div className="space-y-3">
                   <div>
                     <div className="flex justify-between text-xs mb-1">
-                      <span className="text-gray-400">{t.dailyDrawdown}</span>
-                      <span className="text-emerald-400">$3,750 {t.remaining}</span>
+                      <span className="text-text-secondary">{t.dailyDrawdown}</span>
+                      <span className="text-accent">$3,750 {t.remaining}</span>
                     </div>
-                    <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
-                      <div className="h-full w-1/4 bg-emerald-500 rounded-full" />
+                    <div className="h-2 bg-dark-700 rounded-full overflow-hidden">
+                      <div className="h-full w-1/4 bg-accent-hover rounded-full" />
                     </div>
                   </div>
                   <div>
                     <div className="flex justify-between text-xs mb-1">
-                      <span className="text-gray-400">{t.maxDrawdown}</span>
-                      <span className="text-emerald-400">$8,750 {t.remaining}</span>
+                      <span className="text-text-secondary">{t.maxDrawdown}</span>
+                      <span className="text-accent">$8,750 {t.remaining}</span>
                     </div>
-                    <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
+                    <div className="h-2 bg-dark-700 rounded-full overflow-hidden">
                       <div className="h-full w-1/3 bg-cyan-500 rounded-full" />
                     </div>
                   </div>
                 </div>
                 
-                <div className="mt-4 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
+                <div className="mt-4 p-3 bg-accent/10 border border-accent/20 rounded-lg">
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-emerald-400" />
-                    <span className="text-emerald-400 text-sm font-medium">{t.allClear}</span>
+                    <CheckCircle className="w-4 h-4 text-accent" />
+                    <span className="text-accent text-sm font-medium">{t.allClear}</span>
                   </div>
                 </div>
               </div>
@@ -921,7 +921,7 @@ export default function HomeContent() {
             <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
               {t.tradingStylesTitle}
             </h2>
-            <p className="text-gray-500">{t.tradingStylesSubtitle}</p>
+            <p className="text-text-muted">{t.tradingStylesSubtitle}</p>
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -929,10 +929,10 @@ export default function HomeContent() {
               <Link
                 key={style.name}
                 href={style.href}
-                className="group flex flex-col items-center gap-3 p-5 bg-gray-900 hover:bg-gray-800 border border-gray-800 hover:border-gray-700 rounded-xl transition-all"
+                className="group flex flex-col items-center gap-3 p-5 bg-bg-elevated hover:bg-dark-700 border border-border hover:border-border-hover rounded-xl transition-all"
               >
                 <span className="text-3xl">{style.icon}</span>
-                <span className="text-white font-medium text-sm group-hover:text-emerald-400 transition-colors">
+                <span className="text-white font-medium text-sm group-hover:text-accent transition-colors">
                   {style.name}
                 </span>
               </Link>
@@ -942,14 +942,14 @@ export default function HomeContent() {
       </section>
 
       {/* ========== POPULAR COMPARISONS ========== */}
-      <section className="py-16 px-4 bg-gray-900/30">
+      <section className="py-16 px-4 bg-bg-elevated/30">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-10">
             <h2 className="text-2xl md:text-3xl font-bold text-white flex items-center justify-center gap-3 mb-2">
               <span className="text-2xl">⚔️</span>
               {t.comparisonsTitle}
             </h2>
-            <p className="text-gray-500">{t.comparisonsSubtitle}</p>
+            <p className="text-text-muted">{t.comparisonsSubtitle}</p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -957,12 +957,12 @@ export default function HomeContent() {
               <Link
                 key={comparison.slug}
                 href={`/compare/${comparison.slug}`}
-                className="group flex items-center justify-between p-4 bg-gray-900 hover:bg-gray-800 border border-gray-800 hover:border-emerald-500/30 rounded-xl transition-all"
+                className="group flex items-center justify-between p-4 bg-bg-elevated hover:bg-dark-700 border border-border hover:border-accent/30 rounded-xl transition-all"
               >
-                <span className="text-white font-medium group-hover:text-emerald-400 transition-colors">
+                <span className="text-white font-medium group-hover:text-accent transition-colors">
                   {comparison.firms}
                 </span>
-                <ArrowRight className="w-4 h-4 text-gray-600 group-hover:text-emerald-400 transition-colors" />
+                <ArrowRight className="w-4 h-4 text-text-muted group-hover:text-accent transition-colors" />
               </Link>
             ))}
           </div>
@@ -976,7 +976,7 @@ export default function HomeContent() {
             <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
               {t.whyUsTitle}
             </h2>
-            <p className="text-gray-500">{t.whyUsSubtitle}</p>
+            <p className="text-text-muted">{t.whyUsSubtitle}</p>
           </div>
           
           <div className="grid md:grid-cols-4 gap-6">
@@ -987,11 +987,11 @@ export default function HomeContent() {
               { icon: Gift, title: t.exclusiveDeals, description: t.exclusiveDealsDesc },
             ].map((feature, i) => (
               <div key={i} className="text-center">
-                <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-gray-800 flex items-center justify-center">
-                  <feature.icon className="w-7 h-7 text-emerald-400" />
+                <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-dark-700 flex items-center justify-center">
+                  <feature.icon className="w-7 h-7 text-accent" />
                 </div>
                 <h3 className="text-white font-semibold mb-2">{feature.title}</h3>
-                <p className="text-gray-500 text-sm">{feature.description}</p>
+                <p className="text-text-muted text-sm">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -999,7 +999,7 @@ export default function HomeContent() {
       </section>
 
       {/* ========== LATEST FROM BLOG ========== */}
-      <section className="py-16 px-4 bg-gray-900/30">
+      <section className="py-16 px-4 bg-bg-elevated/30">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -1007,11 +1007,11 @@ export default function HomeContent() {
                 <span className="text-2xl">📚</span>
                 {t.blogTitle}
               </h2>
-              <p className="text-gray-500 mt-1">{t.blogSubtitle}</p>
+              <p className="text-text-muted mt-1">{t.blogSubtitle}</p>
             </div>
             <Link 
               href="/blog" 
-              className="hidden md:flex items-center gap-1 text-emerald-400 hover:text-emerald-300 text-sm font-medium"
+              className="hidden md:flex items-center gap-1 text-accent hover:text-accent text-sm font-medium"
             >
               {t.viewAll} <ArrowRight className="w-4 h-4" />
             </Link>
@@ -1022,15 +1022,15 @@ export default function HomeContent() {
               <Link
                 key={post.slug}
                 href={`/blog/${post.slug}`}
-                className="group bg-gray-900 border border-gray-800 hover:border-gray-700 rounded-xl p-6 transition-all"
+                className="group bg-bg-elevated border border-border hover:border-border-hover rounded-xl p-6 transition-all"
               >
-                <span className="inline-block px-2 py-1 bg-emerald-500/10 text-emerald-400 text-xs font-medium rounded mb-3">
+                <span className="inline-block px-2 py-1 bg-accent/10 text-accent text-xs font-medium rounded mb-3">
                   {post.category}
                 </span>
-                <h3 className="text-white font-semibold group-hover:text-emerald-400 transition-colors mb-2">
+                <h3 className="text-white font-semibold group-hover:text-accent transition-colors mb-2">
                   {post.title}
                 </h3>
-                <span className="text-gray-500 text-sm flex items-center gap-1">
+                <span className="text-text-muted text-sm flex items-center gap-1">
                   {t.readMore} <ArrowRight className="w-3 h-3" />
                 </span>
               </Link>
@@ -1045,20 +1045,20 @@ export default function HomeContent() {
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             {t.finalCtaTitle}
           </h2>
-          <p className="text-gray-400 text-lg mb-8">
+          <p className="text-text-secondary text-lg mb-8">
             {t.finalCtaSubtitle}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/compare"
-              className="group flex items-center gap-2 px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold rounded-xl transition-all"
+              className="group flex items-center gap-2 px-8 py-4 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-xl transition-all"
             >
               {t.startComparing}
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
               href="/guide"
-              className="flex items-center gap-2 px-8 py-4 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-xl border border-gray-700 transition-all"
+              className="flex items-center gap-2 px-8 py-4 bg-dark-700 hover:bg-dark-600 text-white font-semibold rounded-xl border border-border transition-all"
             >
               <Award className="w-5 h-5" />
               {t.downloadGuide}

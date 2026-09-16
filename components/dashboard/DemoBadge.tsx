@@ -50,7 +50,7 @@ export function DemoBanner({ onAddAccount }: DemoBannerProps) {
               You&apos;re viewing demo data
               <DemoBadge />
             </p>
-            <p className="text-xs text-gray-400 mt-0.5">
+            <p className="text-xs text-text-secondary mt-0.5">
               Add your own account to see your real risk metrics
             </p>
           </div>

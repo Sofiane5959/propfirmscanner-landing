@@ -146,15 +146,15 @@ export function KeyboardShortcutsModal() {
       />
 
       {/* Modal */}
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-gray-800 border border-gray-700 rounded-2xl shadow-2xl z-[201]">
-        <div className="flex items-center justify-between p-4 border-b border-gray-700">
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-dark-700 border border-border rounded-2xl shadow-2xl z-[201]">
+        <div className="flex items-center justify-between p-4 border-b border-border">
           <div className="flex items-center gap-2">
-            <Keyboard className="w-5 h-5 text-emerald-400" />
+            <Keyboard className="w-5 h-5 text-accent" />
             <h2 className="text-lg font-semibold text-white">Keyboard Shortcuts</h2>
           </div>
           <button
             onClick={() => setShowHelp(false)}
-            className="p-1 text-gray-400 hover:text-white"
+            className="p-1 text-text-secondary hover:text-white"
           >
             <X className="w-5 h-5" />
           </button>
@@ -168,20 +168,20 @@ export function KeyboardShortcutsModal() {
             >
               <div className="flex items-center gap-3">
                 {shortcut.icon && (
-                  <shortcut.icon className="w-4 h-4 text-gray-400" />
+                  <shortcut.icon className="w-4 h-4 text-text-secondary" />
                 )}
-                <span className="text-gray-300">{shortcut.description}</span>
+                <span className="text-text-secondary">{shortcut.description}</span>
               </div>
-              <kbd className="px-2 py-1 bg-gray-700 border border-gray-600 rounded text-gray-300 text-sm font-mono">
+              <kbd className="px-2 py-1 bg-dark-600 border border-border-hover rounded text-text-secondary text-sm font-mono">
                 {shortcut.key}
               </kbd>
             </div>
           ))}
         </div>
 
-        <div className="p-4 border-t border-gray-700 text-center">
-          <p className="text-gray-500 text-sm">
-            Press <kbd className="px-1.5 py-0.5 bg-gray-700 rounded text-xs">?</kbd> to toggle this help
+        <div className="p-4 border-t border-border text-center">
+          <p className="text-text-muted text-sm">
+            Press <kbd className="px-1.5 py-0.5 bg-dark-600 rounded text-xs">?</kbd> to toggle this help
           </p>
         </div>
       </div>
@@ -225,17 +225,17 @@ export function QuickSearchModal() {
       />
 
       {/* Modal */}
-      <div className="fixed top-1/4 left-1/2 -translate-x-1/2 w-full max-w-lg bg-gray-800 border border-gray-700 rounded-2xl shadow-2xl z-[201]">
-        <div className="p-4 border-b border-gray-700">
+      <div className="fixed top-1/4 left-1/2 -translate-x-1/2 w-full max-w-lg bg-dark-700 border border-border rounded-2xl shadow-2xl z-[201]">
+        <div className="p-4 border-b border-border">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
             <input
               type="text"
               placeholder="Search or jump to..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               autoFocus
-              className="w-full pl-12 pr-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white placeholder:text-gray-500 focus:outline-none focus:border-emerald-500"
+              className="w-full pl-12 pr-4 py-3 bg-bg-elevated border border-border rounded-xl text-white placeholder:text-text-muted focus:outline-none focus:border-accent"
             />
           </div>
         </div>
@@ -245,27 +245,27 @@ export function QuickSearchModal() {
             <button
               key={link.href}
               onClick={() => handleSelect(link.href)}
-              className="w-full flex items-center justify-between px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white"
+              className="w-full flex items-center justify-between px-4 py-3 rounded-lg text-text-secondary hover:bg-dark-600 hover:text-white"
             >
               <div className="flex items-center gap-3">
-                <link.icon className="w-4 h-4 text-gray-400" />
+                <link.icon className="w-4 h-4 text-text-secondary" />
                 <span>{link.label}</span>
               </div>
-              <ArrowRight className="w-4 h-4 text-gray-500" />
+              <ArrowRight className="w-4 h-4 text-text-muted" />
             </button>
           ))}
           
           {filteredLinks.length === 0 && (
-            <p className="text-center text-gray-500 py-4">No results found</p>
+            <p className="text-center text-text-muted py-4">No results found</p>
           )}
         </div>
 
-        <div className="p-3 border-t border-gray-700 flex items-center justify-between text-xs text-gray-500">
+        <div className="p-3 border-t border-border flex items-center justify-between text-xs text-text-muted">
           <span>
-            <kbd className="px-1.5 py-0.5 bg-gray-700 rounded">↵</kbd> to select
+            <kbd className="px-1.5 py-0.5 bg-dark-600 rounded">↵</kbd> to select
           </span>
           <span>
-            <kbd className="px-1.5 py-0.5 bg-gray-700 rounded">esc</kbd> to close
+            <kbd className="px-1.5 py-0.5 bg-dark-600 rounded">esc</kbd> to close
           </span>
         </div>
       </div>

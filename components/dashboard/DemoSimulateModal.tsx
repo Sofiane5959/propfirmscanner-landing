@@ -127,7 +127,7 @@ export function DemoSimulateModal({ isOpen, onClose, onAddRealAccount }: DemoSim
   }[result.status] : null;
 
   const resultStyles = result ? {
-    safe: { bg: 'bg-emerald-500/10', border: 'border-emerald-500/30', iconColor: 'text-emerald-400' },
+    safe: { bg: 'bg-accent/10', border: 'border-accent/30', iconColor: 'text-accent' },
     warning: { bg: 'bg-yellow-500/10', border: 'border-yellow-500/30', iconColor: 'text-yellow-400' },
     danger: { bg: 'bg-red-500/10', border: 'border-red-500/30', iconColor: 'text-red-400' },
   }[result.status] : null;
@@ -143,26 +143,26 @@ export function DemoSimulateModal({ isOpen, onClose, onAddRealAccount }: DemoSim
       />
 
       {/* Modal */}
-      <div className="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-gray-900 border border-gray-700 shadow-xl">
+      <div className="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-bg-elevated border border-border shadow-xl">
         {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b border-gray-800">
+        <div className="flex items-center justify-between p-5 border-b border-border">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-emerald-500/20 rounded-lg">
-              <Calculator className="w-5 h-5 text-emerald-400" />
+            <div className="p-2 bg-accent/20 rounded-lg">
+              <Calculator className="w-5 h-5 text-accent" />
             </div>
             <div>
               <h2 className="text-lg font-semibold text-white flex items-center gap-2">
                 Trade Simulator
                 <DemoBadge />
               </h2>
-              <p className="text-sm text-gray-400">Test if a trade is safe</p>
+              <p className="text-sm text-text-secondary">Test if a trade is safe</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+            className="p-2 hover:bg-dark-700 rounded-lg transition-colors"
           >
-            <X className="w-5 h-5 text-gray-400" />
+            <X className="w-5 h-5 text-text-secondary" />
           </button>
         </div>
 
@@ -170,7 +170,7 @@ export function DemoSimulateModal({ isOpen, onClose, onAddRealAccount }: DemoSim
         <div className="p-5 space-y-5 max-h-[70vh] overflow-y-auto">
           {/* Account Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-text-secondary mb-2">
               Select Demo Account
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -180,14 +180,14 @@ export function DemoSimulateModal({ isOpen, onClose, onAddRealAccount }: DemoSim
                   onClick={() => setSelectedAccountId(account.id)}
                   className={`p-3 rounded-lg border text-left transition-all ${
                     selectedAccountId === account.id
-                      ? 'border-emerald-500 bg-emerald-500/10'
-                      : 'border-gray-700 bg-gray-800/50 hover:border-gray-600'
+                      ? 'border-accent bg-accent/10'
+                      : 'border-border bg-dark-700/50 hover:border-border-hover'
                   }`}
                 >
                   <p className="font-medium text-white text-sm truncate">
                     {account.prop_firm}
                   </p>
-                  <p className="text-xs text-gray-400 truncate">
+                  <p className="text-xs text-text-secondary truncate">
                     {formatCurrency(account.account_size)}
                   </p>
                 </button>
@@ -197,19 +197,19 @@ export function DemoSimulateModal({ isOpen, onClose, onAddRealAccount }: DemoSim
 
           {/* Risk Amount */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-text-secondary mb-2">
               Risk Amount (USD)
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-                <DollarSign className="w-5 h-5 text-gray-500" />
+                <DollarSign className="w-5 h-5 text-text-muted" />
               </div>
               <input
                 type="number"
                 value={riskAmount}
                 onChange={(e) => setRiskAmount(e.target.value)}
                 placeholder="Enter risk amount"
-                className="w-full pl-12 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white text-lg font-semibold focus:outline-none focus:border-emerald-500 transition-colors"
+                className="w-full pl-12 pr-4 py-3 bg-dark-700 border border-border rounded-xl text-white text-lg font-semibold focus:outline-none focus:border-accent transition-colors"
               />
             </div>
             <div className="flex gap-2 mt-2">
@@ -219,8 +219,8 @@ export function DemoSimulateModal({ isOpen, onClose, onAddRealAccount }: DemoSim
                   onClick={() => setRiskAmount(amount.toString())}
                   className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition-colors ${
                     riskAmount === amount.toString()
-                      ? 'bg-emerald-500 text-white'
-                      : 'bg-gray-800 text-gray-400 hover:text-white border border-gray-700'
+                      ? 'bg-accent-hover text-white'
+                      : 'bg-dark-700 text-text-secondary hover:text-white border border-border'
                   }`}
                 >
                   ${amount}
@@ -235,25 +235,25 @@ export function DemoSimulateModal({ isOpen, onClose, onAddRealAccount }: DemoSim
               <div className="flex items-start gap-3">
                 <ResultIcon className={`w-5 h-5 ${resultStyles.iconColor} flex-shrink-0 mt-0.5`} />
                 <div className="flex-1">
-                  <p className="text-sm text-gray-200 leading-relaxed">
+                  <p className="text-sm text-text-primary leading-relaxed">
                     {result.message}
                   </p>
                   
-                  <div className="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-gray-700/50">
+                  <div className="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-border/50">
                     <div>
-                      <p className="text-xs text-gray-500">Daily buffer after</p>
+                      <p className="text-xs text-text-muted">Daily buffer after</p>
                       <p className={`font-semibold ${
                         result.dailyRemaining <= 0 ? 'text-red-400' : 
-                        result.dailyRemaining < 500 ? 'text-yellow-400' : 'text-emerald-400'
+                        result.dailyRemaining < 500 ? 'text-yellow-400' : 'text-accent'
                       }`}>
                         {formatCurrency(result.dailyRemaining)}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500">Max DD buffer after</p>
+                      <p className="text-xs text-text-muted">Max DD buffer after</p>
                       <p className={`font-semibold ${
                         result.maxRemaining <= 0 ? 'text-red-400' : 
-                        result.maxRemaining < 1000 ? 'text-yellow-400' : 'text-emerald-400'
+                        result.maxRemaining < 1000 ? 'text-yellow-400' : 'text-accent'
                       }`}>
                         {formatCurrency(result.maxRemaining)}
                       </p>
@@ -274,7 +274,7 @@ export function DemoSimulateModal({ isOpen, onClose, onAddRealAccount }: DemoSim
                 <p className="text-sm font-medium text-white">
                   Want to simulate on your real accounts?
                 </p>
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-text-secondary">
                   Add your prop firm and get personalized risk analysis
                 </p>
               </div>

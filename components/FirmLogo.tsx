@@ -41,7 +41,7 @@ export default function FirmLogo({
   if (!src || failed) {
     return (
       <div
-        className={`w-full h-full flex items-center justify-center bg-emerald-500/10 text-emerald-500 font-bold ${className}`}
+        className={`w-full h-full flex items-center justify-center bg-accent/10 text-accent font-bold ${className}`}
         aria-hidden="true"
       >
         {initial}

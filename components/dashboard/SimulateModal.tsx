@@ -82,9 +82,9 @@ function formatCurrency(amount: number): string {
 function getResultConfig(classification: 'SAFE' | 'RISKY' | 'VIOLATION') {
   const configs = {
     SAFE: {
-      bg: 'bg-emerald-500/20',
-      border: 'border-emerald-500/30',
-      text: 'text-emerald-400',
+      bg: 'bg-accent/20',
+      border: 'border-accent/30',
+      text: 'text-accent',
       icon: CheckCircle,
       label: 'SAFE',
     },
@@ -120,23 +120,23 @@ function UpgradeCTA({ onClose }: { onClose: () => void }) {
       <h3 className="text-xl font-bold text-white mb-2">
         Daily Limit Reached
       </h3>
-      <p className="text-gray-400 mb-6">
+      <p className="text-text-secondary mb-6">
         You've used all 3 free simulations for today. Upgrade to Pro for unlimited simulations.
       </p>
 
-      <div className="bg-gray-900 rounded-xl p-4 mb-6 text-left">
-        <p className="text-sm text-gray-400 mb-3">Pro includes:</p>
+      <div className="bg-bg-elevated rounded-xl p-4 mb-6 text-left">
+        <p className="text-sm text-text-secondary mb-3">Pro includes:</p>
         <ul className="space-y-2">
           <li className="flex items-center gap-2 text-sm text-white">
-            <CheckCircle className="w-4 h-4 text-emerald-400" />
+            <CheckCircle className="w-4 h-4 text-accent" />
             Unlimited trade simulations
           </li>
           <li className="flex items-center gap-2 text-sm text-white">
-            <CheckCircle className="w-4 h-4 text-emerald-400" />
+            <CheckCircle className="w-4 h-4 text-accent" />
             Unlimited prop firm accounts
           </li>
           <li className="flex items-center gap-2 text-sm text-white">
-            <CheckCircle className="w-4 h-4 text-emerald-400" />
+            <CheckCircle className="w-4 h-4 text-accent" />
             Advanced risk analytics
           </li>
         </ul>
@@ -154,13 +154,13 @@ function UpgradeCTA({ onClose }: { onClose: () => void }) {
         
         <button
           onClick={onClose}
-          className="w-full py-3 text-gray-400 hover:text-white transition-colors"
+          className="w-full py-3 text-text-secondary hover:text-white transition-colors"
         >
           Maybe later
         </button>
       </div>
 
-      <p className="text-xs text-gray-500 mt-4">
+      <p className="text-xs text-text-muted mt-4">
         Your simulations reset daily at midnight UTC
       </p>
     </div>
@@ -257,21 +257,21 @@ export function SimulateModal({ isOpen, onClose, account }: SimulateModalProps) 
         onClick={onClose}
       />
 
-      <div className="relative bg-gray-800 rounded-2xl border border-gray-700 w-full max-w-lg overflow-hidden shadow-2xl">
+      <div className="relative bg-dark-700 rounded-2xl border border-border w-full max-w-lg overflow-hidden shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-700">
+        <div className="flex items-center justify-between p-4 border-b border-border">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-emerald-500/20 rounded-lg flex items-center justify-center">
-              <Play className="w-5 h-5 text-emerald-400" />
+            <div className="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center">
+              <Play className="w-5 h-5 text-accent" />
             </div>
             <div>
               <h2 className="text-lg font-semibold text-white">Simulate Trade</h2>
-              <p className="text-sm text-gray-400">{account.prop_firm} • {account.program}</p>
+              <p className="text-sm text-text-secondary">{account.prop_firm} • {account.program}</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors"
+            className="p-2 text-text-secondary hover:text-white hover:bg-dark-600 rounded-lg transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -283,22 +283,22 @@ export function SimulateModal({ isOpen, onClose, account }: SimulateModalProps) 
           <div className="p-4 space-y-4">
             {/* Account Stats */}
             <div className="grid grid-cols-3 gap-3">
-              <div className="bg-gray-900 rounded-xl p-3 text-center">
-                <p className="text-xs text-gray-500 mb-1">Balance</p>
+              <div className="bg-bg-elevated rounded-xl p-3 text-center">
+                <p className="text-xs text-text-muted mb-1">Balance</p>
                 <p className="text-white font-semibold text-sm">
                   {formatCurrency(account.current_balance)}
                 </p>
               </div>
-              <div className="bg-gray-900 rounded-xl p-3 text-center">
-                <p className="text-xs text-gray-500 mb-1">Daily Limit</p>
+              <div className="bg-bg-elevated rounded-xl p-3 text-center">
+                <p className="text-xs text-text-muted mb-1">Daily Limit</p>
                 <p className="text-white font-semibold text-sm">
                   {formatCurrency(dailyLimitUsd)}
                 </p>
               </div>
-              <div className="bg-gray-900 rounded-xl p-3 text-center">
-                <p className="text-xs text-gray-500 mb-1">Today P&L</p>
+              <div className="bg-bg-elevated rounded-xl p-3 text-center">
+                <p className="text-xs text-text-muted mb-1">Today P&L</p>
                 <p className={`font-semibold text-sm ${
-                  account.today_pnl >= 0 ? 'text-emerald-400' : 'text-red-400'
+                  account.today_pnl >= 0 ? 'text-accent' : 'text-red-400'
                 }`}>
                   {account.today_pnl >= 0 ? '+' : ''}{formatCurrency(account.today_pnl)}
                 </p>
@@ -307,11 +307,11 @@ export function SimulateModal({ isOpen, onClose, account }: SimulateModalProps) 
 
             {/* Risk Input */}
             <div>
-              <label className="block text-sm text-gray-400 mb-2">
+              <label className="block text-sm text-text-secondary mb-2">
                 Risk Amount (potential loss if stopped out)
               </label>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">$</span>
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted font-medium">$</span>
                 <input
                   type="number"
                   value={riskAmount}
@@ -321,7 +321,7 @@ export function SimulateModal({ isOpen, onClose, account }: SimulateModalProps) 
                   }}
                   onKeyDown={handleKeyDown}
                   placeholder="Enter amount..."
-                  className="w-full pl-8 pr-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white text-lg placeholder-gray-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
+                  className="w-full pl-8 pr-4 py-3 bg-bg-elevated border border-border rounded-xl text-white text-lg placeholder-text-muted focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all"
                   disabled={isLoading}
                   autoFocus
                 />
@@ -335,7 +335,7 @@ export function SimulateModal({ isOpen, onClose, account }: SimulateModalProps) 
                   key={amount}
                   onClick={() => setRiskAmount(amount.toString())}
                   disabled={isLoading}
-                  className="flex-1 py-2 text-sm text-gray-300 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 rounded-lg transition-colors"
+                  className="flex-1 py-2 text-sm text-text-secondary bg-dark-600 hover:bg-dark-500 disabled:opacity-50 rounded-lg transition-colors"
                 >
                   ${amount}
                 </button>
@@ -344,11 +344,11 @@ export function SimulateModal({ isOpen, onClose, account }: SimulateModalProps) 
 
             {/* Recommended Risk */}
             {recommendations && (
-              <div className="flex items-center justify-between p-3 bg-gray-900 rounded-xl">
-                <span className="text-sm text-gray-400">Max safe risk:</span>
+              <div className="flex items-center justify-between p-3 bg-bg-elevated rounded-xl">
+                <span className="text-sm text-text-secondary">Max safe risk:</span>
                 <button
                   onClick={() => setRiskAmount(recommendations.max_safe_risk.toFixed(0))}
-                  className="text-sm text-emerald-400 hover:text-emerald-300 font-medium"
+                  className="text-sm text-accent hover:text-accent font-medium"
                 >
                   {formatCurrency(recommendations.max_safe_risk)} →
                 </button>
@@ -375,7 +375,7 @@ export function SimulateModal({ isOpen, onClose, account }: SimulateModalProps) 
                   </h3>
                 </div>
 
-                <p className="text-gray-300 text-sm mb-4">
+                <p className="text-text-secondary text-sm mb-4">
                   {result.userMessage}
                 </p>
 
@@ -383,25 +383,25 @@ export function SimulateModal({ isOpen, onClose, account }: SimulateModalProps) 
                 <div className="space-y-3">
                   <div>
                     <div className="flex justify-between text-xs mb-1">
-                      <span className="text-gray-400">Daily DD Usage</span>
+                      <span className="text-text-secondary">Daily DD Usage</span>
                       <span className={`font-medium ${
                         result.metrics.daily_usage_pct > 80 
                           ? 'text-red-400' 
                           : result.metrics.daily_usage_pct > 50 
                             ? 'text-yellow-400' 
-                            : 'text-emerald-400'
+                            : 'text-accent'
                       }`}>
                         {result.metrics.daily_usage_pct.toFixed(1)}%
                       </span>
                     </div>
-                    <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
+                    <div className="h-2 bg-dark-600 rounded-full overflow-hidden">
                       <div
                         className={`h-full transition-all ${
                           result.metrics.daily_usage_pct > 80
                             ? 'bg-red-500'
                             : result.metrics.daily_usage_pct > 50
                               ? 'bg-yellow-500'
-                              : 'bg-emerald-500'
+                              : 'bg-accent-hover'
                         }`}
                         style={{ width: `${Math.min(100, result.metrics.daily_usage_pct)}%` }}
                       />
@@ -410,25 +410,25 @@ export function SimulateModal({ isOpen, onClose, account }: SimulateModalProps) 
 
                   <div>
                     <div className="flex justify-between text-xs mb-1">
-                      <span className="text-gray-400">Max DD Usage</span>
+                      <span className="text-text-secondary">Max DD Usage</span>
                       <span className={`font-medium ${
                         result.metrics.max_usage_pct > 80 
                           ? 'text-red-400' 
                           : result.metrics.max_usage_pct > 50 
                             ? 'text-yellow-400' 
-                            : 'text-emerald-400'
+                            : 'text-accent'
                       }`}>
                         {result.metrics.max_usage_pct.toFixed(1)}%
                       </span>
                     </div>
-                    <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
+                    <div className="h-2 bg-dark-600 rounded-full overflow-hidden">
                       <div
                         className={`h-full transition-all ${
                           result.metrics.max_usage_pct > 80
                             ? 'bg-red-500'
                             : result.metrics.max_usage_pct > 50
                               ? 'bg-yellow-500'
-                              : 'bg-emerald-500'
+                              : 'bg-accent-hover'
                         }`}
                         style={{ width: `${Math.min(100, result.metrics.max_usage_pct)}%` }}
                       />
@@ -437,21 +437,21 @@ export function SimulateModal({ isOpen, onClose, account }: SimulateModalProps) 
                 </div>
 
                 {/* Metrics */}
-                <div className="mt-4 pt-3 border-t border-gray-700 grid grid-cols-2 gap-3 text-xs">
+                <div className="mt-4 pt-3 border-t border-border grid grid-cols-2 gap-3 text-xs">
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Risk:</span>
+                    <span className="text-text-muted">Risk:</span>
                     <span className="text-white font-medium">{formatCurrency(result.metrics.risk_usd)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Daily buffer:</span>
+                    <span className="text-text-muted">Daily buffer:</span>
                     <span className="text-white font-medium">{formatCurrency(result.metrics.daily_buffer_usd)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Buffer used:</span>
+                    <span className="text-text-muted">Buffer used:</span>
                     <span className="text-white font-medium">{result.metrics.daily_buffer_usage_pct.toFixed(1)}%</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Max buffer:</span>
+                    <span className="text-text-muted">Max buffer:</span>
                     <span className="text-white font-medium">{formatCurrency(result.metrics.max_buffer_usd)}</span>
                   </div>
                 </div>
@@ -462,7 +462,7 @@ export function SimulateModal({ isOpen, onClose, account }: SimulateModalProps) 
             <button
               onClick={handleSimulate}
               disabled={isLoading || !riskAmount}
-              className="w-full flex items-center justify-center gap-2 py-3.5 bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-700 disabled:text-gray-500 text-white font-semibold rounded-xl transition-all"
+              className="w-full flex items-center justify-center gap-2 py-3.5 bg-accent-hover hover:brightness-110 disabled:bg-dark-600 disabled:text-text-muted text-white font-semibold rounded-xl transition-all"
             >
               {isLoading ? (
                 <>
@@ -482,7 +482,7 @@ export function SimulateModal({ isOpen, onClose, account }: SimulateModalProps) 
               )}
             </button>
 
-            <p className="text-xs text-gray-500 text-center">
+            <p className="text-xs text-text-muted text-center">
               Enter the maximum amount you could lose if your stop-loss is hit
             </p>
           </div>

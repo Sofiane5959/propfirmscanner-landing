@@ -217,16 +217,16 @@ export function AccountDrawer({ isOpen, onClose, account }: AccountDrawerProps) 
       />
 
       {/* Drawer */}
-      <div className="absolute right-0 top-0 bottom-0 w-full max-w-md bg-gray-900 border-l border-gray-800 overflow-y-auto">
+      <div className="absolute right-0 top-0 bottom-0 w-full max-w-md bg-bg-elevated border-l border-border overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-gray-900 border-b border-gray-800 p-4 flex items-center justify-between">
+        <div className="sticky top-0 bg-bg-elevated border-b border-border p-4 flex items-center justify-between">
           <div>
             <h2 className="font-semibold text-white">{account.prop_firm}</h2>
-            <p className="text-sm text-gray-500">{account.program} · {account.stage}</p>
+            <p className="text-sm text-text-muted">{account.program} · {account.stage}</p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
+            className="p-2 text-text-secondary hover:text-white hover:bg-dark-700 rounded-lg transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -235,12 +235,12 @@ export function AccountDrawer({ isOpen, onClose, account }: AccountDrawerProps) 
         <div className="p-4 space-y-6">
           {/* Status & Balance */}
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-gray-800 rounded-lg p-3">
-              <p className="text-xs text-gray-500 mb-1">Balance</p>
+            <div className="bg-dark-700 rounded-lg p-3">
+              <p className="text-xs text-text-muted mb-1">Balance</p>
               <p className="text-xl font-bold text-white">{formatUSD(account.current_balance)}</p>
             </div>
-            <div className="bg-gray-800 rounded-lg p-3">
-              <p className="text-xs text-gray-500 mb-1">Today P&L</p>
+            <div className="bg-dark-700 rounded-lg p-3">
+              <p className="text-xs text-text-muted mb-1">Today P&L</p>
               <div className="flex items-center gap-2">
                 {isEditingPnl ? (
                   <div className="flex items-center gap-1">
@@ -248,13 +248,13 @@ export function AccountDrawer({ isOpen, onClose, account }: AccountDrawerProps) 
                       type="number"
                       value={todayPnl}
                       onChange={(e) => setTodayPnl(e.target.value)}
-                      className="w-20 px-2 py-1 bg-gray-700 rounded text-white text-sm"
+                      className="w-20 px-2 py-1 bg-dark-600 rounded text-white text-sm"
                       autoFocus
                     />
                     <button
                       onClick={handleSavePnl}
                       disabled={isSavingPnl}
-                      className="p-1 text-emerald-400 hover:bg-gray-700 rounded"
+                      className="p-1 text-accent hover:bg-dark-600 rounded"
                     >
                       <Save className="w-4 h-4" />
                     </button>
@@ -262,13 +262,13 @@ export function AccountDrawer({ isOpen, onClose, account }: AccountDrawerProps) 
                 ) : (
                   <>
                     <p className={`text-xl font-bold ${
-                      account.today_pnl >= 0 ? 'text-emerald-400' : 'text-red-400'
+                      account.today_pnl >= 0 ? 'text-accent' : 'text-red-400'
                     }`}>
                       {account.today_pnl >= 0 ? '+' : ''}{formatUSD(account.today_pnl)}
                     </p>
                     <button
                       onClick={() => setIsEditingPnl(true)}
-                      className="p-1 text-gray-500 hover:text-white hover:bg-gray-700 rounded"
+                      className="p-1 text-text-muted hover:text-white hover:bg-dark-600 rounded"
                     >
                       <Edit3 className="w-3 h-3" />
                     </button>
@@ -281,36 +281,36 @@ export function AccountDrawer({ isOpen, onClose, account }: AccountDrawerProps) 
           {/* Risk Meters */}
           <div className="space-y-3">
             {/* Daily DD */}
-            <div className="bg-gray-800 rounded-lg p-3">
+            <div className="bg-dark-700 rounded-lg p-3">
               <div className="flex justify-between text-sm mb-2">
-                <span className="text-gray-400">Daily drawdown</span>
+                <span className="text-text-secondary">Daily drawdown</span>
                 <span className={`font-medium ${
                   account.health.daily.daily_buffer_pct < 30 ? 'text-red-400' :
                   account.health.daily.daily_buffer_pct < 50 ? 'text-yellow-400' :
-                  'text-emerald-400'
+                  'text-accent'
                 }`}>
                   {formatUSD(account.health.daily.daily_buffer_usd)} left
                 </span>
               </div>
-              <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
+              <div className="h-2 bg-dark-600 rounded-full overflow-hidden">
                 <div
                   className={`h-full transition-all ${
                     account.health.daily.daily_buffer_pct < 30 ? 'bg-red-500' :
                     account.health.daily.daily_buffer_pct < 50 ? 'bg-yellow-500' :
-                    'bg-emerald-500'
+                    'bg-accent-hover'
                   }`}
                   style={{ width: `${account.health.daily.daily_buffer_pct}%` }}
                 />
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-text-muted mt-1">
                 Used {formatUSD(account.health.daily.daily_used_usd)} of {formatUSD(account.health.daily.daily_limit_usd)} today
               </p>
             </div>
 
             {/* Max DD */}
-            <div className="bg-gray-800 rounded-lg p-3">
+            <div className="bg-dark-700 rounded-lg p-3">
               <div className="flex justify-between text-sm mb-2">
-                <span className="text-gray-400 flex items-center gap-1">
+                <span className="text-text-secondary flex items-center gap-1">
                   Max drawdown
                   {account.max_dd_type !== 'static' && (
                     <span className="text-xs text-purple-400">(trailing)</span>
@@ -319,22 +319,22 @@ export function AccountDrawer({ isOpen, onClose, account }: AccountDrawerProps) 
                 <span className={`font-medium ${
                   account.health.max.max_buffer_pct < 30 ? 'text-red-400' :
                   account.health.max.max_buffer_pct < 50 ? 'text-yellow-400' :
-                  'text-emerald-400'
+                  'text-accent'
                 }`}>
                   {formatUSD(account.health.max.max_buffer_usd)} left
                 </span>
               </div>
-              <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
+              <div className="h-2 bg-dark-600 rounded-full overflow-hidden">
                 <div
                   className={`h-full transition-all ${
                     account.health.max.max_buffer_pct < 30 ? 'bg-red-500' :
                     account.health.max.max_buffer_pct < 50 ? 'bg-yellow-500' :
-                    'bg-emerald-500'
+                    'bg-accent-hover'
                   }`}
                   style={{ width: `${account.health.max.max_buffer_pct}%` }}
                 />
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-text-muted mt-1">
                 Floor at {formatUSD(account.health.max.max_floor_usd)}
               </p>
             </div>
@@ -342,7 +342,7 @@ export function AccountDrawer({ isOpen, onClose, account }: AccountDrawerProps) 
 
           {/* Account Rules */}
           <div>
-            <h3 className="text-sm font-medium text-gray-400 mb-2">Account rules</h3>
+            <h3 className="text-sm font-medium text-text-secondary mb-2">Account rules</h3>
             <div className="flex flex-wrap gap-2">
               {account.max_dd_type !== 'static' && (
                 <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-purple-500/20 text-purple-400 text-sm rounded-lg">
@@ -369,7 +369,7 @@ export function AccountDrawer({ isOpen, onClose, account }: AccountDrawerProps) 
                 </span>
               )}
               {account.min_trading_days > 0 && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-700 text-gray-300 text-sm rounded-lg">
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-dark-600 text-text-secondary text-sm rounded-lg">
                   Min {account.min_trading_days} days
                 </span>
               )}
@@ -379,7 +379,7 @@ export function AccountDrawer({ isOpen, onClose, account }: AccountDrawerProps) 
           {/* Hidden Pitfalls */}
           {pitfalls.length > 0 && (
             <div>
-              <h3 className="text-sm font-medium text-gray-400 mb-2 flex items-center gap-1.5">
+              <h3 className="text-sm font-medium text-text-secondary mb-2 flex items-center gap-1.5">
                 <AlertTriangle className="w-4 h-4 text-yellow-400" />
                 Hidden pitfalls
               </h3>
@@ -396,13 +396,13 @@ export function AccountDrawer({ isOpen, onClose, account }: AccountDrawerProps) 
           {/* Recommendations */}
           {recommendations.length > 0 && (
             <div>
-              <h3 className="text-sm font-medium text-gray-400 mb-2 flex items-center gap-1.5">
-                <Lightbulb className="w-4 h-4 text-emerald-400" />
+              <h3 className="text-sm font-medium text-text-secondary mb-2 flex items-center gap-1.5">
+                <Lightbulb className="w-4 h-4 text-accent" />
                 Recommendations
               </h3>
               <div className="space-y-2">
                 {recommendations.map((rec, i) => (
-                  <div key={i} className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-sm text-emerald-300">
+                  <div key={i} className="p-3 bg-accent/10 border border-accent/20 rounded-lg text-sm text-accent">
                     {rec}
                   </div>
                 ))}
@@ -411,19 +411,19 @@ export function AccountDrawer({ isOpen, onClose, account }: AccountDrawerProps) 
           )}
 
           {/* Trade Simulator */}
-          <div className="border-t border-gray-800 pt-6">
-            <h3 className="text-sm font-medium text-gray-400 mb-3 flex items-center gap-1.5">
+          <div className="border-t border-border pt-6">
+            <h3 className="text-sm font-medium text-text-secondary mb-3 flex items-center gap-1.5">
               <Play className="w-4 h-4" />
               Simulate a trade
             </h3>
             
             <div className="space-y-3">
               <div>
-                <label className="text-xs text-gray-500 mb-1 block">
+                <label className="text-xs text-text-muted mb-1 block">
                   How much could you lose? (USD)
                 </label>
                 <div className="relative">
-                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
                   <input
                     type="number"
                     value={riskAmount}
@@ -432,7 +432,7 @@ export function AccountDrawer({ isOpen, onClose, account }: AccountDrawerProps) 
                       setSimResult(null);
                     }}
                     placeholder="500"
-                    className="w-full pl-9 pr-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-emerald-500"
+                    className="w-full pl-9 pr-4 py-2.5 bg-dark-700 border border-border rounded-lg text-white placeholder-text-muted focus:outline-none focus:border-accent"
                   />
                 </div>
               </div>
@@ -446,7 +446,7 @@ export function AccountDrawer({ isOpen, onClose, account }: AccountDrawerProps) 
                       setRiskAmount(amt.toString());
                       setSimResult(null);
                     }}
-                    className="flex-1 py-1.5 text-sm bg-gray-800 hover:bg-gray-700 text-gray-400 rounded-lg transition-colors"
+                    className="flex-1 py-1.5 text-sm bg-dark-700 hover:bg-dark-600 text-text-secondary rounded-lg transition-colors"
                   >
                     ${amt}
                   </button>
@@ -456,7 +456,7 @@ export function AccountDrawer({ isOpen, onClose, account }: AccountDrawerProps) 
               <button
                 onClick={handleSimulate}
                 disabled={isSimulating || !riskAmount}
-                className="w-full flex items-center justify-center gap-2 py-2.5 bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-700 disabled:text-gray-500 text-white font-medium rounded-lg transition-colors"
+                className="w-full flex items-center justify-center gap-2 py-2.5 bg-accent-hover hover:brightness-110 disabled:bg-dark-600 disabled:text-text-muted text-white font-medium rounded-lg transition-colors"
               >
                 {isSimulating ? (
                   <>
@@ -475,28 +475,28 @@ export function AccountDrawer({ isOpen, onClose, account }: AccountDrawerProps) 
               {simResult && (
                 <div className={`p-4 rounded-lg ${
                   simResult.classification === 'SAFE' 
-                    ? 'bg-emerald-500/10 border border-emerald-500/20' 
+                    ? 'bg-accent/10 border border-accent/20' 
                     : simResult.classification === 'RISKY'
                       ? 'bg-yellow-500/10 border border-yellow-500/20'
                       : 'bg-red-500/10 border border-red-500/20'
                 }`}>
                   <div className="flex items-center gap-2 mb-2">
                     {simResult.classification === 'SAFE' ? (
-                      <CheckCircle className="w-5 h-5 text-emerald-400" />
+                      <CheckCircle className="w-5 h-5 text-accent" />
                     ) : simResult.classification === 'RISKY' ? (
                       <AlertTriangle className="w-5 h-5 text-yellow-400" />
                     ) : (
                       <AlertCircle className="w-5 h-5 text-red-400" />
                     )}
                     <span className={`font-semibold ${
-                      simResult.classification === 'SAFE' ? 'text-emerald-400' :
+                      simResult.classification === 'SAFE' ? 'text-accent' :
                       simResult.classification === 'RISKY' ? 'text-yellow-400' :
                       'text-red-400'
                     }`}>
                       {simResult.classification}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-300">{simResult.message}</p>
+                  <p className="text-sm text-text-secondary">{simResult.message}</p>
                 </div>
               )}
             </div>

@@ -107,7 +107,7 @@ export function ProgressRulesTab({ accounts, isDemo = false }: ProgressRulesTabP
   if (!selectedAccount) {
     return (
       <div className="text-center py-16">
-        <p className="text-gray-400">No accounts to display</p>
+        <p className="text-text-secondary">No accounts to display</p>
       </div>
     );
   }
@@ -125,7 +125,7 @@ export function ProgressRulesTab({ accounts, isDemo = false }: ProgressRulesTabP
       {/* Account Selector */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-2">
-          <label className="block text-sm text-gray-400">Select Account</label>
+          <label className="block text-sm text-text-secondary">Select Account</label>
           {isDemo && (
             <span className="flex items-center gap-1 px-2 py-0.5 bg-yellow-500/20 text-yellow-400 text-xs font-medium rounded-lg">
               <Sparkles className="w-3 h-3" />
@@ -137,7 +137,7 @@ export function ProgressRulesTab({ accounts, isDemo = false }: ProgressRulesTabP
           <select
             value={selectedAccountId}
             onChange={(e) => setSelectedAccountId(e.target.value)}
-            className="w-full px-4 py-3 bg-gray-900 border border-gray-800 rounded-lg text-white appearance-none focus:outline-none focus:border-emerald-500"
+            className="w-full px-4 py-3 bg-bg-elevated border border-border rounded-lg text-white appearance-none focus:outline-none focus:border-accent"
           >
             {accounts.map((account) => (
               <option key={account.id} value={account.id}>
@@ -145,39 +145,39 @@ export function ProgressRulesTab({ accounts, isDemo = false }: ProgressRulesTabP
               </option>
             ))}
           </select>
-          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none" />
+          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted pointer-events-none" />
         </div>
       </div>
 
       {/* Progress Section */}
-      <div className="bg-gray-900 rounded-xl border border-gray-800 p-6 mb-6">
+      <div className="bg-bg-elevated rounded-xl border border-border p-6 mb-6">
         <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-          <Target className="w-5 h-5 text-emerald-400" />
+          <Target className="w-5 h-5 text-accent" />
           Evaluation Progress
         </h2>
 
         {/* Profit Target */}
         <div className="mb-6">
           <div className="flex justify-between text-sm mb-2">
-            <span className="text-gray-400">Profit Target</span>
+            <span className="text-text-secondary">Profit Target</span>
             <span className={`font-medium ${
               selectedAccount.current_profit_percent >= selectedAccount.profit_target_percent
-                ? 'text-emerald-400'
+                ? 'text-accent'
                 : 'text-white'
             }`}>
               {selectedAccount.current_profit_percent.toFixed(1)}% / {selectedAccount.profit_target_percent}%
             </span>
           </div>
-          <div className="h-3 bg-gray-800 rounded-full overflow-hidden">
+          <div className="h-3 bg-dark-700 rounded-full overflow-hidden">
             <div
               className={`h-full rounded-full transition-all ${
-                profitProgress >= 100 ? 'bg-emerald-500' :
-                profitProgress >= 50 ? 'bg-yellow-500' : 'bg-gray-600'
+                profitProgress >= 100 ? 'bg-accent-hover' :
+                profitProgress >= 50 ? 'bg-yellow-500' : 'bg-dark-500'
               }`}
               style={{ width: `${Math.max(0, profitProgress)}%` }}
             />
           </div>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-text-muted mt-1">
             {selectedAccount.profit_target_percent > 0
               ? `${formatUSD(selectedAccount.account_size * selectedAccount.profit_target_percent / 100)} profit needed`
               : 'No profit target'
@@ -188,23 +188,23 @@ export function ProgressRulesTab({ accounts, isDemo = false }: ProgressRulesTabP
         {/* Trading Days */}
         <div>
           <div className="flex justify-between text-sm mb-2">
-            <span className="text-gray-400 flex items-center gap-1">
+            <span className="text-text-secondary flex items-center gap-1">
               <Calendar className="w-4 h-4" />
               Trading Days
             </span>
             <span className={`font-medium ${
               selectedAccount.current_trading_days >= selectedAccount.min_trading_days
-                ? 'text-emerald-400'
+                ? 'text-accent'
                 : 'text-white'
             }`}>
               {selectedAccount.current_trading_days} / {selectedAccount.min_trading_days || '—'}
               {selectedAccount.current_trading_days >= selectedAccount.min_trading_days && ' ✓'}
             </span>
           </div>
-          <div className="h-3 bg-gray-800 rounded-full overflow-hidden">
+          <div className="h-3 bg-dark-700 rounded-full overflow-hidden">
             <div
               className={`h-full rounded-full transition-all ${
-                daysProgress >= 100 ? 'bg-emerald-500' : 'bg-gray-600'
+                daysProgress >= 100 ? 'bg-accent-hover' : 'bg-dark-500'
               }`}
               style={{ width: `${daysProgress}%` }}
             />
@@ -218,51 +218,51 @@ export function ProgressRulesTab({ accounts, isDemo = false }: ProgressRulesTabP
       </div>
 
       {/* Key Rules */}
-      <div className="bg-gray-900 rounded-xl border border-gray-800 p-6 mb-6">
+      <div className="bg-bg-elevated rounded-xl border border-border p-6 mb-6">
         <h2 className="text-lg font-semibold text-white mb-4">Key Rules</h2>
         
         <div className="grid grid-cols-2 gap-3">
           {/* Daily DD */}
-          <div className="bg-gray-800 rounded-lg p-3">
-            <p className="text-xs text-gray-500 mb-1">Daily Drawdown</p>
+          <div className="bg-dark-700 rounded-lg p-3">
+            <p className="text-xs text-text-muted mb-1">Daily Drawdown</p>
             <p className="text-lg font-semibold text-white">{selectedAccount.daily_dd_percent}%</p>
-            <p className="text-xs text-gray-500">{formatUSD(selectedAccount.account_size * selectedAccount.daily_dd_percent / 100)}</p>
+            <p className="text-xs text-text-muted">{formatUSD(selectedAccount.account_size * selectedAccount.daily_dd_percent / 100)}</p>
           </div>
 
           {/* Max DD */}
-          <div className="bg-gray-800 rounded-lg p-3">
-            <p className="text-xs text-gray-500 mb-1">Max Drawdown</p>
+          <div className="bg-dark-700 rounded-lg p-3">
+            <p className="text-xs text-text-muted mb-1">Max Drawdown</p>
             <p className={`text-lg font-semibold ${
               selectedAccount.max_dd_type === 'static' ? 'text-white' : 'text-purple-400'
             }`}>
               {selectedAccount.max_dd_percent}%
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-text-muted">
               {selectedAccount.max_dd_type === 'static' ? 'Static' : 'Trailing'}
             </p>
           </div>
 
           {/* News Trading */}
-          <div className="bg-gray-800 rounded-lg p-3">
-            <p className="text-xs text-gray-500 mb-1 flex items-center gap-1">
+          <div className="bg-dark-700 rounded-lg p-3">
+            <p className="text-xs text-text-muted mb-1 flex items-center gap-1">
               <Newspaper className="w-3 h-3" />
               News Trading
             </p>
             <p className={`text-lg font-semibold ${
-              selectedAccount.allows_news ? 'text-emerald-400' : 'text-red-400'
+              selectedAccount.allows_news ? 'text-accent' : 'text-red-400'
             }`}>
               {selectedAccount.allows_news ? 'Allowed' : 'Restricted'}
             </p>
           </div>
 
           {/* Weekend Holding */}
-          <div className="bg-gray-800 rounded-lg p-3">
-            <p className="text-xs text-gray-500 mb-1 flex items-center gap-1">
+          <div className="bg-dark-700 rounded-lg p-3">
+            <p className="text-xs text-text-muted mb-1 flex items-center gap-1">
               <Moon className="w-3 h-3" />
               Weekend Holding
             </p>
             <p className={`text-lg font-semibold ${
-              selectedAccount.allows_weekend ? 'text-emerald-400' : 'text-red-400'
+              selectedAccount.allows_weekend ? 'text-accent' : 'text-red-400'
             }`}>
               {selectedAccount.allows_weekend ? 'Allowed' : 'Not Allowed'}
             </p>
@@ -270,13 +270,13 @@ export function ProgressRulesTab({ accounts, isDemo = false }: ProgressRulesTabP
 
           {/* Consistency Rule */}
           {selectedAccount.has_consistency && (
-            <div className="bg-gray-800 rounded-lg p-3 col-span-2">
-              <p className="text-xs text-gray-500 mb-1 flex items-center gap-1">
+            <div className="bg-dark-700 rounded-lg p-3 col-span-2">
+              <p className="text-xs text-text-muted mb-1 flex items-center gap-1">
                 <BarChart3 className="w-3 h-3" />
                 Consistency Rule
               </p>
               <p className="text-lg font-semibold text-cyan-400">Active</p>
-              <p className="text-xs text-gray-500">No single day can exceed 30-40% of total profit</p>
+              <p className="text-xs text-text-muted">No single day can exceed 30-40% of total profit</p>
             </div>
           )}
 
@@ -296,7 +296,7 @@ export function ProgressRulesTab({ accounts, isDemo = false }: ProgressRulesTabP
       </div>
 
       {/* Common Pitfalls */}
-      <div className="bg-gray-900 rounded-xl border border-gray-800 p-6">
+      <div className="bg-bg-elevated rounded-xl border border-border p-6">
         <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
           <AlertTriangle className="w-5 h-5 text-yellow-400" />
           Common Pitfalls
@@ -317,13 +317,13 @@ export function ProgressRulesTab({ accounts, isDemo = false }: ProgressRulesTabP
 
       {/* CTA for Demo Mode */}
       {isDemo && (
-        <div className="mt-6 bg-gradient-to-r from-emerald-500/10 to-transparent border border-emerald-500/20 rounded-xl p-5 text-center">
-          <p className="text-gray-400 text-sm mb-3">
+        <div className="mt-6 bg-gradient-to-r from-accent/10 to-transparent border border-accent/20 rounded-xl p-5 text-center">
+          <p className="text-text-secondary text-sm mb-3">
             Track your real evaluation progress with your own accounts.
           </p>
           <Link
             href="/dashboard/accounts/new"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent-hover hover:brightness-110 text-white text-sm font-medium rounded-lg transition-colors"
           >
             <Plus className="w-4 h-4" />
             Add Your Account

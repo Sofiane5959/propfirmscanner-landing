@@ -442,21 +442,21 @@ export default function TermsOfServicePage() {
   const t = translations[locale];
 
   return (
-    <div className="min-h-screen bg-gray-900 py-24 px-4">
+    <div className="min-h-screen bg-bg-elevated py-24 px-4">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold text-white mb-4">{t.title}</h1>
-        <p className="text-gray-400 mb-8">{t.lastUpdated}</p>
+        <p className="text-text-secondary mb-8">{t.lastUpdated}</p>
         
         <div className="prose prose-invert prose-lg max-w-none">
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-white mb-4">{t.s1Title}</h2>
-            <p className="text-gray-300">{t.s1p1}</p>
+            <p className="text-text-secondary">{t.s1p1}</p>
           </section>
 
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-white mb-4">{t.s2Title}</h2>
-            <p className="text-gray-300 mb-4">{t.s2p1}</p>
-            <ul className="list-disc list-inside text-gray-300 space-y-2">
+            <p className="text-text-secondary mb-4">{t.s2p1}</p>
+            <ul className="list-disc list-inside text-text-secondary space-y-2">
               <li>{t.s2l1}</li>
               <li>{t.s2l2}</li>
               <li>{t.s2l3}</li>
@@ -468,29 +468,29 @@ export default function TermsOfServicePage() {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-white mb-4">{t.s3Title}</h2>
             <h3 className="text-xl font-medium text-white mb-3">{t.s3h1}</h3>
-            <p className="text-gray-300 mb-4">{t.s3p1}</p>
+            <p className="text-text-secondary mb-4">{t.s3p1}</p>
             <h3 className="text-xl font-medium text-white mb-3">{t.s3h2}</h3>
-            <p className="text-gray-300 mb-4">{t.s3p2}</p>
+            <p className="text-text-secondary mb-4">{t.s3p2}</p>
             <h3 className="text-xl font-medium text-white mb-3">{t.s3h3}</h3>
-            <p className="text-gray-300">{t.s3p3}</p>
+            <p className="text-text-secondary">{t.s3p3}</p>
           </section>
 
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-white mb-4">{t.s4Title}</h2>
-            <p className="text-gray-300 mb-4">{t.s4p1}</p>
-            <p className="text-gray-300">{t.s4p2}</p>
+            <p className="text-text-secondary mb-4">{t.s4p1}</p>
+            <p className="text-text-secondary">{t.s4p2}</p>
           </section>
 
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-white mb-4">{t.s5Title}</h2>
-            <p className="text-gray-300 mb-4">{t.s5p1}</p>
-            <p className="text-gray-300">{t.s5p2}</p>
+            <p className="text-text-secondary mb-4">{t.s5p1}</p>
+            <p className="text-text-secondary">{t.s5p2}</p>
           </section>
 
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-white mb-4">{t.s6Title}</h2>
-            <p className="text-gray-300 mb-4">{t.s6p1}</p>
-            <ul className="list-disc list-inside text-gray-300 space-y-2">
+            <p className="text-text-secondary mb-4">{t.s6p1}</p>
+            <ul className="list-disc list-inside text-text-secondary space-y-2">
               <li>{t.s6l1}</li>
               <li>{t.s6l2}</li>
               <li>{t.s6l3}</li>
@@ -503,52 +503,52 @@ export default function TermsOfServicePage() {
 
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-white mb-4">{t.s7Title}</h2>
-            <p className="text-gray-300 mb-4">{t.s7p1}</p>
-            <p className="text-gray-300">{t.s7p2}</p>
+            <p className="text-text-secondary mb-4">{t.s7p1}</p>
+            <p className="text-text-secondary">{t.s7p2}</p>
           </section>
 
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-white mb-4">{t.s8Title}</h2>
-            <p className="text-gray-300">{t.s8p1}</p>
+            <p className="text-text-secondary">{t.s8p1}</p>
           </section>
 
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-white mb-4">{t.s9Title}</h2>
-            <p className="text-gray-300 mb-4">{t.s9p1}</p>
-            <ul className="list-disc list-inside text-gray-300 space-y-2">
+            <p className="text-text-secondary mb-4">{t.s9p1}</p>
+            <ul className="list-disc list-inside text-text-secondary space-y-2">
               <li>{t.s9l1}</li>
               <li>{t.s9l2}</li>
               <li>{t.s9l3}</li>
               <li>{t.s9l4}</li>
               <li>{t.s9l5}</li>
             </ul>
-            <p className="text-gray-300 mt-4">{t.s9p2}</p>
+            <p className="text-text-secondary mt-4">{t.s9p2}</p>
           </section>
 
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-white mb-4">{t.s10Title}</h2>
-            <p className="text-gray-300">{t.s10p1}</p>
+            <p className="text-text-secondary">{t.s10p1}</p>
           </section>
 
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-white mb-4">{t.s11Title}</h2>
-            <p className="text-gray-300">{t.s11p1}</p>
+            <p className="text-text-secondary">{t.s11p1}</p>
           </section>
 
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-white mb-4">{t.s12Title}</h2>
-            <p className="text-gray-300">{t.s12p1}</p>
+            <p className="text-text-secondary">{t.s12p1}</p>
           </section>
 
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-white mb-4">{t.s13Title}</h2>
-            <p className="text-gray-300">{t.s13p1}</p>
+            <p className="text-text-secondary">{t.s13p1}</p>
           </section>
 
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-white mb-4">{t.s14Title}</h2>
-            <p className="text-gray-300">{t.s14p1}</p>
-            <p className="text-gray-300 mt-4">
+            <p className="text-text-secondary">{t.s14p1}</p>
+            <p className="text-text-secondary mt-4">
               <strong>{t.email}:</strong> legal@propfirmscanner.org<br />
               <strong>{t.website}:</strong> www.propfirmscanner.org
             </p>

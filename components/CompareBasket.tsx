@@ -117,10 +117,10 @@ export function AddToBasketButton({ firm, compact = false }: AddToBasketButtonPr
         disabled={isFull && !inBasket}
         className={`p-2 rounded-lg transition-colors ${
           inBasket
-            ? 'bg-emerald-500 text-white'
+            ? 'bg-accent-hover text-white'
             : isFull
-              ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
-              : 'bg-gray-700 text-gray-300 hover:bg-emerald-500 hover:text-white'
+              ? 'bg-dark-600 text-text-muted cursor-not-allowed'
+              : 'bg-dark-600 text-text-secondary hover:bg-accent-hover hover:text-white'
         }`}
         title={inBasket ? 'Remove from compare' : isFull ? 'Compare basket full' : 'Add to compare'}
       >
@@ -135,10 +135,10 @@ export function AddToBasketButton({ firm, compact = false }: AddToBasketButtonPr
       disabled={isFull && !inBasket}
       className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
         inBasket
-          ? 'bg-emerald-500 text-white'
+          ? 'bg-accent-hover text-white'
           : isFull
-            ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
-            : 'bg-gray-700 text-gray-300 hover:bg-emerald-500 hover:text-white'
+            ? 'bg-dark-600 text-text-muted cursor-not-allowed'
+            : 'bg-dark-600 text-text-secondary hover:bg-accent-hover hover:text-white'
       }`}
     >
       {inBasket ? (
@@ -169,12 +169,12 @@ export function FloatingCompareBasket() {
     <div className="print:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
       {/* Expanded View */}
       {isExpanded && (
-        <div className="mb-3 bg-gray-800 border border-gray-700 rounded-xl p-4 shadow-2xl w-80">
+        <div className="mb-3 bg-dark-700 border border-border rounded-xl p-4 shadow-2xl w-80">
           <div className="flex items-center justify-between mb-3">
             <span className="text-white font-semibold">Compare Basket</span>
             <button
               onClick={clearBasket}
-              className="text-gray-400 hover:text-red-400 text-sm flex items-center gap-1"
+              className="text-text-secondary hover:text-red-400 text-sm flex items-center gap-1"
             >
               <Trash2 className="w-3 h-3" />
               Clear
@@ -185,12 +185,12 @@ export function FloatingCompareBasket() {
             {items.map((item) => (
               <div 
                 key={item.slug}
-                className="flex items-center justify-between bg-gray-700/50 rounded-lg px-3 py-2"
+                className="flex items-center justify-between bg-dark-600/50 rounded-lg px-3 py-2"
               >
-                <span className="text-gray-300 text-sm">{item.name}</span>
+                <span className="text-text-secondary text-sm">{item.name}</span>
                 <button
                   onClick={() => removeItem(item.slug)}
-                  className="text-gray-400 hover:text-red-400"
+                  className="text-text-secondary hover:text-red-400"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -201,7 +201,7 @@ export function FloatingCompareBasket() {
           {items.length >= 2 ? (
             <Link
               href={compareUrl}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-lg"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-lg"
             >
               Compare {items.length} Firms
               <ArrowRight className="w-4 h-4" />
@@ -218,7 +218,7 @@ export function FloatingCompareBasket() {
       {/* Collapsed Badge */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="flex items-center gap-3 px-4 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-full shadow-lg transition-all"
+        className="flex items-center gap-3 px-4 py-3 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-full shadow-lg transition-all"
       >
         <Scale className="w-5 h-5" />
         <span>Compare ({items.length})</span>
@@ -236,12 +236,12 @@ export function InlineCompareBasket() {
 
   if (items.length === 0) {
     return (
-      <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-4">
+      <div className="bg-dark-700/50 border border-border rounded-xl p-4">
         <div className="flex items-center gap-2 mb-3">
-          <Scale className="w-5 h-5 text-emerald-400" />
+          <Scale className="w-5 h-5 text-accent" />
           <span className="text-white font-semibold">Compare Basket</span>
         </div>
-        <p className="text-gray-400 text-sm">
+        <p className="text-text-secondary text-sm">
           Click the + button on any firm to add it to your comparison basket.
         </p>
       </div>
@@ -251,15 +251,15 @@ export function InlineCompareBasket() {
   const compareUrl = `/compare/custom?firms=${items.map(i => i.slug).join(',')}`
 
   return (
-    <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-4">
+    <div className="bg-dark-700/50 border border-border rounded-xl p-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <Scale className="w-5 h-5 text-emerald-400" />
+          <Scale className="w-5 h-5 text-accent" />
           <span className="text-white font-semibold">Compare ({items.length}/4)</span>
         </div>
         <button
           onClick={clearBasket}
-          className="text-gray-400 hover:text-red-400 text-xs"
+          className="text-text-secondary hover:text-red-400 text-xs"
         >
           Clear
         </button>
@@ -269,12 +269,12 @@ export function InlineCompareBasket() {
         {items.map((item) => (
           <div 
             key={item.slug}
-            className="flex items-center justify-between bg-gray-700/50 rounded-lg px-3 py-2"
+            className="flex items-center justify-between bg-dark-600/50 rounded-lg px-3 py-2"
           >
-            <span className="text-gray-300 text-sm truncate">{item.name}</span>
+            <span className="text-text-secondary text-sm truncate">{item.name}</span>
             <button
               onClick={() => removeItem(item.slug)}
-              className="text-gray-400 hover:text-red-400 flex-shrink-0"
+              className="text-text-secondary hover:text-red-400 flex-shrink-0"
             >
               <X className="w-4 h-4" />
             </button>
@@ -285,7 +285,7 @@ export function InlineCompareBasket() {
       {items.length >= 2 ? (
         <Link
           href={compareUrl}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-lg text-sm"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-lg text-sm"
         >
           Compare Now
           <ArrowRight className="w-4 h-4" />

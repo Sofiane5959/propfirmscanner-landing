@@ -520,24 +520,24 @@ export default function ChallengeSelector({
     <section
       id="challenges"
       ref={configRef}
-      className="px-4 py-8 border-y border-gray-800 bg-gray-900/20 scroll-mt-28 print:scroll-mt-0"
+      className="px-4 py-8 border-y border-border bg-bg-elevated/20 scroll-mt-28 print:scroll-mt-0"
     >
       <div className="max-w-6xl mx-auto">
         <div className="mb-5">
-          <p className="text-xs uppercase tracking-wider font-semibold text-emerald-400 mb-1">
+          <p className="text-xs uppercase tracking-wider font-semibold text-accent mb-1">
             {t.eyebrow}
           </p>
           <h2 className="text-2xl md:text-3xl font-bold text-white">{t.title}</h2>
-          <p className="text-gray-400 text-base mt-1">{t.intro}</p>
+          <p className="text-text-secondary text-base mt-1">{t.intro}</p>
         </div>
 
         {/* Controls and summary share one screen — no scrolling to see a price */}
         <div className="grid lg:grid-cols-[minmax(0,1fr)_340px] gap-4 items-start">
           <div className="space-y-3">
             {/* Step 1 */}
-            <fieldset className="bg-gray-900/70 rounded-xl border border-gray-800 px-4 pb-4 pt-2">
+            <fieldset className="bg-bg-elevated/70 rounded-xl border border-border px-4 pb-4 pt-2">
               <legend className="flex items-center gap-2 px-2">
-                <span className="w-5 h-5 rounded-full bg-emerald-500 text-gray-950 text-[11px] font-bold flex items-center justify-center">
+                <span className="w-5 h-5 rounded-full bg-accent-hover text-white text-[11px] font-bold flex items-center justify-center">
                   1
                 </span>
                 <span className="text-base font-semibold text-white">{t.step1}</span>
@@ -558,25 +558,25 @@ export default function ChallengeSelector({
                       type="button"
                       aria-pressed={isActive}
                       onClick={() => handleSelectProgram(program)}
-                      className={`text-left p-3 rounded-lg border transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
+                      className={`text-left p-3 rounded-lg border transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                         isActive
-                          ? 'bg-emerald-500/10 border-emerald-500'
-                          : 'bg-gray-800/40 border-gray-700 hover:border-gray-600'
+                          ? 'bg-accent/10 border-accent'
+                          : 'bg-dark-700/40 border-border hover:border-border-hover'
                       }`}
                     >
                       {guide?.badge && (
-                        <span className="block text-[11px] font-medium text-gray-400 mb-0.5">
+                        <span className="block text-[11px] font-medium text-text-secondary mb-0.5">
                           {guide.badge}
                         </span>
                       )}
                       <span
                         className={`block text-base font-semibold ${
-                          isActive ? 'text-emerald-400' : 'text-white'
+                          isActive ? 'text-accent' : 'text-white'
                         }`}
                       >
                         {program}
                       </span>
-                      <span className="block text-gray-500 text-sm mt-0.5">
+                      <span className="block text-text-muted text-sm mt-0.5">
                         {t.sizes(list.length)}
                         {cheapest !== null && ` · ${t.from} ${formatPrice(cheapest, priceSuffix, locale, currency)}`}
                       </span>
@@ -587,9 +587,9 @@ export default function ChallengeSelector({
             </fieldset>
 
             {/* Step 2 */}
-            <fieldset className="bg-gray-900/70 rounded-xl border border-gray-800 px-4 pb-4 pt-2">
+            <fieldset className="bg-bg-elevated/70 rounded-xl border border-border px-4 pb-4 pt-2">
               <legend className="flex items-center gap-2 px-2">
-                <span className="w-5 h-5 rounded-full bg-emerald-500 text-gray-950 text-[11px] font-bold flex items-center justify-center">
+                <span className="w-5 h-5 rounded-full bg-accent-hover text-white text-[11px] font-bold flex items-center justify-center">
                   2
                 </span>
                 <span className="text-base font-semibold text-white">{t.step2}</span>
@@ -605,20 +605,20 @@ export default function ChallengeSelector({
                       type="button"
                       aria-pressed={isActive}
                       onClick={() => setSelectedSize(c.account_size ?? '')}
-                      className={`px-2 py-2.5 rounded-lg border text-center transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
+                      className={`px-2 py-2.5 rounded-lg border text-center transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                         isActive
-                          ? 'bg-emerald-500/10 border-emerald-500'
-                          : 'bg-gray-800/40 border-gray-700 hover:border-gray-600'
+                          ? 'bg-accent/10 border-accent'
+                          : 'bg-dark-700/40 border-border hover:border-border-hover'
                       }`}
                     >
                       <span
                         className={`block text-base font-bold ${
-                          isActive ? 'text-emerald-400' : 'text-white'
+                          isActive ? 'text-accent' : 'text-white'
                         }`}
                       >
                         {cleanMoneyLabel(c.account_size)}
                       </span>
-                      <span className="block text-gray-500 text-sm">
+                      <span className="block text-text-muted text-sm">
                         {formatPrice(p, priceSuffix, locale, currency)}
                       </span>
                     </button>
@@ -629,9 +629,9 @@ export default function ChallengeSelector({
 
             {/* Step 3 — always visible: it is a real cost, not an advanced option */}
             {hasCheckoutStep && (
-              <fieldset className="bg-gray-900/70 rounded-xl border border-gray-800 px-4 pb-4 pt-2">
+              <fieldset className="bg-bg-elevated/70 rounded-xl border border-border px-4 pb-4 pt-2">
                 <legend className="flex items-center gap-2 px-2">
-                  <span className="w-5 h-5 rounded-full bg-emerald-500 text-gray-950 text-[11px] font-bold flex items-center justify-center">
+                  <span className="w-5 h-5 rounded-full bg-accent-hover text-white text-[11px] font-bold flex items-center justify-center">
                     3
                   </span>
                   <span className="text-base font-semibold text-white">
@@ -648,21 +648,21 @@ export default function ChallengeSelector({
                         type="button"
                         aria-pressed={isActive}
                         onClick={() => setSelectedFeed(opt.value)}
-                        className={`p-2.5 rounded-lg border text-left transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
+                        className={`p-2.5 rounded-lg border text-left transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                           isActive
-                            ? 'bg-emerald-500/10 border-emerald-500'
-                            : 'bg-gray-800/40 border-gray-700 hover:border-gray-600'
+                            ? 'bg-accent/10 border-accent'
+                            : 'bg-dark-700/40 border-border hover:border-border-hover'
                         }`}
                       >
                         <span
                           className={`block text-base font-semibold ${
-                            isActive ? 'text-emerald-400' : 'text-white'
+                            isActive ? 'text-accent' : 'text-white'
                           }`}
                         >
                           {opt.name}
                         </span>
                         {opt.sub && (
-                          <span className="block text-sm text-gray-500 leading-tight mt-0.5">
+                          <span className="block text-sm text-text-muted leading-tight mt-0.5">
                             {opt.sub}
                           </span>
                         )}
@@ -675,8 +675,8 @@ export default function ChallengeSelector({
           </div>
 
           {/* Summary — tight, no filler, price dominant */}
-          <aside className="lg:sticky lg:top-20 bg-gray-900/70 border border-emerald-500/25 rounded-xl p-4">
-            <p className="text-xs uppercase tracking-wider font-semibold text-gray-500">
+          <aside className="lg:sticky lg:top-20 bg-bg-elevated/70 border border-accent/25 rounded-xl p-4">
+            <p className="text-xs uppercase tracking-wider font-semibold text-text-muted">
               {t.selection}
             </p>
             <p className="text-white text-base font-bold mb-3">
@@ -686,24 +686,24 @@ export default function ChallengeSelector({
             <div className="mb-3">
               <p className="text-white leading-none">
                 <span className="text-3xl font-bold">{formatPrice(displayPrice.final, '', locale, currency)}</span>
-                {isSubscription && <span className="text-gray-500 text-base">{t.perMonth}</span>}
+                {isSubscription && <span className="text-text-muted text-base">{t.perMonth}</span>}
               </p>
               {displayPrice.hasDiscount && displayPrice.original !== null && (
-                <p className="text-gray-500 text-sm mt-1">
+                <p className="text-text-muted text-sm mt-1">
                   {(currentChallenge?.id ? discountNoteFor?.(currentChallenge.id) : null) ?? discountNote
                     ? `${(currentChallenge?.id ? discountNoteFor?.(currentChallenge.id) : null) ?? discountNote} `
                     : ''}
-                  <span className="text-gray-400">
+                  <span className="text-text-secondary">
                     {formatPrice(displayPrice.original, priceSuffix, locale, currency)} {t.normally}
                   </span>
                 </p>
               )}
             </div>
 
-            <dl className="divide-y divide-gray-800/70 mb-3">
+            <dl className="divide-y divide-border/70 mb-3">
               {keyNumbers.map((k) => (
                 <div key={k.label} className="flex items-baseline justify-between gap-3 py-1.5">
-                  <dt className="text-gray-500 text-sm">{k.label}</dt>
+                  <dt className="text-text-muted text-sm">{k.label}</dt>
                   <dd className="text-white text-base font-medium text-right">{k.value}</dd>
                 </div>
               ))}
@@ -712,8 +712,8 @@ export default function ChallengeSelector({
             {includedItems && includedItems.length > 0 && (
               <ul className="mb-3 space-y-1">
                 {includedItems.slice(0, 3).map((item) => (
-                  <li key={item} className="flex items-start gap-2 text-gray-400 text-sm">
-                    <Check className="w-3.5 h-3.5 text-emerald-400 mt-0.5 flex-shrink-0" />
+                  <li key={item} className="flex items-start gap-2 text-text-secondary text-sm">
+                    <Check className="w-3.5 h-3.5 text-accent mt-0.5 flex-shrink-0" />
                     <span>{item}</span>
                   </li>
                 ))}
@@ -724,13 +724,13 @@ export default function ChallengeSelector({
               <button
                 type="button"
                 onClick={handleCopyCode}
-                className="w-full flex items-center justify-between gap-2 px-3 py-2 mb-2 bg-gray-800/60 border border-gray-700 rounded-lg hover:border-gray-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+                className="w-full flex items-center justify-between gap-2 px-3 py-2 mb-2 bg-dark-700/60 border border-border rounded-lg hover:border-border-hover transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
               >
                 {/* Le libelle nomme le code et dit quoi en faire. Il affirmait
                     auparavant que le code s'appliquait tout seul : rien ne
                     l'applique, ni le lien d'affiliation ni le panier. */}
-                <span className="text-gray-500 text-sm">{t.codeAuto(discountCode ?? '')}</span>
-                <span className="flex items-center gap-1.5 text-emerald-400 font-mono font-semibold text-sm">
+                <span className="text-text-muted text-sm">{t.codeAuto(discountCode ?? '')}</span>
+                <span className="flex items-center gap-1.5 text-accent font-mono font-semibold text-sm">
                   {discountCode}
                   {codeCopied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                 </span>
@@ -740,12 +740,12 @@ export default function ChallengeSelector({
             <a
               href={ctaLink}
               {...AFFILIATE_LINK_PROPS}
-              className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-emerald-500 hover:bg-emerald-400 text-gray-950 text-base font-semibold rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
+              className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-accent-hover hover:brightness-110 text-white text-base font-semibold rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
               {t.cta(firmName)}
               <ExternalLink className="w-4 h-4" />
             </a>
-            <p className="text-gray-600 text-xs mt-2 text-center leading-snug">{t.disclosure}</p>
+            <p className="text-text-muted text-xs mt-2 text-center leading-snug">{t.disclosure}</p>
           </aside>
         </div>
 
@@ -756,7 +756,7 @@ export default function ChallengeSelector({
             <h3 className="text-xl md:text-2xl font-bold text-white">
               {programGuide.title || t.compareTitle}
             </h3>
-            <p className="text-gray-400 text-base mt-1 mb-4">
+            <p className="text-text-secondary text-base mt-1 mb-4">
               {programGuide.intro || t.compareIntro}
             </p>
 
@@ -772,16 +772,16 @@ export default function ChallengeSelector({
                     key={opt.name || i}
                     className={`rounded-xl border p-4 flex flex-col ${
                       isActive
-                        ? 'bg-emerald-500/5 border-emerald-500/40'
-                        : 'bg-gray-900/50 border-gray-800'
+                        ? 'bg-accent/5 border-accent/40'
+                        : 'bg-bg-elevated/50 border-border'
                     }`}
                   >
                     {opt.badge && (
-                      <span className="text-sm font-medium text-emerald-400 mb-1">{opt.badge}</span>
+                      <span className="text-sm font-medium text-accent mb-1">{opt.badge}</span>
                     )}
                     <h4 className="text-base font-bold text-white mb-1">{opt.name}</h4>
                     {opt.summary && (
-                      <p className="text-gray-400 text-sm leading-snug mb-2">{opt.summary}</p>
+                      <p className="text-text-secondary text-sm leading-snug mb-2">{opt.summary}</p>
                     )}
                     {/* Les puces repetaient les regles que la table par phase
                         montre en detail, et pour un seul programme a la fois.
@@ -792,7 +792,7 @@ export default function ChallengeSelector({
                         deviner lequel faisait autorite. La carte signale
                         seulement lequel est actuellement selectionne. */}
                     {isActive && (
-                      <p className="mt-auto pt-2 text-emerald-400 text-sm font-medium">
+                      <p className="mt-auto pt-2 text-accent text-sm font-medium">
                         {`✓ ${t.picked}`}
                       </p>
                     )}
@@ -805,16 +805,16 @@ export default function ChallengeSelector({
       </div>
 
       {/* Mobile CTA bar */}
-      <div className="lg:hidden print:hidden fixed bottom-0 inset-x-0 z-40 bg-gray-950/95 backdrop-blur border-t border-gray-800 px-4 py-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))]">
+      <div className="lg:hidden print:hidden fixed bottom-0 inset-x-0 z-40 bg-bg-base/95 backdrop-blur border-t border-border px-4 py-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))]">
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-gray-500 text-xs truncate">
+            <p className="text-text-muted text-xs truncate">
               {selectedProgram} · {cleanMoneyLabel(currentChallenge?.account_size)}
             </p>
             <p className="text-white text-base font-bold leading-tight">
               {formatPrice(displayPrice.final, priceSuffix, locale, currency)}
               {displayPrice.hasDiscount && displayPrice.original !== null && (
-                <s className="text-gray-600 text-sm font-normal ml-1.5">
+                <s className="text-text-muted text-sm font-normal ml-1.5">
                   {formatPrice(displayPrice.original, '', locale, currency)}
                 </s>
               )}
@@ -823,7 +823,7 @@ export default function ChallengeSelector({
           <a
             href={ctaLink}
             {...AFFILIATE_LINK_PROPS}
-            className="flex items-center gap-1.5 px-5 py-2.5 bg-emerald-500 text-gray-950 text-base font-semibold rounded-lg flex-shrink-0"
+            className="flex items-center gap-1.5 px-5 py-2.5 bg-accent-hover text-white text-base font-semibold rounded-lg flex-shrink-0"
           >
             {t.ctaShort}
             <ExternalLink className="w-4 h-4" />

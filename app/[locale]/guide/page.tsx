@@ -409,23 +409,23 @@ export default function GuidePageClient() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-bg-elevated">
       {/* Hero Section */}
       <section className="pt-24 pb-16 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left - Content */}
             <div>
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-400 text-sm mb-6">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 border border-accent/20 rounded-full text-accent text-sm mb-6">
                 <BookOpen className="w-4 h-4" />
                 {t.freeGuide}
               </div>
               
               <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
-                {t.heroTitle1} <span className="text-emerald-400">{t.heroTitle2}</span> {t.heroTitle3}
+                {t.heroTitle1} <span className="text-accent">{t.heroTitle2}</span> {t.heroTitle3}
               </h1>
               
-              <p className="text-xl text-gray-400 mb-8">
+              <p className="text-xl text-text-secondary mb-8">
                 {t.heroDescription}
               </p>
 
@@ -433,19 +433,19 @@ export default function GuidePageClient() {
               <div className="grid grid-cols-2 gap-4 mb-8">
                 {BENEFITS.map((benefit, i) => (
                   <div key={i} className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                      <benefit.icon className="w-5 h-5 text-emerald-400" />
+                    <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
+                      <benefit.icon className="w-5 h-5 text-accent" />
                     </div>
-                    <span className="text-gray-300 text-sm">{benefit.text}</span>
+                    <span className="text-text-secondary text-sm">{benefit.text}</span>
                   </div>
                 ))}
               </div>
 
               {/* Social Proof */}
-              <div className="flex items-center gap-4 text-sm text-gray-500">
+              <div className="flex items-center gap-4 text-sm text-text-muted">
                 <div className="flex -space-x-2">
                   {[...Array(5)].map((_, i) => (
-                    <div key={i} className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-blue-500 border-2 border-gray-900" />
+                    <div key={i} className="w-8 h-8 rounded-full bg-gradient-to-br from-accent to-blue-500 border-2 border-border" />
                   ))}
                 </div>
                 <span>{t.socialProof}</span>
@@ -453,41 +453,41 @@ export default function GuidePageClient() {
             </div>
 
             {/* Right - Form */}
-            <div className="bg-gray-800/50 border border-gray-700 rounded-2xl p-8">
+            <div className="bg-dark-700/50 border border-border rounded-2xl p-8">
               <div className="text-center mb-6">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-accent to-emerald-700 flex items-center justify-center mx-auto mb-4">
                   <Download className="w-8 h-8 text-white" />
                 </div>
                 <h2 className="text-2xl font-bold text-white mb-2">{t.getYourFreeGuide}</h2>
-                <p className="text-gray-400">{t.enterEmailToDownload}</p>
+                <p className="text-text-secondary">{t.enterEmailToDownload}</p>
               </div>
 
               {status === 'success' ? (
                 <div className="text-center py-6">
-                  <div className="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
-                    <CheckCircle className="w-8 h-8 text-emerald-400" />
+                  <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-4">
+                    <CheckCircle className="w-8 h-8 text-accent" />
                   </div>
                   <h3 className="text-xl font-bold text-white mb-2">{t.guideReady}</h3>
-                  <p className="text-gray-400 mb-6">{t.clickToDownload}</p>
+                  <p className="text-text-secondary mb-6">{t.clickToDownload}</p>
                   
                   {/* Bouton de téléchargement direct */}
                   <a
                     href={GUIDE_PDF_URL}
                     download="PropFirm-Guide-2026.pdf"
-                    className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 
+                    className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-accent to-accent 
                               text-white font-semibold rounded-xl hover:opacity-90 transition-all"
                   >
                     <Download className="w-5 h-5" />
                     {t.downloadPdfNow}
                   </a>
                   
-                  <p className="text-sm text-gray-500 mt-4">
+                  <p className="text-sm text-text-muted mt-4">
                     {t.problemsDownloading}{' '}
                     <a 
                       href={GUIDE_PDF_URL} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="text-emerald-400 hover:underline"
+                      className="text-accent hover:underline"
                     >
                       {t.openInNewTab}
                     </a>
@@ -496,15 +496,15 @@ export default function GuidePageClient() {
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="relative">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
                     <input
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder={t.emailPlaceholder}
-                      className="w-full pl-12 pr-4 py-4 bg-gray-900 border border-gray-700 rounded-xl
-                                text-white placeholder:text-gray-500 focus:outline-none 
-                                focus:border-emerald-500 transition-all"
+                      className="w-full pl-12 pr-4 py-4 bg-bg-elevated border border-border rounded-xl
+                                text-white placeholder:text-text-muted focus:outline-none 
+                                focus:border-accent transition-all"
                       disabled={status === 'loading'}
                     />
                   </div>
@@ -512,7 +512,7 @@ export default function GuidePageClient() {
                   <button
                     type="submit"
                     disabled={status === 'loading'}
-                    className="w-full py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 
+                    className="w-full py-4 bg-gradient-to-r from-accent to-accent 
                               text-white font-semibold rounded-xl hover:opacity-90 
                               transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                   >
@@ -530,7 +530,7 @@ export default function GuidePageClient() {
                     <p className="text-sm text-red-400 text-center">{message}</p>
                   )}
 
-                  <p className="text-xs text-gray-500 text-center">
+                  <p className="text-xs text-text-muted text-center">
                     {t.byDownloading}
                   </p>
                 </form>
@@ -541,11 +541,11 @@ export default function GuidePageClient() {
       </section>
 
       {/* What's Inside Section */}
-      <section className="py-16 px-4 bg-gray-800/30">
+      <section className="py-16 px-4 bg-dark-700/30">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-white mb-4">{t.whatsInside}</h2>
-            <p className="text-gray-400 max-w-2xl mx-auto">
+            <p className="text-text-secondary max-w-2xl mx-auto">
               {t.whatsInsideDesc}
             </p>
           </div>
@@ -554,16 +554,16 @@ export default function GuidePageClient() {
             {GUIDE_CHAPTERS.map((chapter) => (
               <div
                 key={chapter.number}
-                className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 hover:border-emerald-500/30 transition-all"
+                className="bg-dark-700/50 border border-border rounded-xl p-6 hover:border-accent/30 transition-all"
               >
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-lg bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
-                    <chapter.icon className="w-6 h-6 text-emerald-400" />
+                  <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
+                    <chapter.icon className="w-6 h-6 text-accent" />
                   </div>
                   <div>
-                    <div className="text-emerald-400 text-sm font-medium mb-1">{t.chapter} {chapter.number}</div>
+                    <div className="text-accent text-sm font-medium mb-1">{t.chapter} {chapter.number}</div>
                     <h3 className="text-white font-semibold mb-1">{chapter.title}</h3>
-                    <p className="text-gray-400 text-sm">{chapter.description}</p>
+                    <p className="text-text-secondary text-sm">{chapter.description}</p>
                   </div>
                 </div>
               </div>
@@ -576,15 +576,15 @@ export default function GuidePageClient() {
       {/* Final CTA */}
       <section className="py-16 px-4">
         <div className="max-w-3xl mx-auto">
-          <div className="bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border border-emerald-500/20 rounded-2xl p-8 text-center">
+          <div className="bg-gradient-to-r from-accent/10 to-blue-500/10 border border-accent/20 rounded-2xl p-8 text-center">
             <h2 className="text-3xl font-bold text-white mb-4">{t.readyToFind}</h2>
-            <p className="text-gray-400 mb-6">
+            <p className="text-text-secondary mb-6">
               {t.downloadNowStart}
             </p>
             <a
               href="#"
               onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
-              className="inline-flex items-center gap-2 px-8 py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-xl transition-colors"
             >
               <Download className="w-5 h-5" />
               {t.getFreeGuideNow}

@@ -46,7 +46,7 @@ export function LanguageSelector() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 text-sm text-gray-300 hover:text-white bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors"
+        className="flex items-center gap-2 px-3 py-2 text-sm text-text-secondary hover:text-white bg-dark-700 hover:bg-dark-600 rounded-lg transition-colors"
       >
         <Globe className="w-4 h-4" />
         <span>{localeFlags[locale]}</span>
@@ -55,20 +55,20 @@ export function LanguageSelector() {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-50">
+        <div className="absolute right-0 mt-2 w-48 bg-dark-700 border border-border rounded-lg shadow-lg z-50">
           <div className="py-1">
             {locales.map((loc) => (
               <button
                 key={loc}
                 onClick={() => handleLocaleChange(loc)}
-                className={`w-full flex items-center gap-3 px-4 py-2 text-sm text-left hover:bg-gray-700 transition-colors ${
-                  locale === loc ? 'text-emerald-400 bg-gray-700/50' : 'text-gray-300'
+                className={`w-full flex items-center gap-3 px-4 py-2 text-sm text-left hover:bg-dark-600 transition-colors ${
+                  locale === loc ? 'text-accent bg-dark-600/50' : 'text-text-secondary'
                 }`}
               >
                 <span className="text-lg">{localeFlags[loc]}</span>
                 <span>{localeNames[loc]}</span>
                 {locale === loc && (
-                  <span className="ml-auto text-emerald-400">✓</span>
+                  <span className="ml-auto text-accent">✓</span>
                 )}
               </button>
             ))}

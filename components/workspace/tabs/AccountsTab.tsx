@@ -76,7 +76,7 @@ function formatUSD(amount: number): string {
 
 function getStatusConfig(status: 'safe' | 'warning' | 'danger') {
   return {
-    safe: { bg: 'bg-emerald-500', border: 'border-emerald-500/30', label: 'SAFE' },
+    safe: { bg: 'bg-accent-hover', border: 'border-accent/30', label: 'SAFE' },
     warning: { bg: 'bg-yellow-500', border: 'border-yellow-500/30', label: 'RISK' },
     danger: { bg: 'bg-red-500', border: 'border-red-500/30', label: 'DANGER' },
   }[status];
@@ -116,7 +116,7 @@ export function AccountsTab({ accounts, isDemo = false }: AccountsTabProps) {
           </div>
           <Link
             href="/dashboard/accounts/new"
-            className="flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-accent-hover hover:brightness-110 text-white text-sm font-medium rounded-lg transition-colors"
           >
             <Plus className="w-4 h-4" />
             Add Account
@@ -131,23 +131,23 @@ export function AccountsTab({ accounts, isDemo = false }: AccountsTabProps) {
           return (
             <div
               key={account.id}
-              className={`bg-gray-900 rounded-xl border ${statusConfig.border} overflow-hidden relative`}
+              className={`bg-bg-elevated rounded-xl border ${statusConfig.border} overflow-hidden relative`}
             >
               {/* Demo indicator */}
               {isDemo && (
                 <div className="absolute top-3 right-3 z-10">
-                  <span className="text-xs text-gray-500 bg-gray-800 px-2 py-0.5 rounded">
+                  <span className="text-xs text-text-muted bg-dark-700 px-2 py-0.5 rounded">
                     Demo
                   </span>
                 </div>
               )}
 
               {/* Header */}
-              <div className="p-4 border-b border-gray-800">
+              <div className="p-4 border-b border-border">
                 <div className="flex items-start justify-between pr-16">
                   <div>
                     <h3 className="font-semibold text-white text-lg">{account.prop_firm}</h3>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-text-muted">
                       {account.program} · {account.stage}
                     </p>
                   </div>
@@ -160,7 +160,7 @@ export function AccountsTab({ accounts, isDemo = false }: AccountsTabProps) {
               {/* Metrics */}
               <div className="p-4 grid grid-cols-3 gap-4">
                 <div>
-                  <p className="text-xs text-gray-500 mb-1">Safe to lose today</p>
+                  <p className="text-xs text-text-muted mb-1">Safe to lose today</p>
                   <p className={`text-xl font-bold ${
                     account.health.daily.daily_buffer_usd < 300 ? 'text-red-400' :
                     account.health.daily.daily_buffer_usd < 800 ? 'text-yellow-400' :
@@ -170,7 +170,7 @@ export function AccountsTab({ accounts, isDemo = false }: AccountsTabProps) {
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 mb-1">Total DD remaining</p>
+                  <p className="text-xs text-text-muted mb-1">Total DD remaining</p>
                   <p className={`text-xl font-bold ${
                     account.health.max.max_buffer_usd < 1000 ? 'text-red-400' :
                     account.health.max.max_buffer_usd < 2500 ? 'text-yellow-400' :
@@ -180,10 +180,10 @@ export function AccountsTab({ accounts, isDemo = false }: AccountsTabProps) {
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 mb-1">Trading days</p>
+                  <p className="text-xs text-text-muted mb-1">Trading days</p>
                   <p className={`text-xl font-bold ${
                     account.min_trading_days > 0 && account.current_trading_days >= account.min_trading_days
-                      ? 'text-emerald-400'
+                      ? 'text-accent'
                       : 'text-white'
                   }`}>
                     {account.min_trading_days > 0
@@ -203,13 +203,13 @@ export function AccountsTab({ accounts, isDemo = false }: AccountsTabProps) {
                   </span>
                 )}
                 <span className={`inline-flex items-center gap-1 px-2 py-1 text-xs rounded-lg ${
-                  account.allows_news ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'
+                  account.allows_news ? 'bg-accent/20 text-accent' : 'bg-red-500/20 text-red-400'
                 }`}>
                   <Newspaper className="w-3 h-3" />
                   {account.allows_news ? 'News OK' : 'No news'}
                 </span>
                 <span className={`inline-flex items-center gap-1 px-2 py-1 text-xs rounded-lg ${
-                  account.allows_weekend ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'
+                  account.allows_weekend ? 'bg-accent/20 text-accent' : 'bg-red-500/20 text-red-400'
                 }`}>
                   <Moon className="w-3 h-3" />
                   {account.allows_weekend ? 'Weekend OK' : 'No weekend'}
@@ -226,7 +226,7 @@ export function AccountsTab({ accounts, isDemo = false }: AccountsTabProps) {
               <div className="p-4 pt-0 grid grid-cols-3 gap-2">
                 <button
                   onClick={() => openModal(account, 'simulate')}
-                  className="flex items-center justify-center gap-2 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors"
+                  className="flex items-center justify-center gap-2 py-2.5 bg-accent-hover hover:brightness-110 text-white text-sm font-medium rounded-lg transition-colors"
                 >
                   <Play className="w-4 h-4" />
                   Simulate
@@ -236,8 +236,8 @@ export function AccountsTab({ accounts, isDemo = false }: AccountsTabProps) {
                   disabled={isDemo}
                   className={`flex items-center justify-center gap-2 py-2.5 text-sm font-medium rounded-lg transition-colors ${
                     isDemo 
-                      ? 'bg-gray-800 text-gray-500 cursor-not-allowed' 
-                      : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
+                      ? 'bg-dark-700 text-text-muted cursor-not-allowed' 
+                      : 'bg-dark-700 hover:bg-dark-600 text-text-secondary'
                   }`}
                   title={isDemo ? 'Add your own account to update PnL' : 'Update PnL'}
                 >
@@ -246,7 +246,7 @@ export function AccountsTab({ accounts, isDemo = false }: AccountsTabProps) {
                 </button>
                 <button
                   onClick={() => openModal(account, 'rules')}
-                  className="flex items-center justify-center gap-2 py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm font-medium rounded-lg transition-colors"
+                  className="flex items-center justify-center gap-2 py-2.5 bg-dark-700 hover:bg-dark-600 text-text-secondary text-sm font-medium rounded-lg transition-colors"
                 >
                   <BookOpen className="w-4 h-4" />
                   Rules
@@ -258,19 +258,19 @@ export function AccountsTab({ accounts, isDemo = false }: AccountsTabProps) {
 
         {/* CTA for Demo Mode */}
         {isDemo && (
-          <div className="bg-gradient-to-r from-emerald-500/10 to-transparent border border-emerald-500/20 rounded-xl p-6">
+          <div className="bg-gradient-to-r from-accent/10 to-transparent border border-accent/20 rounded-xl p-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h3 className="font-semibold text-white mb-1">
                   Add your own account to replace demo data
                 </h3>
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-text-secondary">
                   Your real accounts will show personalized risk tracking.
                 </p>
               </div>
               <Link
                 href="/dashboard/accounts/new"
-                className="flex items-center justify-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors whitespace-nowrap"
+                className="flex items-center justify-center gap-2 px-5 py-2.5 bg-accent-hover hover:brightness-110 text-white text-sm font-medium rounded-lg transition-colors whitespace-nowrap"
               >
                 <Plus className="w-4 h-4" />
                 Add Account

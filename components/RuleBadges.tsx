@@ -22,9 +22,9 @@ export function RuleBadge({ allowed, label, showLabel = true, size = 'md' }: Rul
     return (
       <span className={`inline-flex items-center gap-1 ${size === 'sm' ? 'text-xs' : 'text-sm'}`}>
         <span className="w-4 h-4 rounded-full bg-gray-500/20 flex items-center justify-center">
-          <AlertTriangle className="w-2.5 h-2.5 text-gray-400" />
+          <AlertTriangle className="w-2.5 h-2.5 text-text-secondary" />
         </span>
-        {showLabel && <span className="text-gray-400">{label || 'N/A'}</span>}
+        {showLabel && <span className="text-text-secondary">{label || 'N/A'}</span>}
       </span>
     )
   }
@@ -32,10 +32,10 @@ export function RuleBadge({ allowed, label, showLabel = true, size = 'md' }: Rul
   if (allowed) {
     return (
       <span className={`inline-flex items-center gap-1 ${size === 'sm' ? 'text-xs' : 'text-sm'}`}>
-        <span className="w-4 h-4 rounded-full bg-emerald-500/20 flex items-center justify-center">
-          <Check className="w-2.5 h-2.5 text-emerald-400" />
+        <span className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center">
+          <Check className="w-2.5 h-2.5 text-accent" />
         </span>
-        {showLabel && <span className="text-emerald-400">{label || 'Yes'}</span>}
+        {showLabel && <span className="text-accent">{label || 'Yes'}</span>}
       </span>
     )
   }
@@ -61,9 +61,9 @@ interface SpecificRuleBadgeProps {
 
 export function NewsTrading({ allowed, compact = false }: SpecificRuleBadgeProps) {
   return (
-    <div className={`flex items-center gap-2 ${compact ? '' : 'px-3 py-1.5 bg-gray-800/50 rounded-lg'}`}>
-      <Newspaper className="w-4 h-4 text-gray-400" />
-      {!compact && <span className="text-gray-300 text-sm">News</span>}
+    <div className={`flex items-center gap-2 ${compact ? '' : 'px-3 py-1.5 bg-dark-700/50 rounded-lg'}`}>
+      <Newspaper className="w-4 h-4 text-text-secondary" />
+      {!compact && <span className="text-text-secondary text-sm">News</span>}
       <RuleBadge allowed={allowed} showLabel={false} size="sm" />
     </div>
   )
@@ -71,9 +71,9 @@ export function NewsTrading({ allowed, compact = false }: SpecificRuleBadgeProps
 
 export function WeekendHolding({ allowed, compact = false }: SpecificRuleBadgeProps) {
   return (
-    <div className={`flex items-center gap-2 ${compact ? '' : 'px-3 py-1.5 bg-gray-800/50 rounded-lg'}`}>
-      <Calendar className="w-4 h-4 text-gray-400" />
-      {!compact && <span className="text-gray-300 text-sm">Weekend</span>}
+    <div className={`flex items-center gap-2 ${compact ? '' : 'px-3 py-1.5 bg-dark-700/50 rounded-lg'}`}>
+      <Calendar className="w-4 h-4 text-text-secondary" />
+      {!compact && <span className="text-text-secondary text-sm">Weekend</span>}
       <RuleBadge allowed={allowed} showLabel={false} size="sm" />
     </div>
   )
@@ -81,9 +81,9 @@ export function WeekendHolding({ allowed, compact = false }: SpecificRuleBadgePr
 
 export function EATrading({ allowed, compact = false }: SpecificRuleBadgeProps) {
   return (
-    <div className={`flex items-center gap-2 ${compact ? '' : 'px-3 py-1.5 bg-gray-800/50 rounded-lg'}`}>
-      <Bot className="w-4 h-4 text-gray-400" />
-      {!compact && <span className="text-gray-300 text-sm">EA/Bots</span>}
+    <div className={`flex items-center gap-2 ${compact ? '' : 'px-3 py-1.5 bg-dark-700/50 rounded-lg'}`}>
+      <Bot className="w-4 h-4 text-text-secondary" />
+      {!compact && <span className="text-text-secondary text-sm">EA/Bots</span>}
       <RuleBadge allowed={allowed} showLabel={false} size="sm" />
     </div>
   )
@@ -102,7 +102,7 @@ export function DrawdownBadge({ type, compact = false }: DrawdownBadgeProps) {
   const config = {
     static: {
       label: 'Static',
-      color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
+      color: 'text-accent bg-accent/10 border-accent/20',
       tooltip: 'Fixed from starting balance - easier to manage',
     },
     trailing: {
@@ -119,7 +119,7 @@ export function DrawdownBadge({ type, compact = false }: DrawdownBadgeProps) {
 
   if (!type) {
     return (
-      <span className="text-gray-400 text-sm">N/A</span>
+      <span className="text-text-secondary text-sm">N/A</span>
     )
   }
 
@@ -127,7 +127,7 @@ export function DrawdownBadge({ type, compact = false }: DrawdownBadgeProps) {
 
   return (
     <div className={`flex items-center gap-2 ${compact ? '' : ''}`}>
-      <TrendingDown className="w-4 h-4 text-gray-400" />
+      <TrendingDown className="w-4 h-4 text-text-secondary" />
       <span 
         className={`px-2 py-0.5 rounded text-xs font-medium border ${color}`}
         title={tooltip}
@@ -149,7 +149,7 @@ interface PlatformBadgesProps {
 
 export function PlatformBadges({ platforms, compact = false }: PlatformBadgesProps) {
   if (!platforms || platforms.length === 0) {
-    return <span className="text-gray-400 text-sm">N/A</span>
+    return <span className="text-text-secondary text-sm">N/A</span>
   }
 
   const platformColors: Record<string, string> = {
@@ -157,7 +157,7 @@ export function PlatformBadges({ platforms, compact = false }: PlatformBadgesPro
     'MT5': 'bg-blue-500/10 text-blue-400 border-blue-500/20',
     'cTrader': 'bg-purple-500/10 text-purple-400 border-purple-500/20',
     'DXTrade': 'bg-orange-500/10 text-orange-400 border-orange-500/20',
-    'TradeLocker': 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+    'TradeLocker': 'bg-accent/10 text-accent border-accent/20',
     'MatchTrader': 'bg-pink-500/10 text-pink-400 border-pink-500/20',
   }
 
@@ -166,7 +166,7 @@ export function PlatformBadges({ platforms, compact = false }: PlatformBadgesPro
       {platforms.map((platform) => (
         <span
           key={platform}
-          className={`px-2 py-0.5 rounded text-xs font-medium border ${platformColors[platform] || 'bg-gray-500/10 text-gray-400 border-gray-500/20'}`}
+          className={`px-2 py-0.5 rounded text-xs font-medium border ${platformColors[platform] || 'bg-gray-500/10 text-text-secondary border-gray-500/20'}`}
         >
           {platform}
         </span>
@@ -186,21 +186,21 @@ interface MarketBadgesProps {
 
 export function MarketBadges({ markets, compact = false }: MarketBadgesProps) {
   if (!markets || markets.length === 0) {
-    return <span className="text-gray-400 text-sm">N/A</span>
+    return <span className="text-text-secondary text-sm">N/A</span>
   }
 
   const marketConfig: Record<string, { icon: typeof Globe; color: string }> = {
     'Forex': { icon: Globe, color: 'bg-blue-500/10 text-blue-400 border-blue-500/20' },
     'Crypto': { icon: Zap, color: 'bg-orange-500/10 text-orange-400 border-orange-500/20' },
     'Futures': { icon: TrendingDown, color: 'bg-purple-500/10 text-purple-400 border-purple-500/20' },
-    'Indices': { icon: TrendingDown, color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },
+    'Indices': { icon: TrendingDown, color: 'bg-accent/10 text-accent border-accent/20' },
     'Stocks': { icon: TrendingDown, color: 'bg-pink-500/10 text-pink-400 border-pink-500/20' },
   }
 
   return (
     <div className={`flex flex-wrap gap-1 ${compact ? '' : ''}`}>
       {markets.map((market) => {
-        const config = marketConfig[market] || { color: 'bg-gray-500/10 text-gray-400 border-gray-500/20' }
+        const config = marketConfig[market] || { color: 'bg-gray-500/10 text-text-secondary border-gray-500/20' }
         return (
           <span
             key={market}
@@ -225,14 +225,14 @@ interface PayoutBadgeProps {
 
 export function PayoutBadge({ frequency, compact = false }: PayoutBadgeProps) {
   if (!frequency) {
-    return <span className="text-gray-400 text-sm">N/A</span>
+    return <span className="text-text-secondary text-sm">N/A</span>
   }
 
   const freqLower = frequency.toLowerCase()
-  let color = 'bg-gray-500/10 text-gray-400 border-gray-500/20'
+  let color = 'bg-gray-500/10 text-text-secondary border-gray-500/20'
   
   if (freqLower.includes('daily') || freqLower.includes('demand')) {
-    color = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+    color = 'bg-accent/10 text-accent border-accent/20'
   } else if (freqLower.includes('weekly') || freqLower.includes('7')) {
     color = 'bg-blue-500/10 text-blue-400 border-blue-500/20'
   } else if (freqLower.includes('bi-weekly') || freqLower.includes('14')) {
@@ -241,7 +241,7 @@ export function PayoutBadge({ frequency, compact = false }: PayoutBadgeProps) {
 
   return (
     <div className={`flex items-center gap-2 ${compact ? '' : ''}`}>
-      <CreditCard className="w-4 h-4 text-gray-400" />
+      <CreditCard className="w-4 h-4 text-text-secondary" />
       <span className={`px-2 py-0.5 rounded text-xs font-medium border ${color}`}>
         {frequency}
       </span>
@@ -281,22 +281,22 @@ interface ProfitSplitBadgeProps {
 
 export function ProfitSplitBadge({ split, maxSplit }: ProfitSplitBadgeProps) {
   if (!split) {
-    return <span className="text-gray-400">N/A</span>
+    return <span className="text-text-secondary">N/A</span>
   }
 
-  let color = 'text-gray-400'
-  if (split >= 90) color = 'text-emerald-400'
+  let color = 'text-text-secondary'
+  if (split >= 90) color = 'text-accent'
   else if (split >= 80) color = 'text-green-400'
   else if (split >= 70) color = 'text-yellow-400'
   else color = 'text-orange-400'
 
   return (
     <div className="flex items-center gap-1">
-      <Percent className="w-4 h-4 text-gray-400" />
+      <Percent className="w-4 h-4 text-text-secondary" />
       <span className={`font-semibold ${color}`}>
         {split}%
         {maxSplit && maxSplit > split && (
-          <span className="text-gray-500 font-normal"> - {maxSplit}%</span>
+          <span className="text-text-muted font-normal"> - {maxSplit}%</span>
         )}
       </span>
     </div>
@@ -315,21 +315,21 @@ export function TimeLimitBadge({ days }: TimeLimitBadgeProps) {
   if (!days || days === 'unlimited') {
     return (
       <div className="flex items-center gap-1">
-        <Clock className="w-4 h-4 text-gray-400" />
-        <span className="text-emerald-400 font-medium">Unlimited</span>
+        <Clock className="w-4 h-4 text-text-secondary" />
+        <span className="text-accent font-medium">Unlimited</span>
       </div>
     )
   }
 
-  let color = 'text-gray-400'
-  if (days >= 60) color = 'text-emerald-400'
+  let color = 'text-text-secondary'
+  if (days >= 60) color = 'text-accent'
   else if (days >= 30) color = 'text-green-400'
   else if (days >= 14) color = 'text-yellow-400'
   else color = 'text-orange-400'
 
   return (
     <div className="flex items-center gap-1">
-      <Clock className="w-4 h-4 text-gray-400" />
+      <Clock className="w-4 h-4 text-text-secondary" />
       <span className={color}>{days} days</span>
     </div>
   )

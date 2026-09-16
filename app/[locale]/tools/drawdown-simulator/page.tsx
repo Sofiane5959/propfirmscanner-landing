@@ -377,7 +377,7 @@ export default function DrawdownSimulatorPage() {
 
   const getStatusConfig = (status: string) => {
     const configs = {
-      safe: { bg: 'bg-emerald-500/20', text: 'text-emerald-400', icon: CheckCircle, label: t.healthy },
+      safe: { bg: 'bg-accent/20', text: 'text-accent', icon: CheckCircle, label: t.healthy },
       warning: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', icon: AlertTriangle, label: t.warning },
       danger: { bg: 'bg-red-500/20', text: 'text-red-400', icon: AlertCircle, label: t.danger },
     };
@@ -394,11 +394,11 @@ export default function DrawdownSimulatorPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 pt-20 pb-12">
+    <div className="min-h-screen bg-bg-elevated pt-20 pb-12">
       <div className="max-w-4xl mx-auto px-4">
         <Link
           href={`/${locale}/tools`}
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors"
+          className="inline-flex items-center gap-2 text-text-secondary hover:text-white mb-6 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           {t.allTools}
@@ -411,22 +411,22 @@ export default function DrawdownSimulatorPage() {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-white">{t.title}</h1>
-              <p className="text-gray-400">{t.subtitle}</p>
+              <p className="text-text-secondary">{t.subtitle}</p>
             </div>
           </div>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Input Form */}
-          <div className="bg-gray-800 rounded-2xl p-6 border border-gray-700">
+          <div className="bg-dark-700 rounded-2xl p-6 border border-border">
             <h2 className="text-lg font-semibold text-white mb-4">{t.accountSettings}</h2>
 
             <div className="mb-4">
-              <label className="block text-sm text-gray-400 mb-2">{t.propFirmPreset}</label>
+              <label className="block text-sm text-text-secondary mb-2">{t.propFirmPreset}</label>
               <select
                 value={preset}
                 onChange={(e) => handlePresetChange(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white focus:outline-none focus:border-emerald-500"
+                className="w-full px-4 py-3 bg-bg-elevated border border-border rounded-xl text-white focus:outline-none focus:border-accent"
               >
                 {propFirmPresets.map((p) => (
                   <option key={p.name} value={p.name}>{p.name}</option>
@@ -435,12 +435,12 @@ export default function DrawdownSimulatorPage() {
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm text-gray-400 mb-2">{t.accountSize}</label>
+              <label className="block text-sm text-text-secondary mb-2">{t.accountSize}</label>
               <input
                 type="number"
                 value={accountSize}
                 onChange={(e) => setAccountSize(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white focus:outline-none focus:border-emerald-500"
+                className="w-full px-4 py-3 bg-bg-elevated border border-border rounded-xl text-white focus:outline-none focus:border-accent"
               />
               <div className="flex gap-2 mt-2">
                 {[10000, 25000, 50000, 100000, 200000].map((size) => (
@@ -451,7 +451,7 @@ export default function DrawdownSimulatorPage() {
                       setCurrentBalance(size.toString());
                       setHighWatermark(size.toString());
                     }}
-                    className="px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-lg transition-colors"
+                    className="px-2 py-1 text-xs bg-dark-600 hover:bg-dark-500 text-text-secondary rounded-lg transition-colors"
                   >
                     ${(size / 1000)}K
                   </button>
@@ -460,28 +460,28 @@ export default function DrawdownSimulatorPage() {
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm text-gray-400 mb-2">{t.currentBalance}</label>
+              <label className="block text-sm text-text-secondary mb-2">{t.currentBalance}</label>
               <input
                 type="number"
                 value={currentBalance}
                 onChange={(e) => setCurrentBalance(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white focus:outline-none focus:border-emerald-500"
+                className="w-full px-4 py-3 bg-bg-elevated border border-border rounded-xl text-white focus:outline-none focus:border-accent"
               />
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm text-gray-400 mb-2">{t.todayPnl}</label>
+              <label className="block text-sm text-text-secondary mb-2">{t.todayPnl}</label>
               <input
                 type="number"
                 value={todayPnl}
                 onChange={(e) => setTodayPnl(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white focus:outline-none focus:border-emerald-500"
+                className="w-full px-4 py-3 bg-bg-elevated border border-border rounded-xl text-white focus:outline-none focus:border-accent"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div>
-                <label className="block text-sm text-gray-400 mb-2">{t.dailyDDPercent}</label>
+                <label className="block text-sm text-text-secondary mb-2">{t.dailyDDPercent}</label>
                 <input
                   type="number"
                   value={dailyDDPercent}
@@ -490,11 +490,11 @@ export default function DrawdownSimulatorPage() {
                     setPreset('Custom');
                   }}
                   step="0.5"
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white focus:outline-none focus:border-emerald-500"
+                  className="w-full px-4 py-3 bg-bg-elevated border border-border rounded-xl text-white focus:outline-none focus:border-accent"
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-2">{t.maxDDPercent}</label>
+                <label className="block text-sm text-text-secondary mb-2">{t.maxDDPercent}</label>
                 <input
                   type="number"
                   value={maxDDPercent}
@@ -503,7 +503,7 @@ export default function DrawdownSimulatorPage() {
                     setPreset('Custom');
                   }}
                   step="0.5"
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white focus:outline-none focus:border-emerald-500"
+                  className="w-full px-4 py-3 bg-bg-elevated border border-border rounded-xl text-white focus:outline-none focus:border-accent"
                 />
               </div>
             </div>
@@ -517,7 +517,7 @@ export default function DrawdownSimulatorPage() {
                     setIsTrailing(e.target.checked);
                     setPreset('Custom');
                   }}
-                  className="w-5 h-5 rounded bg-gray-700 border-gray-600 text-emerald-500 focus:ring-emerald-500"
+                  className="w-5 h-5 rounded bg-dark-600 border-border-hover text-accent focus:ring-accent"
                 />
                 <span className="text-white">{t.trailingDrawdown}</span>
               </label>
@@ -533,9 +533,9 @@ export default function DrawdownSimulatorPage() {
                   type="number"
                   value={highWatermark}
                   onChange={(e) => setHighWatermark(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white focus:outline-none focus:border-purple-500"
+                  className="w-full px-4 py-3 bg-bg-elevated border border-border rounded-xl text-white focus:outline-none focus:border-purple-500"
                 />
-                <p className="text-xs text-gray-500 mt-2">{t.hwmNote}</p>
+                <p className="text-xs text-text-muted mt-2">{t.hwmNote}</p>
               </div>
             )}
           </div>
@@ -546,23 +546,23 @@ export default function DrawdownSimulatorPage() {
               <StatusIcon className={`w-6 h-6 ${statusConfig.text}`} />
               <div>
                 <p className={`font-semibold ${statusConfig.text}`}>{statusConfig.label}</p>
-                <p className="text-sm text-gray-400">{getStatusMessage(calculations.status)}</p>
+                <p className="text-sm text-text-secondary">{getStatusMessage(calculations.status)}</p>
               </div>
             </div>
 
             {/* Daily DD Card */}
-            <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
-              <h3 className="text-sm text-gray-400 mb-3">{t.dailyDrawdown}</h3>
+            <div className="bg-dark-700 rounded-xl p-5 border border-border">
+              <h3 className="text-sm text-text-secondary mb-3">{t.dailyDrawdown}</h3>
               
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                  <p className="text-xs text-gray-500">{t.limit}</p>
+                  <p className="text-xs text-text-muted">{t.limit}</p>
                   <p className="text-lg font-semibold text-white">
                     {formatCurrency(calculations.dailyLimitUsd)}
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500">{t.usedToday}</p>
+                  <p className="text-xs text-text-muted">{t.usedToday}</p>
                   <p className="text-lg font-semibold text-red-400">
                     {formatCurrency(calculations.dailyUsedUsd)}
                   </p>
@@ -571,25 +571,25 @@ export default function DrawdownSimulatorPage() {
 
               <div className="mb-2">
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="text-gray-400">{t.bufferRemaining}</span>
+                  <span className="text-text-secondary">{t.bufferRemaining}</span>
                   <span className={`font-medium ${
                     calculations.dailyBufferPct < 30 
                       ? calculations.dailyBufferPct < 15 
                         ? 'text-red-400' 
                         : 'text-yellow-400'
-                      : 'text-emerald-400'
+                      : 'text-accent'
                   }`}>
                     {formatCurrency(calculations.dailyBufferUsd)} ({calculations.dailyBufferPct.toFixed(1)}%)
                   </span>
                 </div>
-                <div className="h-3 bg-gray-700 rounded-full overflow-hidden">
+                <div className="h-3 bg-dark-600 rounded-full overflow-hidden">
                   <div
                     className={`h-full transition-all ${
                       calculations.dailyBufferPct < 30
                         ? calculations.dailyBufferPct < 15
                           ? 'bg-red-500'
                           : 'bg-yellow-500'
-                        : 'bg-emerald-500'
+                        : 'bg-accent-hover'
                     }`}
                     style={{ width: `${Math.min(100, calculations.dailyBufferPct)}%` }}
                   />
@@ -598,8 +598,8 @@ export default function DrawdownSimulatorPage() {
             </div>
 
             {/* Max DD Card */}
-            <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
-              <h3 className="text-sm text-gray-400 mb-3 flex items-center gap-2">
+            <div className="bg-dark-700 rounded-xl p-5 border border-border">
+              <h3 className="text-sm text-text-secondary mb-3 flex items-center gap-2">
                 {t.maxDrawdown}
                 {isTrailing && (
                   <span className="px-2 py-0.5 bg-purple-500/20 text-purple-400 text-xs rounded-full">
@@ -610,13 +610,13 @@ export default function DrawdownSimulatorPage() {
               
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                  <p className="text-xs text-gray-500">{t.limit}</p>
+                  <p className="text-xs text-text-muted">{t.limit}</p>
                   <p className="text-lg font-semibold text-white">
                     {formatCurrency(calculations.maxLimitUsd)}
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500">{t.floor}</p>
+                  <p className="text-xs text-text-muted">{t.floor}</p>
                   <p className="text-lg font-semibold text-orange-400">
                     {formatCurrency(calculations.maxFloorUsd)}
                   </p>
@@ -625,25 +625,25 @@ export default function DrawdownSimulatorPage() {
 
               <div className="mb-2">
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="text-gray-400">{t.bufferRemaining}</span>
+                  <span className="text-text-secondary">{t.bufferRemaining}</span>
                   <span className={`font-medium ${
                     calculations.maxBufferPct < 30 
                       ? calculations.maxBufferPct < 15 
                         ? 'text-red-400' 
                         : 'text-yellow-400'
-                      : 'text-emerald-400'
+                      : 'text-accent'
                   }`}>
                     {formatCurrency(calculations.maxBufferUsd)} ({calculations.maxBufferPct.toFixed(1)}%)
                   </span>
                 </div>
-                <div className="h-3 bg-gray-700 rounded-full overflow-hidden">
+                <div className="h-3 bg-dark-600 rounded-full overflow-hidden">
                   <div
                     className={`h-full transition-all ${
                       calculations.maxBufferPct < 30
                         ? calculations.maxBufferPct < 15
                           ? 'bg-red-500'
                           : 'bg-yellow-500'
-                        : 'bg-emerald-500'
+                        : 'bg-accent-hover'
                     }`}
                     style={{ width: `${Math.min(100, calculations.maxBufferPct)}%` }}
                   />
@@ -652,17 +652,17 @@ export default function DrawdownSimulatorPage() {
             </div>
 
             {/* Pro CTA */}
-            <div className="bg-gradient-to-br from-emerald-900/50 to-emerald-800/30 rounded-xl p-5 border border-emerald-500/30">
+            <div className="bg-gradient-to-br from-emerald-900/50 to-emerald-800/30 rounded-xl p-5 border border-accent/30">
               <div className="flex items-start gap-3">
-                <div className="p-2 bg-emerald-500/20 rounded-lg">
+                <div className="p-2 bg-accent/20 rounded-lg">
                   <Crown className="w-5 h-5 text-yellow-400" />
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-white mb-1">{t.trackAuto}</h3>
-                  <p className="text-sm text-gray-400 mb-3">{t.trackAutoDesc}</p>
+                  <p className="text-sm text-text-secondary mb-3">{t.trackAutoDesc}</p>
                   <Link
                     href={`/${locale}/dashboard`}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-accent-hover hover:brightness-110 text-white text-sm font-medium rounded-lg transition-colors"
                   >
                     <Zap className="w-4 h-4" />
                     {t.tryProFree}
@@ -672,12 +672,12 @@ export default function DrawdownSimulatorPage() {
             </div>
 
             {/* Pro Features */}
-            <div className="bg-gray-800 rounded-xl p-5 border border-gray-700 opacity-75">
+            <div className="bg-dark-700 rounded-xl p-5 border border-border opacity-75">
               <div className="flex items-center gap-2 mb-3">
-                <Lock className="w-4 h-4 text-gray-500" />
-                <span className="text-sm text-gray-400">{t.proFeatures}</span>
+                <Lock className="w-4 h-4 text-text-muted" />
+                <span className="text-sm text-text-secondary">{t.proFeatures}</span>
               </div>
-              <ul className="space-y-2 text-sm text-gray-500">
+              <ul className="space-y-2 text-sm text-text-muted">
                 <li className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4" />
                   {t.multiAccount}

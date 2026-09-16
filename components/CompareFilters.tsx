@@ -96,12 +96,12 @@ export function CompareFiltersPanel({ filters, onChange, resultCount }: CompareF
       {/* Mobile Filter Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="lg:hidden flex items-center gap-2 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+        className="lg:hidden flex items-center gap-2 px-4 py-2 bg-dark-700 border border-border rounded-lg text-white"
       >
         <Filter className="w-4 h-4" />
         Filters
         {activeFilterCount > 0 && (
-          <span className="px-2 py-0.5 bg-emerald-500 text-white text-xs rounded-full">
+          <span className="px-2 py-0.5 bg-accent-hover text-white text-xs rounded-full">
             {activeFilterCount}
           </span>
         )}
@@ -118,16 +118,16 @@ export function CompareFiltersPanel({ filters, onChange, resultCount }: CompareF
       {/* Filters Panel */}
       <div className={`
         ${isOpen ? 'fixed inset-y-0 left-0 z-50' : 'hidden lg:block'}
-        w-80 bg-gray-800 border-r border-gray-700 overflow-y-auto
+        w-80 bg-dark-700 border-r border-border overflow-y-auto
         lg:sticky lg:top-24 lg:h-[calc(100vh-8rem)] lg:rounded-xl lg:border
       `}>
         {/* Header */}
-        <div className="sticky top-0 bg-gray-800 p-4 border-b border-gray-700 flex items-center justify-between z-10">
+        <div className="sticky top-0 bg-dark-700 p-4 border-b border-border flex items-center justify-between z-10">
           <div className="flex items-center gap-2">
-            <Filter className="w-5 h-5 text-emerald-400" />
+            <Filter className="w-5 h-5 text-accent" />
             <span className="font-semibold text-white">Filters</span>
             {activeFilterCount > 0 && (
-              <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-xs rounded-full">
+              <span className="px-2 py-0.5 bg-accent/20 text-accent text-xs rounded-full">
                 {activeFilterCount} active
               </span>
             )}
@@ -136,7 +136,7 @@ export function CompareFiltersPanel({ filters, onChange, resultCount }: CompareF
             {activeFilterCount > 0 && (
               <button
                 onClick={resetFilters}
-                className="p-2 text-gray-400 hover:text-white"
+                className="p-2 text-text-secondary hover:text-white"
                 title="Reset filters"
               >
                 <RotateCcw className="w-4 h-4" />
@@ -144,7 +144,7 @@ export function CompareFiltersPanel({ filters, onChange, resultCount }: CompareF
             )}
             <button
               onClick={() => setIsOpen(false)}
-              className="lg:hidden p-2 text-gray-400 hover:text-white"
+              className="lg:hidden p-2 text-text-secondary hover:text-white"
             >
               <X className="w-5 h-5" />
             </button>
@@ -166,8 +166,8 @@ export function CompareFiltersPanel({ filters, onChange, resultCount }: CompareF
                   onClick={() => toggleArrayFilter('markets', market)}
                   className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
                     filters.markets.includes(market)
-                      ? 'bg-emerald-500 text-white'
-                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      ? 'bg-accent-hover text-white'
+                      : 'bg-dark-600 text-text-secondary hover:bg-dark-500'
                   }`}
                 >
                   {market}
@@ -186,23 +186,23 @@ export function CompareFiltersPanel({ filters, onChange, resultCount }: CompareF
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <div className="flex-1">
-                  <label className="text-xs text-gray-500 mb-1 block">Min</label>
+                  <label className="text-xs text-text-muted mb-1 block">Min</label>
                   <input
                     type="number"
                     value={filters.priceRange[0]}
                     onChange={(e) => updateFilter('priceRange', [Number(e.target.value), filters.priceRange[1]])}
-                    className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm"
+                    className="w-full px-3 py-2 bg-bg-elevated border border-border rounded-lg text-white text-sm"
                     placeholder="0"
                   />
                 </div>
-                <span className="text-gray-500 mt-5">-</span>
+                <span className="text-text-muted mt-5">-</span>
                 <div className="flex-1">
-                  <label className="text-xs text-gray-500 mb-1 block">Max</label>
+                  <label className="text-xs text-text-muted mb-1 block">Max</label>
                   <input
                     type="number"
                     value={filters.priceRange[1]}
                     onChange={(e) => updateFilter('priceRange', [filters.priceRange[0], Number(e.target.value)])}
-                    className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm"
+                    className="w-full px-3 py-2 bg-bg-elevated border border-border rounded-lg text-white text-sm"
                     placeholder="2000"
                   />
                 </div>
@@ -233,8 +233,8 @@ export function CompareFiltersPanel({ filters, onChange, resultCount }: CompareF
                   onClick={() => updateFilter('profitSplit', filters.profitSplit === split ? null : split)}
                   className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
                     filters.profitSplit === split
-                      ? 'bg-emerald-500 text-white'
-                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      ? 'bg-accent-hover text-white'
+                      : 'bg-dark-600 text-text-secondary hover:bg-dark-500'
                   }`}
                 >
                   {split}%+
@@ -254,7 +254,7 @@ export function CompareFiltersPanel({ filters, onChange, resultCount }: CompareF
               <select
                 value={filters.drawdownType || ''}
                 onChange={(e) => updateFilter('drawdownType', e.target.value || null)}
-                className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm"
+                className="w-full px-3 py-2 bg-bg-elevated border border-border rounded-lg text-white text-sm"
               >
                 <option value="">Any type</option>
                 {DRAWDOWN_TYPE_OPTIONS.map(type => (
@@ -278,8 +278,8 @@ export function CompareFiltersPanel({ filters, onChange, resultCount }: CompareF
                   onClick={() => toggleArrayFilter('platforms', platform)}
                   className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
                     filters.platforms.includes(platform)
-                      ? 'bg-emerald-500 text-white'
-                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      ? 'bg-accent-hover text-white'
+                      : 'bg-dark-600 text-text-secondary hover:bg-dark-500'
                   }`}
                 >
                   {platform}
@@ -329,8 +329,8 @@ export function CompareFiltersPanel({ filters, onChange, resultCount }: CompareF
                 onClick={() => updateFilter('minTradingDays', null)}
                 className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
                   filters.minTradingDays === null
-                    ? 'bg-emerald-500 text-white'
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    ? 'bg-accent-hover text-white'
+                    : 'bg-dark-600 text-text-secondary hover:bg-dark-500'
                 }`}
               >
                 Any
@@ -341,8 +341,8 @@ export function CompareFiltersPanel({ filters, onChange, resultCount }: CompareF
                   onClick={() => updateFilter('minTradingDays', days)}
                   className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
                     filters.minTradingDays === days
-                      ? 'bg-emerald-500 text-white'
-                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      ? 'bg-accent-hover text-white'
+                      : 'bg-dark-600 text-text-secondary hover:bg-dark-500'
                   }`}
                 >
                   {days === 0 ? 'None' : `≤${days}`}
@@ -365,8 +365,8 @@ export function CompareFiltersPanel({ filters, onChange, resultCount }: CompareF
                   onClick={() => updateFilter('rating', filters.rating === rating ? null : rating)}
                   className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
                     filters.rating === rating
-                      ? 'bg-emerald-500 text-white'
-                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      ? 'bg-accent-hover text-white'
+                      : 'bg-dark-600 text-text-secondary hover:bg-dark-500'
                   }`}
                 >
                   {rating}+ ★
@@ -377,10 +377,10 @@ export function CompareFiltersPanel({ filters, onChange, resultCount }: CompareF
         </div>
 
         {/* Results count (mobile) */}
-        <div className="lg:hidden sticky bottom-0 p-4 bg-gray-800 border-t border-gray-700">
+        <div className="lg:hidden sticky bottom-0 p-4 bg-dark-700 border-t border-border">
           <button
             onClick={() => setIsOpen(false)}
-            className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-lg"
+            className="w-full py-3 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-lg"
           >
             Show {resultCount} Results
           </button>
@@ -401,23 +401,23 @@ interface FilterSectionProps {
 
 function FilterSection({ title, icon: Icon, isExpanded, onToggle, children }: FilterSectionProps) {
   return (
-    <div className="border border-gray-700 rounded-lg overflow-hidden">
+    <div className="border border-border rounded-lg overflow-hidden">
       <button
         onClick={onToggle}
-        className="w-full px-4 py-3 flex items-center justify-between bg-gray-800/50 hover:bg-gray-700/50"
+        className="w-full px-4 py-3 flex items-center justify-between bg-dark-700/50 hover:bg-dark-600/50"
       >
         <div className="flex items-center gap-2">
-          <Icon className="w-4 h-4 text-gray-400" />
+          <Icon className="w-4 h-4 text-text-secondary" />
           <span className="text-white text-sm font-medium">{title}</span>
         </div>
         {isExpanded ? (
-          <ChevronUp className="w-4 h-4 text-gray-400" />
+          <ChevronUp className="w-4 h-4 text-text-secondary" />
         ) : (
-          <ChevronDown className="w-4 h-4 text-gray-400" />
+          <ChevronDown className="w-4 h-4 text-text-secondary" />
         )}
       </button>
       {isExpanded && (
-        <div className="p-4 bg-gray-900/30">
+        <div className="p-4 bg-bg-elevated/30">
           {children}
         </div>
       )}
@@ -443,18 +443,18 @@ function TriStateToggle({ label, icon: Icon, value, onChange }: TriStateTogglePr
   return (
     <button
       onClick={cycle}
-      className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-gray-700/50"
+      className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-dark-600/50"
     >
       <div className="flex items-center gap-2">
-        <Icon className="w-4 h-4 text-gray-400" />
-        <span className="text-gray-300 text-sm">{label}</span>
+        <Icon className="w-4 h-4 text-text-secondary" />
+        <span className="text-text-secondary text-sm">{label}</span>
       </div>
       <span className={`px-2 py-0.5 rounded text-xs font-medium ${
         value === true
-          ? 'bg-emerald-500/20 text-emerald-400'
+          ? 'bg-accent/20 text-accent'
           : value === false
             ? 'bg-red-500/20 text-red-400'
-            : 'bg-gray-700 text-gray-400'
+            : 'bg-dark-600 text-text-secondary'
       }`}>
         {value === true ? 'Yes' : value === false ? 'No' : 'Any'}
       </span>

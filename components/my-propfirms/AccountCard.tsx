@@ -80,7 +80,7 @@ function formatAccountSize(size: number): string {
 
 function getStatusConfig(status: 'safe' | 'warning' | 'danger') {
   return {
-    safe: { bg: 'bg-emerald-500', text: 'text-emerald-500', label: 'SAFE' },
+    safe: { bg: 'bg-accent-hover', text: 'text-accent', label: 'SAFE' },
     warning: { bg: 'bg-yellow-500', text: 'text-yellow-500', label: 'RISK' },
     danger: { bg: 'bg-red-500', text: 'text-red-500', label: 'DANGER' },
   }[status];
@@ -128,13 +128,13 @@ export function AccountCard({ account }: AccountCardProps) {
 
   return (
     <>
-      <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
+      <div className="bg-bg-elevated rounded-xl border border-border overflow-hidden">
         {/* HEADER */}
-        <div className="p-4 border-b border-gray-800">
+        <div className="p-4 border-b border-border">
           <div className="flex items-start justify-between">
             <div>
               <h3 className="font-semibold text-white text-lg">{account.prop_firm}</h3>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-text-muted">
                 {formatAccountSize(account.account_size)} · {account.stage}
               </p>
             </div>
@@ -148,7 +148,7 @@ export function AccountCard({ account }: AccountCardProps) {
         <div className="p-4 grid grid-cols-3 gap-4">
           {/* Safe loss remaining today */}
           <div>
-            <p className="text-xs text-gray-500 mb-1">Safe to lose today</p>
+            <p className="text-xs text-text-muted mb-1">Safe to lose today</p>
             <p className={`text-xl font-bold ${
               account.health.daily.daily_buffer_usd < 300 ? 'text-red-400' :
               account.health.daily.daily_buffer_usd < 800 ? 'text-yellow-400' :
@@ -160,7 +160,7 @@ export function AccountCard({ account }: AccountCardProps) {
 
           {/* Total drawdown remaining */}
           <div>
-            <p className="text-xs text-gray-500 mb-1">Total DD left</p>
+            <p className="text-xs text-text-muted mb-1">Total DD left</p>
             <p className={`text-xl font-bold ${
               account.health.max.max_buffer_usd < 1000 ? 'text-red-400' :
               account.health.max.max_buffer_usd < 2500 ? 'text-yellow-400' :
@@ -172,10 +172,10 @@ export function AccountCard({ account }: AccountCardProps) {
 
           {/* Min trading days progress */}
           <div>
-            <p className="text-xs text-gray-500 mb-1">Trading days</p>
+            <p className="text-xs text-text-muted mb-1">Trading days</p>
             <p className={`text-xl font-bold ${
               account.current_trading_days >= account.min_trading_days 
-                ? 'text-emerald-400' 
+                ? 'text-accent' 
                 : 'text-white'
             }`}>
               {account.min_trading_days > 0 
@@ -202,7 +202,7 @@ export function AccountCard({ account }: AccountCardProps) {
           )}
           <span className={`inline-flex items-center gap-1 px-2 py-1 text-xs rounded-lg ${
             account.allows_news 
-              ? 'bg-emerald-500/20 text-emerald-400' 
+              ? 'bg-accent/20 text-accent' 
               : 'bg-red-500/20 text-red-400'
           }`}>
             <Newspaper className="w-3 h-3" />
@@ -210,7 +210,7 @@ export function AccountCard({ account }: AccountCardProps) {
           </span>
           <span className={`inline-flex items-center gap-1 px-2 py-1 text-xs rounded-lg ${
             account.allows_weekend 
-              ? 'bg-emerald-500/20 text-emerald-400' 
+              ? 'bg-accent/20 text-accent' 
               : 'bg-red-500/20 text-red-400'
           }`}>
             <Moon className="w-3 h-3" />
@@ -249,19 +249,19 @@ export function AccountCard({ account }: AccountCardProps) {
         <div className="p-4 pt-0 grid grid-cols-3 gap-2">
           <button
             onClick={() => setShowSimulator(true)}
-            className="py-2 px-3 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors"
+            className="py-2 px-3 bg-accent-hover hover:brightness-110 text-white text-sm font-medium rounded-lg transition-colors"
           >
             Can I take this trade?
           </button>
           <button
             onClick={() => setShowPnlModal(true)}
-            className="py-2 px-3 bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm font-medium rounded-lg transition-colors"
+            className="py-2 px-3 bg-dark-700 hover:bg-dark-600 text-text-secondary text-sm font-medium rounded-lg transition-colors"
           >
             Update today PnL
           </button>
           <button
             onClick={() => setShowRules(true)}
-            className="py-2 px-3 bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm font-medium rounded-lg transition-colors"
+            className="py-2 px-3 bg-dark-700 hover:bg-dark-600 text-text-secondary text-sm font-medium rounded-lg transition-colors"
           >
             Rules & pitfalls
           </button>

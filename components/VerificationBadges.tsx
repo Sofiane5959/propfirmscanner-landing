@@ -22,34 +22,34 @@ export function LastVerifiedBadge({
   
   if (compact) {
     return (
-      <div className={`inline-flex items-center gap-1.5 text-xs text-gray-400 ${className}`}>
-        <CheckCircle className="w-3 h-3 text-emerald-400" />
+      <div className={`inline-flex items-center gap-1.5 text-xs text-text-secondary ${className}`}>
+        <CheckCircle className="w-3 h-3 text-accent" />
         <span>Verified {formattedDate}</span>
       </div>
     )
   }
   
   return (
-    <div className={`flex items-center gap-2 px-3 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg ${className}`}>
-      <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+    <div className={`flex items-center gap-2 px-3 py-2 bg-accent/10 border border-accent/20 rounded-lg ${className}`}>
+      <CheckCircle className="w-4 h-4 text-accent flex-shrink-0" />
       <div className="text-sm">
-        <span className="text-gray-300">Last verified: </span>
+        <span className="text-text-secondary">Last verified: </span>
         <span className="text-white font-medium">{formattedDate}</span>
         {source && (
           <>
-            <span className="text-gray-500 mx-1">•</span>
+            <span className="text-text-muted mx-1">•</span>
             {sourceUrl ? (
               <a 
                 href={sourceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-emerald-400 hover:underline inline-flex items-center gap-1"
+                className="text-accent hover:underline inline-flex items-center gap-1"
               >
                 {source}
                 <ExternalLink className="w-3 h-3" />
               </a>
             ) : (
-              <span className="text-gray-400">{source}</span>
+              <span className="text-text-secondary">{source}</span>
             )}
           </>
         )}
@@ -80,14 +80,14 @@ export function TrustpilotBadge({
   const url = trustpilotUrl || defaultUrl
   
   return (
-    <div className={`bg-gray-800/50 border border-gray-700 rounded-lg p-3 ${className}`}>
+    <div className={`bg-dark-700/50 border border-border rounded-lg p-3 ${className}`}>
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <div className="flex">
             {[1, 2, 3, 4, 5].map((star) => (
               <svg
                 key={star}
-                className={`w-4 h-4 ${star <= Math.round(rating) ? 'text-emerald-400' : 'text-gray-600'}`}
+                className={`w-4 h-4 ${star <= Math.round(rating) ? 'text-accent' : 'text-text-muted'}`}
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -101,17 +101,17 @@ export function TrustpilotBadge({
           href={url}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-emerald-400 hover:underline text-sm flex items-center gap-1"
+          className="text-accent hover:underline text-sm flex items-center gap-1"
         >
           Trustpilot
           <ExternalLink className="w-3 h-3" />
         </a>
       </div>
       <div className="flex items-center justify-between text-sm">
-        <span className="text-gray-400">
+        <span className="text-text-secondary">
           {reviews > 0 ? `${reviews.toLocaleString()} reviews` : 'Not enough data'}
         </span>
-        <span className="text-gray-500 text-xs">
+        <span className="text-text-muted text-xs">
           Snapshot: {formattedDate}
         </span>
       </div>
@@ -128,9 +128,9 @@ export function FirmStatusBadge({ status, className = '' }: FirmStatusBadgeProps
   const statusConfig = {
     'active': {
       label: 'Active',
-      bgColor: 'bg-emerald-500/10',
-      textColor: 'text-emerald-400',
-      borderColor: 'border-emerald-500/20'
+      bgColor: 'bg-accent/10',
+      textColor: 'text-accent',
+      borderColor: 'border-accent/20'
     },
     'under-review': {
       label: 'Under Review',
@@ -179,7 +179,7 @@ interface DataSourceInfoProps {
 
 export function DataSourceInfo({ sources, className = '' }: DataSourceInfoProps) {
   return (
-    <div className={`text-xs text-gray-500 ${className}`}>
+    <div className={`text-xs text-text-muted ${className}`}>
       <div className="flex items-center gap-1 mb-1">
         <Info className="w-3 h-3" />
         <span>Data sources:</span>
@@ -192,15 +192,15 @@ export function DataSourceInfo({ sources, className = '' }: DataSourceInfoProps)
                 href={source.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-emerald-400 hover:underline"
+                className="text-text-secondary hover:text-accent hover:underline"
               >
                 {source.name}
               </a>
             ) : (
-              <span className="text-gray-400">{source.name}</span>
+              <span className="text-text-secondary">{source.name}</span>
             )}
             {source.lastChecked && (
-              <span className="text-gray-600 ml-1">
+              <span className="text-text-muted ml-1">
                 ({formatVerifiedDate(source.lastChecked)})
               </span>
             )}

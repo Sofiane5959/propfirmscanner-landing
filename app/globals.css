@@ -19,8 +19,8 @@
   }
 
   body {
-    background-color: #0A0A0B; /* bg-base */
-    color: #FAFAFA;            /* text-primary */
+    background-color: #1E293B; /* bg-base */
+    color: #F1F5F9;            /* text-primary */
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11'; /* Inter humanist alternates */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -38,8 +38,8 @@
 
   /* Selection */
   ::selection {
-    background-color: rgba(16, 185, 129, 0.25);
-    color: #FAFAFA;
+    background-color: rgba(52, 211, 153, 0.25); /* accent */
+    color: #F1F5F9;                              /* text-primary */
   }
 
   /* Scrollbar — subtle */
@@ -51,11 +51,11 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: #27272A;
+    background: #334155; /* border */
     border-radius: 4px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #3F3F46;
+    background: #475569; /* border-hover */
   }
 }
 

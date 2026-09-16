@@ -10,8 +10,8 @@ import { cn } from '@/lib/utils'
  *   spacious  = 128px py — hero, key sections
  *
  * `bg` controls background:
- *   base     = #0A0A0B (page bg, default)
- *   elevated = #131316 (slight contrast section, use sparingly)
+ *   base     = #1E293B (page bg, default) — palette 2c
+ *   elevated = #273449 (slight contrast section, use sparingly)
  *
  * Pair with <Container> inside for the actual content layout.
  */

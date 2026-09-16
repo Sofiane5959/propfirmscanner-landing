@@ -24,7 +24,7 @@ interface PromoDeal {
 const PALETTE = [
   'from-blue-500 to-blue-600',
   'from-amber-500 to-orange-600',
-  'from-emerald-500 to-green-600',
+  'from-accent to-green-600',
   'from-purple-500 to-violet-600',
   'from-cyan-500 to-blue-600',
   'from-pink-500 to-rose-600',
@@ -126,7 +126,7 @@ export default function PromoPopup() {
 
   return (
     <div className="print:hidden fixed bottom-4 right-4 z-[9999]">
-      <div className="relative w-80 bg-gray-900 border border-gray-700 rounded-2xl overflow-hidden shadow-2xl">
+      <div className="relative w-80 bg-bg-elevated border border-border rounded-2xl overflow-hidden shadow-2xl">
         <div className={`bg-gradient-to-r ${color} p-4`}>
           <button
             onClick={handleClose}
@@ -149,16 +149,16 @@ export default function PromoPopup() {
 
         <div className="p-4">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-12 h-12 rounded-lg bg-white border border-gray-700 flex items-center justify-center overflow-hidden p-1 flex-shrink-0">
+            <div className="w-12 h-12 rounded-lg bg-white border border-border flex items-center justify-center overflow-hidden p-1 flex-shrink-0">
               {promo.logo_url ? (
                 <Image src={promo.logo_url} alt={promo.name} width={48} height={48} className="object-contain" />
               ) : (
-                <span className="text-lg font-bold text-emerald-600">{promo.name.charAt(0)}</span>
+                <span className="text-lg font-bold text-accent">{promo.name.charAt(0)}</span>
               )}
             </div>
             <div className="min-w-0">
               <h4 className="text-white font-semibold truncate">{promo.name}</h4>
-              <p className="text-gray-400 text-sm">
+              <p className="text-text-secondary text-sm">
                 {hasCode ? 'Use code at checkout' : 'Discount applied via our link'}
               </p>
             </div>
@@ -166,20 +166,20 @@ export default function PromoPopup() {
 
           {hasCode && (
             <div className="flex items-center gap-2 mb-4">
-              <div className="flex-1 px-4 py-2.5 bg-gray-800 border border-dashed border-gray-600 rounded-lg overflow-hidden">
-                <code className="text-emerald-400 font-mono font-semibold tracking-wider text-sm truncate block">
+              <div className="flex-1 px-4 py-2.5 bg-dark-700 border border-dashed border-border-hover rounded-lg overflow-hidden">
+                <code className="text-accent font-mono font-semibold tracking-wider text-sm truncate block">
                   {promo.discount_code}
                 </code>
               </div>
               <button
                 onClick={handleCopy}
-                className="p-2.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg transition-colors"
+                className="p-2.5 bg-dark-700 hover:bg-dark-600 border border-border rounded-lg transition-colors"
                 aria-label={copied ? 'Copied' : 'Copy code'}
               >
                 {copied ? (
-                  <Check className="w-5 h-5 text-emerald-400" />
+                  <Check className="w-5 h-5 text-accent" />
                 ) : (
-                  <Copy className="w-5 h-5 text-gray-400" />
+                  <Copy className="w-5 h-5 text-text-secondary" />
                 )}
               </button>
             </div>

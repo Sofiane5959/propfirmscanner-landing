@@ -81,22 +81,22 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-bg-base flex items-center justify-center p-4">
       <div className="w-full max-w-md">
 
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 mb-6">
-            <div className="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center">
-              <Shield className="w-5 h-5 text-emerald-400" />
+            <div className="w-10 h-10 bg-accent/20 rounded-xl flex items-center justify-center">
+              <Shield className="w-5 h-5 text-accent" />
             </div>
             <span className="text-xl font-bold text-white">PropFirmScanner</span>
           </Link>
           <h1 className="text-2xl font-bold text-white mb-2">Sign In</h1>
-          <p className="text-gray-400">Access your personal space</p>
+          <p className="text-text-secondary">Access your personal space</p>
         </div>
 
-        <div className="bg-gray-900 rounded-2xl border border-gray-800 p-8">
+        <div className="bg-bg-elevated rounded-2xl border border-border p-8">
 
           {/* Error */}
           {error && (
@@ -109,21 +109,21 @@ export default function LoginPage() {
           {/* Email sent confirmation */}
           {emailSent ? (
             <div className="text-center py-4">
-              <div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle2 className="w-8 h-8 text-emerald-400" />
+              <div className="w-16 h-16 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle2 className="w-8 h-8 text-accent" />
               </div>
               <h3 className="text-white font-semibold text-lg mb-2">Check your inbox!</h3>
-              <p className="text-gray-400 text-sm mb-1">
+              <p className="text-text-secondary text-sm mb-1">
                 We sent a magic link to
               </p>
-              <p className="text-emerald-400 font-medium mb-4">{email}</p>
-              <p className="text-gray-500 text-xs">
+              <p className="text-accent font-medium mb-4">{email}</p>
+              <p className="text-text-muted text-xs">
                 Click the link in the email to sign in instantly.<br/>
                 The link expires in 24 hours.
               </p>
               <button
                 onClick={() => setEmailSent(false)}
-                className="mt-6 text-sm text-gray-400 hover:text-white underline"
+                className="mt-6 text-sm text-text-secondary hover:text-white underline"
               >
                 Use a different email
               </button>
@@ -146,37 +146,37 @@ export default function LoginPage() {
               {/* Divider */}
               <div className="relative mb-6">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-800"></div>
+                  <div className="w-full border-t border-border"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-gray-900 text-gray-500">or sign in with email</span>
+                  <span className="px-4 bg-bg-elevated text-text-muted">or sign in with email</span>
                 </div>
               </div>
 
               {/* Email magic link */}
               <form onSubmit={handleEmailLogin} className="space-y-4">
                 <div>
-                  <label className="block text-sm text-gray-400 mb-2">Email address</label>
+                  <label className="block text-sm text-text-secondary mb-2">Email address</label>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
                     required
-                    className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 transition-colors"
+                    className="w-full bg-dark-700 border border-border rounded-xl px-4 py-3 text-white placeholder-text-muted focus:outline-none focus:border-accent transition-colors"
                   />
                 </div>
                 <button
                   type="submit"
                   disabled={isEmailLoading || !email}
-                  className="w-full flex items-center justify-center gap-2 py-3.5 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-white font-semibold rounded-xl transition-colors"
+                  className="w-full flex items-center justify-center gap-2 py-3.5 bg-accent-hover hover:brightness-110 disabled:opacity-50 text-white font-semibold rounded-xl transition-colors"
                 >
                   {isEmailLoading
                     ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending...</>
                     : <><Mail className="w-4 h-4" /> Send magic link</>
                   }
                 </button>
-                <p className="text-center text-xs text-gray-500">
+                <p className="text-center text-xs text-text-muted">
                   No password needed — we'll email you a login link
                 </p>
               </form>
@@ -184,11 +184,11 @@ export default function LoginPage() {
           )}
 
           {/* Terms */}
-          <p className="mt-6 text-center text-xs text-gray-500">
+          <p className="mt-6 text-center text-xs text-text-muted">
             By signing in, you agree to our{' '}
-            <Link href="/terms" className="text-emerald-400 hover:underline">Terms</Link>
+            <Link href="/terms" className="text-accent hover:underline">Terms</Link>
             {' '}and{' '}
-            <Link href="/privacy" className="text-emerald-400 hover:underline">Privacy Policy</Link>
+            <Link href="/privacy" className="text-accent hover:underline">Privacy Policy</Link>
           </p>
         </div>
 
@@ -200,9 +200,9 @@ export default function LoginPage() {
             { title: 'Alerts', desc: 'Never miss a rule' },
             { title: 'Favorites', desc: 'Save your firms' },
           ].map((b, i) => (
-            <div key={i} className="p-4 bg-gray-900/50 rounded-xl border border-gray-800">
+            <div key={i} className="p-4 bg-bg-elevated/50 rounded-xl border border-border">
               <p className="text-sm font-medium text-white">{b.title}</p>
-              <p className="text-xs text-gray-500 mt-1">{b.desc}</p>
+              <p className="text-xs text-text-muted mt-1">{b.desc}</p>
             </div>
           ))}
         </div>

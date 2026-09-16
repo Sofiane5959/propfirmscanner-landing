@@ -9,7 +9,7 @@ export function Footer() {
           {/* Brand */}
           <div className="col-span-1 md:col-span-2">
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-brand-500 to-emerald-500 flex items-center justify-center">
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-brand-500 to-accent flex items-center justify-center">
                 <Target className="w-5 h-5 text-white" />
               </div>
               <span className="font-bold text-lg text-white">

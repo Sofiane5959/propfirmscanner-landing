@@ -71,7 +71,7 @@ const STATUS_CONFIG = {
   'active': {
     icon: CheckCircle,
     label: 'Active',
-    color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
+    color: 'text-accent bg-accent/10 border-accent/20',
     description: 'Operating normally',
   },
   'under-review': {
@@ -105,7 +105,7 @@ export default function StatusPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 py-24 px-4">
+    <div className="min-h-screen bg-bg-elevated py-24 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
@@ -113,16 +113,16 @@ export default function StatusPage() {
             <Shield className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-4xl font-bold text-white mb-4">Prop Firm Status Tracker</h1>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+          <p className="text-xl text-text-secondary max-w-2xl mx-auto">
             Stay informed about prop firm closures, issues, and warnings
           </p>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-4 mb-8">
-          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 text-center">
-            <div className="text-3xl font-bold text-emerald-400">{activeCount}</div>
-            <div className="text-emerald-400/70 text-sm">Active</div>
+          <div className="bg-accent/10 border border-accent/20 rounded-xl p-4 text-center">
+            <div className="text-3xl font-bold text-accent">{activeCount}</div>
+            <div className="text-accent/70 text-sm">Active</div>
           </div>
           <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4 text-center">
             <div className="text-3xl font-bold text-yellow-400">{reviewCount}</div>
@@ -140,7 +140,7 @@ export default function StatusPage() {
             <AlertTriangle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
             <div>
               <div className="text-yellow-400 font-semibold">Active Alerts</div>
-              <p className="text-gray-300 text-sm">
+              <p className="text-text-secondary text-sm">
                 {reviewCount} firm(s) currently under review or with warnings. Check details below.
               </p>
             </div>
@@ -161,7 +161,7 @@ export default function StatusPage() {
                 return (
                   <div
                     key={firm.slug}
-                    className={`bg-gray-800/50 border rounded-xl p-4 ${config.color.split(' ')[2]}`}
+                    className={`bg-dark-700/50 border rounded-xl p-4 ${config.color.split(' ')[2]}`}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-start gap-3">
@@ -176,9 +176,9 @@ export default function StatusPage() {
                             </span>
                           </div>
                           {firm.note && (
-                            <p className="text-gray-400 text-sm mt-1">{firm.note}</p>
+                            <p className="text-text-secondary text-sm mt-1">{firm.note}</p>
                           )}
-                          <div className="text-gray-500 text-xs mt-2">
+                          <div className="text-text-muted text-xs mt-2">
                             Last updated: {new Date(firm.lastUpdated).toLocaleDateString()}
                           </div>
                         </div>
@@ -188,7 +188,7 @@ export default function StatusPage() {
                           href={firm.source}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-gray-400 hover:text-white"
+                          className="text-text-secondary hover:text-white"
                         >
                           <ExternalLink className="w-4 h-4" />
                         </a>
@@ -204,19 +204,19 @@ export default function StatusPage() {
         {/* Active Firms */}
         <div className="mb-8">
           <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-            <CheckCircle className="w-5 h-5 text-emerald-400" />
+            <CheckCircle className="w-5 h-5 text-accent" />
             Active & Verified ({activeCount})
           </h2>
-          <div className="bg-gray-800/50 border border-gray-700 rounded-xl overflow-hidden">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-gray-700">
+          <div className="bg-dark-700/50 border border-border rounded-xl overflow-hidden">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-dark-600">
               {groupedStatuses.active.map((firm) => (
                 <Link
                   key={firm.slug}
                   href={`/prop-firm/${firm.slug}`}
-                  className="bg-gray-800 p-4 hover:bg-gray-700/50 transition-colors"
+                  className="bg-dark-700 p-4 hover:bg-dark-600/50 transition-colors"
                 >
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-emerald-400" />
+                    <CheckCircle className="w-4 h-4 text-accent" />
                     <span className="text-white text-sm font-medium">{firm.name}</span>
                   </div>
                 </Link>
@@ -226,15 +226,15 @@ export default function StatusPage() {
         </div>
 
         {/* Subscribe */}
-        <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 text-center">
-          <Bell className="w-10 h-10 text-emerald-400 mx-auto mb-4" />
+        <div className="bg-dark-700/50 border border-border rounded-xl p-6 text-center">
+          <Bell className="w-10 h-10 text-accent mx-auto mb-4" />
           <h2 className="text-xl font-semibold text-white mb-2">Get Status Alerts</h2>
-          <p className="text-gray-400 mb-4">
+          <p className="text-text-secondary mb-4">
             Subscribe to receive notifications when a prop firm&apos;s status changes.
           </p>
           <Link
             href="/guide"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-xl transition-colors"
           >
             Subscribe to Updates
           </Link>
@@ -242,7 +242,7 @@ export default function StatusPage() {
 
         {/* Disclaimer */}
         <div className="mt-8 text-center">
-          <p className="text-gray-500 text-sm flex items-center justify-center gap-2">
+          <p className="text-text-muted text-sm flex items-center justify-center gap-2">
             <RefreshCw className="w-4 h-4" />
             Status information updated weekly. Last check: December 27, 2025
           </p>

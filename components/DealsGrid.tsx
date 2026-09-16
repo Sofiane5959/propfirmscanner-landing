@@ -261,7 +261,7 @@ function CopyCodeButton({ code, label }: { code: string; label: { copy: string; 
     <button
       onClick={handle}
       className={`p-2 rounded-lg transition-colors ${
-        copied ? 'bg-emerald-500/20 text-emerald-400' : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+        copied ? 'bg-accent/20 text-accent' : 'bg-dark-600 hover:bg-dark-500 text-text-secondary'
       }`}
       title={copied ? label.copied : label.copy}
       aria-label={copied ? label.copied : label.copy}
@@ -310,14 +310,14 @@ export function PromoCodesBanner() {
         </div>
         <div>
           <h2 className="text-lg font-bold text-white">{t.quickCopy}</h2>
-          <p className="text-gray-400 text-sm">{t.clickToCopy}</p>
+          <p className="text-text-secondary text-sm">{t.clickToCopy}</p>
         </div>
       </div>
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {firms.map(f => (
           <div
             key={f.id}
-            className="flex items-center justify-between gap-3 px-4 py-3 bg-gray-800/60 border border-gray-700 rounded-xl"
+            className="flex items-center justify-between gap-3 px-4 py-3 bg-dark-700/60 border border-border rounded-xl"
           >
             <div className="min-w-0">
               <p className="text-white font-medium text-sm truncate">{f.name}</p>
@@ -326,7 +326,7 @@ export function PromoCodesBanner() {
               </p>
             </div>
             <div className="flex items-center gap-1.5 flex-shrink-0">
-              <code className="px-2 py-1 bg-gray-900 border border-dashed border-gray-600 rounded text-emerald-400 text-xs font-mono">
+              <code className="px-2 py-1 bg-bg-elevated border border-dashed border-border-hover rounded text-accent text-xs font-mono">
                 {f.discount_code}
               </code>
               <CopyCodeButton code={f.discount_code as string} label={{ copy: t.copy, copied: t.copied }} />
@@ -352,8 +352,8 @@ function DealCard({ firm, t }: { firm: PropFirm; t: Record<string, string> }) {
 
   return (
     <div
-      className={`bg-gray-800/50 border rounded-2xl overflow-hidden flex flex-col ${
-        hasAff && hasDiscount ? 'border-emerald-500/40' : 'border-gray-700/50'
+      className={`bg-dark-700/50 border rounded-2xl overflow-hidden flex flex-col ${
+        hasAff && hasDiscount ? 'border-accent/40' : 'border-border/50'
       }`}
     >
       {hasDiscount && (
@@ -369,7 +369,7 @@ function DealCard({ firm, t }: { firm: PropFirm; t: Record<string, string> }) {
           {firm.logo_url ? (
             <Image src={firm.logo_url} alt={firm.name} width={48} height={48} className="object-contain" />
           ) : (
-            <span className="text-lg font-bold text-emerald-600">{firm.name.charAt(0)}</span>
+            <span className="text-lg font-bold text-accent">{firm.name.charAt(0)}</span>
           )}
         </div>
         <div className="min-w-0 flex-1">
@@ -377,7 +377,7 @@ function DealCard({ firm, t }: { firm: PropFirm; t: Record<string, string> }) {
             {firm.name}
           </h3>
           {firm.trustpilot_rating && (
-            <div className="flex items-center gap-1 text-xs text-gray-400 mt-0.5">
+            <div className="flex items-center gap-1 text-xs text-text-secondary mt-0.5">
               <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
               <span className="text-white font-medium">{firm.trustpilot_rating.toFixed(1)}</span>
               {firm.trustpilot_reviews != null && (
@@ -396,12 +396,12 @@ function DealCard({ firm, t }: { firm: PropFirm; t: Record<string, string> }) {
 
       <div className="grid grid-cols-2 gap-3 px-5 mt-4">
         <div>
-          <p className="text-[10px] text-gray-500 uppercase tracking-wider">Price</p>
+          <p className="text-[10px] text-text-muted uppercase tracking-wider">Price</p>
           <p className="text-white font-bold">{firm.min_price ? `$${firm.min_price}` : '—'}</p>
         </div>
         <div>
-          <p className="text-[10px] text-gray-500 uppercase tracking-wider">Split</p>
-          <p className="text-emerald-400 font-bold">
+          <p className="text-[10px] text-text-muted uppercase tracking-wider">Split</p>
+          <p className="text-accent font-bold">
             {firm.max_profit_split ? `${firm.max_profit_split}%` : '—'}
           </p>
         </div>
@@ -411,15 +411,15 @@ function DealCard({ firm, t }: { firm: PropFirm; t: Record<string, string> }) {
         <div className="px-5 mt-4">
           {hasCode ? (
             <div className="flex items-center gap-2">
-              <code className="flex-1 px-3 py-2 bg-gray-900 border border-dashed border-gray-600 rounded-lg text-emerald-400 font-mono text-sm text-center truncate">
+              <code className="flex-1 px-3 py-2 bg-bg-elevated border border-dashed border-border-hover rounded-lg text-accent font-mono text-sm text-center truncate">
                 {firm.discount_code}
               </code>
               <CopyCodeButton code={firm.discount_code as string} label={{ copy: t.copy, copied: t.copied }} />
             </div>
           ) : (
-            <div className="flex items-center justify-center gap-2 px-3 py-2 bg-gray-900/60 border border-gray-700 rounded-lg">
-              <ExternalLink className="w-3.5 h-3.5 text-gray-400" />
-              <span className="text-gray-300 text-xs">{t.noCode}</span>
+            <div className="flex items-center justify-center gap-2 px-3 py-2 bg-bg-elevated/60 border border-border rounded-lg">
+              <ExternalLink className="w-3.5 h-3.5 text-text-secondary" />
+              <span className="text-text-secondary text-xs">{t.noCode}</span>
             </div>
           )}
         </div>
@@ -433,8 +433,8 @@ function DealCard({ firm, t }: { firm: PropFirm; t: Record<string, string> }) {
             rel="noopener noreferrer"
             className={`flex items-center justify-center gap-2 w-full py-3 rounded-xl font-medium transition-colors ${
               hasAff && hasDiscount
-                ? 'bg-emerald-500 hover:bg-emerald-600 text-white'
-                : 'bg-gray-700 hover:bg-gray-600 text-white'
+                ? 'bg-accent-hover hover:brightness-110 text-white'
+                : 'bg-dark-600 hover:bg-dark-500 text-white'
             }`}
           >
             {t.visit} <ExternalLink className="w-4 h-4" />
@@ -442,7 +442,7 @@ function DealCard({ firm, t }: { firm: PropFirm; t: Record<string, string> }) {
         ) : (
           <Link
             href={internalUrl}
-            className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-medium bg-gray-700 hover:bg-gray-600 text-white transition-colors"
+            className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-medium bg-dark-600 hover:bg-dark-500 text-white transition-colors"
           >
             {t.details}
           </Link>
@@ -497,15 +497,15 @@ export function DealsGrid() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-16">
-        <Sparkles className="w-5 h-5 text-emerald-400 animate-pulse mr-2" />
-        <span className="text-gray-400">{t.loading}</span>
+        <Sparkles className="w-5 h-5 text-accent animate-pulse mr-2" />
+        <span className="text-text-secondary">{t.loading}</span>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="text-center py-12 text-gray-400">
+      <div className="text-center py-12 text-text-secondary">
         Couldn’t load deals right now. Refresh the page or come back in a minute.
       </div>
     );
@@ -516,12 +516,12 @@ export function DealsGrid() {
       {dealFirms.length > 0 ? (
         <section className="mb-12">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
-              <Tag className="w-5 h-5 text-emerald-400" />
+            <div className="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center">
+              <Tag className="w-5 h-5 text-accent" />
             </div>
             <div>
               <h2 className="text-xl font-bold text-white">{t.activeDeals}</h2>
-              <p className="text-gray-400 text-sm">{t.verifiedDiscounts}</p>
+              <p className="text-text-secondary text-sm">{t.verifiedDiscounts}</p>
             </div>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -531,22 +531,22 @@ export function DealsGrid() {
           </div>
         </section>
       ) : (
-        <section className="mb-12 bg-gray-800/30 border border-gray-700/50 rounded-2xl p-8 text-center">
-          <Gift className="w-10 h-10 text-gray-600 mx-auto mb-3" />
+        <section className="mb-12 bg-dark-700/30 border border-border/50 rounded-2xl p-8 text-center">
+          <Gift className="w-10 h-10 text-text-muted mx-auto mb-3" />
           <h3 className="text-white font-semibold mb-2">{t.noDealsYet}</h3>
-          <p className="text-gray-400 text-sm">{t.noDealsBody}</p>
+          <p className="text-text-secondary text-sm">{t.noDealsBody}</p>
         </section>
       )}
 
       {remainingFirms.length > 0 && (
         <section className="mb-8">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-gray-700/50 flex items-center justify-center">
-              <ShieldCheck className="w-5 h-5 text-gray-400" />
+            <div className="w-10 h-10 rounded-xl bg-dark-600/50 flex items-center justify-center">
+              <ShieldCheck className="w-5 h-5 text-text-secondary" />
             </div>
             <div>
               <h2 className="text-xl font-bold text-white">{t.allFirms}</h2>
-              <p className="text-gray-400 text-sm">{t.allFirmsSubtitle}</p>
+              <p className="text-text-secondary text-sm">{t.allFirmsSubtitle}</p>
             </div>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -557,9 +557,9 @@ export function DealsGrid() {
         </section>
       )}
 
-      <p className="text-center text-gray-500 text-xs max-w-2xl mx-auto mt-12">
+      <p className="text-center text-text-muted text-xs max-w-2xl mx-auto mt-12">
         {t.affiliateNotice}{' '}
-        <Link href="/how-we-make-money" className="text-emerald-400 hover:underline">
+        <Link href="/how-we-make-money" className="text-accent hover:underline">
           {t.readMore}
         </Link>
         .

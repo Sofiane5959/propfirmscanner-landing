@@ -124,7 +124,7 @@ export default function NotificationSettings() {
     <button
       onClick={() => onChange(!enabled)}
       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-        enabled ? 'bg-emerald-500' : 'bg-gray-600'
+        enabled ? 'bg-accent-hover' : 'bg-dark-500'
       }`}
     >
       <span
@@ -137,35 +137,35 @@ export default function NotificationSettings() {
 
   if (loading) {
     return (
-      <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">
+      <div className="bg-bg-elevated rounded-xl p-6 border border-border">
         <div className="animate-pulse space-y-4">
-          <div className="h-6 bg-gray-800 rounded w-1/3"></div>
-          <div className="h-10 bg-gray-800 rounded"></div>
-          <div className="h-10 bg-gray-800 rounded"></div>
+          <div className="h-6 bg-dark-700 rounded w-1/3"></div>
+          <div className="h-10 bg-dark-700 rounded"></div>
+          <div className="h-10 bg-dark-700 rounded"></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">
+    <div className="bg-bg-elevated rounded-xl p-6 border border-border">
       <div className="flex items-center gap-3 mb-6">
-        <div className="p-2 bg-emerald-500/10 rounded-lg">
-          <Bell className="w-5 h-5 text-emerald-500" />
+        <div className="p-2 bg-accent/10 rounded-lg">
+          <Bell className="w-5 h-5 text-accent" />
         </div>
         <div>
           <h2 className="text-xl font-bold text-white">Notifications</h2>
-          <p className="text-gray-400 text-sm">Configurez vos alertes email</p>
+          <p className="text-text-secondary text-sm">Configurez vos alertes email</p>
         </div>
       </div>
 
       {/* Master Toggle */}
-      <div className="flex items-center justify-between p-4 bg-gray-800/50 rounded-lg mb-6">
+      <div className="flex items-center justify-between p-4 bg-dark-700/50 rounded-lg mb-6">
         <div className="flex items-center gap-3">
-          <Mail className="w-5 h-5 text-gray-400" />
+          <Mail className="w-5 h-5 text-text-secondary" />
           <div>
             <p className="text-white font-medium">Notifications par email</p>
-            <p className="text-gray-400 text-sm">Recevoir les alertes par email</p>
+            <p className="text-text-secondary text-sm">Recevoir les alertes par email</p>
           </div>
         </div>
         <Toggle
@@ -177,13 +177,13 @@ export default function NotificationSettings() {
       {preferences.email_enabled && (
         <div className="space-y-4">
           {/* Drawdown Warning */}
-          <div className="p-4 bg-gray-800/30 rounded-lg border border-gray-700">
+          <div className="p-4 bg-dark-700/30 rounded-lg border border-border">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-3">
                 <AlertTriangle className="w-5 h-5 text-yellow-500" />
                 <div>
                   <p className="text-white font-medium">Alerte Drawdown</p>
-                  <p className="text-gray-400 text-sm">Notification quand le drawdown approche</p>
+                  <p className="text-text-secondary text-sm">Notification quand le drawdown approche</p>
                 </div>
               </div>
               <Toggle
@@ -192,8 +192,8 @@ export default function NotificationSettings() {
               />
             </div>
             {preferences.drawdown_warning && (
-              <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-700">
-                <span className="text-gray-400 text-sm">Seuil:</span>
+              <div className="flex items-center gap-4 mt-3 pt-3 border-t border-border">
+                <span className="text-text-secondary text-sm">Seuil:</span>
                 <input
                   type="range"
                   min="50"
@@ -213,13 +213,13 @@ export default function NotificationSettings() {
           </div>
 
           {/* Drawdown Critical */}
-          <div className="p-4 bg-gray-800/30 rounded-lg border border-gray-700">
+          <div className="p-4 bg-dark-700/30 rounded-lg border border-border">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-3">
                 <AlertTriangle className="w-5 h-5 text-red-500" />
                 <div>
                   <p className="text-white font-medium">Alerte Critique</p>
-                  <p className="text-gray-400 text-sm">Notification urgente proche de la limite</p>
+                  <p className="text-text-secondary text-sm">Notification urgente proche de la limite</p>
                 </div>
               </div>
               <Toggle
@@ -228,8 +228,8 @@ export default function NotificationSettings() {
               />
             </div>
             {preferences.drawdown_critical && (
-              <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-700">
-                <span className="text-gray-400 text-sm">Seuil:</span>
+              <div className="flex items-center gap-4 mt-3 pt-3 border-t border-border">
+                <span className="text-text-secondary text-sm">Seuil:</span>
                 <input
                   type="range"
                   min="85"
@@ -249,13 +249,13 @@ export default function NotificationSettings() {
           </div>
 
           {/* Daily Loss Warning */}
-          <div className="p-4 bg-gray-800/30 rounded-lg border border-gray-700">
+          <div className="p-4 bg-dark-700/30 rounded-lg border border-border">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-3">
                 <TrendingDown className="w-5 h-5 text-orange-500" />
                 <div>
                   <p className="text-white font-medium">Perte Journalière</p>
-                  <p className="text-gray-400 text-sm">Alerte limite de perte du jour</p>
+                  <p className="text-text-secondary text-sm">Alerte limite de perte du jour</p>
                 </div>
               </div>
               <Toggle
@@ -264,8 +264,8 @@ export default function NotificationSettings() {
               />
             </div>
             {preferences.daily_loss_warning && (
-              <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-700">
-                <span className="text-gray-400 text-sm">Seuil:</span>
+              <div className="flex items-center gap-4 mt-3 pt-3 border-t border-border">
+                <span className="text-text-secondary text-sm">Seuil:</span>
                 <input
                   type="range"
                   min="50"
@@ -285,13 +285,13 @@ export default function NotificationSettings() {
           </div>
 
           {/* Profit Target */}
-          <div className="p-4 bg-gray-800/30 rounded-lg border border-gray-700">
+          <div className="p-4 bg-dark-700/30 rounded-lg border border-border">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <Target className="w-5 h-5 text-emerald-500" />
+                <Target className="w-5 h-5 text-accent" />
                 <div>
                   <p className="text-white font-medium">Objectif Atteint</p>
-                  <p className="text-gray-400 text-sm">Notification quand l'objectif de profit est atteint</p>
+                  <p className="text-text-secondary text-sm">Notification quand l'objectif de profit est atteint</p>
                 </div>
               </div>
               <Toggle
@@ -302,13 +302,13 @@ export default function NotificationSettings() {
           </div>
 
           {/* Challenge Expiring */}
-          <div className="p-4 bg-gray-800/30 rounded-lg border border-gray-700">
+          <div className="p-4 bg-dark-700/30 rounded-lg border border-border">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-3">
                 <Clock className="w-5 h-5 text-purple-500" />
                 <div>
                   <p className="text-white font-medium">Expiration Challenge</p>
-                  <p className="text-gray-400 text-sm">Rappel avant fin du challenge</p>
+                  <p className="text-text-secondary text-sm">Rappel avant fin du challenge</p>
                 </div>
               </div>
               <Toggle
@@ -317,15 +317,15 @@ export default function NotificationSettings() {
               />
             </div>
             {preferences.challenge_expiring && (
-              <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-700">
-                <span className="text-gray-400 text-sm">Rappel:</span>
+              <div className="flex items-center gap-4 mt-3 pt-3 border-t border-border">
+                <span className="text-text-secondary text-sm">Rappel:</span>
                 <select
                   value={preferences.challenge_expiring_days}
                   onChange={(e) => setPreferences({ 
                     ...preferences, 
                     challenge_expiring_days: parseInt(e.target.value) 
                   })}
-                  className="bg-gray-700 text-white rounded-lg px-3 py-2 border border-gray-600"
+                  className="bg-dark-600 text-white rounded-lg px-3 py-2 border border-border-hover"
                 >
                   <option value={3}>3 jours avant</option>
                   <option value={5}>5 jours avant</option>
@@ -342,7 +342,7 @@ export default function NotificationSettings() {
       {message && (
         <div className={`mt-4 p-3 rounded-lg ${
           message.type === 'success' 
-            ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' 
+            ? 'bg-accent/10 text-accent border border-accent/20' 
             : 'bg-red-500/10 text-red-500 border border-red-500/20'
         }`}>
           {message.text}
@@ -354,13 +354,13 @@ export default function NotificationSettings() {
         <button
           onClick={savePreferences}
           disabled={saving}
-          className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors disabled:opacity-50"
+          className="flex-1 bg-accent-hover hover:brightness-110 text-white font-semibold py-3 px-6 rounded-lg transition-colors disabled:opacity-50"
         >
           {saving ? 'Sauvegarde...' : 'Sauvegarder'}
         </button>
         <button
           onClick={sendTestEmail}
-          className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+          className="px-6 py-3 bg-dark-600 hover:bg-dark-500 text-white rounded-lg transition-colors"
         >
           Tester
         </button>

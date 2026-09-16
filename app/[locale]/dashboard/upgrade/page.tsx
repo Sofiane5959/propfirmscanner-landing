@@ -323,12 +323,12 @@ function SuccessToast({ message, onClose }: { message: string; onClose: () => vo
 
   return (
     <div className="fixed top-6 right-6 z-50 max-w-sm animate-in slide-in-from-top-2 fade-in duration-300">
-      <div className="bg-emerald-900 border border-emerald-500/50 rounded-2xl p-4 shadow-2xl flex items-start gap-3">
-        <div className="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
+      <div className="bg-emerald-900 border border-accent/50 rounded-2xl p-4 shadow-2xl flex items-start gap-3">
+        <div className="w-8 h-8 bg-accent-hover rounded-full flex items-center justify-center flex-shrink-0">
           <Sparkles className="w-4 h-4 text-white" />
         </div>
         <p className="text-emerald-100 text-sm flex-1">{message}</p>
-        <button onClick={onClose} className="text-emerald-400 hover:text-white transition-colors">
+        <button onClick={onClose} className="text-accent hover:text-white transition-colors">
           <X className="w-4 h-4" />
         </button>
       </div>
@@ -426,7 +426,7 @@ function UpgradePageInner() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-900 pt-20 pb-12">
+    <div className="min-h-screen bg-bg-elevated pt-20 pb-12">
       {/* Success Toast */}
       {showSuccessToast && (
         <SuccessToast
@@ -439,7 +439,7 @@ function UpgradePageInner() {
         {/* Back link */}
         <Link
           href={`/${locale}/dashboard`}
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition-colors"
+          className="inline-flex items-center gap-2 text-text-secondary hover:text-white mb-8 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           {t.backToDashboard}
@@ -453,7 +453,7 @@ function UpgradePageInner() {
           <h1 className="text-3xl font-bold text-white mb-2">
             {t.upgradeToPro}
           </h1>
-          <p className="text-gray-400 max-w-md mx-auto">
+          <p className="text-text-secondary max-w-md mx-auto">
             {t.unlockUnlimited}
           </p>
         </div>
@@ -461,26 +461,26 @@ function UpgradePageInner() {
         {/* Plans comparison */}
         <div className="grid md:grid-cols-2 gap-6 mb-8">
           {/* Free Plan */}
-          <div className="bg-gray-800 rounded-2xl p-6 border border-gray-700">
+          <div className="bg-dark-700 rounded-2xl p-6 border border-border">
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-gray-700 rounded-lg">
-                <Shield className="w-5 h-5 text-gray-400" />
+              <div className="p-2 bg-dark-600 rounded-lg">
+                <Shield className="w-5 h-5 text-text-secondary" />
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-white">{t.freePlan}</h3>
-                <p className="text-gray-400 text-sm">{t.currentPlan}</p>
+                <p className="text-text-secondary text-sm">{t.currentPlan}</p>
               </div>
             </div>
 
             <div className="mb-6">
               <span className="text-3xl font-bold text-white">$0</span>
-              <span className="text-gray-400">{t.perMonth}</span>
+              <span className="text-text-secondary">{t.perMonth}</span>
             </div>
 
             <ul className="space-y-3">
               {FREE_FEATURES.map((feature, i) => (
-                <li key={i} className="flex items-start gap-3 text-gray-300">
-                  <Check className="w-5 h-5 text-gray-500 mt-0.5 flex-shrink-0" />
+                <li key={i} className="flex items-start gap-3 text-text-secondary">
+                  <Check className="w-5 h-5 text-text-muted mt-0.5 flex-shrink-0" />
                   {feature}
                 </li>
               ))}
@@ -488,19 +488,19 @@ function UpgradePageInner() {
           </div>
 
           {/* Pro Plan */}
-          <div className="bg-gradient-to-br from-emerald-900/50 to-emerald-800/30 rounded-2xl p-6 border border-emerald-500/30 relative overflow-hidden">
+          <div className="bg-gradient-to-br from-emerald-900/50 to-emerald-800/30 rounded-2xl p-6 border border-accent/30 relative overflow-hidden">
             {/* Popular badge */}
-            <div className="absolute top-4 right-4 px-3 py-1 bg-emerald-500 text-white text-xs font-semibold rounded-full">
+            <div className="absolute top-4 right-4 px-3 py-1 bg-accent-hover text-white text-xs font-semibold rounded-full">
               {t.recommended}
             </div>
 
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-emerald-500/20 rounded-lg">
-                <Zap className="w-5 h-5 text-emerald-400" />
+              <div className="p-2 bg-accent/20 rounded-lg">
+                <Zap className="w-5 h-5 text-accent" />
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-white">{t.proPlan}</h3>
-                <p className="text-emerald-400 text-sm">{t.unlimitedPower}</p>
+                <p className="text-accent text-sm">{t.unlimitedPower}</p>
               </div>
             </div>
 
@@ -508,22 +508,22 @@ function UpgradePageInner() {
             <div className="mb-2">
               <div className="flex items-baseline gap-2">
                 <span className="text-3xl font-bold text-white">$29.99</span>
-                <span className="text-gray-400">{t.perMonth}</span>
-                <span className="text-gray-500 line-through text-sm">$49.99</span>
+                <span className="text-text-secondary">{t.perMonth}</span>
+                <span className="text-text-muted line-through text-sm">$49.99</span>
               </div>
               <div className="flex items-center gap-2 mt-1">
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-yellow-500/20 border border-yellow-500/30 rounded-full text-xs text-yellow-400 font-semibold">
                   <Sparkles className="w-3 h-3" />
                   {t.first100}
                 </span>
-                <span className="text-gray-500 text-xs">{t.thenPrice}</span>
+                <span className="text-text-muted text-xs">{t.thenPrice}</span>
               </div>
             </div>
 
             <ul className="space-y-3 mb-6 mt-4">
               {PRO_FEATURES.map((feature, i) => (
                 <li key={i} className="flex items-start gap-3 text-white">
-                  <Check className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0" />
+                  <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
                   {feature}
                 </li>
               ))}
@@ -535,7 +535,7 @@ function UpgradePageInner() {
         <button
           onClick={handleStripeCheckout}
           disabled={isCheckoutLoading}
-          className="w-full py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white font-bold text-lg rounded-2xl transition-all shadow-lg shadow-emerald-900/40 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-3 mb-4"
+          className="w-full py-4 bg-gradient-to-r from-accent to-accent hover:from-accent hover:to-accent text-white font-bold text-lg rounded-2xl transition-all shadow-lg shadow-emerald-900/40 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-3 mb-4"
         >
           {isCheckoutLoading ? (
             <>
@@ -549,19 +549,19 @@ function UpgradePageInner() {
             </>
           )}
         </button>
-        <p className="text-center text-gray-500 text-xs mb-12">
+        <p className="text-center text-text-muted text-xs mb-12">
           Secure payment via Stripe · Cancel anytime
         </p>
 
         {/* Pro Code Form */}
-        <div className="bg-gray-800 rounded-2xl p-6 border border-gray-700">
+        <div className="bg-dark-700 rounded-2xl p-6 border border-border">
           <div className="flex items-center gap-3 mb-6">
             <div className="p-2 bg-purple-500/20 rounded-lg">
               <Gift className="w-5 h-5 text-purple-400" />
             </div>
             <div>
               <h3 className="text-lg font-semibold text-white">{t.haveProCode}</h3>
-              <p className="text-gray-400 text-sm">{t.enterCodeActivate}</p>
+              <p className="text-text-secondary text-sm">{t.enterCodeActivate}</p>
             </div>
           </div>
 
@@ -575,7 +575,7 @@ function UpgradePageInner() {
                   setMessage(null);
                 }}
                 placeholder={t.enterCodePlaceholder}
-                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 uppercase tracking-wider"
+                className="w-full px-4 py-3 bg-bg-elevated border border-border rounded-xl text-white placeholder-text-muted focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent uppercase tracking-wider"
                 disabled={isPending}
                 maxLength={30}
               />
@@ -584,7 +584,7 @@ function UpgradePageInner() {
             {message && (
               <div className={`p-4 rounded-xl ${
                 message.type === 'success'
-                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                  ? 'bg-accent/20 text-accent border border-accent/30'
                   : 'bg-red-500/20 text-red-400 border border-red-500/30'
               }`}>
                 {message.text}
@@ -610,9 +610,9 @@ function UpgradePageInner() {
             </button>
           </form>
 
-          <p className="text-gray-500 text-sm text-center mt-4">
+          <p className="text-text-muted text-sm text-center mt-4">
             {t.dontHaveCode}{' '}
-            <a href="mailto:pro@propfirmscanner.org" className="text-emerald-400 hover:underline">
+            <a href="mailto:pro@propfirmscanner.org" className="text-accent hover:underline">
               pro@propfirmscanner.org
             </a>
           </p>
@@ -623,28 +623,28 @@ function UpgradePageInner() {
           <h3 className="text-xl font-semibold text-white mb-6">{t.whyUpgrade}</h3>
 
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700/50">
+            <div className="bg-dark-700/50 rounded-xl p-5 border border-border/50">
               <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
                 <TrendingUp className="w-6 h-6 text-blue-400" />
               </div>
               <h4 className="font-semibold text-white mb-2">{t.multipleAccounts}</h4>
-              <p className="text-gray-400 text-sm">{t.multipleAccountsDesc}</p>
+              <p className="text-text-secondary text-sm">{t.multipleAccountsDesc}</p>
             </div>
 
-            <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700/50">
-              <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <Zap className="w-6 h-6 text-emerald-400" />
+            <div className="bg-dark-700/50 rounded-xl p-5 border border-border/50">
+              <div className="w-12 h-12 bg-accent/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <Zap className="w-6 h-6 text-accent" />
               </div>
               <h4 className="font-semibold text-white mb-2">{t.unlimitedSims}</h4>
-              <p className="text-gray-400 text-sm">{t.unlimitedSimsDesc}</p>
+              <p className="text-text-secondary text-sm">{t.unlimitedSimsDesc}</p>
             </div>
 
-            <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700/50">
+            <div className="bg-dark-700/50 rounded-xl p-5 border border-border/50">
               <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
                 <Shield className="w-6 h-6 text-purple-400" />
               </div>
               <h4 className="font-semibold text-white mb-2">{t.stayCompliant}</h4>
-              <p className="text-gray-400 text-sm">{t.stayCompliantDesc}</p>
+              <p className="text-text-secondary text-sm">{t.stayCompliantDesc}</p>
             </div>
           </div>
         </div>
@@ -659,7 +659,7 @@ function UpgradePageInner() {
 
 export default function UpgradePage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-gray-900" />}>
+    <Suspense fallback={<div className="min-h-screen bg-bg-elevated" />}>
       <UpgradePageInner />
     </Suspense>
   );

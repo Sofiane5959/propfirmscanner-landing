@@ -63,14 +63,14 @@ export default function Newsletter({ variant = 'card', className = '' }: Newslet
           placeholder="Enter your email"
           className="flex-1 px-4 py-2 bg-white/5 border border-white/10 rounded-lg 
                      text-white placeholder:text-white/40 focus:outline-none 
-                     focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20
+                     focus:border-accent/50 focus:ring-1 focus:ring-accent/20
                      transition-all duration-200"
           disabled={status === 'loading'}
         />
         <button
           type="submit"
           disabled={status === 'loading'}
-          className="px-6 py-2 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold
+          className="px-6 py-2 bg-accent-hover hover:brightness-110 text-black font-semibold
                      rounded-lg transition-all duration-200 disabled:opacity-50 
                      disabled:cursor-not-allowed whitespace-nowrap"
         >
@@ -97,21 +97,21 @@ export default function Newsletter({ variant = 'card', className = '' }: Newslet
             placeholder="your@email.com"
             className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg 
                        text-white placeholder:text-white/30 focus:outline-none 
-                       focus:border-emerald-500/50 transition-all duration-200 text-sm"
+                       focus:border-accent/50 transition-all duration-200 text-sm"
             disabled={status === 'loading'}
           />
           <button
             type="submit"
             disabled={status === 'loading'}
-            className="w-full py-2.5 bg-emerald-500/10 border border-emerald-500/30 
-                       hover:bg-emerald-500/20 text-emerald-400 font-medium rounded-lg 
+            className="w-full py-2.5 bg-accent/10 border border-accent/30 
+                       hover:bg-accent/20 text-accent font-medium rounded-lg 
                        transition-all duration-200 disabled:opacity-50 text-sm"
           >
             {status === 'loading' ? '...' : 'Subscribe'}
           </button>
         </form>
         {message && (
-          <p className={`mt-2 text-xs transition-opacity duration-300 ${status === 'error' ? 'text-red-400' : 'text-emerald-400'}`}>
+          <p className={`mt-2 text-xs transition-opacity duration-300 ${status === 'error' ? 'text-red-400' : 'text-accent'}`}>
             {message}
           </p>
         )}
@@ -123,8 +123,8 @@ export default function Newsletter({ variant = 'card', className = '' }: Newslet
   return (
     <section className={`relative overflow-hidden ${className}`}>
       {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-transparent to-blue-500/10 rounded-2xl" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-emerald-500/5 via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-br from-accent/10 via-transparent to-blue-500/10 rounded-2xl" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-accent/5 via-transparent to-transparent" />
       
       {/* Grid pattern overlay */}
       <div 
@@ -139,8 +139,8 @@ export default function Newsletter({ variant = 'card', className = '' }: Newslet
       <div className="relative px-8 py-12 md:px-12 md:py-16 border border-white/10 rounded-2xl backdrop-blur-sm">
         <div className="max-w-2xl mx-auto text-center">
           {/* Icon */}
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-emerald-500/10 border border-emerald-500/20 mb-6">
-            <svg className="w-7 h-7 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-accent/10 border border-accent/20 mb-6">
+            <svg className="w-7 h-7 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} 
                     d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
@@ -163,7 +163,7 @@ export default function Newsletter({ variant = 'card', className = '' }: Newslet
                 placeholder="Enter your email address"
                 className="w-full px-5 py-3.5 bg-white/5 border border-white/10 rounded-xl
                            text-white placeholder:text-white/30 focus:outline-none 
-                           focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/10
+                           focus:border-accent/50 focus:ring-2 focus:ring-accent/10
                            transition-all duration-300"
                 disabled={status === 'loading' || status === 'success'}
               />
@@ -171,7 +171,7 @@ export default function Newsletter({ variant = 'card', className = '' }: Newslet
             <button
               type="submit"
               disabled={status === 'loading' || status === 'success'}
-              className="px-8 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold
+              className="px-8 py-3.5 bg-accent-hover hover:brightness-110 text-black font-semibold
                          rounded-xl transition-all duration-200 disabled:opacity-50 
                          disabled:cursor-not-allowed shadow-lg shadow-emerald-500/20
                          hover:shadow-xl hover:shadow-emerald-500/30 hover:scale-[1.02] active:scale-[0.98]"
@@ -198,7 +198,7 @@ export default function Newsletter({ variant = 'card', className = '' }: Newslet
           </form>
 
           {message && status !== 'success' && (
-            <p className={`mt-4 text-sm transition-opacity duration-300 ${status === 'error' ? 'text-red-400' : 'text-emerald-400'}`}>
+            <p className={`mt-4 text-sm transition-opacity duration-300 ${status === 'error' ? 'text-red-400' : 'text-accent'}`}>
               {message}
             </p>
           )}

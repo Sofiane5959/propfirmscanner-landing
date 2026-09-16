@@ -59,7 +59,7 @@ export function PaywallGuard({
   if (!limits) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="animate-spin w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full" />
+        <div className="animate-spin w-8 h-8 border-2 border-accent border-t-transparent rounded-full" />
       </div>
     );
   }
@@ -77,7 +77,7 @@ export function PaywallGuard({
 
   // Show upgrade prompt
   return (
-    <div className="bg-gray-800 rounded-2xl p-8 border border-gray-700 text-center">
+    <div className="bg-dark-700 rounded-2xl p-8 border border-border text-center">
       <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
         <Lock className="w-8 h-8 text-white" />
       </div>
@@ -86,13 +86,13 @@ export function PaywallGuard({
         Limit Reached
       </h3>
       
-      <p className="text-gray-400 mb-6 max-w-md mx-auto">
+      <p className="text-text-secondary mb-6 max-w-md mx-auto">
         {getMessage()}
       </p>
       
       <Link
         href="/dashboard/upgrade"
-        className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold rounded-xl transition-all"
+        className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-accent to-accent hover:from-accent hover:to-emerald-700 text-white font-semibold rounded-xl transition-all"
       >
         <Crown className="w-5 h-5" />
         Upgrade to Pro
@@ -119,7 +119,7 @@ export function UsageIndicator({ limits, showUpgradeLink = true }: UsageIndicato
   // Pro users don't need to see limits
   if (limits.is_pro) {
     return (
-      <div className="flex items-center gap-2 text-emerald-400">
+      <div className="flex items-center gap-2 text-accent">
         <Crown className="w-4 h-4" />
         <span className="text-sm font-medium">Pro Plan</span>
       </div>
@@ -135,13 +135,13 @@ export function UsageIndicator({ limits, showUpgradeLink = true }: UsageIndicato
     : 0;
 
   return (
-    <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
+    <div className="bg-dark-700 rounded-xl p-4 border border-border">
       <div className="flex items-center justify-between mb-4">
-        <span className="text-gray-400 text-sm">Free Plan Limits</span>
+        <span className="text-text-secondary text-sm">Free Plan Limits</span>
         {showUpgradeLink && (
           <Link 
             href="/dashboard/upgrade"
-            className="text-emerald-400 text-sm hover:text-emerald-300 flex items-center gap-1"
+            className="text-accent text-sm hover:text-accent flex items-center gap-1"
           >
             <Zap className="w-3 h-3" />
             Upgrade
@@ -152,15 +152,15 @@ export function UsageIndicator({ limits, showUpgradeLink = true }: UsageIndicato
       {/* Accounts */}
       <div className="mb-3">
         <div className="flex justify-between text-sm mb-1">
-          <span className="text-gray-300">Accounts</span>
-          <span className="text-gray-400">
+          <span className="text-text-secondary">Accounts</span>
+          <span className="text-text-secondary">
             {limits.accounts_count}/{limits.accounts_limit}
           </span>
         </div>
-        <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
+        <div className="h-2 bg-dark-600 rounded-full overflow-hidden">
           <div 
             className={`h-full transition-all ${
-              accountsPercent >= 100 ? 'bg-red-500' : 'bg-emerald-500'
+              accountsPercent >= 100 ? 'bg-red-500' : 'bg-accent-hover'
             }`}
             style={{ width: `${Math.min(100, accountsPercent)}%` }}
           />
@@ -170,15 +170,15 @@ export function UsageIndicator({ limits, showUpgradeLink = true }: UsageIndicato
       {/* Simulations */}
       <div>
         <div className="flex justify-between text-sm mb-1">
-          <span className="text-gray-300">Simulations today</span>
-          <span className="text-gray-400">
+          <span className="text-text-secondary">Simulations today</span>
+          <span className="text-text-secondary">
             {limits.simulations_today}/{limits.simulations_limit}
           </span>
         </div>
-        <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
+        <div className="h-2 bg-dark-600 rounded-full overflow-hidden">
           <div 
             className={`h-full transition-all ${
-              simulationsPercent >= 100 ? 'bg-red-500' : 'bg-emerald-500'
+              simulationsPercent >= 100 ? 'bg-red-500' : 'bg-accent-hover'
             }`}
             style={{ width: `${Math.min(100, simulationsPercent)}%` }}
           />
@@ -218,7 +218,7 @@ export function ProBadge({ isPro, expiresAt, size = 'md' }: ProBadgeProps) {
     <span className={`inline-flex items-center gap-1 font-semibold rounded-full ${sizeClasses[size]} ${
       isExpiringSoon 
         ? 'bg-yellow-500/20 text-yellow-400' 
-        : 'bg-emerald-500/20 text-emerald-400'
+        : 'bg-accent/20 text-accent'
     }`}>
       <Crown className={size === 'sm' ? 'w-3 h-3' : size === 'md' ? 'w-4 h-4' : 'w-5 h-5'} />
       PRO

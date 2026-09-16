@@ -112,9 +112,9 @@ export default function DashboardStats() {
     return (
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="bg-gray-800/50 rounded-xl p-6 animate-pulse">
-            <div className="h-4 bg-gray-700 rounded w-20 mb-3" />
-            <div className="h-8 bg-gray-700 rounded w-16" />
+          <div key={i} className="bg-dark-700/50 rounded-xl p-6 animate-pulse">
+            <div className="h-4 bg-dark-600 rounded w-20 mb-3" />
+            <div className="h-8 bg-dark-600 rounded w-16" />
           </div>
         ))}
       </div>
@@ -123,10 +123,10 @@ export default function DashboardStats() {
 
   if (!stats) {
     return (
-      <div className="bg-gray-800/50 rounded-xl p-8 text-center">
-        <Bell className="w-12 h-12 text-gray-600 mx-auto mb-4" />
+      <div className="bg-dark-700/50 rounded-xl p-8 text-center">
+        <Bell className="w-12 h-12 text-text-muted mx-auto mb-4" />
         <h3 className="text-lg font-semibold text-white mb-2">No Data Yet</h3>
-        <p className="text-gray-400">Create price alerts and add favorites to see your stats.</p>
+        <p className="text-text-secondary">Create price alerts and add favorites to see your stats.</p>
       </div>
     )
   }
@@ -136,8 +136,8 @@ export default function DashboardStats() {
       label: 'Active Alerts',
       value: stats.activeAlerts,
       icon: Bell,
-      color: 'text-emerald-400',
-      bgColor: 'bg-emerald-500/10',
+      color: 'text-accent',
+      bgColor: 'bg-accent/10',
     },
     {
       label: 'Triggered',
@@ -169,10 +169,10 @@ export default function DashboardStats() {
         {statCards.map((stat, i) => (
           <div 
             key={i} 
-            className="bg-gray-800/50 border border-gray-700/50 rounded-xl p-5 hover:border-gray-600 transition-colors"
+            className="bg-dark-700/50 border border-border/50 rounded-xl p-5 hover:border-border-hover transition-colors"
           >
             <div className="flex items-center justify-between mb-3">
-              <span className="text-gray-400 text-sm">{stat.label}</span>
+              <span className="text-text-secondary text-sm">{stat.label}</span>
               <div className={`p-2 rounded-lg ${stat.bgColor}`}>
                 <stat.icon className={`w-4 h-4 ${stat.color}`} />
               </div>
@@ -184,14 +184,14 @@ export default function DashboardStats() {
 
       {/* Recent Alerts */}
       {alerts.length > 0 && (
-        <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-700">
+        <div className="bg-dark-700/50 border border-border/50 rounded-xl overflow-hidden">
+          <div className="px-6 py-4 border-b border-border">
             <h3 className="font-semibold text-white flex items-center gap-2">
-              <Clock className="w-4 h-4 text-gray-400" />
+              <Clock className="w-4 h-4 text-text-secondary" />
               Recent Price Alerts
             </h3>
           </div>
-          <div className="divide-y divide-gray-700/50">
+          <div className="divide-y divide-border/50">
             {alerts.slice(0, 5).map((alert) => {
               const currentPrice = alert.prop_firms?.min_price || alert.current_price_at_creation
               const isBelow = currentPrice <= alert.target_price
@@ -201,28 +201,28 @@ export default function DashboardStats() {
                 <div key={alert.id} className="px-6 py-4 flex items-center justify-between">
                   <div>
                     <p className="font-medium text-white">{alert.prop_firms?.name || 'Unknown Firm'}</p>
-                    <p className="text-sm text-gray-400">
+                    <p className="text-sm text-text-secondary">
                       Target: ${alert.target_price} • Current: ${currentPrice}
                     </p>
                   </div>
                   <div className="text-right">
                     {alert.is_triggered ? (
-                      <span className="px-2 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-medium rounded-full">
+                      <span className="px-2 py-1 bg-accent/20 text-accent text-xs font-medium rounded-full">
                         Triggered ✓
                       </span>
                     ) : alert.is_active ? (
                       <div className="flex items-center gap-1">
                         {isBelow ? (
-                          <TrendingDown className="w-4 h-4 text-emerald-400" />
+                          <TrendingDown className="w-4 h-4 text-accent" />
                         ) : (
-                          <TrendingUp className="w-4 h-4 text-gray-400" />
+                          <TrendingUp className="w-4 h-4 text-text-secondary" />
                         )}
-                        <span className={`text-sm font-medium ${isBelow ? 'text-emerald-400' : 'text-gray-400'}`}>
+                        <span className={`text-sm font-medium ${isBelow ? 'text-accent' : 'text-text-secondary'}`}>
                           {isBelow ? 'Ready!' : `$${Math.abs(priceDiff)} to go`}
                         </span>
                       </div>
                     ) : (
-                      <span className="text-gray-500 text-xs">Inactive</span>
+                      <span className="text-text-muted text-xs">Inactive</span>
                     )}
                   </div>
                 </div>
@@ -230,8 +230,8 @@ export default function DashboardStats() {
             })}
           </div>
           {alerts.length > 5 && (
-            <div className="px-6 py-3 bg-gray-900/50 text-center">
-              <span className="text-sm text-gray-500">
+            <div className="px-6 py-3 bg-bg-elevated/50 text-center">
+              <span className="text-sm text-text-muted">
                 +{alerts.length - 5} more alerts
               </span>
             </div>
@@ -240,14 +240,14 @@ export default function DashboardStats() {
       )}
 
       {/* Tip */}
-      <div className="bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border border-emerald-500/20 rounded-xl p-4">
+      <div className="bg-gradient-to-r from-accent/10 to-blue-500/10 border border-accent/20 rounded-xl p-4">
         <div className="flex items-start gap-3">
-          <div className="p-2 bg-emerald-500/20 rounded-lg">
-            <BarChart3 className="w-5 h-5 text-emerald-400" />
+          <div className="p-2 bg-accent/20 rounded-lg">
+            <BarChart3 className="w-5 h-5 text-accent" />
           </div>
           <div>
             <p className="font-medium text-white mb-1">Pro Tip</p>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-text-secondary">
               Set price alerts on your favorite firms to get notified when they offer discounts. 
               Average savings: 15-25% during promotional periods!
             </p>

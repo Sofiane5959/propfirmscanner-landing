@@ -104,15 +104,15 @@ export function SimulationTab({ accounts, isDemo = false }: SimulationTabProps) 
         </div>
       )}
 
-      <div className="bg-gray-900 rounded-xl border border-gray-800 p-6">
+      <div className="bg-bg-elevated rounded-xl border border-border p-6">
         <h2 className="text-lg font-semibold text-white mb-1">Trade Simulation</h2>
-        <p className="text-sm text-gray-500 mb-6">
+        <p className="text-sm text-text-muted mb-6">
           Test if a trade is safe before you risk real money.
         </p>
 
         {/* Account Selector */}
         <div className="mb-4">
-          <label className="block text-sm text-gray-400 mb-2">Select Account</label>
+          <label className="block text-sm text-text-secondary mb-2">Select Account</label>
           <div className="relative">
             <select
               value={selectedAccountId}
@@ -120,7 +120,7 @@ export function SimulationTab({ accounts, isDemo = false }: SimulationTabProps) 
                 setSelectedAccountId(e.target.value);
                 setResult(null);
               }}
-              className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white appearance-none focus:outline-none focus:border-emerald-500"
+              className="w-full px-4 py-3 bg-dark-700 border border-border rounded-lg text-white appearance-none focus:outline-none focus:border-accent"
             >
               {accounts.map((account) => (
                 <option key={account.id} value={account.id}>
@@ -128,21 +128,21 @@ export function SimulationTab({ accounts, isDemo = false }: SimulationTabProps) 
                 </option>
               ))}
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none" />
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted pointer-events-none" />
           </div>
         </div>
 
         {/* Account Status Preview */}
         {selectedAccount && (
-          <div className="mb-4 p-3 bg-gray-800 rounded-lg">
+          <div className="mb-4 p-3 bg-dark-700 rounded-lg">
             <div className="flex justify-between text-sm mb-2">
-              <span className="text-gray-400">Daily buffer remaining</span>
+              <span className="text-text-secondary">Daily buffer remaining</span>
               <span className="text-white font-medium">
                 ${Math.round(selectedAccount.health.daily.daily_buffer_usd)}
               </span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-400">Total DD remaining</span>
+              <span className="text-text-secondary">Total DD remaining</span>
               <span className="text-white font-medium">
                 ${Math.round(selectedAccount.health.max.max_buffer_usd)}
               </span>
@@ -152,7 +152,7 @@ export function SimulationTab({ accounts, isDemo = false }: SimulationTabProps) 
 
         {/* Risk Input */}
         <div className="mb-4">
-          <label className="block text-sm text-gray-400 mb-2">Risk if stopped out (USD)</label>
+          <label className="block text-sm text-text-secondary mb-2">Risk if stopped out (USD)</label>
           <input
             type="number"
             value={riskAmount}
@@ -161,7 +161,7 @@ export function SimulationTab({ accounts, isDemo = false }: SimulationTabProps) 
               setResult(null);
             }}
             placeholder="e.g. 500"
-            className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white text-lg placeholder-gray-600 focus:outline-none focus:border-emerald-500"
+            className="w-full px-4 py-3 bg-dark-700 border border-border rounded-lg text-white text-lg placeholder-text-muted focus:outline-none focus:border-accent"
           />
         </div>
 
@@ -176,8 +176,8 @@ export function SimulationTab({ accounts, isDemo = false }: SimulationTabProps) 
               }}
               className={`flex-1 py-2 text-sm rounded-lg transition-colors ${
                 riskAmount === amt.toString()
-                  ? 'bg-emerald-500 text-white'
-                  : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                  ? 'bg-accent-hover text-white'
+                  : 'bg-dark-700 text-text-secondary hover:bg-dark-600'
               }`}
             >
               ${amt}
@@ -189,7 +189,7 @@ export function SimulationTab({ accounts, isDemo = false }: SimulationTabProps) 
         <button
           onClick={handleSimulate}
           disabled={isSimulating || !riskAmount || !selectedAccount}
-          className="w-full flex items-center justify-center gap-2 py-3 bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-700 disabled:text-gray-500 text-white font-medium rounded-lg transition-colors"
+          className="w-full flex items-center justify-center gap-2 py-3 bg-accent-hover hover:brightness-110 disabled:bg-dark-600 disabled:text-text-muted text-white font-medium rounded-lg transition-colors"
         >
           {isSimulating ? (
             <>
@@ -208,24 +208,24 @@ export function SimulationTab({ accounts, isDemo = false }: SimulationTabProps) 
         {result && (
           <div className={`mt-6 p-4 rounded-lg border ${
             result.classification === 'SAFE'
-              ? 'bg-emerald-500/10 border-emerald-500/30'
+              ? 'bg-accent/10 border-accent/30'
               : result.classification === 'RISKY'
                 ? 'bg-yellow-500/10 border-yellow-500/30'
                 : 'bg-red-500/10 border-red-500/30'
           }`}>
             <div className="flex items-start gap-3">
-              {result.classification === 'SAFE' && <CheckCircle className="w-6 h-6 text-emerald-400 flex-shrink-0" />}
+              {result.classification === 'SAFE' && <CheckCircle className="w-6 h-6 text-accent flex-shrink-0" />}
               {result.classification === 'RISKY' && <AlertTriangle className="w-6 h-6 text-yellow-400 flex-shrink-0" />}
               {result.classification === 'VIOLATION' && <XCircle className="w-6 h-6 text-red-400 flex-shrink-0" />}
               <div>
                 <p className={`font-semibold mb-1 ${
-                  result.classification === 'SAFE' ? 'text-emerald-400' :
+                  result.classification === 'SAFE' ? 'text-accent' :
                   result.classification === 'RISKY' ? 'text-yellow-400' : 'text-red-400'
                 }`}>
                   {result.classification}
                 </p>
                 <p className="text-white text-sm mb-2">{result.message}</p>
-                <p className="text-gray-400 text-sm">{result.details}</p>
+                <p className="text-text-secondary text-sm">{result.details}</p>
               </div>
             </div>
           </div>
@@ -234,13 +234,13 @@ export function SimulationTab({ accounts, isDemo = false }: SimulationTabProps) 
 
       {/* CTA for Demo Mode */}
       {isDemo && (
-        <div className="mt-6 bg-gradient-to-r from-emerald-500/10 to-transparent border border-emerald-500/20 rounded-xl p-5 text-center">
-          <p className="text-gray-400 text-sm mb-3">
+        <div className="mt-6 bg-gradient-to-r from-accent/10 to-transparent border border-accent/20 rounded-xl p-5 text-center">
+          <p className="text-text-secondary text-sm mb-3">
             Add your real account to simulate trades with your actual data.
           </p>
           <Link
             href="/dashboard/accounts/new"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent-hover hover:brightness-110 text-white text-sm font-medium rounded-lg transition-colors"
           >
             <Plus className="w-4 h-4" />
             Add Your Account

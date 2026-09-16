@@ -162,13 +162,13 @@ export function TrustBadgeWithTooltip({
       <div className="
         invisible group-hover:visible opacity-0 group-hover:opacity-100
         absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2
-        px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg
-        text-xs text-gray-300 whitespace-nowrap
+        px-3 py-2 bg-bg-elevated border border-border rounded-lg
+        text-xs text-text-secondary whitespace-nowrap
         transition-all duration-200
       ">
         {config.description}
         <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1">
-          <div className="border-4 border-transparent border-t-gray-900" />
+          <div className="border-4 border-transparent border-t-border" />
         </div>
       </div>
     </div>

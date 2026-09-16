@@ -307,13 +307,13 @@ export default async function ComparePage({ params }: Props) {
   }[firms.length] || 'grid-cols-2'
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-bg-elevated">
       {/* Header */}
-      <div className="bg-gray-800/50 border-b border-gray-700">
+      <div className="bg-dark-700/50 border-b border-border">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <Link 
             href="/compare" 
-            className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-4 transition-colors"
+            className="inline-flex items-center gap-2 text-text-secondary hover:text-white mb-4 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to all firms
@@ -322,7 +322,7 @@ export default async function ComparePage({ params }: Props) {
           <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
             {firms.map(f => f.name).join(' vs ')}
           </h1>
-          <p className="text-gray-400">
+          <p className="text-text-secondary">
             Detailed comparison of {firms.length} prop trading firms
           </p>
         </div>
@@ -343,13 +343,13 @@ export default async function ComparePage({ params }: Props) {
         </div>
 
         {/* Comparison Table */}
-        <div className="bg-gray-800/50 border border-gray-700 rounded-2xl overflow-hidden mb-8">
+        <div className="bg-dark-700/50 border border-border rounded-2xl overflow-hidden mb-8">
           <div className="overflow-x-auto">
             <table className="w-full">
               {/* Header */}
               <thead>
-                <tr className="border-b border-gray-700">
-                  <th className="text-left p-4 text-gray-400 font-medium w-48 sticky left-0 bg-gray-800/90 backdrop-blur-sm">
+                <tr className="border-b border-border">
+                  <th className="text-left p-4 text-text-secondary font-medium w-48 sticky left-0 bg-dark-700/90 backdrop-blur-sm">
                     Feature
                   </th>
                   {firms.map((firm, i) => (
@@ -359,7 +359,7 @@ export default async function ComparePage({ params }: Props) {
                           {firm.logo_url ? (
                             <Image src={firm.logo_url} alt={firm.name} width={32} height={32} className="object-contain" />
                           ) : (
-                            <span className="text-sm font-bold text-emerald-600">{firm.name.charAt(0)}</span>
+                            <span className="text-sm font-bold text-accent">{firm.name.charAt(0)}</span>
                           )}
                         </div>
                         <span className="text-white font-semibold text-sm">{firm.name}</span>
@@ -373,11 +373,11 @@ export default async function ComparePage({ params }: Props) {
                 {comparisonData.map((section, sectionIndex) => (
                   <>
                     {/* Section Header */}
-                    <tr key={`section-${sectionIndex}`} className="bg-gray-900/50">
+                    <tr key={`section-${sectionIndex}`} className="bg-bg-elevated/50">
                       <td colSpan={firms.length + 1} className="p-3">
                         <div className="flex items-center gap-2">
-                          <section.icon className="w-4 h-4 text-emerald-400" />
-                          <span className="text-emerald-400 font-semibold text-sm">{section.category}</span>
+                          <section.icon className="w-4 h-4 text-accent" />
+                          <span className="text-accent font-semibold text-sm">{section.category}</span>
                         </div>
                       </td>
                     </tr>
@@ -389,9 +389,9 @@ export default async function ComparePage({ params }: Props) {
                       return (
                         <tr 
                           key={`row-${sectionIndex}-${rowIndex}`} 
-                          className="border-b border-gray-800 hover:bg-gray-800/30 transition-colors"
+                          className="border-b border-border hover:bg-dark-700/30 transition-colors"
                         >
-                          <td className="p-4 text-gray-300 text-sm sticky left-0 bg-gray-900/80 backdrop-blur-sm">
+                          <td className="p-4 text-text-secondary text-sm sticky left-0 bg-bg-elevated/80 backdrop-blur-sm">
                             {row.label}
                           </td>
                           {row.values.map((value, valueIndex) => {
@@ -401,16 +401,16 @@ export default async function ComparePage({ params }: Props) {
                             return (
                               <td 
                                 key={valueIndex} 
-                                className={`p-4 text-center ${isBest ? 'bg-emerald-500/10' : ''}`}
+                                className={`p-4 text-center ${isBest ? 'bg-accent/10' : ''}`}
                               >
                                 {isBoolean ? (
                                   value ? (
-                                    <CheckCircle className={`w-5 h-5 mx-auto ${isBest ? 'text-emerald-400' : 'text-emerald-500/70'}`} />
+                                    <CheckCircle className={`w-5 h-5 mx-auto ${isBest ? 'text-accent' : 'text-accent/70'}`} />
                                   ) : (
                                     <XCircle className="w-5 h-5 mx-auto text-red-500/50" />
                                   )
                                 ) : (
-                                  <span className={`text-sm font-medium ${isBest ? 'text-emerald-400' : 'text-gray-300'}`}>
+                                  <span className={`text-sm font-medium ${isBest ? 'text-accent' : 'text-text-secondary'}`}>
                                     {value}
                                   </span>
                                 )}
@@ -424,26 +424,26 @@ export default async function ComparePage({ params }: Props) {
                 ))}
 
                 {/* Platforms Row */}
-                <tr className="bg-gray-900/50">
+                <tr className="bg-bg-elevated/50">
                   <td colSpan={firms.length + 1} className="p-3">
                     <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-emerald-400" />
-                      <span className="text-emerald-400 font-semibold text-sm">Platforms</span>
+                      <Calendar className="w-4 h-4 text-accent" />
+                      <span className="text-accent font-semibold text-sm">Platforms</span>
                     </div>
                   </td>
                 </tr>
-                <tr className="border-b border-gray-800">
-                  <td className="p-4 text-gray-300 text-sm sticky left-0 bg-gray-900/80">Trading Platforms</td>
+                <tr className="border-b border-border">
+                  <td className="p-4 text-text-secondary text-sm sticky left-0 bg-bg-elevated/80">Trading Platforms</td>
                   {firms.map((firm, i) => (
                     <td key={i} className="p-4">
                       <div className="flex flex-wrap justify-center gap-1">
                         {toArray(firm.platforms).slice(0, 4).map(p => (
-                          <span key={p} className="px-2 py-0.5 bg-gray-700 text-gray-300 text-xs rounded">
+                          <span key={p} className="px-2 py-0.5 bg-dark-600 text-text-secondary text-xs rounded">
                             {p}
                           </span>
                         ))}
                         {toArray(firm.platforms).length > 4 && (
-                          <span className="text-xs text-gray-500">+{toArray(firm.platforms).length - 4}</span>
+                          <span className="text-xs text-text-muted">+{toArray(firm.platforms).length - 4}</span>
                         )}
                       </div>
                     </td>
@@ -451,28 +451,28 @@ export default async function ComparePage({ params }: Props) {
                 </tr>
 
                 {/* Rating Row */}
-                <tr className="bg-gray-900/50">
+                <tr className="bg-bg-elevated/50">
                   <td colSpan={firms.length + 1} className="p-3">
                     <div className="flex items-center gap-2">
-                      <Star className="w-4 h-4 text-emerald-400" />
-                      <span className="text-emerald-400 font-semibold text-sm">Reputation</span>
+                      <Star className="w-4 h-4 text-accent" />
+                      <span className="text-accent font-semibold text-sm">Reputation</span>
                     </div>
                   </td>
                 </tr>
                 <tr>
-                  <td className="p-4 text-gray-300 text-sm sticky left-0 bg-gray-900/80">Trustpilot Rating</td>
+                  <td className="p-4 text-text-secondary text-sm sticky left-0 bg-bg-elevated/80">Trustpilot Rating</td>
                   {firms.map((firm, i) => {
                     const maxRating = Math.max(...firms.map(f => f.trustpilot_rating || 0))
                     const isBest = firm.trustpilot_rating === maxRating && maxRating > 0
                     return (
-                      <td key={i} className={`p-4 text-center ${isBest ? 'bg-emerald-500/10' : ''}`}>
+                      <td key={i} className={`p-4 text-center ${isBest ? 'bg-accent/10' : ''}`}>
                         <div className="flex items-center justify-center gap-1">
                           <Star className={`w-4 h-4 ${isBest ? 'text-yellow-400 fill-yellow-400' : 'text-yellow-500/70 fill-yellow-500/70'}`} />
-                          <span className={`font-semibold ${isBest ? 'text-white' : 'text-gray-300'}`}>
+                          <span className={`font-semibold ${isBest ? 'text-white' : 'text-text-secondary'}`}>
                             {firm.trustpilot_rating?.toFixed(1) || 'N/A'}
                           </span>
                           {firm.trustpilot_reviews && (
-                            <span className="text-gray-500 text-xs">({firm.trustpilot_reviews.toLocaleString()})</span>
+                            <span className="text-text-muted text-xs">({firm.trustpilot_reviews.toLocaleString()})</span>
                           )}
                         </div>
                       </td>
@@ -485,10 +485,10 @@ export default async function ComparePage({ params }: Props) {
         </div>
 
         {/* Verdict Section */}
-        <div className="bg-gradient-to-br from-emerald-500/10 to-blue-500/10 border border-emerald-500/30 rounded-2xl p-6 md:p-8 mb-8">
+        <div className="bg-gradient-to-br from-accent/10 to-blue-500/10 border border-accent/30 rounded-2xl p-6 md:p-8 mb-8">
           <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-emerald-500/20 rounded-lg">
-              <Award className="w-6 h-6 text-emerald-400" />
+            <div className="p-2 bg-accent/20 rounded-lg">
+              <Award className="w-6 h-6 text-accent" />
             </div>
             <h2 className="text-xl md:text-2xl font-bold text-white">Our Verdict</h2>
           </div>
@@ -505,18 +505,18 @@ export default async function ComparePage({ params }: Props) {
           {firms.map((firm, index) => (
             <div 
               key={firm.id}
-              className={`bg-gray-800/50 border rounded-xl p-5 text-center ${
-                index === winnerIndex ? 'border-emerald-500/50' : 'border-gray-700'
+              className={`bg-dark-700/50 border rounded-xl p-5 text-center ${
+                index === winnerIndex ? 'border-accent/50' : 'border-border'
               }`}
             >
-              <p className="text-gray-400 text-sm mb-1">Get Started with</p>
+              <p className="text-text-secondary text-sm mb-1">Get Started with</p>
               <p className="text-lg font-bold text-white mb-4">{firm.name}</p>
               <div className="flex flex-col gap-2">
                 <a
                   href={firm.affiliate_url || firm.website_url || '#'}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 text-sm"
+                  className="w-full py-2.5 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 text-sm"
                 >
                   <DollarSign className="w-4 h-4" />
                   Buy Challenge
@@ -524,7 +524,7 @@ export default async function ComparePage({ params }: Props) {
                 </a>
                 <Link
                   href={`/prop-firm/${firm.slug}`}
-                  className="w-full py-2.5 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors text-sm"
+                  className="w-full py-2.5 bg-dark-600 hover:bg-dark-500 text-white rounded-lg transition-colors text-sm"
                 >
                   View Details
                 </Link>
@@ -534,9 +534,9 @@ export default async function ComparePage({ params }: Props) {
         </div>
 
         {/* Other Comparisons */}
-        <div className="bg-gray-800/50 border border-gray-700 rounded-2xl p-6">
+        <div className="bg-dark-700/50 border border-border rounded-2xl p-6">
           <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-            <ChevronRight className="w-5 h-5 text-emerald-400" />
+            <ChevronRight className="w-5 h-5 text-accent" />
             Other Popular Comparisons
           </h2>
           <div className="flex flex-wrap gap-2">
@@ -547,7 +547,7 @@ export default async function ComparePage({ params }: Props) {
                 <Link
                   key={comparison}
                   href={`/compare/${comparison}`}
-                  className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white rounded-lg text-sm transition-colors"
+                  className="px-3 py-1.5 bg-dark-600 hover:bg-dark-500 text-text-secondary hover:text-white rounded-lg text-sm transition-colors"
                 >
                   {comparison.split('-vs-').map(s => 
                     s.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
@@ -564,7 +564,7 @@ export default async function ComparePage({ params }: Props) {
 // Firm Card Component
 function FirmCard({ firm, score, isWinner, rank }: { firm: PropFirm; score: number; isWinner: boolean; rank: number }) {
   return (
-    <div className={`relative bg-gray-800/50 border rounded-2xl p-4 md:p-5 ${isWinner ? 'border-yellow-500/50 ring-1 ring-yellow-500/20' : 'border-gray-700'}`}>
+    <div className={`relative bg-dark-700/50 border rounded-2xl p-4 md:p-5 ${isWinner ? 'border-yellow-500/50 ring-1 ring-yellow-500/20' : 'border-border'}`}>
       {isWinner && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-gradient-to-r from-yellow-500 to-amber-500 text-black text-xs font-bold rounded-full flex items-center gap-1 shadow-lg">
           <Trophy className="w-3 h-3" /> BEST CHOICE
@@ -576,7 +576,7 @@ function FirmCard({ firm, score, isWinner, rank }: { firm: PropFirm; score: numb
           {firm.logo_url ? (
             <Image src={firm.logo_url} alt={firm.name} width={48} height={48} className="object-contain" />
           ) : (
-            <span className="text-xl font-bold text-emerald-600">{firm.name.charAt(0)}</span>
+            <span className="text-xl font-bold text-accent">{firm.name.charAt(0)}</span>
           )}
         </div>
         <div className="flex-1 min-w-0">
@@ -585,20 +585,20 @@ function FirmCard({ firm, score, isWinner, rank }: { firm: PropFirm; score: numb
             <div className="flex items-center gap-1">
               <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
               <span className="text-white font-medium text-sm">{firm.trustpilot_rating.toFixed(1)}</span>
-              <span className="text-gray-500 text-xs">/ 5</span>
+              <span className="text-text-muted text-xs">/ 5</span>
             </div>
           )}
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-2 mb-4">
-        <div className="bg-gray-900/50 rounded-lg p-2.5 text-center">
-          <p className="text-gray-500 text-[10px] uppercase mb-0.5">From</p>
+        <div className="bg-bg-elevated/50 rounded-lg p-2.5 text-center">
+          <p className="text-text-muted text-[10px] uppercase mb-0.5">From</p>
           <p className="text-lg font-bold text-white">${firm.min_price || '99'}</p>
         </div>
-        <div className="bg-gray-900/50 rounded-lg p-2.5 text-center">
-          <p className="text-gray-500 text-[10px] uppercase mb-0.5">Split</p>
-          <p className="text-lg font-bold text-emerald-400">
+        <div className="bg-bg-elevated/50 rounded-lg p-2.5 text-center">
+          <p className="text-text-muted text-[10px] uppercase mb-0.5">Split</p>
+          <p className="text-lg font-bold text-accent">
             {firm.max_profit_split || firm.profit_split || 80}%
           </p>
         </div>
@@ -606,7 +606,7 @@ function FirmCard({ firm, score, isWinner, rank }: { firm: PropFirm; score: numb
 
       <div className="flex flex-wrap gap-1 mb-4">
         {firm.allows_scalping && (
-          <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-[10px] rounded-full">Scalping</span>
+          <span className="px-2 py-0.5 bg-accent/20 text-accent text-[10px] rounded-full">Scalping</span>
         )}
         {firm.allows_news_trading && (
           <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 text-[10px] rounded-full">News</span>
@@ -622,12 +622,12 @@ function FirmCard({ firm, score, isWinner, rank }: { firm: PropFirm; score: numb
       {/* Score Bar */}
       <div className="mb-4">
         <div className="flex justify-between text-xs mb-1">
-          <span className="text-gray-500">Score</span>
+          <span className="text-text-muted">Score</span>
           <span className="text-white font-medium">{score}/100</span>
         </div>
-        <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
+        <div className="h-2 bg-dark-600 rounded-full overflow-hidden">
           <div 
-            className={`h-full rounded-full transition-all ${isWinner ? 'bg-gradient-to-r from-yellow-500 to-amber-500' : 'bg-emerald-500'}`}
+            className={`h-full rounded-full transition-all ${isWinner ? 'bg-gradient-to-r from-yellow-500 to-amber-500' : 'bg-accent-hover'}`}
             style={{ width: `${score}%` }}
           />
         </div>
@@ -643,19 +643,19 @@ function TwoFirmVerdict({ firms, scores, winnerIndex }: { firms: PropFirm[]; sco
 
   return (
     <>
-      <p className="text-gray-300 text-lg leading-relaxed mb-6">
-        Based on our analysis, <span className="text-emerald-400 font-semibold">{winner.name}</span> edges out 
+      <p className="text-text-secondary text-lg leading-relaxed mb-6">
+        Based on our analysis, <span className="text-accent font-semibold">{winner.name}</span> edges out 
         with a score of {scores[winnerIndex]} vs {scores[winnerIndex === 0 ? 1 : 0]}. 
         However, both are solid choices depending on your priorities.
       </p>
 
       <div className="grid md:grid-cols-2 gap-4">
-        <div className="bg-gray-900/50 rounded-xl p-4">
+        <div className="bg-bg-elevated/50 rounded-xl p-4">
           <h3 className="font-semibold text-white mb-3 flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 text-emerald-400" />
+            <CheckCircle className="w-4 h-4 text-accent" />
             Choose {firms[0].name} if:
           </h3>
-          <ul className="text-gray-400 text-sm space-y-2">
+          <ul className="text-text-secondary text-sm space-y-2">
             {(firms[0].max_profit_split || firms[0].profit_split || 0) >= (firms[1].max_profit_split || firms[1].profit_split || 0) && (
               <li>• You want higher profit split potential</li>
             )}
@@ -672,12 +672,12 @@ function TwoFirmVerdict({ firms, scores, winnerIndex }: { firms: PropFirm[]; sco
           </ul>
         </div>
 
-        <div className="bg-gray-900/50 rounded-xl p-4">
+        <div className="bg-bg-elevated/50 rounded-xl p-4">
           <h3 className="font-semibold text-white mb-3 flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 text-emerald-400" />
+            <CheckCircle className="w-4 h-4 text-accent" />
             Choose {firms[1].name} if:
           </h3>
-          <ul className="text-gray-400 text-sm space-y-2">
+          <ul className="text-text-secondary text-sm space-y-2">
             {(firms[1].max_profit_split || firms[1].profit_split || 0) >= (firms[0].max_profit_split || firms[0].profit_split || 0) && (
               <li>• You want higher profit split potential</li>
             )}
@@ -705,8 +705,8 @@ function MultiFirmVerdict({ firms, scores, winnerIndex }: { firms: PropFirm[]; s
 
   return (
     <>
-      <p className="text-gray-300 text-lg leading-relaxed mb-6">
-        After comparing all {firms.length} firms, <span className="text-emerald-400 font-semibold">{winner.name}</span> comes 
+      <p className="text-text-secondary text-lg leading-relaxed mb-6">
+        After comparing all {firms.length} firms, <span className="text-accent font-semibold">{winner.name}</span> comes 
         out on top with a score of {scores[winnerIndex]}/100. Here's the full ranking:
       </p>
 
@@ -715,26 +715,26 @@ function MultiFirmVerdict({ firms, scores, winnerIndex }: { firms: PropFirm[]; s
           <div 
             key={firm.id}
             className={`flex items-center justify-between p-4 rounded-xl ${
-              index === 0 ? 'bg-emerald-500/20 border border-emerald-500/30' : 'bg-gray-900/50'
+              index === 0 ? 'bg-accent/20 border border-accent/30' : 'bg-bg-elevated/50'
             }`}
           >
             <div className="flex items-center gap-3">
               <span className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
-                index === 0 ? 'bg-emerald-500 text-white' : 
-                index === 1 ? 'bg-gray-600 text-white' : 
-                'bg-gray-700 text-gray-400'
+                index === 0 ? 'bg-accent-hover text-white' : 
+                index === 1 ? 'bg-dark-500 text-white' : 
+                'bg-dark-600 text-text-secondary'
               }`}>
                 {index + 1}
               </span>
-              <span className={`font-semibold ${index === 0 ? 'text-emerald-400' : 'text-white'}`}>
+              <span className={`font-semibold ${index === 0 ? 'text-accent' : 'text-white'}`}>
                 {firm.name}
               </span>
             </div>
             <div className="flex items-center gap-4">
-              <span className="text-gray-400 text-sm hidden sm:block">
+              <span className="text-text-secondary text-sm hidden sm:block">
                 ${firm.min_price} • {firm.max_profit_split || firm.profit_split}% split
               </span>
-              <span className={`font-bold ${index === 0 ? 'text-emerald-400' : 'text-white'}`}>
+              <span className={`font-bold ${index === 0 ? 'text-accent' : 'text-white'}`}>
                 {score}/100
               </span>
             </div>

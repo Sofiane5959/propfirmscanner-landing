@@ -431,20 +431,20 @@ export default function SimulatePage() {
   }
   
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-bg-elevated">
       {/* Header */}
-      <header className="border-b border-gray-800 bg-gray-900/95 backdrop-blur sticky top-0 z-50">
+      <header className="border-b border-border bg-bg-elevated/95 backdrop-blur sticky top-0 z-50">
         <div className="max-w-2xl mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
-            <Link href={`/${locale}/dashboard`} className="p-2 hover:bg-gray-800 rounded-lg transition-colors">
-              <ArrowLeft className="w-5 h-5 text-gray-400" />
+            <Link href={`/${locale}/dashboard`} className="p-2 hover:bg-dark-700 rounded-lg transition-colors">
+              <ArrowLeft className="w-5 h-5 text-text-secondary" />
             </Link>
             <div>
               <h1 className="text-lg font-bold text-white flex items-center gap-2">
-                <Target className="w-5 h-5 text-emerald-400" />
+                <Target className="w-5 h-5 text-accent" />
                 {t.tradeSimulator}
               </h1>
-              <p className="text-sm text-gray-500">{t.checkTradeSafe}</p>
+              <p className="text-sm text-text-muted">{t.checkTradeSafe}</p>
             </div>
           </div>
         </div>
@@ -454,14 +454,14 @@ export default function SimulatePage() {
         <div className="space-y-6">
           {/* Select Account */}
           <div>
-            <label className="block text-sm font-medium text-gray-400 mb-2">
+            <label className="block text-sm font-medium text-text-secondary mb-2">
               {t.selectAccount}
             </label>
             <div className="relative">
               <select
                 value={selectedAccountId}
                 onChange={(e) => { setSelectedAccountId(e.target.value); setResult(null) }}
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white appearance-none focus:outline-none focus:border-emerald-500"
+                className="w-full px-4 py-3 bg-dark-700 border border-border rounded-xl text-white appearance-none focus:outline-none focus:border-accent"
               >
                 <option value="">{t.chooseAccount}</option>
                 {mockAccounts.map(acc => (
@@ -470,32 +470,32 @@ export default function SimulatePage() {
                   </option>
                 ))}
               </select>
-              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none" />
+              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted pointer-events-none" />
             </div>
           </div>
           
           {/* Account Summary */}
           {account && (
-            <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4">
+            <div className="bg-dark-700/50 border border-border/50 rounded-xl p-4">
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <p className="text-gray-500">{t.currentBalance}</p>
+                  <p className="text-text-muted">{t.currentBalance}</p>
                   <p className="text-white font-medium">${account.current_balance.toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-gray-500">{t.todayPnL}</p>
-                  <p className={account.today_pnl >= 0 ? 'text-emerald-400 font-medium' : 'text-red-400 font-medium'}>
+                  <p className="text-text-muted">{t.todayPnL}</p>
+                  <p className={account.today_pnl >= 0 ? 'text-accent font-medium' : 'text-red-400 font-medium'}>
                     {account.today_pnl >= 0 ? '+' : ''}${account.today_pnl.toLocaleString()}
                   </p>
                 </div>
                 <div>
-                  <p className="text-gray-500">{t.dailyDDLimit}</p>
+                  <p className="text-text-muted">{t.dailyDDLimit}</p>
                   <p className="text-white font-medium">
                     {account.daily_dd_percent > 0 ? `${account.daily_dd_percent}%` : t.none}
                   </p>
                 </div>
                 <div>
-                  <p className="text-gray-500">{t.maxDDLimit}</p>
+                  <p className="text-text-muted">{t.maxDDLimit}</p>
                   <p className="text-white font-medium">
                     {account.max_dd_percent}% ({account.max_dd_type})
                   </p>
@@ -506,17 +506,17 @@ export default function SimulatePage() {
           
           {/* Risk Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-400 mb-2">
+            <label className="block text-sm font-medium text-text-secondary mb-2">
               {t.riskInUsd}
             </label>
             <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted">$</span>
               <input
                 type="number"
                 value={riskUsd}
                 onChange={(e) => { setRiskUsd(e.target.value); setResult(null) }}
                 placeholder="500"
-                className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder:text-gray-600 focus:outline-none focus:border-emerald-500"
+                className="w-full pl-10 pr-4 py-3 bg-dark-700 border border-border rounded-xl text-white placeholder:text-text-muted focus:outline-none focus:border-accent"
               />
             </div>
           </div>
@@ -525,7 +525,7 @@ export default function SimulatePage() {
           <button
             onClick={handleSimulate}
             disabled={!selectedAccountId || !riskUsd}
-            className="w-full py-4 bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
+            className="w-full py-4 bg-accent-hover hover:brightness-110 disabled:bg-dark-600 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
           >
             <Target className="w-5 h-5" />
             {t.simulateTrade}
@@ -534,23 +534,23 @@ export default function SimulatePage() {
           {/* Result */}
           {result && (
             <div className={`rounded-2xl overflow-hidden ${
-              result.status === 'safe' ? 'bg-emerald-500/10 border-2 border-emerald-500/30' :
+              result.status === 'safe' ? 'bg-accent/10 border-2 border-accent/30' :
               result.status === 'risky' ? 'bg-yellow-500/10 border-2 border-yellow-500/30' :
               'bg-red-500/10 border-2 border-red-500/30'
             }`}>
               {/* Status Header */}
               <div className={`p-6 text-center ${
-                result.status === 'safe' ? 'bg-emerald-500/20' :
+                result.status === 'safe' ? 'bg-accent/20' :
                 result.status === 'risky' ? 'bg-yellow-500/20' :
                 'bg-red-500/20'
               }`}>
                 <div className="flex justify-center mb-3">
-                  {result.status === 'safe' && <Check className="w-12 h-12 text-emerald-400" />}
+                  {result.status === 'safe' && <Check className="w-12 h-12 text-accent" />}
                   {result.status === 'risky' && <AlertTriangle className="w-12 h-12 text-yellow-400" />}
                   {result.status === 'violation' && <XCircle className="w-12 h-12 text-red-400" />}
                 </div>
                 <h2 className={`text-2xl font-bold mb-2 ${
-                  result.status === 'safe' ? 'text-emerald-400' :
+                  result.status === 'safe' ? 'text-accent' :
                   result.status === 'risky' ? 'text-yellow-400' :
                   'text-red-400'
                 }`}>
@@ -564,8 +564,8 @@ export default function SimulatePage() {
               {/* Details */}
               <div className="p-4 space-y-2">
                 {result.details.map((detail, i) => (
-                  <p key={i} className="text-sm text-gray-400 flex items-start gap-2">
-                    <span className="text-gray-600">•</span>
+                  <p key={i} className="text-sm text-text-secondary flex items-start gap-2">
+                    <span className="text-text-muted">•</span>
                     {detail}
                   </p>
                 ))}
@@ -575,7 +575,7 @@ export default function SimulatePage() {
           
           {/* Empty State */}
           {!result && (
-            <div className="text-center py-8 text-gray-600">
+            <div className="text-center py-8 text-text-muted">
               <Target className="w-12 h-12 mx-auto mb-3 opacity-30" />
               <p>{t.selectAccountHint}</p>
             </div>

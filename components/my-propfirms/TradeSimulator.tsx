@@ -93,9 +93,9 @@ export function TradeSimulator({ account, onClose }: TradeSimulatorProps) {
   const getResultConfig = (classification: 'SAFE' | 'RISKY' | 'VIOLATION') => {
     const configs = {
       SAFE: {
-        bg: 'bg-emerald-500/10',
-        border: 'border-emerald-500/30',
-        text: 'text-emerald-400',
+        bg: 'bg-accent/10',
+        border: 'border-accent/30',
+        text: 'text-accent',
       },
       RISKY: {
         bg: 'bg-yellow-500/10',
@@ -124,16 +124,16 @@ export function TradeSimulator({ account, onClose }: TradeSimulatorProps) {
       <div className="absolute inset-0 bg-black/70" onClick={onClose} />
 
       {/* Modal */}
-      <div className="relative bg-gray-900 rounded-xl border border-gray-800 w-full max-w-md p-6">
+      <div className="relative bg-bg-elevated rounded-xl border border-border w-full max-w-md p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
             <h2 className="text-lg font-semibold text-white">Can I take this trade?</h2>
-            <p className="text-sm text-gray-500">{account.prop_firm}</p>
+            <p className="text-sm text-text-muted">{account.prop_firm}</p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg"
+            className="p-2 text-text-secondary hover:text-white hover:bg-dark-700 rounded-lg"
           >
             <X className="w-5 h-5" />
           </button>
@@ -141,7 +141,7 @@ export function TradeSimulator({ account, onClose }: TradeSimulatorProps) {
 
         {/* Input */}
         <div className="mb-4">
-          <label className="block text-sm text-gray-400 mb-2">
+          <label className="block text-sm text-text-secondary mb-2">
             Risk if stopped out (USD)
           </label>
           <input
@@ -152,7 +152,7 @@ export function TradeSimulator({ account, onClose }: TradeSimulatorProps) {
               setResult(null);
             }}
             placeholder="Enter risk amount"
-            className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white text-lg placeholder-gray-600 focus:outline-none focus:border-emerald-500"
+            className="w-full px-4 py-3 bg-dark-700 border border-border rounded-lg text-white text-lg placeholder-text-muted focus:outline-none focus:border-accent"
             autoFocus
           />
         </div>
@@ -168,8 +168,8 @@ export function TradeSimulator({ account, onClose }: TradeSimulatorProps) {
               }}
               className={`flex-1 py-2 text-sm rounded-lg transition-colors ${
                 riskAmount === amt.toString()
-                  ? 'bg-emerald-500 text-white'
-                  : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                  ? 'bg-accent-hover text-white'
+                  : 'bg-dark-700 text-text-secondary hover:bg-dark-600'
               }`}
             >
               ${amt}
@@ -181,7 +181,7 @@ export function TradeSimulator({ account, onClose }: TradeSimulatorProps) {
         <button
           onClick={handleSimulate}
           disabled={isSimulating || !riskAmount}
-          className="w-full flex items-center justify-center gap-2 py-3 bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-700 disabled:text-gray-500 text-white font-medium rounded-lg transition-colors mb-4"
+          className="w-full flex items-center justify-center gap-2 py-3 bg-accent-hover hover:brightness-110 disabled:bg-dark-600 disabled:text-text-muted text-white font-medium rounded-lg transition-colors mb-4"
         >
           {isSimulating ? (
             <>
@@ -205,7 +205,7 @@ export function TradeSimulator({ account, onClose }: TradeSimulatorProps) {
                 <p className={`font-semibold mb-1 ${getResultConfig(result.classification).text}`}>
                   {result.classification}
                 </p>
-                <p className="text-sm text-gray-300">{result.message}</p>
+                <p className="text-sm text-text-secondary">{result.message}</p>
               </div>
             </div>
           </div>

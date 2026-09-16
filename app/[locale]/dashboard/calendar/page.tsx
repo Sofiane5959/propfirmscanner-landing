@@ -18,7 +18,7 @@ interface CalendarEvent {
 const IMPACT_CONFIG = {
   High: { color: "text-red-400", bg: "bg-red-500", dot: "🔴", label: "High" },
   Medium: { color: "text-yellow-400", bg: "bg-yellow-500", dot: "🟡", label: "Medium" },
-  Low: { color: "text-gray-400", bg: "bg-gray-500", dot: "⚪", label: "Low" },
+  Low: { color: "text-text-secondary", bg: "bg-gray-500", dot: "⚪", label: "Low" },
   Holiday: { color: "text-blue-400", bg: "bg-blue-500", dot: "📅", label: "Holiday" },
 };
 
@@ -123,20 +123,20 @@ export default function EconomicCalendarPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 p-4 md:p-8">
+    <div className="min-h-screen bg-bg-base p-4 md:p-8">
       <div className="max-w-5xl mx-auto">
 
         {/* Header */}
         <div className="flex items-start justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold text-white">Economic Calendar</h1>
-            <p className="text-gray-400 text-sm mt-1">
+            <p className="text-text-secondary text-sm mt-1">
               This week's market-moving events · Source: Forex Factory
             </p>
           </div>
           <div className="text-right">
             {lastUpdated && (
-              <p className="text-xs text-gray-500">Updated {lastUpdated}</p>
+              <p className="text-xs text-text-muted">Updated {lastUpdated}</p>
             )}
             <button
               onClick={fetchCalendar}
@@ -150,29 +150,29 @@ export default function EconomicCalendarPage() {
         {/* Stats row */}
         {!loading && !error && (
           <div className="grid grid-cols-3 gap-3 mb-6">
-            <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
+            <div className="bg-bg-elevated border border-border rounded-xl p-4 text-center">
               <p className="text-2xl font-bold text-white">{events.length}</p>
-              <p className="text-xs text-gray-400 mt-1">Events this week</p>
+              <p className="text-xs text-text-secondary mt-1">Events this week</p>
             </div>
-            <div className="bg-gray-900 border border-red-900/30 rounded-xl p-4 text-center">
+            <div className="bg-bg-elevated border border-red-900/30 rounded-xl p-4 text-center">
               <p className="text-2xl font-bold text-red-400">
                 {events.filter((e) => e.impact === "High").length}
               </p>
-              <p className="text-xs text-gray-400 mt-1">High impact</p>
+              <p className="text-xs text-text-secondary mt-1">High impact</p>
             </div>
-            <div className="bg-gray-900 border border-blue-900/30 rounded-xl p-4 text-center">
+            <div className="bg-bg-elevated border border-blue-900/30 rounded-xl p-4 text-center">
               <p className="text-2xl font-bold text-blue-400">{highImpactToday}</p>
-              <p className="text-xs text-gray-400 mt-1">High impact today</p>
+              <p className="text-xs text-text-secondary mt-1">High impact today</p>
             </div>
           </div>
         )}
 
         {/* Filters */}
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 mb-6">
+        <div className="bg-bg-elevated border border-border rounded-xl p-4 mb-6">
           <div className="flex flex-col sm:flex-row gap-4">
             {/* Currency filter */}
             <div className="flex-1">
-              <p className="text-xs text-gray-400 mb-2 font-medium">Currency</p>
+              <p className="text-xs text-text-secondary mb-2 font-medium">Currency</p>
               <div className="flex flex-wrap gap-1.5">
                 {CURRENCIES.map((c) => (
                   <button
@@ -181,7 +181,7 @@ export default function EconomicCalendarPage() {
                     className={`px-3 py-1 rounded-lg text-xs font-medium transition ${
                       selectedCurrency === c
                         ? "bg-blue-600 text-white"
-                        : "bg-gray-800 text-gray-400 hover:bg-gray-700"
+                        : "bg-dark-700 text-text-secondary hover:bg-dark-600"
                     }`}
                   >
                     {CURRENCY_FLAGS[c] || ""} {c}
@@ -192,7 +192,7 @@ export default function EconomicCalendarPage() {
 
             {/* Impact filter */}
             <div>
-              <p className="text-xs text-gray-400 mb-2 font-medium">Impact</p>
+              <p className="text-xs text-text-secondary mb-2 font-medium">Impact</p>
               <div className="flex gap-1.5">
                 {(["High", "Medium", "Low"] as const).map((impact) => {
                   const cfg = IMPACT_CONFIG[impact];
@@ -202,8 +202,8 @@ export default function EconomicCalendarPage() {
                       onClick={() => toggleImpact(impact)}
                       className={`px-3 py-1 rounded-lg text-xs font-medium transition flex items-center gap-1 ${
                         selectedImpact.includes(impact)
-                          ? "bg-gray-700 text-white"
-                          : "bg-gray-800/50 text-gray-600"
+                          ? "bg-dark-600 text-white"
+                          : "bg-dark-700/50 text-text-muted"
                       }`}
                     >
                       {cfg.dot} {impact}
@@ -220,7 +220,7 @@ export default function EconomicCalendarPage() {
           <div className="flex items-center justify-center py-20">
             <div className="flex flex-col items-center gap-3">
               <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-              <p className="text-gray-400 text-sm">Loading calendar…</p>
+              <p className="text-text-secondary text-sm">Loading calendar…</p>
             </div>
           </div>
         )}
@@ -244,12 +244,12 @@ export default function EconomicCalendarPage() {
             {Object.keys(grouped).sort().map((day) => (
               <div key={day}>
                 {/* Day header */}
-                <div className={`flex items-center gap-3 mb-3 ${isToday(day) ? "text-blue-400" : "text-gray-400"}`}>
-                  <div className={`h-px flex-1 ${isToday(day) ? "bg-blue-800" : "bg-gray-800"}`} />
+                <div className={`flex items-center gap-3 mb-3 ${isToday(day) ? "text-blue-400" : "text-text-secondary"}`}>
+                  <div className={`h-px flex-1 ${isToday(day) ? "bg-blue-800" : "bg-dark-700"}`} />
                   <span className="text-sm font-semibold">
                     {isToday(day) ? "📅 TODAY — " : ""}{formatDate(day)}
                   </span>
-                  <div className={`h-px flex-1 ${isToday(day) ? "bg-blue-800" : "bg-gray-800"}`} />
+                  <div className={`h-px flex-1 ${isToday(day) ? "bg-blue-800" : "bg-dark-700"}`} />
                 </div>
 
                 {/* Events */}
@@ -260,25 +260,25 @@ export default function EconomicCalendarPage() {
                     return (
                       <div
                         key={i}
-                        className={`bg-gray-900 border rounded-xl p-4 transition ${
+                        className={`bg-bg-elevated border rounded-xl p-4 transition ${
                           upcoming
                             ? "border-yellow-600/50 bg-yellow-900/10"
                             : event.impact === "High" && isToday(event.date)
                             ? "border-red-800/50"
-                            : "border-gray-800"
+                            : "border-border"
                         }`}
                       >
                         <div className="flex items-start gap-3">
                           {/* Time */}
                           <div className="w-16 text-right shrink-0">
-                            <span className="text-xs text-gray-400 font-mono">
+                            <span className="text-xs text-text-secondary font-mono">
                               {formatTime(event.date.split("T")[0], event.time)}
                             </span>
                           </div>
 
                           {/* Currency + Impact */}
                           <div className="flex flex-col items-center gap-1 shrink-0 w-12">
-                            <span className="text-xs font-bold text-gray-200">
+                            <span className="text-xs font-bold text-text-primary">
                               {CURRENCY_FLAGS[event.country] || ""} {event.country}
                             </span>
                             <span className={`text-xs font-semibold ${cfg.color}`}>
@@ -309,7 +309,7 @@ export default function EconomicCalendarPage() {
                               <div className="flex gap-4 mt-2">
                                 {event.actual && (
                                   <div>
-                                    <span className="text-xs text-gray-500">Actual</span>
+                                    <span className="text-xs text-text-muted">Actual</span>
                                     <p className={`text-xs font-semibold ${
                                       event.actual && event.forecast
                                         ? parseFloat(event.actual) >= parseFloat(event.forecast)
@@ -323,14 +323,14 @@ export default function EconomicCalendarPage() {
                                 )}
                                 {event.forecast && (
                                   <div>
-                                    <span className="text-xs text-gray-500">Forecast</span>
-                                    <p className="text-xs font-semibold text-gray-300">{event.forecast}</p>
+                                    <span className="text-xs text-text-muted">Forecast</span>
+                                    <p className="text-xs font-semibold text-text-secondary">{event.forecast}</p>
                                   </div>
                                 )}
                                 {event.previous && (
                                   <div>
-                                    <span className="text-xs text-gray-500">Previous</span>
-                                    <p className="text-xs font-semibold text-gray-400">{event.previous}</p>
+                                    <span className="text-xs text-text-muted">Previous</span>
+                                    <p className="text-xs font-semibold text-text-secondary">{event.previous}</p>
                                   </div>
                                 )}
                               </div>
@@ -350,7 +350,7 @@ export default function EconomicCalendarPage() {
             ))}
 
             {Object.keys(grouped).length === 0 && (
-              <div className="text-center py-12 text-gray-500">
+              <div className="text-center py-12 text-text-muted">
                 No events match your filters.
               </div>
             )}

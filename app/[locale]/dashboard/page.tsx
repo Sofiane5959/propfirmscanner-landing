@@ -48,7 +48,7 @@ function ChallengeCard({ account, locale }: { account: any; locale: string }) {
   const ddWarning = ddPct > 50;
 
   return (
-    <div className={`bg-gray-900/60 rounded-xl border p-5 ${ddDanger || dailyDanger ? 'border-red-500/50' : ddWarning ? 'border-yellow-500/30' : 'border-gray-800'}`}>
+    <div className={`bg-bg-elevated/60 rounded-xl border p-5 ${ddDanger || dailyDanger ? 'border-red-500/50' : ddWarning ? 'border-yellow-500/30' : 'border-border'}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
@@ -60,13 +60,13 @@ function ChallengeCard({ account, locale }: { account: any; locale: string }) {
               </span>
             )}
           </div>
-          <p className="text-gray-500 text-sm">{account.firm_name} · ${account.initial_balance?.toLocaleString()}</p>
+          <p className="text-text-muted text-sm">{account.firm_name} · ${account.initial_balance?.toLocaleString()}</p>
         </div>
         <div className={`text-right`}>
-          <p className={`text-lg font-bold ${pnl >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+          <p className={`text-lg font-bold ${pnl >= 0 ? 'text-accent' : 'text-red-400'}`}>
             {pnl >= 0 ? '+' : ''}${Math.round(pnl).toLocaleString()}
           </p>
-          <p className={`text-xs ${pnl >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+          <p className={`text-xs ${pnl >= 0 ? 'text-accent' : 'text-red-500'}`}>
             {pnlPct >= 0 ? '+' : ''}{pnlPct.toFixed(2)}%
           </p>
         </div>
@@ -77,14 +77,14 @@ function ChallengeCard({ account, locale }: { account: any; locale: string }) {
         {/* Max Drawdown */}
         <div>
           <div className="flex justify-between text-xs mb-1">
-            <span className="text-gray-400">Max Drawdown</span>
-            <span className={ddDanger ? 'text-red-400 font-medium' : ddWarning ? 'text-yellow-400' : 'text-gray-400'}>
+            <span className="text-text-secondary">Max Drawdown</span>
+            <span className={ddDanger ? 'text-red-400 font-medium' : ddWarning ? 'text-yellow-400' : 'text-text-secondary'}>
               {ddUsed.toFixed(2)}% / {maxDD}%
             </span>
           </div>
-          <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
+          <div className="h-2 bg-dark-700 rounded-full overflow-hidden">
             <div
-              className={`h-full rounded-full transition-all ${ddDanger ? 'bg-red-500' : ddWarning ? 'bg-yellow-500' : 'bg-emerald-500'}`}
+              className={`h-full rounded-full transition-all ${ddDanger ? 'bg-red-500' : ddWarning ? 'bg-yellow-500' : 'bg-accent-hover'}`}
               style={{ width: `${ddPct}%` }}
             />
           </div>
@@ -93,12 +93,12 @@ function ChallengeCard({ account, locale }: { account: any; locale: string }) {
         {/* Daily Loss */}
         <div>
           <div className="flex justify-between text-xs mb-1">
-            <span className="text-gray-400">Daily Loss</span>
-            <span className={dailyDanger ? 'text-red-400 font-medium' : 'text-gray-400'}>
+            <span className="text-text-secondary">Daily Loss</span>
+            <span className={dailyDanger ? 'text-red-400 font-medium' : 'text-text-secondary'}>
               ${Math.abs(Math.round(dailyLoss)).toLocaleString()} / ${Math.round(account.initial_balance * dailyLimit / 100).toLocaleString()}
             </span>
           </div>
-          <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
+          <div className="h-2 bg-dark-700 rounded-full overflow-hidden">
             <div
               className={`h-full rounded-full transition-all ${dailyDanger ? 'bg-red-500' : dailyPct > 50 ? 'bg-yellow-500' : 'bg-blue-500'}`}
               style={{ width: `${dailyPct}%` }}
@@ -109,14 +109,14 @@ function ChallengeCard({ account, locale }: { account: any; locale: string }) {
         {/* Profit Target */}
         <div>
           <div className="flex justify-between text-xs mb-1">
-            <span className="text-gray-400">Profit Target</span>
-            <span className={targetPct >= 100 ? 'text-emerald-400 font-medium' : 'text-gray-400'}>
+            <span className="text-text-secondary">Profit Target</span>
+            <span className={targetPct >= 100 ? 'text-accent font-medium' : 'text-text-secondary'}>
               {pnlPct >= 0 ? pnlPct.toFixed(2) : '0.00'}% / {target}%
             </span>
           </div>
-          <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
+          <div className="h-2 bg-dark-700 rounded-full overflow-hidden">
             <div
-              className={`h-full rounded-full transition-all ${targetPct >= 100 ? 'bg-emerald-400' : 'bg-purple-500'}`}
+              className={`h-full rounded-full transition-all ${targetPct >= 100 ? 'bg-accent' : 'bg-purple-500'}`}
               style={{ width: `${targetPct}%` }}
             />
           </div>
@@ -124,17 +124,17 @@ function ChallengeCard({ account, locale }: { account: any; locale: string }) {
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-800">
+      <div className="flex items-center justify-between mt-4 pt-3 border-t border-border">
         {account.challenge_end_date ? (
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-text-muted">
             Ends: {new Date(account.challenge_end_date).toLocaleDateString()}
           </span>
         ) : (
-          <span className="text-xs text-gray-600">No end date</span>
+          <span className="text-xs text-text-muted">No end date</span>
         )}
         <Link
           href={`/${locale}/dashboard/accounts/${account.id}`}
-          className="text-xs text-emerald-400 hover:text-emerald-300 flex items-center gap-1"
+          className="text-xs text-accent hover:text-accent flex items-center gap-1"
         >
           Details <ChevronRight className="w-3 h-3" />
         </Link>
@@ -173,43 +173,43 @@ function TradeSimulator() {
   };
 
   return (
-    <div className="bg-gray-900/60 rounded-xl border border-gray-800 p-5">
+    <div className="bg-bg-elevated/60 rounded-xl border border-border p-5">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-semibold text-white flex items-center gap-2">
           <Calculator className="w-5 h-5 text-blue-400" />
           Trade Simulator
         </h3>
         <div className="flex items-center gap-1.5">
-          <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-          <span className="text-xs text-gray-500">Rule Checker Active</span>
+          <div className="w-2 h-2 rounded-full bg-accent-hover"></div>
+          <span className="text-xs text-text-muted">Rule Checker Active</span>
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-2.5 mb-3">
         <div>
-          <label className="text-xs text-gray-500 mb-1 block">Account size ($)</label>
+          <label className="text-xs text-text-muted mb-1 block">Account size ($)</label>
           <input type="number" value={accountSize} onChange={e => setAccountSize(e.target.value)}
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500" />
+            className="w-full bg-dark-700 border border-border rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500" />
         </div>
         <div>
-          <label className="text-xs text-gray-500 mb-1 block">Risk % per trade</label>
+          <label className="text-xs text-text-muted mb-1 block">Risk % per trade</label>
           <input type="number" value={riskPct} onChange={e => setRiskPct(e.target.value)} step="0.1"
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500" />
+            className="w-full bg-dark-700 border border-border rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500" />
         </div>
         <div>
-          <label className="text-xs text-gray-500 mb-1 block">Stop loss (pips)</label>
+          <label className="text-xs text-text-muted mb-1 block">Stop loss (pips)</label>
           <input type="number" value={slPips} onChange={e => setSlPips(e.target.value)}
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500" />
+            className="w-full bg-dark-700 border border-border rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500" />
         </div>
         <div>
-          <label className="text-xs text-gray-500 mb-1 block">Pip value ($)</label>
+          <label className="text-xs text-text-muted mb-1 block">Pip value ($)</label>
           <input type="number" value={pipValue} onChange={e => setPipValue(e.target.value)}
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500" />
+            className="w-full bg-dark-700 border border-border rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500" />
         </div>
         <div className="col-span-2">
-          <label className="text-xs text-gray-500 mb-1 block">Max DD remaining (%)</label>
+          <label className="text-xs text-text-muted mb-1 block">Max DD remaining (%)</label>
           <input type="number" value={maxDDRemaining} onChange={e => setMaxDDRemaining(e.target.value)} step="0.1"
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500" />
+            className="w-full bg-dark-700 border border-border rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500" />
         </div>
       </div>
 
@@ -219,23 +219,23 @@ function TradeSimulator() {
       </button>
 
       {result && (
-        <div className={`rounded-lg p-3 border ${result.safe ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-red-500/10 border-red-500/30'}`}>
+        <div className={`rounded-lg p-3 border ${result.safe ? 'bg-accent/10 border-accent/30' : 'bg-red-500/10 border-red-500/30'}`}>
           <div className="flex items-center gap-2 mb-2">
             {result.safe
-              ? <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              ? <CheckCircle2 className="w-4 h-4 text-accent" />
               : <AlertTriangle className="w-4 h-4 text-red-400" />}
-            <span className={`text-sm font-semibold ${result.safe ? 'text-emerald-400' : 'text-red-400'}`}>
+            <span className={`text-sm font-semibold ${result.safe ? 'text-accent' : 'text-red-400'}`}>
               {result.safe ? '✓ Safe to trade' : '✗ Rule violation risk!'}
             </span>
           </div>
           {result.warning && <p className="text-xs text-red-300 mb-2">{result.warning}</p>}
           <div className="grid grid-cols-2 gap-2 text-sm">
-            <div className="bg-gray-800/50 rounded p-2">
-              <p className="text-gray-500 text-xs">Lot size</p>
+            <div className="bg-dark-700/50 rounded p-2">
+              <p className="text-text-muted text-xs">Lot size</p>
               <p className="text-white font-bold">{result.lots}</p>
             </div>
-            <div className="bg-gray-800/50 rounded p-2">
-              <p className="text-gray-500 text-xs">Risk amount</p>
+            <div className="bg-dark-700/50 rounded p-2">
+              <p className="text-text-muted text-xs">Risk amount</p>
               <p className="text-white font-bold">${result.riskAmount.toLocaleString()}</p>
             </div>
           </div>
@@ -297,7 +297,7 @@ function EconomicCalendarLocked({ locale }: { locale: string }) {
   const highCount = events.filter(e => e.impact === 'High').length;
 
   return (
-    <div className="bg-gray-900/60 rounded-xl border border-gray-800 p-5">
+    <div className="bg-bg-elevated/60 rounded-xl border border-border p-5">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-semibold text-white flex items-center gap-2">
           <Calendar className="w-5 h-5 text-orange-400" />
@@ -316,12 +316,12 @@ function EconomicCalendarLocked({ locale }: { locale: string }) {
       {loading ? (
         <div className="space-y-2">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-10 bg-gray-800 rounded-lg animate-pulse" />
+            <div key={i} className="h-10 bg-dark-700 rounded-lg animate-pulse" />
           ))}
         </div>
       ) : events.length === 0 ? (
         <div className="text-center py-6">
-          <p className="text-gray-500 text-sm">No high-impact events today 🎉</p>
+          <p className="text-text-muted text-sm">No high-impact events today 🎉</p>
           <Link href={`/${locale}/dashboard/calendar`} className="text-xs text-blue-400 hover:text-blue-300 mt-1 inline-block">
             View this week →
           </Link>
@@ -330,25 +330,25 @@ function EconomicCalendarLocked({ locale }: { locale: string }) {
         <div className="space-y-2">
           {events.map((event, i) => (
             <div key={i} className={`flex items-center gap-3 px-3 py-2.5 rounded-lg ${
-              event.impact === 'High' ? 'bg-red-900/10 border border-red-900/30' : 'bg-gray-800/60'
+              event.impact === 'High' ? 'bg-red-900/10 border border-red-900/30' : 'bg-dark-700/60'
             }`}>
               <span className="text-sm w-4 shrink-0">{event.impact === 'High' ? '🔴' : '🟡'}</span>
-              <span className="text-xs text-gray-400 w-16 shrink-0 font-mono">{formatTimeDash(event.time)}</span>
-              <span className="text-xs text-gray-300 shrink-0">{CURRENCY_FLAGS_DASH[event.country] || ''} {event.country}</span>
+              <span className="text-xs text-text-secondary w-16 shrink-0 font-mono">{formatTimeDash(event.time)}</span>
+              <span className="text-xs text-text-secondary shrink-0">{CURRENCY_FLAGS_DASH[event.country] || ''} {event.country}</span>
               <span className="text-xs text-white truncate flex-1">{event.title}</span>
               {event.actual ? (
                 <span className="text-xs text-green-400 shrink-0">{event.actual}</span>
               ) : event.forecast ? (
-                <span className="text-xs text-gray-500 shrink-0">F: {event.forecast}</span>
+                <span className="text-xs text-text-muted shrink-0">F: {event.forecast}</span>
               ) : null}
             </div>
           ))}
         </div>
       )}
 
-      <div className="mt-3 pt-3 border-t border-gray-800 flex justify-between items-center">
-        <p className="text-xs text-gray-600">Source: Forex Factory</p>
-        <div className="flex gap-3 text-xs text-gray-600">
+      <div className="mt-3 pt-3 border-t border-border flex justify-between items-center">
+        <p className="text-xs text-text-muted">Source: Forex Factory</p>
+        <div className="flex gap-3 text-xs text-text-muted">
           <span>🔴 High</span>
           <span>🟡 Medium</span>
         </div>
@@ -367,7 +367,7 @@ function TradingIdeasLocked({ locale }: { locale: string }) {
     { pair: 'XAU/USD', direction: 'LONG', rr: '1:4', setup: 'HTF demand zone $2,310', risk: 'LOW' },
   ];
   return (
-    <div className="bg-gray-900/60 rounded-xl border border-gray-800 p-5 relative overflow-hidden">
+    <div className="bg-bg-elevated/60 rounded-xl border border-border p-5 relative overflow-hidden">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-semibold text-white flex items-center gap-2">
           <TrendingUp className="w-5 h-5 text-cyan-400" />
@@ -379,28 +379,28 @@ function TradingIdeasLocked({ locale }: { locale: string }) {
       </div>
       <div className="space-y-2 blur-sm pointer-events-none select-none">
         {ideas.map((idea, i) => (
-          <div key={i} className="flex items-center justify-between p-2.5 bg-gray-800/50 rounded-lg">
+          <div key={i} className="flex items-center justify-between p-2.5 bg-dark-700/50 rounded-lg">
             <div className="flex items-center gap-2">
-              <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${idea.direction === 'LONG' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
+              <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${idea.direction === 'LONG' ? 'bg-accent/20 text-accent' : 'bg-red-500/20 text-red-400'}`}>
                 {idea.direction}
               </span>
               <span className="text-sm text-white">{idea.pair}</span>
             </div>
             <div className="text-right">
-              <p className="text-xs text-gray-400">{idea.setup}</p>
+              <p className="text-xs text-text-secondary">{idea.setup}</p>
               <p className="text-xs text-purple-400">R:R {idea.rr}</p>
             </div>
           </div>
         ))}
       </div>
-      <div className="absolute inset-0 flex items-center justify-center bg-gray-950/60 rounded-xl">
+      <div className="absolute inset-0 flex items-center justify-center bg-bg-base/60 rounded-xl">
         <Link href={`/${locale}/dashboard/upgrade`}
           className="flex flex-col items-center gap-2 text-center">
           <div className="w-10 h-10 bg-purple-500/20 rounded-full flex items-center justify-center">
             <Lock className="w-5 h-5 text-purple-400" />
           </div>
           <p className="text-sm text-white font-medium">Educational ideas only</p>
-          <p className="text-xs text-gray-400">Not financial advice · Pro feature</p>
+          <p className="text-xs text-text-secondary">Not financial advice · Pro feature</p>
           <span className="text-xs bg-purple-600 text-white px-3 py-1 rounded-full">Upgrade →</span>
         </Link>
       </div>
@@ -471,8 +471,8 @@ export default function DashboardPage() {
   useEffect(() => { if (user) fetchData(); }, [user]);
 
   if (isLoading) return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-      <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
+    <div className="min-h-screen bg-bg-base flex items-center justify-center">
+      <Loader2 className="w-8 h-8 text-accent animate-spin" />
     </div>
   );
   if (!user) return null;
@@ -486,7 +486,7 @@ export default function DashboardPage() {
   }).length;
 
   return (
-    <div className="min-h-screen bg-gray-950">
+    <div className="min-h-screen bg-bg-base">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         {/* ── HEADER ─────────────────────────────────────────────────────── */}
@@ -494,10 +494,10 @@ export default function DashboardPage() {
           <div className="flex items-center gap-4">
             {avatarUrl
               ? <img src={avatarUrl} alt={displayName} className="w-10 h-10 rounded-full" referrerPolicy="no-referrer" />
-              : <div className="w-10 h-10 bg-emerald-500/20 rounded-full flex items-center justify-center"><User className="w-5 h-5 text-emerald-400" /></div>
+              : <div className="w-10 h-10 bg-accent/20 rounded-full flex items-center justify-center"><User className="w-5 h-5 text-accent" /></div>
             }
             <div>
-              <p className="text-gray-400 text-xs">Welcome back</p>
+              <p className="text-text-secondary text-xs">Welcome back</p>
               <h1 className="text-xl font-bold text-white">{displayName}</h1>
             </div>
             {atRiskCount > 0 && (
@@ -508,17 +508,17 @@ export default function DashboardPage() {
             )}
           </div>
           <div className="flex items-center gap-3">
-            <button onClick={fetchData} className="p-2 text-gray-500 hover:text-white transition-colors" title="Refresh">
+            <button onClick={fetchData} className="p-2 text-text-muted hover:text-white transition-colors" title="Refresh">
               <RefreshCw className="w-4 h-4" />
             </button>
-            <span className="text-xs text-gray-600 hidden sm:inline">Updated {lastUpdated.toLocaleTimeString()}</span>
+            <span className="text-xs text-text-muted hidden sm:inline">Updated {lastUpdated.toLocaleTimeString()}</span>
             {isPro ? (
               <span className="px-3 py-1 bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs rounded-full flex items-center gap-1">
                 <Zap className="w-3 h-3" /> Pro
               </span>
             ) : (
               <>
-                <span className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs rounded-full hidden sm:inline">Free plan</span>
+                <span className="px-3 py-1 bg-accent/10 border border-accent/20 text-accent text-xs rounded-full hidden sm:inline">Free plan</span>
                 <Link href={`/${locale}/dashboard/upgrade`}
                   className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors text-sm font-medium">
                   <Zap className="w-4 h-4" />
@@ -534,35 +534,35 @@ export default function DashboardPage() {
         {/* ── MY COURSE HERO ─────────────────────────────────────────────── */}
         {hasCourse ? (
           <Link href={`/${locale}/education`}
-            className="flex items-center justify-between bg-gradient-to-r from-emerald-900/60 to-teal-900/50 border border-emerald-500/30 rounded-xl p-5 mb-6 hover:border-emerald-400/60 transition-all group">
+            className="flex items-center justify-between bg-gradient-to-r from-emerald-900/60 to-teal-900/50 border border-accent/30 rounded-xl p-5 mb-6 hover:border-accent/60 transition-all group">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center shrink-0">
-                <GraduationCap className="w-6 h-6 text-emerald-400" />
+              <div className="w-12 h-12 bg-accent/20 rounded-xl flex items-center justify-center shrink-0">
+                <GraduationCap className="w-6 h-6 text-accent" />
               </div>
               <div>
-                <p className="text-xs text-emerald-400 uppercase tracking-wider mb-0.5">My Course</p>
+                <p className="text-xs text-accent uppercase tracking-wider mb-0.5">My Course</p>
                 <p className="text-white font-semibold">Prop Firm Fundamentals</p>
-                <p className="text-gray-400 text-sm">10 lessons · 17 audio files · 8 interactive quizzes</p>
+                <p className="text-text-secondary text-sm">10 lessons · 17 audio files · 8 interactive quizzes</p>
               </div>
             </div>
-            <div className="bg-emerald-500 group-hover:bg-emerald-400 text-white px-5 py-2 rounded-lg transition-colors text-sm font-medium">
+            <div className="bg-accent-hover group-hover:brightness-110 text-white px-5 py-2 rounded-lg transition-colors text-sm font-medium">
               Continue learning →
             </div>
           </Link>
         ) : (
           <Link href={`/${locale}/education`}
-            className="flex items-center justify-between bg-gray-900/50 border border-dashed border-gray-700 rounded-xl p-5 mb-6 hover:border-emerald-500/40 transition-all group">
+            className="flex items-center justify-between bg-bg-elevated/50 border border-dashed border-border rounded-xl p-5 mb-6 hover:border-accent/40 transition-all group">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center shrink-0">
-                <GraduationCap className="w-6 h-6 text-gray-500" />
+              <div className="w-12 h-12 bg-dark-700 rounded-xl flex items-center justify-center shrink-0">
+                <GraduationCap className="w-6 h-6 text-text-muted" />
               </div>
               <div>
-                <p className="text-xs text-gray-500 uppercase tracking-wider mb-0.5">Course</p>
+                <p className="text-xs text-text-muted uppercase tracking-wider mb-0.5">Course</p>
                 <p className="text-white font-semibold">Prop Firm Fundamentals</p>
-                <p className="text-gray-400 text-sm">Learn how to pass any prop firm challenge · $69.99 lifetime</p>
+                <p className="text-text-secondary text-sm">Learn how to pass any prop firm challenge · $69.99 lifetime</p>
               </div>
             </div>
-            <div className="border border-emerald-500 text-emerald-400 px-4 py-2 rounded-lg text-sm font-medium group-hover:bg-emerald-500/10 transition-colors">
+            <div className="border border-accent text-accent px-4 py-2 rounded-lg text-sm font-medium group-hover:bg-accent/10 transition-colors">
               Get Access →
             </div>
           </Link>
@@ -570,33 +570,33 @@ export default function DashboardPage() {
 
         {/* ── STATS ROW ──────────────────────────────────────────────────── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <div className="bg-gray-900/60 rounded-xl border border-gray-800 p-4">
+          <div className="bg-bg-elevated/60 rounded-xl border border-border p-4">
             <div className="flex items-center gap-2 mb-2">
-              <div className="p-1.5 bg-emerald-500/10 rounded-lg"><Wallet className="w-4 h-4 text-emerald-500" /></div>
-              <span className="text-gray-400 text-xs">Total P&L</span>
+              <div className="p-1.5 bg-accent/10 rounded-lg"><Wallet className="w-4 h-4 text-accent" /></div>
+              <span className="text-text-secondary text-xs">Total P&L</span>
             </div>
-            <p className={`text-2xl font-bold ${totalProfit >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+            <p className={`text-2xl font-bold ${totalProfit >= 0 ? 'text-accent' : 'text-red-500'}`}>
               {totalProfit >= 0 ? '+' : ''}${Math.round(totalProfit).toLocaleString()}
             </p>
           </div>
-          <div className="bg-gray-900/60 rounded-xl border border-gray-800 p-4">
+          <div className="bg-bg-elevated/60 rounded-xl border border-border p-4">
             <div className="flex items-center gap-2 mb-2">
               <div className="p-1.5 bg-blue-500/10 rounded-lg"><Activity className="w-4 h-4 text-blue-500" /></div>
-              <span className="text-gray-400 text-xs">Active Challenges</span>
+              <span className="text-text-secondary text-xs">Active Challenges</span>
             </div>
             <p className="text-2xl font-bold text-white">{accounts.length}</p>
           </div>
-          <div className="bg-gray-900/60 rounded-xl border border-gray-800 p-4">
+          <div className="bg-bg-elevated/60 rounded-xl border border-border p-4">
             <div className="flex items-center gap-2 mb-2">
               <div className="p-1.5 bg-red-500/10 rounded-lg"><AlertTriangle className="w-4 h-4 text-red-500" /></div>
-              <span className="text-gray-400 text-xs">Accounts at Risk</span>
+              <span className="text-text-secondary text-xs">Accounts at Risk</span>
             </div>
-            <p className={`text-2xl font-bold ${atRiskCount > 0 ? 'text-red-500' : 'text-emerald-500'}`}>{atRiskCount}</p>
+            <p className={`text-2xl font-bold ${atRiskCount > 0 ? 'text-red-500' : 'text-accent'}`}>{atRiskCount}</p>
           </div>
-          <div className="bg-gray-900/60 rounded-xl border border-gray-800 p-4">
+          <div className="bg-bg-elevated/60 rounded-xl border border-border p-4">
             <div className="flex items-center gap-2 mb-2">
               <div className="p-1.5 bg-yellow-500/10 rounded-lg"><Star className="w-4 h-4 text-yellow-500" /></div>
-              <span className="text-gray-400 text-xs">Favorite Firms</span>
+              <span className="text-text-secondary text-xs">Favorite Firms</span>
             </div>
             <p className="text-2xl font-bold text-white">{favoriteCount}</p>
           </div>
@@ -612,40 +612,40 @@ export default function DashboardPage() {
             <div>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-base font-bold text-white flex items-center gap-2">
-                  <Target className="w-5 h-5 text-emerald-400" />
+                  <Target className="w-5 h-5 text-accent" />
                   Challenge Tracker
-                  <span className="text-xs text-gray-500 font-normal">— Real-time drawdown monitoring</span>
+                  <span className="text-xs text-text-muted font-normal">— Real-time drawdown monitoring</span>
                 </h2>
                 <div className="flex items-center gap-2">
                   <Link href={`/${locale}/dashboard/accounts/new`}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors text-xs font-medium">
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-accent-hover hover:brightness-110 text-white rounded-lg transition-colors text-xs font-medium">
                     <Plus className="w-3.5 h-3.5" /> Add Challenge
                   </Link>
                   <Link href={`/${locale}/dashboard/accounts`}
-                    className="text-emerald-400 hover:text-emerald-300 text-xs flex items-center gap-1">
+                    className="text-accent hover:text-accent text-xs flex items-center gap-1">
                     All <ChevronRight className="w-3 h-3" />
                   </Link>
                 </div>
               </div>
 
               {loadingAccounts ? (
-                <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-8 flex items-center justify-center">
-                  <Loader2 className="w-6 h-6 text-emerald-500 animate-spin" />
+                <div className="bg-bg-elevated/50 rounded-xl border border-border p-8 flex items-center justify-center">
+                  <Loader2 className="w-6 h-6 text-accent animate-spin" />
                 </div>
               ) : accounts.length === 0 ? (
-                <div className="bg-gray-900/50 rounded-xl border border-dashed border-gray-700 p-10 text-center">
-                  <div className="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Target className="w-8 h-8 text-gray-600" />
+                <div className="bg-bg-elevated/50 rounded-xl border border-dashed border-border p-10 text-center">
+                  <div className="w-16 h-16 bg-dark-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Target className="w-8 h-8 text-text-muted" />
                   </div>
                   <h3 className="text-white font-semibold mb-2">No challenges tracked yet</h3>
-                  <p className="text-gray-400 text-sm mb-1">Add your prop firm challenge to monitor:</p>
+                  <p className="text-text-secondary text-sm mb-1">Add your prop firm challenge to monitor:</p>
                   <div className="flex flex-wrap justify-center gap-2 mb-5 mt-2">
                     {['Max Drawdown', 'Daily Loss Limit', 'Profit Target', 'Rule Compliance'].map(f => (
-                      <span key={f} className="text-xs bg-gray-800 text-gray-400 px-2 py-1 rounded-full">{f}</span>
+                      <span key={f} className="text-xs bg-dark-700 text-text-secondary px-2 py-1 rounded-full">{f}</span>
                     ))}
                   </div>
                   <Link href={`/${locale}/dashboard/accounts/new`}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors text-sm font-medium">
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent-hover hover:brightness-110 text-white rounded-lg transition-colors text-sm font-medium">
                     <Plus className="w-4 h-4" /> Track My First Challenge
                   </Link>
                 </div>
@@ -654,7 +654,7 @@ export default function DashboardPage() {
                   {accounts.slice(0, 3).map(a => <ChallengeCard key={a.id} account={a} locale={locale} />)}
                   {accounts.length > 3 && (
                     <Link href={`/${locale}/dashboard/accounts`}
-                      className="flex items-center justify-center gap-2 py-3 bg-gray-800/50 hover:bg-gray-800 text-gray-400 hover:text-white rounded-xl transition-colors text-sm">
+                      className="flex items-center justify-center gap-2 py-3 bg-dark-700/50 hover:bg-dark-700 text-text-secondary hover:text-white rounded-xl transition-colors text-sm">
                       View {accounts.length - 3} more challenges <ChevronRight className="w-4 h-4" />
                     </Link>
                   )}
@@ -673,43 +673,43 @@ export default function DashboardPage() {
           <div className="space-y-5">
 
             {/* Profile + Settings */}
-            <div className="bg-gray-900/60 rounded-xl border border-gray-800 p-5">
+            <div className="bg-bg-elevated/60 rounded-xl border border-border p-5">
               <div className="flex items-center gap-3 mb-4">
                 {avatarUrl
                   ? <img src={avatarUrl} alt={displayName} className="w-12 h-12 rounded-full" referrerPolicy="no-referrer" />
-                  : <div className="w-12 h-12 bg-emerald-500/20 rounded-full flex items-center justify-center"><User className="w-6 h-6 text-emerald-400" /></div>
+                  : <div className="w-12 h-12 bg-accent/20 rounded-full flex items-center justify-center"><User className="w-6 h-6 text-accent" /></div>
                 }
                 <div className="min-w-0">
                   <p className="text-white font-medium truncate">{displayName}</p>
-                  <p className="text-gray-500 text-xs truncate">{user.email}</p>
+                  <p className="text-text-muted text-xs truncate">{user.email}</p>
                 </div>
               </div>
               <div className="flex items-center justify-between text-xs mb-4">
-                <span className="text-gray-500 flex items-center gap-1.5"><Crown className="w-3 h-3" /> Plan</span>
+                <span className="text-text-muted flex items-center gap-1.5"><Crown className="w-3 h-3" /> Plan</span>
                 {isPro
                   ? <span className="text-purple-400 font-medium flex items-center gap-1"><Zap className="w-3 h-3" /> Pro</span>
-                  : <span className="text-emerald-400 font-medium">Free</span>
+                  : <span className="text-accent font-medium">Free</span>
                 }
               </div>
               <Link href={`/${locale}/dashboard/settings`}
-                className="w-full flex items-center justify-center gap-2 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg transition-colors text-sm">
+                className="w-full flex items-center justify-center gap-2 py-2 bg-dark-700 hover:bg-dark-600 text-text-secondary rounded-lg transition-colors text-sm">
                 <Settings className="w-4 h-4" /> Settings
               </Link>
             </div>
 
             {/* Favorite Firms */}
-            <div className="bg-gray-900/60 rounded-xl border border-gray-800 p-5">
+            <div className="bg-bg-elevated/60 rounded-xl border border-border p-5">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="font-medium text-white flex items-center gap-2 text-sm">
                   <Star className="w-4 h-4 text-yellow-400" /> Favorite Firms
                 </h3>
-                <Link href={`/${locale}/dashboard/favorites`} className="text-emerald-400 text-xs">View all →</Link>
+                <Link href={`/${locale}/dashboard/favorites`} className="text-accent text-xs">View all →</Link>
               </div>
               {favoriteCount === 0 ? (
                 <div className="text-center py-3">
-                  <p className="text-gray-500 text-sm mb-3">No favorites saved yet</p>
+                  <p className="text-text-muted text-sm mb-3">No favorites saved yet</p>
                   <Link href={`/${locale}/compare`}
-                    className="inline-flex items-center gap-1.5 px-3 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg text-xs transition-colors">
+                    className="inline-flex items-center gap-1.5 px-3 py-2 bg-dark-700 hover:bg-dark-600 text-text-secondary rounded-lg text-xs transition-colors">
                     <BarChart3 className="w-3.5 h-3.5" /> Browse 90+ firms
                   </Link>
                 </div>
@@ -723,42 +723,42 @@ export default function DashboardPage() {
                         target={firm.affiliate_url ? '_blank' : undefined}
                         rel="noopener noreferrer"
                         title={firm.name}
-                        className="w-9 h-9 rounded-lg bg-white border border-gray-200 flex items-center justify-center overflow-hidden p-1 hover:ring-2 hover:ring-emerald-400 transition-all shrink-0"
+                        className="w-9 h-9 rounded-lg bg-white border border-gray-200 flex items-center justify-center overflow-hidden p-1 hover:ring-2 hover:ring-accent transition-all shrink-0"
                       >
                         {firm.logo_url ? (
                           <img src={firm.logo_url} alt={firm.name} className="w-full h-full object-contain" />
                         ) : (
-                          <span className="text-xs font-bold text-gray-600">{firm.name.charAt(0)}</span>
+                          <span className="text-xs font-bold text-text-muted">{firm.name.charAt(0)}</span>
                         )}
                       </a>
                     ))}
                     {favoriteCount > 4 && (
                       <Link href={`/${locale}/dashboard/favorites`}
-                        className="w-9 h-9 rounded-lg bg-gray-800 border border-gray-700 flex items-center justify-center text-xs text-gray-400 hover:text-white transition-colors">
+                        className="w-9 h-9 rounded-lg bg-dark-700 border border-border flex items-center justify-center text-xs text-text-secondary hover:text-white transition-colors">
                         +{favoriteCount - 4}
                       </Link>
                     )}
                   </div>
-                  <p className="text-gray-500 text-xs">{favoriteCount} firm{favoriteCount > 1 ? 's' : ''} saved</p>
+                  <p className="text-text-muted text-xs">{favoriteCount} firm{favoriteCount > 1 ? 's' : ''} saved</p>
                 </div>
               )}
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-gray-900/60 rounded-xl border border-gray-800 p-5">
+            <div className="bg-bg-elevated/60 rounded-xl border border-border p-5">
               <h3 className="font-medium text-white mb-3 text-sm">Quick Actions</h3>
               <div className="space-y-1.5">
                 {[
-                  { icon: BarChart3, label: 'Compare Firms', href: `/${locale}/compare`, color: 'text-emerald-400' },
+                  { icon: BarChart3, label: 'Compare Firms', href: `/${locale}/compare`, color: 'text-accent' },
                   { icon: Tag, label: 'View Deals', href: `/${locale}/deals`, color: 'text-yellow-400' },
-                  { icon: Star, label: 'My Favorites', href: `/${locale}/dashboard/favorites`, color: 'text-gray-400' },
+                  { icon: Star, label: 'My Favorites', href: `/${locale}/dashboard/favorites`, color: 'text-text-secondary' },
                   { icon: BookOpen, label: 'Rules Database', href: `/${locale}/dashboard/rules`, color: 'text-blue-400' },
                   { icon: Bell, label: 'Alert Settings', href: `/${locale}/dashboard/settings`, color: 'text-purple-400' },
                 ].map((item, i) => (
                   <Link key={i} href={item.href}
-                    className="flex items-center gap-3 p-2.5 bg-gray-800/50 hover:bg-gray-800 rounded-lg transition-colors">
+                    className="flex items-center gap-3 p-2.5 bg-dark-700/50 hover:bg-dark-700 rounded-lg transition-colors">
                     <item.icon className={`w-4 h-4 ${item.color}`} />
-                    <span className="text-gray-300 text-sm">{item.label}</span>
+                    <span className="text-text-secondary text-sm">{item.label}</span>
                   </Link>
                 ))}
               </div>
@@ -769,15 +769,15 @@ export default function DashboardPage() {
 
             {/* Pro Banner — hidden for Pro users */}
             {isPro ? (
-              <div className="bg-gradient-to-br from-purple-900/30 to-gray-900 border border-purple-500/20 rounded-xl p-5">
+              <div className="bg-gradient-to-br from-purple-900/30 to-bg-elevated border border-purple-500/20 rounded-xl p-5">
                 <div className="flex items-center gap-2 mb-2">
                   <Zap className="w-4 h-4 text-purple-400" />
                   <h3 className="font-semibold text-white text-sm">You&apos;re on Pro 🎉</h3>
                 </div>
-                <p className="text-gray-400 text-xs">All features unlocked. Thank you for your support!</p>
+                <p className="text-text-secondary text-xs">All features unlocked. Thank you for your support!</p>
               </div>
             ) : (
-              <div className="bg-gradient-to-br from-purple-900/40 to-gray-900 border border-purple-500/20 rounded-xl p-5">
+              <div className="bg-gradient-to-br from-purple-900/40 to-bg-elevated border border-purple-500/20 rounded-xl p-5">
                 <div className="flex items-center gap-2 mb-3">
                   <Sparkles className="w-5 h-5 text-purple-400" />
                   <h3 className="font-semibold text-white text-sm">Unlock Pro</h3>
@@ -790,8 +790,8 @@ export default function DashboardPage() {
                     'Educational trading ideas',
                     'Advanced trade simulator',
                   ].map((f, i) => (
-                    <li key={i} className="flex items-center gap-2 text-xs text-gray-300">
-                      <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />{f}
+                    <li key={i} className="flex items-center gap-2 text-xs text-text-secondary">
+                      <CheckCircle2 className="w-3 h-3 text-accent shrink-0" />{f}
                     </li>
                   ))}
                 </ul>

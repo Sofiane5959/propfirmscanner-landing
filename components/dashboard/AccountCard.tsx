@@ -88,9 +88,9 @@ function formatPnl(amount: number): string {
 function getStatusConfig(status: 'safe' | 'warning' | 'danger') {
   const configs = {
     safe: {
-      bg: 'bg-emerald-500/20',
-      border: 'border-emerald-500/30',
-      text: 'text-emerald-400',
+      bg: 'bg-accent/20',
+      border: 'border-accent/30',
+      text: 'text-accent',
       icon: Shield,
       label: 'Healthy',
     },
@@ -153,13 +153,13 @@ export function AccountCard({ account, canSimulate }: AccountCardProps) {
 
   return (
     <>
-      <div className={`bg-gray-800 rounded-xl border ${statusConfig.border} overflow-hidden`}>
+      <div className={`bg-dark-700 rounded-xl border ${statusConfig.border} overflow-hidden`}>
         {/* Header */}
-        <div className="p-4 border-b border-gray-700">
+        <div className="p-4 border-b border-border">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
               {/* Prop Firm Logo Placeholder */}
-              <div className="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-dark-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">
                   {account.prop_firm.charAt(0)}
                 </span>
@@ -167,7 +167,7 @@ export function AccountCard({ account, canSimulate }: AccountCardProps) {
               
               <div>
                 <h3 className="font-semibold text-white">{account.prop_firm}</h3>
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-text-secondary">
                   {account.program} • {account.stage}
                 </p>
               </div>
@@ -188,27 +188,27 @@ export function AccountCard({ account, canSimulate }: AccountCardProps) {
           {/* Balance & P&L Row */}
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
-              <p className="text-xs text-gray-500 mb-1">Current Balance</p>
+              <p className="text-xs text-text-muted mb-1">Current Balance</p>
               <p className="text-xl font-bold text-white">
                 {formatCurrency(account.current_balance)}
               </p>
             </div>
             
             <div>
-              <p className="text-xs text-gray-500 mb-1">Today's P&L</p>
+              <p className="text-xs text-text-muted mb-1">Today's P&L</p>
               {isEditing ? (
                 <div className="flex items-center gap-2">
                   <input
                     type="number"
                     value={pnlInput}
                     onChange={(e) => setPnlInput(e.target.value)}
-                    className="w-24 px-2 py-1 bg-gray-700 border border-gray-600 rounded text-white text-sm focus:outline-none focus:border-emerald-500"
+                    className="w-24 px-2 py-1 bg-dark-600 border border-border-hover rounded text-white text-sm focus:outline-none focus:border-accent"
                     autoFocus
                   />
                   <button
                     onClick={handleSavePnl}
                     disabled={isSaving}
-                    className="p-1 text-emerald-400 hover:bg-emerald-500/20 rounded"
+                    className="p-1 text-accent hover:bg-accent/20 rounded"
                   >
                     <Check className="w-4 h-4" />
                   </button>
@@ -217,7 +217,7 @@ export function AccountCard({ account, canSimulate }: AccountCardProps) {
                       setIsEditing(false);
                       setPnlInput(account.today_pnl.toString());
                     }}
-                    className="p-1 text-gray-400 hover:bg-gray-700 rounded"
+                    className="p-1 text-text-secondary hover:bg-dark-600 rounded"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -225,13 +225,13 @@ export function AccountCard({ account, canSimulate }: AccountCardProps) {
               ) : (
                 <div className="flex items-center gap-2">
                   <p className={`text-xl font-bold ${
-                    account.today_pnl >= 0 ? 'text-emerald-400' : 'text-red-400'
+                    account.today_pnl >= 0 ? 'text-accent' : 'text-red-400'
                   }`}>
                     {formatPnl(account.today_pnl)}
                   </p>
                   <button
                     onClick={() => setIsEditing(true)}
-                    className="p-1 text-gray-500 hover:text-white hover:bg-gray-700 rounded transition-colors"
+                    className="p-1 text-text-muted hover:text-white hover:bg-dark-600 rounded transition-colors"
                     title="Edit today's P&L"
                   >
                     <Edit2 className="w-3.5 h-3.5" />
@@ -246,25 +246,25 @@ export function AccountCard({ account, canSimulate }: AccountCardProps) {
             {/* Daily Drawdown Buffer */}
             <div>
               <div className="flex justify-between text-xs mb-1">
-                <span className="text-gray-400">Daily DD Buffer</span>
+                <span className="text-text-secondary">Daily DD Buffer</span>
                 <span className={`font-medium ${
                   account.health.daily.daily_buffer_pct < 30 
                     ? account.health.daily.daily_buffer_pct < 15 
                       ? 'text-red-400' 
                       : 'text-yellow-400'
-                    : 'text-emerald-400'
+                    : 'text-accent'
                 }`}>
                   {formatCurrency(account.health.daily.daily_buffer_usd)} ({account.health.daily.daily_buffer_pct.toFixed(0)}%)
                 </span>
               </div>
-              <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
+              <div className="h-2 bg-dark-600 rounded-full overflow-hidden">
                 <div
                   className={`h-full transition-all ${
                     account.health.daily.daily_buffer_pct < 30
                       ? account.health.daily.daily_buffer_pct < 15
                         ? 'bg-red-500'
                         : 'bg-yellow-500'
-                      : 'bg-emerald-500'
+                      : 'bg-accent-hover'
                   }`}
                   style={{ width: `${Math.min(100, account.health.daily.daily_buffer_pct)}%` }}
                 />
@@ -274,7 +274,7 @@ export function AccountCard({ account, canSimulate }: AccountCardProps) {
             {/* Max Drawdown Buffer */}
             <div>
               <div className="flex justify-between text-xs mb-1">
-                <span className="text-gray-400">
+                <span className="text-text-secondary">
                   Max DD Buffer
                   {account.max_dd_type !== 'static' && (
                     <span className="text-purple-400 ml-1">(trailing)</span>
@@ -285,19 +285,19 @@ export function AccountCard({ account, canSimulate }: AccountCardProps) {
                     ? account.health.max.max_buffer_pct < 15
                       ? 'text-red-400'
                       : 'text-yellow-400'
-                    : 'text-emerald-400'
+                    : 'text-accent'
                 }`}>
                   {formatCurrency(account.health.max.max_buffer_usd)} ({account.health.max.max_buffer_pct.toFixed(0)}%)
                 </span>
               </div>
-              <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
+              <div className="h-2 bg-dark-600 rounded-full overflow-hidden">
                 <div
                   className={`h-full transition-all ${
                     account.health.max.max_buffer_pct < 30
                       ? account.health.max.max_buffer_pct < 15
                         ? 'bg-red-500'
                         : 'bg-yellow-500'
-                      : 'bg-emerald-500'
+                      : 'bg-accent-hover'
                   }`}
                   style={{ width: `${Math.min(100, account.health.max.max_buffer_pct)}%` }}
                 />
@@ -349,8 +349,8 @@ export function AccountCard({ account, canSimulate }: AccountCardProps) {
               disabled={!canSimulate}
               className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 canSimulate
-                  ? 'bg-emerald-500 hover:bg-emerald-600 text-white'
-                  : 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                  ? 'bg-accent-hover hover:brightness-110 text-white'
+                  : 'bg-dark-600 text-text-muted cursor-not-allowed'
               }`}
             >
               <Play className="w-4 h-4" />
@@ -359,7 +359,7 @@ export function AccountCard({ account, canSimulate }: AccountCardProps) {
             
             <Link
               href={`/dashboard/rules?firm=${account.prop_firm_slug}`}
-              className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm font-medium rounded-lg transition-colors"
+              className="flex items-center justify-center gap-2 px-4 py-2 bg-dark-600 hover:bg-dark-500 text-white text-sm font-medium rounded-lg transition-colors"
             >
               View Rules
               <ChevronRight className="w-4 h-4" />

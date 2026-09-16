@@ -47,6 +47,7 @@ module.exports = {
           500: '#64748b',
           600: '#475569',
           700: '#334155',
+          750: '#273449', // surfaces hautes (cartes, barres) — palette 2c
           800: '#1e293b',
           900: '#0f172a',
           950: '#020617',
@@ -54,24 +55,27 @@ module.exports = {
 
         // --- NEW DESIGN SYSTEM v1.0 (Sprint 2+) ------------------------------
         // 5 colors total + semantic states. See DESIGN_SYSTEM.md §2.
+        // Palette 2c « ardoise sombre » (septembre 2026) : contraste verifie
+        // WCAG AA sur ce fond. `text.muted` a ete eclairci expres — l'ancien
+        // #52525B devient illisible sur l'ardoise.
         bg: {
-          base: '#0A0A0B',
-          elevated: '#131316',
+          base: '#1E293B',
+          elevated: '#273449',
         },
         border: {
-          DEFAULT: '#27272A',
-          hover: '#3F3F46',
+          DEFAULT: '#334155',
+          hover: '#475569',
         },
         text: {
-          primary: '#FAFAFA',
-          secondary: '#A1A1AA',
-          muted: '#52525B',
+          primary: '#F1F5F9',
+          secondary: '#CBD5E1',
+          muted: '#94A3B8',
         },
         accent: {
-          DEFAULT: '#10B981',
-          hover: '#059669',
-          subtle: 'rgba(16, 185, 129, 0.1)',
-          border: 'rgba(16, 185, 129, 0.2)',
+          DEFAULT: '#34D399', // texte, chiffres, liens
+          hover: '#059669', // fond des boutons principaux (texte blanc)
+          subtle: 'rgba(52, 211, 153, 0.14)',
+          border: 'rgba(52, 211, 153, 0.3)',
         },
         warning: {
           DEFAULT: '#F59E0B',

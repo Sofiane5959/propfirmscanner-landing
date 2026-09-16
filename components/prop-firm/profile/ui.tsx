@@ -16,7 +16,8 @@ const FOCUS =
   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base'
 
 export const BTN_PRIMARY = cx(
-  'inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-bg-base transition-colors hover:bg-accent-hover',
+  // Palette 2c : fond accent-hover et texte blanc (l'accent clair sert au texte).
+  'inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-accent-hover px-4 py-2.5 text-sm font-semibold text-white transition hover:brightness-110',
   FOCUS
 )
 export const BTN_SECONDARY = cx(

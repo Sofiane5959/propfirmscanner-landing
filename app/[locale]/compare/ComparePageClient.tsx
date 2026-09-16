@@ -860,7 +860,7 @@ const normalizeChallengeType = (types: string[] | undefined): string[] => {
 const Toast = ({ message, type, onClose }: { message: string; type: 'success' | 'error'; onClose: () => void }) => {
   useEffect(() => { const timer = setTimeout(onClose, 3000); return () => clearTimeout(timer) }, [onClose])
   return (
-    <div role="alert" aria-live="polite" className={`fixed bottom-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-in slide-in-from-bottom-2 ${type === 'success' ? 'bg-emerald-500' : 'bg-red-500'} text-white`}>
+    <div role="alert" aria-live="polite" className={`fixed bottom-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-in slide-in-from-bottom-2 ${type === 'success' ? 'bg-accent-hover' : 'bg-red-500'} text-white`}>
       {type === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <X className="w-4 h-4" />}
       <span className="text-sm font-medium">{message}</span>
     </div>
@@ -870,12 +870,12 @@ const Toast = ({ message, type, onClose }: { message: string; type: 'success' | 
 const TrustBadge = ({ status }: { status: string }) => {
   const config: Record<string, { bg: string; text: string; label: string }> = {
     // PropFirmScanner statuses
-    scanned:         { bg: 'bg-emerald-500/20', text: 'text-emerald-400', label: 'Scanned \u2713' },
+    scanned:         { bg: 'bg-accent/20', text: 'text-accent', label: 'Scanned \u2713' },
     unverified:      { bg: 'bg-yellow-500/20',  text: 'text-yellow-400',  label: 'Unverified' },
     not_recommended: { bg: 'bg-red-500/20',     text: 'text-red-400',     label: 'Not Recommended' },
     // Legacy (backward compat)
-    verified:        { bg: 'bg-emerald-500/20', text: 'text-emerald-400', label: 'Scanned \u2713' },
-    trusted:         { bg: 'bg-emerald-500/20', text: 'text-emerald-400', label: 'Scanned \u2713' },
+    verified:        { bg: 'bg-accent/20', text: 'text-accent', label: 'Scanned \u2713' },
+    trusted:         { bg: 'bg-accent/20', text: 'text-accent', label: 'Scanned \u2713' },
     banned:          { bg: 'bg-red-500/20',     text: 'text-red-400',     label: 'Not Recommended' },
     closed:          { bg: 'bg-red-500/20',     text: 'text-red-400',     label: 'Not Recommended' },
     under_review:    { bg: 'bg-yellow-500/20',  text: 'text-yellow-400',  label: 'Unverified' },
@@ -892,7 +892,7 @@ const TrustBadge = ({ status }: { status: string }) => {
 }
 
 const FilterChip = ({ label, onRemove }: { label: string; onRemove: () => void }) => (
-  <span className="inline-flex items-center gap-1 px-2 py-1 bg-emerald-500/20 text-emerald-400 text-xs rounded-lg border border-emerald-500/30">
+  <span className="inline-flex items-center gap-1 px-2 py-1 bg-accent/20 text-accent text-xs rounded-lg border border-accent/30">
     {label}
     <button onClick={onRemove} className="hover:text-white" aria-label={`Remove ${label} filter`}><X className="w-3 h-3" /></button>
   </span>
@@ -927,7 +927,7 @@ const FilterDropdown = ({
   
   const hasSelection = count > 0
   const colorStyles = {
-    emerald: { bg: 'bg-emerald-500/20', text: 'text-emerald-400', ring: 'ring-emerald-500/50', badge: 'bg-emerald-500' },
+    emerald: { bg: 'bg-accent/20', text: 'text-accent', ring: 'ring-accent/50', badge: 'bg-accent-hover' },
     purple: { bg: 'bg-purple-500/20', text: 'text-purple-400', ring: 'ring-purple-500/50', badge: 'bg-purple-500' },
     yellow: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', ring: 'ring-yellow-500/50', badge: 'bg-yellow-500' },
     blue: { bg: 'bg-blue-500/20', text: 'text-blue-400', ring: 'ring-blue-500/50', badge: 'bg-blue-500' },
@@ -943,7 +943,7 @@ const FilterDropdown = ({
         aria-haspopup="listbox"
         aria-label={`${label} filter${hasSelection ? `, ${count} selected` : ''}`}
         className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 whitespace-nowrap ${
-          hasSelection ? `${colors.bg} ${colors.text} ring-1 ${colors.ring}` : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+          hasSelection ? `${colors.bg} ${colors.text} ring-1 ${colors.ring}` : 'bg-dark-700 text-text-secondary hover:bg-dark-600'
         }`}
       >
         {label}
@@ -951,7 +951,7 @@ const FilterDropdown = ({
         <ChevronDown className={`w-3 h-3 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
       {isOpen && (
-        <div role="listbox" className="absolute top-full left-0 mt-1 p-3 bg-gray-800 border border-gray-700 rounded-xl shadow-xl z-50 min-w-[200px] max-w-[280px] animate-in fade-in-0 zoom-in-95 duration-150">
+        <div role="listbox" className="absolute top-full left-0 mt-1 p-3 bg-dark-700 border border-border rounded-xl shadow-xl z-50 min-w-[200px] max-w-[280px] animate-in fade-in-0 zoom-in-95 duration-150">
           {children}
         </div>
       )}
@@ -964,9 +964,9 @@ const PriceSlider = ({ value, onChange }: { value: [number, number]; onChange: (
   useEffect(() => { setLocalMax(value[1]) }, [value])
   return (
     <div className="space-y-2">
-      <div className="flex justify-between text-xs text-gray-400">
+      <div className="flex justify-between text-xs text-text-secondary">
         <span>$0</span>
-        <span className="text-emerald-400 font-medium">{localMax >= 1000 ? 'Any' : `$${localMax}`}</span>
+        <span className="text-accent font-medium">{localMax >= 1000 ? 'Any' : `$${localMax}`}</span>
       </div>
       <input
         type="range" min={0} max={1000} step={25} value={localMax}
@@ -974,9 +974,9 @@ const PriceSlider = ({ value, onChange }: { value: [number, number]; onChange: (
         onMouseUp={() => onChange([0, localMax])}
         onTouchEnd={() => onChange([0, localMax])}
         aria-label="Maximum price filter"
-        className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+        className="w-full h-2 bg-dark-600 rounded-lg appearance-none cursor-pointer accent-emerald-500"
       />
-      <div className="flex justify-between text-[10px] text-gray-500">
+      <div className="flex justify-between text-[10px] text-text-muted">
         <span>$0</span><span>$250</span><span>$500</span><span>$750</span><span>$1000+</span>
       </div>
     </div>
@@ -1024,14 +1024,14 @@ const ReviewModal = ({
       className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
       onClick={handleBackdrop}
     >
-      <div className="bg-gray-900 border border-gray-700 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+      <div className="bg-bg-elevated border border-border rounded-2xl p-6 w-full max-w-md shadow-2xl">
         {submitted ? (
           <div className="text-center py-8">
-            <div className="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
-              <CheckCircle2 className="w-8 h-8 text-emerald-400" />
+            <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-4">
+              <CheckCircle2 className="w-8 h-8 text-accent" />
             </div>
             <h3 className="text-white font-bold text-xl mb-1">{t.thankYouReview}</h3>
-            <p className="text-gray-400 text-sm">{t.thankYouSub}</p>
+            <p className="text-text-secondary text-sm">{t.thankYouSub}</p>
           </div>
         ) : (
           <>
@@ -1040,21 +1040,21 @@ const ReviewModal = ({
                 <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center p-1 flex-shrink-0">
                   {firm.logo_url
                     ? <Image src={firm.logo_url} alt={firm.name} width={40} height={40} className="object-contain" />
-                    : <span className="font-bold text-emerald-600 text-lg">{firm.name[0]}</span>
+                    : <span className="font-bold text-accent text-lg">{firm.name[0]}</span>
                   }
                 </div>
                 <div>
                   <h3 className="text-white font-bold text-base">{firm.name}</h3>
-                  <p className="text-gray-400 text-xs">{t.shareExperience}</p>
+                  <p className="text-text-secondary text-xs">{t.shareExperience}</p>
                 </div>
               </div>
-              <button onClick={onClose} aria-label="Close" className="text-gray-500 hover:text-white transition-colors">
+              <button onClick={onClose} aria-label="Close" className="text-text-muted hover:text-white transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="mb-5">
-              <p className="text-sm text-gray-400 mb-2">{t.yourRating} *</p>
+              <p className="text-sm text-text-secondary mb-2">{t.yourRating} *</p>
               <div className="flex gap-2 mb-1">
                 {[1, 2, 3, 4, 5].map(s => (
                   <button
@@ -1065,7 +1065,7 @@ const ReviewModal = ({
                     aria-label={`Rate ${s} star${s > 1 ? 's' : ''}`}
                     className="transition-transform hover:scale-110 focus:outline-none"
                   >
-                    <Star className={`w-9 h-9 transition-colors ${(hoverRating || rating) >= s ? 'text-yellow-400 fill-yellow-400' : 'text-gray-600'}`} />
+                    <Star className={`w-9 h-9 transition-colors ${(hoverRating || rating) >= s ? 'text-yellow-400 fill-yellow-400' : 'text-text-muted'}`} />
                   </button>
                 ))}
               </div>
@@ -1075,7 +1075,7 @@ const ReviewModal = ({
             </div>
 
             <div className="mb-4">
-              <p className="text-sm text-gray-400 mb-2">{t.tradingStyleUsed}</p>
+              <p className="text-sm text-text-secondary mb-2">{t.tradingStyleUsed}</p>
               <div className="flex flex-wrap gap-2">
                 {TRADING_STYLES_REVIEW.map(style => (
                   <button
@@ -1083,8 +1083,8 @@ const ReviewModal = ({
                     onClick={() => setTradingStyle(prev => prev === style ? '' : style)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                       tradingStyle === style
-                        ? 'bg-emerald-500 text-white'
-                        : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                        ? 'bg-accent-hover text-white'
+                        : 'bg-dark-700 text-text-secondary hover:bg-dark-600'
                     }`}
                   >
                     {style}
@@ -1094,22 +1094,22 @@ const ReviewModal = ({
             </div>
 
             <div className="mb-5">
-              <p className="text-sm text-gray-400 mb-2">Your experience <span className="text-gray-600">(optional)</span></p>
+              <p className="text-sm text-text-secondary mb-2">Your experience <span className="text-text-muted">(optional)</span></p>
               <textarea
                 value={comment}
                 onChange={e => setComment(e.target.value)}
                 placeholder={t.commentPlaceholder}
-                className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-sm text-white placeholder-gray-500 resize-none focus:outline-none focus:border-emerald-500 transition-colors"
+                className="w-full bg-dark-700 border border-border rounded-xl p-3 text-sm text-white placeholder-text-muted resize-none focus:outline-none focus:border-accent transition-colors"
                 rows={3}
                 maxLength={500}
               />
-              <p className="text-[10px] text-gray-600 text-right mt-0.5">{comment.length}/500</p>
+              <p className="text-[10px] text-text-muted text-right mt-0.5">{comment.length}/500</p>
             </div>
 
             <button
               onClick={handleSubmit}
               disabled={rating === 0 || isSubmitting}
-              className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors"
+              className="w-full py-3 bg-accent-hover hover:brightness-110 disabled:bg-dark-600 disabled:text-text-muted disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors"
             >
               {isSubmitting ? t.submitting : t.submitReview}
             </button>
@@ -1183,14 +1183,14 @@ const PayoutProofModal = ({
       className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
       onClick={handleBackdrop}
     >
-      <div className="bg-gray-900 border border-gray-700 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+      <div className="bg-bg-elevated border border-border rounded-2xl p-6 w-full max-w-md shadow-2xl">
         {submitted ? (
           <div className="text-center py-8">
-            <div className="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
-              <Banknote className="w-8 h-8 text-emerald-400" />
+            <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-4">
+              <Banknote className="w-8 h-8 text-accent" />
             </div>
             <h3 className="text-white font-bold text-xl mb-1">{t.thankYouPayout}</h3>
-            <p className="text-gray-400 text-sm">{t.thankYouPayoutSub}</p>
+            <p className="text-text-secondary text-sm">{t.thankYouPayoutSub}</p>
           </div>
         ) : (
           <>
@@ -1200,22 +1200,22 @@ const PayoutProofModal = ({
                 <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center p-1 flex-shrink-0">
                   {firm.logo_url
                     ? <Image src={firm.logo_url} alt={firm.name} width={40} height={40} className="object-contain" />
-                    : <span className="font-bold text-emerald-600 text-lg">{firm.name[0]}</span>
+                    : <span className="font-bold text-accent text-lg">{firm.name[0]}</span>
                   }
                 </div>
                 <div>
                   <h3 className="text-white font-bold text-base">{firm.name}</h3>
-                  <p className="text-gray-400 text-xs">{t.submitPayout}</p>
+                  <p className="text-text-secondary text-xs">{t.submitPayout}</p>
                 </div>
               </div>
-              <button onClick={onClose} aria-label="Close" className="text-gray-500 hover:text-white transition-colors">
+              <button onClick={onClose} aria-label="Close" className="text-text-muted hover:text-white transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Amount + Currency */}
             <div className="mb-4">
-              <p className="text-sm text-gray-400 mb-2">{t.payoutAmount} *</p>
+              <p className="text-sm text-text-secondary mb-2">{t.payoutAmount} *</p>
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -1223,13 +1223,13 @@ const PayoutProofModal = ({
                   value={amount}
                   onChange={e => setAmount(e.target.value)}
                   placeholder={t.payoutAmountPlaceholder}
-                  className="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 transition-colors"
+                  className="flex-1 bg-dark-700 border border-border rounded-xl px-3 py-2.5 text-sm text-white placeholder-text-muted focus:outline-none focus:border-accent transition-colors"
                 />
                 <select
                   value={currency}
                   onChange={e => setCurrency(e.target.value)}
                   aria-label={t.payoutCurrency}
-                  className="w-24 bg-gray-800 border border-gray-700 rounded-xl px-2 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 transition-colors"
+                  className="w-24 bg-dark-700 border border-border rounded-xl px-2 py-2.5 text-sm text-white focus:outline-none focus:border-accent transition-colors"
                 >
                   {PAYOUT_CURRENCIES.map(c => (
                     <option key={c} value={c}>{c}</option>
@@ -1240,38 +1240,38 @@ const PayoutProofModal = ({
 
             {/* Date */}
             <div className="mb-4">
-              <p className="text-sm text-gray-400 mb-2">{t.payoutDate} <span className="text-gray-600">(optional)</span></p>
+              <p className="text-sm text-text-secondary mb-2">{t.payoutDate} <span className="text-text-muted">(optional)</span></p>
               <input
                 type="date"
                 value={date}
                 onChange={e => setDate(e.target.value)}
-                className="w-full bg-gray-800 border border-gray-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 transition-colors [color-scheme:dark]"
+                className="w-full bg-dark-700 border border-border rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-accent transition-colors [color-scheme:dark]"
               />
             </div>
 
             {/* Screenshot upload */}
             <div className="mb-5">
-              <p className="text-sm text-gray-400 mb-2">{t.payoutScreenshot}</p>
+              <p className="text-sm text-text-secondary mb-2">{t.payoutScreenshot}</p>
               {preview ? (
-                <div className="relative rounded-xl overflow-hidden border border-gray-700 bg-gray-800">
+                <div className="relative rounded-xl overflow-hidden border border-border bg-dark-700">
                   <img src={preview} alt="Payout screenshot preview" className="w-full max-h-40 object-contain" />
                   <button
                     onClick={handleRemoveFile}
-                    className="absolute top-2 right-2 p-1.5 bg-gray-900/80 hover:bg-red-500/80 rounded-lg text-white transition-colors"
+                    className="absolute top-2 right-2 p-1.5 bg-bg-elevated/80 hover:bg-red-500/80 rounded-lg text-white transition-colors"
                     aria-label="Remove screenshot"
                   >
                     <X className="w-4 h-4" />
                   </button>
-                  <div className="absolute bottom-2 left-2 bg-gray-900/80 rounded-lg px-2 py-0.5">
-                    <p className="text-[10px] text-gray-300 truncate max-w-[200px]">{file?.name}</p>
+                  <div className="absolute bottom-2 left-2 bg-bg-elevated/80 rounded-lg px-2 py-0.5">
+                    <p className="text-[10px] text-text-secondary truncate max-w-[200px]">{file?.name}</p>
                   </div>
                 </div>
               ) : (
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-full border-2 border-dashed border-gray-700 hover:border-emerald-500/50 rounded-xl p-4 flex flex-col items-center gap-2 text-gray-500 hover:text-gray-300 transition-colors group"
+                  className="w-full border-2 border-dashed border-border hover:border-accent/50 rounded-xl p-4 flex flex-col items-center gap-2 text-text-muted hover:text-text-secondary transition-colors group"
                 >
-                  <ImageIcon className="w-7 h-7 group-hover:text-emerald-400 transition-colors" />
+                  <ImageIcon className="w-7 h-7 group-hover:text-accent transition-colors" />
                   <span className="text-xs">{t.payoutScreenshotHint}</span>
                 </button>
               )}
@@ -1289,7 +1289,7 @@ const PayoutProofModal = ({
             <button
               onClick={handleSubmit}
               disabled={!amount || parseFloat(amount) <= 0 || isNaN(parseFloat(amount)) || isSubmitting}
-              className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
+              className="w-full py-3 bg-accent-hover hover:brightness-110 disabled:bg-dark-600 disabled:text-text-muted disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <span>{t.submitting}</span>
@@ -1343,55 +1343,55 @@ const PropFirmCard = ({
   
   if (isCompact) {
     return (
-      <div className={`group bg-gray-800/50 hover:bg-gray-800 border rounded-lg p-3 transition-colors ${
+      <div className={`group bg-dark-700/50 hover:bg-dark-700 border rounded-lg p-3 transition-colors ${
         isTopPick
-          ? 'border-emerald-500/40 hover:border-emerald-500/70'
-          : 'border-gray-700/50 hover:border-gray-600'
+          ? 'border-accent/40 hover:border-accent/70'
+          : 'border-border/50 hover:border-border-hover'
       }`}>
         <div className="flex items-center gap-3">
           {/* Logo links to the internal firm page (SEO + detail content).
               The Visit button to the right handles the outbound affiliate link. */}
-          <Link href={`/prop-firm/${firm.slug}`} className="w-10 h-10 rounded-lg bg-white flex items-center justify-center overflow-hidden p-1 flex-shrink-0 hover:ring-2 hover:ring-emerald-500/40 transition-all">
-            {firm.logo_url ? <Image src={firm.logo_url} alt={firm.name} width={40} height={40} className="object-contain" /> : <span className="text-lg font-bold text-emerald-600">{firm.name.charAt(0)}</span>}
+          <Link href={`/prop-firm/${firm.slug}`} className="w-10 h-10 rounded-lg bg-white flex items-center justify-center overflow-hidden p-1 flex-shrink-0 hover:ring-2 hover:ring-accent/40 transition-all">
+            {firm.logo_url ? <Image src={firm.logo_url} alt={firm.name} width={40} height={40} className="object-contain" /> : <span className="text-lg font-bold text-accent">{firm.name.charAt(0)}</span>}
           </Link>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <Link href={`/prop-firm/${firm.slug}`} className="font-semibold text-white hover:text-emerald-400 truncate text-sm flex-1 min-w-0 transition-colors">{firm.name}</Link>
+              <Link href={`/prop-firm/${firm.slug}`} className="font-semibold text-white hover:text-accent truncate text-sm flex-1 min-w-0 transition-colors">{firm.name}</Link>
               {isTopPick && (
-                <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[9px] font-semibold tracking-wider uppercase flex-shrink-0">
+                <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-accent/15 text-accent border border-accent/30 text-[9px] font-semibold tracking-wider uppercase flex-shrink-0">
                   <Star className="w-2 h-2 fill-emerald-400" />
                   Top
                 </span>
               )}
               <TrustBadge status={firm.trust_status || 'verified'} />
             </div>
-            <div className="flex items-center gap-3 text-xs text-gray-400 mt-0.5 flex-wrap">
+            <div className="flex items-center gap-3 text-xs text-text-secondary mt-0.5 flex-wrap">
               <span className="flex items-center gap-1"><Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />{firm.trustpilot_rating?.toFixed(1) || 'N/A'}</span>
               {communityRating && communityRating.count > 0 && (
-                <span className="flex items-center gap-1 text-gray-300">
+                <span className="flex items-center gap-1 text-text-secondary">
                   <MessageSquare className="w-3 h-3" />{communityRating.avg.toFixed(1)} ({communityRating.count})
                 </span>
               )}
               {payoutAggregate && payoutAggregate.count > 0 && (
-                <span className="flex items-center gap-1 text-emerald-400">
+                <span className="flex items-center gap-1 text-accent">
                   <Banknote className="w-3 h-3" />{payoutAggregate.count} {t.payoutBadge}
                 </span>
               )}
               <span>${firm.min_price || 'N/A'}</span>
-              <span className="text-emerald-400">{formatProfitSplit(firm.profit_split, firm.max_profit_split)}</span>
+              <span className="text-accent">{formatProfitSplit(firm.profit_split, firm.max_profit_split)}</span>
             </div>
           </div>
           {hasDiscount && (
             <span className="px-2 py-1 bg-amber-500/15 text-amber-400 border border-amber-500/30 text-[11px] font-semibold rounded-md uppercase tracking-wider">-{firm.discount_percent}%</span>
           )}
           <div className="flex items-center gap-1">
-            <button onClick={onFavorite} aria-label={isFavorite ? `Remove ${firm.name} from favorites` : `Add ${firm.name} to favorites`} aria-pressed={isFavorite} className={`p-2 rounded-lg transition-all ${isFavorite ? 'text-red-400 bg-red-500/20' : 'text-gray-500 hover:text-red-400 hover:bg-gray-700'}`}>
+            <button onClick={onFavorite} aria-label={isFavorite ? `Remove ${firm.name} from favorites` : `Add ${firm.name} to favorites`} aria-pressed={isFavorite} className={`p-2 rounded-lg transition-all ${isFavorite ? 'text-red-400 bg-red-500/20' : 'text-text-muted hover:text-red-400 hover:bg-dark-600'}`}>
               <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
             </button>
-            <button onClick={onRate} aria-label={`Rate ${firm.name}`} title={hasReviewed ? 'Update your review' : 'Rate this firm'} className={`p-2 rounded-lg transition-all ${hasReviewed ? 'text-yellow-400 bg-yellow-500/20' : 'text-gray-500 hover:text-yellow-400 hover:bg-gray-700'}`}>
+            <button onClick={onRate} aria-label={`Rate ${firm.name}`} title={hasReviewed ? 'Update your review' : 'Rate this firm'} className={`p-2 rounded-lg transition-all ${hasReviewed ? 'text-yellow-400 bg-yellow-500/20' : 'text-text-muted hover:text-yellow-400 hover:bg-dark-600'}`}>
               <Star className={`w-4 h-4 ${hasReviewed ? 'fill-current' : ''}`} />
             </button>
-            <button onClick={onPayout} aria-label={`Submit payout proof for ${firm.name}`} title="Submit payout proof" className="p-2 rounded-lg transition-all text-gray-500 hover:text-emerald-400 hover:bg-gray-700">
+            <button onClick={onPayout} aria-label={`Submit payout proof for ${firm.name}`} title="Submit payout proof" className="p-2 rounded-lg transition-all text-text-muted hover:text-accent hover:bg-dark-600">
               <Banknote className="w-4 h-4" />
             </button>
             <PriceAlertButton firmId={firm.id} firmName={firm.name} firmSlug={firm.slug} currentPrice={firm.min_price || 0} />
@@ -1399,10 +1399,10 @@ const PropFirmCard = ({
                 same internal page. Only outbound CTA remains: the affiliate. */}
             <a href={getFirmUrl(firm, 'compare-list')} target="_blank" rel="noopener noreferrer" className={`px-3 py-1.5 text-xs font-medium rounded-md flex items-center gap-1 transition-colors ${
               hasDiscount
-                ? 'bg-emerald-500 hover:bg-emerald-600 text-white'
+                ? 'bg-accent-hover hover:brightness-110 text-white'
                 : firm.affiliate_url
-                ? 'bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border border-emerald-500/30'
-                : 'bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700'
+                ? 'bg-accent/15 hover:bg-accent/25 text-accent border border-accent/30'
+                : 'bg-dark-700 hover:bg-dark-600 text-text-secondary border border-border'
             }`}>
               {hasDiscount ? `Get -${firm.discount_percent}%` : t.visit} <ExternalLink className="w-3 h-3" />
             </a>
@@ -1413,10 +1413,10 @@ const PropFirmCard = ({
   }
 
   return (
-    <div className={`bg-gray-800/50 border rounded-lg overflow-hidden transition-colors group relative flex flex-col ${
+    <div className={`bg-dark-700/50 border rounded-lg overflow-hidden transition-colors group relative flex flex-col ${
       isTopPick
-        ? 'border-emerald-500/40 hover:border-emerald-500/70'
-        : 'border-gray-700/50 hover:border-gray-600'
+        ? 'border-accent/40 hover:border-accent/70'
+        : 'border-border/50 hover:border-border-hover'
     }`}>
       {hasDiscount && (
         <div className="absolute top-3 right-3 z-10">
@@ -1433,7 +1433,7 @@ const PropFirmCard = ({
       
       {/* Top Pick badge (editor's choice — priority_tier = 1) */}
       {isTopPick && (
-        <div className="absolute top-3 left-3 z-10 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[10px] font-semibold tracking-wider uppercase">
+        <div className="absolute top-3 left-3 z-10 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-accent/15 text-accent border border-accent/30 text-[10px] font-semibold tracking-wider uppercase">
           <Star className="w-2.5 h-2.5 fill-emerald-400" />
           Top Pick
         </div>
@@ -1441,7 +1441,7 @@ const PropFirmCard = ({
       
       {/* Rank number (top-3 by current sort) — only show if not a Top Pick to avoid badge collision */}
       {!isTopPick && rank <= 3 && (
-        <div className="absolute top-3 left-3 z-10 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-gray-800 text-gray-300 border border-gray-700 text-[10px] font-semibold tracking-wider uppercase font-mono">
+        <div className="absolute top-3 left-3 z-10 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-dark-700 text-text-secondary border border-border text-[10px] font-semibold tracking-wider uppercase font-mono">
           #{rank}
         </div>
       )}
@@ -1449,16 +1449,16 @@ const PropFirmCard = ({
       <div className={`p-4 ${hasDiscount || rank <= 3 || isTopPick ? 'pt-12' : ''}`}>
         {/* Actions row */}
         <div className="flex justify-end gap-1 mb-2">
-          <button onClick={onFavorite} aria-label={isFavorite ? `Remove ${firm.name} from favorites` : `Add ${firm.name} to favorites`} aria-pressed={isFavorite} className={`p-1.5 rounded-lg transition-all ${isFavorite ? 'text-red-400 bg-red-500/20' : 'text-gray-500 hover:text-red-400 hover:bg-gray-700'}`}>
+          <button onClick={onFavorite} aria-label={isFavorite ? `Remove ${firm.name} from favorites` : `Add ${firm.name} to favorites`} aria-pressed={isFavorite} className={`p-1.5 rounded-lg transition-all ${isFavorite ? 'text-red-400 bg-red-500/20' : 'text-text-muted hover:text-red-400 hover:bg-dark-600'}`}>
             <Heart className={`w-3.5 h-3.5 ${isFavorite ? 'fill-current' : ''}`} />
           </button>
-          <button onClick={onCompare} aria-label={isComparing ? `Remove ${firm.name} from comparison` : `Add ${firm.name} to comparison`} aria-pressed={isComparing} className={`p-1.5 rounded-lg transition-all ${isComparing ? 'text-blue-400 bg-blue-500/20' : 'text-gray-500 hover:text-blue-400 hover:bg-gray-700'}`}>
+          <button onClick={onCompare} aria-label={isComparing ? `Remove ${firm.name} from comparison` : `Add ${firm.name} to comparison`} aria-pressed={isComparing} className={`p-1.5 rounded-lg transition-all ${isComparing ? 'text-blue-400 bg-blue-500/20' : 'text-text-muted hover:text-blue-400 hover:bg-dark-600'}`}>
             <GitCompare className="w-3.5 h-3.5" />
           </button>
-          <button onClick={onRate} aria-label={hasReviewed ? `Update review for ${firm.name}` : `Rate ${firm.name}`} title={hasReviewed ? 'Update your review' : t.writeReview} className={`p-1.5 rounded-lg transition-all ${hasReviewed ? 'text-yellow-400 bg-yellow-500/20' : 'text-gray-500 hover:text-yellow-400 hover:bg-gray-700'}`}>
+          <button onClick={onRate} aria-label={hasReviewed ? `Update review for ${firm.name}` : `Rate ${firm.name}`} title={hasReviewed ? 'Update your review' : t.writeReview} className={`p-1.5 rounded-lg transition-all ${hasReviewed ? 'text-yellow-400 bg-yellow-500/20' : 'text-text-muted hover:text-yellow-400 hover:bg-dark-600'}`}>
             <Star className={`w-3.5 h-3.5 ${hasReviewed ? 'fill-current' : ''}`} />
           </button>
-          <button onClick={onPayout} aria-label={`Submit payout proof for ${firm.name}`} title={t.submitPayout} className="p-1.5 rounded-lg transition-all text-gray-500 hover:text-emerald-400 hover:bg-gray-700">
+          <button onClick={onPayout} aria-label={`Submit payout proof for ${firm.name}`} title={t.submitPayout} className="p-1.5 rounded-lg transition-all text-text-muted hover:text-accent hover:bg-dark-600">
             <Banknote className="w-3.5 h-3.5" />
           </button>
           <PriceAlertButton firmId={firm.id} firmName={firm.name} firmSlug={firm.slug} currentPrice={firm.min_price || 0} />
@@ -1469,7 +1469,7 @@ const PropFirmCard = ({
             cleanly: discover here, click out there. */}
         <Link href={`/prop-firm/${firm.slug}`} className="flex items-center gap-3 mb-2 group/title">
           <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center overflow-hidden border border-gray-200 p-1 flex-shrink-0">
-            {firm.logo_url ? <Image src={firm.logo_url} alt={firm.name} width={48} height={48} className="object-contain" /> : <span className="text-lg font-bold text-emerald-600">{firm.name.charAt(0)}</span>}
+            {firm.logo_url ? <Image src={firm.logo_url} alt={firm.name} width={48} height={48} className="object-contain" /> : <span className="text-lg font-bold text-accent">{firm.name.charAt(0)}</span>}
           </div>
           <div className="min-w-0">
             <h3 className="font-bold text-white text-sm leading-tight mb-0.5 group-hover/title:text-emerald-400 transition-colors">{firm.name}</h3>
@@ -1481,55 +1481,55 @@ const PropFirmCard = ({
           <span className="flex items-center gap-1 text-sm">
             <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
             <span className="text-white font-medium">{firm.trustpilot_rating?.toFixed(1) || 'N/A'}</span>
-            {firm.trustpilot_reviews && <span className="text-gray-500 text-xs">({formatReviewCount(firm.trustpilot_reviews)})</span>}
+            {firm.trustpilot_reviews && <span className="text-text-muted text-xs">({formatReviewCount(firm.trustpilot_reviews)})</span>}
           </span>
         </div>
         {/* Community rating */}
         {communityRating && communityRating.count > 0 && (
           <div className="flex items-center gap-1 mt-0.5">
-            <MessageSquare className="w-3 h-3 text-gray-400" />
-            <span className="text-gray-300 text-xs font-medium">{communityRating.avg.toFixed(1)}</span>
-            <span className="text-gray-500 text-xs">{t.communityRating} ({communityRating.count})</span>
+            <MessageSquare className="w-3 h-3 text-text-secondary" />
+            <span className="text-text-secondary text-xs font-medium">{communityRating.avg.toFixed(1)}</span>
+            <span className="text-text-muted text-xs">{t.communityRating} ({communityRating.count})</span>
           </div>
         )}
         {/* Payout badge */}
         {payoutAggregate && payoutAggregate.count > 0 && (
           <div className="flex items-center gap-1 mt-0.5">
-            <Banknote className="w-3 h-3 text-emerald-400" />
-            <span className="text-emerald-400 text-xs font-medium">{payoutAggregate.count} {t.payoutBadge}</span>
+            <Banknote className="w-3 h-3 text-accent" />
+            <span className="text-accent text-xs font-medium">{payoutAggregate.count} {t.payoutBadge}</span>
           </div>
         )}
       </div>
       
-      <div className="px-4 py-3 bg-gray-900/50 border-y border-gray-700/50 grid grid-cols-2 gap-3">
+      <div className="px-4 py-3 bg-bg-elevated/50 border-y border-border/50 grid grid-cols-2 gap-3">
         <div>
-          <p className="text-[10px] text-gray-500 uppercase">Price</p>
+          <p className="text-[10px] text-text-muted uppercase">Price</p>
           <p className="text-base font-bold text-white">${firm.min_price || 'N/A'}</p>
         </div>
         <div>
-          <p className="text-[10px] text-gray-500 uppercase">Split</p>
-          <p className="text-base font-bold text-emerald-400">{formatProfitSplit(firm.profit_split, firm.max_profit_split)}</p>
+          <p className="text-[10px] text-text-muted uppercase">Split</p>
+          <p className="text-base font-bold text-accent">{formatProfitSplit(firm.profit_split, firm.max_profit_split)}</p>
         </div>
       </div>
       
       <div className="p-4 space-y-3 flex-1">
         <div className="flex flex-wrap gap-1">
           {markets.map(m => (
-            <span key={m} className="px-1.5 py-0.5 bg-gray-800 text-gray-400 border border-gray-700 text-[10px] rounded-md">{m}</span>
+            <span key={m} className="px-1.5 py-0.5 bg-dark-700 text-text-secondary border border-border text-[10px] rounded-md">{m}</span>
           ))}
         </div>
         <div className="flex flex-wrap gap-1">
-          {firm.allows_scalping && <span className="px-1.5 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] rounded-md flex items-center gap-0.5"><Check className="w-2.5 h-2.5" />Scalping</span>}
-          {firm.allows_news_trading && <span className="px-1.5 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] rounded-md flex items-center gap-0.5"><Check className="w-2.5 h-2.5" />News</span>}
-          {firm.allows_ea && <span className="px-1.5 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] rounded-md flex items-center gap-0.5"><Check className="w-2.5 h-2.5" />EAs</span>}
+          {firm.allows_scalping && <span className="px-1.5 py-0.5 bg-accent/10 text-accent border border-accent/20 text-[10px] rounded-md flex items-center gap-0.5"><Check className="w-2.5 h-2.5" />Scalping</span>}
+          {firm.allows_news_trading && <span className="px-1.5 py-0.5 bg-accent/10 text-accent border border-accent/20 text-[10px] rounded-md flex items-center gap-0.5"><Check className="w-2.5 h-2.5" />News</span>}
+          {firm.allows_ea && <span className="px-1.5 py-0.5 bg-accent/10 text-accent border border-accent/20 text-[10px] rounded-md flex items-center gap-0.5"><Check className="w-2.5 h-2.5" />EAs</span>}
           {firm.has_instant_funding && <span className="px-1.5 py-0.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] rounded-md flex items-center gap-0.5"><Zap className="w-2.5 h-2.5" />Instant</span>}
         </div>
         {firm.platforms && firm.platforms.length > 0 && (
           <div className="flex flex-wrap gap-1">
             {firm.platforms.slice(0, 3).map(p => (
-              <span key={p} className="px-1.5 py-0.5 bg-gray-800 text-gray-400 border border-gray-700 text-[10px] rounded-md">{p}</span>
+              <span key={p} className="px-1.5 py-0.5 bg-dark-700 text-text-secondary border border-border text-[10px] rounded-md">{p}</span>
             ))}
-            {firm.platforms.length > 3 && <span className="text-[10px] text-gray-500">+{firm.platforms.length - 3}</span>}
+            {firm.platforms.length > 3 && <span className="text-[10px] text-text-muted">+{firm.platforms.length - 3}</span>}
           </div>
         )}
       </div>
@@ -1547,10 +1547,10 @@ const PropFirmCard = ({
           rel="noopener noreferrer"
           className={`block w-full py-2.5 text-center text-sm font-medium rounded-md flex items-center justify-center gap-1.5 transition-colors ${
             hasDiscount
-              ? 'bg-emerald-500 hover:bg-emerald-600 text-white'
+              ? 'bg-accent-hover hover:brightness-110 text-white'
               : firm.affiliate_url
-              ? 'bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border border-emerald-500/30'
-              : 'bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700'
+              ? 'bg-accent/15 hover:bg-accent/25 text-accent border border-accent/30'
+              : 'bg-dark-700 hover:bg-dark-600 text-text-secondary border border-border'
           }`}
         >
           {hasDiscount ? `Get -${firm.discount_percent}%` : firm.affiliate_url ? `Visit ${firm.name}` : 'Visit Site'}
@@ -1565,22 +1565,22 @@ const CompareBar = ({ firms, onRemove, onClear }: { firms: PropFirm[]; onRemove:
   if (firms.length === 0) return null
   const compareUrl = `/compare/${firms.map(f => f.slug).join('-vs-')}`
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 p-4 z-40">
+    <div className="fixed bottom-0 left-0 right-0 bg-dark-700 border-t border-border p-4 z-40">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="text-sm text-gray-400">Compare ({firms.length}/4):</span>
+          <span className="text-sm text-text-secondary">Compare ({firms.length}/4):</span>
           <div className="flex gap-2">
             {firms.map(f => (
-              <div key={f.id} className="flex items-center gap-1 px-2 py-1 bg-gray-700 rounded-lg">
+              <div key={f.id} className="flex items-center gap-1 px-2 py-1 bg-dark-600 rounded-lg">
                 <span className="text-xs text-white">{f.name}</span>
-                <button onClick={() => onRemove(f.id)} aria-label={`Remove ${f.name} from comparison`} className="text-gray-400 hover:text-red-400"><X className="w-3 h-3" /></button>
+                <button onClick={() => onRemove(f.id)} aria-label={`Remove ${f.name} from comparison`} className="text-text-secondary hover:text-red-400"><X className="w-3 h-3" /></button>
               </div>
             ))}
           </div>
         </div>
         <div className="flex gap-2">
-          <button onClick={onClear} className="px-3 py-1.5 text-gray-400 hover:text-white text-sm">Clear</button>
-          <Link href={compareUrl} className="px-4 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg">Compare Now</Link>
+          <button onClick={onClear} className="px-3 py-1.5 text-text-secondary hover:text-white text-sm">Clear</button>
+          <Link href={compareUrl} className="px-4 py-1.5 bg-accent-hover hover:brightness-110 text-white text-sm font-medium rounded-lg">Compare Now</Link>
         </div>
       </div>
     </div>
@@ -1588,28 +1588,28 @@ const CompareBar = ({ firms, onRemove, onClear }: { firms: PropFirm[]; onRemove:
 }
 
 const CardSkeleton = () => (
-  <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl overflow-hidden animate-pulse">
+  <div className="bg-dark-700/50 border border-border/50 rounded-xl overflow-hidden animate-pulse">
     <div className="p-4">
       <div className="flex items-start gap-3">
-        <div className="w-14 h-14 rounded-xl bg-gray-700" />
+        <div className="w-14 h-14 rounded-xl bg-dark-600" />
         <div className="flex-1">
-          <div className="h-5 bg-gray-700 rounded w-2/3 mb-2" />
-          <div className="h-4 bg-gray-700 rounded w-1/3" />
+          <div className="h-5 bg-dark-600 rounded w-2/3 mb-2" />
+          <div className="h-4 bg-dark-600 rounded w-1/3" />
         </div>
       </div>
     </div>
-    <div className="px-4 py-3 bg-gray-900/50 border-y border-gray-700/50 grid grid-cols-2 gap-3">
-      <div className="h-10 bg-gray-700 rounded" />
-      <div className="h-10 bg-gray-700 rounded" />
+    <div className="px-4 py-3 bg-bg-elevated/50 border-y border-border/50 grid grid-cols-2 gap-3">
+      <div className="h-10 bg-dark-600 rounded" />
+      <div className="h-10 bg-dark-600 rounded" />
     </div>
     <div className="p-4 space-y-3">
       <div className="flex gap-1">
-        <div className="h-5 w-12 bg-gray-700 rounded" />
-        <div className="h-5 w-12 bg-gray-700 rounded" />
+        <div className="h-5 w-12 bg-dark-600 rounded" />
+        <div className="h-5 w-12 bg-dark-600 rounded" />
       </div>
       <div className="flex gap-2">
-        <div className="h-8 flex-1 bg-gray-700 rounded-lg" />
-        <div className="h-8 flex-1 bg-gray-700 rounded-lg" />
+        <div className="h-8 flex-1 bg-dark-600 rounded-lg" />
+        <div className="h-8 flex-1 bg-dark-600 rounded-lg" />
       </div>
     </div>
   </div>
@@ -1627,7 +1627,7 @@ const ShadowPropFirmCard = ({ firm }: { firm: ShadowFirm }) => {
 
   return (
     <div
-      className={`bg-gray-800/30 border rounded-xl overflow-hidden transition-all flex flex-col opacity-60 hover:opacity-90 ${
+      className={`bg-dark-700/30 border rounded-xl overflow-hidden transition-all flex flex-col opacity-60 hover:opacity-90 ${
         isNotRecommended
           ? 'border-red-500/40 hover:border-red-500/60'
           : 'border-yellow-500/30 hover:border-yellow-500/50'
@@ -1650,23 +1650,23 @@ const ShadowPropFirmCard = ({ firm }: { firm: ShadowFirm }) => {
             {firm.logo_url ? (
               <Image src={firm.logo_url} alt={firm.name} width={48} height={48} className="object-contain" />
             ) : (
-              <span className="text-lg font-bold text-gray-500">{firm.name.charAt(0)}</span>
+              <span className="text-lg font-bold text-text-muted">{firm.name.charAt(0)}</span>
             )}
           </div>
           <div className="min-w-0 flex-1">
-            <h3 className="font-bold text-gray-300 text-sm leading-tight mb-0.5 truncate">{firm.name}</h3>
+            <h3 className="font-bold text-text-secondary text-sm leading-tight mb-0.5 truncate">{firm.name}</h3>
             <TrustBadge status={firm.trust_status || 'unverified'} />
           </div>
         </div>
 
         {/* Minimal data */}
-        <div className="flex items-center gap-3 text-xs text-gray-500 mb-3">
+        <div className="flex items-center gap-3 text-xs text-text-muted mb-3">
           {firm.trustpilot_rating && (
             <span className="flex items-center gap-1">
-              <Star className="w-3 h-3 text-gray-500" />
+              <Star className="w-3 h-3 text-text-muted" />
               {firm.trustpilot_rating.toFixed(1)}
               {firm.trustpilot_reviews ? (
-                <span className="text-gray-600">({formatReviewCount(firm.trustpilot_reviews)})</span>
+                <span className="text-text-muted">({formatReviewCount(firm.trustpilot_reviews)})</span>
               ) : null}
             </span>
           )}
@@ -1684,13 +1684,13 @@ const ShadowPropFirmCard = ({ firm }: { firm: ShadowFirm }) => {
             className={`w-full py-2 text-center text-xs font-medium rounded-lg flex items-center justify-center gap-1 transition-colors ${
               isNotRecommended
                 ? 'bg-red-500/15 hover:bg-red-500/25 text-red-300 border border-red-500/30'
-                : 'bg-gray-700/60 hover:bg-gray-700 text-gray-300'
+                : 'bg-dark-600/60 hover:bg-dark-600 text-text-secondary'
             }`}
           >
             Visit site <ExternalLink className="w-3 h-3" />
           </a>
         ) : (
-          <div className="w-full py-2 text-center text-xs text-gray-500 bg-gray-700/30 rounded-lg">
+          <div className="w-full py-2 text-center text-xs text-text-muted bg-dark-600/30 rounded-lg">
             No website available
           </div>
         )}
@@ -2149,7 +2149,7 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 pb-20">
+    <div className="min-h-screen bg-bg-elevated pb-20">
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
       {/* REVIEW MODAL */}
@@ -2184,15 +2184,15 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
             <div>
               <div className="flex items-center gap-3 mb-1">
                 <h1 className="text-h3 sm:text-h2 text-white font-display">{t.pageTitle}</h1>
-                <span className="px-2 py-0.5 bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[11px] font-medium uppercase tracking-wider rounded-md flex items-center gap-1"><BadgeCheck className="w-3 h-3" />Verified</span>
+                <span className="px-2 py-0.5 bg-accent/15 text-accent border border-accent/30 text-[11px] font-medium uppercase tracking-wider rounded-md flex items-center gap-1"><BadgeCheck className="w-3 h-3" />Verified</span>
               </div>
-              <p className="text-small text-gray-500">Every prop firm. One place. <span className="text-gray-600">·</span> <span className="text-gray-400">Last updated: {formatMonthYear(new Date())}</span></p>
+              <p className="text-small text-text-muted">Every prop firm. One place. <span className="text-text-muted">·</span> <span className="text-text-secondary">Last updated: {formatMonthYear(new Date())}</span></p>
             </div>
             <div className="flex items-center gap-2">
-              <button onClick={() => setViewMode('grid')} aria-label="Grid view" aria-pressed={viewMode === 'grid'} className={`p-2 rounded-md border transition-colors ${viewMode === 'grid' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-gray-800 text-gray-400 border-gray-700 hover:border-gray-600'}`}>
+              <button onClick={() => setViewMode('grid')} aria-label="Grid view" aria-pressed={viewMode === 'grid'} className={`p-2 rounded-md border transition-colors ${viewMode === 'grid' ? 'bg-accent/15 text-accent border-accent/30' : 'bg-dark-700 text-text-secondary border-border hover:border-border-hover'}`}>
                 <Grid3X3 className="w-4 h-4" />
               </button>
-              <button onClick={() => setViewMode('list')} aria-label="List view" aria-pressed={viewMode === 'list'} className={`p-2 rounded-md border transition-colors ${viewMode === 'list' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-gray-800 text-gray-400 border-gray-700 hover:border-gray-600'}`}>
+              <button onClick={() => setViewMode('list')} aria-label="List view" aria-pressed={viewMode === 'list'} className={`p-2 rounded-md border transition-colors ${viewMode === 'list' ? 'bg-accent/15 text-accent border-accent/30' : 'bg-dark-700 text-text-secondary border-border hover:border-border-hover'}`}>
                 <List className="w-4 h-4" />
               </button>
             </div>
@@ -2205,7 +2205,7 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
           the navbar and banner collapse, so it always sits flush against
           whatever is above it. */}
       <section
-        className={`pt-3 pb-4 px-4 border-b border-gray-800 sticky top-16 z-30 bg-gray-900/95 backdrop-blur-sm transition-transform duration-300 motion-reduce:transition-none ${
+        className={`pt-3 pb-4 px-4 border-b border-border sticky top-16 z-30 bg-bg-elevated/95 backdrop-blur-sm transition-transform duration-300 motion-reduce:transition-none ${
           headerHidden ? '-translate-y-16' : 'translate-y-0'
         }`}
       >
@@ -2214,15 +2214,15 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
             <div className="flex flex-wrap items-center gap-2">
               {/* Search */}
               <div className="relative min-w-[160px] max-w-[200px]">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                <input type="text" value={filters.search} onChange={(e) => setFilters(f => ({ ...f, search: e.target.value }))} placeholder={t.searchPlaceholder} aria-label="Search prop firms" className="w-full pl-8 pr-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-white text-xs placeholder:text-gray-500 focus:outline-none focus:border-emerald-500" />
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+                <input type="text" value={filters.search} onChange={(e) => setFilters(f => ({ ...f, search: e.target.value }))} placeholder={t.searchPlaceholder} aria-label="Search prop firms" className="w-full pl-8 pr-3 py-1.5 bg-dark-700 border border-border rounded-lg text-white text-xs placeholder:text-text-muted focus:outline-none focus:border-accent" />
               </div>
               
               {/* Markets */}
               <FilterDropdown label={t.markets} count={filters.markets.length} isOpen={openDropdown === 'markets'} onToggle={() => toggleDropdown('markets')}>
                 <div className="flex flex-wrap gap-1.5">
                   {MARKET_OPTIONS.map(market => (
-                    <button key={market} onClick={() => setFilters(f => ({ ...f, markets: f.markets.includes(market) ? f.markets.filter(m => m !== market) : [...f.markets, market] }))} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.markets.includes(market) ? 'bg-emerald-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
+                    <button key={market} onClick={() => setFilters(f => ({ ...f, markets: f.markets.includes(market) ? f.markets.filter(m => m !== market) : [...f.markets, market] }))} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.markets.includes(market) ? 'bg-accent-hover text-white' : 'bg-dark-600 text-text-secondary hover:bg-dark-500'}`}>
                       {market}{filters.markets.includes(market) && <Check className="w-3 h-3" />}
                     </button>
                   ))}
@@ -2233,7 +2233,7 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
               <FilterDropdown label={t.platform} count={filters.platforms.length} isOpen={openDropdown === 'platforms'} onToggle={() => toggleDropdown('platforms')}>
                 <div className="flex flex-wrap gap-1.5 max-h-[200px] overflow-y-auto">
                   {availablePlatforms.map(platform => (
-                    <button key={platform} onClick={() => setFilters(f => ({ ...f, platforms: f.platforms.includes(platform) ? f.platforms.filter(p => p !== platform) : [...f.platforms, platform] }))} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.platforms.includes(platform) ? 'bg-emerald-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
+                    <button key={platform} onClick={() => setFilters(f => ({ ...f, platforms: f.platforms.includes(platform) ? f.platforms.filter(p => p !== platform) : [...f.platforms, platform] }))} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.platforms.includes(platform) ? 'bg-accent-hover text-white' : 'bg-dark-600 text-text-secondary hover:bg-dark-500'}`}>
                       {platform}{filters.platforms.includes(platform) && <Check className="w-3 h-3" />}
                     </button>
                   ))}
@@ -2244,7 +2244,7 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
               <FilterDropdown label={t.challenge} count={filters.challengeTypes.length} isOpen={openDropdown === 'challenge'} onToggle={() => toggleDropdown('challenge')}>
                 <div className="flex flex-wrap gap-1.5">
                   {CHALLENGE_TYPE_OPTIONS.map(type => (
-                    <button key={type} onClick={() => setFilters(f => ({ ...f, challengeTypes: f.challengeTypes.includes(type) ? f.challengeTypes.filter(t => t !== type) : [...f.challengeTypes, type] }))} className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1 ${filters.challengeTypes.includes(type) ? 'bg-emerald-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
+                    <button key={type} onClick={() => setFilters(f => ({ ...f, challengeTypes: f.challengeTypes.includes(type) ? f.challengeTypes.filter(t => t !== type) : [...f.challengeTypes, type] }))} className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1 ${filters.challengeTypes.includes(type) ? 'bg-accent-hover text-white' : 'bg-dark-600 text-text-secondary hover:bg-dark-500'}`}>
                       {type}{filters.challengeTypes.includes(type) && <Check className="w-3 h-3" />}
                     </button>
                   ))}
@@ -2255,7 +2255,7 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
               <FilterDropdown label={t.style} count={filters.tradingStyles.length} isOpen={openDropdown === 'style'} onToggle={() => toggleDropdown('style')}>
                 <div className="flex flex-wrap gap-1.5">
                   {TRADING_STYLE_OPTIONS.map(style => (
-                    <button key={style.key} onClick={() => setFilters(f => ({ ...f, tradingStyles: f.tradingStyles.includes(style.key) ? f.tradingStyles.filter(s => s !== style.key) : [...f.tradingStyles, style.key] }))} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.tradingStyles.includes(style.key) ? 'bg-emerald-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
+                    <button key={style.key} onClick={() => setFilters(f => ({ ...f, tradingStyles: f.tradingStyles.includes(style.key) ? f.tradingStyles.filter(s => s !== style.key) : [...f.tradingStyles, style.key] }))} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.tradingStyles.includes(style.key) ? 'bg-accent-hover text-white' : 'bg-dark-600 text-text-secondary hover:bg-dark-500'}`}>
                       {style.label}{filters.tradingStyles.includes(style.key) && <Check className="w-3 h-3" />}
                     </button>
                   ))}
@@ -2266,7 +2266,7 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
               <FilterDropdown label={t.rating} count={filters.ratings.length} isOpen={openDropdown === 'rating'} onToggle={() => toggleDropdown('rating')}>
                 <div className="flex flex-wrap gap-1.5">
                   {RATING_OPTIONS.map(rating => (
-                    <button key={rating} onClick={() => setFilters(f => ({ ...f, ratings: f.ratings.includes(rating) ? f.ratings.filter(r => r !== rating) : [...f.ratings, rating] }))} className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1 ${filters.ratings.includes(rating) ? 'bg-emerald-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
+                    <button key={rating} onClick={() => setFilters(f => ({ ...f, ratings: f.ratings.includes(rating) ? f.ratings.filter(r => r !== rating) : [...f.ratings, rating] }))} className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1 ${filters.ratings.includes(rating) ? 'bg-accent-hover text-white' : 'bg-dark-600 text-text-secondary hover:bg-dark-500'}`}>
                       <Star className="w-3 h-3" />{rating}+{filters.ratings.includes(rating) && <Check className="w-3 h-3" />}
                     </button>
                   ))}
@@ -2279,7 +2279,7 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
                   {BEST_FOR_OPTIONS.map(opt => {
                     const Icon = opt.icon
                     return (
-                      <button key={opt.key} onClick={() => setFilters(f => ({ ...f, bestFor: f.bestFor.includes(opt.key) ? f.bestFor.filter(b => b !== opt.key) : [...f.bestFor, opt.key] }))} className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1 ${filters.bestFor.includes(opt.key) ? 'bg-emerald-500 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
+                      <button key={opt.key} onClick={() => setFilters(f => ({ ...f, bestFor: f.bestFor.includes(opt.key) ? f.bestFor.filter(b => b !== opt.key) : [...f.bestFor, opt.key] }))} className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1 ${filters.bestFor.includes(opt.key) ? 'bg-accent-hover text-white' : 'bg-dark-600 text-text-secondary hover:bg-dark-500'}`}>
                         <Icon className="w-3 h-3" />{opt.label}{filters.bestFor.includes(opt.key) && <Check className="w-3 h-3" />}
                       </button>
                     )
@@ -2296,19 +2296,19 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
               
               {/* Deals */}
               {stats.withDiscounts > 0 && (
-                <button onClick={() => setFilters(f => ({ ...f, hasDiscount: !f.hasDiscount }))} aria-pressed={filters.hasDiscount} aria-label={`Filter by deals only. ${stats.withDiscounts} firms with discounts`} className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1 ${filters.hasDiscount ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30' : 'bg-gray-800 text-gray-400 border border-gray-700 hover:border-gray-600'}`}>
+                <button onClick={() => setFilters(f => ({ ...f, hasDiscount: !f.hasDiscount }))} aria-pressed={filters.hasDiscount} aria-label={`Filter by deals only. ${stats.withDiscounts} firms with discounts`} className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1 ${filters.hasDiscount ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30' : 'bg-dark-700 text-text-secondary border border-border hover:border-border-hover'}`}>
                   <Tag className="w-3 h-3" /> Deals ({stats.withDiscounts})
                 </button>
               )}
               
               {/* Sort */}
-              <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} aria-label="Sort firms by" className="px-2.5 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-gray-400 text-xs focus:outline-none focus:border-emerald-500">
+              <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} aria-label="Sort firms by" className="px-2.5 py-1.5 bg-dark-700 border border-border rounded-lg text-text-secondary text-xs focus:outline-none focus:border-accent">
                 {SORT_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
               </select>
               
               {/* Reset */}
               {activeFilterChips.length > 0 && (
-                <button onClick={resetFilters} aria-label="Reset all filters" className="px-2.5 py-1.5 rounded-lg text-xs font-medium text-gray-500 hover:text-red-400 hover:bg-gray-800 flex items-center gap-1">
+                <button onClick={resetFilters} aria-label="Reset all filters" className="px-2.5 py-1.5 rounded-lg text-xs font-medium text-text-muted hover:text-red-400 hover:bg-dark-700 flex items-center gap-1">
                   <RotateCcw className="w-3 h-3" /> Reset
                 </button>
               )}
@@ -2327,23 +2327,23 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
       {/* QUIZ BANNER */}
       <div className="px-4 pt-4">
         <div className="max-w-7xl mx-auto">
-          <div className="rounded-lg bg-gray-800/50 border border-gray-700 hover:border-gray-600 transition-colors">
+          <div className="rounded-lg bg-dark-700/50 border border-border hover:border-border-hover transition-colors">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 px-5 py-4">
               <div className="flex items-center gap-4 min-w-0">
-                <div className="w-10 h-10 rounded-md bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center flex-shrink-0">
-                  <Sparkles className="w-5 h-5 text-emerald-400" />
+                <div className="w-10 h-10 rounded-md bg-accent/15 border border-accent/30 flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="w-5 h-5 text-accent" />
                 </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
                     <p className="text-white font-medium text-sm">Not sure which firm to pick?</p>
-                    <span className="px-1.5 py-0.5 bg-emerald-500/15 text-emerald-400 text-[10px] font-medium rounded border border-emerald-500/30 uppercase tracking-wider">Free</span>
+                    <span className="px-1.5 py-0.5 bg-accent/15 text-accent text-[10px] font-medium rounded border border-accent/30 uppercase tracking-wider">Free</span>
                   </div>
-                  <p className="text-gray-400 text-xs">Discover the prop firm that fits your trading style in under 60 seconds</p>
+                  <p className="text-text-secondary text-xs">Discover the prop firm that fits your trading style in under 60 seconds</p>
                 </div>
               </div>
               <Link
                 href="/en/quiz?start=true"
-                className="flex-shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-medium text-sm rounded-md transition-colors whitespace-nowrap"
+                className="flex-shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-accent-hover hover:brightness-110 text-white font-medium text-sm rounded-md transition-colors whitespace-nowrap"
               >
                 Find my perfect firm
                 <ChevronRight className="w-4 h-4" />
@@ -2361,7 +2361,7 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
                 displaying it implies a number we'd need to keep accurate, and the
                 grid below already conveys the count visually. */}
             {favorites.length > 0 && (
-              <span className="text-xs text-gray-500">{favorites.length} favorites</span>
+              <span className="text-xs text-text-muted">{favorites.length} favorites</span>
             )}
           </div>
           
@@ -2394,7 +2394,7 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
               {/* PAGINATION */}
               {totalPages > 1 && (
                 <nav aria-label="Pagination" className="flex items-center justify-center gap-2 mt-8">
-                  <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} aria-label="Previous page" className="p-2 rounded-lg bg-gray-800 text-gray-400 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                  <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} aria-label="Previous page" className="p-2 rounded-lg bg-dark-700 text-text-secondary hover:bg-dark-600 disabled:opacity-50 disabled:cursor-not-allowed">
                     <ChevronLeft className="w-4 h-4" />
                   </button>
                   <div className="flex gap-1">
@@ -2405,13 +2405,13 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
                       else if (currentPage >= totalPages - 2) page = totalPages - 4 + i
                       else page = currentPage - 2 + i
                       return (
-                        <button key={page} onClick={() => setCurrentPage(page)} aria-label={`Page ${page}`} aria-current={currentPage === page ? 'page' : undefined} className={`w-8 h-8 rounded-lg text-sm font-medium ${currentPage === page ? 'bg-emerald-500 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}>
+                        <button key={page} onClick={() => setCurrentPage(page)} aria-label={`Page ${page}`} aria-current={currentPage === page ? 'page' : undefined} className={`w-8 h-8 rounded-lg text-sm font-medium ${currentPage === page ? 'bg-accent-hover text-white' : 'bg-dark-700 text-text-secondary hover:bg-dark-600'}`}>
                           {page}
                         </button>
                       )
                     })}
                   </div>
-                  <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} aria-label="Next page" className="p-2 rounded-lg bg-gray-800 text-gray-400 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                  <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} aria-label="Next page" className="p-2 rounded-lg bg-dark-700 text-text-secondary hover:bg-dark-600 disabled:opacity-50 disabled:cursor-not-allowed">
                     <ChevronRight className="w-4 h-4" />
                   </button>
                 </nav>
@@ -2421,16 +2421,16 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
 
           {/* SHADOW RESULTS — unlisted firms matching the search */}
           {shadowMatches.length > 0 && (
-            <div className={paginatedFirms.length > 0 ? 'mt-10 pt-8 border-t border-gray-800' : ''}>
+            <div className={paginatedFirms.length > 0 ? 'mt-10 pt-8 border-t border-border' : ''}>
               <div className="mb-4">
                 <div className="flex items-center gap-2 mb-1">
                   <div className="w-1 h-5 bg-yellow-500/60 rounded-full" />
-                  <h2 className="text-sm font-semibold text-gray-300">
-                    Other results <span className="text-gray-500 font-normal">— unverified or not recommended</span>
-                    <span className="ml-2 px-1.5 py-0.5 bg-gray-800 text-gray-400 text-[10px] rounded">{shadowMatches.length}</span>
+                  <h2 className="text-sm font-semibold text-text-secondary">
+                    Other results <span className="text-text-muted font-normal">— unverified or not recommended</span>
+                    <span className="ml-2 px-1.5 py-0.5 bg-dark-700 text-text-secondary text-[10px] rounded">{shadowMatches.length}</span>
                   </h2>
                 </div>
-                <p className="text-xs text-gray-500 ml-3">
+                <p className="text-xs text-text-muted ml-3">
                   These firms aren&apos;t currently listed on PropFirmScanner. We haven&apos;t verified their claims, or we don&apos;t recommend them. Proceed with caution.
                 </p>
               </div>
@@ -2445,12 +2445,12 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
           {/* EMPTY STATE — only when BOTH listed and shadow are empty */}
           {paginatedFirms.length === 0 && shadowMatches.length === 0 && (
             <div className="text-center py-16">
-              <div className="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center mx-auto mb-4">
-                <Search className="w-8 h-8 text-gray-600" />
+              <div className="w-16 h-16 rounded-full bg-dark-700 flex items-center justify-center mx-auto mb-4">
+                <Search className="w-8 h-8 text-text-muted" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">{t.noFirmsFound}</h3>
-              <p className="text-gray-500 mb-4">{t.tryAdjusting}</p>
-              <button onClick={resetFilters} className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm rounded-lg transition-colors">{t.resetFilters}</button>
+              <p className="text-text-muted mb-4">{t.tryAdjusting}</p>
+              <button onClick={resetFilters} className="px-4 py-2 bg-accent-hover hover:brightness-110 text-white text-sm rounded-lg transition-colors">{t.resetFilters}</button>
             </div>
           )}
         </div>
@@ -2459,22 +2459,22 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
       {/* STILL UNDECIDED — sober redirect to quiz */}
       <section className="px-4 py-section-default">
         <div className="max-w-4xl mx-auto">
-          <div className="border border-gray-800 rounded-lg p-8 sm:p-10">
+          <div className="border border-border rounded-lg p-8 sm:p-10">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
               <div className="max-w-xl">
-                <p className="text-tiny text-emerald-400 uppercase tracking-wider font-medium mb-2">
+                <p className="text-tiny text-accent uppercase tracking-wider font-medium mb-2">
                   Personalized matching
                 </p>
                 <h3 className="text-h2 text-white mb-2">
                   Still undecided?
                 </h3>
-                <p className="text-small text-gray-400">
+                <p className="text-small text-text-secondary">
                   Answer 4 quick questions and get your top 3 matches in under 60 seconds. No account required.
                 </p>
               </div>
               <Link
                 href="/en/quiz?start=true"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-medium text-sm rounded-md transition-colors whitespace-nowrap"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-accent-hover hover:brightness-110 text-white font-medium text-sm rounded-md transition-colors whitespace-nowrap"
               >
                 Take the quiz
                 <ChevronRight className="w-4 h-4" />
@@ -2489,7 +2489,7 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
         <div className="fixed bottom-20 right-4 z-40 animate-fade-in">
           <Link
             href="/en/quiz?start=true"
-            className="inline-flex items-center gap-2 px-4 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-medium text-sm rounded-md shadow-lg transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-3 bg-accent-hover hover:brightness-110 text-white font-medium text-sm rounded-md shadow-lg transition-colors"
           >
             Find my match
             <ChevronRight className="w-4 h-4" />

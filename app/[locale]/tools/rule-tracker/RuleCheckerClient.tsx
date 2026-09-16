@@ -127,7 +127,7 @@ export function RuleCheckerClient() {
       {/* Input Form */}
       <div className="space-y-4">
         {/* Prop Firm Selector */}
-        <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
+        <div className="bg-dark-700 rounded-xl p-5 border border-border">
           <h2 className="text-lg font-semibold text-white mb-4">Select Prop Firm</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {(Object.keys(propFirmRules) as FirmName[]).map((firm) => (
@@ -137,7 +137,7 @@ export function RuleCheckerClient() {
                 className={`px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                   selectedFirm === firm
                     ? 'bg-purple-500 text-white'
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    : 'bg-dark-600 text-text-secondary hover:bg-dark-500'
                 }`}
               >
                 {firm}
@@ -147,64 +147,64 @@ export function RuleCheckerClient() {
         </div>
 
         {/* Trade Plan Checklist */}
-        <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
+        <div className="bg-dark-700 rounded-xl p-5 border border-border">
           <h2 className="text-lg font-semibold text-white mb-4">Your Trade Plan</h2>
-          <p className="text-sm text-gray-400 mb-4">Check what applies to your planned trade:</p>
+          <p className="text-sm text-text-secondary mb-4">Check what applies to your planned trade:</p>
 
           <div className="space-y-3">
-            <label className="flex items-center gap-3 p-3 bg-gray-900 rounded-xl cursor-pointer hover:bg-gray-700/50 transition-colors">
+            <label className="flex items-center gap-3 p-3 bg-bg-elevated rounded-xl cursor-pointer hover:bg-dark-600/50 transition-colors">
               <input
                 type="checkbox"
                 checked={tradePlan.isNewsTime}
                 onChange={(e) => setTradePlan({ ...tradePlan, isNewsTime: e.target.checked })}
-                className="w-5 h-5 rounded bg-gray-700 border-gray-600 text-purple-500 focus:ring-purple-500"
+                className="w-5 h-5 rounded bg-dark-600 border-border-hover text-purple-500 focus:ring-purple-500"
               />
               <Newspaper className="w-5 h-5 text-orange-400" />
               <div>
                 <p className="text-white">Trading around news time</p>
-                <p className="text-xs text-gray-500">High-impact economic events</p>
+                <p className="text-xs text-text-muted">High-impact economic events</p>
               </div>
             </label>
 
-            <label className="flex items-center gap-3 p-3 bg-gray-900 rounded-xl cursor-pointer hover:bg-gray-700/50 transition-colors">
+            <label className="flex items-center gap-3 p-3 bg-bg-elevated rounded-xl cursor-pointer hover:bg-dark-600/50 transition-colors">
               <input
                 type="checkbox"
                 checked={tradePlan.isWeekend}
                 onChange={(e) => setTradePlan({ ...tradePlan, isWeekend: e.target.checked })}
-                className="w-5 h-5 rounded bg-gray-700 border-gray-600 text-purple-500 focus:ring-purple-500"
+                className="w-5 h-5 rounded bg-dark-600 border-border-hover text-purple-500 focus:ring-purple-500"
               />
               <Calendar className="w-5 h-5 text-blue-400" />
               <div>
                 <p className="text-white">Holding over weekend</p>
-                <p className="text-xs text-gray-500">Positions open Friday → Monday</p>
+                <p className="text-xs text-text-muted">Positions open Friday → Monday</p>
               </div>
             </label>
 
-            <label className="flex items-center gap-3 p-3 bg-gray-900 rounded-xl cursor-pointer hover:bg-gray-700/50 transition-colors">
+            <label className="flex items-center gap-3 p-3 bg-bg-elevated rounded-xl cursor-pointer hover:bg-dark-600/50 transition-colors">
               <input
                 type="checkbox"
                 checked={tradePlan.bigProfitDay}
                 onChange={(e) => setTradePlan({ ...tradePlan, bigProfitDay: e.target.checked })}
-                className="w-5 h-5 rounded bg-gray-700 border-gray-600 text-purple-500 focus:ring-purple-500"
+                className="w-5 h-5 rounded bg-dark-600 border-border-hover text-purple-500 focus:ring-purple-500"
               />
-              <BarChart3 className="w-5 h-5 text-emerald-400" />
+              <BarChart3 className="w-5 h-5 text-accent" />
               <div>
                 <p className="text-white">Large profit day planned</p>
-                <p className="text-xs text-gray-500">Expecting &gt;30% of target in one day</p>
+                <p className="text-xs text-text-muted">Expecting &gt;30% of target in one day</p>
               </div>
             </label>
 
-            <label className="flex items-center gap-3 p-3 bg-gray-900 rounded-xl cursor-pointer hover:bg-gray-700/50 transition-colors">
+            <label className="flex items-center gap-3 p-3 bg-bg-elevated rounded-xl cursor-pointer hover:bg-dark-600/50 transition-colors">
               <input
                 type="checkbox"
                 checked={tradePlan.hedging}
                 onChange={(e) => setTradePlan({ ...tradePlan, hedging: e.target.checked })}
-                className="w-5 h-5 rounded bg-gray-700 border-gray-600 text-purple-500 focus:ring-purple-500"
+                className="w-5 h-5 rounded bg-dark-600 border-border-hover text-purple-500 focus:ring-purple-500"
               />
               <TrendingUp className="w-5 h-5 text-cyan-400" />
               <div>
                 <p className="text-white">Using hedging</p>
-                <p className="text-xs text-gray-500">Opposite positions on same pair</p>
+                <p className="text-xs text-text-muted">Opposite positions on same pair</p>
               </div>
             </label>
           </div>
@@ -219,7 +219,7 @@ export function RuleCheckerClient() {
             ? 'bg-red-500/20 border border-red-500/30' 
             : hasWarnings 
               ? 'bg-yellow-500/20 border border-yellow-500/30'
-              : 'bg-emerald-500/20 border border-emerald-500/30'
+              : 'bg-accent/20 border border-accent/30'
         }`}>
           <div className="flex items-center gap-3">
             {hasErrors ? (
@@ -227,15 +227,15 @@ export function RuleCheckerClient() {
             ) : hasWarnings ? (
               <AlertTriangle className="w-8 h-8 text-yellow-400" />
             ) : (
-              <CheckCircle className="w-8 h-8 text-emerald-400" />
+              <CheckCircle className="w-8 h-8 text-accent" />
             )}
             <div>
               <p className={`font-bold text-lg ${
-                hasErrors ? 'text-red-400' : hasWarnings ? 'text-yellow-400' : 'text-emerald-400'
+                hasErrors ? 'text-red-400' : hasWarnings ? 'text-yellow-400' : 'text-accent'
               }`}>
                 {hasErrors ? 'Rule Violation' : hasWarnings ? 'Warning' : 'All Clear'}
               </p>
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-text-secondary">
                 {hasErrors 
                   ? 'This trade plan violates firm rules' 
                   : hasWarnings 
@@ -248,8 +248,8 @@ export function RuleCheckerClient() {
 
         {/* Issues List */}
         {issues.length > 0 && (
-          <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
-            <h3 className="text-sm text-gray-400 mb-3">Issues Found</h3>
+          <div className="bg-dark-700 rounded-xl p-5 border border-border">
+            <h3 className="text-sm text-text-secondary mb-3">Issues Found</h3>
             <div className="space-y-3">
               {issues.map((issue, i) => (
                 <div key={i} className={`flex items-start gap-3 p-3 rounded-lg ${
@@ -272,47 +272,47 @@ export function RuleCheckerClient() {
         )}
 
         {/* Selected Firm Rules Summary */}
-        <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
-          <h3 className="text-sm text-gray-400 mb-4">{selectedFirm} Rules</h3>
+        <div className="bg-dark-700 rounded-xl p-5 border border-border">
+          <h3 className="text-sm text-text-secondary mb-4">{selectedFirm} Rules</h3>
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-2 text-gray-300">
+              <span className="flex items-center gap-2 text-text-secondary">
                 <Newspaper className="w-4 h-4 text-orange-400" />
                 News Trading
               </span>
-              <span className={rules.newsTrading.allowed ? 'text-emerald-400' : 'text-red-400'}>
+              <span className={rules.newsTrading.allowed ? 'text-accent' : 'text-red-400'}>
                 {rules.newsTrading.allowed ? 'Allowed' : `${'buffer' in rules.newsTrading ? rules.newsTrading.buffer : 2}min buffer`}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-2 text-gray-300">
+              <span className="flex items-center gap-2 text-text-secondary">
                 <Calendar className="w-4 h-4 text-blue-400" />
                 Weekend Holding
               </span>
-              <span className={rules.weekendHolding.allowed ? 'text-emerald-400' : 'text-red-400'}>
+              <span className={rules.weekendHolding.allowed ? 'text-accent' : 'text-red-400'}>
                 {rules.weekendHolding.allowed ? 'Allowed' : 'Not Allowed'}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-2 text-gray-300">
+              <span className="flex items-center gap-2 text-text-secondary">
                 <BarChart3 className="w-4 h-4 text-purple-400" />
                 Consistency Rule
               </span>
-              <span className={!rules.consistency.required ? 'text-emerald-400' : 'text-yellow-400'}>
+              <span className={!rules.consistency.required ? 'text-accent' : 'text-yellow-400'}>
                 {rules.consistency.required ? `Max ${'maxDayPct' in rules.consistency ? rules.consistency.maxDayPct : 40}%/day` : 'None'}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-2 text-gray-300">
+              <span className="flex items-center gap-2 text-text-secondary">
                 <TrendingUp className="w-4 h-4 text-pink-400" />
                 Max DD Type
               </span>
-              <span className={rules.maxDDType === 'static' ? 'text-emerald-400' : 'text-yellow-400'}>
+              <span className={rules.maxDDType === 'static' ? 'text-accent' : 'text-yellow-400'}>
                 {rules.maxDDType === 'static' ? 'Static' : 'Trailing'}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-2 text-gray-300">
+              <span className="flex items-center gap-2 text-text-secondary">
                 <Clock className="w-4 h-4 text-cyan-400" />
                 Min Trading Days
               </span>

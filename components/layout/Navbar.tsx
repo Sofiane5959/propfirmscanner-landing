@@ -23,11 +23,11 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-accent flex items-center justify-center">
               <span className="text-white font-bold text-sm">P</span>
             </div>
             <span className="text-white font-bold text-lg hidden sm:block">
-              PropFirm<span className="text-emerald-400">Scanner</span>
+              PropFirm<span className="text-accent">Scanner</span>
             </span>
           </Link>
 
@@ -41,8 +41,8 @@ export function Navbar() {
                   href={item.href}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all
                     ${isActive 
-                      ? 'bg-emerald-500/20 text-emerald-400' 
-                      : 'text-gray-300 hover:text-white hover:bg-white/5'
+                      ? 'bg-accent/20 text-accent' 
+                      : 'text-text-secondary hover:text-white hover:bg-white/5'
                     }`}
                 >
                   <item.icon className="w-4 h-4" />
@@ -54,11 +54,11 @@ export function Navbar() {
             {/* Free Guide */}
             <Link
               href="/guide"
-              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all bg-accent/10 text-accent hover:bg-accent/20"
             >
               <BookOpen className="w-4 h-4" />
               Free Guide
-              <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded">FREE</span>
+              <span className="px-1.5 py-0.5 bg-accent-hover text-white text-xs rounded">FREE</span>
             </Link>
 
             {/* My Prop Firms - Single product page */}
@@ -66,8 +66,8 @@ export function Navbar() {
               href="/dashboard"
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all
                 ${isMyPropFirmsActive 
-                  ? 'bg-emerald-500/20 text-emerald-400' 
-                  : 'text-gray-300 hover:text-white hover:bg-white/5'
+                  ? 'bg-accent/20 text-accent' 
+                  : 'text-text-secondary hover:text-white hover:bg-white/5'
                 }`}
             >
               <Shield className="w-4 h-4" />
@@ -79,13 +79,13 @@ export function Navbar() {
           <div className="hidden md:flex items-center space-x-3">
             <Link
               href="/auth/login"
-              className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors"
+              className="px-4 py-2 text-sm font-medium text-text-secondary hover:text-white transition-colors"
             >
               Log in
             </Link>
             <Link
               href="/auth/signup"
-              className="px-4 py-2 text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors"
+              className="px-4 py-2 text-sm font-medium text-white bg-accent-hover hover:brightness-110 rounded-lg transition-colors"
             >
               Get Started
             </Link>
@@ -94,7 +94,7 @@ export function Navbar() {
           {/* Mobile menu button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-gray-400 hover:text-white"
+            className="md:hidden p-2 text-text-secondary hover:text-white"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -103,7 +103,7 @@ export function Navbar() {
 
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-gray-900/95 backdrop-blur-lg border-t border-gray-800">
+        <div className="md:hidden bg-bg-elevated/95 backdrop-blur-lg border-t border-border">
           <div className="px-4 py-4 space-y-2">
             {navigation.map((item) => {
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
@@ -114,8 +114,8 @@ export function Navbar() {
                   onClick={() => setMobileMenuOpen(false)}
                   className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all
                     ${isActive 
-                      ? 'bg-emerald-500/20 text-emerald-400' 
-                      : 'text-gray-300 hover:text-white hover:bg-white/5'
+                      ? 'bg-accent/20 text-accent' 
+                      : 'text-text-secondary hover:text-white hover:bg-white/5'
                     }`}
                 >
                   <item.icon className="w-5 h-5" />
@@ -128,11 +128,11 @@ export function Navbar() {
             <Link
               href="/guide"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium bg-emerald-500/10 text-emerald-400"
+              className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium bg-accent/10 text-accent"
             >
               <BookOpen className="w-5 h-5" />
               Free Guide
-              <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-xs rounded ml-auto">FREE</span>
+              <span className="px-1.5 py-0.5 bg-accent-hover text-white text-xs rounded ml-auto">FREE</span>
             </Link>
 
             {/* My Prop Firms - Mobile */}
@@ -141,26 +141,26 @@ export function Navbar() {
               onClick={() => setMobileMenuOpen(false)}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all
                 ${isMyPropFirmsActive 
-                  ? 'bg-emerald-500/20 text-emerald-400' 
-                  : 'text-gray-300 hover:text-white hover:bg-white/5'
+                  ? 'bg-accent/20 text-accent' 
+                  : 'text-text-secondary hover:text-white hover:bg-white/5'
                 }`}
             >
               <Shield className="w-5 h-5" />
               My Prop Firms
             </Link>
 
-            <div className="pt-4 border-t border-gray-800 space-y-2">
+            <div className="pt-4 border-t border-border space-y-2">
               <Link
                 href="/auth/login"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block px-4 py-3 text-center text-sm font-medium text-gray-300 hover:text-white rounded-lg hover:bg-white/5"
+                className="block px-4 py-3 text-center text-sm font-medium text-text-secondary hover:text-white rounded-lg hover:bg-white/5"
               >
                 Log in
               </Link>
               <Link
                 href="/auth/signup"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block px-4 py-3 text-center text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg"
+                className="block px-4 py-3 text-center text-sm font-medium text-white bg-accent-hover hover:brightness-110 rounded-lg"
               >
                 Get Started
               </Link>

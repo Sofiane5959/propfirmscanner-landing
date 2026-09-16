@@ -78,7 +78,7 @@ export default function TopPicksCarousel({ firms }: TopPicksCarouselProps) {
 
   const getRankBadge = (index: number) => {
     if (index === 0) return { icon: Trophy, color: 'text-yellow-500', bg: 'bg-yellow-500/10' }
-    if (index === 1) return { icon: Trophy, color: 'text-gray-400', bg: 'bg-gray-400/10' }
+    if (index === 1) return { icon: Trophy, color: 'text-text-secondary', bg: 'bg-gray-400/10' }
     if (index === 2) return { icon: Trophy, color: 'text-amber-600', bg: 'bg-amber-600/10' }
     return { icon: TrendingUp, color: 'text-blue-500', bg: 'bg-blue-500/10' }
   }
@@ -95,7 +95,7 @@ export default function TopPicksCarousel({ firms }: TopPicksCarouselProps) {
           </div>
           <div>
             <h2 className="text-2xl font-bold text-white">Top 10 Prop Firms</h2>
-            <p className="text-sm text-gray-400">Our recommended picks for 2025</p>
+            <p className="text-sm text-text-secondary">Our recommended picks for 2025</p>
           </div>
         </div>
         
@@ -106,8 +106,8 @@ export default function TopPicksCarousel({ firms }: TopPicksCarouselProps) {
             disabled={!canScrollLeft}
             className={`p-2 rounded-lg border transition-all ${
               canScrollLeft
-                ? 'border-gray-600 bg-gray-800 hover:bg-gray-700 text-white'
-                : 'border-gray-700 bg-gray-800/50 text-gray-600 cursor-not-allowed'
+                ? 'border-border-hover bg-dark-700 hover:bg-dark-600 text-white'
+                : 'border-border bg-dark-700/50 text-text-muted cursor-not-allowed'
             }`}
           >
             <ChevronLeft className="w-5 h-5" />
@@ -117,8 +117,8 @@ export default function TopPicksCarousel({ firms }: TopPicksCarouselProps) {
             disabled={!canScrollRight}
             className={`p-2 rounded-lg border transition-all ${
               canScrollRight
-                ? 'border-gray-600 bg-gray-800 hover:bg-gray-700 text-white'
-                : 'border-gray-700 bg-gray-800/50 text-gray-600 cursor-not-allowed'
+                ? 'border-border-hover bg-dark-700 hover:bg-dark-600 text-white'
+                : 'border-border bg-dark-700/50 text-text-muted cursor-not-allowed'
             }`}
           >
             <ChevronRight className="w-5 h-5" />
@@ -142,14 +142,14 @@ export default function TopPicksCarousel({ firms }: TopPicksCarouselProps) {
                 href={`/prop-firm/${firm.slug}`}
                 className="flex-shrink-0 w-[300px] group"
               >
-                <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-2xl border border-gray-700 p-5 hover:border-blue-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10 h-full">
+                <div className="bg-gradient-to-b from-dark-700 to-bg-elevated rounded-2xl border border-border p-5 hover:border-blue-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10 h-full">
                   {/* Rank Badge & Logo */}
                   <div className="flex items-start justify-between mb-4">
                     <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${bg}`}>
                       <RankIcon className={`w-4 h-4 ${color}`} />
                       <span className={`text-sm font-bold ${color}`}>#{index + 1}</span>
                     </div>
-                    <div className="w-12 h-12 rounded-xl bg-gray-700 flex items-center justify-center overflow-hidden">
+                    <div className="w-12 h-12 rounded-xl bg-dark-600 flex items-center justify-center overflow-hidden">
                       {firm.logo_url ? (
                         <Image
                           src={firm.logo_url}
@@ -159,7 +159,7 @@ export default function TopPicksCarousel({ firms }: TopPicksCarouselProps) {
                           className="object-contain"
                         />
                       ) : (
-                        <span className="text-lg font-bold text-gray-400">
+                        <span className="text-lg font-bold text-text-secondary">
                           {firm.name.substring(0, 2).toUpperCase()}
                         </span>
                       )}
@@ -179,7 +179,7 @@ export default function TopPicksCarousel({ firms }: TopPicksCarouselProps) {
                         {(firm.trustpilot_rating ?? 0).toFixed(1)}
                       </span>
                     </div>
-                    <span className="text-gray-500 text-sm">
+                    <span className="text-text-muted text-sm">
                       {firm.trustpilot_reviews 
                         ? `(${firm.trustpilot_reviews.toLocaleString()} reviews)`
                         : '(Not tracked)'
@@ -189,20 +189,20 @@ export default function TopPicksCarousel({ firms }: TopPicksCarouselProps) {
 
                   {/* Key Stats */}
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-gray-800/50 rounded-lg p-3">
-                      <p className="text-xs text-gray-500 mb-1">From</p>
+                    <div className="bg-dark-700/50 rounded-lg p-3">
+                      <p className="text-xs text-text-muted mb-1">From</p>
                       <p className="text-white font-bold">${firm.min_price ?? 'N/A'}</p>
                     </div>
-                    <div className="bg-gray-800/50 rounded-lg p-3">
-                      <p className="text-xs text-gray-500 mb-1">Profit Split</p>
+                    <div className="bg-dark-700/50 rounded-lg p-3">
+                      <p className="text-xs text-text-muted mb-1">Profit Split</p>
                       <p className="text-green-400 font-bold">{firm.profit_split ?? 'N/A'}%</p>
                     </div>
-                    <div className="bg-gray-800/50 rounded-lg p-3">
-                      <p className="text-xs text-gray-500 mb-1">Daily DD</p>
+                    <div className="bg-dark-700/50 rounded-lg p-3">
+                      <p className="text-xs text-text-muted mb-1">Daily DD</p>
                       <p className="text-orange-400 font-bold">{firm.max_daily_drawdown ?? 'N/A'}%</p>
                     </div>
-                    <div className="bg-gray-800/50 rounded-lg p-3">
-                      <p className="text-xs text-gray-500 mb-1">Max DD</p>
+                    <div className="bg-dark-700/50 rounded-lg p-3">
+                      <p className="text-xs text-text-muted mb-1">Max DD</p>
                       <p className="text-red-400 font-bold">{firm.max_total_drawdown ?? 'N/A'}%</p>
                     </div>
                   </div>
@@ -220,10 +220,10 @@ export default function TopPicksCarousel({ firms }: TopPicksCarouselProps) {
 
         {/* Gradient Edges */}
         {canScrollLeft && (
-          <div className="absolute left-0 top-0 bottom-4 w-12 bg-gradient-to-r from-gray-900 to-transparent pointer-events-none" />
+          <div className="absolute left-0 top-0 bottom-4 w-12 bg-gradient-to-r from-bg-elevated to-transparent pointer-events-none" />
         )}
         {canScrollRight && (
-          <div className="absolute right-0 top-0 bottom-4 w-12 bg-gradient-to-l from-gray-900 to-transparent pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-4 w-12 bg-gradient-to-l from-bg-elevated to-transparent pointer-events-none" />
         )}
       </div>
 
@@ -231,7 +231,7 @@ export default function TopPicksCarousel({ firms }: TopPicksCarouselProps) {
       <div className="text-center mt-4">
         <Link
           href="/compare"
-          className="text-gray-400 hover:text-white text-sm transition-colors"
+          className="text-text-secondary hover:text-white text-sm transition-colors"
         >
           View all {firms.length} prop firms →
         </Link>

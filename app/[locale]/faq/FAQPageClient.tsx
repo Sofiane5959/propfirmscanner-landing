@@ -616,26 +616,26 @@ export default function FAQPageClient() {
     : filteredCategories
 
   return (
-    <div className="min-h-screen bg-gray-900 py-24 px-4">
+    <div className="min-h-screen bg-bg-elevated py-24 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
-            <HelpCircle className="w-8 h-8 text-emerald-400" />
+          <div className="w-16 h-16 rounded-2xl bg-accent/20 flex items-center justify-center mx-auto mb-4">
+            <HelpCircle className="w-8 h-8 text-accent" />
           </div>
           <h1 className="text-4xl font-bold text-white mb-4">{t.title}</h1>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">{t.subtitle}</p>
+          <p className="text-xl text-text-secondary max-w-2xl mx-auto">{t.subtitle}</p>
         </div>
 
         {/* Search */}
         <div className="relative max-w-xl mx-auto mb-8">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
           <input
             type="text"
             placeholder={t.searchPlaceholder}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder:text-gray-500 focus:outline-none focus:border-emerald-500"
+            className="w-full pl-12 pr-4 py-3 bg-dark-700 border border-border rounded-xl text-white placeholder:text-text-muted focus:outline-none focus:border-accent"
           />
         </div>
 
@@ -645,8 +645,8 @@ export default function FAQPageClient() {
             onClick={() => setActiveCategory(null)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               activeCategory === null
-                ? 'bg-emerald-500 text-white'
-                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                ? 'bg-accent-hover text-white'
+                : 'bg-dark-700 text-text-secondary hover:bg-dark-600'
             }`}
           >
             {t.all}
@@ -657,8 +657,8 @@ export default function FAQPageClient() {
               onClick={() => setActiveCategory(category.id)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
                 activeCategory === category.id
-                  ? 'bg-emerald-500 text-white'
-                  : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                  ? 'bg-accent-hover text-white'
+                  : 'bg-dark-700 text-text-secondary hover:bg-dark-600'
               }`}
             >
               <category.icon className="w-4 h-4" />
@@ -673,7 +673,7 @@ export default function FAQPageClient() {
             <div key={category.id}>
               {!activeCategory && (
                 <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                  <category.icon className="w-5 h-5 text-emerald-400" />
+                  <category.icon className="w-5 h-5 text-accent" />
                   {category.title}
                 </h2>
               )}
@@ -686,21 +686,21 @@ export default function FAQPageClient() {
                   return (
                     <div
                       key={itemId}
-                      className="bg-gray-800/50 border border-gray-700 rounded-xl overflow-hidden"
+                      className="bg-dark-700/50 border border-border rounded-xl overflow-hidden"
                     >
                       <button
                         onClick={() => toggleItem(itemId)}
                         className="w-full px-6 py-4 flex items-center justify-between text-left"
                       >
                         <span className="text-white font-medium pr-4">{faqItem.question}</span>
-                        <ChevronDown className={`w-5 h-5 text-gray-400 flex-shrink-0 transition-transform ${
+                        <ChevronDown className={`w-5 h-5 text-text-secondary flex-shrink-0 transition-transform ${
                           isOpen ? 'rotate-180' : ''
                         }`} />
                       </button>
                       
                       {isOpen && (
                         <div className="px-6 pb-4">
-                          <p className="text-gray-400 leading-relaxed">{faqItem.answer}</p>
+                          <p className="text-text-secondary leading-relaxed">{faqItem.answer}</p>
                         </div>
                       )}
                     </div>
@@ -714,20 +714,20 @@ export default function FAQPageClient() {
         {/* No Results */}
         {searchQuery && filteredCategories.length === 0 && (
           <div className="text-center py-12">
-            <HelpCircle className="w-12 h-12 text-gray-500 mx-auto mb-4" />
+            <HelpCircle className="w-12 h-12 text-text-muted mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-white mb-2">{t.noResults}</h3>
-            <p className="text-gray-400">{t.tryDifferent}</p>
+            <p className="text-text-secondary">{t.tryDifferent}</p>
           </div>
         )}
 
         {/* Contact CTA */}
-        <div className="mt-12 bg-gray-800/50 border border-gray-700 rounded-xl p-8 text-center">
-          <MessageCircle className="w-12 h-12 text-emerald-400 mx-auto mb-4" />
+        <div className="mt-12 bg-dark-700/50 border border-border rounded-xl p-8 text-center">
+          <MessageCircle className="w-12 h-12 text-accent mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-white mb-2">{t.stillQuestions}</h2>
-          <p className="text-gray-400 mb-6">{t.cantFind}</p>
+          <p className="text-text-secondary mb-6">{t.cantFind}</p>
           <a
             href="mailto:support@propfirmscanner.org"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-xl transition-colors"
           >
             {t.contactSupport}
           </a>
@@ -737,27 +737,27 @@ export default function FAQPageClient() {
         <div className="mt-8 grid md:grid-cols-3 gap-4">
           <Link
             href={`/${locale}/quick-match`}
-            className="p-4 bg-gray-800/50 border border-gray-700 rounded-xl hover:border-emerald-500/30 text-center"
+            className="p-4 bg-dark-700/50 border border-border rounded-xl hover:border-accent/30 text-center"
           >
-            <Target className="w-6 h-6 text-emerald-400 mx-auto mb-2" />
+            <Target className="w-6 h-6 text-accent mx-auto mb-2" />
             <div className="text-white font-medium">{t.quickMatch}</div>
-            <div className="text-gray-400 text-sm">{t.findIdealFirm}</div>
+            <div className="text-text-secondary text-sm">{t.findIdealFirm}</div>
           </Link>
           <Link
             href={`/${locale}/compare`}
-            className="p-4 bg-gray-800/50 border border-gray-700 rounded-xl hover:border-emerald-500/30 text-center"
+            className="p-4 bg-dark-700/50 border border-border rounded-xl hover:border-accent/30 text-center"
           >
-            <Clock className="w-6 h-6 text-emerald-400 mx-auto mb-2" />
+            <Clock className="w-6 h-6 text-accent mx-auto mb-2" />
             <div className="text-white font-medium">{t.compareFirms}</div>
-            <div className="text-gray-400 text-sm">{t.sideBySide}</div>
+            <div className="text-text-secondary text-sm">{t.sideBySide}</div>
           </Link>
           <Link
             href={`/${locale}/guide`}
-            className="p-4 bg-gray-800/50 border border-gray-700 rounded-xl hover:border-emerald-500/30 text-center"
+            className="p-4 bg-dark-700/50 border border-border rounded-xl hover:border-accent/30 text-center"
           >
-            <HelpCircle className="w-6 h-6 text-emerald-400 mx-auto mb-2" />
+            <HelpCircle className="w-6 h-6 text-accent mx-auto mb-2" />
             <div className="text-white font-medium">{t.freeGuide}</div>
-            <div className="text-gray-400 text-sm">{t.downloadGuide}</div>
+            <div className="text-text-secondary text-sm">{t.downloadGuide}</div>
           </Link>
         </div>
       </div>
