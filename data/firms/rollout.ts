@@ -12,7 +12,7 @@
 // =============================================================================
 
 export const FIRM_PROFILE_ROLLOUT: Readonly<Record<string, readonly string[]>> = {
-  // futureselite: ['en'],
+  futureselite: ['en'],
 }
 
 export function profilActif(slug: string, locale: string): boolean {
