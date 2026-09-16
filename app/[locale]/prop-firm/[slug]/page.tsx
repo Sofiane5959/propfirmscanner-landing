@@ -4,7 +4,9 @@ import { createClient } from '@supabase/supabase-js'
 import PropFirmPageClient from './PropFirmPageClient'
 import FirmPage from '@/components/prop-firm/FirmPage'
 import UniversalFirmPage from '@/components/prop-firm/UniversalFirmPage'
+import FirmProfilePage from '@/components/prop-firm/profile/FirmProfilePage'
 import { FIRM_SHEETS } from '@/data/firms'
+import { profilActif } from '@/data/firms/rollout'
 import { sheetMetaDescription } from '@/lib/firm-sheet'
 import { buildAffiliateUrl } from '@/lib/affiliate'
 
@@ -522,7 +524,17 @@ export default async function PropFirmPage({ params }: Props) {
       {/* Une firme qui a sa fiche (data/firms/<slug>.json, issue de son tableur)
           est rendue par la page universelle, a partir de ce seul fichier. Les
           autres firmes gardent leur rendu actuel. */}
-      {FIRM_SHEETS[firm.slug] ? (
+      {/* Pilote : une firme listee dans data/firms/rollout.ts, pour cette langue,
+          passe par la page universelle finale. Retirer la ligne suffit a
+          revenir au rendu precedent. */}
+      {FIRM_SHEETS[firm.slug] && profilActif(firm.slug, locale) ? (
+        <FirmProfilePage
+          sheet={FIRM_SHEETS[firm.slug]}
+          firmSlug={firm.slug}
+          locale={locale}
+          rating={firm.trustpilot_rating ?? null}
+        />
+      ) : FIRM_SHEETS[firm.slug] ? (
         <UniversalFirmPage
           sheet={FIRM_SHEETS[firm.slug]}
           ctaHref={buildAffiliateUrl(firm.slug, { placement: 'hero', locale })}

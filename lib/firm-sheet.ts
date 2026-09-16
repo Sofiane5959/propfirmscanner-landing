@@ -11,6 +11,26 @@
 
 export type PhaseKey = 'evaluation' | 'evaluation_2' | 'funded'
 
+/**
+ * Pourquoi une valeur manque. `confirmed` accompagne une valeur publiee ; les
+ * quatre autres remplacent la valeur. Une valeur simplement vide n'a pas de
+ * statut : sa ligne disparait.
+ */
+export type Statut = 'confirmed' | 'not_published' | 'not_applicable' | 'needs_confirmation' | 'source_conflict'
+
+/** Les champs d'une phase qui peuvent porter un statut. */
+export type ChampPhase =
+  | 'objectifProfit'
+  | 'perteMax'
+  | 'typePerteMax'
+  | 'perteJour'
+  | 'joursMin'
+  | 'regularite'
+  | 'maxContrats'
+  | 'partage'
+  | 'plafondRetrait'
+  | 'retraitMinimum'
+
 export interface SheetPhase {
   phase: PhaseKey
   objectifProfit: number | null
@@ -24,6 +44,12 @@ export interface SheetPhase {
   maxContrats: number | null
   /** Fraction : 0.9 = 90 %. */
   partage: number | null
+  /** Plafond par demande de retrait, en devise. */
+  plafondRetrait: number | null
+  /** Minimum par demande de retrait, en devise. */
+  retraitMinimum: number | null
+  /** Le statut des champs dont la valeur manque. */
+  statuts: Partial<Record<ChampPhase, Statut>>
 }
 
 export interface SheetPlan {
@@ -33,6 +59,9 @@ export interface SheetPlan {
   prix: number | null
   /** Le plan affiche dans la carte « MOST POPULAR PLAN ». */
   cartePromo: boolean
+  /** Paiement unique, ou abonnement renouvele a chaque `intervalle`. */
+  facturation: 'one_time' | 'subscription'
+  intervalle: 'monthly' | null
   phases: SheetPhase[]
 }
 
@@ -45,6 +74,10 @@ export interface SheetProgramme {
   resume: string | null
   marche: string
   type: 'evaluation' | 'instant'
+  /** Comptes finances actifs au plus, pour CE programme. */
+  maxComptes: number | null
+  maxComptesStatut: Statut | null
+  maxComptesNote: string | null
   plans: SheetPlan[]
 }
 
@@ -61,7 +94,8 @@ export interface SheetOffre {
 
 /** Une etape de « From evaluation to your first payout ». */
 export interface SheetEtape {
-  etape: 'evaluation' | 'funded' | 'payout'
+  /** evaluation, funded, payout — ou un libelle propre a la firme. */
+  etape: string
   titre: string
   texte: string
 }
@@ -73,10 +107,39 @@ export interface SheetCout {
   note: string | null
 }
 
-export const ETAPE_LABEL: Record<SheetEtape['etape'], string> = {
+export const ETAPE_LABEL: Record<string, string> = {
   evaluation: 'Evaluation',
   funded: 'Funded',
   payout: 'Payout',
+}
+
+/** Le petit titre d'une etape : son libelle s'il est connu, l'etape telle quelle sinon. */
+export function etapeLabel(etape: string): string {
+  return ETAPE_LABEL[etape] ?? etape
+}
+
+/** Une plateforme citee par la firme. Seules les selectionnables s'affichent. */
+export interface SheetPlateforme {
+  nom: string
+  selectionnable: boolean
+  note: string | null
+}
+
+/** Un choix d'achat qui change le produit : il est transmis au lien de paiement. */
+export interface SheetOption {
+  type: 'plateforme' | 'data_feed'
+  nom: string
+  detail: string | null
+  parametre: string
+  valeur: string
+  /** Slugs concernes ; vide = tous les programmes. */
+  programmes: string[]
+}
+
+export interface SheetCompte {
+  nom: string
+  description: string | null
+  lignes: { libelle: string; valeur: string }[]
 }
 
 export interface FirmSheet {
@@ -112,6 +175,26 @@ export interface FirmSheet {
     limites: string[]
   }
   faq: { question: string; reponse: string }[]
+
+  // --- Nouvelle page (FirmProfilePage). L'ancienne n'en lit rien. -------------
+  /** Le H1 : une proposition de valeur. Null : le nom sert de H1. */
+  titre: string | null
+  /** 2 a 3 lignes sous le H1. */
+  description: string | null
+  /** « What [Firm] is known for » : quatre faits au plus. */
+  connuPour: { titre: string; detail: string | null }[]
+  preuves: { libelle: string; valeur: string; source: string | null }[]
+  plateformesDetail: SheetPlateforme[]
+  /** Categories precises (Index futures…), seulement si confirmees. */
+  categoriesActifs: string[]
+  categoriesActifsStatut: Statut | null
+  /** Achat : `moyensPaiement`. Retrait : ces deux champs. */
+  methodesRetrait: string[]
+  prestataireRetrait: string | null
+  levierStatut: Statut | null
+  optionsAchat: SheetOption[]
+  formation: { titre: string | null; intro: string | null; elements: string[] } | null
+  comptesApresReussite: SheetCompte[]
 }
 
 /** Une firme proposee en fin de page. Construite par la route, depuis la base. */
@@ -262,7 +345,7 @@ export interface RuleRow {
   meaning: string
 }
 
-function meaningMaxLoss(type: string | null): string {
+export function meaningMaxLoss(type: string | null): string {
   switch ((type ?? '').toLowerCase()) {
     case 'end of day':
       return 'The limit is updated from the end-of-day balance.'

@@ -1,4 +1,5 @@
 {
+  "_genere": "Fichier genere par scripts/xlsx_to_firm.py depuis data/firms/futureselite.xlsx. Ne pas modifier : corriger le tableur, puis relancer le script.",
   "slug": "futureselite",
   "nom": "FuturesElite",
   "logoUrl": "https://cdn.prod.website-files.com/690a53b4dc85f8bf1d3328d4/690a53b4dc85f8bf1d332987_Webclip.svg",
@@ -44,6 +45,9 @@
       "resume": "One-step evaluation, end-of-day drawdown and no daily loss limit.",
       "marche": "futures",
       "type": "evaluation",
+      "maxComptes": 5,
+      "maxComptesStatut": "confirmed",
+      "maxComptesNote": "Counts towards the shared cap of 5 funded accounts across Elite, Custom, Instant and Nitro.",
       "plans": [
         {
           "taille": 25000,
@@ -51,12 +55,17 @@
           "devise": "USD",
           "prix": 95,
           "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
           "phases": [
             {
               "phase": "evaluation",
               "objectifProfit": 1250,
               "perteMax": 1000,
               "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
               "perteJour": "aucune",
               "joursMin": 3,
               "regularite": 0.4,
@@ -68,6 +77,9 @@
               "objectifProfit": null,
               "perteMax": 1000,
               "typePerteMax": "End of Day",
+              "plafondRetrait": 1000,
+              "retraitMinimum": 500,
+              "statuts": {},
               "perteJour": "aucune",
               "joursMin": 6,
               "regularite": "aucune",
@@ -82,12 +94,17 @@
           "devise": "USD",
           "prix": 153,
           "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
           "phases": [
             {
               "phase": "evaluation",
               "objectifProfit": 3000,
               "perteMax": 2000,
               "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
               "perteJour": "aucune",
               "joursMin": 3,
               "regularite": 0.4,
@@ -99,6 +116,9 @@
               "objectifProfit": null,
               "perteMax": 2000,
               "typePerteMax": "End of Day",
+              "plafondRetrait": 2000,
+              "retraitMinimum": 500,
+              "statuts": {},
               "perteJour": "aucune",
               "joursMin": 6,
               "regularite": "aucune",
@@ -113,12 +133,17 @@
           "devise": "USD",
           "prix": 293,
           "cartePromo": true,
+          "facturation": "one_time",
+          "intervalle": null,
           "phases": [
             {
               "phase": "evaluation",
               "objectifProfit": 6000,
               "perteMax": 3000,
               "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
               "perteJour": "aucune",
               "joursMin": 3,
               "regularite": 0.4,
@@ -130,6 +155,9 @@
               "objectifProfit": null,
               "perteMax": 3000,
               "typePerteMax": "End of Day",
+              "plafondRetrait": 2500,
+              "retraitMinimum": 500,
+              "statuts": {},
               "perteJour": "aucune",
               "joursMin": 6,
               "regularite": "aucune",
@@ -144,12 +172,17 @@
           "devise": "USD",
           "prix": 353,
           "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
           "phases": [
             {
               "phase": "evaluation",
               "objectifProfit": 9000,
               "perteMax": 4500,
               "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
               "perteJour": "aucune",
               "joursMin": 3,
               "regularite": 0.4,
@@ -161,6 +194,9 @@
               "objectifProfit": null,
               "perteMax": 4500,
               "typePerteMax": "End of Day",
+              "plafondRetrait": 3000,
+              "retraitMinimum": 500,
+              "statuts": {},
               "perteJour": "aucune",
               "joursMin": 6,
               "regularite": "aucune",
@@ -178,6 +214,9 @@
       "resume": "One-step evaluation with the lowest minimum trading days. Once funded it switches to a trailing-equity drawdown with a buffer.",
       "marche": "futures",
       "type": "evaluation",
+      "maxComptes": null,
+      "maxComptesStatut": "source_conflict",
+      "maxComptesNote": "The official FAQ states 3 active funded Nitro accounts; the purchase configurator displayed MAX 4 FUNDED.",
       "plans": [
         {
           "taille": 25000,
@@ -185,12 +224,17 @@
           "devise": "USD",
           "prix": 129,
           "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
           "phases": [
             {
               "phase": "evaluation",
               "objectifProfit": 1250,
               "perteMax": 1000,
               "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
               "perteJour": "aucune",
               "joursMin": 2,
               "regularite": 0.5,
@@ -202,6 +246,11 @@
               "objectifProfit": null,
               "perteMax": 1000,
               "typePerteMax": "Trailing Equity",
+              "plafondRetrait": 1000,
+              "retraitMinimum": null,
+              "statuts": {
+                "retraitMinimum": "not_published"
+              },
               "perteJour": "aucune",
               "joursMin": 1,
               "regularite": "aucune",
@@ -216,12 +265,17 @@
           "devise": "USD",
           "prix": 138,
           "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
           "phases": [
             {
               "phase": "evaluation",
               "objectifProfit": 3000,
               "perteMax": 2000,
               "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
               "perteJour": "aucune",
               "joursMin": 2,
               "regularite": 0.5,
@@ -233,6 +287,11 @@
               "objectifProfit": null,
               "perteMax": 2000,
               "typePerteMax": "Trailing Equity",
+              "plafondRetrait": 2000,
+              "retraitMinimum": null,
+              "statuts": {
+                "retraitMinimum": "not_published"
+              },
               "perteJour": "aucune",
               "joursMin": 1,
               "regularite": "aucune",
@@ -247,12 +306,17 @@
           "devise": "USD",
           "prix": 218,
           "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
           "phases": [
             {
               "phase": "evaluation",
               "objectifProfit": 6000,
               "perteMax": 3000,
               "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
               "perteJour": "aucune",
               "joursMin": 2,
               "regularite": 0.5,
@@ -264,6 +328,11 @@
               "objectifProfit": null,
               "perteMax": 3000,
               "typePerteMax": "Trailing Equity",
+              "plafondRetrait": 2500,
+              "retraitMinimum": null,
+              "statuts": {
+                "retraitMinimum": "not_published"
+              },
               "perteJour": "aucune",
               "joursMin": 1,
               "regularite": "aucune",
@@ -278,12 +347,17 @@
           "devise": "USD",
           "prix": 298,
           "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
           "phases": [
             {
               "phase": "evaluation",
               "objectifProfit": 9000,
               "perteMax": 4500,
               "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
               "perteJour": "aucune",
               "joursMin": 2,
               "regularite": 0.5,
@@ -295,6 +369,11 @@
               "objectifProfit": null,
               "perteMax": 4500,
               "typePerteMax": "Trailing Equity",
+              "plafondRetrait": 2800,
+              "retraitMinimum": null,
+              "statuts": {
+                "retraitMinimum": "not_published"
+              },
               "perteJour": "aucune",
               "joursMin": 1,
               "regularite": "aucune",
@@ -312,6 +391,9 @@
       "resume": "The only programme with a daily loss limit in both phases. It also carries the longest bundle ladder, up to ten accounts.",
       "marche": "futures",
       "type": "evaluation",
+      "maxComptes": 10,
+      "maxComptesStatut": "confirmed",
+      "maxComptesNote": "Prime has its own cap: 10 active funded accounts.",
       "plans": [
         {
           "taille": 25000,
@@ -319,12 +401,17 @@
           "devise": "USD",
           "prix": 96,
           "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
           "phases": [
             {
               "phase": "evaluation",
               "objectifProfit": 1250,
               "perteMax": 1000,
               "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
               "perteJour": 600,
               "joursMin": 1,
               "regularite": null,
@@ -336,6 +423,11 @@
               "objectifProfit": null,
               "perteMax": 1000,
               "typePerteMax": "End of Day",
+              "plafondRetrait": 1000,
+              "retraitMinimum": null,
+              "statuts": {
+                "retraitMinimum": "not_published"
+              },
               "perteJour": 600,
               "joursMin": 3,
               "regularite": 0.4,
@@ -350,12 +442,17 @@
           "devise": "USD",
           "prix": 179,
           "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
           "phases": [
             {
               "phase": "evaluation",
               "objectifProfit": 3000,
               "perteMax": 2000,
               "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
               "perteJour": 1200,
               "joursMin": 1,
               "regularite": null,
@@ -367,6 +464,11 @@
               "objectifProfit": null,
               "perteMax": 2000,
               "typePerteMax": "End of Day",
+              "plafondRetrait": 2000,
+              "retraitMinimum": null,
+              "statuts": {
+                "retraitMinimum": "not_published"
+              },
               "perteJour": 1200,
               "joursMin": 3,
               "regularite": 0.4,
@@ -381,12 +483,17 @@
           "devise": "USD",
           "prix": 279,
           "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
           "phases": [
             {
               "phase": "evaluation",
               "objectifProfit": 6000,
               "perteMax": 3000,
               "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
               "perteJour": 1800,
               "joursMin": 1,
               "regularite": null,
@@ -398,6 +505,11 @@
               "objectifProfit": null,
               "perteMax": 3000,
               "typePerteMax": "End of Day",
+              "plafondRetrait": 2500,
+              "retraitMinimum": null,
+              "statuts": {
+                "retraitMinimum": "not_published"
+              },
               "perteJour": 1800,
               "joursMin": 3,
               "regularite": 0.4,
@@ -412,12 +524,17 @@
           "devise": "USD",
           "prix": 369,
           "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
           "phases": [
             {
               "phase": "evaluation",
               "objectifProfit": 9000,
               "perteMax": 4500,
               "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
               "perteJour": 2700,
               "joursMin": 1,
               "regularite": null,
@@ -429,6 +546,11 @@
               "objectifProfit": null,
               "perteMax": 4500,
               "typePerteMax": "End of Day",
+              "plafondRetrait": 3000,
+              "retraitMinimum": null,
+              "statuts": {
+                "retraitMinimum": "not_published"
+              },
               "perteJour": 2700,
               "joursMin": 3,
               "regularite": 0.4,
@@ -446,6 +568,9 @@
       "resume": "No evaluation: the account is live from purchase. Payout eligibility still requires 10 trading days and a 20% consistency rule.",
       "marche": "futures",
       "type": "instant",
+      "maxComptes": 5,
+      "maxComptesStatut": "confirmed",
+      "maxComptesNote": "Counts towards the shared cap of 5 funded accounts across Elite, Custom, Instant and Nitro.",
       "plans": [
         {
           "taille": 50000,
@@ -453,12 +578,19 @@
           "devise": "USD",
           "prix": 349,
           "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
           "phases": [
             {
               "phase": "funded",
               "objectifProfit": null,
               "perteMax": 1800,
               "typePerteMax": "End of Day",
+              "plafondRetrait": 1500,
+              "retraitMinimum": null,
+              "statuts": {
+                "retraitMinimum": "not_published"
+              },
               "perteJour": "aucune",
               "joursMin": 10,
               "regularite": 0.2,
@@ -473,12 +605,19 @@
           "devise": "USD",
           "prix": 469,
           "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
           "phases": [
             {
               "phase": "funded",
               "objectifProfit": null,
               "perteMax": 3000,
               "typePerteMax": "End of Day",
+              "plafondRetrait": 2500,
+              "retraitMinimum": null,
+              "statuts": {
+                "retraitMinimum": "not_published"
+              },
               "perteJour": "aucune",
               "joursMin": 10,
               "regularite": 0.2,
@@ -493,12 +632,19 @@
           "devise": "USD",
           "prix": 569,
           "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
           "phases": [
             {
               "phase": "funded",
               "objectifProfit": null,
               "perteMax": 4500,
               "typePerteMax": "End of Day",
+              "plafondRetrait": 3500,
+              "retraitMinimum": null,
+              "statuts": {
+                "retraitMinimum": "not_published"
+              },
               "perteJour": "aucune",
               "joursMin": 10,
               "regularite": 0.2,
@@ -599,5 +745,74 @@
       "Per-request payout cap, from $1,000 to $3,000 by account size"
     ]
   },
-  "faq": []
+  "faq": [],
+  "titre": "Four routes to a funded futures account",
+  "description": "Compare Elite, Nitro, Prime and Instant to choose between a traditional evaluation, a faster route or funding from purchase. Each program has its own loss limits, consistency rules and payout conditions.",
+  "connuPour": [
+    {
+      "titre": "Four funding routes",
+      "detail": "Evaluation, faster routes and instant funding."
+    },
+    {
+      "titre": "One-time fees",
+      "detail": "No monthly evaluation subscription."
+    },
+    {
+      "titre": "No activation fee",
+      "detail": "Applies across the four documented programs."
+    },
+    {
+      "titre": "Daily payout requests",
+      "detail": "Once the selected program’s eligibility conditions are met."
+    }
+  ],
+  "preuves": [],
+  "plateformesDetail": [
+    {
+      "nom": "Tradovate",
+      "selectionnable": true,
+      "note": null
+    },
+    {
+      "nom": "NinjaTrader",
+      "selectionnable": true,
+      "note": "Potential external licence cost in live trading."
+    },
+    {
+      "nom": "Quantower",
+      "selectionnable": true,
+      "note": null
+    },
+    {
+      "nom": "ATAS",
+      "selectionnable": true,
+      "note": null
+    },
+    {
+      "nom": "WealthCharts",
+      "selectionnable": true,
+      "note": null
+    },
+    {
+      "nom": "DeepCharts",
+      "selectionnable": true,
+      "note": "Written DeepChart in the purchase configurator and DeepCharts® on the official homepage; one product. The dashboard provides credentials and a Dxfeed agreement flow."
+    },
+    {
+      "nom": "Volumetrica",
+      "selectionnable": false,
+      "note": "Listed on the official homepage but not exposed in the purchase configurator."
+    }
+  ],
+  "categoriesActifs": [],
+  "categoriesActifsStatut": "needs_confirmation",
+  "methodesRetrait": [
+    "Crypto",
+    "Riseworks"
+  ],
+  "prestataireRetrait": "Rise",
+  "levierStatut": "not_applicable",
+  "optionsAchat": [],
+  "formation": null,
+  "comptesApresReussite": []
 }

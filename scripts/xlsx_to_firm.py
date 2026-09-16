@@ -9,7 +9,12 @@ les fiches presentes. Le tableur est la source ; le JSON n'en est qu'une copie
 lisible par le site. On ne corrige jamais le JSON a la main.
 
 Le script ne complete rien : une cellule vide devient null ou une liste vide,
-et la page n'affiche pas l'emplacement correspondant.
+et la page n'affiche pas l'emplacement correspondant. Une valeur inconnue porte
+un statut (not_published, not_applicable, needs_confirmation, source_conflict).
+
+    python scripts/xlsx_to_firm.py --check
+
+verifie que chaque JSON est exactement la conversion de son tableur.
 """
 import datetime as dt
 import glob
@@ -97,6 +102,22 @@ def lignes(ws, nb_colonnes):
 
 PHASES = {"evaluation": "evaluation", "evaluation_2": "evaluation_2", "funded": "funded", "sim_funded": "funded"}
 
+# Une valeur inconnue s'ecrit avec un statut, jamais en laissant croire a une
+# valeur. Une cellule vide, elle, masque la ligne.
+STATUTS = ("confirmed", "not_published", "not_applicable", "needs_confirmation", "source_conflict")
+
+# Ce que /api/go/[slug] accepte comme opt_key / opt_value.
+PARAMETRE_SUR = re.compile(r"^[A-Za-z0-9_-]{1,40}$")
+
+GENERE = ("Fichier genere par scripts/xlsx_to_firm.py depuis data/firms/{slug}.xlsx. "
+          "Ne pas modifier : corriger le tableur, puis relancer le script.")
+
+
+def statut(v):
+    """Le statut ecrit dans une cellule a la place d'une valeur, sinon None."""
+    t = str(txt(v) or "").lower()
+    return t if t in STATUTS else None
+
 
 def feuille(wb, nom):
     """L'onglet, ou un onglet vide s'il n'existe pas dans ce tableur."""
@@ -113,36 +134,63 @@ def convertir(chemin):
 
     # --- Programmes, plans, phases ------------------------------------------
     programmes = []
-    for s_, nom_p, marche, type_, statut, accroche, resume_p in lignes(wb["Programmes"], 7):
-        if (txt(statut) or "active") not in ("active", "promotional"):
+    for (s_, nom_p, marche, type_, etat, accroche, resume_p,
+         max_comptes, max_statut, max_note) in lignes(wb["Programmes"], 10):
+        if (txt(etat) or "active") not in ("active", "promotional"):
             continue
+        max_n = None if statut(max_comptes) else nombre(max_comptes)
         programmes.append({"slug": txt(s_), "nom": txt(nom_p) or txt(s_), "accroche": txt(accroche), "resume": txt(resume_p),
                            "marche": txt(marche) or "",
-                           "type": "instant" if txt(type_) == "instant" else "evaluation", "plans": []})
+                           "type": "instant" if txt(type_) == "instant" else "evaluation",
+                           "maxComptes": max_n,
+                           "maxComptesStatut": statut(max_statut) or statut(max_comptes)
+                           or ("confirmed" if max_n is not None else None),
+                           "maxComptesNote": txt(max_note),
+                           "plans": []})
     par_slug = {p["slug"]: p for p in programmes}
 
     plans = {}
-    for prog, taille, variante, devise, prix, promo in lignes(wb["Plans"], 6):
+    for prog, taille, variante, devise, prix, promo, facturation, intervalle in lignes(wb["Plans"], 8):
         cle = (txt(prog), nombre(taille), txt(variante))
         if cle[0] not in par_slug:
             avertissements.append(f"Plans : programme « {cle[0]} » absent de l'onglet Programmes, plan ignore.")
             continue
+        modele = txt(facturation) or "one_time"
+        if modele not in ("one_time", "subscription"):
+            avertissements.append(f"Plans : facturation « {modele} » inconnue sur {cle}, one_time retenu.")
+            modele = "one_time"
+        if modele == "subscription" and not txt(intervalle):
+            avertissements.append(f"Plans : abonnement sans intervalle sur {cle}.")
         plan = {"taille": cle[1], "variante": cle[2], "devise": txt(devise) or "USD",
-                "prix": nombre(prix), "cartePromo": oui(promo), "phases": []}
+                "prix": nombre(prix), "cartePromo": oui(promo),
+                "facturation": modele, "intervalle": txt(intervalle) if modele == "subscription" else None,
+                "phases": []}
         plans[cle] = plan
         par_slug[cle[0]]["plans"].append(plan)
 
     for (prog, taille, variante, phase, objectif, perte_max, type_perte, perte_jour,
-         jours, regularite, contrats, partage) in lignes(wb["Phases"], 12):
+         jours, regularite, contrats, partage, plafond, minimum) in lignes(wb["Phases"], 14):
         cle = (txt(prog), nombre(taille), txt(variante))
         if cle not in plans:
             avertissements.append(f"Phases : aucun plan {cle} dans l'onglet Plans, phase ignoree.")
             continue
+        # Une cellule peut porter un statut a la place de sa valeur : la valeur
+        # est alors null, et le statut dit pourquoi.
+        cellules = {"objectifProfit": objectif, "perteMax": perte_max, "typePerteMax": type_perte,
+                    "perteJour": perte_jour, "joursMin": jours, "regularite": regularite,
+                    "maxContrats": contrats, "partage": partage,
+                    "plafondRetrait": plafond, "retraitMinimum": minimum}
+        statuts = {k: statut(v) for k, v in cellules.items() if statut(v)}
+        if str(txt(regularite) or "").lower().replace("é", "e") in ("non confirmee", "unconfirmed"):
+            statuts.setdefault("regularite", "needs_confirmation")
         plans[cle]["phases"].append({
             "phase": PHASES.get(txt(phase) or "", "evaluation"),
             "objectifProfit": nombre(objectif),
             "perteMax": nombre(perte_max),
-            "typePerteMax": txt(type_perte),
+            "typePerteMax": None if statut(type_perte) else txt(type_perte),
+            "plafondRetrait": nombre(plafond),
+            "retraitMinimum": nombre(minimum),
+            "statuts": statuts,
             "perteJour": mot_ou(perte_jour, {"aucune": "aucune", "none": "aucune"}, nombre),
             "joursMin": nombre(jours),
             "regularite": mot_ou(regularite, {"aucune": "aucune", "none": "aucune",
@@ -209,7 +257,65 @@ def convertir(chemin):
            for _, q, r in sorted(lignes(wb["FAQ"], 3), key=lambda l: nombre(l[0]) or 0)
            if txt(q) and txt(r)]
 
+    # --- Nouvelle page : en-tete, known for, plateformes, options, modules ---------
+    connu_pour = [{"titre": txt(t), "detail": txt(d)}
+                  for _, t, d in sorted(lignes(feuille(wb, "ConnuPour"), 3), key=lambda l: nombre(l[0]) or 0)
+                  if txt(t)]
+    if len(connu_pour) > 4:
+        avertissements.append(f"ConnuPour : {len(connu_pour)} faits, seuls les 4 premiers sont gardes.")
+        connu_pour = connu_pour[:4]
+
+    preuves = [{"libelle": txt(l), "valeur": str(txt(v)), "source": txt(src)}
+               for _, l, v, src in sorted(lignes(feuille(wb, "Preuves"), 4), key=lambda l: nombre(l[0]) or 0)
+               if txt(l) and txt(v) is not None]
+
+    plateformes_detail = []
+    vus = set()
+    for nom_pf, selectionnable, note_pf in lignes(feuille(wb, "Plateformes"), 3):
+        cle_pf = str(txt(nom_pf)).lower()
+        if cle_pf in vus:
+            avertissements.append(f"Plateformes : « {txt(nom_pf)} » en double, seconde ligne ignoree.")
+            continue
+        vus.add(cle_pf)
+        plateformes_detail.append({"nom": txt(nom_pf), "selectionnable": oui(selectionnable), "note": txt(note_pf)})
+
+    options_achat = []
+    for type_o, nom_o, detail_o, param_o, valeur_o, progs_o in lignes(feuille(wb, "OptionsAchat"), 6):
+        if txt(type_o) not in ("plateforme", "data_feed"):
+            avertissements.append(f"OptionsAchat : type « {txt(type_o)} » inconnu, ligne ignoree.")
+            continue
+        if not (txt(nom_o) and PARAMETRE_SUR.match(str(txt(param_o) or ""))
+                and PARAMETRE_SUR.match(str(txt(valeur_o) or ""))):
+            avertissements.append(f"OptionsAchat : « {txt(nom_o)} » sans nom, parametre ou valeur valide, ignoree.")
+            continue
+        options_achat.append({"type": txt(type_o), "nom": txt(nom_o), "detail": txt(detail_o),
+                              "parametre": str(txt(param_o)), "valeur": str(txt(valeur_o)),
+                              "programmes": liste(progs_o)})
+
+    formation = None
+    lignes_formation = sorted(lignes(feuille(wb, "Formation"), 3), key=lambda l: nombre(l[1]) or 0)
+    if lignes_formation:
+        formation = {"titre": None, "intro": None, "elements": []}
+        for type_f, _, texte_f in lignes_formation:
+            if not txt(texte_f):
+                continue
+            if txt(type_f) == "element":
+                formation["elements"].append(txt(texte_f))
+            elif txt(type_f) in ("titre", "intro"):
+                formation[txt(type_f)] = txt(texte_f)
+
+    comptes = {}
+    for compte, description_c, ordre_c, libelle_c, valeur_c in sorted(
+            lignes(feuille(wb, "ComptesApresReussite"), 5), key=lambda l: nombre(l[2]) or 0):
+        c_ = comptes.setdefault(txt(compte), {"nom": txt(compte), "description": None, "lignes": []})
+        c_["description"] = c_["description"] or txt(description_c)
+        if txt(libelle_c) and txt(valeur_c) is not None:
+            c_["lignes"].append({"libelle": txt(libelle_c), "valeur": str(txt(valeur_c))})
+
+    categories = liste(f.get("categories_actifs"))
+
     fiche = {
+        "_genere": GENERE.format(slug=slug),
         "slug": slug,
         "nom": nom,
         "logoUrl": txt(f.get("logo_url")),
@@ -232,6 +338,20 @@ def convertir(chemin):
         "couts": couts,
         "verdict": verdict,
         "faq": faq,
+        # Nouvelle page (FirmProfilePage). L'ancienne n'en lit rien.
+        "titre": txt(f.get("titre")),
+        "description": txt(f.get("description")),
+        "connuPour": connu_pour,
+        "preuves": preuves,
+        "plateformesDetail": plateformes_detail,
+        "categoriesActifs": categories,
+        "categoriesActifsStatut": statut(f.get("categories_actifs_statut")) or ("confirmed" if categories else None),
+        "methodesRetrait": liste(f.get("methodes_retrait")),
+        "prestataireRetrait": txt(f.get("prestataire_retrait")),
+        "levierStatut": statut(f.get("levier_statut")) or ("confirmed" if txt(f.get("levier")) else None),
+        "optionsAchat": options_achat,
+        "formation": formation,
+        "comptesApresReussite": list(comptes.values()),
     }
 
     # Garde-fou : l'exemple FuturesElite laisse dans le tableur d'une autre firme.
@@ -261,9 +381,36 @@ def regenerer_index():
     return fiches
 
 
+def verifier():
+    """Le JSON n'est qu'une sortie : il doit etre exactement la conversion du tableur."""
+    ecarts = []
+    tableurs = sorted(t for t in glob.glob(os.path.join(DOSSIER, "*.xlsx"))
+                      if not os.path.basename(t).startswith("~$"))
+    for tableur in tableurs:
+        fiche = convertir(tableur)
+        chemin = os.path.join(DOSSIER, f"{fiche['slug']}.json")
+        actuel = None
+        if os.path.exists(chemin):
+            with open(chemin, encoding="utf-8") as fh:
+                actuel = json.load(fh)
+        if actuel != fiche:
+            ecarts.append(os.path.relpath(chemin, RACINE))
+    orphelins = sorted(
+        os.path.relpath(j, RACINE) for j in glob.glob(os.path.join(DOSSIER, "*.json"))
+        if not os.path.exists(os.path.splitext(j)[0] + ".xlsx"))
+    for e in ecarts:
+        print(f"ECART : {e} ne correspond pas a son tableur. Relancer la conversion, ne pas l'editer.")
+    for o in orphelins:
+        print(f"ORPHELIN : {o} n'a pas de tableur.")
+    print(f"{len(tableurs)} tableur(s) verifie(s), {len(ecarts)} ecart(s), {len(orphelins)} orphelin(s).")
+    sys.exit(1 if ecarts or orphelins else 0)
+
+
 if __name__ == "__main__":
+    if sys.argv[1:] == ["--check"]:
+        verifier()
     if len(sys.argv) != 2:
-        sys.exit("Usage : python scripts/xlsx_to_firm.py data/firms/<slug>.xlsx")
+        sys.exit("Usage : python scripts/xlsx_to_firm.py data/firms/<slug>.xlsx  |  --check")
     fiche = convertir(sys.argv[1])
     os.makedirs(DOSSIER, exist_ok=True)
     sortie = os.path.join(DOSSIER, f"{fiche['slug']}.json")
