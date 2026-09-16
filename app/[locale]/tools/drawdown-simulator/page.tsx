@@ -377,7 +377,7 @@ export default function DrawdownSimulatorPage() {
 
   const getStatusConfig = (status: string) => {
     const configs = {
-      safe: { bg: 'bg-accent/20', text: 'text-accent', icon: CheckCircle, label: t.healthy },
+      safe: { bg: 'bg-accent/10', text: 'text-accent', icon: CheckCircle, label: t.healthy },
       warning: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', icon: AlertTriangle, label: t.warning },
       danger: { bg: 'bg-red-500/20', text: 'text-red-400', icon: AlertCircle, label: t.danger },
     };

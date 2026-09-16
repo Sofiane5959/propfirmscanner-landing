@@ -870,12 +870,12 @@ const Toast = ({ message, type, onClose }: { message: string; type: 'success' | 
 const TrustBadge = ({ status }: { status: string }) => {
   const config: Record<string, { bg: string; text: string; label: string }> = {
     // PropFirmScanner statuses
-    scanned:         { bg: 'bg-accent/20', text: 'text-accent', label: 'Scanned \u2713' },
+    scanned:         { bg: 'bg-accent/10', text: 'text-accent', label: 'Scanned \u2713' },
     unverified:      { bg: 'bg-yellow-500/20',  text: 'text-yellow-400',  label: 'Unverified' },
     not_recommended: { bg: 'bg-red-500/20',     text: 'text-red-400',     label: 'Not Recommended' },
     // Legacy (backward compat)
-    verified:        { bg: 'bg-accent/20', text: 'text-accent', label: 'Scanned \u2713' },
-    trusted:         { bg: 'bg-accent/20', text: 'text-accent', label: 'Scanned \u2713' },
+    verified:        { bg: 'bg-accent/10', text: 'text-accent', label: 'Scanned \u2713' },
+    trusted:         { bg: 'bg-accent/10', text: 'text-accent', label: 'Scanned \u2713' },
     banned:          { bg: 'bg-red-500/20',     text: 'text-red-400',     label: 'Not Recommended' },
     closed:          { bg: 'bg-red-500/20',     text: 'text-red-400',     label: 'Not Recommended' },
     under_review:    { bg: 'bg-yellow-500/20',  text: 'text-yellow-400',  label: 'Unverified' },
@@ -927,7 +927,7 @@ const FilterDropdown = ({
   
   const hasSelection = count > 0
   const colorStyles = {
-    emerald: { bg: 'bg-accent/20', text: 'text-accent', ring: 'ring-accent/50', badge: 'bg-accent-hover' },
+    emerald: { bg: 'bg-accent/10', text: 'text-accent', ring: 'ring-accent/50', badge: 'bg-accent-hover' },
     purple: { bg: 'bg-purple-500/20', text: 'text-purple-400', ring: 'ring-purple-500/50', badge: 'bg-purple-500' },
     yellow: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', ring: 'ring-yellow-500/50', badge: 'bg-yellow-500' },
     blue: { bg: 'bg-blue-500/20', text: 'text-blue-400', ring: 'ring-blue-500/50', badge: 'bg-blue-500' },
