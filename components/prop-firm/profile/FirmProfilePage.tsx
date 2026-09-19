@@ -66,13 +66,13 @@ export default function FirmProfilePage({
         continueHref={lien('configurator_continue')}
       />
       <ProgramComparison sel={sel} />
-      <RulesByPhase sel={sel} />
+      <RulesByPhase sheet={sheet} />
       <OptionalModules sheet={sheet} />
       <ConditionsSection sheet={sheet} sel={sel} />
       <VerdictSection sheet={sheet} />
       <FaqSection sheet={sheet} />
       <FinalCta sheet={sheet} sel={sel} claimHref={lien('final_claim')} continueHref={lien('final_continue')} />
-      <SimilarFirms firms={similarFirms} />
+      <SimilarFirms nom={sheet.nom} firms={similarFirms} />
     </div>
   )
 }

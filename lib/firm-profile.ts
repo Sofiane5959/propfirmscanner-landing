@@ -19,10 +19,15 @@ import {
   type SheetProgramme,
   type SheetRegle,
   type Statut,
+  QUESTIONS_GABARIT,
+  faqItems,
   meaningMaxLoss,
   money,
   pct,
 } from './firm-sheet'
+
+/** « How do payouts work? », la 4e question du gabarit. */
+const QUESTION_RETRAITS = QUESTIONS_GABARIT[3]
 
 /** Ce qu'affiche une case : un texte, ou le statut qui explique son absence. */
 export type Cellule = { texte: string; statut?: undefined } | { texte?: undefined; statut: StatutManquant }
@@ -175,6 +180,55 @@ export function reglesDePhase(phase: SheetPhase, devise: string): LigneRegle[] {
     }))
 }
 
+// Definitions valables quelle que soit la phase, pour le tableau comparatif.
+const SENS_COMPARATIF: Record<string, string> = {
+  objectifProfit: 'Profit to reach to pass the phase.',
+  perteMax: 'Reaching this loss breaches the account. The type says how the limit moves.',
+  perteJour: 'Losing more than this in a single day breaches the account. None: no daily limit.',
+  joursMin: 'Trading days required before passing, or before a payout once funded.',
+  regularite: 'Caps the share of total profit a single day may represent. None: no such rule.',
+  maxContrats: 'Largest position size allowed at the same time.',
+  partage: 'Your share of the profit you withdraw.',
+  plafondRetrait: 'The most a single payout request can be.',
+  retraitMinimum: 'The smallest amount a payout request can be.',
+}
+
+export interface TableauRegles {
+  colonnes: { cle: SheetPhase['phase']; libelle: string }[]
+  lignes: {
+    cle: string
+    libelle: string
+    sens: string
+    /** Par phase : la valeur, le statut qui la remplace, ou null (ne s'applique pas). */
+    cellules: ({ valeur: string | null; statut: Statut } | null)[]
+  }[]
+}
+
+/**
+ * Toutes les phases du plan cote a cote : une colonne par phase reellement
+ * presente, une ligne par regle publiee dans au moins une phase.
+ */
+export function tableauRegles(plan: SheetPlan, programme: SheetProgramme, ordonnees: SheetPhase[]): TableauRegles {
+  const parPhase = ordonnees.map((ph) => reglesDePhase(ph, plan.devise))
+  const ordre = Object.keys(SENS_COMPARATIF)
+  const cles = ordre.filter((cle) => parPhase.some((lignes) => lignes.some((l) => l.cle === cle)))
+  return {
+    colonnes: ordonnees.map((ph) => ({ cle: ph.phase, libelle: libellePhase(ph, plan, programme) })),
+    lignes: cles.map((cle) => {
+      const premiere = parPhase.flat().find((l) => l.cle === cle)!
+      return {
+        cle,
+        libelle: premiere.libelle,
+        sens: SENS_COMPARATIF[cle],
+        cellules: parPhase.map((lignes) => {
+          const l = lignes.find((x) => x.cle === cle)
+          return l ? { valeur: l.valeur, statut: l.statut } : null
+        }),
+      }
+    }),
+  }
+}
+
 function versCellule(l: LigneRegle | undefined): Cellule | null {
   if (!l) return null
   return l.statut !== 'confirmed' ? { statut: l.statut } : l.valeur != null ? { texte: l.valeur } : null
@@ -213,13 +267,50 @@ export function regleApplicable(r: SheetRegle, programme: SheetProgramme, plan: 
   return true
 }
 
+/**
+ * Les regles d'une carte pour la selection. Les regles bloquantes, puis celles
+ * qui portent une reserve, passent en tete : ce sont elles qui changent une
+ * decision. L'ordre du tableur est garde a l'interieur de chaque groupe.
+ */
 export function reglesDeCarte(
   sheet: FirmSheet,
   carte: SheetRegle['carte'],
   programme: SheetProgramme,
   plan: SheetPlan
 ): SheetRegle[] {
-  return sheet.regles.filter((r) => r.carte === carte && regleApplicable(r, programme, plan))
+  const poids = (r: SheetRegle) => (r.bloquante ? 0 : r.statut !== 'confirmed' ? 1 : 2)
+  return sheet.regles
+    .map((r, i) => ({ r, i }))
+    .filter(({ r }) => r.carte === carte && regleApplicable(r, programme, plan))
+    .sort((a, b) => poids(a.r) - poids(b.r) || a.i - b.i)
+    .map(({ r }) => r)
+}
+
+/**
+ * La FAQ de la nouvelle page. Comme faqItems, sauf « How do payouts work? » :
+ * recomposee depuis les champs structures (prestataire, methodes, plafonds par
+ * plan) plutot que depuis le paragraphe libre de l'onglet Conditions.
+ */
+export function faqProfil(sheet: FirmSheet): { question: string; reponse: string }[] {
+  const items = faqItems(sheet)
+  const plafonds = sheet.programmes.some((p) => p.plans.some((pl) => pl.phases.some((ph) => ph.plafondRetrait != null)))
+  const morceaux = [
+    sheet.prestataireRetrait
+      ? `Payouts are paid through ${sheet.prestataireRetrait}${
+          sheet.methodesRetrait.length > 0 ? ` (${sheet.methodesRetrait.join(', ')})` : ''
+        }.`
+      : sheet.methodesRetrait.length > 0
+        ? `Payout methods: ${sheet.methodesRetrait.join(', ')}.`
+        : null,
+    plafonds ? 'Each request is capped by programme and account size: the configurator shows the cap for your plan.' : null,
+    sheet.regles.some((r) => r.carte === 'payouts')
+      ? 'Review times, minimums and eligibility conditions are listed in the Payouts card above.'
+      : null,
+  ].filter(Boolean)
+  if (morceaux.length === 0) return items
+  return items.map((q) =>
+    q.question === QUESTION_RETRAITS ? { question: q.question, reponse: morceaux.join(' ') } : q
+  )
 }
 
 export interface LigneFrais {

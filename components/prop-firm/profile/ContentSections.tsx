@@ -3,14 +3,14 @@
 // 7.  Modules optionnels — parcours ; puis « What else is included? ».
 // 8.  Trading and payout conditions — trois cartes structurees, filtrees par
 //     la selection (programme, taille, phase) : aucune prose repetee.
-// 9.  PropFirmScanner verdict — un seul bloc : Our view, Best for, Things to know.
+// 9.  PropFirmScanner verdict — un seul bloc : conclusion, Best for, Things to know.
 // 10. FAQ.  11. CTA final.  12. Similar firms.
 // Chaque section disparait quand la fiche n'a rien a y mettre.
 
-import { AlertTriangle, Check, Minus } from 'lucide-react'
+import { AlertTriangle, Check, ChevronDown, Info } from 'lucide-react'
 
-import { type FirmSheet, type SimilarFirm, etapeLabel, faqItems, sizeLabel } from '@/lib/firm-sheet'
-import { fraisDeSelection, libellePhase, reglesDeCarte, retraitsDeSelection } from '@/lib/firm-profile'
+import { type FirmSheet, type SimilarFirm, etapeLabel, sizeLabel } from '@/lib/firm-sheet'
+import { faqProfil, fraisDeSelection, libellePhase, reglesDeCarte } from '@/lib/firm-profile'
 import { prixSelection } from './AccountConfigurator'
 import { COPY } from './copy'
 import type { FirmSelection } from './useFirmSelection'
@@ -25,7 +25,6 @@ import {
   Section,
   SectionHeading,
   StatusBadge,
-  Valeur,
   cx,
 } from './ui'
 
@@ -102,54 +101,71 @@ export function OptionalModules({ sheet }: { sheet: FirmSheet }) {
 }
 
 // --- 8. Trading and payout conditions -----------------------------------------
-function LigneRegle({ regle, texte, statut, bloquante, phase }: { regle: string; texte: string; statut: FirmSheet['regles'][number]['statut']; bloquante: boolean; phase: string | null }) {
+// Trois cartes, sans repeter ce qui est deja ailleurs : le partage, le plafond
+// et le minimum de retrait sont dans le configurateur et les regles ; le prix
+// dans le configurateur. Chaque regle tient sur une ligne de titre et une
+// phrase ; les bloquantes et les reserves passent en tete.
+const REGLES_VISIBLES = 4
+
+function LigneRegle({ r, phase }: { r: FirmSheet['regles'][number]; phase: string | null }) {
   return (
-    <li className="py-2">
+    <li className="py-2.5">
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-        <span className="font-semibold text-text-primary">{regle}</span>
+        <span className="text-sm font-semibold text-text-primary">{r.regle}</span>
         {phase && <span className={CHIP}>{phase}</span>}
-        {bloquante && (
+        {r.bloquante && (
           <span className="inline-flex items-center gap-1 rounded-full bg-danger-subtle px-2 py-0.5 text-[11px] font-medium text-danger">
             <AlertTriangle className="h-3 w-3" aria-hidden="true" />
             {COPY.conditions.breach}
           </span>
         )}
-        {statut !== 'confirmed' && <StatusBadge statut={statut} />}
+        {r.statut !== 'confirmed' && <StatusBadge statut={r.statut} />}
       </div>
-      <p className="mt-0.5 text-sm leading-relaxed text-text-muted">{texte}</p>
+      <p className="mt-0.5 text-[13px] leading-relaxed text-text-muted">{r.texte}</p>
     </li>
   )
 }
 
-/** Les premieres regles visibles, le reste replie : la carte garde une hauteur lisible. */
-const REGLES_VISIBLES = 5
-
 function ListeRegles({
   regles,
   nomPhase,
-  classe,
+  visibles = REGLES_VISIBLES,
 }: {
   regles: FirmSheet['regles']
   nomPhase: (cle: string | null) => string | null
-  classe?: string
+  visibles?: number
 }) {
   if (regles.length === 0) return null
-  const rendu = (r: FirmSheet['regles'][number]) => (
-    <LigneRegle key={`${r.regle}-${r.phase}`} regle={r.regle} texte={r.texte} statut={r.statut} bloquante={r.bloquante} phase={nomPhase(r.phase)} />
-  )
-  const reste = regles.slice(REGLES_VISIBLES)
+  const reste = regles.slice(visibles)
   return (
-    <div className={classe}>
-      <ul className="divide-y divide-border">{regles.slice(0, REGLES_VISIBLES).map(rendu)}</ul>
+    <div>
+      <ul className="divide-y divide-border">
+        {regles.slice(0, visibles).map((r) => (
+          <LigneRegle key={`${r.regle}-${r.phase}`} r={r} phase={nomPhase(r.phase)} />
+        ))}
+      </ul>
       {reste.length > 0 && (
         <details className="group border-t border-border">
-          <summary className="cursor-pointer list-none py-2 text-sm font-semibold text-accent marker:hidden">
-            <span className="group-open:hidden">{COPY.conditions.showAll(regles.length)}</span>
+          <summary className="cursor-pointer list-none py-2.5 text-sm font-semibold text-accent marker:hidden">
+            <span className="group-open:hidden">{COPY.conditions.showMore(reste.length)}</span>
             <span className="hidden group-open:inline">{COPY.conditions.showLess}</span>
           </summary>
-          <ul className="divide-y divide-border">{reste.map(rendu)}</ul>
+          <ul className="divide-y divide-border">
+            {reste.map((r) => (
+              <LigneRegle key={`${r.regle}-${r.phase}`} r={r} phase={nomPhase(r.phase)} />
+            ))}
+          </ul>
         </details>
       )}
+    </div>
+  )
+}
+
+function EnteteCarte({ eyebrow, titre }: { eyebrow: string; titre: string }) {
+  return (
+    <div className="mb-2 border-b border-border pb-3">
+      <p className={EYEBROW}>{eyebrow}</p>
+      <h3 className="mt-1 text-base font-semibold">{titre}</h3>
     </div>
   )
 }
@@ -164,67 +180,67 @@ export function ConditionsSection({ sheet, sel }: { sheet: FirmSheet; sel: FirmS
 
   const trading = reglesDeCarte(sheet, 'trading', programme, plan)
   const frais = fraisDeSelection(sheet, programme, plan)
-  const retraits = retraitsDeSelection(plan)
-  const reglesRetrait = reglesDeCarte(sheet, 'payouts', programme, plan)
+  const retraits = reglesDeCarte(sheet, 'payouts', programme, plan)
+  const live = reglesDeCarte(sheet, 'live', programme, plan)
+  const payoutsVide = retraits.length === 0 && live.length === 0 && !sheet.prestataireRetrait && sheet.methodesRetrait.length === 0
 
   const cartes = [
     trading.length > 0 && (
-      <article key="trading" className={cx(CARD, 'p-4')}>
-        <p className={EYEBROW}>{COPY.conditions.trading}</p>
-        <h3 className="mt-1 font-semibold">{COPY.conditions.tradingTitle}</h3>
-        <ListeRegles regles={trading} nomPhase={nomPhase} classe="mt-2" />
+      <article key="trading" className={cx(CARD, 'p-4 sm:p-5')}>
+        <EnteteCarte eyebrow={COPY.conditions.trading} titre={COPY.conditions.tradingTitle} />
+        <ListeRegles regles={trading} nomPhase={nomPhase} />
       </article>
     ),
     frais.length > 0 && (
-      <article key="fees" className={cx(CARD, 'p-4')}>
-        <p className={EYEBROW}>{COPY.conditions.fees}</p>
-        <h3 className="mt-1 font-semibold">{COPY.conditions.feesTitle}</h3>
-        <dl className="mt-2 divide-y divide-border text-sm">
+      <article key="fees" className={cx(CARD, 'p-4 sm:p-5')}>
+        <EnteteCarte eyebrow={COPY.conditions.fees} titre={COPY.conditions.feesTitle} />
+        <dl className="divide-y divide-border">
           {frais.map((f) => (
-            <div key={f.libelle} className="py-2">
-              <div className="flex justify-between gap-3">
-                <dt className="font-medium">{f.libelle}</dt>
-                <dd className="shrink-0 text-right font-semibold tabular-nums">{f.valeur}</dd>
+            <div key={f.libelle} className="py-3">
+              <div className="flex items-baseline justify-between gap-3">
+                <dt className="text-sm font-medium text-text-secondary">{f.libelle}</dt>
+                <dd className="shrink-0 text-right font-display text-xl font-bold tabular-nums text-text-primary">{f.valeur}</dd>
               </div>
-              {f.note && <p className="mt-0.5 text-xs leading-relaxed text-text-muted">{f.note}</p>}
+              {f.note && <p className="mt-1 text-[13px] leading-relaxed text-text-muted">{f.note}</p>}
             </div>
           ))}
         </dl>
       </article>
     ),
-    (retraits.length > 0 || reglesRetrait.length > 0 || sheet.prestataireRetrait || sheet.methodesRetrait.length > 0) && (
-      <article key="payouts" className={cx(CARD, 'p-4')}>
-        <p className={EYEBROW}>{COPY.conditions.payouts}</p>
-        <h3 className="mt-1 font-semibold">{COPY.conditions.payoutsTitle}</h3>
-        <dl className="mt-2 divide-y divide-border text-sm">
-          {retraits.map((l) => (
-            <div key={l.libelle} className="flex justify-between gap-3 py-2">
-              <dt className="font-medium">{l.libelle}</dt>
-              <dd className="text-right font-semibold tabular-nums">
-                <Valeur cellule={l.valeur} />
-              </dd>
-            </div>
-          ))}
-          {sheet.prestataireRetrait && (
-            <div className="flex justify-between gap-3 py-2">
-              <dt className="font-medium">{COPY.conditions.provider}</dt>
-              <dd className="text-right font-semibold">{sheet.prestataireRetrait}</dd>
-            </div>
-          )}
-          {sheet.methodesRetrait.length > 0 && (
-            <div className="flex flex-wrap items-center justify-between gap-2 py-2">
-              <dt className="font-medium">{COPY.conditions.methods}</dt>
-              <dd className="flex flex-wrap justify-end gap-1.5">
-                {sheet.methodesRetrait.map((m) => (
-                  <span key={m} className={CHIP}>
-                    {m}
-                  </span>
-                ))}
-              </dd>
-            </div>
-          )}
-        </dl>
-        <ListeRegles regles={reglesRetrait} nomPhase={nomPhase} classe="mt-1 border-t border-border" />
+    !payoutsVide && (
+      <article key="payouts" className={cx(CARD, 'p-4 sm:p-5')}>
+        <EnteteCarte eyebrow={COPY.conditions.payouts} titre={COPY.conditions.payoutsTitle} />
+        {(sheet.prestataireRetrait || sheet.methodesRetrait.length > 0) && (
+          <div className="flex flex-wrap items-center gap-2 pb-2.5 pt-1">
+            {sheet.prestataireRetrait && (
+              <span className="text-sm">
+                <span className="text-text-muted">{COPY.conditions.provider}: </span>
+                <span className="font-semibold">{sheet.prestataireRetrait}</span>
+              </span>
+            )}
+            {sheet.methodesRetrait.map((m) => (
+              <span key={m} className={CHIP}>
+                {m}
+              </span>
+            ))}
+          </div>
+        )}
+        <div className="border-t border-border">
+          <ListeRegles regles={retraits} nomPhase={nomPhase} />
+        </div>
+        {live.length > 0 && (
+          <details className="group mt-2 rounded-lg border border-border bg-bg-base px-3">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-2 py-2.5 text-sm font-semibold marker:hidden">
+              <span>{COPY.conditions.live(live.length)}</span>
+              <ChevronDown className="h-4 w-4 text-accent transition-transform group-open:rotate-180" aria-hidden="true" />
+            </summary>
+            <ul className="divide-y divide-border border-t border-border">
+              {live.map((r) => (
+                <LigneRegle key={`${r.regle}-${r.phase}`} r={r} phase={null} />
+              ))}
+            </ul>
+          </details>
+        )}
       </article>
     ),
   ].filter(Boolean)
@@ -239,67 +255,61 @@ export function ConditionsSection({ sheet, sel }: { sheet: FirmSheet; sel: FirmS
 }
 
 // --- 9. PropFirmScanner verdict -----------------------------------------------------
+// Meme en-tete que les autres sections ; la conclusion en tete, puis deux
+// colonnes jumelles : Best for (vert) et Things to know (ambre).
 export function VerdictSection({ sheet }: { sheet: FirmSheet }) {
   const { texte, pourQui, limites } = sheet.verdict
-  const gauche = Boolean(texte || pourQui.length > 0)
-  if (!gauche && limites.length === 0) return null
+  if (!texte && pourQui.length === 0 && limites.length === 0) return null
+
+  const colonne = (titre: string, items: string[], ton: 'pour' | 'contre') => (
+    <div className={cx('rounded-lg border p-4', ton === 'pour' ? 'border-accent-border bg-accent/5' : 'border-warning/30 bg-warning-subtle')}>
+      <p className={cx('flex items-center gap-2 text-sm font-bold uppercase tracking-wider', ton === 'pour' ? 'text-accent' : 'text-warning')}>
+        {ton === 'pour' ? <Check className="h-4 w-4" aria-hidden="true" /> : <Info className="h-4 w-4" aria-hidden="true" />}
+        {titre}
+      </p>
+      <ul className="mt-2 divide-y divide-border text-sm">
+        {items.map((p) => (
+          <li key={p} className="py-2 text-text-secondary">
+            {p}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
 
   return (
     <Section id="verdict" labelledBy="verdict-title">
-      {/* Un seul bloc : la conclusion, Best for, Things to know. */}
-      <SectionHeading id="verdict-title" title={COPY.verdict.title} />
-      <div className={cx('grid items-stretch gap-3', gauche && limites.length > 0 && 'lg:grid-cols-[1.15fr_0.85fr]')}>
-        {gauche && (
-          <article className={cx(CARD, 'p-4 sm:p-5')}>
-            {texte && <p className="text-sm leading-relaxed text-text-secondary">{texte}</p>}
-            {pourQui.length > 0 && (
-              <>
-                <h3 className={cx('font-semibold', texte && 'mt-4')}>{COPY.verdict.bestFor}</h3>
-                <ul className="mt-1 divide-y divide-border text-sm">
-                  {pourQui.map((p) => (
-                    <li key={p} className="flex gap-2 py-2">
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
-                      {p}
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-          </article>
+      <SectionHeading id="verdict-title" eyebrow={COPY.verdict.eyebrow} title={COPY.verdict.title} />
+      <article className={cx(CARD, 'p-4 sm:p-5')}>
+        {texte && <p className="max-w-4xl text-base leading-relaxed text-text-primary">{texte}</p>}
+        {(pourQui.length > 0 || limites.length > 0) && (
+          <div className={cx('grid gap-3', texte && 'mt-4', pourQui.length > 0 && limites.length > 0 && 'md:grid-cols-2')}>
+            {pourQui.length > 0 && colonne(COPY.verdict.bestFor, pourQui, 'pour')}
+            {limites.length > 0 && colonne(COPY.verdict.thingsToKnow, limites, 'contre')}
+          </div>
         )}
-        {limites.length > 0 && (
-          <article className={cx(CARD, 'p-4 sm:p-5')}>
-            <h3 className="font-semibold">{COPY.verdict.thingsToKnow}</h3>
-            <ul className="mt-1 divide-y divide-border text-sm">
-              {limites.map((p) => (
-                <li key={p} className="flex gap-2 py-2">
-                  <Minus className="mt-0.5 h-4 w-4 shrink-0 text-danger" aria-hidden="true" />
-                  {p}
-                </li>
-              ))}
-            </ul>
-          </article>
-        )}
-      </div>
+      </article>
     </Section>
   )
 }
 
 // --- 10. FAQ -----------------------------------------------------------------------
 export function FaqSection({ sheet }: { sheet: FirmSheet }) {
-  const faq = faqItems(sheet)
+  const faq = faqProfil(sheet)
   if (faq.length === 0) return null
   return (
     <Section id="faq" labelledBy="faq-title">
       <SectionHeading id="faq-title" eyebrow={COPY.faq.eyebrow} title={COPY.faq.title} />
-      <div className={cx(CARD, 'divide-y divide-border px-4 sm:px-5')}>
+      <div className="grid gap-2">
         {faq.map((q, i) => (
-          <details key={q.question} open={i === 0} className="group py-3.5">
-            <summary className="cursor-pointer list-none font-semibold marker:hidden">
-              <span className="mr-2 inline-block text-accent transition-transform group-open:rotate-90">›</span>
+          <details key={q.question} open={i === 0} className={cx(CARD, 'group px-4 sm:px-5')}>
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-3 py-3.5 text-base font-semibold marker:hidden">
               {q.question}
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border border-border text-accent transition-transform group-open:rotate-180">
+                <ChevronDown className="h-4 w-4" aria-hidden="true" />
+              </span>
             </summary>
-            <p className="mt-2 pl-4 text-sm leading-relaxed text-text-muted">{q.reponse}</p>
+            <p className="-mt-1 pb-4 text-sm leading-relaxed text-text-secondary">{q.reponse}</p>
           </details>
         ))}
       </div>
@@ -351,11 +361,11 @@ export function FinalCta({
 }
 
 // --- 12. Similar firms ---------------------------------------------------------------
-export function SimilarFirms({ firms }: { firms: SimilarFirm[] }) {
+export function SimilarFirms({ nom, firms }: { nom: string; firms: SimilarFirm[] }) {
   if (firms.length === 0) return null
   return (
     <Section labelledBy="similar-title">
-      <SectionHeading id="similar-title" eyebrow={COPY.similar.eyebrow} title={COPY.similar.title} />
+      <SectionHeading id="similar-title" eyebrow={COPY.similar.eyebrow} title={COPY.similar.title(nom)} />
       <div className={cx('grid gap-3', COLONNES[Math.min(firms.length, 3)])}>
         {firms.map((f) => (
           <article key={f.id} className={cx(CARD, 'flex flex-col p-4')}>

@@ -5,7 +5,7 @@
 //    reperes Founded / Country / CEO ; a droite « Most popular plan ».
 //    Le logo n'est pas un lien : les sorties passent par Claim deal et Continue to.
 
-import { Star } from 'lucide-react'
+import { ChevronDown, Star } from 'lucide-react'
 
 import {
   type FirmSheet,
@@ -14,6 +14,7 @@ import {
   discounted,
   firmType,
   offerApplies,
+  paragraphs,
   pct,
   sizeLabel,
 } from '@/lib/firm-sheet'
@@ -43,6 +44,7 @@ export function HeroSection({
     ] as [string, string | null][]
   ).filter((r): r is [string, string] => Boolean(r[1]))
   const trustpilot = sheet.trustpilotScore != null && sheet.trustpilotScore > 0
+  const detail = paragraphs(sheet.presentation)
 
   return (
     <section className="pb-5 pt-6 sm:pt-8">
@@ -100,6 +102,21 @@ export function HeroSection({
             </h1>
             {sheet.description && (
               <p className="mt-3 max-w-3xl text-base leading-relaxed text-text-secondary sm:text-[17px]">{sheet.description}</p>
+            )}
+            {/* La presentation detaillee (onglet Firme > presentation), repliee sous le resume. */}
+            {detail.length > 0 && (
+              <details className="group mt-2 max-w-3xl">
+                <summary className="inline-flex cursor-pointer list-none items-center gap-1 text-sm font-semibold text-accent marker:hidden">
+                  <span className="group-open:hidden">{COPY.hero.readMore}</span>
+                  <span className="hidden group-open:inline">{COPY.hero.readLess}</span>
+                  <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" aria-hidden="true" />
+                </summary>
+                <div className="mt-2 space-y-2 text-sm leading-relaxed text-text-secondary">
+                  {detail.map((p, i) => (
+                    <p key={i}>{p}</p>
+                  ))}
+                </div>
+              </details>
             )}
 
             {(reperes.length > 0 || sheet.preuves.length > 0) && (

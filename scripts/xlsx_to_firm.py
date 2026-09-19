@@ -258,7 +258,7 @@ def convertir(chemin):
     # --- Regles : cartes Trading et Payouts, filtrees par la selection ------------
     regles = []
     for carte, regle, texte_r, statut_r, progs_r, tailles_r, phase_r, bloquante, source in lignes(feuille(wb, "Regles"), 9):
-        if txt(carte) not in ("trading", "payouts"):
+        if txt(carte) not in ("trading", "payouts", "live"):
             avertissements.append(f"Regles : carte « {txt(carte)} » inconnue pour « {txt(regle)} », ligne ignoree.")
             continue
         if not (txt(regle) and txt(texte_r)):

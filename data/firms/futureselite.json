@@ -933,17 +933,6 @@
     },
     {
       "carte": "payouts",
-      "regle": "Payment provider",
-      "texte": "Rise. The first payout requires a Rise account and KYC.",
-      "statut": "confirmed",
-      "programmes": [],
-      "tailles": [],
-      "phase": null,
-      "bloquante": false,
-      "source": "https://faq.futureselite.com/en/articles/11949985-how-are-payouts-processed"
-    },
-    {
-      "carte": "payouts",
       "regle": "Bank transfer",
       "texte": "1 to 3 days after approval.",
       "statut": "confirmed",
@@ -1032,7 +1021,7 @@
       "source": "https://futureselite.com/#pricing"
     },
     {
-      "carte": "payouts",
+      "carte": "live",
       "regle": "Transition to live",
       "texte": "A risk-team decision. The fifth payout is a ceiling, not an automatic entitlement.",
       "statut": "confirmed",
@@ -1043,7 +1032,7 @@
       "source": "https://faq.futureselite.com/en/articles/15899069-live-trading-program"
     },
     {
-      "carte": "payouts",
+      "carte": "live",
       "regle": "Live starting balance",
       "texte": "Starts at $0 with a loss floor based on account size. 50K example: $2,000 loss floor and $1,000 cushion.",
       "statut": "confirmed",
@@ -1054,7 +1043,7 @@
       "source": "https://faq.futureselite.com/en/articles/15899069-live-trading-program"
     },
     {
-      "carte": "payouts",
+      "carte": "live",
       "regle": "Live cushion unlock",
       "texte": "15 profitable days meeting the size-specific daily minimum. Days need not be consecutive.",
       "statut": "confirmed",
@@ -1065,7 +1054,7 @@
       "source": "https://faq.futureselite.com/en/articles/15899069-live-trading-program"
     },
     {
-      "carte": "payouts",
+      "carte": "live",
       "regle": "Live payout",
       "texte": "Daily, $200 minimum, on profits above the cushion or unlocked reserve.",
       "statut": "confirmed",
@@ -1076,7 +1065,7 @@
       "source": "https://faq.futureselite.com/en/articles/15899069-live-trading-program"
     },
     {
-      "carte": "payouts",
+      "carte": "live",
       "regle": "Market data",
       "texte": "Exchange market data is the trader’s responsibility on a live account. Amount not specified.",
       "statut": "confirmed",
@@ -1087,7 +1076,7 @@
       "source": "https://faq.futureselite.com/en/articles/12291073-market-data-costs"
     },
     {
-      "carte": "payouts",
+      "carte": "live",
       "regle": "Commissions",
       "texte": "Commissions and exchange fees are charged per instrument on each executed trade. The official FAQ still labels some exchange fees as 2024 rates.",
       "statut": "confirmed",
@@ -1098,7 +1087,7 @@
       "source": "https://faq.futureselite.com/en/articles/12291021-what-are-the-costs-fees"
     },
     {
-      "carte": "payouts",
+      "carte": "live",
       "regle": "Platform licence",
       "texte": "A paid platform licence may apply depending on the selected platform.",
       "statut": "confirmed",
@@ -1109,7 +1098,7 @@
       "source": "https://faq.futureselite.com/en/articles/12291021-what-are-the-costs-fees"
     },
     {
-      "carte": "payouts",
+      "carte": "live",
       "regle": "Maintenance fee",
       "texte": "No hidden administrative maintenance fee is stated: $0.",
       "statut": "confirmed",

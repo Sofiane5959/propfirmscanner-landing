@@ -26,6 +26,8 @@ export const BTN_SECONDARY = cx(BTN, 'border border-border bg-dark-700 text-text
 export const CARD = 'rounded-xl border border-border bg-bg-elevated'
 export const CARD_ACCENT = 'rounded-xl border border-accent-border bg-bg-elevated'
 export const EYEBROW = 'text-xs font-semibold uppercase tracking-wider text-accent'
+// Sur-titre de section : plus present que l'eyebrow des cartes (commentaire du 19/09).
+const EYEBROW_SECTION = 'inline-flex items-center gap-2 text-[13px] font-bold uppercase tracking-[0.14em] text-accent'
 export const LABEL = 'text-[11px] font-semibold uppercase tracking-wider text-text-muted'
 export const CHIP = 'rounded-md border border-border bg-bg-base px-2 py-1 text-xs text-text-secondary'
 export const CHOICE = cx('flex flex-col gap-0.5 rounded-lg border px-3 py-2.5 text-left transition-colors', FOCUS)
@@ -72,9 +74,14 @@ export function SectionHeading({
   intro?: string
 }) {
   return (
-    <div className="mb-4">
-      {eyebrow && <p className={EYEBROW}>{eyebrow}</p>}
-      <h2 id={id} className="mt-1 text-balance font-display text-2xl font-bold tracking-tight text-text-primary sm:text-[29px] sm:leading-tight">
+    <div className="mb-5">
+      {eyebrow && (
+        <p className={EYEBROW_SECTION}>
+          <span aria-hidden="true" className="h-0.5 w-5 rounded-full bg-accent" />
+          {eyebrow}
+        </p>
+      )}
+      <h2 id={id} className="mt-1.5 text-balance font-display text-[26px] font-bold leading-tight tracking-tight text-text-primary sm:text-[34px]">
         {title}
       </h2>
       {intro && <p className="mt-1 max-w-2xl text-sm text-text-muted sm:text-base">{intro}</p>}
@@ -103,24 +110,45 @@ export function Valeur({ cellule }: { cellule: Cellule }) {
   return cellule.statut ? <StatusBadge statut={cellule.statut} /> : <>{cellule.texte}</>
 }
 
-function CopyButton({ code }: { code: string }) {
+/**
+ * Le code et son bouton copient tous les deux : on clique d'abord sur le code
+ * lui-meme. Le retour (« Copied ») s'affiche sur le bouton.
+ */
+function CodeCopiable({ code }: { code: string }) {
   const [texte, setTexte] = useState<string>(COPY.copy.idle)
+  const copier = async () => {
+    try {
+      await navigator.clipboard.writeText(code)
+      setTexte(COPY.copy.done)
+      setTimeout(() => setTexte(COPY.copy.idle), 1300)
+    } catch {
+      setTexte(COPY.copy.failed)
+    }
+  }
   return (
-    <button
-      type="button"
-      className={cx(BTN, 'min-w-[112px] border border-accent-border bg-accent/10 text-accent hover:bg-accent/20')}
-      onClick={async () => {
-        try {
-          await navigator.clipboard.writeText(code)
-          setTexte(COPY.copy.done)
-          setTimeout(() => setTexte(COPY.copy.idle), 1300)
-        } catch {
-          setTexte(COPY.copy.failed)
-        }
-      }}
-    >
-      {texte}
-    </button>
+    <div className="grid grid-cols-1 gap-2 min-[420px]:grid-cols-[minmax(0,1fr)_auto]">
+      <button
+        type="button"
+        data-check="promo-code"
+        onClick={copier}
+        aria-label={`${COPY.copy.idle}: ${code}`}
+        title={COPY.copy.idle}
+        className={cx(
+          'flex cursor-copy items-center justify-center rounded-lg border border-accent bg-accent/10 px-3 py-2.5 font-mono text-lg font-bold tracking-[0.12em] text-accent transition-colors hover:bg-accent/20',
+          FOCUS
+        )}
+      >
+        {code}
+      </button>
+      <button
+        type="button"
+        onClick={copier}
+        aria-live="polite"
+        className={cx(BTN, 'min-w-[112px] border border-accent-border bg-accent/10 text-accent hover:bg-accent/20')}
+      >
+        {texte}
+      </button>
+    </div>
   )
 }
 
@@ -144,15 +172,7 @@ export function PromoGroup({
       {code && (
         <div>
           <p className={cx(LABEL, 'mb-1.5')}>{COPY.commercial.code}</p>
-          <div className="grid grid-cols-1 gap-2 min-[420px]:grid-cols-[minmax(0,1fr)_auto]">
-            <code
-              data-check="promo-code"
-              className="flex items-center justify-center rounded-lg border border-accent bg-accent/10 px-3 py-2.5 font-mono text-lg font-bold tracking-[0.12em] text-accent"
-            >
-              {code}
-            </code>
-            <CopyButton code={code} />
-          </div>
+          <CodeCopiable code={code} />
         </div>
       )}
       <div className="flex flex-col gap-2 sm:flex-row">

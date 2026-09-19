@@ -112,9 +112,12 @@ export interface SheetCout {
   programmes: string[]
 }
 
-/** Une regle de conduite ou de retrait, rangee dans la carte Trading ou Payouts. */
+/**
+ * Une regle de conduite ou de retrait : carte Trading, carte Payouts, ou
+ * programme de compte reel (live), replie sous Payouts.
+ */
 export interface SheetRegle {
-  carte: 'trading' | 'payouts'
+  carte: 'trading' | 'payouts' | 'live'
   regle: string
   texte: string
   statut: Statut

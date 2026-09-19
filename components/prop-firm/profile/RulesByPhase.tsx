@@ -1,110 +1,124 @@
 'use client'
 
 // 6. Rules by programme and phase — firme → programme → plan (taille +
-//    variante) → phase → regles. Les onglets de programme pilotent la meme
-//    selection que le configurateur ; les onglets de phase viennent des phases
-//    que le plan possede reellement.
+//    variante) → phases → regles. La section a SA PROPRE selection (commentaire
+//    du 19 septembre) : consulter les regles d'un autre programme ne change pas
+//    le configurateur. Toutes les phases du plan sont cote a cote, une colonne
+//    chacune ; une valeur verifiee s'affiche seule, une reserve porte son statut.
 
-import { sizeLabel } from '@/lib/firm-sheet'
-import { libellePhase, reglesDePhase } from '@/lib/firm-profile'
+import { type FirmSheet, sizeLabel } from '@/lib/firm-sheet'
+import { tableauRegles } from '@/lib/firm-profile'
 import { COPY } from './copy'
-import type { FirmSelection } from './useFirmSelection'
+import { useFirmSelection } from './useFirmSelection'
 import { CARD, LABEL, Section, SectionHeading, StatusBadge, cx } from './ui'
 
 const ONGLET = 'rounded-lg border px-3 py-1.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent'
 const ONGLET_ACTIF = 'border-accent bg-accent text-bg-base'
 const ONGLET_REPOS = 'border-border bg-bg-base text-text-secondary hover:border-border-hover'
 
-export function RulesByPhase({ sel }: { sel: FirmSelection }) {
-  const { programme, plan, phase, phases } = sel
-  if (!programme || !plan || !phase) return null
-  const lignes = reglesDePhase(phase, plan.devise)
-  if (lignes.length === 0) return null
-  const nomPhase = libellePhase(phase, plan, programme)
+function Onglets<T extends string | number>({
+  label,
+  options,
+  actif,
+  choisir,
+}: {
+  label: string
+  options: { cle: T; libelle: string }[]
+  actif: T
+  choisir: (cle: T) => void
+}) {
+  if (options.length < 2) return null
+  return (
+    <div>
+      <p className={LABEL}>{label}</p>
+      <div role="tablist" aria-label={label} className="mt-2 flex flex-wrap gap-2">
+        {options.map((o) => (
+          <button
+            key={String(o.cle)}
+            type="button"
+            role="tab"
+            aria-selected={o.cle === actif}
+            onClick={() => choisir(o.cle)}
+            className={cx(ONGLET, o.cle === actif ? ONGLET_ACTIF : ONGLET_REPOS)}
+          >
+            {o.libelle}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+export function RulesByPhase({ sheet }: { sheet: FirmSheet }) {
+  // Une instance a part : meme logique que le configurateur, etat independant.
+  const sel = useFirmSelection(sheet)
+  const { programme, plan, phases } = sel
+  if (!programme || !plan || phases.length === 0) return null
+  const tableau = tableauRegles(plan, programme, phases)
+  if (tableau.lignes.length === 0) return null
 
   return (
     <Section id="rules" labelledBy="rules-title">
       <SectionHeading id="rules-title" eyebrow={COPY.rules.eyebrow} title={COPY.rules.title} intro={COPY.rules.intro} />
       <div className={cx(CARD, 'p-4 sm:p-5')}>
-        <div className="mb-4 grid gap-3 rounded-lg border border-border bg-bg-base p-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
-          <div>
-            <p className={LABEL}>{COPY.rules.plan}</p>
-            <p className="mt-0.5 font-semibold">
-              {programme.nom} · {sizeLabel(plan.taille, plan.devise)}
-              {sel.variante ? ` · ${sel.variante}` : ''}
-            </p>
-          </div>
-          <span className="inline-flex min-h-[34px] items-center justify-self-start rounded-lg border border-accent-border bg-accent/10 px-3 text-sm font-semibold text-accent">
-            {programme.nom} · {nomPhase}
-          </span>
+        <div className="mb-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-[auto_auto_minmax(0,1fr)] lg:items-end">
+          <Onglets
+            label={COPY.rules.programme}
+            options={sel.programmesVisibles.map((p) => ({ cle: p.slug, libelle: p.nom }))}
+            actif={programme.slug}
+            choisir={(slug) => {
+              const p = sel.programmesVisibles.find((x) => x.slug === slug)
+              if (p) sel.choisirProgramme(p)
+            }}
+          />
+          <Onglets
+            label={COPY.rules.variant}
+            options={sel.variantes.map((v) => ({ cle: v, libelle: v || COPY.configurator.standard }))}
+            actif={sel.variante}
+            choisir={sel.setVariante}
+          />
+          <Onglets
+            label={COPY.rules.size}
+            options={sel.plansDeVariante.map((pl) => ({ cle: pl.taille, libelle: sizeLabel(pl.taille, pl.devise) }))}
+            actif={plan.taille}
+            choisir={(taille) => sel.setTaille(String(taille))}
+          />
         </div>
 
-        {sel.programmesVisibles.length > 1 && (
-          <>
-            <p className={LABEL}>{COPY.rules.programme}</p>
-            <div role="tablist" aria-label={COPY.rules.programme} className="mb-3 mt-2 flex flex-wrap gap-2">
-              {sel.programmesVisibles.map((p) => {
-                const actif = p.slug === programme.slug
-                return (
-                  <button
-                    key={p.slug}
-                    type="button"
-                    role="tab"
-                    aria-selected={actif}
-                    onClick={() => sel.choisirProgramme(p)}
-                    className={cx(ONGLET, actif ? ONGLET_ACTIF : ONGLET_REPOS)}
-                  >
-                    {p.nom}
-                  </button>
-                )
-              })}
-            </div>
-          </>
-        )}
-
-        {phases.length > 1 && (
-          <>
-            <p className={LABEL}>{COPY.rules.phase}</p>
-            <div role="tablist" aria-label={COPY.rules.phase} className="mb-3 mt-2 flex flex-wrap gap-2">
-              {phases.map((ph) => {
-                const actif = ph.phase === phase.phase
-                return (
-                  <button
-                    key={ph.phase}
-                    type="button"
-                    role="tab"
-                    aria-selected={actif}
-                    onClick={() => sel.setPhase(ph.phase)}
-                    className={cx(ONGLET, actif ? ONGLET_ACTIF : ONGLET_REPOS)}
-                  >
-                    {libellePhase(ph, plan, programme)}
-                  </button>
-                )
-              })}
-            </div>
-          </>
-        )}
+        <p className="mb-2 text-sm text-text-muted">
+          {programme.nom} · {sizeLabel(plan.taille, plan.devise)}
+          {sel.variante ? ` · ${sel.variante}` : ''} — {tableau.colonnes.map((c) => c.libelle).join(' → ')}
+        </p>
 
         <table className="w-full border-collapse text-sm">
           <thead className="hidden md:table-header-group">
             <tr className="border-b border-border text-left text-[11px] uppercase tracking-wider text-text-muted">
               <th className="py-2 pr-4 font-semibold">{COPY.rules.rule}</th>
-              <th className="py-2 pr-4 font-semibold">{nomPhase}</th>
-              <th className="py-2 pr-4 font-semibold">{COPY.rules.status}</th>
+              {tableau.colonnes.map((c) => (
+                <th key={c.cle} className="py-2 pr-4 font-semibold text-accent">
+                  {c.libelle}
+                </th>
+              ))}
               <th className="py-2 font-semibold">{COPY.rules.meaning}</th>
             </tr>
           </thead>
           <tbody>
-            {lignes.map((l) => (
+            {tableau.lignes.map((l) => (
               <tr key={l.cle} className="block border-b border-border py-2.5 last:border-0 md:table-row md:py-0">
                 <td className="block font-semibold md:table-cell md:py-2.5 md:pr-4">{l.libelle}</td>
-                <td className="block font-semibold text-accent tabular-nums md:table-cell md:whitespace-nowrap md:py-2.5 md:pr-4 md:text-text-primary">
-                  {l.valeur ?? '—'}
-                </td>
-                <td className="block py-1 md:table-cell md:py-2.5 md:pr-4">
-                  <StatusBadge statut={l.statut} />
-                </td>
-                <td className="block text-text-muted md:table-cell md:py-2.5">{l.sens}</td>
+                {l.cellules.map((cellule, i) => (
+                  <td key={tableau.colonnes[i].cle} className="block tabular-nums md:table-cell md:whitespace-nowrap md:py-2.5 md:pr-4">
+                    <span className="mr-1.5 text-xs text-text-muted md:hidden">{tableau.colonnes[i].libelle}:</span>
+                    {cellule == null ? (
+                      <span className="text-text-muted">—</span>
+                    ) : cellule.statut !== 'confirmed' ? (
+                      <StatusBadge statut={cellule.statut} />
+                    ) : (
+                      <span className="font-semibold text-text-primary">{cellule.valeur}</span>
+                    )}
+                  </td>
+                ))}
+                <td className="block pt-1 text-text-muted md:table-cell md:py-2.5">{l.sens}</td>
               </tr>
             ))}
           </tbody>
