@@ -846,7 +846,7 @@
     {
       "carte": "trading",
       "regle": "News trading",
-      "texte": "The configurator displays \"Yes\".",
+      "texte": "Allowed during the evaluation.",
       "statut": "confirmed",
       "programmes": [
         "elite",

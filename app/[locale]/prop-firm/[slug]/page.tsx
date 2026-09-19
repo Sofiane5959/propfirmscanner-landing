@@ -339,6 +339,11 @@ export default async function PropFirmPage({ params }: Props) {
     similarFirms = [...similarFirms, ...((filler || []) as SimilarRow[]).filter(isComplete)]
   }
 
+  // FirmProfilePage filtre ensuite (firme listee, lien affilie) : il puise dans
+  // toute la reserve, sinon le filtre applique apres la coupe a 3 ne laissait
+  // qu'une carte sur la preview du 19 septembre.
+  const reserveSimilaires = similarFirms
+
   // Never more than three, and never a partial card. Padding the row with an
   // incomplete firm makes the whole section look unreliable.
   similarFirms = similarFirms.slice(0, SIMILAR_LIMIT)
@@ -537,7 +542,7 @@ export default async function PropFirmPage({ params }: Props) {
           locale={locale}
           // 20 septembre : une page active (firme listee) et un lien affilie
           // actif ; le code et la remise ne s'affichent que s'ils sont actifs.
-          similarFirms={similarFirms
+          similarFirms={reserveSimilaires
             .filter((sf) => sf.listing_status === 'listed' && Boolean(sf.affiliate_url) && sf.affiliate_url !== '#')
             .slice(0, 3)
             .map((sf) => ({
