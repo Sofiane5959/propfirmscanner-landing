@@ -7,6 +7,7 @@ import UniversalFirmPage from '@/components/prop-firm/UniversalFirmPage'
 import FirmProfilePage from '@/components/prop-firm/profile/FirmProfilePage'
 import { FIRM_SHEETS } from '@/data/firms'
 import { profilActif } from '@/data/firms/rollout'
+import { LEGACY_SHEETS } from '@/data/firms/legacy'
 import { sheetMetaDescription } from '@/lib/firm-sheet'
 import { buildAffiliateUrl } from '@/lib/affiliate'
 
@@ -259,7 +260,7 @@ export default async function PropFirmPage({ params }: Props) {
   // deduit les colonnes du type litteral de cet argument. Coupee en deux avec
   // un `+`, elle devient un `string` quelconque et la requete revient typee
   // `GenericStringError[]`.
-  const SIMILAR_COLUMNS = 'id, name, slug, logo_url, trustpilot_rating, min_price, profit_split, affiliate_url, discount_code, discount_percent, discount_expires_at'
+  const SIMILAR_COLUMNS = 'id, name, slug, logo_url, trustpilot_rating, min_price, profit_split, affiliate_url, discount_code, discount_percent, discount_expires_at, listing_status'
   const SIMILAR_LIMIT = 4
 
   // Une alternative proposee ici doit etre actionnable : un lien d'affiliation
@@ -314,6 +315,7 @@ export default async function PropFirmPage({ params }: Props) {
     discount_code: string | null
     discount_percent: number | null
     discount_expires_at: string | null
+    listing_status: string | null
   }
   let similarFirms = ((matched || []) as SimilarRow[]).filter(isComplete)
 
@@ -532,10 +534,10 @@ export default async function PropFirmPage({ params }: Props) {
           sheet={FIRM_SHEETS[firm.slug]}
           firmSlug={firm.slug}
           locale={locale}
-          // Contrat visuel du 19 septembre : seulement les firmes qui ont a la
-          // fois un lien affilie et un code actif, trois au plus.
+          // 20 septembre : une page active (firme listee) et un lien affilie
+          // actif ; le code et la remise ne s'affichent que s'ils sont actifs.
           similarFirms={similarFirms
-            .filter((sf) => Boolean(sf.affiliate_url) && sf.affiliate_url !== '#' && codeActif(sf))
+            .filter((sf) => sf.listing_status === 'listed' && Boolean(sf.affiliate_url) && sf.affiliate_url !== '#')
             .slice(0, 3)
             .map((sf) => ({
               id: sf.id,
@@ -544,13 +546,14 @@ export default async function PropFirmPage({ params }: Props) {
               logoUrl: sf.logo_url,
               rating: sf.trustpilot_rating,
               minPrice: sf.min_price,
-              code: sf.discount_code,
-              remise: sf.discount_percent,
+              code: codeActif(sf) ? sf.discount_code : null,
+              remise: codeActif(sf) ? sf.discount_percent : null,
             }))}
         />
       ) : FIRM_SHEETS[firm.slug] ? (
         <UniversalFirmPage
-          sheet={FIRM_SHEETS[firm.slug]}
+          // Copie figee de production : les langues non basculees ne changent pas.
+          sheet={LEGACY_SHEETS[firm.slug] ?? FIRM_SHEETS[firm.slug]}
           ctaHref={buildAffiliateUrl(firm.slug, { placement: 'hero', locale })}
           logoHref={buildAffiliateUrl(firm.slug, { placement: 'logo', locale })}
           rating={firm.trustpilot_rating ?? null}

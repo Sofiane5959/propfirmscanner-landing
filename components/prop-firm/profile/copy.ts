@@ -36,6 +36,7 @@ export const COPY = {
   },
   knownFor: (nom: string) => `What ${nom} is known for`,
   info: {
+    title: 'Firm information',
     platforms: 'Selectable platforms',
     markets: 'Tradable markets',
     dataFeeds: 'Data feeds',
@@ -108,9 +109,7 @@ export const COPY = {
     showLess: 'Show fewer rules',
   },
   verdict: {
-    eyebrow: 'PropFirmScanner verdict',
-    title: (nom: string) => `Who we recommend ${nom} to`,
-    view: 'Our view',
+    title: 'PropFirmScanner verdict',
     bestFor: 'Best for',
     thingsToKnow: 'Things to know',
   },

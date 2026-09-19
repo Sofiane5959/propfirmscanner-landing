@@ -199,7 +199,9 @@ export interface FirmSheet {
   // --- Nouvelle page (FirmProfilePage). L'ancienne n'en lit rien. -------------
   /** Note sur 5 ; null : le bloc Trustpilot n'apparait pas. */
   trustpilotScore: number | null
-  trustpilotAvis: number | null
+  trustpilotReviewCount: number | null
+  /** Page Trustpilot de la firme : le badge y renvoie. */
+  trustpilotUrl: string | null
   regles: SheetRegle[]
   /** Le H1 : une proposition de valeur. Null : le nom sert de H1. */
   titre: string | null

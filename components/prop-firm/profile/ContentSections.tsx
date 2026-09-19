@@ -246,16 +246,12 @@ export function VerdictSection({ sheet }: { sheet: FirmSheet }) {
 
   return (
     <Section id="verdict" labelledBy="verdict-title">
-      <SectionHeading id="verdict-title" eyebrow={COPY.verdict.eyebrow} title={COPY.verdict.title(sheet.nom)} />
+      {/* Un seul bloc : la conclusion, Best for, Things to know. */}
+      <SectionHeading id="verdict-title" title={COPY.verdict.title} />
       <div className={cx('grid items-stretch gap-3', gauche && limites.length > 0 && 'lg:grid-cols-[1.15fr_0.85fr]')}>
         {gauche && (
           <article className={cx(CARD, 'p-4 sm:p-5')}>
-            {texte && (
-              <>
-                <h3 className="font-semibold">{COPY.verdict.view}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-text-secondary">{texte}</p>
-              </>
-            )}
+            {texte && <p className="text-sm leading-relaxed text-text-secondary">{texte}</p>}
             {pourQui.length > 0 && (
               <>
                 <h3 className={cx('font-semibold', texte && 'mt-4')}>{COPY.verdict.bestFor}</h3>

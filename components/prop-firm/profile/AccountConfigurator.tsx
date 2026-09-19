@@ -44,10 +44,12 @@ interface Etape {
 export function AccountConfigurator({
   sheet,
   sel,
+  claimHref,
   continueHref,
 }: {
   sheet: FirmSheet
   sel: FirmSelection
+  claimHref: string
   continueHref: string
 }) {
   const { programme, plan, offreAppliquee, prixRemise: remise, phases } = sel
@@ -184,7 +186,7 @@ export function AccountConfigurator({
 
           <PromoGroup
             code={offre && offreAppliquee ? offre.code : null}
-            claimHref={null}
+            claimHref={offre && offreAppliquee ? claimHref : null}
             continueHref={continueHref}
             continueLabel={COPY.commercial.continueTo(sheet.nom)}
           />

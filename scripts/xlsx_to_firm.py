@@ -362,7 +362,8 @@ def convertir(chemin):
         "faq": faq,
         # Nouvelle page (FirmProfilePage). L'ancienne n'en lit rien.
         "trustpilotScore": nombre(f.get("trustpilot_score")),
-        "trustpilotAvis": nombre(f.get("trustpilot_avis")),
+        "trustpilotReviewCount": nombre(f.get("trustpilot_review_count")),
+        "trustpilotUrl": txt(f.get("trustpilot_url")),
         "regles": regles,
         "titre": txt(f.get("titre")),
         "description": txt(f.get("description")),

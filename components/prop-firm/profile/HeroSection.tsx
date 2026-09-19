@@ -67,9 +67,12 @@ export function HeroSection({
             </div>
 
             {trustpilot && (
-              <div
+              <a
                 data-check="trustpilot"
-                className="mt-4 rounded-lg border border-accent-border bg-accent/10 px-3 py-2.5 sm:absolute sm:right-5 sm:top-5 sm:mt-0 sm:min-w-[158px] sm:text-right"
+                href={sheet.trustpilotUrl ?? undefined}
+                target={sheet.trustpilotUrl ? '_blank' : undefined}
+                rel={sheet.trustpilotUrl ? 'nofollow noopener noreferrer' : undefined}
+                className="mt-4 block rounded-lg border border-accent-border bg-accent/10 px-3 py-2.5 transition-colors hover:border-accent sm:absolute sm:right-5 sm:top-5 sm:mt-0 sm:min-w-[158px] sm:text-right"
               >
                 <p className={LABEL}>{COPY.hero.trustpilot}</p>
                 <p className="text-lg font-bold tabular-nums">
@@ -83,13 +86,13 @@ export function HeroSection({
                       className={cx('h-3 w-3', i < Math.round(sheet.trustpilotScore!) ? 'fill-warning' : 'opacity-40')}
                     />
                   ))}
-                  {sheet.trustpilotAvis != null && (
+                  {sheet.trustpilotReviewCount != null && (
                     <span className="ml-1 text-text-muted">
-                      {COPY.hero.reviews(new Intl.NumberFormat('en-US').format(sheet.trustpilotAvis))}
+                      {COPY.hero.reviews(new Intl.NumberFormat('en-US').format(sheet.trustpilotReviewCount))}
                     </span>
                   )}
                 </p>
-              </div>
+              </a>
             )}
 
             <h1 className="mt-5 max-w-3xl text-balance font-display text-[32px] font-bold leading-[1.08] tracking-tight text-text-primary sm:text-[42px]">

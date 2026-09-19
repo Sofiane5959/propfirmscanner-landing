@@ -59,7 +59,12 @@ export default function FirmProfilePage({
       <HeroSection sheet={sheet} promo={sel.promo} claimHref={lien('hero_claim')} continueHref={lien('hero_continue')} />
       <KnownForStrip sheet={sheet} />
       <InfoCards sheet={sheet} />
-      <AccountConfigurator sheet={sheet} sel={sel} continueHref={lien('configurator')} />
+      <AccountConfigurator
+        sheet={sheet}
+        sel={sel}
+        claimHref={lien('configurator_claim')}
+        continueHref={lien('configurator_continue')}
+      />
       <ProgramComparison sel={sel} />
       <RulesByPhase sel={sel} />
       <OptionalModules sheet={sheet} />

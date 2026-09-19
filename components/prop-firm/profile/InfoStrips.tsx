@@ -75,13 +75,13 @@ export function InfoCards({ sheet }: { sheet: FirmSheet }) {
       statut: null,
     },
   ]
-  const visibles = groupes.filter(
-    (g) => g.valeurs.length > 0 || g.statut || (g.label === COPY.info.profile && levierReserve)
-  )
+  // Une carte sans aucune valeur confirmee n'apporte rien : elle disparait,
+  // meme si un statut explique l'absence (« Needs confirmation », « Not applicable »).
+  const visibles = groupes.filter((g) => g.valeurs.length > 0)
   if (visibles.length === 0) return null
 
   return (
-    <section aria-label={COPY.info.profile} className="pb-5">
+    <section aria-label={COPY.info.title} className="pb-5">
       <Container>
         <div className={cx('grid gap-3', COLONNES[visibles.length])}>
           {visibles.map((g) => (

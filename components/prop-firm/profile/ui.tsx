@@ -32,8 +32,14 @@ export const CHOICE = cx('flex flex-col gap-0.5 rounded-lg border px-3 py-2.5 te
 export const CHOICE_IDLE = 'border-border bg-bg-base hover:border-border-hover'
 export const CHOICE_ACTIVE = 'border-accent bg-accent/10'
 
+// Meme largeur que les autres fiches (PropFirmPageClient) : contenu de
+// max-w-6xl (1152 px), marge laterale a l'exterieur de cette largeur.
 export function Container({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={cx('mx-auto w-full max-w-6xl px-4 sm:px-6', className)}>{children}</div>
+  return (
+    <div className="px-4">
+      <div className={cx('mx-auto w-full max-w-6xl', className)}>{children}</div>
+    </div>
+  )
 }
 
 export function Section({
