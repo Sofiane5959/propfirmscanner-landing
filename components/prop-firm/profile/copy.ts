@@ -19,6 +19,10 @@ export const COPY = {
     readLess: 'Show less',
     choose: 'Choose your program',
     rules: 'See the key rules',
+    save: 'Save',
+    saved: 'Saved',
+    share: 'Share',
+    linkCopied: 'Link copied',
   },
   commercial: {
     popular: 'Most popular plan',

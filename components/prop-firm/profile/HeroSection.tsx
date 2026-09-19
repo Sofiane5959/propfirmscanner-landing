@@ -20,6 +20,7 @@ import {
 } from '@/lib/firm-sheet'
 import { planLeMoinsCher } from '@/lib/firm-profile'
 import { COPY } from './copy'
+import { FirmActions } from './FirmActions'
 import { prixPlan, prixRemise } from './format'
 import { BTN_PRIMARY, BTN_SECONDARY, CARD, CARD_ACCENT, Container, EYEBROW, LABEL, PromoGroup, cx } from './ui'
 
@@ -28,11 +29,14 @@ export function HeroSection({
   promo,
   claimHref,
   continueHref,
+  firmId,
 }: {
   sheet: FirmSheet
   promo: { programme: SheetProgramme; plan: SheetPlan } | null
   claimHref: string
   continueHref: string
+  /** Identifiant prop_firms, pour le favori ; null : pas de bouton Save. */
+  firmId: string | null
 }) {
   // Le nom n'est repete en titre que si la fiche n'a pas de proposition de valeur.
   const titre = sheet.titre ?? sheet.nom
@@ -134,13 +138,16 @@ export function HeroSection({
               </ul>
             )}
 
-            <div className="mt-auto flex flex-col gap-2.5 pt-5 sm:flex-row">
+            <div className="mt-auto flex flex-col gap-2.5 pt-5 sm:flex-row sm:flex-wrap sm:items-center">
               <a href="#accounts" className={BTN_PRIMARY}>
                 {COPY.hero.choose}
               </a>
               <a href="#rules" className={BTN_SECONDARY}>
                 {COPY.hero.rules}
               </a>
+              <div className="sm:ml-auto">
+                <FirmActions firmId={firmId} nom={sheet.nom} />
+              </div>
             </div>
           </article>
 

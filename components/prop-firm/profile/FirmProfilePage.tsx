@@ -35,11 +35,14 @@ import { useFirmSelection } from './useFirmSelection'
 export default function FirmProfilePage({
   sheet,
   firmSlug,
+  firmId = null,
   locale,
   similarFirms = [],
 }: {
   sheet: FirmSheet
   firmSlug: string
+  /** prop_firms.id, pour enregistrer la firme en favori. */
+  firmId?: string | null
   locale: string
   /** Firmes avec page, lien affilie et code actifs — choisies par la route. */
   similarFirms?: SimilarFirm[]
@@ -56,7 +59,7 @@ export default function FirmProfilePage({
 
   return (
     <div className="bg-bg-base pb-8 font-sans text-text-primary">
-      <HeroSection sheet={sheet} promo={sel.promo} claimHref={lien('hero_claim')} continueHref={lien('hero_continue')} />
+      <HeroSection sheet={sheet} promo={sel.promo} claimHref={lien('hero_claim')} continueHref={lien('hero_continue')} firmId={firmId} />
       <KnownForStrip sheet={sheet} />
       <InfoCards sheet={sheet} />
       <AccountConfigurator

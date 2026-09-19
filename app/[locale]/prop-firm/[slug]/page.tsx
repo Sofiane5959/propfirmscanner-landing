@@ -533,6 +533,7 @@ export default async function PropFirmPage({ params }: Props) {
         <FirmProfilePage
           sheet={FIRM_SHEETS[firm.slug]}
           firmSlug={firm.slug}
+          firmId={firm.id}
           locale={locale}
           // 20 septembre : une page active (firme listee) et un lien affilie
           // actif ; le code et la remise ne s'affichent que s'ils sont actifs.
