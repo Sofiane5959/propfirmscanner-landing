@@ -127,6 +127,8 @@ export interface SheetRegle {
   phase: PhaseKey | null
   /** L'enfreindre fait perdre le compte. */
   bloquante: boolean
+  /** Affichee sur la page ; les autres restent dans le tableur. */
+  essentielle: boolean
   source: string | null
 }
 

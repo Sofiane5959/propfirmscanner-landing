@@ -110,7 +110,7 @@ export function AccountConfigurator({
 
   return (
     <Section id="accounts" labelledBy="accounts-title">
-      <SectionHeading id="accounts-title" eyebrow={COPY.configurator.eyebrow} title={COPY.configurator.title} intro={COPY.configurator.intro} />
+      <SectionHeading id="accounts-title" eyebrow={COPY.configurator.eyebrow} title={COPY.configurator.title(sheet.nom)} intro={COPY.configurator.intro} />
 
       <div className="grid items-stretch gap-4 lg:grid-cols-2">
         {/* Les etapes se partagent la hauteur du resume : pas de vide sous la derniere. */}
@@ -205,7 +205,7 @@ export function ProgramComparison({ sel }: { sel: FirmSelection }) {
   const n = sel.programmesVisibles.length
   return (
     <Section labelledBy="comparison-title">
-      <SectionHeading id="comparison-title" eyebrow={COPY.comparison.eyebrow} title={COPY.comparison.title} intro={COPY.comparison.intro} />
+      <SectionHeading id="comparison-title" eyebrow={COPY.comparison.eyebrow} title={COPY.comparison.title(n)} intro={COPY.comparison.intro} />
       <div className={cx('grid gap-3 sm:grid-cols-2', n === 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-3')}>
         {sel.programmesVisibles.map((p) => {
           const actif = p.slug === actifSlug

@@ -27,7 +27,8 @@ export const CARD = 'rounded-xl border border-border bg-bg-elevated'
 export const CARD_ACCENT = 'rounded-xl border border-accent-border bg-bg-elevated'
 export const EYEBROW = 'text-xs font-semibold uppercase tracking-wider text-accent'
 // Sur-titre de section : plus present que l'eyebrow des cartes (commentaire du 19/09).
-const EYEBROW_SECTION = 'inline-flex items-center gap-2 text-[13px] font-bold uppercase tracking-[0.14em] text-accent'
+const EYEBROW_SECTION =
+  'inline-flex items-center rounded-full border border-accent-border bg-accent/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] text-accent'
 export const LABEL = 'text-[11px] font-semibold uppercase tracking-wider text-text-muted'
 export const CHIP = 'rounded-md border border-border bg-bg-base px-2 py-1 text-xs text-text-secondary'
 export const CHOICE = cx('flex flex-col gap-0.5 rounded-lg border px-3 py-2.5 text-left transition-colors', FOCUS)
@@ -74,17 +75,20 @@ export function SectionHeading({
   intro?: string
 }) {
   return (
-    <div className="mb-5">
-      {eyebrow && (
-        <p className={EYEBROW_SECTION}>
-          <span aria-hidden="true" className="h-0.5 w-5 rounded-full bg-accent" />
-          {eyebrow}
-        </p>
-      )}
-      <h2 id={id} className="mt-1.5 text-balance font-display text-[26px] font-bold leading-tight tracking-tight text-text-primary sm:text-[34px]">
+    // En-tete de section (commentaires du 19/09) : le titre porte une barre
+    // verte, le sur-titre est une pastille. Meme traitement partout.
+    <div className="mb-5 border-l-4 border-accent pl-4">
+      {eyebrow && <p className={EYEBROW_SECTION}>{eyebrow}</p>}
+      <h2
+        id={id}
+        className={cx(
+          'text-balance font-display text-[28px] font-bold leading-tight tracking-tight text-text-primary sm:text-[36px]',
+          eyebrow && 'mt-2'
+        )}
+      >
         {title}
       </h2>
-      {intro && <p className="mt-1 max-w-2xl text-sm text-text-muted sm:text-base">{intro}</p>}
+      {intro && <p className="mt-1.5 max-w-2xl text-sm text-text-secondary sm:text-base">{intro}</p>}
     </div>
   )
 }

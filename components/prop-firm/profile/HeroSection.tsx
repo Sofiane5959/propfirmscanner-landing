@@ -51,7 +51,7 @@ export function HeroSection({
       <Container>
         <div className="grid items-stretch gap-4 lg:grid-cols-[minmax(0,1.55fr)_minmax(330px,0.9fr)]">
           <article data-check="hero-left" className={cx(CARD, 'relative flex h-full flex-col p-5 sm:p-6')}>
-            <div className={cx('flex items-center gap-3', trustpilot && 'sm:pr-48')}>
+            <div className={cx('flex items-center gap-3', trustpilot && 'sm:pr-44')}>
               <div className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-xl bg-white p-1 font-display text-xl font-bold text-bg-base">
                 {sheet.logoUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -74,7 +74,7 @@ export function HeroSection({
                 href={sheet.trustpilotUrl ?? undefined}
                 target={sheet.trustpilotUrl ? '_blank' : undefined}
                 rel={sheet.trustpilotUrl ? 'nofollow noopener noreferrer' : undefined}
-                className="mt-4 block rounded-lg border border-accent-border bg-accent/10 px-3 py-2.5 transition-colors hover:border-accent sm:absolute sm:right-5 sm:top-5 sm:mt-0 sm:min-w-[158px] sm:text-right"
+                className="mt-3 inline-block transition-opacity hover:opacity-80 sm:absolute sm:right-6 sm:top-6 sm:mt-0 sm:text-right"
               >
                 <p className={LABEL}>{COPY.hero.trustpilot}</p>
                 <p className="text-lg font-bold tabular-nums">

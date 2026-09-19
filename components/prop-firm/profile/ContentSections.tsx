@@ -105,6 +105,8 @@ export function OptionalModules({ sheet }: { sheet: FirmSheet }) {
 // et le minimum de retrait sont dans le configurateur et les regles ; le prix
 // dans le configurateur. Chaque regle tient sur une ligne de titre et une
 // phrase ; les bloquantes et les reserves passent en tete.
+// Le tableur designe les regles essentielles (quatre par carte au plus) : elles
+// s'affichent toutes. Sans selection dans le tableur, on s'arrete a quatre.
 const REGLES_VISIBLES = 4
 
 function LigneRegle({ r, phase }: { r: FirmSheet['regles'][number]; phase: string | null }) {
@@ -188,7 +190,7 @@ export function ConditionsSection({ sheet, sel }: { sheet: FirmSheet; sel: FirmS
     trading.length > 0 && (
       <article key="trading" className={cx(CARD, 'p-4 sm:p-5')}>
         <EnteteCarte eyebrow={COPY.conditions.trading} titre={COPY.conditions.tradingTitle} />
-        <ListeRegles regles={trading} nomPhase={nomPhase} />
+        <ListeRegles regles={trading} nomPhase={nomPhase} visibles={sheet.regles.some((r) => r.essentielle) ? trading.length : REGLES_VISIBLES} />
       </article>
     ),
     frais.length > 0 && (
@@ -226,21 +228,8 @@ export function ConditionsSection({ sheet, sel }: { sheet: FirmSheet; sel: FirmS
           </div>
         )}
         <div className="border-t border-border">
-          <ListeRegles regles={retraits} nomPhase={nomPhase} />
+          <ListeRegles regles={[...retraits, ...live]} nomPhase={nomPhase} visibles={sheet.regles.some((r) => r.essentielle) ? retraits.length + live.length : REGLES_VISIBLES} />
         </div>
-        {live.length > 0 && (
-          <details className="group mt-2 rounded-lg border border-border bg-bg-base px-3">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-2 py-2.5 text-sm font-semibold marker:hidden">
-              <span>{COPY.conditions.live(live.length)}</span>
-              <ChevronDown className="h-4 w-4 text-accent transition-transform group-open:rotate-180" aria-hidden="true" />
-            </summary>
-            <ul className="divide-y divide-border border-t border-border">
-              {live.map((r) => (
-                <LigneRegle key={`${r.regle}-${r.phase}`} r={r} phase={null} />
-              ))}
-            </ul>
-          </details>
-        )}
       </article>
     ),
   ].filter(Boolean)
@@ -365,7 +354,7 @@ export function SimilarFirms({ nom, firms }: { nom: string; firms: SimilarFirm[]
   if (firms.length === 0) return null
   return (
     <Section labelledBy="similar-title">
-      <SectionHeading id="similar-title" eyebrow={COPY.similar.eyebrow} title={COPY.similar.title(nom)} />
+      <SectionHeading id="similar-title" title={COPY.similar.title} />
       <div className={cx('grid gap-3', COLONNES[Math.min(firms.length, 3)])}>
         {firms.map((f) => (
           <article key={f.id} className={cx(CARD, 'flex flex-col p-4')}>

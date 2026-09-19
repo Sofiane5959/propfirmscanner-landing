@@ -9,12 +9,10 @@
 import { type FirmSheet, sizeLabel } from '@/lib/firm-sheet'
 import { tableauRegles } from '@/lib/firm-profile'
 import { COPY } from './copy'
+import { prixPlan } from './format'
 import { useFirmSelection } from './useFirmSelection'
 import { CARD, LABEL, Section, SectionHeading, StatusBadge, cx } from './ui'
 
-const ONGLET = 'rounded-lg border px-3 py-1.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent'
-const ONGLET_ACTIF = 'border-accent bg-accent text-bg-base'
-const ONGLET_REPOS = 'border-border bg-bg-base text-text-secondary hover:border-border-hover'
 
 function Onglets<T extends string | number>({
   label,
@@ -23,27 +21,39 @@ function Onglets<T extends string | number>({
   choisir,
 }: {
   label: string
-  options: { cle: T; libelle: string }[]
+  options: { cle: T; libelle: string; detail?: string }[]
   actif: T
   choisir: (cle: T) => void
 }) {
   if (options.length < 2) return null
   return (
-    <div>
+    <div className="min-w-0">
       <p className={LABEL}>{label}</p>
-      <div role="tablist" aria-label={label} className="mt-2 flex flex-wrap gap-2">
-        {options.map((o) => (
-          <button
-            key={String(o.cle)}
-            type="button"
-            role="tab"
-            aria-selected={o.cle === actif}
-            onClick={() => choisir(o.cle)}
-            className={cx(ONGLET, o.cle === actif ? ONGLET_ACTIF : ONGLET_REPOS)}
-          >
-            {o.libelle}
-          </button>
-        ))}
+      {/* Controle segmente : un bloc, des cibles larges, l'etat choisi evident. */}
+      <div role="tablist" aria-label={label} className="mt-2 flex flex-wrap gap-1 rounded-xl border border-border bg-bg-base p-1">
+        {options.map((o) => {
+          const actifIci = o.cle === actif
+          return (
+            <button
+              key={String(o.cle)}
+              type="button"
+              role="tab"
+              aria-selected={actifIci}
+              onClick={() => choisir(o.cle)}
+              className={cx(
+                'flex min-h-[44px] min-w-[72px] flex-1 flex-col items-center justify-center rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
+                actifIci ? 'bg-accent text-bg-base shadow-sm' : 'text-text-secondary hover:bg-dark-700 hover:text-text-primary'
+              )}
+            >
+              {o.libelle}
+              {o.detail && (
+                <span className={cx('text-[11px] font-medium tabular-nums', actifIci ? 'text-bg-base/80' : 'text-text-muted')}>
+                  {o.detail}
+                </span>
+              )}
+            </button>
+          )
+        })}
       </div>
     </div>
   )
@@ -61,7 +71,7 @@ export function RulesByPhase({ sheet }: { sheet: FirmSheet }) {
     <Section id="rules" labelledBy="rules-title">
       <SectionHeading id="rules-title" eyebrow={COPY.rules.eyebrow} title={COPY.rules.title} intro={COPY.rules.intro} />
       <div className={cx(CARD, 'p-4 sm:p-5')}>
-        <div className="mb-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-[auto_auto_minmax(0,1fr)] lg:items-end">
+        <div className={cx('mb-4 grid gap-3 md:grid-cols-2', sel.variantes.length > 1 && 'lg:grid-cols-3')}>
           <Onglets
             label={COPY.rules.programme}
             options={sel.programmesVisibles.map((p) => ({ cle: p.slug, libelle: p.nom }))}
@@ -79,7 +89,11 @@ export function RulesByPhase({ sheet }: { sheet: FirmSheet }) {
           />
           <Onglets
             label={COPY.rules.size}
-            options={sel.plansDeVariante.map((pl) => ({ cle: pl.taille, libelle: sizeLabel(pl.taille, pl.devise) }))}
+            options={sel.plansDeVariante.map((pl) => ({
+              cle: pl.taille,
+              libelle: sizeLabel(pl.taille, pl.devise),
+              detail: pl.prix != null ? prixPlan(pl.prix, pl) : undefined,
+            }))}
             actif={plan.taille}
             choisir={(taille) => sel.setTaille(String(taille))}
           />

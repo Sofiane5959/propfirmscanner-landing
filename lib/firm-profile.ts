@@ -28,12 +28,24 @@ import {
 
 /** « How do payouts work? », la 4e question du gabarit. */
 const QUESTION_RETRAITS = QUESTIONS_GABARIT[3]
+/** « Does the promotional code apply to every account? », la 5e. */
+const QUESTION_PROMO = QUESTIONS_GABARIT[4]
 
 /** Ce qu'affiche une case : un texte, ou le statut qui explique son absence. */
 export type Cellule = { texte: string; statut?: undefined } | { texte?: undefined; statut: StatutManquant }
 export type StatutManquant = Exclude<Statut, 'confirmed'>
 
+/**
+ * Ce qui n'est pas sur ne s'affiche pas (consigne du 19 septembre 2026) : une
+ * valeur « needs_confirmation » ou « source_conflict » disparait de la page,
+ * comme si elle etait vide. « not_published » et « not_applicable » sont des
+ * faits et restent affiches.
+ */
+const INCERTAINS: ReadonlySet<Statut> = new Set<Statut>(['needs_confirmation', 'source_conflict'])
+export const estIncertain = (statut: Statut | null | undefined) => Boolean(statut && INCERTAINS.has(statut))
+
 export function cellule(valeur: string | null | undefined, statut: Statut | null | undefined): Cellule | null {
+  if (estIncertain(statut)) return null
   if (statut && statut !== 'confirmed') return { statut }
   return valeur == null || valeur === '' ? null : { texte: valeur }
 }
@@ -170,6 +182,7 @@ export function reglesDePhase(phase: SheetPhase, devise: string): LigneRegle[] {
     { cle: 'retraitMinimum', libelle: 'Minimum payout per request', valeur: argent(phase.retraitMinimum), statut: st.retraitMinimum, sens: 'The smallest amount a payout request can be.' },
   ]
   return lignes
+    .filter((l) => !estIncertain(l.statut))
     .filter((l) => l.valeur != null || (l.statut && l.statut !== 'confirmed'))
     .map((l) => ({
       cle: l.cle,
@@ -279,9 +292,17 @@ export function reglesDeCarte(
   plan: SheetPlan
 ): SheetRegle[] {
   const poids = (r: SheetRegle) => (r.bloquante ? 0 : r.statut !== 'confirmed' ? 1 : 2)
+  // Quand le tableur designe des regles essentielles, seules celles-la s'affichent.
+  const tri = sheet.regles.some((r) => r.essentielle)
   return sheet.regles
     .map((r, i) => ({ r, i }))
-    .filter(({ r }) => r.carte === carte && regleApplicable(r, programme, plan))
+    .filter(
+      ({ r }) =>
+        r.carte === carte &&
+        (!tri || r.essentielle) &&
+        !estIncertain(r.statut) &&
+        regleApplicable(r, programme, plan)
+    )
     .sort((a, b) => poids(a.r) - poids(b.r) || a.i - b.i)
     .map(({ r }) => r)
 }
@@ -307,9 +328,20 @@ export function faqProfil(sheet: FirmSheet): { question: string; reponse: string
       ? 'Review times, minimums and eligibility conditions are listed in the Payouts card above.'
       : null,
   ].filter(Boolean)
-  if (morceaux.length === 0) return items
+  // Code promo : sans portee verifiee, on dit ce qu'il donne, sans commenter
+  // l'incertitude (le prix affiche garde son « ≈ »).
+  const o = sheet.offre
+  const reponsePromo =
+    o && o.portee === 'non_confirmee'
+      ? `Code ${o.code} gives ${pct(o.remise)} off. Enter it at checkout; the configurator shows the price with the code applied.`
+      : null
+
   return items.map((q) =>
-    q.question === QUESTION_RETRAITS ? { question: q.question, reponse: morceaux.join(' ') } : q
+    q.question === QUESTION_RETRAITS && morceaux.length > 0
+      ? { question: q.question, reponse: morceaux.join(' ') }
+      : q.question === QUESTION_PROMO && reponsePromo
+        ? { question: q.question, reponse: reponsePromo }
+        : q
   )
 }
 

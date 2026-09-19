@@ -257,7 +257,8 @@ def convertir(chemin):
 
     # --- Regles : cartes Trading et Payouts, filtrees par la selection ------------
     regles = []
-    for carte, regle, texte_r, statut_r, progs_r, tailles_r, phase_r, bloquante, source in lignes(feuille(wb, "Regles"), 9):
+    for (carte, regle, texte_r, statut_r, progs_r, tailles_r, phase_r, bloquante, essentielle,
+         source) in lignes(feuille(wb, "Regles"), 10):
         if txt(carte) not in ("trading", "payouts", "live"):
             avertissements.append(f"Regles : carte « {txt(carte)} » inconnue pour « {txt(regle)} », ligne ignoree.")
             continue
@@ -272,7 +273,7 @@ def convertir(chemin):
             "programmes": liste(progs_r),
             "tailles": [n for n in (nombre(x) for x in liste(tailles_r)) if n is not None],
             "phase": PHASES.get(txt(phase_r)) if txt(phase_r) else None,
-            "bloquante": oui(bloquante), "source": txt(source),
+            "bloquante": oui(bloquante), "essentielle": oui(essentielle), "source": txt(source),
         })
 
     faq = [{"question": txt(q), "reponse": txt(r)}

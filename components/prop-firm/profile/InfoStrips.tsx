@@ -8,7 +8,7 @@
 import { Check } from 'lucide-react'
 
 import type { FirmSheet } from '@/lib/firm-sheet'
-import { type StatutManquant, plateformesAffichees } from '@/lib/firm-profile'
+import { type StatutManquant, estIncertain, plateformesAffichees } from '@/lib/firm-profile'
 import { COPY } from './copy'
 import { CARD, CHIP, Container, LABEL, StatusBadge, cx } from './ui'
 
@@ -59,19 +59,26 @@ interface Groupe {
 }
 
 export function InfoCards({ sheet }: { sheet: FirmSheet }) {
-  const reserve = (s: FirmSheet['levierStatut']): StatutManquant | null => (s && s !== 'confirmed' ? s : null)
+  const reserve = (s: FirmSheet['levierStatut']): StatutManquant | null =>
+    s && s !== 'confirmed' && !estIncertain(s) ? s : null
+  // Rien d'incertain a l'ecran : une liste en attente de confirmation ne s'affiche pas.
+  const categories = estIncertain(sheet.categoriesActifsStatut) ? [] : sheet.categoriesActifs
+  const levierSur = !estIncertain(sheet.levierStatut)
   const dataFeeds = Array.from(new Set(sheet.optionsAchat.filter((o) => o.type === 'data_feed').map((o) => o.nom)))
   const levierReserve = reserve(sheet.levierStatut)
 
   const groupes: Groupe[] = [
     { label: COPY.info.platforms, valeurs: plateformesAffichees(sheet), statut: null },
-    { label: COPY.info.markets, valeurs: sheet.categoriesActifs, statut: reserve(sheet.categoriesActifsStatut) },
+    { label: COPY.info.markets, valeurs: categories, statut: reserve(sheet.categoriesActifsStatut) },
     dataFeeds.length > 0
       ? { label: COPY.info.dataFeeds, valeurs: dataFeeds, statut: null }
       : { label: COPY.info.purchase, valeurs: sheet.moyensPaiement, statut: null },
     {
       label: COPY.info.profile,
-      valeurs: [...(!levierReserve && sheet.levier ? [`${COPY.info.leverage} ${sheet.levier}`] : []), ...sheet.stylesTrading],
+      valeurs: [
+        ...(levierSur && !levierReserve && sheet.levier ? [`${COPY.info.leverage} ${sheet.levier}`] : []),
+        ...sheet.stylesTrading,
+      ],
       statut: null,
     },
   ]

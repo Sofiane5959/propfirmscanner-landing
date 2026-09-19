@@ -756,6 +756,7 @@
       "tailles": [],
       "phase": null,
       "bloquante": false,
+      "essentielle": true,
       "source": "https://faq.futureselite.com/en/articles/11949421-futures-trading-hours-and-guidelines"
     },
     {
@@ -767,6 +768,7 @@
       "tailles": [],
       "phase": null,
       "bloquante": true,
+      "essentielle": true,
       "source": "https://faq.futureselite.com/en/articles/11949421-futures-trading-hours-and-guidelines"
     },
     {
@@ -778,6 +780,7 @@
       "tailles": [],
       "phase": null,
       "bloquante": false,
+      "essentielle": false,
       "source": "https://faq.futureselite.com/en/articles/11949421-futures-trading-hours-and-guidelines"
     },
     {
@@ -789,6 +792,7 @@
       "tailles": [],
       "phase": null,
       "bloquante": true,
+      "essentielle": true,
       "source": "https://faq.futureselite.com/en/articles/11949446-what-is-allowed-and-not-allowed-with-us-fair-play-and-prohibited-trading-practices"
     },
     {
@@ -800,6 +804,7 @@
       "tailles": [],
       "phase": null,
       "bloquante": true,
+      "essentielle": false,
       "source": "https://faq.futureselite.com/en/articles/11949446-what-is-allowed-and-not-allowed-with-us-fair-play-and-prohibited-trading-practices"
     },
     {
@@ -811,6 +816,7 @@
       "tailles": [],
       "phase": null,
       "bloquante": true,
+      "essentielle": false,
       "source": "https://faq.futureselite.com/en/articles/11949446-what-is-allowed-and-not-allowed-with-us-fair-play-and-prohibited-trading-practices"
     },
     {
@@ -822,6 +828,7 @@
       "tailles": [],
       "phase": null,
       "bloquante": true,
+      "essentielle": false,
       "source": "https://faq.futureselite.com/en/articles/11949446-what-is-allowed-and-not-allowed-with-us-fair-play-and-prohibited-trading-practices"
     },
     {
@@ -833,6 +840,7 @@
       "tailles": [],
       "phase": null,
       "bloquante": false,
+      "essentielle": false,
       "source": "https://futureselite.com/#pricing"
     },
     {
@@ -848,6 +856,7 @@
       "tailles": [],
       "phase": "evaluation",
       "bloquante": false,
+      "essentielle": true,
       "source": "https://futureselite.com/#pricing"
     },
     {
@@ -859,6 +868,7 @@
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
+      "essentielle": false,
       "source": "https://futureselite.com/#pricing"
     },
     {
@@ -870,6 +880,7 @@
       "tailles": [],
       "phase": null,
       "bloquante": false,
+      "essentielle": true,
       "source": "https://faq.futureselite.com/en/articles/11948842-know-your-customer-kyc-policy"
     },
     {
@@ -881,6 +892,7 @@
       "tailles": [],
       "phase": null,
       "bloquante": true,
+      "essentielle": false,
       "source": "https://faq.futureselite.com/en/articles/12291084-trader-rules-responsibilities"
     },
     {
@@ -892,6 +904,7 @@
       "tailles": [],
       "phase": null,
       "bloquante": false,
+      "essentielle": false,
       "source": "https://faq.futureselite.com/en/articles/12291084-trader-rules-responsibilities"
     },
     {
@@ -907,17 +920,19 @@
       "tailles": [],
       "phase": "evaluation",
       "bloquante": false,
+      "essentielle": false,
       "source": "https://faq.futureselite.com/en/articles/16778908-is-the-challenge-fee-is-one-time"
     },
     {
       "carte": "trading",
       "regle": "Active funded accounts",
-      "texte": "Maximum 10 funded accounts overall; maximum 10 Prime; maximum 5 combined across Elite, Custom, Instant and Nitro. Nitro funded-account limit: not confirmed.",
+      "texte": "Maximum 10 funded accounts overall; maximum 10 Prime; maximum 5 combined across Elite, Custom, Instant and Nitro.",
       "statut": "confirmed",
       "programmes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
+      "essentielle": false,
       "source": "https://faq.futureselite.com/en/articles/11949051-how-many-accounts-can-i-have-with-futureselite"
     },
     {
@@ -929,6 +944,7 @@
       "tailles": [],
       "phase": null,
       "bloquante": false,
+      "essentielle": true,
       "source": "https://faq.futureselite.com/en/articles/11949982-what-is-the-payout-process-like-on-futures-elite"
     },
     {
@@ -940,6 +956,7 @@
       "tailles": [],
       "phase": null,
       "bloquante": false,
+      "essentielle": true,
       "source": "https://faq.futureselite.com/en/articles/11949985-how-are-payouts-processed"
     },
     {
@@ -951,6 +968,7 @@
       "tailles": [],
       "phase": null,
       "bloquante": false,
+      "essentielle": false,
       "source": "https://faq.futureselite.com/en/articles/11949985-how-are-payouts-processed"
     },
     {
@@ -964,6 +982,7 @@
       "tailles": [],
       "phase": null,
       "bloquante": false,
+      "essentielle": false,
       "source": "https://faq.futureselite.com/en/articles/16387630-how-much-can-i-request"
     },
     {
@@ -977,6 +996,7 @@
       "tailles": [],
       "phase": null,
       "bloquante": false,
+      "essentielle": true,
       "source": "https://futureselite.com/#pricing"
     },
     {
@@ -992,6 +1012,7 @@
       ],
       "phase": null,
       "bloquante": true,
+      "essentielle": false,
       "source": "https://futureselite.com/#pricing"
     },
     {
@@ -1005,6 +1026,7 @@
       "tailles": [],
       "phase": null,
       "bloquante": false,
+      "essentielle": false,
       "source": "https://faq.futureselite.com/en/articles/12901358-how-do-payout-works-on-the-new-instant-challenges"
     },
     {
@@ -1018,6 +1040,7 @@
       "tailles": [],
       "phase": "evaluation",
       "bloquante": false,
+      "essentielle": false,
       "source": "https://futureselite.com/#pricing"
     },
     {
@@ -1029,6 +1052,7 @@
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
+      "essentielle": true,
       "source": "https://faq.futureselite.com/en/articles/15899069-live-trading-program"
     },
     {
@@ -1040,6 +1064,7 @@
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
+      "essentielle": false,
       "source": "https://faq.futureselite.com/en/articles/15899069-live-trading-program"
     },
     {
@@ -1051,6 +1076,7 @@
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
+      "essentielle": false,
       "source": "https://faq.futureselite.com/en/articles/15899069-live-trading-program"
     },
     {
@@ -1062,6 +1088,7 @@
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
+      "essentielle": false,
       "source": "https://faq.futureselite.com/en/articles/15899069-live-trading-program"
     },
     {
@@ -1073,6 +1100,7 @@
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
+      "essentielle": false,
       "source": "https://faq.futureselite.com/en/articles/12291073-market-data-costs"
     },
     {
@@ -1084,6 +1112,7 @@
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
+      "essentielle": false,
       "source": "https://faq.futureselite.com/en/articles/12291021-what-are-the-costs-fees"
     },
     {
@@ -1095,6 +1124,7 @@
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
+      "essentielle": false,
       "source": "https://faq.futureselite.com/en/articles/12291021-what-are-the-costs-fees"
     },
     {
@@ -1106,6 +1136,7 @@
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
+      "essentielle": false,
       "source": "https://faq.futureselite.com/en/articles/12291021-what-are-the-costs-fees"
     }
   ],
