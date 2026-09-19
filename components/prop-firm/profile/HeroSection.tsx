@@ -1,10 +1,11 @@
 'use client'
 
-// 1. Hero : a gauche l'identite et la proposition de valeur, a droite la carte
-//    commerciale. Les deux cartes s'etirent a la meme hauteur.
+// 1. Hero — contrat visuel du 19 septembre 2026. Deux cartes de meme hauteur :
+//    a gauche l'identite (Trustpilot dans l'angle), le titre, le resume et les
+//    reperes Founded / Country / CEO ; a droite « Most popular plan ».
+//    Le logo n'est pas un lien : les sorties passent par Claim deal et Continue to.
 
-import type { ReactNode } from 'react'
-import { ExternalLink, Star } from 'lucide-react'
+import { Star } from 'lucide-react'
 
 import {
   type FirmSheet,
@@ -17,76 +18,94 @@ import {
   sizeLabel,
 } from '@/lib/firm-sheet'
 import { planLeMoinsCher } from '@/lib/firm-profile'
-import { AFFILIATE_LINK_PROPS } from '@/lib/affiliate'
 import { COPY } from './copy'
 import { prixPlan, prixRemise } from './format'
-import { BTN_PRIMARY, BTN_SECONDARY, CARD, Container, EYEBROW, LABEL, PromoCode, cx } from './ui'
+import { BTN_PRIMARY, BTN_SECONDARY, CARD, CARD_ACCENT, Container, EYEBROW, LABEL, PromoGroup, cx } from './ui'
 
 export function HeroSection({
   sheet,
-  rating,
-  logoHref,
-  carte,
+  promo,
+  claimHref,
+  continueHref,
 }: {
   sheet: FirmSheet
-  rating: number | null
-  logoHref: string
-  carte: ReactNode
+  promo: { programme: SheetProgramme; plan: SheetPlan } | null
+  claimHref: string
+  continueHref: string
 }) {
   // Le nom n'est repete en titre que si la fiche n'a pas de proposition de valeur.
   const titre = sheet.titre ?? sheet.nom
+  const reperes = (
+    [
+      [COPY.hero.founded, sheet.anneeCreation != null ? String(sheet.anneeCreation) : null],
+      [COPY.hero.country, sheet.pays],
+      [COPY.hero.founder, sheet.ceoFondateur],
+    ] as [string, string | null][]
+  ).filter((r): r is [string, string] => Boolean(r[1]))
+  const trustpilot = sheet.trustpilotScore != null && sheet.trustpilotScore > 0
 
   return (
     <section className="pb-5 pt-6 sm:pt-8">
       <Container>
-        <div className="grid items-stretch gap-4 lg:grid-cols-[minmax(0,1.65fr)_minmax(0,1fr)]">
-          <div data-check="hero-left" className={cx(CARD, 'flex h-full flex-col gap-5 p-5 sm:p-6')}>
-            <div className="flex items-center gap-3">
-              <a
-                href={logoHref}
-                {...AFFILIATE_LINK_PROPS}
-                aria-label={COPY.hero.logoLabel(sheet.nom, sheet.offre?.code ?? null)}
-                className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-lg bg-white p-1 font-display text-xl font-bold text-bg-base transition-shadow hover:ring-2 hover:ring-accent"
-              >
+        <div className="grid items-stretch gap-4 lg:grid-cols-[minmax(0,1.55fr)_minmax(330px,0.9fr)]">
+          <article data-check="hero-left" className={cx(CARD, 'relative flex h-full flex-col p-5 sm:p-6')}>
+            <div className={cx('flex items-center gap-3', trustpilot && 'sm:pr-48')}>
+              <div className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-xl bg-white p-1 font-display text-xl font-bold text-bg-base">
                 {sheet.logoUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={sheet.logoUrl} alt="" className="h-full w-full object-contain" />
                 ) : (
                   sheet.nom.charAt(0)
                 )}
-              </a>
+              </div>
               <div className="min-w-0">
-                {sheet.titre && <p className="font-display text-lg font-bold leading-tight">{sheet.nom}</p>}
-                <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
-                  {sheet.marches.length > 0 && (
-                    <span className="font-medium text-accent">{COPY.hero.badge(firmType(sheet.marches))}</span>
-                  )}
-                  {/* La note vient de Trustpilot, pas de nous : la mention le dit. */}
-                  {rating != null && rating > 0 && (
-                    <span className="inline-flex items-center gap-1 text-text-secondary">
-                      <Star className="h-3.5 w-3.5 fill-warning text-warning" aria-hidden="true" />
-                      <span className="font-semibold text-text-primary">{rating.toFixed(1)}</span>
-                      {COPY.hero.trustpilot}
-                      <span className="rounded border border-border px-1 text-[10px] uppercase tracking-wide">
-                        {COPY.hero.external}
-                      </span>
-                    </span>
-                  )}
-                </div>
+                <p className="font-display text-lg font-bold leading-tight">{sheet.nom}</p>
+                {sheet.marches.length > 0 && (
+                  <p className="text-sm text-accent">{COPY.hero.badge(firmType(sheet.marches))}</p>
+                )}
               </div>
             </div>
 
-            <div>
-              <h1 className="text-balance font-display text-3xl font-bold leading-tight tracking-tight text-text-primary sm:text-4xl">
-                {titre}
-              </h1>
-              {sheet.description && (
-                <p className="mt-3 max-w-2xl text-base leading-relaxed text-text-secondary">{sheet.description}</p>
-              )}
-            </div>
+            {trustpilot && (
+              <div
+                data-check="trustpilot"
+                className="mt-4 rounded-lg border border-accent-border bg-accent/10 px-3 py-2.5 sm:absolute sm:right-5 sm:top-5 sm:mt-0 sm:min-w-[158px] sm:text-right"
+              >
+                <p className={LABEL}>{COPY.hero.trustpilot}</p>
+                <p className="text-lg font-bold tabular-nums">
+                  {sheet.trustpilotScore!.toFixed(1)} <span className="text-sm font-medium text-text-muted">{COPY.hero.outOf}</span>
+                </p>
+                <p className="inline-flex items-center gap-1 text-xs text-warning">
+                  {[0, 1, 2, 3, 4].map((i) => (
+                    <Star
+                      key={i}
+                      aria-hidden="true"
+                      className={cx('h-3 w-3', i < Math.round(sheet.trustpilotScore!) ? 'fill-warning' : 'opacity-40')}
+                    />
+                  ))}
+                  {sheet.trustpilotAvis != null && (
+                    <span className="ml-1 text-text-muted">
+                      {COPY.hero.reviews(new Intl.NumberFormat('en-US').format(sheet.trustpilotAvis))}
+                    </span>
+                  )}
+                </p>
+              </div>
+            )}
 
-            {sheet.preuves.length > 0 && (
-              <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-text-secondary">
+            <h1 className="mt-5 max-w-3xl text-balance font-display text-[32px] font-bold leading-[1.08] tracking-tight text-text-primary sm:text-[42px]">
+              {titre}
+            </h1>
+            {sheet.description && (
+              <p className="mt-3 max-w-3xl text-base leading-relaxed text-text-secondary sm:text-[17px]">{sheet.description}</p>
+            )}
+
+            {(reperes.length > 0 || sheet.preuves.length > 0) && (
+              <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm text-text-secondary">
+                {reperes.map(([label, valeur]) => (
+                  <li key={label}>
+                    {label} <span className="font-semibold text-text-primary">{valeur}</span>
+                  </li>
+                ))}
                 {sheet.preuves.map((p) => (
                   <li key={p.libelle}>
                     <span className="font-semibold text-text-primary">{p.valeur}</span> {p.libelle}
@@ -95,7 +114,7 @@ export function HeroSection({
               </ul>
             )}
 
-            <div className="mt-auto flex flex-wrap gap-3">
+            <div className="mt-auto flex flex-col gap-2.5 pt-5 sm:flex-row">
               <a href="#accounts" className={BTN_PRIMARY}>
                 {COPY.hero.choose}
               </a>
@@ -103,9 +122,9 @@ export function HeroSection({
                 {COPY.hero.rules}
               </a>
             </div>
-          </div>
+          </article>
 
-          {carte}
+          <CommercialCard sheet={sheet} promo={promo} claimHref={claimHref} continueHref={continueHref} />
         </div>
       </Container>
     </section>
@@ -113,84 +132,63 @@ export function HeroSection({
 }
 
 /**
- * La carte commerciale, unique : avec une offre, la remise, le code et
- * « Claim deal » ; sans offre, la note, le prix de depart et « Configure my
- * account ».
+ * « Most popular plan » : le plan designe dans le tableur, son prix, la remise,
+ * le code et les deux sorties. Sans offre : le prix de depart et Continue to.
  */
-export function CommercialCard({
+function CommercialCard({
   sheet,
   promo,
-  rating,
-  ctaHref,
+  claimHref,
+  continueHref,
 }: {
   sheet: FirmSheet
   promo: { programme: SheetProgramme; plan: SheetPlan } | null
-  rating: number | null
-  ctaHref: string
+  claimHref: string
+  continueHref: string
 }) {
   const offre = sheet.offre
-  const base = cx(CARD, 'flex h-full flex-col gap-4 p-5 sm:p-6')
-
-  if (!offre) {
-    const moinsCher = planLeMoinsCher(sheet.programmes)
-    return (
-      <aside data-check="hero-right" className={base}>
-        {rating != null && rating > 0 && (
-          <p className="inline-flex items-center gap-1.5 text-sm text-text-secondary">
-            <Star className="h-4 w-4 fill-warning text-warning" aria-hidden="true" />
-            <span className="font-semibold text-text-primary">{rating.toFixed(1)}</span> {COPY.hero.trustpilot}
-          </p>
-        )}
-        {moinsCher?.prix != null && (
-          <div>
-            <p className={LABEL}>{COPY.commercial.from}</p>
-            <p className="mt-1 font-display text-4xl font-bold tabular-nums">{prixPlan(moinsCher.prix, moinsCher)}</p>
-          </div>
-        )}
-        <a href="#accounts" className={cx(BTN_PRIMARY, 'mt-auto w-full')}>
-          {COPY.commercial.configure}
-        </a>
-      </aside>
-    )
-  }
-
-  // Meme calcul que le configurateur : les deux prix affiches ne peuvent pas diverger.
-  const remise =
-    promo && promo.plan.prix != null && offerApplies(offre, promo.programme.slug, promo.plan.taille)
-      ? discounted(promo.plan.prix, offre.remise)
-      : null
+  const plan = promo?.plan ?? planLeMoinsCher(sheet.programmes)
+  const applique = Boolean(offre && promo && offerApplies(offre, promo.programme.slug, promo.plan.taille))
+  const remise = offre && applique && plan?.prix != null ? discounted(plan.prix, offre.remise) : null
 
   return (
-    <aside data-check="hero-right" className={cx(base, 'border-accent-border')}>
-      {promo && (
-        <div>
-          <p className={EYEBROW}>{COPY.commercial.popular}</p>
-          <p className="mt-1 font-display text-lg font-bold">
+    <aside data-check="hero-right" className={cx(CARD_ACCENT, 'flex h-full flex-col justify-center gap-3 p-5 text-center sm:p-6')}>
+      <div>
+        <p className={EYEBROW}>{promo ? COPY.commercial.popular : COPY.commercial.from}</p>
+        {promo && (
+          <h2 className="mt-1.5 font-display text-xl font-bold">
             {promo.programme.nom} · {sizeLabel(promo.plan.taille, promo.plan.devise)}
-          </p>
-        </div>
-      )}
-      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-        <p className="font-display text-4xl font-bold uppercase leading-none text-accent">
-          {pct(offre.remise)} {COPY.commercial.off}
-        </p>
-        {promo && remise != null && promo.plan.prix != null && (
-          <p className="text-sm text-text-secondary tabular-nums">
-            <span className="text-lg font-bold text-text-primary">
-              {prixRemise(remise, promo.plan, offre)}
-            </span>{' '}
-            <span className="line-through">{prixPlan(promo.plan.prix, promo.plan)}</span>
-          </p>
+          </h2>
         )}
       </div>
-      <div>
-        <p className={cx(LABEL, 'mb-1.5')}>{COPY.commercial.code}</p>
-        <PromoCode code={offre.code} label={COPY.copy.idle} />
+
+      {offre && applique && (
+        <p className="font-display text-[40px] font-bold uppercase leading-none text-accent">
+          {pct(offre.remise)} {COPY.commercial.off}
+        </p>
+      )}
+
+      {plan?.prix != null && (
+        <p className="tabular-nums text-text-muted">
+          {offre && remise != null ? (
+            <>
+              <span className="text-2xl font-bold text-text-primary">{prixRemise(remise, plan, offre)}</span>{' '}
+              <span className="line-through">{prixPlan(plan.prix, plan)}</span>
+            </>
+          ) : (
+            <span className="text-2xl font-bold text-text-primary">{prixPlan(plan.prix, plan)}</span>
+          )}
+        </p>
+      )}
+
+      <div className="text-left">
+        <PromoGroup
+          code={offre ? offre.code : null}
+          claimHref={offre ? claimHref : null}
+          continueHref={continueHref}
+          continueLabel={COPY.commercial.continueTo(sheet.nom)}
+        />
       </div>
-      <a data-check="claim-deal" href={ctaHref} {...AFFILIATE_LINK_PROPS} className={cx(BTN_PRIMARY, 'mt-auto w-full')}>
-        {COPY.commercial.claim}
-        <ExternalLink className="h-4 w-4" aria-hidden="true" />
-      </a>
     </aside>
   )
 }

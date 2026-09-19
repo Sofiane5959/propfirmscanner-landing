@@ -57,6 +57,8 @@
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
+          "fraisReset": 79,
+          "fraisActivation": 0,
           "phases": [
             {
               "phase": "evaluation",
@@ -96,6 +98,8 @@
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
+          "fraisReset": 89,
+          "fraisActivation": 0,
           "phases": [
             {
               "phase": "evaluation",
@@ -135,6 +139,8 @@
           "cartePromo": true,
           "facturation": "one_time",
           "intervalle": null,
+          "fraisReset": 159,
+          "fraisActivation": 0,
           "phases": [
             {
               "phase": "evaluation",
@@ -174,6 +180,8 @@
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
+          "fraisReset": 229,
+          "fraisActivation": 0,
           "phases": [
             {
               "phase": "evaluation",
@@ -226,6 +234,8 @@
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
+          "fraisReset": 89,
+          "fraisActivation": 0,
           "phases": [
             {
               "phase": "evaluation",
@@ -267,6 +277,8 @@
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
+          "fraisReset": 99,
+          "fraisActivation": 0,
           "phases": [
             {
               "phase": "evaluation",
@@ -308,6 +320,8 @@
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
+          "fraisReset": 149,
+          "fraisActivation": 0,
           "phases": [
             {
               "phase": "evaluation",
@@ -349,6 +363,8 @@
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
+          "fraisReset": 219,
+          "fraisActivation": 0,
           "phases": [
             {
               "phase": "evaluation",
@@ -403,6 +419,8 @@
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
+          "fraisReset": 89,
+          "fraisActivation": 0,
           "phases": [
             {
               "phase": "evaluation",
@@ -444,6 +462,8 @@
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
+          "fraisReset": 109,
+          "fraisActivation": 0,
           "phases": [
             {
               "phase": "evaluation",
@@ -485,6 +505,8 @@
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
+          "fraisReset": 159,
+          "fraisActivation": 0,
           "phases": [
             {
               "phase": "evaluation",
@@ -526,6 +548,8 @@
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
+          "fraisReset": 209,
+          "fraisActivation": 0,
           "phases": [
             {
               "phase": "evaluation",
@@ -580,6 +604,8 @@
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
           "phases": [
             {
               "phase": "funded",
@@ -607,6 +633,8 @@
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
           "phases": [
             {
               "phase": "funded",
@@ -634,6 +662,8 @@
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
           "phases": [
             {
               "phase": "funded",
@@ -689,29 +719,10 @@
   ],
   "couts": [
     {
-      "libelle": "Account purchase",
-      "montant": "$95 – $569",
-      "note": "One-time fee per account, no monthly subscription. The price depends on the programme and the account size."
-    },
-    {
-      "libelle": "Reset after a breach",
-      "montant": "$79 – $229",
-      "note": "Optional, on the evaluation programmes only. Buying a new account instead is always possible."
-    },
-    {
-      "libelle": "Funded account activation",
-      "montant": "None",
-      "note": "No activation fee once the evaluation is passed."
-    },
-    {
       "libelle": "Trading costs",
       "montant": "Per contract",
-      "note": "Commissions and exchange fees are charged per instrument on each executed trade."
-    },
-    {
-      "libelle": "First payout",
-      "montant": "$500 minimum on Elite",
-      "note": "Requests are capped from $1,000 to $3,500 by account size. Elite asks for 6 trading days first."
+      "note": "Commissions and exchange fees are charged per instrument on each executed trade.",
+      "programmes": []
     }
   ],
   "verdict": {
@@ -722,22 +733,8 @@
       "A funded account that opens with no activation fee",
       "The option to stack up to ten accounts in parallel"
     ],
-    "pasPour": [
-      "You want a regulated broker: Quantum SRL holds no financial regulator licence.",
-      "You want real capital: every account is simulated, and performance stays hypothetical.",
-      "You run fully automated systems: AI and bots are prohibited.",
-      "You want to withdraw a whole balance at once: each request is capped by account size.",
-      "You need a guaranteed route to live trading: it is a risk-team decision, not an entitlement."
-    ],
-    "pointsForts": [
-      "90% profit split on Elite, Nitro and Prime; 80% on Instant",
-      "Drawdown type differs by program and phase — see the rules table",
-      "No daily loss limit on Elite, Nitro and Instant — Prime has one in both phases",
-      "No funded consistency rule on Elite and Nitro",
-      "No activation fee to unlock the funded account",
-      "Payouts available every day once funded",
-      "Bundle discounts: the fifth account is free"
-    ],
+    "pasPour": [],
+    "pointsForts": [],
     "limites": [
       "No financial regulator licence",
       "Demo accounts, hypothetical performance",
@@ -746,6 +743,382 @@
     ]
   },
   "faq": [],
+  "trustpilotScore": null,
+  "trustpilotAvis": null,
+  "regles": [
+    {
+      "carte": "trading",
+      "regle": "Trading hours",
+      "texte": "18:00 EST to 16:55 EST the following day. All positions must close before 16:55 EST.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "source": "https://faq.futureselite.com/en/articles/11949421-futures-trading-hours-and-guidelines"
+    },
+    {
+      "carte": "trading",
+      "regle": "Overnight holding",
+      "texte": "Not allowed. Automatic liquidation may occur.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": true,
+      "source": "https://faq.futureselite.com/en/articles/11949421-futures-trading-hours-and-guidelines"
+    },
+    {
+      "carte": "trading",
+      "regle": "Weekend",
+      "texte": "Market closed Friday 16:55 EST to Sunday 18:00 EST. Holiday closures may differ.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "source": "https://faq.futureselite.com/en/articles/11949421-futures-trading-hours-and-guidelines"
+    },
+    {
+      "carte": "trading",
+      "regle": "Automated trading",
+      "texte": "Fully automated AI or bots are not permitted.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": true,
+      "source": "https://faq.futureselite.com/en/articles/11949446-what-is-allowed-and-not-allowed-with-us-fair-play-and-prohibited-trading-practices"
+    },
+    {
+      "carte": "trading",
+      "regle": "Order fills",
+      "texte": "Multiple limit orders at the same price to manipulate fills are prohibited.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": true,
+      "source": "https://faq.futureselite.com/en/articles/11949446-what-is-allowed-and-not-allowed-with-us-fair-play-and-prohibited-trading-practices"
+    },
+    {
+      "carte": "trading",
+      "regle": "Market gaps",
+      "texte": "Exploiting isolated fills in gapped or illiquid markets is prohibited.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": true,
+      "source": "https://faq.futureselite.com/en/articles/11949446-what-is-allowed-and-not-allowed-with-us-fair-play-and-prohibited-trading-practices"
+    },
+    {
+      "carte": "trading",
+      "regle": "Account flipping",
+      "texte": "Payout, breach and repeat patterns are prohibited.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": true,
+      "source": "https://faq.futureselite.com/en/articles/11949446-what-is-allowed-and-not-allowed-with-us-fair-play-and-prohibited-trading-practices"
+    },
+    {
+      "carte": "trading",
+      "regle": "Scalping",
+      "texte": "The configurator displays \"No\" on every current plan, with no definition or duration threshold.",
+      "statut": "needs_confirmation",
+      "programmes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "source": "https://futureselite.com/#pricing"
+    },
+    {
+      "carte": "trading",
+      "regle": "News trading",
+      "texte": "The configurator displays \"Yes\".",
+      "statut": "confirmed",
+      "programmes": [
+        "elite",
+        "nitro",
+        "prime"
+      ],
+      "tailles": [],
+      "phase": "evaluation",
+      "bloquante": false,
+      "source": "https://futureselite.com/#pricing"
+    },
+    {
+      "carte": "trading",
+      "regle": "News trading",
+      "texte": "The configurator displays \"With restrictions\" without stating the event window.",
+      "statut": "needs_confirmation",
+      "programmes": [],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "source": "https://futureselite.com/#pricing"
+    },
+    {
+      "carte": "payouts",
+      "regle": "KYC",
+      "texte": "Veriff. Buyer, KYC holder and account operator must be the same person. Reviewed at upgrades.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "source": "https://faq.futureselite.com/en/articles/11948842-know-your-customer-kyc-policy"
+    },
+    {
+      "carte": "trading",
+      "regle": "Inactivity",
+      "texte": "30 consecutive days without trades may permanently close a live account.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": true,
+      "source": "https://faq.futureselite.com/en/articles/12291084-trader-rules-responsibilities"
+    },
+    {
+      "carte": "trading",
+      "regle": "Protective stops",
+      "texte": "A stop order is required on every open position on a live account.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "source": "https://faq.futureselite.com/en/articles/12291084-trader-rules-responsibilities"
+    },
+    {
+      "carte": "trading",
+      "regle": "Evaluation duration",
+      "texte": "No deadline to pass. One-time fee, no recurring monthly fee.",
+      "statut": "confirmed",
+      "programmes": [
+        "elite",
+        "nitro",
+        "prime"
+      ],
+      "tailles": [],
+      "phase": "evaluation",
+      "bloquante": false,
+      "source": "https://faq.futureselite.com/en/articles/16778908-is-the-challenge-fee-is-one-time"
+    },
+    {
+      "carte": "trading",
+      "regle": "Active funded accounts",
+      "texte": "Maximum 10 funded accounts overall; maximum 10 Prime; maximum 5 combined across Elite, Custom, Instant and Nitro. Nitro funded-account limit: not confirmed.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "source": "https://faq.futureselite.com/en/articles/11949051-how-many-accounts-can-i-have-with-futureselite"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Payout review",
+      "texte": "Average under 24 hours. Manual review may take longer.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "source": "https://faq.futureselite.com/en/articles/11949982-what-is-the-payout-process-like-on-futures-elite"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Payment provider",
+      "texte": "Rise. The first payout requires a Rise account and KYC.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "source": "https://faq.futureselite.com/en/articles/11949985-how-are-payouts-processed"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Bank transfer",
+      "texte": "1 to 3 days after approval.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "source": "https://faq.futureselite.com/en/articles/11949985-how-are-payouts-processed"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Direct crypto",
+      "texte": "Maximum $500 per request. Above that, standard Rise methods apply.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "source": "https://faq.futureselite.com/en/articles/11949985-how-are-payouts-processed"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Elite maximum request",
+      "texte": "Elite accounts bought from 2026-06-25 15:00 CET: 50% of total profit remaining, capped by account size. Older Elite accounts use 50% of current-cycle profit. Documented for Elite only.",
+      "statut": "confirmed",
+      "programmes": [
+        "elite"
+      ],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "source": "https://faq.futureselite.com/en/articles/16387630-how-much-can-i-request"
+    },
+    {
+      "carte": "payouts",
+      "regle": "What counts as a profitable day",
+      "texte": "Elite requires 6 profitable days per payout, and a day only qualifies above a size-specific minimum: $100 on a 25K, $150 on a 50K, $250 on a 100K, $350 on a 150K.",
+      "statut": "confirmed",
+      "programmes": [
+        "elite"
+      ],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "source": "https://futureselite.com/#pricing"
+    },
+    {
+      "carte": "trading",
+      "regle": "Prime 150K maximum loss",
+      "texte": "Unresolved: the Prime overview and the live configurator show $4,500, while a detailed official MLL article has shown $4,000. The configurator value is used here.",
+      "statut": "source_conflict",
+      "programmes": [
+        "prime"
+      ],
+      "tailles": [
+        150000
+      ],
+      "phase": null,
+      "bloquante": true,
+      "source": "https://futureselite.com/#pricing"
+    },
+    {
+      "carte": "trading",
+      "regle": "Instant 25K availability",
+      "texte": "Documented in the official Instant FAQ but not currently purchasable: the live configurator exposes only 50K, 100K and 150K.",
+      "statut": "needs_confirmation",
+      "programmes": [
+        "instant"
+      ],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "source": "https://faq.futureselite.com/en/articles/12901358-how-do-payout-works-on-the-new-instant-challenges"
+    },
+    {
+      "carte": "trading",
+      "regle": "Prime evaluation length",
+      "texte": "Can be passed in one trading day. A separate FAQ article describes no minimum; the configurator states one day.",
+      "statut": "needs_confirmation",
+      "programmes": [
+        "prime"
+      ],
+      "tailles": [],
+      "phase": "evaluation",
+      "bloquante": false,
+      "source": "https://futureselite.com/#pricing"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Transition to live",
+      "texte": "A risk-team decision. The fifth payout is a ceiling, not an automatic entitlement.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "source": "https://faq.futureselite.com/en/articles/15899069-live-trading-program"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Live starting balance",
+      "texte": "Starts at $0 with a loss floor based on account size. 50K example: $2,000 loss floor and $1,000 cushion.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "source": "https://faq.futureselite.com/en/articles/15899069-live-trading-program"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Live cushion unlock",
+      "texte": "15 profitable days meeting the size-specific daily minimum. Days need not be consecutive.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "source": "https://faq.futureselite.com/en/articles/15899069-live-trading-program"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Live payout",
+      "texte": "Daily, $200 minimum, on profits above the cushion or unlocked reserve.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "source": "https://faq.futureselite.com/en/articles/15899069-live-trading-program"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Market data",
+      "texte": "Exchange market data is the trader’s responsibility on a live account. Amount not specified.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "source": "https://faq.futureselite.com/en/articles/12291073-market-data-costs"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Commissions",
+      "texte": "Commissions and exchange fees are charged per instrument on each executed trade. The official FAQ still labels some exchange fees as 2024 rates.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "source": "https://faq.futureselite.com/en/articles/12291021-what-are-the-costs-fees"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Platform licence",
+      "texte": "A paid platform licence may apply depending on the selected platform.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "source": "https://faq.futureselite.com/en/articles/12291021-what-are-the-costs-fees"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Maintenance fee",
+      "texte": "No hidden administrative maintenance fee is stated: $0.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "source": "https://faq.futureselite.com/en/articles/12291021-what-are-the-costs-fees"
+    }
+  ],
   "titre": "Four routes to a funded futures account",
   "description": "Compare Elite, Nitro, Prime and Instant to choose between a traditional evaluation, a faster route or funding from purchase. Each program has its own loss limits, consistency rules and payout conditions.",
   "connuPour": [

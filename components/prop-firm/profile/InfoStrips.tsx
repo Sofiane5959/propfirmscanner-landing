@@ -1,31 +1,48 @@
 'use client'
 
-// 2. What [Firm] is known for — quatre faits au plus, sur une ligne en desktop.
-// 3. Quick information — plateformes, actifs, data feeds ou moyens d'achat,
-//    profil de trading. Toutes les valeurs visibles, jamais de « +N more ».
+// 2. What [Firm] is known for — une carte, quatre faits au plus, separes par
+//    des filets ; le titre n'est lu que par les lecteurs d'ecran (contrat visuel).
+// 3. Informations — plateformes selectionnables, marches, moyens d'achat ou
+//    data feeds, profil de trading. Toutes les valeurs visibles.
 
 import { Check } from 'lucide-react'
 
-import { type FirmSheet, assetsLabel } from '@/lib/firm-sheet'
+import type { FirmSheet } from '@/lib/firm-sheet'
 import { type StatutManquant, plateformesAffichees } from '@/lib/firm-profile'
 import { COPY } from './copy'
-import { CHIP, Container, LABEL, StatusBadge } from './ui'
+import { CARD, CHIP, Container, LABEL, StatusBadge, cx } from './ui'
+
+const COLONNES: Record<number, string> = {
+  1: 'sm:grid-cols-1',
+  2: 'sm:grid-cols-2',
+  3: 'sm:grid-cols-2 lg:grid-cols-3',
+  4: 'sm:grid-cols-2 lg:grid-cols-4',
+}
 
 export function KnownForStrip({ sheet }: { sheet: FirmSheet }) {
-  if (sheet.connuPour.length === 0) return null
+  const faits = sheet.connuPour.slice(0, 4)
+  if (faits.length === 0) return null
   return (
-    <section aria-labelledby="known-for" className="border-y border-border bg-bg-elevated/40">
-      <Container className="py-5">
-        <h2 id="known-for" className={LABEL}>
+    <section aria-labelledby="known-for" className="pb-5">
+      <Container>
+        <h2 id="known-for" className="sr-only">
           {COPY.knownFor(sheet.nom)}
         </h2>
-        <ul className="mt-3 grid gap-x-6 gap-y-3 sm:grid-cols-2 lg:grid-cols-4">
-          {sheet.connuPour.map((fait) => (
-            <li key={fait.titre} className="flex gap-2.5">
+        <ul className={cx(CARD, 'grid overflow-hidden', COLONNES[faits.length])}>
+          {faits.map((fait, i) => (
+            <li
+              key={fait.titre}
+              className={cx(
+                'flex gap-2.5 px-4 py-4',
+                i > 0 && 'border-t border-border sm:border-t-0',
+                i > 0 && 'sm:border-l',
+                i === 2 && faits.length === 4 && 'sm:border-l-0 lg:border-l sm:border-t lg:border-t-0'
+              )}
+            >
               <Check className="mt-0.5 h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
               <div>
                 <p className="text-sm font-semibold text-text-primary">{fait.titre}</p>
-                {fait.detail && <p className="text-xs leading-relaxed text-text-secondary">{fait.detail}</p>}
+                {fait.detail && <p className="mt-0.5 text-xs leading-relaxed text-text-muted">{fait.detail}</p>}
               </div>
             </li>
           ))}
@@ -41,64 +58,51 @@ interface Groupe {
   statut: StatutManquant | null
 }
 
-export function QuickInfoStrip({ sheet }: { sheet: FirmSheet }) {
+export function InfoCards({ sheet }: { sheet: FirmSheet }) {
   const reserve = (s: FirmSheet['levierStatut']): StatutManquant | null => (s && s !== 'confirmed' ? s : null)
   const dataFeeds = Array.from(new Set(sheet.optionsAchat.filter((o) => o.type === 'data_feed').map((o) => o.nom)))
-
-  const levier = reserve(sheet.levierStatut)
-    ? []
-    : sheet.levier
-      ? [`${COPY.quick.leverage} ${sheet.levier}`]
-      : []
+  const levierReserve = reserve(sheet.levierStatut)
 
   const groupes: Groupe[] = [
-    { label: COPY.quick.platforms, valeurs: plateformesAffichees(sheet), statut: null },
-    {
-      label: assetsLabel(sheet.marches),
-      valeurs: sheet.categoriesActifs,
-      statut: reserve(sheet.categoriesActifsStatut),
-    },
+    { label: COPY.info.platforms, valeurs: plateformesAffichees(sheet), statut: null },
+    { label: COPY.info.markets, valeurs: sheet.categoriesActifs, statut: reserve(sheet.categoriesActifsStatut) },
     dataFeeds.length > 0
-      ? { label: COPY.quick.dataFeeds, valeurs: dataFeeds, statut: null }
-      : { label: COPY.quick.purchase, valeurs: sheet.moyensPaiement, statut: null },
+      ? { label: COPY.info.dataFeeds, valeurs: dataFeeds, statut: null }
+      : { label: COPY.info.purchase, valeurs: sheet.moyensPaiement, statut: null },
     {
-      label: COPY.quick.profile,
-      valeurs: [...levier, ...sheet.stylesTrading],
+      label: COPY.info.profile,
+      valeurs: [...(!levierReserve && sheet.levier ? [`${COPY.info.leverage} ${sheet.levier}`] : []), ...sheet.stylesTrading],
       statut: null,
     },
   ]
-  const levierReserve = reserve(sheet.levierStatut)
   const visibles = groupes.filter(
-    (g) => g.valeurs.length > 0 || g.statut || (g.label === COPY.quick.profile && levierReserve)
+    (g) => g.valeurs.length > 0 || g.statut || (g.label === COPY.info.profile && levierReserve)
   )
   if (visibles.length === 0) return null
 
   return (
-    <section aria-labelledby="quick-info" className="py-5">
+    <section aria-label={COPY.info.profile} className="pb-5">
       <Container>
-        <h2 id="quick-info" className="sr-only">
-          {COPY.quick.title}
-        </h2>
-        <dl className="grid gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className={cx('grid gap-3', COLONNES[visibles.length])}>
           {visibles.map((g) => (
-            <div key={g.label}>
-              <dt className={LABEL}>{g.label}</dt>
-              <dd className="mt-2 flex flex-wrap items-center gap-1.5">
+            <article key={g.label} className={cx(CARD, 'p-4')}>
+              <p className={LABEL}>{g.label}</p>
+              <div className="mt-2 flex flex-wrap items-center gap-1.5">
                 {g.valeurs.map((v) => (
                   <span key={v} className={CHIP}>
                     {v}
                   </span>
                 ))}
-                {g.label === COPY.quick.profile && levierReserve && (
-                  <span className={CHIP}>
-                    {COPY.quick.leverage} <StatusBadge statut={levierReserve} />
+                {g.label === COPY.info.profile && levierReserve && (
+                  <span className={cx(CHIP, 'inline-flex items-center gap-1.5')}>
+                    {COPY.info.leverage} <StatusBadge statut={levierReserve} />
                   </span>
                 )}
                 {g.statut && <StatusBadge statut={g.statut} />}
-              </dd>
-            </div>
+              </div>
+            </article>
           ))}
-        </dl>
+        </div>
       </Container>
     </section>
   )

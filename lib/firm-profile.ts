@@ -5,6 +5,10 @@
 // fiche (lib/firm-sheet.ts) ; aucune n'ajoute une information qui n'y est pas.
 // Une valeur absente avec un statut devient une cellule « statut » ; une
 // valeur absente sans statut disparait.
+//
+// Hierarchie des regles (contrat du 19 septembre 2026) :
+//   firme → programme → plan (taille + variante) → phase → regles.
+// Les phases viennent des lignes du plan, jamais d'une liste fixe.
 // =============================================================================
 
 import {
@@ -13,6 +17,7 @@ import {
   type SheetPhase,
   type SheetPlan,
   type SheetProgramme,
+  type SheetRegle,
   type Statut,
   meaningMaxLoss,
   money,
@@ -63,6 +68,31 @@ export function optionsParType(options: SheetOption[], programmeSlug: string): [
 }
 
 // -----------------------------------------------------------------------------
+// PHASES
+// -----------------------------------------------------------------------------
+/**
+ * Le nom d'une phase, deduit des phases que le plan possede reellement :
+ * « Evaluation 1 » seulement s'il existe une « Evaluation 2 », « Instant
+ * funded » pour un programme sans evaluation.
+ */
+export function libellePhase(phase: SheetPhase, plan: SheetPlan, programme: SheetProgramme): string {
+  const deuxEtapes = plan.phases.some((ph) => ph.phase === 'evaluation_2')
+  switch (phase.phase) {
+    case 'evaluation':
+      return deuxEtapes ? 'Evaluation 1' : 'Evaluation'
+    case 'evaluation_2':
+      return 'Evaluation 2'
+    case 'funded':
+      return programme.type === 'instant' ? 'Instant funded' : 'Funded'
+  }
+}
+
+/** « Evaluation → Funded », dans l'ordre du plan. */
+export function parcoursPhases(plan: SheetPlan, programme: SheetProgramme, ordonnees: SheetPhase[]): string {
+  return ordonnees.map((ph) => libellePhase(ph, plan, programme)).join(' → ')
+}
+
+// -----------------------------------------------------------------------------
 // REGLES D'UNE PHASE
 // -----------------------------------------------------------------------------
 // Libelles et definitions GENERIQUES : identiques pour toutes les firmes, ils
@@ -70,7 +100,9 @@ export function optionsParType(options: SheetOption[], programmeSlug: string): [
 export interface LigneRegle {
   cle: string
   libelle: string
-  valeur: Cellule
+  /** La valeur, ou null quand un statut la remplace. */
+  valeur: string | null
+  statut: Statut
   sens: string
 }
 
@@ -82,34 +114,23 @@ export function reglesDePhase(phase: SheetPhase, devise: string): LigneRegle[] {
   const perteJour =
     phase.perteJour === 'aucune' ? 'None' : typeof phase.perteJour === 'number' ? money(phase.perteJour, devise) : null
   const regularite =
-    phase.regularite === 'aucune'
-      ? 'None'
-      : typeof phase.regularite === 'number'
-        ? pct(phase.regularite)
-        : null
+    phase.regularite === 'aucune' ? 'None' : typeof phase.regularite === 'number' ? pct(phase.regularite) : null
 
-  const lignes: (Omit<LigneRegle, 'valeur'> & { valeur: Cellule | null })[] = [
-    {
-      cle: 'objectifProfit',
-      libelle: 'Profit objective',
-      valeur: cellule(argent(phase.objectifProfit), st.objectifProfit),
-      sens: 'Profit to reach to pass this phase.',
-    },
+  const lignes: { cle: string; libelle: string; valeur: string | null; statut?: Statut; sens: string }[] = [
+    { cle: 'objectifProfit', libelle: 'Profit objective', valeur: argent(phase.objectifProfit), statut: st.objectifProfit, sens: 'Profit to reach to pass this phase.' },
     {
       cle: 'perteMax',
       libelle: 'Maximum loss',
-      valeur: cellule(
-        phase.perteMax == null
-          ? null
-          : `${money(phase.perteMax, devise)}${phase.typePerteMax ? ` · ${phase.typePerteMax}` : ''}`,
-        st.perteMax
-      ),
+      valeur:
+        phase.perteMax == null ? null : `${money(phase.perteMax, devise)}${phase.typePerteMax ? ` · ${phase.typePerteMax}` : ''}`,
+      statut: st.perteMax,
       sens: meaningMaxLoss(phase.typePerteMax),
     },
     {
       cle: 'perteJour',
       libelle: 'Daily loss',
-      valeur: cellule(perteJour, st.perteJour),
+      valeur: perteJour,
+      statut: st.perteJour,
       sens:
         phase.perteJour === 'aucune'
           ? 'No daily limit in this phase; the maximum loss still applies.'
@@ -118,15 +139,15 @@ export function reglesDePhase(phase: SheetPhase, devise: string): LigneRegle[] {
     {
       cle: 'joursMin',
       libelle: 'Minimum days',
-      valeur: cellule(phase.joursMin == null ? null : String(phase.joursMin), st.joursMin),
-      sens: finance
-        ? 'Trading days required before a payout request.'
-        : 'Trading days required before the phase can be passed.',
+      valeur: phase.joursMin == null ? null : String(phase.joursMin),
+      statut: st.joursMin,
+      sens: finance ? 'Trading days required before a payout request.' : 'Trading days required before the phase can be passed.',
     },
     {
       cle: 'regularite',
       libelle: 'Consistency',
-      valeur: cellule(regularite, st.regularite),
+      valeur: regularite,
+      statut: st.regularite,
       sens:
         phase.regularite === 'aucune'
           ? 'No consistency rule in this phase.'
@@ -134,48 +155,108 @@ export function reglesDePhase(phase: SheetPhase, devise: string): LigneRegle[] {
     },
     {
       cle: 'maxContrats',
-      libelle: 'Maximum positions/contracts',
-      valeur: cellule(phase.maxContrats == null ? null : String(phase.maxContrats), st.maxContrats),
+      libelle: 'Maximum positions',
+      valeur: phase.maxContrats == null ? null : String(phase.maxContrats),
+      statut: st.maxContrats,
       sens: 'Largest position size allowed at the same time.',
     },
-    {
-      cle: 'partage',
-      libelle: 'Profit split',
-      valeur: cellule(phase.partage == null ? null : pct(phase.partage), st.partage),
-      sens: 'Your share of the profit you withdraw.',
-    },
-    {
-      cle: 'plafondRetrait',
-      libelle: 'Payout cap per request',
-      valeur: cellule(argent(phase.plafondRetrait), st.plafondRetrait),
-      sens: 'The most a single payout request can be.',
-    },
-    {
-      cle: 'retraitMinimum',
-      libelle: 'Minimum payout per request',
-      valeur: cellule(argent(phase.retraitMinimum), st.retraitMinimum),
-      sens: 'The smallest amount a payout request can be.',
-    },
+    { cle: 'partage', libelle: 'Profit split', valeur: phase.partage == null ? null : pct(phase.partage), statut: st.partage, sens: 'Your share of the profit you withdraw.' },
+    { cle: 'plafondRetrait', libelle: 'Payout cap per request', valeur: argent(phase.plafondRetrait), statut: st.plafondRetrait, sens: 'The most a single payout request can be.' },
+    { cle: 'retraitMinimum', libelle: 'Minimum payout per request', valeur: argent(phase.retraitMinimum), statut: st.retraitMinimum, sens: 'The smallest amount a payout request can be.' },
   ]
-  return lignes.filter((l): l is LigneRegle => l.valeur != null)
+  return lignes
+    .filter((l) => l.valeur != null || (l.statut && l.statut !== 'confirmed'))
+    .map((l) => ({
+      cle: l.cle,
+      libelle: l.libelle,
+      valeur: l.statut && l.statut !== 'confirmed' ? null : l.valeur,
+      statut: l.statut ?? 'confirmed',
+      sens: l.sens,
+    }))
 }
 
-/** Les chiffres du resume de selection, chacun pris dans la phase ou il s'applique. */
+function versCellule(l: LigneRegle | undefined): Cellule | null {
+  if (!l) return null
+  return l.statut !== 'confirmed' ? { statut: l.statut } : l.valeur != null ? { texte: l.valeur } : null
+}
+
+/** Les six chiffres du resume de selection, chacun pris dans la phase ou il s'applique. */
 export function lignesSelection(plan: SheetPlan): { libelle: string; valeur: Cellule }[] {
-  const devise = plan.devise
   const evaluation = plan.phases.find((ph) => ph.phase === 'evaluation') ?? null
   const finance = plan.phases.find((ph) => ph.phase === 'funded') ?? null
-  const premiere = plan.phases[0] ?? null
+  const premiere = evaluation ?? finance
   const trouver = (ph: SheetPhase | null, cle: string) =>
-    ph ? reglesDePhase(ph, devise).find((l) => l.cle === cle)?.valeur ?? null : null
+    ph ? versCellule(reglesDePhase(ph, plan.devise).find((l) => l.cle === cle)) : null
 
   const lignes: { libelle: string; valeur: Cellule | null }[] = [
     { libelle: 'Profit target', valeur: trouver(evaluation, 'objectifProfit') },
-    { libelle: 'Max drawdown', valeur: premiere?.perteMax != null ? { texte: money(premiere.perteMax, devise) } : trouver(premiere, 'perteMax') },
+    {
+      libelle: 'Maximum loss',
+      valeur: premiere?.perteMax != null ? { texte: money(premiere.perteMax, plan.devise) } : trouver(premiere, 'perteMax'),
+    },
     { libelle: 'Daily loss', valeur: trouver(premiere, 'perteJour') },
-    { libelle: 'Max contracts', valeur: trouver(premiere, 'maxContrats') },
+    { libelle: 'Maximum positions', valeur: trouver(premiere, 'maxContrats') },
     { libelle: 'Profit split', valeur: trouver(finance, 'partage') },
     { libelle: 'Payout cap', valeur: trouver(finance, 'plafondRetrait') },
   ]
   return lignes.filter((l): l is { libelle: string; valeur: Cellule } => l.valeur != null)
+}
+
+// -----------------------------------------------------------------------------
+// CARTES TRADING, FEES ET PAYOUTS — filtrees par la selection
+// -----------------------------------------------------------------------------
+/** Une regle s'applique si son programme, sa taille et sa phase correspondent a la selection. */
+export function regleApplicable(r: SheetRegle, programme: SheetProgramme, plan: SheetPlan): boolean {
+  if (r.programmes.length > 0 && !r.programmes.includes(programme.slug)) return false
+  if (r.tailles.length > 0 && !r.tailles.includes(plan.taille)) return false
+  if (r.phase && !plan.phases.some((ph) => ph.phase === r.phase)) return false
+  return true
+}
+
+export function reglesDeCarte(
+  sheet: FirmSheet,
+  carte: SheetRegle['carte'],
+  programme: SheetProgramme,
+  plan: SheetPlan
+): SheetRegle[] {
+  return sheet.regles.filter((r) => r.carte === carte && regleApplicable(r, programme, plan))
+}
+
+export interface LigneFrais {
+  libelle: string
+  valeur: string
+  note: string | null
+}
+
+/** Carte Fees : reset et activation du plan, puis les couts propres au programme. */
+export function fraisDeSelection(sheet: FirmSheet, programme: SheetProgramme, plan: SheetPlan): LigneFrais[] {
+  const lignes: LigneFrais[] = []
+  if (plan.fraisReset != null) lignes.push({ libelle: 'Reset after a breach', valeur: money(plan.fraisReset, plan.devise), note: null })
+  if (plan.fraisActivation != null) {
+    lignes.push({
+      libelle: 'Funded account activation',
+      valeur: plan.fraisActivation === 0 ? 'None' : money(plan.fraisActivation, plan.devise),
+      note: null,
+    })
+  }
+  for (const c of sheet.couts) {
+    if (c.programmes.length > 0 && !c.programmes.includes(programme.slug)) continue
+    lignes.push({ libelle: c.libelle, valeur: c.montant ?? '—', note: c.note })
+  }
+  return lignes
+}
+
+/** Carte Payouts : partage, plafond et minimum de la phase financee du plan choisi. */
+export function retraitsDeSelection(plan: SheetPlan): { libelle: string; valeur: Cellule }[] {
+  const finance = plan.phases.find((ph) => ph.phase === 'funded')
+  if (!finance) return []
+  const lignes = reglesDePhase(finance, plan.devise)
+  const garder: [string, string][] = [
+    ['partage', 'Profit split'],
+    ['plafondRetrait', 'Cap per request'],
+    ['retraitMinimum', 'Minimum per request'],
+  ]
+  return garder
+    .map(([cle, libelle]) => ({ libelle, valeur: versCellule(lignes.find((l) => l.cle === cle)) }))
+    .filter((l): l is { libelle: string; valeur: Cellule } => l.valeur != null)
 }

@@ -532,7 +532,21 @@ export default async function PropFirmPage({ params }: Props) {
           sheet={FIRM_SHEETS[firm.slug]}
           firmSlug={firm.slug}
           locale={locale}
-          rating={firm.trustpilot_rating ?? null}
+          // Contrat visuel du 19 septembre : seulement les firmes qui ont a la
+          // fois un lien affilie et un code actif, trois au plus.
+          similarFirms={similarFirms
+            .filter((sf) => Boolean(sf.affiliate_url) && sf.affiliate_url !== '#' && codeActif(sf))
+            .slice(0, 3)
+            .map((sf) => ({
+              id: sf.id,
+              name: sf.name,
+              href: localeHref(locale, `/prop-firm/${sf.slug}`),
+              logoUrl: sf.logo_url,
+              rating: sf.trustpilot_rating,
+              minPrice: sf.min_price,
+              code: sf.discount_code,
+              remise: sf.discount_percent,
+            }))}
         />
       ) : FIRM_SHEETS[firm.slug] ? (
         <UniversalFirmPage

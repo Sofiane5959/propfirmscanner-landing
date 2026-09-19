@@ -5,9 +5,10 @@
 // aucune valeur hexadecimale ici ni dans les sections.
 
 import { useState, type ReactNode } from 'react'
-import { AlertTriangle, Minus } from 'lucide-react'
+import { AlertTriangle, ExternalLink, Minus } from 'lucide-react'
 
 import type { Cellule, StatutManquant } from '@/lib/firm-profile'
+import { AFFILIATE_LINK_PROPS } from '@/lib/affiliate'
 import { COPY } from './copy'
 
 export const cx = (...classes: (string | false | null | undefined)[]) => classes.filter(Boolean).join(' ')
@@ -15,25 +16,21 @@ export const cx = (...classes: (string | false | null | undefined)[]) => classes
 const FOCUS =
   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base'
 
-export const BTN_PRIMARY = cx(
-  // Palette 2c : fond accent-hover et texte blanc (l'accent clair sert au texte).
-  'inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-accent-hover px-4 py-2.5 text-sm font-semibold text-white transition hover:brightness-110',
+export const BTN = cx(
+  'inline-flex min-h-[46px] items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition',
   FOCUS
 )
-export const BTN_SECONDARY = cx(
-  'inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg border border-border bg-bg-elevated px-4 py-2.5 text-sm font-semibold text-text-primary transition-colors hover:border-border-hover',
-  FOCUS
-)
+// Palette 2c : fond accent-hover et texte blanc (l'accent clair sert au texte).
+export const BTN_PRIMARY = cx(BTN, 'bg-accent-hover text-white hover:brightness-110')
+export const BTN_SECONDARY = cx(BTN, 'border border-border bg-dark-700 text-text-primary hover:border-border-hover')
 export const CARD = 'rounded-xl border border-border bg-bg-elevated'
+export const CARD_ACCENT = 'rounded-xl border border-accent-border bg-bg-elevated'
 export const EYEBROW = 'text-xs font-semibold uppercase tracking-wider text-accent'
-export const LABEL = 'text-xs font-semibold uppercase tracking-wider text-text-secondary'
-export const CHIP = 'rounded-md border border-border bg-bg-base px-2 py-1 text-xs text-text-primary'
-export const CHOICE = cx(
-  'flex flex-col gap-0.5 rounded-lg border px-4 py-3 text-left transition-colors',
-  FOCUS
-)
+export const LABEL = 'text-[11px] font-semibold uppercase tracking-wider text-text-muted'
+export const CHIP = 'rounded-md border border-border bg-bg-base px-2 py-1 text-xs text-text-secondary'
+export const CHOICE = cx('flex flex-col gap-0.5 rounded-lg border px-3 py-2.5 text-left transition-colors', FOCUS)
 export const CHOICE_IDLE = 'border-border bg-bg-base hover:border-border-hover'
-export const CHOICE_ACTIVE = 'border-accent bg-accent-subtle'
+export const CHOICE_ACTIVE = 'border-accent bg-accent/10'
 
 export function Container({ children, className }: { children: ReactNode; className?: string }) {
   return <div className={cx('mx-auto w-full max-w-6xl px-4 sm:px-6', className)}>{children}</div>
@@ -51,7 +48,7 @@ export function Section({
   labelledBy?: string
 }) {
   return (
-    <section id={id} aria-labelledby={labelledBy} className={cx('py-7 sm:py-9', id && 'scroll-mt-36', className)}>
+    <section id={id} aria-labelledby={labelledBy} className={cx('py-5 sm:py-6', id && 'scroll-mt-36', className)}>
       <Container>{children}</Container>
     </section>
   )
@@ -69,27 +66,28 @@ export function SectionHeading({
   intro?: string
 }) {
   return (
-    <div className="mb-5">
+    <div className="mb-4">
       {eyebrow && <p className={EYEBROW}>{eyebrow}</p>}
-      <h2 id={id} className="mt-1 text-balance font-display text-2xl font-bold tracking-tight text-text-primary sm:text-3xl">
+      <h2 id={id} className="mt-1 text-balance font-display text-2xl font-bold tracking-tight text-text-primary sm:text-[29px] sm:leading-tight">
         {title}
       </h2>
-      {intro && <p className="mt-1.5 max-w-2xl text-sm text-text-secondary sm:text-base">{intro}</p>}
+      {intro && <p className="mt-1 max-w-2xl text-sm text-text-muted sm:text-base">{intro}</p>}
     </div>
   )
 }
 
 /** Un statut a la place d'une valeur. Les deux statuts qui appellent la prudence sont en ambre. */
-export function StatusBadge({ statut }: { statut: StatutManquant }) {
+export function StatusBadge({ statut }: { statut: StatutManquant | 'confirmed' }) {
   const alerte = statut === 'needs_confirmation' || statut === 'source_conflict'
   return (
     <span
       className={cx(
-        'inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-medium',
-        alerte ? 'bg-warning-subtle text-warning' : 'bg-bg-base text-text-secondary'
+        'inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-0.5 text-[11px] font-medium',
+        alerte ? 'bg-warning-subtle text-warning' : 'bg-bg-base text-text-muted'
       )}
     >
-      {alerte ? <AlertTriangle className="h-3 w-3" aria-hidden="true" /> : <Minus className="h-3 w-3" aria-hidden="true" />}
+      {alerte && <AlertTriangle className="h-3 w-3" aria-hidden="true" />}
+      {statut === 'not_published' || statut === 'not_applicable' ? <Minus className="h-3 w-3" aria-hidden="true" /> : null}
       {COPY.statut[statut]}
     </span>
   )
@@ -99,17 +97,17 @@ export function Valeur({ cellule }: { cellule: Cellule }) {
   return cellule.statut ? <StatusBadge statut={cellule.statut} /> : <>{cellule.texte}</>
 }
 
-export function CopyButton({ code, label }: { code: string; label: string }) {
-  const [texte, setTexte] = useState(label)
+function CopyButton({ code }: { code: string }) {
+  const [texte, setTexte] = useState<string>(COPY.copy.idle)
   return (
     <button
       type="button"
-      className={BTN_SECONDARY}
+      className={cx(BTN, 'min-w-[112px] border border-accent-border bg-accent/10 text-accent hover:bg-accent/20')}
       onClick={async () => {
         try {
           await navigator.clipboard.writeText(code)
           setTexte(COPY.copy.done)
-          setTimeout(() => setTexte(label), 1300)
+          setTimeout(() => setTexte(COPY.copy.idle), 1300)
         } catch {
           setTexte(COPY.copy.failed)
         }
@@ -120,16 +118,54 @@ export function CopyButton({ code, label }: { code: string; label: string }) {
   )
 }
 
-export function PromoCode({ code, label }: { code: string; label: string }) {
+/**
+ * Le groupe commercial, identique partout (hero, configurateur, CTA final) :
+ * code bien visible + Copy code, puis les sorties. Aucun vide entre eux.
+ */
+export function PromoGroup({
+  code,
+  claimHref,
+  continueHref,
+  continueLabel,
+}: {
+  code: string | null
+  claimHref: string | null
+  continueHref: string
+  continueLabel: string
+}) {
   return (
-    <div className="flex items-stretch gap-2">
-      <code
-        data-check="promo-code"
-        className="flex flex-1 items-center rounded-lg border border-dashed border-accent-border bg-bg-base px-3 py-2 font-mono text-lg font-bold tracking-widest text-text-primary"
-      >
-        {code}
-      </code>
-      <CopyButton code={code} label={label} />
+    <div className="grid gap-2.5">
+      {code && (
+        <div>
+          <p className={cx(LABEL, 'mb-1.5')}>{COPY.commercial.code}</p>
+          <div className="grid grid-cols-1 gap-2 min-[420px]:grid-cols-[minmax(0,1fr)_auto]">
+            <code
+              data-check="promo-code"
+              className="flex items-center justify-center rounded-lg border border-accent bg-accent/10 px-3 py-2.5 font-mono text-lg font-bold tracking-[0.12em] text-accent"
+            >
+              {code}
+            </code>
+            <CopyButton code={code} />
+          </div>
+        </div>
+      )}
+      <div className="flex flex-col gap-2 sm:flex-row">
+        {claimHref && (
+          <a data-check="claim-deal" href={claimHref} {...AFFILIATE_LINK_PROPS} className={cx(BTN_PRIMARY, 'flex-1')}>
+            {COPY.commercial.claim}
+            <ExternalLink className="h-4 w-4" aria-hidden="true" />
+          </a>
+        )}
+        <a
+          data-check="continue-to"
+          href={continueHref}
+          {...AFFILIATE_LINK_PROPS}
+          className={cx(claimHref ? BTN_SECONDARY : BTN_PRIMARY, 'flex-1')}
+        >
+          {continueLabel}
+          <ExternalLink className="h-4 w-4" aria-hidden="true" />
+        </a>
+      </div>
     </div>
   )
 }

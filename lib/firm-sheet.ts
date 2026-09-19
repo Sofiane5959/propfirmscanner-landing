@@ -62,6 +62,9 @@ export interface SheetPlan {
   /** Paiement unique, ou abonnement renouvele a chaque `intervalle`. */
   facturation: 'one_time' | 'subscription'
   intervalle: 'monthly' | null
+  /** Carte Fees : reset apres une perte, et activation du compte finance (0 = aucun). */
+  fraisReset: number | null
+  fraisActivation: number | null
   phases: SheetPhase[]
 }
 
@@ -105,6 +108,23 @@ export interface SheetCout {
   libelle: string
   montant: string | null
   note: string | null
+  /** Slugs concernes ; vide = tous les programmes. */
+  programmes: string[]
+}
+
+/** Une regle de conduite ou de retrait, rangee dans la carte Trading ou Payouts. */
+export interface SheetRegle {
+  carte: 'trading' | 'payouts'
+  regle: string
+  texte: string
+  statut: Statut
+  /** Vides = toute la firme. */
+  programmes: string[]
+  tailles: number[]
+  phase: PhaseKey | null
+  /** L'enfreindre fait perdre le compte. */
+  bloquante: boolean
+  source: string | null
 }
 
 export const ETAPE_LABEL: Record<string, string> = {
@@ -177,6 +197,10 @@ export interface FirmSheet {
   faq: { question: string; reponse: string }[]
 
   // --- Nouvelle page (FirmProfilePage). L'ancienne n'en lit rien. -------------
+  /** Note sur 5 ; null : le bloc Trustpilot n'apparait pas. */
+  trustpilotScore: number | null
+  trustpilotAvis: number | null
+  regles: SheetRegle[]
   /** Le H1 : une proposition de valeur. Null : le nom sert de H1. */
   titre: string | null
   /** 2 a 3 lignes sous le H1. */

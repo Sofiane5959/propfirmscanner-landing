@@ -75,7 +75,9 @@ module.exports = {
         },
         accent: {
           DEFAULT: '#34D399', // texte, chiffres, liens
-          hover: '#059669', // fond des boutons principaux (texte blanc)
+          // Fond des boutons principaux (texte blanc). #047857 plutot que le
+          // #059669 du handoff : 5,48:1 au lieu de 3,77:1 (decision du 19/09/2026).
+          hover: '#047857',
           subtle: 'rgba(52, 211, 153, 0.14)',
           border: 'rgba(52, 211, 153, 0.3)',
         },

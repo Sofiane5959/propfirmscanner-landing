@@ -150,7 +150,8 @@ def convertir(chemin):
     par_slug = {p["slug"]: p for p in programmes}
 
     plans = {}
-    for prog, taille, variante, devise, prix, promo, facturation, intervalle in lignes(wb["Plans"], 8):
+    for (prog, taille, variante, devise, prix, promo, facturation, intervalle,
+         frais_reset, frais_activation) in lignes(wb["Plans"], 10):
         cle = (txt(prog), nombre(taille), txt(variante))
         if cle[0] not in par_slug:
             avertissements.append(f"Plans : programme « {cle[0]} » absent de l'onglet Programmes, plan ignore.")
@@ -164,6 +165,7 @@ def convertir(chemin):
         plan = {"taille": cle[1], "variante": cle[2], "devise": txt(devise) or "USD",
                 "prix": nombre(prix), "cartePromo": oui(promo),
                 "facturation": modele, "intervalle": txt(intervalle) if modele == "subscription" else None,
+                "fraisReset": nombre(frais_reset), "fraisActivation": nombre(frais_activation),
                 "phases": []}
         plans[cle] = plan
         par_slug[cle[0]]["plans"].append(plan)
@@ -249,9 +251,29 @@ def convertir(chemin):
             continue
         parcours.append({"etape": txt(etape), "titre": txt(titre), "texte": txt(texte)})
 
-    couts = [{"libelle": txt(libelle), "montant": txt(montant), "note": txt(note)}
-             for _, libelle, montant, note in sorted(lignes(feuille(wb, "Couts"), 4), key=lambda l: nombre(l[0]) or 0)
+    couts = [{"libelle": txt(libelle), "montant": txt(montant), "note": txt(note), "programmes": liste(progs_c)}
+             for _, libelle, montant, note, progs_c in sorted(lignes(feuille(wb, "Couts"), 5), key=lambda l: nombre(l[0]) or 0)
              if txt(libelle)]
+
+    # --- Regles : cartes Trading et Payouts, filtrees par la selection ------------
+    regles = []
+    for carte, regle, texte_r, statut_r, progs_r, tailles_r, phase_r, bloquante, source in lignes(feuille(wb, "Regles"), 9):
+        if txt(carte) not in ("trading", "payouts"):
+            avertissements.append(f"Regles : carte « {txt(carte)} » inconnue pour « {txt(regle)} », ligne ignoree.")
+            continue
+        if not (txt(regle) and txt(texte_r)):
+            continue
+        if txt(phase_r) and txt(phase_r) not in PHASES:
+            avertissements.append(f"Regles : phase « {txt(phase_r)} » inconnue pour « {txt(regle)} », ligne ignoree.")
+            continue
+        regles.append({
+            "carte": txt(carte), "regle": txt(regle), "texte": txt(texte_r),
+            "statut": statut(statut_r) or "confirmed",
+            "programmes": liste(progs_r),
+            "tailles": [n for n in (nombre(x) for x in liste(tailles_r)) if n is not None],
+            "phase": PHASES.get(txt(phase_r)) if txt(phase_r) else None,
+            "bloquante": oui(bloquante), "source": txt(source),
+        })
 
     faq = [{"question": txt(q), "reponse": txt(r)}
            for _, q, r in sorted(lignes(wb["FAQ"], 3), key=lambda l: nombre(l[0]) or 0)
@@ -339,6 +361,9 @@ def convertir(chemin):
         "verdict": verdict,
         "faq": faq,
         # Nouvelle page (FirmProfilePage). L'ancienne n'en lit rien.
+        "trustpilotScore": nombre(f.get("trustpilot_score")),
+        "trustpilotAvis": nombre(f.get("trustpilot_avis")),
+        "regles": regles,
         "titre": txt(f.get("titre")),
         "description": txt(f.get("description")),
         "connuPour": connu_pour,

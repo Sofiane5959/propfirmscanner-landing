@@ -3,34 +3,32 @@
 // =============================================================================
 // PAGE FIRME UNIVERSELLE            components/prop-firm/profile/FirmProfilePage
 // =============================================================================
-// Le composant final de toutes les fiches firme. Grammaire visuelle de la fiche
-// Earn2Trade (jetons du site), donnees et configurateur de la fiche universelle.
-// Il ne recoit que la fiche d'une firme (data/firms/<slug>.json, generee depuis
-// son tableur) : aucune branche sur un slug, aucun texte metier.
+// Contrat visuel : « PropFirmScanner Universal Virgin Template » (HTML fourni
+// par Sofiane le 19 septembre 2026). Donnees : la fiche de la firme
+// (data/firms/<slug>.json, generee depuis son tableur). Aucune branche sur un
+// slug, aucun texte metier.
 //
-// Ordre : hero · known for · quick information · configurator · comparison ·
-// rules by phase · modules optionnels · conditions · about · strengths ·
-// verdict · FAQ · final CTA.
+// Ordre : hero · known for · informations · configurator · program comparison ·
+// rules by programme and phase · modules optionnels · trading and payout
+// conditions · PropFirmScanner verdict · FAQ · CTA final · similar firms.
 //
-// Tant que le pilote n'est pas valide, UniversalFirmPage et l'ancien rendu
-// restent en place pour le retour arriere (data/firms/rollout.ts).
+// Toutes les sorties passent par /api/go/[slug] ; chaque bouton a son
+// emplacement de suivi.
 // =============================================================================
 
-import type { FirmSheet } from '@/lib/firm-sheet'
+import type { FirmSheet, SimilarFirm } from '@/lib/firm-sheet'
 import { buildAffiliateUrl } from '@/lib/affiliate'
 import { AccountConfigurator, ProgramComparison } from './AccountConfigurator'
 import {
-  AboutSection,
   ConditionsSection,
   FaqSection,
   FinalCta,
-  MobileBar,
   OptionalModules,
-  StrengthsSection,
+  SimilarFirms,
   VerdictSection,
 } from './ContentSections'
-import { CommercialCard, HeroSection } from './HeroSection'
-import { KnownForStrip, QuickInfoStrip } from './InfoStrips'
+import { HeroSection } from './HeroSection'
+import { InfoCards, KnownForStrip } from './InfoStrips'
 import { RulesByPhase } from './RulesByPhase'
 import { useFirmSelection } from './useFirmSelection'
 
@@ -38,17 +36,16 @@ export default function FirmProfilePage({
   sheet,
   firmSlug,
   locale,
-  rating = null,
+  similarFirms = [],
 }: {
   sheet: FirmSheet
   firmSlug: string
   locale: string
-  /** Note Trustpilot, lue en base : elle bouge sans la fiche. */
-  rating?: number | null
+  /** Firmes avec page, lien affilie et code actifs — choisies par la route. */
+  similarFirms?: SimilarFirm[]
 }) {
   const sel = useFirmSelection(sheet)
 
-  // Tous les liens sortants passent par /api/go, avec l'option d'achat choisie.
   const lien = (placement: string) =>
     buildAffiliateUrl(firmSlug, {
       placement,
@@ -58,26 +55,19 @@ export default function FirmProfilePage({
     })
 
   return (
-    <div className="bg-bg-base pb-24 font-sans text-text-primary lg:pb-0">
-      <HeroSection
-        sheet={sheet}
-        rating={rating}
-        logoHref={lien('logo')}
-        carte={<CommercialCard sheet={sheet} promo={sel.promo} rating={rating} ctaHref={lien('hero')} />}
-      />
+    <div className="bg-bg-base pb-8 font-sans text-text-primary">
+      <HeroSection sheet={sheet} promo={sel.promo} claimHref={lien('hero_claim')} continueHref={lien('hero_continue')} />
       <KnownForStrip sheet={sheet} />
-      <QuickInfoStrip sheet={sheet} />
-      <AccountConfigurator sheet={sheet} sel={sel} ctaHref={lien('configurator')} />
+      <InfoCards sheet={sheet} />
+      <AccountConfigurator sheet={sheet} sel={sel} continueHref={lien('configurator')} />
       <ProgramComparison sel={sel} />
       <RulesByPhase sel={sel} />
       <OptionalModules sheet={sheet} />
-      <ConditionsSection sheet={sheet} />
-      <AboutSection sheet={sheet} />
-      <StrengthsSection sheet={sheet} />
+      <ConditionsSection sheet={sheet} sel={sel} />
       <VerdictSection sheet={sheet} />
       <FaqSection sheet={sheet} />
-      <FinalCta sheet={sheet} sel={sel} />
-      <MobileBar sheet={sheet} sel={sel} ctaHref={lien('mobile_bar')} />
+      <FinalCta sheet={sheet} sel={sel} claimHref={lien('final_claim')} continueHref={lien('final_continue')} />
+      <SimilarFirms firms={similarFirms} />
     </div>
   )
 }
