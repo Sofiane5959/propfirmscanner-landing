@@ -43,7 +43,7 @@ export const COPY = {
   knownFor: (nom: string) => `What ${nom} is known for`,
   info: {
     title: 'Firm information',
-    platforms: 'Selectable platforms',
+    platforms: 'Platforms',
     markets: 'Tradable markets',
     dataFeeds: 'Data feeds',
     purchase: 'Purchase methods',
@@ -74,9 +74,7 @@ export const COPY = {
   comparison: {
     eyebrow: 'Step 2 · Compare',
     title: (n: number) => `Compare the ${n} programs`,
-    intro: 'One card per program. Choosing one updates the configurator.',
-    selected: 'Selected',
-    program: 'Program',
+    intro: 'One card per program, side by side.',
     maxAccounts: 'Max funded accounts',
   },
   rules: {

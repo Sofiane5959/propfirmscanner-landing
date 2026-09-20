@@ -404,7 +404,7 @@
       "slug": "prime",
       "nom": "Prime",
       "accroche": "Up to 10 funded accounts",
-      "resume": "The only programme with a daily loss limit in both phases. It also carries the longest bundle ladder, up to ten accounts.",
+      "resume": "The only program with a daily loss limit in both phases. It also carries the longest bundle ladder, up to ten accounts.",
       "marche": "futures",
       "type": "evaluation",
       "maxComptes": 10,
@@ -704,12 +704,12 @@
     {
       "etape": "evaluation",
       "titre": "Pass the evaluation",
-      "texte": "One phase on Elite, Nitro and Prime: reach the profit objective without breaching the maximum loss. There is no deadline to pass. Minimum trading days differ by programme, and Instant has no evaluation at all."
+      "texte": "One phase on Elite, Nitro and Prime: reach the profit objective without breaching the maximum loss. There is no deadline to pass. Minimum trading days differ by program, and Instant has no evaluation at all."
     },
     {
       "etape": "funded",
       "titre": "Get the funded account",
-      "texte": "The simulated funded account opens with no activation fee. Drawdown type and contract scaling change with the programme, so the rules table above is the one that applies."
+      "texte": "The simulated funded account opens with no activation fee. Drawdown type and contract scaling change with the program, so the rules table above is the one that applies."
     },
     {
       "etape": "payout",
@@ -739,7 +739,7 @@
       "No financial regulator licence",
       "Demo accounts, hypothetical performance",
       "Minimum days differ by program; Elite needs 6 profitable days above a size-based threshold before a payout",
-      "Per-request payout caps vary by programme and account size."
+      "Per-request payout caps vary by program and account size."
     ]
   },
   "faq": [],

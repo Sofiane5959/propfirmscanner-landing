@@ -480,7 +480,7 @@ function reponsesRecomposees(sheet: FirmSheet): Record<string, string | null> {
   // account » dans une version precedente, et la FAQ y renvoyait encore.
   const debutants =
     programmes.length > 0
-      ? `${sheet.nom} offers ${programmes.length} programme${programmes.length > 1 ? 's' : ''}: ` +
+      ? `${sheet.nom} offers ${programmes.length} program${programmes.length > 1 ? 's' : ''}: ` +
         `${programmes.map((p) => p.nom).join(', ')}. Their rules and costs differ, so compare them in ` +
         `the account configurator above and see who we recommend ${sheet.nom} for.`
       : null

@@ -199,26 +199,19 @@ export function AccountConfigurator({
   )
 }
 
+// 20 septembre : ces cartes ne se choisissent pas. Le programme se choisit a
+// l'etape 1 ; ici on lit les quatre cote a cote.
 export function ProgramComparison({ sel }: { sel: FirmSelection }) {
   if (sel.programmesVisibles.length < 2 || !sel.programme) return null
-  const actifSlug = sel.programme.slug
   const n = sel.programmesVisibles.length
   return (
     <Section labelledBy="comparison-title">
       <SectionHeading id="comparison-title" eyebrow={COPY.comparison.eyebrow} title={COPY.comparison.title(n)} intro={COPY.comparison.intro} />
       <div className={cx('grid gap-3 sm:grid-cols-2', n === 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-3')}>
         {sel.programmesVisibles.map((p) => {
-          const actif = p.slug === actifSlug
           const comptes = cellule(p.maxComptes == null ? null : String(p.maxComptes), p.maxComptesStatut)
           return (
-            <button
-              key={p.slug}
-              type="button"
-              aria-pressed={actif}
-              onClick={() => sel.choisirProgramme(p)}
-              className={cx(CHOICE, 'gap-1.5 p-4', actif ? CHOICE_ACTIVE : cx(CHOICE_IDLE, 'bg-bg-elevated'))}
-            >
-              <span className={EYEBROW}>{actif ? COPY.comparison.selected : COPY.comparison.program}</span>
+            <article key={p.slug} className={cx(CARD, 'flex flex-col gap-1.5 p-4')}>
               <span className="font-display text-lg font-bold">{p.nom}</span>
               {p.resume && <span className="text-sm leading-relaxed text-text-muted">{p.resume}</span>}
               {comptes && (
@@ -230,7 +223,7 @@ export function ProgramComparison({ sel }: { sel: FirmSelection }) {
                   {comptes.statut && p.maxComptesNote && <span className="mt-1 block leading-relaxed">{p.maxComptesNote}</span>}
                 </span>
               )}
-            </button>
+            </article>
           )
         })}
       </div>

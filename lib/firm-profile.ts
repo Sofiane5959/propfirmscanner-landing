@@ -323,7 +323,7 @@ export function faqProfil(sheet: FirmSheet): { question: string; reponse: string
       : sheet.methodesRetrait.length > 0
         ? `Payout methods: ${sheet.methodesRetrait.join(', ')}.`
         : null,
-    plafonds ? 'Each request is capped by programme and account size: the configurator shows the cap for your plan.' : null,
+    plafonds ? 'Each request is capped by program and account size: the configurator shows the cap for your plan.' : null,
     sheet.regles.some((r) => r.carte === 'payouts')
       ? 'Review times, minimums and eligibility conditions are listed in the Payouts card above.'
       : null,

@@ -91,12 +91,24 @@ export function InfoCards({ sheet }: { sheet: FirmSheet }) {
     <section aria-label={COPY.info.title} className="pb-5">
       <Container>
         <div className={cx('grid gap-3', COLONNES[visibles.length])}>
-          {visibles.map((g) => (
+          {visibles.map((g) => {
+            const plateformes = g.label === COPY.info.platforms
+            return (
             <article key={g.label} className={cx(CARD, 'p-4')}>
               <p className={LABEL}>{g.label}</p>
               <div className="mt-2 flex flex-wrap items-center gap-1.5">
                 {g.valeurs.map((v) => (
-                  <span key={v} className={CHIP}>
+                  <span key={v} className={cx(CHIP, plateformes && 'inline-flex items-center gap-1.5 pl-1.5')}>
+                    {/* Pastille a l'initiale : elle distingue les plateformes d'un
+                        coup d'oeil sans reprendre un logo qui ne nous appartient pas. */}
+                    {plateformes && (
+                      <span
+                        aria-hidden="true"
+                        className="grid h-5 w-5 shrink-0 place-items-center rounded bg-dark-700 text-[10px] font-bold text-text-primary"
+                      >
+                        {v.charAt(0)}
+                      </span>
+                    )}
                     {v}
                   </span>
                 ))}
@@ -108,7 +120,8 @@ export function InfoCards({ sheet }: { sheet: FirmSheet }) {
                 {g.statut && <StatusBadge statut={g.statut} />}
               </div>
             </article>
-          ))}
+            )
+          })}
         </div>
       </Container>
     </section>

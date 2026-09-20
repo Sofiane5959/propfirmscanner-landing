@@ -6,6 +6,8 @@
 //    le configurateur. Toutes les phases du plan sont cote a cote, une colonne
 //    chacune ; une valeur verifiee s'affiche seule, une reserve porte son statut.
 
+import { useState } from 'react'
+
 import { type FirmSheet, sizeLabel } from '@/lib/firm-sheet'
 import { tableauRegles } from '@/lib/firm-profile'
 import { COPY } from './copy'
@@ -62,16 +64,22 @@ function Onglets<T extends string | number>({
 export function RulesByPhase({ sheet }: { sheet: FirmSheet }) {
   // Une instance a part : meme logique que le configurateur, etat independant.
   const sel = useFirmSelection(sheet)
+  // Sur mobile, une phase a la fois : afficher les deux colonnes obligeait a
+  // repeter « Evaluation : » et « Funded : » sur chaque ligne (commentaire du 20/09).
+  const [phaseMobile, setPhaseMobile] = useState(0)
   const { programme, plan, phases } = sel
   if (!programme || !plan || phases.length === 0) return null
   const tableau = tableauRegles(plan, programme, phases)
   if (tableau.lignes.length === 0) return null
+  const iPhase = Math.min(phaseMobile, tableau.colonnes.length - 1)
 
   return (
     <Section id="rules" labelledBy="rules-title">
       <SectionHeading id="rules-title" eyebrow={COPY.rules.eyebrow} title={COPY.rules.title} intro={COPY.rules.intro} />
       <div className={cx(CARD, 'p-4 sm:p-5')}>
-        <div className={cx('mb-4 grid gap-3 md:grid-cols-2', sel.variantes.length > 1 && 'lg:grid-cols-3')}>
+        {/* Une seule barre de reglages : on choisit, on lit le rappel, on lit le tableau. */}
+        <div className="mb-4 rounded-xl border border-border p-3">
+        <div className={cx('grid gap-3 md:grid-cols-2', sel.variantes.length > 1 && 'lg:grid-cols-3')}>
           <Onglets
             label={COPY.rules.programme}
             options={sel.programmesVisibles.map((p) => ({ cle: p.slug, libelle: p.nom }))}
@@ -99,10 +107,22 @@ export function RulesByPhase({ sheet }: { sheet: FirmSheet }) {
           />
         </div>
 
-        <p className="mb-2 text-sm text-text-muted">
+        {/* Mobile : le selecteur de phase remplace les etiquettes repetees. */}
+        <div className="mt-3 md:hidden">
+          <Onglets
+            label={COPY.rules.phase}
+            options={tableau.colonnes.map((c, i) => ({ cle: i, libelle: c.libelle }))}
+            actif={iPhase}
+            choisir={setPhaseMobile}
+          />
+        </div>
+
+        <p className="mt-3 border-t border-border pt-2 text-xs text-text-muted">
           {programme.nom} · {sizeLabel(plan.taille, plan.devise)}
-          {sel.variante ? ` · ${sel.variante}` : ''} — {tableau.colonnes.map((c) => c.libelle).join(' → ')}
+          {sel.variante ? ` · ${sel.variante}` : ''}
+          <span className="hidden md:inline"> — {tableau.colonnes.map((c) => c.libelle).join(' → ')}</span>
         </p>
+        </div>
 
         <table className="w-full border-collapse text-sm">
           <thead className="hidden md:table-header-group">
@@ -121,8 +141,13 @@ export function RulesByPhase({ sheet }: { sheet: FirmSheet }) {
               <tr key={l.cle} className="block border-b border-border py-2.5 last:border-0 md:table-row md:py-0">
                 <td className="block font-semibold md:table-cell md:py-2.5 md:pr-4">{l.libelle}</td>
                 {l.cellules.map((cellule, i) => (
-                  <td key={tableau.colonnes[i].cle} className="block tabular-nums md:table-cell md:whitespace-nowrap md:py-2.5 md:pr-4">
-                    <span className="mr-1.5 text-xs text-text-muted md:hidden">{tableau.colonnes[i].libelle}:</span>
+                  <td
+                    key={tableau.colonnes[i].cle}
+                    className={cx(
+                      'tabular-nums md:table-cell md:whitespace-nowrap md:py-2.5 md:pr-4',
+                      i === iPhase ? 'block' : 'hidden'
+                    )}
+                  >
                     {cellule == null ? (
                       <span className="text-text-muted">—</span>
                     ) : cellule.statut !== 'confirmed' ? (
