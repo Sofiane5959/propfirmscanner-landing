@@ -5,6 +5,7 @@
 //    reperes Founded / Country / CEO ; a droite « Most popular plan ».
 //    Le logo n'est pas un lien : les sorties passent par Claim deal et Continue to.
 
+import type { ReactNode } from 'react'
 import { ChevronDown, Star } from 'lucide-react'
 
 import {
@@ -23,6 +24,30 @@ import { COPY } from './copy'
 import { FirmActions } from './FirmActions'
 import { prixPlan, prixRemise } from './format'
 import { BTN_PRIMARY, BTN_SECONDARY, CARD, CARD_ACCENT, Container, EYEBROW, LABEL, PromoGroup, cx } from './ui'
+
+const TRUSTPILOT_BADGE = 'mt-3 inline-block sm:absolute sm:right-6 sm:top-6 sm:mt-0 sm:text-right'
+
+/** La note Trustpilot : un lien vers le profil quand la fiche en donne un. */
+function TrustpilotBadge({ url, children }: { url: string | null; children: ReactNode }) {
+  if (!url) {
+    return (
+      <div data-check="trustpilot" className={TRUSTPILOT_BADGE}>
+        {children}
+      </div>
+    )
+  }
+  return (
+    <a
+      data-check="trustpilot"
+      href={url}
+      target="_blank"
+      rel="nofollow noopener noreferrer"
+      className={cx(TRUSTPILOT_BADGE, 'transition-opacity hover:opacity-80')}
+    >
+      {children}
+    </a>
+  )
+}
 
 export function HeroSection({
   sheet,
@@ -73,13 +98,9 @@ export function HeroSection({
             </div>
 
             {trustpilot && (
-              <a
-                data-check="trustpilot"
-                href={sheet.trustpilotUrl ?? undefined}
-                target={sheet.trustpilotUrl ? '_blank' : undefined}
-                rel={sheet.trustpilotUrl ? 'nofollow noopener noreferrer' : undefined}
-                className="mt-3 inline-block transition-opacity hover:opacity-80 sm:absolute sm:right-6 sm:top-6 sm:mt-0 sm:text-right"
-              >
+              // Sans URL de profil, la note reste un simple bloc : un lien sans
+              // destination se focalise au clavier et ne mene nulle part.
+              <TrustpilotBadge url={sheet.trustpilotUrl}>
                 <p className={LABEL}>{COPY.hero.trustpilot}</p>
                 <p className="text-lg font-bold tabular-nums">
                   {sheet.trustpilotScore!.toFixed(1)} <span className="text-sm font-medium text-text-muted">{COPY.hero.outOf}</span>
@@ -98,7 +119,7 @@ export function HeroSection({
                     </span>
                   )}
                 </p>
-              </a>
+              </TrustpilotBadge>
             )}
 
             <h1 className="mt-5 max-w-3xl text-balance font-display text-[32px] font-bold leading-[1.08] tracking-tight text-text-primary sm:text-[42px]">
