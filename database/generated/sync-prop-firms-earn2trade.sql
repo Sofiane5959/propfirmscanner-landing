@@ -2,7 +2,7 @@
 -- NE PAS MODIFIER A LA MAIN : corriger le tableur, puis relancer
 --   npm run firms:build
 -- `npm run firms:check` echoue si ce fichier ne correspond plus a la fiche.
--- Fiche : data/firms/earn2trade.json (sha256:0ec0aa99f610f8cc851985a0c0d1def3581cc552e66db0e6396a8a63257b0879)
+-- Fiche : data/firms/earn2trade.json (sha256:e793b05389db76fe1a3307b4a9e2a483cb5c6fc796e1127a28874cb4f6037ca1)
 --
 -- Recopie dans prop_firms les colonnes lues par /compare, /deals, le bandeau
 -- des offres, /best-for, le quiz, les favoris et les cartes Similar firms.
@@ -54,8 +54,8 @@ update prop_firms set
   max_price = 550,
   profit_split = 50,
   max_profit_split = 80,
-  discount_code = null,
-  discount_percent = null,
+  discount_code = 'SCANNED',
+  discount_percent = 50,
   discount_expires_at = null,
   updated_at = now()
 where slug = 'earn2trade';
@@ -95,8 +95,8 @@ begin
      or (r.max_price is null or abs(r.max_price::numeric - 550) > 0.001)
      or (r.profit_split is null or abs(r.profit_split::numeric - 50) > 0.001)
      or (r.max_profit_split is null or abs(r.max_profit_split::numeric - 80) > 0.001)
-     or r.discount_code is not null
-     or r.discount_percent is not null
+     or r.discount_code is distinct from 'SCANNED'
+     or (r.discount_percent is null or abs(r.discount_percent::numeric - 50) > 0.001)
      or r.discount_expires_at is not null then
     raise exception 'Controle echoue : prop_firms earn2trade ne correspond pas a la fiche';
   end if;
