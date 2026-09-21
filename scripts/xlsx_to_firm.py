@@ -123,12 +123,13 @@ MODELE = os.path.join(RACINE, "MODELE-propfirm.xlsx")
 
 
 def exemples_du_modele():
-    """Le slug, le nom et le code de l'exemple rempli dans le modele vierge."""
+    """Le slug et le nom de l'exemple rempli dans le modele vierge. Pas le code :
+    le meme code partenaire peut servir chez plusieurs firmes."""
     if not os.path.exists(MODELE):
         return {}
     wb = load_workbook(MODELE, read_only=True)
     sortie = {}
-    for onglet, champs in (("Firme", ("slug", "nom")), ("Offre", ("code",))):
+    for onglet, champs in (("Firme", ("slug", "nom")),):
         for ligne in wb[onglet].iter_rows(min_row=2, max_col=3, values_only=True):
             if ligne[0] in champs and isinstance(ligne[2], str) and len(ligne[2].strip()) >= 4:
                 sortie[ligne[0]] = ligne[2].strip()
@@ -182,8 +183,11 @@ def convertir(chemin):
         plans[cle] = plan
         par_slug[cle[0]]["plans"].append(plan)
 
+    # Colonnes 16-17 (apres « controle ») : le partage par palier, ajoute le
+    # 21/09/2026 sans decaler les colonnes ni les formules existantes.
     for (prog, taille, variante, phase, objectif, perte_max, type_perte, perte_jour,
-         jours, regularite, contrats, partage, plafond, minimum) in lignes(wb["Phases"], 14):
+         jours, regularite, contrats, partage, plafond, minimum, _controle,
+         partage_bas, seuil_partage) in lignes(wb["Phases"], 17):
         cle = (txt(prog), nombre(taille), txt(variante))
         if cle not in plans:
             avertissements.append(f"Phases : aucun plan {cle} dans l'onglet Plans, phase ignoree.")
@@ -212,7 +216,14 @@ def convertir(chemin):
                                  fraction),
             "maxContrats": nombre(contrats),
             "partage": fraction(partage),
+            "partageBas": fraction(partage_bas),
+            "seuilPartage": nombre(seuil_partage),
         })
+        ph = plans[cle]["phases"][-1]
+        if (ph["partageBas"] is None) != (ph["seuilPartage"] is None):
+            avertissements.append(f"Phases : {cle} {ph['phase']} — partage_bas et seuil_partage vont ensemble.")
+        elif ph["partageBas"] is not None and (ph["partage"] is None or ph["partageBas"] >= ph["partage"]):
+            avertissements.append(f"Phases : {cle} {ph['phase']} — partage_bas doit etre inferieur a partage.")
 
     for cle, plan in plans.items():
         if not plan["phases"]:
@@ -383,6 +394,7 @@ def convertir(chemin):
         "trustpilotUrl": txt(f.get("trustpilot_url")),
         "regles": regles,
         "titre": txt(f.get("titre")),
+        "metaDescription": txt(f.get("meta_description")),
         "description": txt(f.get("description")),
         "connuPour": connu_pour,
         "preuves": preuves,

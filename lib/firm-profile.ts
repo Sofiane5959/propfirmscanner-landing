@@ -21,6 +21,7 @@ import {
   type Statut,
   QUESTIONS_GABARIT,
   faqItems,
+  formatPartage,
   meaningMaxLoss,
   money,
   pct,
@@ -169,7 +170,8 @@ export function reglesDePhase(phase: SheetPhase, devise: string): LigneRegle[] {
     {
       cle: 'joursMin',
       libelle: 'Minimum days',
-      valeur: phase.joursMin == null ? null : String(phase.joursMin),
+      // 0 jour minimum : la firme dit « no minimum », la page dit « None » comme ailleurs.
+      valeur: phase.joursMin == null ? null : phase.joursMin === 0 ? 'None' : String(phase.joursMin),
       statut: st.joursMin,
       sens: finance ? 'Trading days required before a payout request.' : 'Trading days required before the phase can be passed.',
     },
@@ -190,7 +192,7 @@ export function reglesDePhase(phase: SheetPhase, devise: string): LigneRegle[] {
       statut: st.maxContrats,
       sens: 'Largest position size allowed at the same time.',
     },
-    { cle: 'partage', libelle: 'Profit split', valeur: phase.partage == null ? null : pct(phase.partage), statut: st.partage, sens: 'Your share of the profit you withdraw.' },
+    { cle: 'partage', libelle: 'Profit split', valeur: formatPartage(phase, devise), statut: st.partage, sens: 'Your share of the profit you withdraw.' },
     { cle: 'plafondRetrait', libelle: 'Payout cap per request', valeur: argent(phase.plafondRetrait), statut: st.plafondRetrait, sens: 'The most a single payout request can be.' },
     { cle: 'retraitMinimum', libelle: 'Minimum payout per request', valeur: argent(phase.retraitMinimum), statut: st.retraitMinimum, sens: 'The smallest amount a payout request can be.' },
   ]
@@ -356,7 +358,18 @@ export function faqProfil(sheet: FirmSheet): { question: string; reponse: string
   const debutantsSaisie = sheet.faq.some((q) => q.question === QUESTION_DEBUTANTS && q.reponse)
   const questionDebutants = QUESTION_DEBUTANTS.replace(/\[Firm\]/g, sheet.nom)
 
-  return items
+  // La question des retraits existe des que la fiche sait qui paie et comment,
+  // meme si l'onglet Conditions est vide ; elle garde sa place, apres le partage.
+  const avecRetraits =
+    morceaux.length > 0 && !items.some((q) => q.question === QUESTION_RETRAITS)
+      ? (() => {
+          const i = items.findIndex((q) => q.question === QUESTIONS_GABARIT[2].replace(/\[Firm\]/g, sheet.nom))
+          const ajout = { question: QUESTION_RETRAITS, reponse: '' }
+          return i >= 0 ? [...items.slice(0, i + 1), ajout, ...items.slice(i + 1)] : [...items, ajout]
+        })()
+      : items
+
+  return avecRetraits
     .filter((q) => debutantsSaisie || q.question !== questionDebutants)
     .map((q) =>
       !sheet.offre && q.reponse.startsWith(PREFIXE_REMISE)

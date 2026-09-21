@@ -72,7 +72,9 @@
               "joursMin": 3,
               "regularite": 0.4,
               "maxContrats": 2,
-              "partage": null
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
             },
             {
               "phase": "funded",
@@ -86,7 +88,9 @@
               "joursMin": 6,
               "regularite": "aucune",
               "maxContrats": 2,
-              "partage": 0.9
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
             }
           ]
         },
@@ -113,7 +117,9 @@
               "joursMin": 3,
               "regularite": 0.4,
               "maxContrats": 4,
-              "partage": null
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
             },
             {
               "phase": "funded",
@@ -127,7 +133,9 @@
               "joursMin": 6,
               "regularite": "aucune",
               "maxContrats": 4,
-              "partage": 0.9
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
             }
           ]
         },
@@ -154,7 +162,9 @@
               "joursMin": 3,
               "regularite": 0.4,
               "maxContrats": 8,
-              "partage": null
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
             },
             {
               "phase": "funded",
@@ -168,7 +178,9 @@
               "joursMin": 6,
               "regularite": "aucune",
               "maxContrats": 8,
-              "partage": 0.9
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
             }
           ]
         },
@@ -195,7 +207,9 @@
               "joursMin": 3,
               "regularite": 0.4,
               "maxContrats": 12,
-              "partage": null
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
             },
             {
               "phase": "funded",
@@ -209,7 +223,9 @@
               "joursMin": 6,
               "regularite": "aucune",
               "maxContrats": 12,
-              "partage": 0.9
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
             }
           ]
         }
@@ -249,7 +265,9 @@
               "joursMin": 2,
               "regularite": 0.5,
               "maxContrats": 2,
-              "partage": null
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
             },
             {
               "phase": "funded",
@@ -265,7 +283,9 @@
               "joursMin": 1,
               "regularite": "aucune",
               "maxContrats": 2,
-              "partage": 0.9
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
             }
           ]
         },
@@ -292,7 +312,9 @@
               "joursMin": 2,
               "regularite": 0.5,
               "maxContrats": 5,
-              "partage": null
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
             },
             {
               "phase": "funded",
@@ -308,7 +330,9 @@
               "joursMin": 1,
               "regularite": "aucune",
               "maxContrats": 5,
-              "partage": 0.9
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
             }
           ]
         },
@@ -335,7 +359,9 @@
               "joursMin": 2,
               "regularite": 0.5,
               "maxContrats": 8,
-              "partage": null
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
             },
             {
               "phase": "funded",
@@ -351,7 +377,9 @@
               "joursMin": 1,
               "regularite": "aucune",
               "maxContrats": 8,
-              "partage": 0.9
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
             }
           ]
         },
@@ -378,7 +406,9 @@
               "joursMin": 2,
               "regularite": 0.5,
               "maxContrats": 10,
-              "partage": null
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
             },
             {
               "phase": "funded",
@@ -394,7 +424,9 @@
               "joursMin": 1,
               "regularite": "aucune",
               "maxContrats": 10,
-              "partage": 0.9
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
             }
           ]
         }
@@ -434,7 +466,9 @@
               "joursMin": 1,
               "regularite": null,
               "maxContrats": 2,
-              "partage": null
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
             },
             {
               "phase": "funded",
@@ -450,7 +484,9 @@
               "joursMin": 3,
               "regularite": 0.4,
               "maxContrats": 2,
-              "partage": 0.9
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
             }
           ]
         },
@@ -477,7 +513,9 @@
               "joursMin": 1,
               "regularite": null,
               "maxContrats": 4,
-              "partage": null
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
             },
             {
               "phase": "funded",
@@ -493,7 +531,9 @@
               "joursMin": 3,
               "regularite": 0.4,
               "maxContrats": 4,
-              "partage": 0.9
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
             }
           ]
         },
@@ -520,7 +560,9 @@
               "joursMin": 1,
               "regularite": null,
               "maxContrats": 6,
-              "partage": null
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
             },
             {
               "phase": "funded",
@@ -536,7 +578,9 @@
               "joursMin": 3,
               "regularite": 0.4,
               "maxContrats": 6,
-              "partage": 0.9
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
             }
           ]
         },
@@ -563,7 +607,9 @@
               "joursMin": 1,
               "regularite": null,
               "maxContrats": 10,
-              "partage": null
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
             },
             {
               "phase": "funded",
@@ -579,7 +625,9 @@
               "joursMin": 3,
               "regularite": 0.4,
               "maxContrats": 10,
-              "partage": 0.9
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
             }
           ]
         }
@@ -621,7 +669,9 @@
               "joursMin": 10,
               "regularite": 0.2,
               "maxContrats": 4,
-              "partage": 0.8
+              "partage": 0.8,
+              "partageBas": null,
+              "seuilPartage": null
             }
           ]
         },
@@ -650,7 +700,9 @@
               "joursMin": 10,
               "regularite": 0.2,
               "maxContrats": 8,
-              "partage": 0.8
+              "partage": 0.8,
+              "partageBas": null,
+              "seuilPartage": null
             }
           ]
         },
@@ -679,7 +731,9 @@
               "joursMin": 10,
               "regularite": 0.2,
               "maxContrats": 12,
-              "partage": 0.8
+              "partage": 0.8,
+              "partageBas": null,
+              "seuilPartage": null
             }
           ]
         }
@@ -1142,6 +1196,7 @@
     }
   ],
   "titre": "Four routes to a funded futures account",
+  "metaDescription": null,
   "description": "Compare Elite, Nitro, Prime and Instant to choose between a traditional evaluation, a faster route or funding from purchase. Each program has its own loss limits, consistency rules and payout conditions.",
   "connuPour": [
     {

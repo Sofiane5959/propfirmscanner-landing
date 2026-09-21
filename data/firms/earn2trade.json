@@ -1,0 +1,897 @@
+{
+  "_genere": "Fichier genere par `npm run firms:build` depuis data/firms/earn2trade.xlsx. Ne pas modifier : corriger le tableur, puis relancer la commande.",
+  "slug": "earn2trade",
+  "nom": "Earn2Trade",
+  "logoUrl": "https://www.earn2trade.com/apple-touch-icon.png",
+  "marches": [
+    "futures"
+  ],
+  "resume": null,
+  "presentation": "Earn2Trade is a US company specialised in futures. It runs the evaluation and the training, then connects successful traders with partner trading firms that provide the funded account.\n\nIts flagship program, the Trader Career Path, works like a ladder: you start with a $25,000 evaluation, and each goal you reach unlocks a larger account ($50K, $100K, then $200K).\n\nYou trade only futures contracts listed on the CME, COMEX, NYMEX and CBOT, on around twenty platforms including NinjaTrader, Tradovate and TradingView. A training library is included.",
+  "anneeCreation": null,
+  "pays": "United States",
+  "ceoFondateur": "Osvaldo Guimarães",
+  "actifs": [
+    "Futures"
+  ],
+  "plateformes": [],
+  "moyensPaiement": [],
+  "levier": null,
+  "stylesTrading": [],
+  "programmes": [
+    {
+      "slug": "tcp",
+      "nom": "Trader Career Path",
+      "accroche": null,
+      "resume": "Start at $25K, $50K or $100K, then move up step by step to a $200K Live account.",
+      "marche": "futures",
+      "type": "evaluation",
+      "maxComptes": null,
+      "maxComptesStatut": null,
+      "maxComptesNote": null,
+      "plans": [
+        {
+          "taille": 25000,
+          "variante": null,
+          "devise": "USD",
+          "prix": 150,
+          "cartePromo": true,
+          "facturation": "subscription",
+          "intervalle": "monthly",
+          "fraisReset": null,
+          "fraisActivation": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 1750,
+              "perteMax": 1500,
+              "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 550,
+              "joursMin": 0,
+              "regularite": 0.3,
+              "maxContrats": 3,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 1500,
+              "typePerteMax": "End of Day on LiveSim, trailing on Live",
+              "plafondRetrait": null,
+              "retraitMinimum": 100,
+              "statuts": {},
+              "perteJour": 550,
+              "joursMin": 0,
+              "regularite": "aucune",
+              "maxContrats": 3,
+              "partage": 0.8,
+              "partageBas": 0.5,
+              "seuilPartage": 1500
+            }
+          ]
+        },
+        {
+          "taille": 50000,
+          "variante": null,
+          "devise": "USD",
+          "prix": 190,
+          "cartePromo": false,
+          "facturation": "subscription",
+          "intervalle": "monthly",
+          "fraisReset": null,
+          "fraisActivation": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 3000,
+              "perteMax": 2000,
+              "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 1100,
+              "joursMin": 0,
+              "regularite": 0.3,
+              "maxContrats": 6,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 2000,
+              "typePerteMax": "End of Day on LiveSim, trailing on Live",
+              "plafondRetrait": null,
+              "retraitMinimum": 100,
+              "statuts": {},
+              "perteJour": 1100,
+              "joursMin": 0,
+              "regularite": "aucune",
+              "maxContrats": 6,
+              "partage": 0.8,
+              "partageBas": 0.5,
+              "seuilPartage": 2250
+            }
+          ]
+        },
+        {
+          "taille": 100000,
+          "variante": null,
+          "devise": "USD",
+          "prix": 350,
+          "cartePromo": false,
+          "facturation": "subscription",
+          "intervalle": "monthly",
+          "fraisReset": 100,
+          "fraisActivation": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 6000,
+              "perteMax": 3500,
+              "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 2200,
+              "joursMin": 0,
+              "regularite": 0.3,
+              "maxContrats": 12,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 3500,
+              "typePerteMax": "End of Day on LiveSim, trailing on Live",
+              "plafondRetrait": null,
+              "retraitMinimum": 100,
+              "statuts": {},
+              "perteJour": 2200,
+              "joursMin": 0,
+              "regularite": "aucune",
+              "maxContrats": 12,
+              "partage": 0.8,
+              "partageBas": 0.5,
+              "seuilPartage": 3000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "gauntlet-mini",
+      "nom": "Gauntlet Mini",
+      "accroche": null,
+      "resume": "A single-phase evaluation at the account size you want, from $50K to $200K.",
+      "marche": "futures",
+      "type": "evaluation",
+      "maxComptes": null,
+      "maxComptesStatut": null,
+      "maxComptesNote": null,
+      "plans": [
+        {
+          "taille": 50000,
+          "variante": null,
+          "devise": "USD",
+          "prix": 170,
+          "cartePromo": false,
+          "facturation": "subscription",
+          "intervalle": "monthly",
+          "fraisReset": null,
+          "fraisActivation": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 3000,
+              "perteMax": 2000,
+              "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 1100,
+              "joursMin": 0,
+              "regularite": 0.3,
+              "maxContrats": 6,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 2000,
+              "typePerteMax": "End of Day on LiveSim, trailing on Live",
+              "plafondRetrait": null,
+              "retraitMinimum": 100,
+              "statuts": {},
+              "perteJour": 1100,
+              "joursMin": 0,
+              "regularite": "aucune",
+              "maxContrats": 6,
+              "partage": 0.8,
+              "partageBas": 0.5,
+              "seuilPartage": 2250
+            }
+          ]
+        },
+        {
+          "taille": 100000,
+          "variante": null,
+          "devise": "USD",
+          "prix": 315,
+          "cartePromo": false,
+          "facturation": "subscription",
+          "intervalle": "monthly",
+          "fraisReset": null,
+          "fraisActivation": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 6000,
+              "perteMax": 3500,
+              "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 2200,
+              "joursMin": 0,
+              "regularite": 0.3,
+              "maxContrats": 12,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 3500,
+              "typePerteMax": "End of Day on LiveSim, trailing on Live",
+              "plafondRetrait": null,
+              "retraitMinimum": 100,
+              "statuts": {},
+              "perteJour": 2200,
+              "joursMin": 0,
+              "regularite": "aucune",
+              "maxContrats": 12,
+              "partage": 0.8,
+              "partageBas": 0.5,
+              "seuilPartage": 3000
+            }
+          ]
+        },
+        {
+          "taille": 150000,
+          "variante": null,
+          "devise": "USD",
+          "prix": 375,
+          "cartePromo": false,
+          "facturation": "subscription",
+          "intervalle": "monthly",
+          "fraisReset": null,
+          "fraisActivation": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 9000,
+              "perteMax": 4500,
+              "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 3300,
+              "joursMin": 0,
+              "regularite": 0.3,
+              "maxContrats": 15,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 4500,
+              "typePerteMax": "End of Day on LiveSim, trailing on Live",
+              "plafondRetrait": null,
+              "retraitMinimum": 100,
+              "statuts": {},
+              "perteJour": 3300,
+              "joursMin": 0,
+              "regularite": "aucune",
+              "maxContrats": 15,
+              "partage": 0.8,
+              "partageBas": 0.5,
+              "seuilPartage": 4000
+            }
+          ]
+        },
+        {
+          "taille": 200000,
+          "variante": null,
+          "devise": "USD",
+          "prix": 550,
+          "cartePromo": false,
+          "facturation": "subscription",
+          "intervalle": "monthly",
+          "fraisReset": null,
+          "fraisActivation": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 11000,
+              "perteMax": 6000,
+              "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 4400,
+              "joursMin": 0,
+              "regularite": 0.3,
+              "maxContrats": 16,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 6000,
+              "typePerteMax": "End of Day on LiveSim, trailing on Live",
+              "plafondRetrait": null,
+              "retraitMinimum": 100,
+              "statuts": {},
+              "perteJour": 4400,
+              "joursMin": 0,
+              "regularite": "aucune",
+              "maxContrats": 16,
+              "partage": 0.8,
+              "partageBas": 0.5,
+              "seuilPartage": 5000
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "offre": {
+    "code": "SCANNED",
+    "remise": 0.5,
+    "portee": "non_confirmee",
+    "checkoutVerifie": false,
+    "programmesEligibles": [],
+    "taillesEligibles": [],
+    "expireLe": null,
+    "statut": "needs_confirmation"
+  },
+  "conditions": {
+    "trading": null,
+    "commission": null,
+    "retraits": null
+  },
+  "parcours": [
+    {
+      "etape": "evaluation",
+      "titre": "Pass the evaluation",
+      "texte": "One phase, billed monthly, with no time limit and no minimum trading days."
+    },
+    {
+      "etape": "funded",
+      "titre": "Choose LiveSim or Live",
+      "texte": "After you pass, you trade the same capital on a LiveSim or a Live account. The $139 activation fee is deducted from your first withdrawal."
+    },
+    {
+      "etape": "payout",
+      "titre": "Get paid weekly",
+      "texte": "Withdrawals are processed every Wednesday, with a minimum net withdrawal of $100."
+    }
+  ],
+  "couts": [
+    {
+      "libelle": "Funded account activation",
+      "montant": "$139",
+      "note": "One-time, deducted from your first successful withdrawal. Nothing to pay upfront.",
+      "programmes": []
+    },
+    {
+      "libelle": "Evaluation reset",
+      "montant": "Varies monthly",
+      "note": "On TCP25 and TCP50, always below the price of a new subscription. One free reset at each renewal.",
+      "programmes": [
+        "tcp"
+      ]
+    },
+    {
+      "libelle": "Commissions",
+      "montant": "Per instrument",
+      "note": "The schedule is given at activation and depends on the provider (Tradovate or Rithmic).",
+      "programmes": []
+    }
+  ],
+  "verdict": {
+    "texte": "Earn2Trade is rated 4.6 out of 5 on Trustpilot across nearly 5,000 reviews, and replies to 98% of negative reviews, usually within 48 hours. It also publishes its pass rate, which is still rare in the industry. The Trader Career Path suits traders who would rather grow a small account than buy a large one outright. The trade-off is rules applied without flexibility: going over the allowed number of contracts ends the evaluation immediately, the drawdown becomes trailing on a Live account, and the profit split starts at 50%. Choose it if you are disciplined and patient; avoid it if you want a 90% split from the first dollar or forgiving rules.",
+    "pourQui": [
+      "Disciplined futures day traders (NQ, ES, CL, GC…) who keep their position size in check.",
+      "Traders who want to climb in steps from $25K to $200K rather than pay for a large account up front.",
+      "Traders who want the training and the evaluation in one place.",
+      "NinjaTrader, Tradovate and TradingView users."
+    ],
+    "pasPour": [],
+    "pointsForts": [],
+    "limites": [
+      "Monthly subscription. On the Trader Career Path, each renewal includes a free reset.",
+      "No swing trading in the evaluation: every position must be closed by 15:50 Chicago time.",
+      "30% consistency rule during the evaluation, removed once funded.",
+      "Progression ladder: the number of contracts allowed depends on your balance, and going over it ends the evaluation immediately. Ten micro contracts count as one standard contract.",
+      "Funded profit split: 50% below a threshold that depends on the account size ($1,500 on TCP25, $2,250 on TCP50, $3,000 on TCP100), 80% above it.",
+      "Drawdown: end of day in the evaluation and on LiveSim, trailing on a Live account.",
+      "Most funded traders stay on simulated capital: in 2025, 5.23% of successful traders traded a Live account and 94.77% a LiveSim account.",
+      "Futures only: no stocks, options, forex, crypto or CFDs.",
+      "Citizens of 25 countries cannot be funded, including Nigeria, Pakistan, Kenya, Ukraine and Russia."
+    ]
+  },
+  "faq": [],
+  "trustpilotScore": 4.6,
+  "trustpilotReviewCount": 4995,
+  "trustpilotUrl": "https://www.trustpilot.com/review/www.earn2trade.com",
+  "regles": [
+    {
+      "carte": "trading",
+      "regle": "Trading hours",
+      "texte": "All positions must be closed by 15:50 CT.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": "evaluation",
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://help.earn2trade.com/en/articles/2090496-can-i-hold-positions-overnight-on-the-trader-career-path-gauntlet-mini"
+    },
+    {
+      "carte": "trading",
+      "regle": "Overnight holding",
+      "texte": "Not allowed: positions cannot be held overnight.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": "evaluation",
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://help.earn2trade.com/en/articles/2090496-can-i-hold-positions-overnight-on-the-trader-career-path-gauntlet-mini"
+    },
+    {
+      "carte": "trading",
+      "regle": "News trading",
+      "texte": "Allowed.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://www.earn2trade.com/non-us/trader-career-path"
+    },
+    {
+      "carte": "trading",
+      "regle": "Platforms",
+      "texte": "Free: NinjaTrader, Finamark (with a 90-day live trading licence), R | Trader Pro, Tradovate, TradingView and BlackArrow One. Others, such as Quantower, ATAS, MultiCharts or Sierra Chart, need your own licence.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://help.earn2trade.com/en/articles/2090521-what-platforms-can-i-use-for-the-gauntlet-mini-trader-career-path"
+    },
+    {
+      "carte": "trading",
+      "regle": "Instruments",
+      "texte": "Futures only, listed on CME, COMEX, NYMEX and CBOT.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "essentielle": false,
+      "source": "https://www.earn2trade.com/non-us/trader-career-path"
+    },
+    {
+      "carte": "trading",
+      "regle": "Data fees",
+      "texte": "Included for a non-professional CME status. Professional status: $140 per month per exchange, or $156 with NinjaTrader. Market depth (DOM) costs extra.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": "evaluation",
+      "bloquante": false,
+      "essentielle": false,
+      "source": "https://help.earn2trade.com/en/articles/2825514-do-i-have-to-pay-for-data-fees-during-the-trader-career-path-gauntlet-mini"
+    },
+    {
+      "carte": "payouts",
+      "regle": "How the split works",
+      "texte": "The split depends on the size of each withdrawal, not on accumulated profit.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://help.earn2trade.com/en/articles/5452472-what-is-the-withdrawal-policy"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Payout schedule",
+      "texte": "Processed every Wednesday. Request by email before 2:00 PM CT on the Friday before. Minimum net withdrawal: $100.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://help.earn2trade.com/en/articles/5452472-what-is-the-withdrawal-policy"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Withdrawal methods",
+      "texte": "The firm chooses the provider. Rise: $50 per withdrawal outside the US, 1.5% in the US. Deel: $50. Bayzat: $5 to $40. Direct crypto: 0.735%, in select cases.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://help.earn2trade.com/en/articles/5452472-what-is-the-withdrawal-policy"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Rise availability",
+      "texte": "Rise does not pay traders in Iowa, Minnesota, South Carolina, Guam, Puerto Rico, the U.S. Virgin Islands or Haiti.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": false,
+      "source": "https://help.earn2trade.com/en/articles/5452472-what-is-the-withdrawal-policy"
+    },
+    {
+      "carte": "payouts",
+      "regle": "LiveSim maximum withdrawal",
+      "texte": "$1,750 on this account size.",
+      "statut": "confirmed",
+      "programmes": [
+        "tcp"
+      ],
+      "tailles": [
+        25000
+      ],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://help.earn2trade.com/en/articles/5452472-what-is-the-withdrawal-policy"
+    },
+    {
+      "carte": "payouts",
+      "regle": "LiveSim maximum withdrawal",
+      "texte": "$3,000 on this account size.",
+      "statut": "confirmed",
+      "programmes": [
+        "tcp"
+      ],
+      "tailles": [
+        50000
+      ],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://help.earn2trade.com/en/articles/5452472-what-is-the-withdrawal-policy"
+    },
+    {
+      "carte": "payouts",
+      "regle": "LiveSim maximum withdrawal",
+      "texte": "$6,000 on this account size.",
+      "statut": "confirmed",
+      "programmes": [
+        "tcp"
+      ],
+      "tailles": [
+        100000
+      ],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://help.earn2trade.com/en/articles/5452472-what-is-the-withdrawal-policy"
+    },
+    {
+      "carte": "payouts",
+      "regle": "LiveSim maximum withdrawal",
+      "texte": "$5,000 on this account size.",
+      "statut": "confirmed",
+      "programmes": [
+        "gauntlet-mini"
+      ],
+      "tailles": [
+        50000
+      ],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://help.earn2trade.com/en/articles/5452472-what-is-the-withdrawal-policy"
+    },
+    {
+      "carte": "payouts",
+      "regle": "LiveSim maximum withdrawal",
+      "texte": "$5,000 on this account size.",
+      "statut": "confirmed",
+      "programmes": [
+        "gauntlet-mini"
+      ],
+      "tailles": [
+        100000
+      ],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://help.earn2trade.com/en/articles/5452472-what-is-the-withdrawal-policy"
+    },
+    {
+      "carte": "payouts",
+      "regle": "LiveSim maximum withdrawal",
+      "texte": "$5,000 on this account size.",
+      "statut": "confirmed",
+      "programmes": [
+        "gauntlet-mini"
+      ],
+      "tailles": [
+        150000
+      ],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://help.earn2trade.com/en/articles/5452472-what-is-the-withdrawal-policy"
+    },
+    {
+      "carte": "payouts",
+      "regle": "LiveSim maximum withdrawal",
+      "texte": "$5,000 on this account size.",
+      "statut": "confirmed",
+      "programmes": [
+        "gauntlet-mini"
+      ],
+      "tailles": [
+        200000
+      ],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://help.earn2trade.com/en/articles/5452472-what-is-the-withdrawal-policy"
+    },
+    {
+      "carte": "live",
+      "regle": "Moving up the Trader Career Path",
+      "texte": "After you withdraw your profit goal minus 20%, you move to the next Live account: $50K, then $100K, then $200K. The help center says the plan can grow up to $400,000.",
+      "statut": "confirmed",
+      "programmes": [
+        "tcp"
+      ],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://help.earn2trade.com/en/articles/16295637-what-is-earn2trade"
+    },
+    {
+      "carte": "trading",
+      "regle": "Data feed",
+      "texte": "Chosen at purchase: Rithmic (Finamark, R Trader Pro), BlackArrow, or NinjaTrader (Tradovate, TradingView).",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": "evaluation",
+      "bloquante": false,
+      "essentielle": false,
+      "source": "https://www.earn2trade.com/non-us/purchase"
+    }
+  ],
+  "titre": "Earn2Trade review: Trader Career Path rules and prices (2026)",
+  "metaDescription": "Futures prop firm: Trader Career Path from $25K to $200K, end-of-day drawdown in the evaluation, split up to 80%, weekly payouts. Rules and pitfalls.",
+  "description": "Futures prop firm: the Trader Career Path grows from $25K to $200K, with an end-of-day drawdown in the evaluation, a profit split of up to 80% and weekly payouts.",
+  "connuPour": [
+    {
+      "titre": "No minimum trading days",
+      "detail": "In the evaluation and once funded."
+    },
+    {
+      "titre": "Weekly payouts",
+      "detail": "Every Wednesday, from $100 net."
+    },
+    {
+      "titre": "LiveSim or Live",
+      "detail": "After you pass, choose simulated or real capital."
+    },
+    {
+      "titre": "30% consistency",
+      "detail": "Applies during the evaluation only."
+    }
+  ],
+  "preuves": [
+    {
+      "libelle": "passed the evaluation in 2025",
+      "valeur": "8.89%",
+      "source": "https://www.earn2trade.com/non-us/trader-career-path"
+    },
+    {
+      "libelle": "of Live accounts had a withdrawal in 2025",
+      "valeur": "18.04%",
+      "source": "https://www.earn2trade.com/non-us/trader-career-path"
+    },
+    {
+      "libelle": "of LiveSim accounts had a withdrawal in 2025",
+      "valeur": "18.20%",
+      "source": "https://www.earn2trade.com/non-us/trader-career-path"
+    }
+  ],
+  "plateformesDetail": [
+    {
+      "nom": "NinjaTrader",
+      "selectionnable": true,
+      "note": "Free during the evaluation (help centre, article 2090521)."
+    },
+    {
+      "nom": "Finamark",
+      "selectionnable": true,
+      "note": "Free during the evaluation (help centre, article 2090521)."
+    },
+    {
+      "nom": "R | Trader Pro",
+      "selectionnable": true,
+      "note": "Free during the evaluation (help centre, article 2090521)."
+    },
+    {
+      "nom": "Tradovate",
+      "selectionnable": true,
+      "note": "Free during the evaluation (help centre, article 2090521)."
+    },
+    {
+      "nom": "TradingView",
+      "selectionnable": true,
+      "note": "Free during the evaluation (help centre, article 2090521)."
+    },
+    {
+      "nom": "BlackArrow One",
+      "selectionnable": true,
+      "note": "Free during the evaluation (help centre, article 2090521)."
+    },
+    {
+      "nom": "Quantower",
+      "selectionnable": false,
+      "note": "Usable with your own licence (help centre, article 2090521)."
+    },
+    {
+      "nom": "ATAS",
+      "selectionnable": false,
+      "note": "Usable with your own licence (help centre, article 2090521)."
+    },
+    {
+      "nom": "MultiCharts",
+      "selectionnable": false,
+      "note": "Usable with your own licence (help centre, article 2090521)."
+    },
+    {
+      "nom": "Sierra Chart",
+      "selectionnable": false,
+      "note": "Usable with your own licence (help centre, article 2090521)."
+    },
+    {
+      "nom": "Bookmap",
+      "selectionnable": false,
+      "note": "Usable with your own licence (help centre, article 2090521)."
+    },
+    {
+      "nom": "MotiveWave",
+      "selectionnable": false,
+      "note": "Usable with your own licence (help centre, article 2090521)."
+    },
+    {
+      "nom": "Jigsaw Trading",
+      "selectionnable": false,
+      "note": "Usable with your own licence (help centre, article 2090521)."
+    },
+    {
+      "nom": "Investor RT",
+      "selectionnable": false,
+      "note": "Usable with your own licence (help centre, article 2090521)."
+    },
+    {
+      "nom": "Inside Edge Trader",
+      "selectionnable": false,
+      "note": "Usable with your own licence (help centre, article 2090521)."
+    },
+    {
+      "nom": "Photon",
+      "selectionnable": false,
+      "note": "Usable with your own licence (help centre, article 2090521)."
+    },
+    {
+      "nom": "QScalp",
+      "selectionnable": false,
+      "note": "Usable with your own licence (help centre, article 2090521)."
+    },
+    {
+      "nom": "QSI",
+      "selectionnable": false,
+      "note": "Usable with your own licence (help centre, article 2090521)."
+    },
+    {
+      "nom": "ScalpTool",
+      "selectionnable": false,
+      "note": "Usable with your own licence (help centre, article 2090521)."
+    },
+    {
+      "nom": "Trade Navigator",
+      "selectionnable": false,
+      "note": "Usable with your own licence (help centre, article 2090521)."
+    },
+    {
+      "nom": "Volfix.net",
+      "selectionnable": false,
+      "note": "Usable with your own licence (help centre, article 2090521)."
+    }
+  ],
+  "categoriesActifs": [],
+  "categoriesActifsStatut": null,
+  "methodesRetrait": [
+    "Rise",
+    "Deel",
+    "Bayzat",
+    "Direct crypto"
+  ],
+  "prestataireRetrait": null,
+  "levierStatut": null,
+  "optionsAchat": [],
+  "formation": {
+    "titre": "Training included",
+    "intro": null,
+    "elements": [
+      "Video library and study guides, free during the evaluation."
+    ]
+  },
+  "comptesApresReussite": [
+    {
+      "nom": "LiveSim",
+      "description": "Trade with simulated capital using real-time market data.",
+      "lignes": [
+        {
+          "libelle": "Drawdown",
+          "valeur": "End of day"
+        },
+        {
+          "libelle": "Accounts at the same time",
+          "valeur": "Up to 3"
+        }
+      ]
+    },
+    {
+      "nom": "Live",
+      "description": "Trade with real capital and withdraw your profits.",
+      "lignes": [
+        {
+          "libelle": "Drawdown",
+          "valeur": "Trailing"
+        },
+        {
+          "libelle": "Accounts at the same time",
+          "valeur": "1"
+        }
+      ]
+    }
+  ]
+}

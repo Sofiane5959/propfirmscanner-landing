@@ -61,6 +61,12 @@ cas('rollout.ts exporte une liste slug → langues', /FIRM_PROFILE_ROLLOUT:\s*Re
 const route = readFileSync(join(RACINE, 'app/[locale]/prop-firm/[slug]/page.tsx'), 'utf8')
 cas('la route ne passe par FirmProfilePage que via profilActif', /FIRM_SHEETS\[firm\.slug\] && profilActif\(firm\.slug, locale\)/.test(route))
 cas('la route garde UniversalFirmPage pour le retour arriere', route.includes('<UniversalFirmPage'))
+// Un nouveau tableur ne change rien en ligne tant que la firme n'est pas activee.
+cas('UniversalFirmPage ne sert que les firmes deja servies par leur fiche', /: LEGACY_SHEETS\[firm\.slug\] \? \(\s*<UniversalFirmPage/.test(route))
+cas('titre et donnees structurees ne lisent une fiche qu\'une fois en ligne',
+  /const ficheMeta = ficheEnLigne\(/.test(route) && /const ficheDonnees = ficheEnLigne\(/.test(route))
+cas('aucune autre lecture directe de FIRM_SHEETS dans la route',
+  (route.match(/FIRM_SHEETS\[/g) || []).length === 4, String((route.match(/FIRM_SHEETS\[/g) || []).length))
 cas('la route garde l\'ancien rendu pour le retour arriere', route.includes('<PropFirmPageClient'))
 
 // Offre : rien ne s'affiche sans confirmation du partenaire (21 septembre 2026).

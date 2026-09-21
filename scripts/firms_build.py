@@ -37,6 +37,18 @@ def rel(chemin):
     return os.path.relpath(chemin, RACINE).replace(os.sep, "/")
 
 
+def firmes_publiees():
+    """Les slugs dont la page publique lit la fiche : rollout.ts, ou copie figee."""
+    publiees = {os.path.splitext(os.path.basename(p))[0]
+                for p in glob.glob(os.path.join(FICHES, "legacy", "*.json"))}
+    with open(os.path.join(FICHES, "rollout.ts"), encoding="utf-8") as fh:
+        source = fh.read()
+    bloc = re.search(r"FIRM_PROFILE_ROLLOUT[^=]*=\s*\{([^}]*)\}", source)
+    if bloc:
+        publiees |= set(re.findall(r"^\s*'?([a-z0-9-]+)'?\s*:\s*\[", bloc.group(1), re.M))
+    return publiees
+
+
 def chemin_sql(slug):
     return os.path.join(SQL, f"sync-prop-firms-{slug}.sql")
 
@@ -67,6 +79,7 @@ def generer():
     """Retourne (sorties {chemin: texte}, erreurs, avertissements par fiche)."""
     sorties, erreurs, avertissements = {}, [], {}
     slugs = []
+    publiees = firmes_publiees()
     for tableur in tableurs():
         conversion.avertissements.clear()
         fiche = conversion.convertir(tableur)
@@ -81,7 +94,7 @@ def generer():
         if erreurs_fiche:
             continue
         sorties[os.path.join(FICHES, f"{slug}.json")] = texte_json
-        sorties[chemin_sql(slug)] = generer_sql(fiche, valeurs, texte_json, rel(tableur))
+        sorties[chemin_sql(slug)] = generer_sql(fiche, valeurs, texte_json, rel(tableur), slug in publiees)
         slugs.append(slug)
     sorties[os.path.join(FICHES, "index.ts")] = contenu_index(sorted(slugs))
     return sorties, erreurs, avertissements

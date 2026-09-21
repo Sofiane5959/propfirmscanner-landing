@@ -42,8 +42,15 @@ export interface SheetPhase {
   /** Fraction (0.4 = 40 %), « aucune », « non confirmee », ou null. */
   regularite: number | 'aucune' | 'non confirmee' | null
   maxContrats: number | null
-  /** Fraction : 0.9 = 90 %. */
+  /** Fraction : 0.9 = 90 %. Avec un palier, c'est le taux au-dessus du seuil. */
   partage: number | null
+  /**
+   * Partage par palier (Earn2Trade : 50 % sous 1 500 $, 80 % au-dela) : le taux
+   * sous le seuil et le seuil, en devise, par demande de retrait. Absents des
+   * copies figees de production.
+   */
+  partageBas?: number | null
+  seuilPartage?: number | null
   /** Plafond par demande de retrait, en devise. */
   plafondRetrait: number | null
   /** Minimum par demande de retrait, en devise. */
@@ -216,6 +223,8 @@ export interface FirmSheet {
   regles: SheetRegle[]
   /** Le H1 : une proposition de valeur. Null : le nom sert de H1. */
   titre: string | null
+  /** Meta description (onglet Firme). Vide : calculee depuis la presentation. */
+  metaDescription?: string | null
   /** 2 a 3 lignes sous le H1. */
   description: string | null
   /** « What [Firm] is known for » : quatre faits au plus. */
@@ -305,6 +314,19 @@ export function sizeLabel(n: number, devise: string): string {
   }).format(n)
 }
 
+/**
+ * Le partage d'une phase tel qu'il s'affiche : un taux, ou deux taux et leur
+ * seuil quand la firme paie par palier (« 50% under $1,500 · 80% from $1,500 »).
+ */
+export function formatPartage(phase: SheetPhase, devise: string): string | null {
+  if (phase.partage == null) return null
+  if (phase.partageBas != null && phase.seuilPartage != null) {
+    const seuil = money(phase.seuilPartage, devise)
+    return `${pct(phase.partageBas)} under ${seuil} · ${pct(phase.partage)} from ${seuil}`
+  }
+  return pct(phase.partage)
+}
+
 export function pct(fraction: number): string {
   return `${Math.round(fraction * 100)}%`
 }
@@ -327,6 +349,13 @@ export function paragraphs(texte: string | null): string[] {
  * Google coupe, et l'ancien verdict en faisait pres de 400.
  */
 export function sheetMetaDescription(sheet: FirmSheet): string {
+  // Ecrite dans le tableur (onglet Firme, meta_description) : elle prime.
+  if (sheet.metaDescription) {
+    const m = sheet.metaDescription.trim()
+    if (m.length <= 160) return m
+    const c = m.slice(0, 157)
+    return `${c.slice(0, c.lastIndexOf(' '))}…`
+  }
   const source = sheet.presentation ?? sheet.resume ?? ''
   const premiere = source.match(/^[\s\S]*?[.!?](\s|$)/)?.[0].trim() ?? ''
   const suite = `Fees, trading rules, profit split and promo codes for ${sheet.nom}.`
@@ -496,16 +525,20 @@ function reponsesRecomposees(sheet: FirmSheet): Record<string, string | null> {
       const devise = p.plans[0]?.devise ?? 'USD'
       const prix = p.plans.map((pl) => pl.prix).filter((x): x is number => x != null)
       const f = fourchette(prix, (n) => money(n, devise))
-      return f ? `${p.nom}: ${f}` : null
+      // Un abonnement se dit « per month » : sans quoi le lecteur croit a un paiement unique.
+      const mensuel = p.plans.some((pl) => pl.prix != null) &&
+        p.plans.filter((pl) => pl.prix != null).every((pl) => pl.facturation === 'subscription' && pl.intervalle === 'monthly')
+      return f ? `${p.nom}: ${f}${mensuel ? ' per month' : ''}` : null
     })
     .filter((x): x is string => x != null)
 
   const partages = programmes
     .map((p) => {
+      // Un palier compte ses deux taux : « 50% to 80% », jamais « 80% » seul.
       const valeurs = p.plans
         .flatMap((pl) => pl.phases)
         .filter((ph) => ph.phase === 'funded' && ph.partage != null)
-        .map((ph) => ph.partage as number)
+        .flatMap((ph) => (ph.partageBas != null ? [ph.partageBas, ph.partage as number] : [ph.partage as number]))
       const f = fourchette(valeurs, pct)
       return f ? `${p.nom}: ${f}` : null
     })

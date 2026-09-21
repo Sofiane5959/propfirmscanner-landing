@@ -75,6 +75,10 @@ def projeter(fiche):
         erreurs.append(f"Plans : plusieurs devises ({', '.join(devises)}) ; min_price melangerait des monnaies.")
 
     partages = [ph["partage"] for pl in plans for ph in pl.get("phases", []) if ph.get("partage") is not None]
+    # Un partage par palier commence a son taux bas : profit_split dit ou la
+    # firme commence (CLAUDE.md), max_profit_split jusqu'ou elle va.
+    partages_bas = [ph["partageBas"] if ph.get("partageBas") is not None else ph["partage"]
+                    for pl in plans for ph in pl.get("phases", []) if ph.get("partage") is not None]
 
     marches = set(fiche.get("marches") or [])
     is_futures = None
@@ -106,7 +110,7 @@ def projeter(fiche):
         "price_currency": devises[0] if len(devises) == 1 else None,
         "min_price": _entier_si_possible(min(prix)) if prix else None,
         "max_price": _entier_si_possible(max(prix)) if prix else None,
-        "profit_split": int(round(min(partages) * 100)) if partages else None,
+        "profit_split": int(round(min(partages_bas) * 100)) if partages_bas else None,
         "max_profit_split": int(round(max(partages) * 100)) if partages else None,
         "discount_code": offre["code"] if offre_active else None,
         "discount_percent": pourcentage,
@@ -146,7 +150,7 @@ def empreinte(texte_json):
     return "sha256:" + hashlib.sha256(texte_json.encode("utf-8")).hexdigest()
 
 
-def generer_sql(fiche, valeurs, texte_json, chemin_tableur):
+def generer_sql(fiche, valeurs, texte_json, chemin_tableur, publiee=True):
     slug = fiche["slug"]
     s = _litteral(slug)
     colonnes = [(c, g) for c, g in COLONNES if c in valeurs]
@@ -181,6 +185,18 @@ def generer_sql(fiche, valeurs, texte_json, chemin_tableur):
         "",
         "begin;",
         "",
+        *([] if publiee else [
+            "-- VERROU : cette firme n'est pas encore publiee (ni dans data/firms/rollout.ts,",
+            "-- ni dans data/firms/legacy). Ses copies prop_firms ne doivent pas changer avant",
+            "-- la publication de sa page : ce bloc annule tout. Il disparait tout seul du",
+            "-- fichier genere des que la firme est activee dans rollout.ts.",
+            "do $garde$",
+            "begin",
+            f"  raise exception '{slug} n''est pas encore publiee : ce SQL ne doit pas etre execute.';",
+            "end",
+            "$garde$;",
+            "",
+        ]),
         "do $ctrl$",
         "begin",
         f"  if not exists (select 1 from prop_firms where slug = {s}) then",
