@@ -222,7 +222,11 @@ def convertir(chemin):
             "programmesEligibles": liste(o.get("programmes_eligibles")),
             "taillesEligibles": [n for n in (nombre(x) for x in liste(o.get("tailles_eligibles"))) if n is not None],
             "expireLe": expire.date().isoformat() if isinstance(expire, dt.datetime) else txt(expire),
+            # Sans confirmation explicite du partenaire, l'offre ne s'affiche pas.
+            "statut": statut(o.get("statut")) or "needs_confirmation",
         }
+        if statut(o.get("statut")) is None:
+            avertissements.append("Offre : statut vide, l'offre est traitee comme needs_confirmation et reste masquee.")
 
     c = formulaire(wb["Conditions"])
 

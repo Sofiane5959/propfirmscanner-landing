@@ -357,7 +357,15 @@ export function SimilarFirms({ nom, firms }: { nom: string; firms: SimilarFirm[]
       <SectionHeading id="similar-title" title={COPY.similar.title} />
       <div className={cx('grid gap-3', COLONNES[Math.min(firms.length, 3)])}>
         {firms.map((f) => (
-          <article key={f.id} className={cx(CARD, 'flex flex-col p-4')}>
+          // Toute la carte est le lien (21/09) : on clique ou l'on veut, pas seulement sur le bouton.
+          <a
+            key={f.id}
+            href={f.href}
+            className={cx(
+              CARD,
+              'group flex flex-col p-4 transition-colors hover:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent'
+            )}
+          >
             <div className="flex items-center justify-between gap-3">
               <div className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-lg bg-white p-1 font-bold text-bg-base">
                 {f.logoUrl ? (
@@ -375,10 +383,8 @@ export function SimilarFirms({ nom, firms }: { nom: string; firms: SimilarFirm[]
                 {f.code}
               </span>
             )}
-            <a href={f.href} className={cx(BTN_SECONDARY, 'mt-auto w-full')}>
-              {COPY.similar.view}
-            </a>
-          </article>
+            <span className={cx(BTN_SECONDARY, 'mt-auto w-full group-hover:border-border-hover')}>{COPY.similar.view}</span>
+          </a>
         ))}
       </div>
     </Section>

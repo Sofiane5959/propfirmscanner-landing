@@ -93,6 +93,12 @@ export interface SheetOffre {
   programmesEligibles: string[]
   taillesEligibles: number[]
   expireLe: string | null
+  /**
+   * Seule une offre « confirmed » s'affiche (code, remise, Copy code, Claim deal).
+   * Le partenaire doit avoir confirme le code, le pourcentage et le lien.
+   * Absent dans les copies figees de production, que la nouvelle page ne lit pas.
+   */
+  statut?: Statut
 }
 
 /** Une etape de « From evaluation to your first payout ». */

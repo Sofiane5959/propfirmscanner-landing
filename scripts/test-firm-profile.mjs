@@ -63,6 +63,15 @@ cas('la route ne passe par FirmProfilePage que via profilActif', /FIRM_SHEETS\[f
 cas('la route garde UniversalFirmPage pour le retour arriere', route.includes('<UniversalFirmPage'))
 cas('la route garde l\'ancien rendu pour le retour arriere', route.includes('<PropFirmPageClient'))
 
+// Offre : rien ne s'affiche sans confirmation du partenaire (21 septembre 2026).
+const page = readFileSync(join(DOSSIER, 'FirmProfilePage.tsx'), 'utf8')
+cas('FirmProfilePage filtre l\'offre avant toute section', /const sheet = ficheAffichable\(ficheBrute\)/.test(page))
+for (const f of readdirSync(FICHES).filter((x) => x.endsWith('.json'))) {
+  const fiche = JSON.parse(readFileSync(join(FICHES, f), 'utf8'))
+  if (!fiche.offre) continue
+  cas(`${f} : statut d'offre renseigne`, ['confirmed', 'needs_confirmation'].includes(fiche.offre.statut), String(fiche.offre.statut))
+}
+
 console.log('\n' + '-'.repeat(60))
 for (const e of echecs) console.log('ECHEC :', e)
 console.log(`${reussis} reussis, ${echecs.length} echoues`)

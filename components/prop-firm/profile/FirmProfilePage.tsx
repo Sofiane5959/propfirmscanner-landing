@@ -18,6 +18,7 @@
 
 import type { FirmSheet, SimilarFirm } from '@/lib/firm-sheet'
 import { buildAffiliateUrl } from '@/lib/affiliate'
+import { ficheAffichable } from '@/lib/firm-profile'
 import { AccountConfigurator, ProgramComparison } from './AccountConfigurator'
 import {
   ConditionsSection,
@@ -33,7 +34,7 @@ import { RulesByPhase } from './RulesByPhase'
 import { useFirmSelection } from './useFirmSelection'
 
 export default function FirmProfilePage({
-  sheet,
+  sheet: ficheBrute,
   firmSlug,
   firmId = null,
   locale,
@@ -47,6 +48,8 @@ export default function FirmProfilePage({
   /** Firmes avec page, lien affilie et code actifs — choisies par la route. */
   similarFirms?: SimilarFirm[]
 }) {
+  // Une offre non confirmee ne sort jamais d'ici : les sections ne la voient pas.
+  const sheet = ficheAffichable(ficheBrute)
   const sel = useFirmSelection(sheet)
 
   const lien = (placement: string) =>

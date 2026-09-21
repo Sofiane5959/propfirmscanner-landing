@@ -693,7 +693,8 @@
     "checkoutVerifie": false,
     "programmesEligibles": [],
     "taillesEligibles": [],
-    "expireLe": null
+    "expireLe": null,
+    "statut": "needs_confirmation"
   },
   "conditions": {
     "trading": "Overnight holding is not allowed; automatic liquidation may occur. Market closed Friday 16:55 EST to Sunday 18:00 EST. Fully automated AI or bots are not permitted. The configurator lists scalping as not allowed, without defining it. News trading is allowed in evaluation and restricted once funded, without a stated event window.",
@@ -745,7 +746,7 @@
   "faq": [],
   "trustpilotScore": 4.7,
   "trustpilotReviewCount": null,
-  "trustpilotUrl": null,
+  "trustpilotUrl": "https://www.trustpilot.com/review/futureselite.com",
   "regles": [
     {
       "carte": "trading",

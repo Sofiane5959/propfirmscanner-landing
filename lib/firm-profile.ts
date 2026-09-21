@@ -30,6 +30,9 @@ import {
 const QUESTION_RETRAITS = QUESTIONS_GABARIT[3]
 /** « Does the promotional code apply to every account? », la 5e. */
 const QUESTION_PROMO = QUESTIONS_GABARIT[4]
+/** « Is [Firm] suitable for beginners? », la 1re. */
+const QUESTION_DEBUTANTS = QUESTIONS_GABARIT[0]
+const PREFIXE_REMISE = 'Before any discount — '
 
 /** Ce qu'affiche une case : un texte, ou le statut qui explique son absence. */
 export type Cellule = { texte: string; statut?: undefined } | { texte?: undefined; statut: StatutManquant }
@@ -43,6 +46,16 @@ export type StatutManquant = Exclude<Statut, 'confirmed'>
  */
 const INCERTAINS: ReadonlySet<Statut> = new Set<Statut>(['needs_confirmation', 'source_conflict'])
 export const estIncertain = (statut: Statut | null | undefined) => Boolean(statut && INCERTAINS.has(statut))
+
+/**
+ * La fiche telle que la page publique peut l'afficher : une offre non confirmee
+ * par le partenaire (21 septembre 2026, SCANNED inactif au checkout) est retiree,
+ * et la page se comporte comme une firme sans promotion. Un seul point de
+ * decision : toutes les sections recoivent cette fiche.
+ */
+export function ficheAffichable(sheet: FirmSheet): FirmSheet {
+  return sheet.offre && sheet.offre.statut !== 'confirmed' ? { ...sheet, offre: null } : sheet
+}
 
 export function cellule(valeur: string | null | undefined, statut: Statut | null | undefined): Cellule | null {
   if (estIncertain(statut)) return null
@@ -336,13 +349,27 @@ export function faqProfil(sheet: FirmSheet): { question: string; reponse: string
       ? `Code ${o.code} gives ${pct(o.remise)} off. Enter it at checkout; the configurator shows the price with the code applied.`
       : null
 
-  return items.map((q) =>
-    q.question === QUESTION_RETRAITS && morceaux.length > 0
-      ? { question: q.question, reponse: morceaux.join(' ') }
-      : q.question === QUESTION_PROMO && reponsePromo
-        ? { question: q.question, reponse: reponsePromo }
+  // Regles du 21/09 : la FAQ ne repete ni le configurateur ni le verdict, et ne
+  // suggere aucune remise que la page n'affiche pas. La reponse generee pour les
+  // debutants ne faisait que renvoyer vers ces deux sections : elle sort, sauf si
+  // le tableur en donne une.
+  const debutantsSaisie = sheet.faq.some((q) => q.question === QUESTION_DEBUTANTS && q.reponse)
+  const questionDebutants = QUESTION_DEBUTANTS.replace(/\[Firm\]/g, sheet.nom)
+
+  return items
+    .filter((q) => debutantsSaisie || q.question !== questionDebutants)
+    .map((q) =>
+      !sheet.offre && q.reponse.startsWith(PREFIXE_REMISE)
+        ? { ...q, reponse: `Public prices — ${q.reponse.slice(PREFIXE_REMISE.length)}` }
         : q
-  )
+    )
+    .map((q) =>
+      q.question === QUESTION_RETRAITS && morceaux.length > 0
+        ? { question: q.question, reponse: morceaux.join(' ') }
+        : q.question === QUESTION_PROMO && reponsePromo
+          ? { question: q.question, reponse: reponsePromo }
+          : q
+    )
 }
 
 export interface LigneFrais {
