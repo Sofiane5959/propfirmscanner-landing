@@ -1,4 +1,4 @@
-// GENERE PAR scripts/xlsx_to_firm.py — ne pas modifier a la main.
+// GENERE PAR scripts/firms_build.py — ne pas modifier a la main.
 // Une entree par fiche data/firms/<slug>.json. Une firme presente ici est
 // rendue par la page universelle ; les autres gardent leur rendu actuel.
 

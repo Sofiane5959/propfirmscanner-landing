@@ -2,22 +2,17 @@
 """
 Convertit le tableur rempli d'une firme en fiche JSON pour la page universelle.
 
-    python scripts/xlsx_to_firm.py data/firms/<slug>.xlsx
-
-Ecrit data/firms/<slug>.json et regenere data/firms/index.ts, qui liste toutes
-les fiches presentes. Le tableur est la source ; le JSON n'en est qu'une copie
-lisible par le site. On ne corrige jamais le JSON a la main.
+La commande a lancer est `npm run firms:build` (scripts/firms_build.py) : elle
+convertit tous les tableurs avec ce module, puis ecrit les JSON, l'index et le
+SQL de synchronisation. Ce fichier n'en est que la partie « lecture du tableur ».
+Le tableur est la source ; le JSON n'en est qu'une copie lisible par le site.
+On ne corrige jamais le JSON a la main.
 
 Le script ne complete rien : une cellule vide devient null ou une liste vide,
 et la page n'affiche pas l'emplacement correspondant. Une valeur inconnue porte
 un statut (not_published, not_applicable, needs_confirmation, source_conflict).
-
-    python scripts/xlsx_to_firm.py --check
-
-verifie que chaque JSON est exactement la conversion de son tableur.
 """
 import datetime as dt
-import glob
 import json
 import os
 import re
@@ -109,8 +104,8 @@ STATUTS = ("confirmed", "not_published", "not_applicable", "needs_confirmation",
 # Ce que /api/go/[slug] accepte comme opt_key / opt_value.
 PARAMETRE_SUR = re.compile(r"^[A-Za-z0-9_-]{1,40}$")
 
-GENERE = ("Fichier genere par scripts/xlsx_to_firm.py depuis data/firms/{slug}.xlsx. "
-          "Ne pas modifier : corriger le tableur, puis relancer le script.")
+GENERE = ("Fichier genere par `npm run firms:build` depuis data/firms/{slug}.xlsx. "
+          "Ne pas modifier : corriger le tableur, puis relancer la commande.")
 
 
 def statut(v):
@@ -122,6 +117,23 @@ def statut(v):
 def feuille(wb, nom):
     """L'onglet, ou un onglet vide s'il n'existe pas dans ce tableur."""
     return wb[nom] if nom in wb.sheetnames else Workbook().active
+
+
+MODELE = os.path.join(RACINE, "MODELE-propfirm.xlsx")
+
+
+def exemples_du_modele():
+    """Le slug, le nom et le code de l'exemple rempli dans le modele vierge."""
+    if not os.path.exists(MODELE):
+        return {}
+    wb = load_workbook(MODELE, read_only=True)
+    sortie = {}
+    for onglet, champs in (("Firme", ("slug", "nom")), ("Offre", ("code",))):
+        for ligne in wb[onglet].iter_rows(min_row=2, max_col=3, values_only=True):
+            if ligne[0] in champs and isinstance(ligne[2], str) and len(ligne[2].strip()) >= 4:
+                sortie[ligne[0]] = ligne[2].strip()
+    wb.close()
+    return sortie
 
 
 def convertir(chemin):
@@ -385,76 +397,18 @@ def convertir(chemin):
         "comptesApresReussite": list(comptes.values()),
     }
 
-    # Garde-fou : l'exemple FuturesElite laisse dans le tableur d'une autre firme.
-    if slug != "futureselite" and ("SCANNED" in json.dumps(fiche) or "FuturesElite" in json.dumps(fiche)):
-        avertissements.append("Des valeurs de l'exemple FuturesElite sont restees dans ce tableur.")
+    # Garde-fou : les valeurs d'exemple du modele laissees dans le tableur d'une
+    # autre firme (colonne « Exemple » de MODELE-propfirm.xlsx).
+    exemples = exemples_du_modele()
+    if exemples and slug != exemples.get("slug"):
+        texte = json.dumps(fiche, ensure_ascii=False)
+        restes = sorted(v for v in exemples.values() if v in texte)
+        if restes:
+            avertissements.append(f"Valeurs de l'exemple du modele restees dans ce tableur : {', '.join(restes)}.")
 
     return fiche
 
 
-def regenerer_index():
-    fiches = sorted(os.path.splitext(os.path.basename(p))[0] for p in glob.glob(os.path.join(DOSSIER, "*.json")))
-    ident = lambda s: "fiche_" + re.sub(r"[^a-zA-Z0-9]", "_", s)
-    contenu = [
-        "// GENERE PAR scripts/xlsx_to_firm.py — ne pas modifier a la main.",
-        "// Une entree par fiche data/firms/<slug>.json. Une firme presente ici est",
-        "// rendue par la page universelle ; les autres gardent leur rendu actuel.",
-        "",
-        "import type { FirmSheet } from '@/lib/firm-sheet'",
-        "",
-    ]
-    contenu += [f"import {ident(s)} from './{s}.json'" for s in fiches]
-    contenu += ["", "export const FIRM_SHEETS: Record<string, FirmSheet> = {"]
-    contenu += [f"  '{s}': {ident(s)} as unknown as FirmSheet," for s in fiches]
-    contenu += ["}", ""]
-    with open(os.path.join(DOSSIER, "index.ts"), "w", encoding="utf-8", newline="\n") as fh:
-        fh.write("\n".join(contenu))
-    return fiches
-
-
-def verifier():
-    """Le JSON n'est qu'une sortie : il doit etre exactement la conversion du tableur."""
-    ecarts = []
-    tableurs = sorted(t for t in glob.glob(os.path.join(DOSSIER, "*.xlsx"))
-                      if not os.path.basename(t).startswith("~$"))
-    for tableur in tableurs:
-        fiche = convertir(tableur)
-        chemin = os.path.join(DOSSIER, f"{fiche['slug']}.json")
-        actuel = None
-        if os.path.exists(chemin):
-            with open(chemin, encoding="utf-8") as fh:
-                actuel = json.load(fh)
-        if actuel != fiche:
-            ecarts.append(os.path.relpath(chemin, RACINE))
-    orphelins = sorted(
-        os.path.relpath(j, RACINE) for j in glob.glob(os.path.join(DOSSIER, "*.json"))
-        if not os.path.exists(os.path.splitext(j)[0] + ".xlsx"))
-    for e in ecarts:
-        print(f"ECART : {e} ne correspond pas a son tableur. Relancer la conversion, ne pas l'editer.")
-    for o in orphelins:
-        print(f"ORPHELIN : {o} n'a pas de tableur.")
-    print(f"{len(tableurs)} tableur(s) verifie(s), {len(ecarts)} ecart(s), {len(orphelins)} orphelin(s).")
-    sys.exit(1 if ecarts or orphelins else 0)
-
-
 if __name__ == "__main__":
-    if sys.argv[1:] == ["--check"]:
-        verifier()
-    if len(sys.argv) != 2:
-        sys.exit("Usage : python scripts/xlsx_to_firm.py data/firms/<slug>.xlsx  |  --check")
-    fiche = convertir(sys.argv[1])
-    os.makedirs(DOSSIER, exist_ok=True)
-    sortie = os.path.join(DOSSIER, f"{fiche['slug']}.json")
-    with open(sortie, "w", encoding="utf-8", newline="\n") as fh:
-        json.dump(fiche, fh, ensure_ascii=False, indent=2)
-        fh.write("\n")
-    fiches = regenerer_index()
-
-    nb_plans = sum(len(p["plans"]) for p in fiche["programmes"])
-    nb_phases = sum(len(pl["phases"]) for p in fiche["programmes"] for pl in p["plans"])
-    print(f"{sortie}")
-    print(f"  {len(fiche['programmes'])} programmes · {nb_plans} plans · {nb_phases} phases · "
-          f"offre {'oui' if fiche['offre'] else 'non'} · {len(fiche['faq'])} FAQ")
-    print(f"  index : {len(fiches)} fiche(s) — {', '.join(fiches)}")
-    for a in avertissements:
-        print(f"  ATTENTION : {a}")
+    sys.exit("Ce script ne s'appelle plus directement : lancer `npm run firms:build` "
+             "(ou `npm run firms:check`), qui convertit tous les tableurs et genere JSON, index et SQL.")

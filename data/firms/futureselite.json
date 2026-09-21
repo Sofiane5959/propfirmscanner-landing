@@ -1,5 +1,5 @@
 {
-  "_genere": "Fichier genere par scripts/xlsx_to_firm.py depuis data/firms/futureselite.xlsx. Ne pas modifier : corriger le tableur, puis relancer le script.",
+  "_genere": "Fichier genere par `npm run firms:build` depuis data/firms/futureselite.xlsx. Ne pas modifier : corriger le tableur, puis relancer la commande.",
   "slug": "futureselite",
   "nom": "FuturesElite",
   "logoUrl": "https://cdn.prod.website-files.com/690a53b4dc85f8bf1d3328d4/690a53b4dc85f8bf1d332987_Webclip.svg",

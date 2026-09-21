@@ -63,11 +63,19 @@ Déploiement Vercel via GitHub Desktop — pas de git en ligne de commande.
   étaient `GAU50`, pas `GM50`, et la déduction a coûté plusieurs allers-retours.
 - Ne pas promettre au visiteur ce que le partenaire ne garantit pas. Le coupon
   n'est certain que sur un deep link vers le checkout.
+- Fiches firmes : `data/firms/<slug>.xlsx` est la seule source éditable.
+  `npm run firms:build` régénère `data/firms/<slug>.json`, `data/firms/index.ts`
+  et `database/generated/sync-prop-firms-<slug>.sql` ; `npm run firms:check`
+  échoue si l'un d'eux a été modifié à la main. Aucun script de remplissage
+  propre à une firme, aucune donnée métier dans un composant. Le SQL généré ne
+  s'exécute jamais depuis un script : Sofiane le lance dans Supabase.
+- Une offre (onglet Offre) n'est affichée sur la fiche ni recopiée dans
+  `prop_firms.discount_*` que si son `statut` est `confirmed`.
 
 ## Vérifications avant de conclure
 
 Lancer `npm run build` et `npx tsc --noEmit`. Ne pas annoncer qu'une tâche est
-terminée sans les avoir passés.
+terminée sans les avoir passés. Si une fiche firme a changé : `npm run firms:check`.
 
 Prérequis : un `.env.local` renseigné. Sans lui, `npm run build` échoue pendant
 *Collecting page data* — plusieurs routes API construisent leur client Supabase
