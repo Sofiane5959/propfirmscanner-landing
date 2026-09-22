@@ -328,6 +328,15 @@ export function reglesDeCarte(
  * plan) plutot que depuis le paragraphe libre de l'onglet Conditions.
  */
 export function faqProfil(sheet: FirmSheet): { question: string; reponse: string }[] {
+  // 22/09 : une FAQ redigee dans le tableur remplace la FAQ generee. Ses
+  // questions s'affichent telles quelles, dans l'ordre de l'onglet.
+  const redigees = sheet.faq.filter((q) => q.question && q.reponse)
+  if (redigees.length > 0) {
+    return redigees.map((q) => ({
+      question: q.question.replace(/\[Firm\]/g, sheet.nom),
+      reponse: q.reponse.replace(/\[Firm\]/g, sheet.nom),
+    }))
+  }
   const items = faqItems(sheet)
   const plafonds = sheet.programmes.some((p) => p.plans.some((pl) => pl.phases.some((ph) => ph.plafondRetrait != null)))
   const morceaux = [

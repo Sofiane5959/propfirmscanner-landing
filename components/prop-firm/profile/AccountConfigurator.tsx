@@ -260,7 +260,8 @@ export function ProgramComparison({ sel }: { sel: FirmSelection }) {
           return (
             <article key={p.slug} className={cx(CARD, 'flex flex-col gap-1.5 p-4')}>
               {p.accroche && <span className={EYEBROW}>{p.accroche}</span>}
-              <span className="font-display text-lg font-bold">{p.nom}</span>
+              {/* Nom du programme plus present (commentaire du 22/09). */}
+              <h3 className="border-l-4 border-accent pl-2.5 font-display text-[22px] font-bold leading-tight text-text-primary">{p.nom}</h3>
               {p.resume && <span className="text-sm leading-relaxed text-text-muted">{p.resume}</span>}
               {/* Pied de carte : chiffres et comptes max, cales en bas pour s'aligner d'une carte a l'autre. */}
               <div className="mt-auto pt-2">

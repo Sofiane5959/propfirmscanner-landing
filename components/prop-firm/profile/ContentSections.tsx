@@ -7,7 +7,7 @@
 // 10. FAQ.  11. CTA final.  12. Similar firms.
 // Chaque section disparait quand la fiche n'a rien a y mettre.
 
-import { AlertTriangle, Check, ChevronDown, Info } from 'lucide-react'
+import { AlertTriangle, Check, ChevronDown, GraduationCap, Info, ListChecks, Receipt, Wallet } from 'lucide-react'
 
 import { type FirmSheet, type SimilarFirm, etapeLabel, sizeLabel } from '@/lib/firm-sheet'
 import { faqProfil, fraisDeSelection, libellePhase, reglesDeCarte } from '@/lib/firm-profile'
@@ -39,11 +39,11 @@ const COLONNES: Record<number, string> = {
 export function OptionalModules({ sheet }: { sheet: FirmSheet }) {
   const { parcours, formation, comptesApresReussite: comptes } = sheet
   // 22/09 : les comptes proposes apres la reussite suivent le parcours, dans
-  // la meme section ; « What else is included? » ne garde que la formation.
-  const cartesComptes = comptes.map((c) => (
-    <article key={c.nom} className={cx(CARD, 'flex flex-col p-4')}>
-      <p className={EYEBROW}>{COPY.modules.accounts}</p>
-      <h3 className="mt-1 font-semibold">{c.nom}</h3>
+  // la meme section ; la formation a sa propre section.
+  const carteCompte = (c: (typeof comptes)[number], dansEtape: boolean) => (
+    <article key={c.nom} className={cx(CARD, 'flex flex-col p-4', dansEtape && 'bg-bg-base')}>
+      {!dansEtape && <p className={EYEBROW}>{COPY.modules.accounts}</p>}
+      <h3 className={cx('font-semibold', !dansEtape && 'mt-1')}>{c.nom}</h3>
       {c.description && <p className="mt-1 text-sm text-text-muted">{c.description}</p>}
       {c.lignes.length > 0 && (
         <dl className="mt-auto divide-y divide-border pt-2 text-sm">
@@ -56,26 +56,15 @@ export function OptionalModules({ sheet }: { sheet: FirmSheet }) {
         </dl>
       )}
     </article>
-  ))
+  )
+  const cartesComptes = comptes.map((c) => carteCompte(c, false))
   const comptesDansParcours = parcours.length > 0
-  const modules = [
-    formation && formation.elements.length > 0 && (
-      <article key="formation" className={cx(CARD, 'flex flex-col p-4')}>
-        <p className={EYEBROW}>{COPY.modules.training}</p>
-        <h3 className="mt-1 font-semibold">{formation.titre ?? COPY.modules.training}</h3>
-        {formation.intro && <p className="mt-1 text-sm text-text-muted">{formation.intro}</p>}
-        <ul className="mt-2 space-y-1.5 text-sm">
-          {formation.elements.map((el) => (
-            <li key={el} className="flex gap-2">
-              <Check className="mt-0.5 h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
-              {el}
-            </li>
-          ))}
-        </ul>
-      </article>
-    ),
-    ...(comptesDansParcours ? [] : cartesComptes),
-  ].filter(Boolean)
+  // 23/09 : la formation s'ouvre a l'achat de l'evaluation ; elle tient en une
+  // ligne dans l'etape « evaluation » du parcours. Sans cette etape, elle garde
+  // sa propre section.
+  const aFormation = !!formation && (formation.elements.length > 0 || !!formation.intro)
+  const iEvaluation = aFormation ? parcours.findIndex((e) => e.etape === 'evaluation') : -1
+  const modules = comptesDansParcours ? [] : cartesComptes
 
   return (
     <>
@@ -87,23 +76,73 @@ export function OptionalModules({ sheet }: { sheet: FirmSheet }) {
             title={COPY.modules.journeyTitle}
             intro={COPY.modules.journeyIntro}
           />
-          <ol className={cx('grid gap-2.5', COLONNES[Math.min(parcours.length, 4)])}>
-            {parcours.map((etape, i) => {
-              const libelle = etapeLabel(etape.etape)
-              // Le libelle se tait quand il repete le titre (« Payout » / « Payouts »).
-              const doublon = etape.titre.toLowerCase().startsWith(libelle.toLowerCase())
-              return (
-                <li key={etape.titre} className="rounded-xl border border-border p-4">
-                  <span className="grid h-6 w-6 place-items-center rounded-full bg-accent/15 text-xs font-bold text-accent">{i + 1}</span>
-                  {!doublon && <p className={cx(LABEL, 'mt-2')}>{libelle}</p>}
-                  <h3 className={cx('font-semibold', doublon ? 'mt-2' : 'mt-0.5')}>{etape.titre}</h3>
-                  <p className="mt-1 text-sm leading-relaxed text-text-muted">{etape.texte}</p>
+          {/* Frise verticale (22/09, « ergonomic and smooth ») : une etape par ligne,
+              reliees par un trait ; les comptes a choisir s'ouvrent dans l'etape
+              « funded ». Sans cette etape, ils suivent la frise. */}
+          {(() => {
+            const iFunded = comptes.length > 0 ? parcours.findIndex((e) => e.etape === 'funded') : -1
+            return (
+              <div className={cx(CARD, 'p-4 sm:p-6')}>
+                <ol>
+                  {parcours.map((etape, i) => {
+                    const libelle = etapeLabel(etape.etape)
+                    // Le libelle se tait quand il repete le titre (« Payout » / « Payouts »).
+                    const doublon = etape.titre.toLowerCase().startsWith(libelle.toLowerCase())
+                    const derniere = i === parcours.length - 1
+                    return (
+                      <li key={etape.titre} className={cx('relative flex gap-4', !derniere && 'pb-6')}>
+                        {!derniere && <span aria-hidden="true" className="absolute bottom-0 left-4 top-9 w-px -translate-x-1/2 bg-border" />}
+                        <span className="relative grid h-8 w-8 shrink-0 place-items-center rounded-full border border-accent-border bg-accent/15 text-sm font-bold text-accent">
+                          {i + 1}
+                        </span>
+                        <div className="min-w-0 flex-1 pt-1">
+                          {!doublon && <p className={LABEL}>{libelle}</p>}
+                          <h3 className="font-semibold">{etape.titre}</h3>
+                          <p className="mt-1 text-sm leading-relaxed text-text-muted">{etape.texte}</p>
+                          {i === iEvaluation && formation && (
+                            <p className="mt-2 inline-flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg border border-accent-border bg-accent/5 px-3 py-1.5 text-sm">
+                              <GraduationCap className="h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
+                              <span className="font-semibold text-text-primary">{formation.titre ?? COPY.modules.training}</span>
+                              {formation.elements.length > 0 && <span className="text-text-muted">{formation.elements.join(' · ')}</span>}
+                            </p>
+                          )}
+                          {i === iFunded && (
+                            <div className={cx('mt-3 grid items-stretch gap-3', comptes.length > 1 && 'sm:grid-cols-2')}>
+                              {comptes.map((c) => carteCompte(c, true))}
+                            </div>
+                          )}
+                        </div>
+                      </li>
+                    )
+                  })}
+                </ol>
+                {iFunded < 0 && cartesComptes.length > 0 && (
+                  <div className={cx('mt-4 grid items-stretch gap-3', COLONNES[Math.min(cartesComptes.length, 3)])}>{cartesComptes}</div>
+                )}
+              </div>
+            )
+          })()}
+        </Section>
+      )}
+      {aFormation && iEvaluation < 0 && formation && (
+        <Section labelledBy="training-title">
+          <SectionHeading
+            id="training-title"
+            eyebrow={COPY.modules.trainingEyebrow}
+            title={formation.titre ?? COPY.modules.training}
+            intro={formation.intro ?? undefined}
+          />
+          {formation.elements.length > 0 && (
+            <ul className={cx('grid items-stretch gap-3', COLONNES[Math.min(formation.elements.length, 4)])}>
+              {formation.elements.map((el) => (
+                <li key={el} className={cx(CARD, 'flex items-center gap-3 p-4')}>
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-accent/15 text-accent">
+                    <GraduationCap className="h-4 w-4" aria-hidden="true" />
+                  </span>
+                  <span className="text-sm font-semibold text-text-primary">{el}</span>
                 </li>
-              )
-            })}
-          </ol>
-          {cartesComptes.length > 0 && (
-            <div className={cx('mt-3 grid items-stretch gap-3', COLONNES[Math.min(cartesComptes.length, 3)])}>{cartesComptes}</div>
+              ))}
+            </ul>
           )}
         </Section>
       )}
@@ -131,21 +170,21 @@ const REGLES_VISIBLES = 4
 // libelle a gauche, valeur a droite. Les phrases gardent leur paragraphe.
 const REGLE_COURTE = 40
 
-function LigneRegle({ r, phase }: { r: FirmSheet['regles'][number]; phase: string | null }) {
+function LigneRegle({ r, phase, sansBadge = false }: { r: FirmSheet['regles'][number]; phase: string | null; sansBadge?: boolean }) {
   if (r.texte.length <= REGLE_COURTE && r.statut === 'confirmed') {
     return (
       <li className="flex items-baseline justify-between gap-3 py-2.5">
         <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
           <span className="text-sm font-semibold text-text-primary">{r.regle}</span>
           {phase && <span className={CHIP}>{phase}</span>}
-          {r.bloquante && (
+          {r.bloquante && !sansBadge && (
             <span className="inline-flex items-center gap-1 rounded-full bg-danger-subtle px-2 py-0.5 text-[11px] font-medium text-danger">
               <AlertTriangle className="h-3 w-3" aria-hidden="true" />
               {COPY.conditions.breach}
             </span>
           )}
         </span>
-        <span className="shrink-0 text-right text-sm text-text-secondary">{r.texte.replace(/\.$/, '')}</span>
+        <span className="shrink-0 text-right text-sm font-semibold text-text-primary">{r.texte.replace(/\.$/, '')}</span>
       </li>
     )
   }
@@ -154,7 +193,7 @@ function LigneRegle({ r, phase }: { r: FirmSheet['regles'][number]; phase: strin
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
         <span className="text-sm font-semibold text-text-primary">{r.regle}</span>
         {phase && <span className={CHIP}>{phase}</span>}
-        {r.bloquante && (
+        {r.bloquante && !sansBadge && (
           <span className="inline-flex items-center gap-1 rounded-full bg-danger-subtle px-2 py-0.5 text-[11px] font-medium text-danger">
             <AlertTriangle className="h-3 w-3" aria-hidden="true" />
             {COPY.conditions.breach}
@@ -177,18 +216,37 @@ function ListeRegles({
   visibles?: number
 }) {
   if (regles.length === 0) return null
-  const reste = regles.slice(visibles)
   // L'etiquette de phase n'informe que si la carte melange plusieurs phases ;
   // « Funded » sur chaque ligne des retraits n'etait que du bruit (22/09).
   const phaseUtile = new Set(regles.map((r) => r.phase ?? '')).size > 1
   const phaseDe = (cle: string | null) => (phaseUtile ? nomPhase(cle) : null)
+  // 22/09 : les regles qui font perdre le compte passent en tete, dans un
+  // encadre a part, au lieu d'un badge perdu au milieu de la liste.
+  const bloquantes = regles.filter((r) => r.bloquante)
+  const autres = regles.filter((r) => !r.bloquante)
+  const reste = autres.slice(visibles)
   return (
-    <div>
-      <ul className="divide-y divide-border">
-        {regles.slice(0, visibles).map((r) => (
-          <LigneRegle key={`${r.regle}-${r.phase}`} r={r} phase={phaseDe(r.phase)} />
-        ))}
-      </ul>
+    <div className="flex flex-col gap-3">
+      {bloquantes.length > 0 && (
+        <div className="rounded-lg border border-danger/30 bg-danger-subtle px-3">
+          <p className="flex items-center gap-1.5 pt-2.5 text-xs font-bold uppercase tracking-wider text-danger">
+            <AlertTriangle className="h-3.5 w-3.5" aria-hidden="true" />
+            {COPY.conditions.hardRules}
+          </p>
+          <ul className="divide-y divide-danger/20">
+            {bloquantes.map((r) => (
+              <LigneRegle key={`${r.regle}-${r.phase}`} r={r} phase={phaseDe(r.phase)} sansBadge />
+            ))}
+          </ul>
+        </div>
+      )}
+      {autres.length > 0 && (
+        <ul className="divide-y divide-border">
+          {autres.slice(0, visibles).map((r) => (
+            <LigneRegle key={`${r.regle}-${r.phase}`} r={r} phase={phaseDe(r.phase)} />
+          ))}
+        </ul>
+      )}
       {reste.length > 0 && (
         <details className="group border-t border-border">
           <summary className="cursor-pointer list-none py-2.5 text-sm font-semibold text-accent marker:hidden">
@@ -206,11 +264,14 @@ function ListeRegles({
   )
 }
 
-function EnteteCarte({ eyebrow, titre }: { eyebrow: string; titre: string }) {
+/** Un titre par carte, avec son icone : plus de sur-titre + sous-titre (22/09). */
+function EnteteCarte({ icone: Icone, titre }: { icone: typeof Wallet; titre: string }) {
   return (
-    <div className="mb-2 border-b border-border pb-3">
-      <p className={EYEBROW}>{eyebrow}</p>
-      <h3 className="mt-1 text-base font-semibold">{titre}</h3>
+    <div className="mb-3 flex items-center gap-2.5 border-b border-border pb-3">
+      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent/15 text-accent">
+        <Icone className="h-4 w-4" aria-hidden="true" />
+      </span>
+      <h3 className="text-lg font-bold">{titre}</h3>
     </div>
   )
 }
@@ -228,74 +289,65 @@ export function ConditionsSection({ sheet, sel }: { sheet: FirmSheet; sel: FirmS
   const retraits = reglesDeCarte(sheet, 'payouts', programme, plan)
   const live = reglesDeCarte(sheet, 'live', programme, plan)
   const payoutsVide = retraits.length === 0 && live.length === 0 && !sheet.prestataireRetrait && sheet.methodesRetrait.length === 0
+  const essentielles = sheet.regles.some((r) => r.essentielle)
 
-  const cartes = [
-    trading.length > 0 && (
-      <article key="trading" className={cx(CARD, 'flex flex-col p-4 sm:p-5')}>
-        <EnteteCarte eyebrow={COPY.conditions.trading} titre={COPY.conditions.tradingTitle} />
-        <ListeRegles regles={trading} nomPhase={nomPhase} visibles={sheet.regles.some((r) => r.essentielle) ? trading.length : REGLES_VISIBLES} />
-      </article>
-    ),
-    frais.length > 0 && (
-      <article key="fees" className={cx(CARD, 'flex flex-col p-4 sm:p-5')}>
-        <EnteteCarte eyebrow={COPY.conditions.fees} titre={COPY.conditions.feesTitle} />
-        <dl className="divide-y divide-border">
-          {frais.map((f) => (
-            <div key={f.libelle} className="py-3">
-              <div className="flex items-baseline justify-between gap-3">
-                <dt className="text-sm font-medium text-text-secondary">{f.libelle}</dt>
-                <dd className="shrink-0 text-right font-display text-xl font-bold tabular-nums text-text-primary">{f.valeur}</dd>
-              </div>
-              {f.note && <p className="mt-1 text-[13px] leading-relaxed text-text-muted">{f.note}</p>}
-            </div>
+  const carteTrading = trading.length > 0 && (
+    <article key="trading" className={cx(CARD, 'flex flex-col p-4 sm:p-5')}>
+      <EnteteCarte icone={ListChecks} titre={COPY.conditions.trading} />
+      <ListeRegles regles={trading} nomPhase={nomPhase} visibles={essentielles ? trading.length : REGLES_VISIBLES} />
+    </article>
+  )
+  const cartePayouts = !payoutsVide && (
+    <article key="payouts" className={cx(CARD, 'flex flex-col p-4 sm:p-5')}>
+      <EnteteCarte icone={Wallet} titre={COPY.conditions.payouts} />
+      {(sheet.prestataireRetrait || sheet.methodesRetrait.length > 0) && (
+        <div className="mb-3 flex flex-wrap items-center gap-2">
+          {sheet.prestataireRetrait && (
+            <span className="text-sm">
+              <span className="text-text-muted">{COPY.conditions.provider}: </span>
+              <span className="font-semibold">{sheet.prestataireRetrait}</span>
+            </span>
+          )}
+          {sheet.methodesRetrait.map((m) => (
+            <span key={m} className={CHIP}>
+              {m}
+            </span>
           ))}
-        </dl>
-      </article>
-    ),
-    !payoutsVide && (
-      <article key="payouts" className={cx(CARD, 'flex flex-col p-4 sm:p-5')}>
-        <EnteteCarte eyebrow={COPY.conditions.payouts} titre={COPY.conditions.payoutsTitle} />
-        {(sheet.prestataireRetrait || sheet.methodesRetrait.length > 0) && (
-          <div className="flex flex-wrap items-center gap-2 pb-2.5 pt-1">
-            {sheet.prestataireRetrait && (
-              <span className="text-sm">
-                <span className="text-text-muted">{COPY.conditions.provider}: </span>
-                <span className="font-semibold">{sheet.prestataireRetrait}</span>
-              </span>
-            )}
-            {sheet.methodesRetrait.map((m) => (
-              <span key={m} className={CHIP}>
-                {m}
-              </span>
-            ))}
-          </div>
-        )}
-        <div className="border-t border-border">
-          <ListeRegles regles={[...retraits, ...live]} nomPhase={nomPhase} visibles={sheet.regles.some((r) => r.essentielle) ? retraits.length + live.length : REGLES_VISIBLES} />
         </div>
-      </article>
-    ),
-  ].filter(Boolean)
+      )}
+      <ListeRegles
+        regles={[...retraits, ...live]}
+        nomPhase={nomPhase}
+        visibles={essentielles ? retraits.length + live.length : REGLES_VISIBLES}
+      />
+    </article>
+  )
+  // Les frais en tuiles sur toute la largeur : un montant se lit d'un coup d'oeil.
+  const carteFrais = frais.length > 0 && (
+    <article key="fees" className={cx(CARD, 'p-4 sm:p-5')}>
+      <EnteteCarte icone={Receipt} titre={COPY.conditions.fees} />
+      <dl className={cx('grid gap-3', COLONNES[Math.min(frais.length, 3)])}>
+        {frais.map((f) => (
+          <div key={f.libelle} className="flex flex-col rounded-lg border border-border bg-bg-base p-4">
+            <dt className={LABEL}>{f.libelle}</dt>
+            <dd className="mt-1 font-display text-xl font-bold tabular-nums text-text-primary">{f.valeur}</dd>
+            {f.note && <p className="mt-1.5 text-[13px] leading-relaxed text-text-muted">{f.note}</p>}
+          </div>
+        ))}
+      </dl>
+    </article>
+  )
 
-  if (cartes.length === 0) return null
-  // Trois cartes : Trading et Fees empiles a gauche, Payouts (la plus longue)
-  // a droite. Cote a cote, la carte la plus courte laissait un grand vide
-  // (commentaire du 22/09).
-  const [premiere, deuxieme, troisieme] = cartes
+  const colonnes = [carteTrading, cartePayouts].filter(Boolean)
+  if (colonnes.length === 0 && !carteFrais) return null
+  // Regles de trading et retraits cote a cote, de meme hauteur ; les frais dessous.
   return (
     <Section labelledBy="conditions-title">
       <SectionHeading id="conditions-title" eyebrow={COPY.conditions.eyebrow} title={COPY.conditions.title} intro={COPY.conditions.intro} />
-      {cartes.length === 3 ? (
-        <div className="grid items-start gap-3 lg:grid-cols-2">
-          <div className="grid gap-3">
-            {premiere}
-            {deuxieme}
-          </div>
-          {troisieme}
-        </div>
-      ) : (
-        <div className={cx('grid items-start gap-3', COLONNES[cartes.length])}>{cartes}</div>
+      {colonnes.length > 0 && (
+        <div className={cx('grid items-stretch gap-3', colonnes.length === 2 && 'lg:grid-cols-2')}>{colonnes}</div>
       )}
+      {carteFrais && <div className={cx(colonnes.length > 0 && 'mt-3')}>{carteFrais}</div>}
     </Section>
   )
 }
@@ -345,7 +397,7 @@ export function FaqSection({ sheet }: { sheet: FirmSheet }) {
   if (faq.length === 0) return null
   return (
     <Section id="faq" labelledBy="faq-title">
-      <SectionHeading id="faq-title" eyebrow={COPY.faq.eyebrow} title={COPY.faq.title} />
+      <SectionHeading id="faq-title" eyebrow={COPY.faq.eyebrow} title={COPY.faq.title} intro={COPY.faq.intro(sheet.nom)} />
       <div className="grid gap-2">
         {faq.map((q, i) => (
           <details key={q.question} open={i === 0} className={cx(CARD, 'group px-4 sm:px-5')}>

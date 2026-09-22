@@ -8,7 +8,7 @@
   ],
   "resume": null,
   "presentation": "Earn2Trade is a US company specialised in futures. It runs the evaluation and the training, then connects successful traders with partner trading firms that provide the funded account.\n\nIts flagship program, the Trader Career Path, works like a ladder: you start with a $25,000 evaluation, and each goal you reach unlocks a larger account ($50K, $100K, then $200K).\n\nYou trade only futures contracts listed on the CME, COMEX, NYMEX and CBOT, on around twenty platforms including NinjaTrader, Tradovate and TradingView. A training library is included.",
-  "anneeCreation": null,
+  "anneeCreation": 2016,
   "pays": "United States",
   "ceoFondateur": "Osvaldo Guimarães",
   "actifs": [
@@ -441,7 +441,36 @@
       "Citizens of 25 countries cannot be funded, including Nigeria, Pakistan, Kenya, Ukraine and Russia."
     ]
   },
-  "faq": [],
+  "faq": [
+    {
+      "question": "Is Earn2Trade legit?",
+      "reponse": "Earn2Trade is an education and evaluation company based in Wyoming, founded in 2016. It runs simulated evaluations, and traders who pass are funded by partner proprietary trading firms. It also publishes its pass rate. Review the rules carefully and consider starting with a smaller account."
+    },
+    {
+      "question": "How much does Earn2Trade cost?",
+      "reponse": "Evaluations are billed monthly, from $150 to $550 per month depending on the program and account size. The subscription renews every 30 days until you pass or cancel, so budget for more than one cycle. The configurator above shows the exact price of each program and size."
+    },
+    {
+      "question": "What profit split does Earn2Trade offer?",
+      "reponse": "The split depends on the size of each withdrawal: 50% below a threshold that depends on the account size ($1,500 on TCP25, $2,250 on TCP50 and GM 50K), 80% above it. The $400K Trader Career Path tier pays a fixed 60/40."
+    },
+    {
+      "question": "Can I trade the news or hold positions overnight?",
+      "reponse": "News trading is allowed. Every position must be closed by 3:50 PM CT: no overnight or weekend holding, in the evaluation and once funded. Trade copiers are not allowed."
+    },
+    {
+      "question": "How does Earn2Trade handle payouts?",
+      "reponse": "Payouts are processed every Wednesday for requests sent before 2:00 PM CT on the previous Friday. The minimum is $100 net, paid through Rise, Deel, Bayzat or, in some cases, direct crypto. There are no minimum trading days before a withdrawal."
+    },
+    {
+      "question": "What fees are deducted from the first withdrawal?",
+      "reponse": "Nothing is paid upfront. On a LiveSim account, a one-time $139 activation fee is deducted from your first profitable withdrawal, and never charged if you make no withdrawal. A Live account has no activation fee but pays market data: $140 per month per exchange with Rithmic, $156 with NinjaTrader. The monthly subscription stops once you pass."
+    },
+    {
+      "question": "What is the maximum capital I can manage at Earn2Trade?",
+      "reponse": "Up to $400K by climbing the Trader Career Path from TCP50 or TCP100, and up to $200K from TCP25. You can run up to 5 evaluations and 3 funded accounts at a time, only one of them Live."
+    }
+  ],
   "trustpilotScore": 4.6,
   "trustpilotReviewCount": 4995,
   "trustpilotUrl": "https://www.trustpilot.com/review/www.earn2trade.com",
@@ -695,18 +724,6 @@
       "source": "Handbook partenaire Earn2Trade 2026 (fourni par Sofiane)"
     },
     {
-      "carte": "trading",
-      "regle": "Data feed",
-      "texte": "Chosen at purchase: Rithmic (Finamark, R Trader Pro), BlackArrow, or NinjaTrader (Tradovate, TradingView).",
-      "statut": "confirmed",
-      "programmes": [],
-      "tailles": [],
-      "phase": "evaluation",
-      "bloquante": false,
-      "essentielle": false,
-      "source": "https://www.earn2trade.com/non-us/purchase"
-    },
-    {
       "carte": "live",
       "regle": "Moving up the Trader Career Path",
       "texte": "Withdraw your profit goal minus 20% to move up, all the way to $400K Live: fixed $388,000 floor and a fixed 60/40 split.",
@@ -762,6 +779,7 @@
   ],
   "titre": "A structured path to a funded futures account",
   "metaDescription": "Futures prop firm: Trader Career Path from $25K to $200K, end-of-day drawdown in the evaluation, split up to 80%, weekly payouts. Rules and pitfalls.",
+  "fluxDonnees": [],
   "description": "Choose between climbing to $400K or funding your target size straight away. Single-step evaluation, no minimum trading days, weekly payouts.",
   "connuPour": [
     {
@@ -786,132 +804,139 @@
     {
       "nom": "NinjaTrader",
       "selectionnable": true,
-      "note": "Free during the evaluation (help centre, article 2090521).",
+      "note": "Liste validee par Sofiane le 22/09/2026 ; logo : icone du site officiel de l'editeur.",
       "logoUrl": "https://ninjatrader.com/assets/dist/images/favicons/apple-touch-icon.png"
-    },
-    {
-      "nom": "Finamark",
-      "selectionnable": true,
-      "note": "Free during the evaluation (help centre, article 2090521).",
-      "logoUrl": null
-    },
-    {
-      "nom": "R | Trader Pro",
-      "selectionnable": true,
-      "note": "Free during the evaluation (help centre, article 2090521).",
-      "logoUrl": "https://www.rithmic.com/favicon.png"
     },
     {
       "nom": "Tradovate",
       "selectionnable": true,
-      "note": "Free during the evaluation (help centre, article 2090521).",
-      "logoUrl": null
+      "note": "Liste validee par Sofiane le 22/09/2026. Logo : icone de l'application web officielle (le favicon du site refuse l'affichage ailleurs).",
+      "logoUrl": "https://trader.tradovate.com/img/icons/iphone-retina.png"
+    },
+    {
+      "nom": "Rithmic",
+      "selectionnable": true,
+      "note": "Liste validee par Sofiane le 22/09/2026 ; logo : icone du site officiel de l'editeur.",
+      "logoUrl": "https://www.rithmic.com/favicon.png"
+    },
+    {
+      "nom": "Quantower",
+      "selectionnable": true,
+      "note": "Liste validee par Sofiane le 22/09/2026 ; logo : icone du site officiel de l'editeur.",
+      "logoUrl": "https://www.quantower.com/favicon.ico"
     },
     {
       "nom": "TradingView",
       "selectionnable": true,
-      "note": "Free during the evaluation (help centre, article 2090521).",
+      "note": "Liste validee par Sofiane le 22/09/2026 ; logo : icone du site officiel de l'editeur.",
       "logoUrl": "https://static.tradingview.com/static/images/favicon/apple-touch-icon-180x180.png"
     },
     {
-      "nom": "BlackArrow One",
-      "selectionnable": true,
-      "note": "Free during the evaluation (help centre, article 2090521).",
+      "nom": "Finamark",
+      "selectionnable": false,
+      "note": "Also usable (help centre, article 2090521).",
       "logoUrl": null
     },
     {
-      "nom": "Quantower",
+      "nom": "BlackArrow One",
       "selectionnable": false,
-      "note": "Usable with your own licence (help centre, article 2090521).",
+      "note": "Also usable (help centre, article 2090521).",
       "logoUrl": null
     },
     {
       "nom": "ATAS",
       "selectionnable": false,
-      "note": "Usable with your own licence (help centre, article 2090521).",
+      "note": "Also usable (help centre, article 2090521).",
       "logoUrl": null
     },
     {
       "nom": "MultiCharts",
       "selectionnable": false,
-      "note": "Usable with your own licence (help centre, article 2090521).",
+      "note": "Also usable (help centre, article 2090521).",
       "logoUrl": null
     },
     {
       "nom": "Sierra Chart",
       "selectionnable": false,
-      "note": "Usable with your own licence (help centre, article 2090521).",
+      "note": "Also usable (help centre, article 2090521).",
       "logoUrl": null
     },
     {
       "nom": "Bookmap",
       "selectionnable": false,
-      "note": "Usable with your own licence (help centre, article 2090521).",
+      "note": "Also usable (help centre, article 2090521).",
       "logoUrl": null
     },
     {
       "nom": "MotiveWave",
       "selectionnable": false,
-      "note": "Usable with your own licence (help centre, article 2090521).",
+      "note": "Also usable (help centre, article 2090521).",
       "logoUrl": null
     },
     {
       "nom": "Jigsaw Trading",
       "selectionnable": false,
-      "note": "Usable with your own licence (help centre, article 2090521).",
+      "note": "Also usable (help centre, article 2090521).",
       "logoUrl": null
     },
     {
       "nom": "Investor RT",
       "selectionnable": false,
-      "note": "Usable with your own licence (help centre, article 2090521).",
+      "note": "Also usable (help centre, article 2090521).",
       "logoUrl": null
     },
     {
       "nom": "Inside Edge Trader",
       "selectionnable": false,
-      "note": "Usable with your own licence (help centre, article 2090521).",
+      "note": "Also usable (help centre, article 2090521).",
       "logoUrl": null
     },
     {
       "nom": "Photon",
       "selectionnable": false,
-      "note": "Usable with your own licence (help centre, article 2090521).",
+      "note": "Also usable (help centre, article 2090521).",
       "logoUrl": null
     },
     {
       "nom": "QScalp",
       "selectionnable": false,
-      "note": "Usable with your own licence (help centre, article 2090521).",
+      "note": "Also usable (help centre, article 2090521).",
       "logoUrl": null
     },
     {
       "nom": "QSI",
       "selectionnable": false,
-      "note": "Usable with your own licence (help centre, article 2090521).",
+      "note": "Also usable (help centre, article 2090521).",
       "logoUrl": null
     },
     {
       "nom": "ScalpTool",
       "selectionnable": false,
-      "note": "Usable with your own licence (help centre, article 2090521).",
+      "note": "Also usable (help centre, article 2090521).",
       "logoUrl": null
     },
     {
       "nom": "Trade Navigator",
       "selectionnable": false,
-      "note": "Usable with your own licence (help centre, article 2090521).",
+      "note": "Also usable (help centre, article 2090521).",
       "logoUrl": null
     },
     {
       "nom": "Volfix.net",
       "selectionnable": false,
-      "note": "Usable with your own licence (help centre, article 2090521).",
+      "note": "Also usable (help centre, article 2090521).",
       "logoUrl": null
     }
   ],
-  "categoriesActifs": [],
-  "categoriesActifsStatut": null,
+  "categoriesActifs": [
+    "Index futures",
+    "Energy futures",
+    "Metals futures",
+    "Agricultural futures",
+    "Currency futures",
+    "Micro futures"
+  ],
+  "categoriesActifsStatut": "confirmed",
   "methodesRetrait": [
     "Rise",
     "Deel",
@@ -920,13 +945,52 @@
   ],
   "prestataireRetrait": null,
   "levierStatut": null,
-  "optionsAchat": [],
-  "formation": null,
+  "optionsAchat": [
+    {
+      "type": "data_feed",
+      "nom": "Rithmic",
+      "detail": "Finamark, R Trader Pro",
+      "parametre": "platform",
+      "valeur": "rithmic",
+      "programmes": [],
+      "logoUrl": "https://www.rithmic.com/favicon.png"
+    },
+    {
+      "type": "data_feed",
+      "nom": "BlackArrow",
+      "detail": "Newest feed, added 2026",
+      "parametre": "platform",
+      "valeur": "blackarrow",
+      "programmes": [],
+      "logoUrl": "https://play-lh.googleusercontent.com/191WjA_sl5t4IRzwv6dVF8R-8zgkPsfyLJoT1y3lhHRh4uhopEvvoXycxFrEeaXxn3ViFJ6MszdgoVLAVPxgQg=w180-h180"
+    },
+    {
+      "type": "data_feed",
+      "nom": "NinjaTrader",
+      "detail": "Tradovate, TradingView",
+      "parametre": "platform",
+      "valeur": "ninjatrader",
+      "programmes": [],
+      "logoUrl": "https://ninjatrader.com/assets/dist/images/favicons/apple-touch-icon.png"
+    }
+  ],
+  "formation": {
+    "titre": "Training included once you buy:",
+    "intro": null,
+    "elements": [
+      "Video library",
+      "Study guides"
+    ]
+  },
   "comptesApresReussite": [
     {
       "nom": "LiveSim",
       "description": "Simulated capital, real market data, real withdrawals.",
       "lignes": [
+        {
+          "libelle": "Access",
+          "valeur": "Right after you pass"
+        },
         {
           "libelle": "Drawdown",
           "valeur": "End of day"
@@ -941,6 +1005,10 @@
       "nom": "Live",
       "description": "Real capital, in a funded account at a partner firm.",
       "lignes": [
+        {
+          "libelle": "Access",
+          "valeur": "Up to 10 days"
+        },
         {
           "libelle": "Drawdown",
           "valeur": "Trailing"

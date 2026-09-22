@@ -181,6 +181,8 @@ export interface SheetOption {
   valeur: string
   /** Slugs concernes ; vide = tous les programmes. */
   programmes: string[]
+  /** Icone officielle (site de l'editeur). Absente des copies figees. */
+  logoUrl?: string | null
 }
 
 export interface SheetCompte {
@@ -234,6 +236,8 @@ export interface FirmSheet {
   titre: string | null
   /** Meta description (onglet Firme). Vide : calculee depuis la presentation. */
   metaDescription?: string | null
+  /** Flux de donnees proposes (carte d'information). Absent des copies figees. */
+  fluxDonnees?: string[]
   /** 2 a 3 lignes sous le H1. */
   description: string | null
   /** « What [Firm] is known for » : quatre faits au plus. */

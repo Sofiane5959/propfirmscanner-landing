@@ -344,7 +344,8 @@ def convertir(chemin):
                                    "logoUrl": logo})
 
     options_achat = []
-    for type_o, nom_o, detail_o, param_o, valeur_o, progs_o in lignes(feuille(wb, "OptionsAchat"), 6):
+    # Colonne 7 : logo_url, l'icone officielle de l'option (22/09/2026).
+    for type_o, nom_o, detail_o, param_o, valeur_o, progs_o, logo_o in lignes(feuille(wb, "OptionsAchat"), 7):
         if txt(type_o) not in ("plateforme", "data_feed"):
             avertissements.append(f"OptionsAchat : type « {txt(type_o)} » inconnu, ligne ignoree.")
             continue
@@ -354,7 +355,8 @@ def convertir(chemin):
             continue
         options_achat.append({"type": txt(type_o), "nom": txt(nom_o), "detail": txt(detail_o),
                               "parametre": str(txt(param_o)), "valeur": str(txt(valeur_o)),
-                              "programmes": liste(progs_o)})
+                              "programmes": liste(progs_o),
+                              "logoUrl": txt(logo_o) if str(txt(logo_o) or "").startswith("https://") else None})
 
     formation = None
     lignes_formation = sorted(lignes(feuille(wb, "Formation"), 3), key=lambda l: nombre(l[1]) or 0)
@@ -409,6 +411,9 @@ def convertir(chemin):
         "regles": regles,
         "titre": txt(f.get("titre")),
         "metaDescription": txt(f.get("meta_description")),
+        # Flux de donnees proposes, pour la carte d'information (22/09/2026).
+        # Les options d'achat, elles, exigent un parametre transmis au paiement.
+        "fluxDonnees": liste(f.get("flux_donnees")),
         "description": txt(f.get("description")),
         "connuPour": connu_pour,
         "preuves": preuves,

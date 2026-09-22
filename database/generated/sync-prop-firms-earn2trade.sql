@@ -2,7 +2,7 @@
 -- NE PAS MODIFIER A LA MAIN : corriger le tableur, puis relancer
 --   npm run firms:build
 -- `npm run firms:check` echoue si ce fichier ne correspond plus a la fiche.
--- Fiche : data/firms/earn2trade.json (sha256:51490cb0ec378948f706c0da7814d6ab951f94c814324709b101a757476f02ed)
+-- Fiche : data/firms/earn2trade.json (sha256:16ff646f0d5704c87c7c5ef9f776969eef4252d0859846a9d00ae1c0a3dc1f9c)
 --
 -- Recopie dans prop_firms les colonnes lues par /compare, /deals, le bandeau
 -- des offres, /best-for, le quiz, les favoris et les cartes Similar firms.
@@ -48,7 +48,7 @@ update prop_firms set
   trustpilot_reviews = 4995,
   is_futures = true,
   has_instant_funding = false,
-  platforms = 'NinjaTrader, Finamark, R | Trader Pro, Tradovate, TradingView, BlackArrow One',
+  platforms = 'NinjaTrader, Tradovate, Rithmic, Quantower, TradingView',
   price_currency = 'USD',
   min_price = 150,
   max_price = 550,
@@ -70,9 +70,9 @@ begin
   if t is null then
     return;
   elsif t = 'ARRAY' then
-    update prop_firms set platforms_list = string_to_array('NinjaTrader, Finamark, R | Trader Pro, Tradovate, TradingView, BlackArrow One', ', ') where slug = 'earn2trade';
+    update prop_firms set platforms_list = string_to_array('NinjaTrader, Tradovate, Rithmic, Quantower, TradingView', ', ') where slug = 'earn2trade';
   else
-    update prop_firms set platforms_list = 'NinjaTrader, Finamark, R | Trader Pro, Tradovate, TradingView, BlackArrow One' where slug = 'earn2trade';
+    update prop_firms set platforms_list = 'NinjaTrader, Tradovate, Rithmic, Quantower, TradingView' where slug = 'earn2trade';
   end if;
 end
 $plat$;
@@ -89,7 +89,7 @@ begin
      or (r.trustpilot_reviews is null or abs(r.trustpilot_reviews::numeric - 4995) > 0.001)
      or r.is_futures is distinct from true
      or r.has_instant_funding is distinct from false
-     or r.platforms is distinct from 'NinjaTrader, Finamark, R | Trader Pro, Tradovate, TradingView, BlackArrow One'
+     or r.platforms is distinct from 'NinjaTrader, Tradovate, Rithmic, Quantower, TradingView'
      or r.price_currency is distinct from 'USD'
      or (r.min_price is null or abs(r.min_price::numeric - 150) > 0.001)
      or (r.max_price is null or abs(r.max_price::numeric - 550) > 0.001)
