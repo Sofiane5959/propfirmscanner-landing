@@ -163,8 +163,11 @@ def convertir(chemin):
     par_slug = {p["slug"]: p for p in programmes}
 
     plans = {}
+    # Colonne 13 (apres les deux colonnes auto) : lien_plan, le slug du plan dans
+    # prop_firm_challenges. /api/go ouvre alors son lien profond (plan, code,
+    # identifiants d'affiliation). Ajoutee le 22/09/2026.
     for (prog, taille, variante, devise, prix, promo, facturation, intervalle,
-         frais_reset, frais_activation) in lignes(wb["Plans"], 10):
+         frais_reset, frais_activation, _nb_phases, _controle, lien_plan) in lignes(wb["Plans"], 13):
         cle = (txt(prog), nombre(taille), txt(variante))
         if cle[0] not in par_slug:
             avertissements.append(f"Plans : programme « {cle[0]} » absent de l'onglet Programmes, plan ignore.")
@@ -179,7 +182,12 @@ def convertir(chemin):
                 "prix": nombre(prix), "cartePromo": oui(promo),
                 "facturation": modele, "intervalle": txt(intervalle) if modele == "subscription" else None,
                 "fraisReset": nombre(frais_reset), "fraisActivation": nombre(frais_activation),
-                "phases": []}
+                "lienPlan": None, "phases": []}
+        if txt(lien_plan):
+            if PARAMETRE_SUR.match(str(txt(lien_plan))):
+                plan["lienPlan"] = str(txt(lien_plan))
+            else:
+                avertissements.append(f"Plans : lien_plan « {txt(lien_plan)} » invalide sur {cle}, ignore.")
         plans[cle] = plan
         par_slug[cle[0]]["plans"].append(plan)
 
@@ -268,7 +276,7 @@ def convertir(chemin):
     # --- Parcours et couts ----------------------------------------------------
     # Onglets facultatifs : une firme dont ils sont vides n'affiche simplement
     # pas les sections correspondantes.
-    etapes_connues = ("evaluation", "funded", "payout")
+    etapes_connues = ("evaluation", "certification", "funded", "payout")
     parcours = []
     for ordre, etape, titre, texte in sorted(lignes(feuille(wb, "Parcours"), 4), key=lambda l: nombre(l[0]) or 0):
         if not (txt(titre) and txt(texte)):
@@ -321,13 +329,19 @@ def convertir(chemin):
 
     plateformes_detail = []
     vus = set()
-    for nom_pf, selectionnable, note_pf in lignes(feuille(wb, "Plateformes"), 3):
+    # Colonne 4 : logo_url, l'icone officielle de la plateforme (22/09/2026).
+    for nom_pf, selectionnable, note_pf, logo_pf in lignes(feuille(wb, "Plateformes"), 4):
         cle_pf = str(txt(nom_pf)).lower()
         if cle_pf in vus:
             avertissements.append(f"Plateformes : « {txt(nom_pf)} » en double, seconde ligne ignoree.")
             continue
         vus.add(cle_pf)
-        plateformes_detail.append({"nom": txt(nom_pf), "selectionnable": oui(selectionnable), "note": txt(note_pf)})
+        logo = txt(logo_pf)
+        if logo and not str(logo).startswith("https://"):
+            avertissements.append(f"Plateformes : logo de « {txt(nom_pf)} » hors https, ignore.")
+            logo = None
+        plateformes_detail.append({"nom": txt(nom_pf), "selectionnable": oui(selectionnable), "note": txt(note_pf),
+                                   "logoUrl": logo})
 
     options_achat = []
     for type_o, nom_o, detail_o, param_o, valeur_o, progs_o in lignes(feuille(wb, "OptionsAchat"), 6):

@@ -110,8 +110,27 @@ export function StatusBadge({ statut }: { statut: StatutManquant | 'confirmed' }
   )
 }
 
+/**
+ * Une valeur et ses precisions (« $1,500 · End of Day », « 50% under $1,500 ·
+ * 80% from $1,500 ») : la premiere partie en clair, les suivantes dessous, en
+ * petit. Sur une seule ligne, elles etiraient le tableau (commentaire du 22/09).
+ */
+export function TexteEtage({ texte, className }: { texte: string; className?: string }) {
+  const [tete, ...suite] = texte.split(' · ')
+  return (
+    <span className={cx('inline-flex flex-col', className)}>
+      <span>{tete}</span>
+      {suite.map((s) => (
+        <span key={s} className="text-xs font-normal leading-snug text-text-muted">
+          {s}
+        </span>
+      ))}
+    </span>
+  )
+}
+
 export function Valeur({ cellule }: { cellule: Cellule }) {
-  return cellule.statut ? <StatusBadge statut={cellule.statut} /> : <>{cellule.texte}</>
+  return cellule.statut ? <StatusBadge statut={cellule.statut} /> : <TexteEtage texte={cellule.texte} />
 }
 
 /**

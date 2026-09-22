@@ -72,6 +72,9 @@ cas('la route garde l\'ancien rendu pour le retour arriere', route.includes('<Pr
 // Offre : rien ne s'affiche sans confirmation du partenaire (21 septembre 2026).
 const page = readFileSync(join(DOSSIER, 'FirmProfilePage.tsx'), 'utf8')
 cas('FirmProfilePage filtre l\'offre avant toute section', /const sheet = ficheAffichable\(ficheBrute\)/.test(page))
+// 22/09 : chaque bouton ouvre le lien profond du plan vise (code applique).
+cas('les liens sortants transmettent le plan vise', /challenge: lienPlan/.test(page)
+  && (page.match(/lien\('(hero|configurator|final)_(claim|continue)', plan(Hero|Selection)\)/g) || []).length === 6)
 for (const f of readdirSync(FICHES).filter((x) => x.endsWith('.json'))) {
   const fiche = JSON.parse(readFileSync(join(FICHES, f), 'utf8'))
   if (!fiche.offre) continue

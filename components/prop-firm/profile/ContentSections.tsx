@@ -38,9 +38,29 @@ const COLONNES: Record<number, string> = {
 // --- 7. Modules optionnels ---------------------------------------------------
 export function OptionalModules({ sheet }: { sheet: FirmSheet }) {
   const { parcours, formation, comptesApresReussite: comptes } = sheet
+  // 22/09 : les comptes proposes apres la reussite suivent le parcours, dans
+  // la meme section ; « What else is included? » ne garde que la formation.
+  const cartesComptes = comptes.map((c) => (
+    <article key={c.nom} className={cx(CARD, 'flex flex-col p-4')}>
+      <p className={EYEBROW}>{COPY.modules.accounts}</p>
+      <h3 className="mt-1 font-semibold">{c.nom}</h3>
+      {c.description && <p className="mt-1 text-sm text-text-muted">{c.description}</p>}
+      {c.lignes.length > 0 && (
+        <dl className="mt-auto divide-y divide-border pt-2 text-sm">
+          {c.lignes.map((l) => (
+            <div key={l.libelle} className="flex justify-between gap-3 py-1.5">
+              <dt className="text-text-muted">{l.libelle}</dt>
+              <dd className="text-right font-semibold">{l.valeur}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
+    </article>
+  ))
+  const comptesDansParcours = parcours.length > 0
   const modules = [
     formation && formation.elements.length > 0 && (
-      <article key="formation" className={cx(CARD, 'p-4')}>
+      <article key="formation" className={cx(CARD, 'flex flex-col p-4')}>
         <p className={EYEBROW}>{COPY.modules.training}</p>
         <h3 className="mt-1 font-semibold">{formation.titre ?? COPY.modules.training}</h3>
         {formation.intro && <p className="mt-1 text-sm text-text-muted">{formation.intro}</p>}
@@ -54,46 +74,44 @@ export function OptionalModules({ sheet }: { sheet: FirmSheet }) {
         </ul>
       </article>
     ),
-    ...comptes.map((c) => (
-      <article key={c.nom} className={cx(CARD, 'p-4')}>
-        <p className={EYEBROW}>{COPY.modules.accounts}</p>
-        <h3 className="mt-1 font-semibold">{c.nom}</h3>
-        {c.description && <p className="mt-1 text-sm text-text-muted">{c.description}</p>}
-        {c.lignes.length > 0 && (
-          <dl className="mt-2 divide-y divide-border text-sm">
-            {c.lignes.map((l) => (
-              <div key={l.libelle} className="flex justify-between gap-3 py-1.5">
-                <dt className="text-text-muted">{l.libelle}</dt>
-                <dd className="text-right font-semibold">{l.valeur}</dd>
-              </div>
-            ))}
-          </dl>
-        )}
-      </article>
-    )),
+    ...(comptesDansParcours ? [] : cartesComptes),
   ].filter(Boolean)
 
   return (
     <>
       {parcours.length > 0 && (
         <Section labelledBy="journey-title">
-          <SectionHeading id="journey-title" eyebrow={COPY.modules.journeyEyebrow} title={COPY.modules.journeyTitle} />
+          <SectionHeading
+            id="journey-title"
+            eyebrow={COPY.modules.journeyEyebrow}
+            title={COPY.modules.journeyTitle}
+            intro={COPY.modules.journeyIntro}
+          />
           <ol className={cx('grid gap-2.5', COLONNES[Math.min(parcours.length, 4)])}>
-            {parcours.map((etape, i) => (
-              <li key={etape.titre} className="rounded-xl border border-border p-4">
-                <span className="grid h-6 w-6 place-items-center rounded-full bg-accent/15 text-xs font-bold text-accent">{i + 1}</span>
-                <p className={cx(LABEL, 'mt-2')}>{etapeLabel(etape.etape)}</p>
-                <h3 className="mt-0.5 font-semibold">{etape.titre}</h3>
-                <p className="mt-1 text-sm leading-relaxed text-text-muted">{etape.texte}</p>
-              </li>
-            ))}
+            {parcours.map((etape, i) => {
+              const libelle = etapeLabel(etape.etape)
+              // Le libelle se tait quand il repete le titre (« Payout » / « Payouts »).
+              const doublon = etape.titre.toLowerCase().startsWith(libelle.toLowerCase())
+              return (
+                <li key={etape.titre} className="rounded-xl border border-border p-4">
+                  <span className="grid h-6 w-6 place-items-center rounded-full bg-accent/15 text-xs font-bold text-accent">{i + 1}</span>
+                  {!doublon && <p className={cx(LABEL, 'mt-2')}>{libelle}</p>}
+                  <h3 className={cx('font-semibold', doublon ? 'mt-2' : 'mt-0.5')}>{etape.titre}</h3>
+                  <p className="mt-1 text-sm leading-relaxed text-text-muted">{etape.texte}</p>
+                </li>
+              )
+            })}
           </ol>
+          {cartesComptes.length > 0 && (
+            <div className={cx('mt-3 grid items-stretch gap-3', COLONNES[Math.min(cartesComptes.length, 3)])}>{cartesComptes}</div>
+          )}
         </Section>
       )}
       {modules.length > 0 && (
         <Section labelledBy="included-title">
           <SectionHeading id="included-title" eyebrow={COPY.modules.includedEyebrow} title={COPY.modules.includedTitle} />
-          <div className={cx('grid items-start gap-3', COLONNES[Math.min(modules.length, 3)])}>{modules}</div>
+          {/* Meme hauteur pour toutes les cartes (commentaire du 22/09) ; leurs listes se calent en bas. */}
+          <div className={cx('grid items-stretch gap-3', COLONNES[Math.min(modules.length, 3)])}>{modules}</div>
         </Section>
       )}
     </>
@@ -109,7 +127,28 @@ export function OptionalModules({ sheet }: { sheet: FirmSheet }) {
 // s'affichent toutes. Sans selection dans le tableur, on s'arrete a quatre.
 const REGLES_VISIBLES = 4
 
+// Une regle courte (« Not allowed. ») se lit comme une ligne de tableau :
+// libelle a gauche, valeur a droite. Les phrases gardent leur paragraphe.
+const REGLE_COURTE = 40
+
 function LigneRegle({ r, phase }: { r: FirmSheet['regles'][number]; phase: string | null }) {
+  if (r.texte.length <= REGLE_COURTE && r.statut === 'confirmed') {
+    return (
+      <li className="flex items-baseline justify-between gap-3 py-2.5">
+        <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
+          <span className="text-sm font-semibold text-text-primary">{r.regle}</span>
+          {phase && <span className={CHIP}>{phase}</span>}
+          {r.bloquante && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-danger-subtle px-2 py-0.5 text-[11px] font-medium text-danger">
+              <AlertTriangle className="h-3 w-3" aria-hidden="true" />
+              {COPY.conditions.breach}
+            </span>
+          )}
+        </span>
+        <span className="shrink-0 text-right text-sm text-text-secondary">{r.texte.replace(/\.$/, '')}</span>
+      </li>
+    )
+  }
   return (
     <li className="py-2.5">
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
@@ -139,11 +178,15 @@ function ListeRegles({
 }) {
   if (regles.length === 0) return null
   const reste = regles.slice(visibles)
+  // L'etiquette de phase n'informe que si la carte melange plusieurs phases ;
+  // « Funded » sur chaque ligne des retraits n'etait que du bruit (22/09).
+  const phaseUtile = new Set(regles.map((r) => r.phase ?? '')).size > 1
+  const phaseDe = (cle: string | null) => (phaseUtile ? nomPhase(cle) : null)
   return (
     <div>
       <ul className="divide-y divide-border">
         {regles.slice(0, visibles).map((r) => (
-          <LigneRegle key={`${r.regle}-${r.phase}`} r={r} phase={nomPhase(r.phase)} />
+          <LigneRegle key={`${r.regle}-${r.phase}`} r={r} phase={phaseDe(r.phase)} />
         ))}
       </ul>
       {reste.length > 0 && (
@@ -154,7 +197,7 @@ function ListeRegles({
           </summary>
           <ul className="divide-y divide-border">
             {reste.map((r) => (
-              <LigneRegle key={`${r.regle}-${r.phase}`} r={r} phase={nomPhase(r.phase)} />
+              <LigneRegle key={`${r.regle}-${r.phase}`} r={r} phase={phaseDe(r.phase)} />
             ))}
           </ul>
         </details>
@@ -188,13 +231,13 @@ export function ConditionsSection({ sheet, sel }: { sheet: FirmSheet; sel: FirmS
 
   const cartes = [
     trading.length > 0 && (
-      <article key="trading" className={cx(CARD, 'p-4 sm:p-5')}>
+      <article key="trading" className={cx(CARD, 'flex flex-col p-4 sm:p-5')}>
         <EnteteCarte eyebrow={COPY.conditions.trading} titre={COPY.conditions.tradingTitle} />
         <ListeRegles regles={trading} nomPhase={nomPhase} visibles={sheet.regles.some((r) => r.essentielle) ? trading.length : REGLES_VISIBLES} />
       </article>
     ),
     frais.length > 0 && (
-      <article key="fees" className={cx(CARD, 'p-4 sm:p-5')}>
+      <article key="fees" className={cx(CARD, 'flex flex-col p-4 sm:p-5')}>
         <EnteteCarte eyebrow={COPY.conditions.fees} titre={COPY.conditions.feesTitle} />
         <dl className="divide-y divide-border">
           {frais.map((f) => (
@@ -210,7 +253,7 @@ export function ConditionsSection({ sheet, sel }: { sheet: FirmSheet; sel: FirmS
       </article>
     ),
     !payoutsVide && (
-      <article key="payouts" className={cx(CARD, 'p-4 sm:p-5')}>
+      <article key="payouts" className={cx(CARD, 'flex flex-col p-4 sm:p-5')}>
         <EnteteCarte eyebrow={COPY.conditions.payouts} titre={COPY.conditions.payoutsTitle} />
         {(sheet.prestataireRetrait || sheet.methodesRetrait.length > 0) && (
           <div className="flex flex-wrap items-center gap-2 pb-2.5 pt-1">
@@ -235,10 +278,24 @@ export function ConditionsSection({ sheet, sel }: { sheet: FirmSheet; sel: FirmS
   ].filter(Boolean)
 
   if (cartes.length === 0) return null
+  // Trois cartes : Trading et Fees empiles a gauche, Payouts (la plus longue)
+  // a droite. Cote a cote, la carte la plus courte laissait un grand vide
+  // (commentaire du 22/09).
+  const [premiere, deuxieme, troisieme] = cartes
   return (
     <Section labelledBy="conditions-title">
       <SectionHeading id="conditions-title" eyebrow={COPY.conditions.eyebrow} title={COPY.conditions.title} intro={COPY.conditions.intro} />
-      <div className={cx('grid items-start gap-3', cartes.length === 3 ? 'lg:grid-cols-3' : COLONNES[cartes.length])}>{cartes}</div>
+      {cartes.length === 3 ? (
+        <div className="grid items-start gap-3 lg:grid-cols-2">
+          <div className="grid gap-3">
+            {premiere}
+            {deuxieme}
+          </div>
+          {troisieme}
+        </div>
+      ) : (
+        <div className={cx('grid items-start gap-3', COLONNES[cartes.length])}>{cartes}</div>
+      )}
     </Section>
   )
 }

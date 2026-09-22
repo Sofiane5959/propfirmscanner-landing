@@ -72,6 +72,12 @@ export interface SheetPlan {
   /** Carte Fees : reset apres une perte, et activation du compte finance (0 = aucun). */
   fraisReset: number | null
   fraisActivation: number | null
+  /**
+   * Slug du plan dans prop_firm_challenges : /api/go ouvre son lien profond,
+   * qui porte le plan, le code et nos identifiants d'affiliation. Vide : le
+   * lien general de la firme. Absent des copies figees.
+   */
+  lienPlan?: string | null
   phases: SheetPhase[]
 }
 
@@ -147,6 +153,7 @@ export interface SheetRegle {
 
 export const ETAPE_LABEL: Record<string, string> = {
   evaluation: 'Evaluation',
+  certification: 'Certification',
   funded: 'Funded',
   payout: 'Payout',
 }
@@ -161,6 +168,8 @@ export interface SheetPlateforme {
   nom: string
   selectionnable: boolean
   note: string | null
+  /** Icone officielle (site de l'editeur). Vide : pastille a l'initiale. */
+  logoUrl?: string | null
 }
 
 /** Un choix d'achat qui change le produit : il est transmis au lien de paiement. */

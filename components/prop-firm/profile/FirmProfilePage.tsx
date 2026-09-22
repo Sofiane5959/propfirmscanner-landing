@@ -52,24 +52,29 @@ export default function FirmProfilePage({
   const sheet = ficheAffichable(ficheBrute)
   const sel = useFirmSelection(sheet)
 
-  const lien = (placement: string) =>
+  // Le plan vise ouvre le paiement de CE plan, code applique (lien profond du
+  // plan en base) : le plan affiche dans le hero, sinon la selection en cours.
+  const lien = (placement: string, lienPlan?: string | null) =>
     buildAffiliateUrl(firmSlug, {
       placement,
       locale,
+      challenge: lienPlan ?? undefined,
       optKey: sel.optionTransmise?.parametre ?? null,
       optValue: sel.optionTransmise?.valeur ?? null,
     })
+  const planHero = sel.promo?.plan.lienPlan ?? null
+  const planSelection = sel.plan?.lienPlan ?? null
 
   return (
     <div className="bg-bg-base pb-8 font-sans text-text-primary">
-      <HeroSection sheet={sheet} promo={sel.promo} claimHref={lien('hero_claim')} continueHref={lien('hero_continue')} firmId={firmId} />
+      <HeroSection sheet={sheet} promo={sel.promo} claimHref={lien('hero_claim', planHero)} continueHref={lien('hero_continue', planHero)} firmId={firmId} />
       <KnownForStrip sheet={sheet} />
       <InfoCards sheet={sheet} />
       <AccountConfigurator
         sheet={sheet}
         sel={sel}
-        claimHref={lien('configurator_claim')}
-        continueHref={lien('configurator_continue')}
+        claimHref={lien('configurator_claim', planSelection)}
+        continueHref={lien('configurator_continue', planSelection)}
       />
       <ProgramComparison sel={sel} />
       <RulesByPhase sheet={sheet} />
@@ -77,7 +82,7 @@ export default function FirmProfilePage({
       <ConditionsSection sheet={sheet} sel={sel} />
       <VerdictSection sheet={sheet} />
       <FaqSection sheet={sheet} />
-      <FinalCta sheet={sheet} sel={sel} claimHref={lien('final_claim')} continueHref={lien('final_continue')} />
+      <FinalCta sheet={sheet} sel={sel} claimHref={lien('final_claim', planSelection)} continueHref={lien('final_continue', planSelection)} />
       <SimilarFirms nom={sheet.nom} firms={similarFirms} />
     </div>
   )

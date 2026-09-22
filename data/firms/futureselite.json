@@ -59,6 +59,7 @@
           "intervalle": null,
           "fraisReset": 79,
           "fraisActivation": 0,
+          "lienPlan": null,
           "phases": [
             {
               "phase": "evaluation",
@@ -104,6 +105,7 @@
           "intervalle": null,
           "fraisReset": 89,
           "fraisActivation": 0,
+          "lienPlan": null,
           "phases": [
             {
               "phase": "evaluation",
@@ -149,6 +151,7 @@
           "intervalle": null,
           "fraisReset": 159,
           "fraisActivation": 0,
+          "lienPlan": null,
           "phases": [
             {
               "phase": "evaluation",
@@ -194,6 +197,7 @@
           "intervalle": null,
           "fraisReset": 229,
           "fraisActivation": 0,
+          "lienPlan": null,
           "phases": [
             {
               "phase": "evaluation",
@@ -252,6 +256,7 @@
           "intervalle": null,
           "fraisReset": 89,
           "fraisActivation": 0,
+          "lienPlan": null,
           "phases": [
             {
               "phase": "evaluation",
@@ -299,6 +304,7 @@
           "intervalle": null,
           "fraisReset": 99,
           "fraisActivation": 0,
+          "lienPlan": null,
           "phases": [
             {
               "phase": "evaluation",
@@ -346,6 +352,7 @@
           "intervalle": null,
           "fraisReset": 149,
           "fraisActivation": 0,
+          "lienPlan": null,
           "phases": [
             {
               "phase": "evaluation",
@@ -393,6 +400,7 @@
           "intervalle": null,
           "fraisReset": 219,
           "fraisActivation": 0,
+          "lienPlan": null,
           "phases": [
             {
               "phase": "evaluation",
@@ -453,6 +461,7 @@
           "intervalle": null,
           "fraisReset": 89,
           "fraisActivation": 0,
+          "lienPlan": null,
           "phases": [
             {
               "phase": "evaluation",
@@ -500,6 +509,7 @@
           "intervalle": null,
           "fraisReset": 109,
           "fraisActivation": 0,
+          "lienPlan": null,
           "phases": [
             {
               "phase": "evaluation",
@@ -547,6 +557,7 @@
           "intervalle": null,
           "fraisReset": 159,
           "fraisActivation": 0,
+          "lienPlan": null,
           "phases": [
             {
               "phase": "evaluation",
@@ -594,6 +605,7 @@
           "intervalle": null,
           "fraisReset": 209,
           "fraisActivation": 0,
+          "lienPlan": null,
           "phases": [
             {
               "phase": "evaluation",
@@ -654,6 +666,7 @@
           "intervalle": null,
           "fraisReset": null,
           "fraisActivation": 0,
+          "lienPlan": null,
           "phases": [
             {
               "phase": "funded",
@@ -685,6 +698,7 @@
           "intervalle": null,
           "fraisReset": null,
           "fraisActivation": 0,
+          "lienPlan": null,
           "phases": [
             {
               "phase": "funded",
@@ -716,6 +730,7 @@
           "intervalle": null,
           "fraisReset": null,
           "fraisActivation": 0,
+          "lienPlan": null,
           "phases": [
             {
               "phase": "funded",
@@ -1221,37 +1236,44 @@
     {
       "nom": "Tradovate",
       "selectionnable": true,
-      "note": null
+      "note": null,
+      "logoUrl": null
     },
     {
       "nom": "NinjaTrader",
       "selectionnable": true,
-      "note": "Potential external licence cost in live trading."
+      "note": "Potential external licence cost in live trading.",
+      "logoUrl": null
     },
     {
       "nom": "Quantower",
       "selectionnable": true,
-      "note": null
+      "note": null,
+      "logoUrl": null
     },
     {
       "nom": "ATAS",
       "selectionnable": true,
-      "note": null
+      "note": null,
+      "logoUrl": null
     },
     {
       "nom": "WealthCharts",
       "selectionnable": true,
-      "note": null
+      "note": null,
+      "logoUrl": null
     },
     {
       "nom": "DeepCharts",
       "selectionnable": true,
-      "note": "Written DeepChart in the purchase configurator and DeepCharts® on the official homepage; one product. The dashboard provides credentials and a Dxfeed agreement flow."
+      "note": "Written DeepChart in the purchase configurator and DeepCharts® on the official homepage; one product. The dashboard provides credentials and a Dxfeed agreement flow.",
+      "logoUrl": null
     },
     {
       "nom": "Volumetrica",
       "selectionnable": false,
-      "note": "Listed on the official homepage but not exposed in the purchase configurator."
+      "note": "Listed on the official homepage but not exposed in the purchase configurator.",
+      "logoUrl": null
     }
   ],
   "categoriesActifs": [],

@@ -76,6 +76,13 @@ export const COPY = {
     title: (n: number) => `Compare the ${n} programs`,
     intro: 'One card per program, side by side.',
     maxAccounts: 'Max funded accounts',
+    from: 'From',
+    sizes: 'Sizes',
+    evaluation: 'Evaluation',
+    noEvaluation: 'None',
+    phases: (n: number) => `${n} phase${n > 1 ? 's' : ''}`,
+    split: 'Profit split',
+    same: (n: number) => (n === 2 ? 'Same on both' : `Same on all ${n}`),
   },
   rules: {
     eyebrow: 'Step 3 · Check the rules',
@@ -93,6 +100,7 @@ export const COPY = {
   modules: {
     journeyEyebrow: 'How it works',
     journeyTitle: 'From evaluation to your first payout',
+    journeyIntro: 'What actually happens after you pay, step by step.',
     includedEyebrow: 'Included',
     includedTitle: 'What else is included?',
     training: 'Training',

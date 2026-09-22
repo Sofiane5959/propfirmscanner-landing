@@ -66,6 +66,8 @@ export function InfoCards({ sheet }: { sheet: FirmSheet }) {
   const levierSur = !estIncertain(sheet.levierStatut)
   const dataFeeds = Array.from(new Set(sheet.optionsAchat.filter((o) => o.type === 'data_feed').map((o) => o.nom)))
   const levierReserve = reserve(sheet.levierStatut)
+  // Icones officielles des plateformes (onglet Plateformes, colonne logo_url).
+  const logos = new Map(sheet.plateformesDetail.filter((p) => p.logoUrl).map((p) => [p.nom, p.logoUrl as string]))
 
   const groupes: Groupe[] = [
     { label: COPY.info.platforms, valeurs: plateformesAffichees(sheet), statut: null },
@@ -101,14 +103,17 @@ export function InfoCards({ sheet }: { sheet: FirmSheet }) {
                   <span key={v} className={cx(CHIP, plateformes && 'inline-flex items-center gap-1.5 pl-1.5')}>
                     {/* Pastille a l'initiale : elle distingue les plateformes d'un
                         coup d'oeil sans reprendre un logo qui ne nous appartient pas. */}
-                    {plateformes && (
+                    {plateformes && (logos.get(v) ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={logos.get(v)!} alt="" className="h-5 w-5 shrink-0 rounded bg-white object-contain" />
+                    ) : (
                       <span
                         aria-hidden="true"
                         className="grid h-5 w-5 shrink-0 place-items-center rounded bg-dark-700 text-[10px] font-bold text-text-primary"
                       >
                         {v.charAt(0)}
                       </span>
-                    )}
+                    ))}
                     {v}
                   </span>
                 ))}
