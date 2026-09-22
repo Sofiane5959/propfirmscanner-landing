@@ -23,7 +23,7 @@
       "slug": "tcp",
       "nom": "Trader Career Path",
       "accroche": "Start smaller, climb higher",
-      "resume": "Start at $25K, $50K or $100K, then move up step by step to a $200K Live account.",
+      "resume": "Start at $25K, $50K or $100K and move up step by step: to $200K from TCP25, to $400K from TCP50 and TCP100.",
       "marche": "futures",
       "type": "evaluation",
       "maxComptes": null,
@@ -235,7 +235,7 @@
           "cartePromo": false,
           "facturation": "subscription",
           "intervalle": "monthly",
-          "fraisReset": null,
+          "fraisReset": 100,
           "fraisActivation": null,
           "lienPlan": null,
           "phases": [
@@ -281,7 +281,7 @@
           "cartePromo": false,
           "facturation": "subscription",
           "intervalle": "monthly",
-          "fraisReset": null,
+          "fraisReset": 130,
           "fraisActivation": null,
           "lienPlan": null,
           "phases": [
@@ -327,7 +327,7 @@
           "cartePromo": false,
           "facturation": "subscription",
           "intervalle": "monthly",
-          "fraisReset": null,
+          "fraisReset": 155,
           "fraisActivation": null,
           "lienPlan": null,
           "phases": [
@@ -413,17 +413,15 @@
       "programmes": []
     },
     {
-      "libelle": "Reset (TCP25, TCP50)",
+      "libelle": "Reset (TCP25, TCP50, GM 50K)",
       "montant": "Varies monthly",
-      "note": "Below the price of a new subscription. One free reset at each renewal.",
-      "programmes": [
-        "tcp"
-      ]
+      "note": "Below the price of a new subscription. The Trader Career Path adds one free reset at each renewal.",
+      "programmes": []
     },
     {
       "libelle": "Commissions",
-      "montant": "Per instrument",
-      "note": "Schedule given at activation.",
+      "montant": "Per contract",
+      "note": "Once funded, per contract and per side: about $0.54 exchange fee ($0.46 on micros), $0.10 Rithmic, $0.02 NFA, plus platform fees.",
       "programmes": []
     }
   ],
@@ -683,16 +681,18 @@
     {
       "carte": "live",
       "regle": "Moving up the Trader Career Path",
-      "texte": "After you withdraw your profit goal minus 20%, you move to the next Live account: $50K, then $100K, then $200K. The help center says the plan can grow up to $400,000.",
+      "texte": "Withdraw your profit goal minus 20% to move up: $50K, $100K, then $200K Live, on a fixed $194,000 floor.",
       "statut": "confirmed",
       "programmes": [
         "tcp"
       ],
-      "tailles": [],
+      "tailles": [
+        25000
+      ],
       "phase": "funded",
       "bloquante": false,
       "essentielle": false,
-      "source": "https://help.earn2trade.com/en/articles/16295637-what-is-earn2trade"
+      "source": "Handbook partenaire Earn2Trade 2026 (fourni par Sofiane)"
     },
     {
       "carte": "trading",
@@ -705,6 +705,59 @@
       "bloquante": false,
       "essentielle": false,
       "source": "https://www.earn2trade.com/non-us/purchase"
+    },
+    {
+      "carte": "live",
+      "regle": "Moving up the Trader Career Path",
+      "texte": "Withdraw your profit goal minus 20% to move up, all the way to $400K Live: fixed $388,000 floor and a fixed 60/40 split.",
+      "statut": "confirmed",
+      "programmes": [
+        "tcp"
+      ],
+      "tailles": [
+        50000,
+        100000
+      ],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": false,
+      "source": "Handbook partenaire Earn2Trade 2026 (fourni par Sofiane)"
+    },
+    {
+      "carte": "trading",
+      "regle": "End-of-day drawdown",
+      "texte": "The floor only moves up at the close, but open losses count in real time: dipping below it during the day fails the account.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": true,
+      "essentielle": true,
+      "source": "https://help.earn2trade.com/en/articles/5372687-how-does-end-of-day-drawdown-work"
+    },
+    {
+      "carte": "trading",
+      "regle": "Trade copiers",
+      "texte": "Not allowed.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": true,
+      "essentielle": true,
+      "source": "https://help.earn2trade.com/en/articles/6877364-what-happens-when-i-complete-my-evaluation"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Keep a cushion",
+      "texte": "Once the floor locks at your starting balance, withdrawing all your profit leaves no margin. Leave a buffer in the account.",
+      "statut": "confirmed",
+      "programmes": [],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": true,
+      "source": "Handbook partenaire Earn2Trade 2026 (fourni par Sofiane)"
     }
   ],
   "titre": "A structured path to a funded futures account",
