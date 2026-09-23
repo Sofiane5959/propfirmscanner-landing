@@ -909,9 +909,9 @@ const TrustBadge = ({ status }: { status: string }) => {
 }
 
 const FilterChip = ({ label, onRemove }: { label: string; onRemove: () => void }) => (
-  <span className="inline-flex items-center gap-1 px-2 py-1 bg-accent/10 text-accent text-xs rounded-lg border border-accent/30">
+  <span className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-bg-base px-3 py-1.5 text-sm text-text-primary">
     {label}
-    <button onClick={onRemove} className="hover:text-white" aria-label={`Remove ${label} filter`}><X className="w-3 h-3" /></button>
+    <button onClick={onRemove} className="text-text-muted hover:text-text-primary" aria-label={`Remove ${label} filter`}><X className="h-3 w-3" /></button>
   </span>
 )
 
@@ -959,16 +959,18 @@ const FilterDropdown = ({
         aria-expanded={isOpen}
         aria-haspopup="listbox"
         aria-label={`${label} filter${hasSelection ? `, ${count} selected` : ''}`}
-        className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 whitespace-nowrap ${
-          hasSelection ? `${colors.bg} ${colors.text} ring-1 ${colors.ring}` : 'bg-dark-700 text-text-secondary hover:bg-dark-600'
+        className={`flex items-center gap-1.5 whitespace-nowrap rounded-xl border px-3.5 py-2.5 text-sm font-medium transition-colors ${
+          hasSelection
+            ? 'border-accent-border bg-accent-subtle text-accent'
+            : 'border-border bg-bg-base text-text-secondary hover:border-border-hover'
         }`}
       >
         {label}
-        {hasSelection && <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${colors.badge} text-white`}>{count}</span>}
-        <ChevronDown className={`w-3 h-3 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        {hasSelection && <span className="rounded-full bg-accent-hover px-1.5 py-0.5 font-mono text-[11px] text-white">{count}</span>}
+        <ChevronDown className={`h-3.5 w-3.5 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
       {isOpen && (
-        <div role="listbox" className="absolute top-full left-0 mt-1 p-3 bg-dark-700 border border-border rounded-xl shadow-xl z-50 min-w-[200px] max-w-[280px] animate-in fade-in-0 zoom-in-95 duration-150">
+        <div role="listbox" className="animate-in fade-in-0 zoom-in-95 absolute left-0 top-full z-50 mt-1 max-w-[280px] min-w-[200px] rounded-xl border border-border bg-bg-elevated p-3 shadow-xl duration-150">
           {children}
         </div>
       )}
@@ -991,7 +993,7 @@ const PriceSlider = ({ value, onChange }: { value: [number, number]; onChange: (
         onMouseUp={() => onChange([0, localMax])}
         onTouchEnd={() => onChange([0, localMax])}
         aria-label="Maximum price filter"
-        className="w-full h-2 bg-dark-600 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+        className="w-full h-2 bg-bg-elevated rounded-lg appearance-none cursor-pointer accent-emerald-500"
       />
       <div className="flex justify-between text-[10px] text-text-muted">
         <span>$0</span><span>$250</span><span>$500</span><span>$750</span><span>$1000+</span>
@@ -1047,7 +1049,7 @@ const ReviewModal = ({
             <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-4">
               <CheckCircle2 className="w-8 h-8 text-accent" />
             </div>
-            <h3 className="text-white font-bold text-xl mb-1">{t.thankYouReview}</h3>
+            <h3 className="text-text-primary font-bold text-xl mb-1">{t.thankYouReview}</h3>
             <p className="text-text-secondary text-sm">{t.thankYouSub}</p>
           </div>
         ) : (
@@ -1061,11 +1063,11 @@ const ReviewModal = ({
                   }
                 </div>
                 <div>
-                  <h3 className="text-white font-bold text-base">{firm.name}</h3>
+                  <h3 className="text-text-primary font-bold text-base">{firm.name}</h3>
                   <p className="text-text-secondary text-xs">{t.shareExperience}</p>
                 </div>
               </div>
-              <button onClick={onClose} aria-label="Close" className="text-text-muted hover:text-white transition-colors">
+              <button onClick={onClose} aria-label="Close" className="text-text-muted hover:text-text-primary transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1101,7 +1103,7 @@ const ReviewModal = ({
                     className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                       tradingStyle === style
                         ? 'bg-accent-hover text-white'
-                        : 'bg-dark-700 text-text-secondary hover:bg-dark-600'
+                        : 'bg-bg-base text-text-secondary hover:bg-bg-elevated'
                     }`}
                   >
                     {style}
@@ -1116,7 +1118,7 @@ const ReviewModal = ({
                 value={comment}
                 onChange={e => setComment(e.target.value)}
                 placeholder={t.commentPlaceholder}
-                className="w-full bg-dark-700 border border-border rounded-xl p-3 text-sm text-white placeholder-text-muted resize-none focus:outline-none focus:border-accent transition-colors"
+                className="w-full bg-bg-base border border-border rounded-xl p-3 text-sm text-text-primary placeholder-text-muted resize-none focus:outline-none focus:border-accent transition-colors"
                 rows={3}
                 maxLength={500}
               />
@@ -1126,7 +1128,7 @@ const ReviewModal = ({
             <button
               onClick={handleSubmit}
               disabled={rating === 0 || isSubmitting}
-              className="w-full py-3 bg-accent-hover hover:brightness-110 disabled:bg-dark-600 disabled:text-text-muted disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors"
+              className="w-full py-3 bg-accent-hover hover:brightness-110 disabled:bg-bg-elevated disabled:text-text-muted disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors"
             >
               {isSubmitting ? t.submitting : t.submitReview}
             </button>
@@ -1206,7 +1208,7 @@ const PayoutProofModal = ({
             <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-4">
               <Banknote className="w-8 h-8 text-accent" />
             </div>
-            <h3 className="text-white font-bold text-xl mb-1">{t.thankYouPayout}</h3>
+            <h3 className="text-text-primary font-bold text-xl mb-1">{t.thankYouPayout}</h3>
             <p className="text-text-secondary text-sm">{t.thankYouPayoutSub}</p>
           </div>
         ) : (
@@ -1221,11 +1223,11 @@ const PayoutProofModal = ({
                   }
                 </div>
                 <div>
-                  <h3 className="text-white font-bold text-base">{firm.name}</h3>
+                  <h3 className="text-text-primary font-bold text-base">{firm.name}</h3>
                   <p className="text-text-secondary text-xs">{t.submitPayout}</p>
                 </div>
               </div>
-              <button onClick={onClose} aria-label="Close" className="text-text-muted hover:text-white transition-colors">
+              <button onClick={onClose} aria-label="Close" className="text-text-muted hover:text-text-primary transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1240,13 +1242,13 @@ const PayoutProofModal = ({
                   value={amount}
                   onChange={e => setAmount(e.target.value)}
                   placeholder={t.payoutAmountPlaceholder}
-                  className="flex-1 bg-dark-700 border border-border rounded-xl px-3 py-2.5 text-sm text-white placeholder-text-muted focus:outline-none focus:border-accent transition-colors"
+                  className="flex-1 bg-bg-base border border-border rounded-xl px-3 py-2.5 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-accent transition-colors"
                 />
                 <select
                   value={currency}
                   onChange={e => setCurrency(e.target.value)}
                   aria-label={t.payoutCurrency}
-                  className="w-24 bg-dark-700 border border-border rounded-xl px-2 py-2.5 text-sm text-white focus:outline-none focus:border-accent transition-colors"
+                  className="w-24 bg-bg-base border border-border rounded-xl px-2 py-2.5 text-sm text-text-primary focus:outline-none focus:border-accent transition-colors"
                 >
                   {PAYOUT_CURRENCIES.map(c => (
                     <option key={c} value={c}>{c}</option>
@@ -1262,7 +1264,7 @@ const PayoutProofModal = ({
                 type="date"
                 value={date}
                 onChange={e => setDate(e.target.value)}
-                className="w-full bg-dark-700 border border-border rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-accent transition-colors [color-scheme:dark]"
+                className="w-full bg-bg-base border border-border rounded-xl px-3 py-2.5 text-sm text-text-primary focus:outline-none focus:border-accent transition-colors [color-scheme:dark]"
               />
             </div>
 
@@ -1270,7 +1272,7 @@ const PayoutProofModal = ({
             <div className="mb-5">
               <p className="text-sm text-text-secondary mb-2">{t.payoutScreenshot}</p>
               {preview ? (
-                <div className="relative rounded-xl overflow-hidden border border-border bg-dark-700">
+                <div className="relative rounded-xl overflow-hidden border border-border bg-bg-base">
                   <img src={preview} alt="Payout screenshot preview" className="w-full max-h-40 object-contain" />
                   <button
                     onClick={handleRemoveFile}
@@ -1306,7 +1308,7 @@ const PayoutProofModal = ({
             <button
               onClick={handleSubmit}
               disabled={!amount || parseFloat(amount) <= 0 || isNaN(parseFloat(amount)) || isSubmitting}
-              className="w-full py-3 bg-accent-hover hover:brightness-110 disabled:bg-dark-600 disabled:text-text-muted disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
+              className="w-full py-3 bg-accent-hover hover:brightness-110 disabled:bg-bg-elevated disabled:text-text-muted disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <span>{t.submitting}</span>
@@ -1360,7 +1362,7 @@ const PropFirmCard = ({
   
   if (isCompact) {
     return (
-      <div className={`group bg-dark-700/50 hover:bg-dark-700 border rounded-lg p-3 transition-colors ${
+      <div className={`group bg-bg-elevated hover:bg-bg-base border rounded-lg p-3 transition-colors ${
         isTopPick
           ? 'border-accent/40 hover:border-accent/70'
           : 'border-border/50 hover:border-border-hover'
@@ -1373,7 +1375,7 @@ const PropFirmCard = ({
           </Link>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <Link href={`/prop-firm/${firm.slug}`} className="font-semibold text-white hover:text-accent truncate text-sm flex-1 min-w-0 transition-colors">{firm.name}</Link>
+              <Link href={`/prop-firm/${firm.slug}`} className="font-semibold text-text-primary hover:text-accent truncate text-sm flex-1 min-w-0 transition-colors">{firm.name}</Link>
               {isTopPick && (
                 <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-accent/10 text-accent border border-accent/30 text-[9px] font-semibold tracking-wider uppercase flex-shrink-0">
                   <Star className="w-2 h-2 fill-emerald-400" />
@@ -1402,13 +1404,13 @@ const PropFirmCard = ({
             <span className="px-2 py-1 bg-amber-500/15 text-amber-400 border border-amber-500/30 text-[11px] font-semibold rounded-md uppercase tracking-wider">-{firm.discount_percent}%</span>
           )}
           <div className="flex items-center gap-1">
-            <button onClick={onFavorite} aria-label={isFavorite ? `Remove ${firm.name} from favorites` : `Add ${firm.name} to favorites`} aria-pressed={isFavorite} className={`p-2 rounded-lg transition-all ${isFavorite ? 'text-red-400 bg-red-500/20' : 'text-text-muted hover:text-red-400 hover:bg-dark-600'}`}>
+            <button onClick={onFavorite} aria-label={isFavorite ? `Remove ${firm.name} from favorites` : `Add ${firm.name} to favorites`} aria-pressed={isFavorite} className={`p-2 rounded-lg transition-all ${isFavorite ? 'text-red-400 bg-red-500/20' : 'text-text-muted hover:text-red-400 hover:bg-bg-elevated'}`}>
               <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
             </button>
-            <button onClick={onRate} aria-label={`Rate ${firm.name}`} title={hasReviewed ? 'Update your review' : 'Rate this firm'} className={`p-2 rounded-lg transition-all ${hasReviewed ? 'text-yellow-400 bg-yellow-500/20' : 'text-text-muted hover:text-yellow-400 hover:bg-dark-600'}`}>
+            <button onClick={onRate} aria-label={`Rate ${firm.name}`} title={hasReviewed ? 'Update your review' : 'Rate this firm'} className={`p-2 rounded-lg transition-all ${hasReviewed ? 'text-yellow-400 bg-yellow-500/20' : 'text-text-muted hover:text-yellow-400 hover:bg-bg-elevated'}`}>
               <Star className={`w-4 h-4 ${hasReviewed ? 'fill-current' : ''}`} />
             </button>
-            <button onClick={onPayout} aria-label={`Submit payout proof for ${firm.name}`} title="Submit payout proof" className="p-2 rounded-lg transition-all text-text-muted hover:text-accent hover:bg-dark-600">
+            <button onClick={onPayout} aria-label={`Submit payout proof for ${firm.name}`} title="Submit payout proof" className="p-2 rounded-lg transition-all text-text-muted hover:text-accent hover:bg-bg-elevated">
               <Banknote className="w-4 h-4" />
             </button>
             <PriceAlertButton firmId={firm.id} firmName={firm.name} firmSlug={firm.slug} currentPrice={firm.min_price || 0} />
@@ -1419,7 +1421,7 @@ const PropFirmCard = ({
                 ? 'bg-accent-hover hover:brightness-110 text-white'
                 : firm.affiliate_url
                 ? 'bg-accent/10 hover:bg-accent/25 text-accent border border-accent/30'
-                : 'bg-dark-700 hover:bg-dark-600 text-text-secondary border border-border'
+                : 'bg-bg-base hover:bg-bg-elevated text-text-secondary border border-border'
             }`}>
               {hasDiscount ? `Get -${firm.discount_percent}%` : t.visit} <ExternalLink className="w-3 h-3" />
             </a>
@@ -1429,150 +1431,149 @@ const PropFirmCard = ({
     )
   }
 
+  // Carte en mode grille, refaite le 23/09/2026 d'apres la maquette :
+  // en-tete, preuves, chiffres, permissions, promo, actions, pied de carte.
+  // Seules la presentation et les classes changent ; les donnees et les
+  // rappels (favori, comparaison, note, preuve de paiement, alerte) sont ceux
+  // d'avant.
+  const pills = [
+    firm.allows_scalping && t.scalping,
+    firm.allows_news_trading && 'News',
+    firm.allows_ea && 'EAs',
+  ].filter(Boolean) as string[]
+
   return (
-    <div className={`bg-dark-700/50 border rounded-lg overflow-hidden transition-colors group relative flex flex-col ${
-      isTopPick
-        ? 'border-accent/40 hover:border-accent/70'
-        : 'border-border/50 hover:border-border-hover'
+    <div className={`flex flex-col gap-3 rounded-2xl border bg-bg-elevated p-4 transition-colors ${
+      isTopPick ? 'border-accent-border hover:border-accent' : 'border-border hover:border-border-hover'
     }`}>
-      {hasDiscount && (
-        <div className="absolute top-3 right-3 z-10">
-          <div className="bg-amber-500/15 text-amber-400 border border-amber-500/30 px-2 py-1 rounded-md text-[11px] font-semibold uppercase tracking-wider">
-            -{firm.discount_percent}%
-            {firm.discount_code && (
-              <button onClick={() => onCopyCode(firm.discount_code)} aria-label={`Copy discount code ${firm.discount_code}`} className="flex items-center gap-1 text-[10px] font-mono normal-case tracking-normal opacity-90 hover:opacity-100 mt-0.5">
-                <Copy className="w-2.5 h-2.5" />{firm.discount_code}
-              </button>
-            )}
-          </div>
-        </div>
-      )}
-      
-      {/* Top Pick badge (editor's choice — priority_tier = 1) */}
-      {isTopPick && (
-        <div className="absolute top-3 left-3 z-10 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-accent/10 text-accent border border-accent/30 text-[10px] font-semibold tracking-wider uppercase">
-          <Star className="w-2.5 h-2.5 fill-emerald-400" />
-          Top Pick
-        </div>
-      )}
-      
-      {/* Rank number (top-3 by current sort) — only show if not a Top Pick to avoid badge collision */}
-      {!isTopPick && rank <= 3 && (
-        <div className="absolute top-3 left-3 z-10 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-dark-700 text-text-secondary border border-border text-[10px] font-semibold tracking-wider uppercase font-mono">
-          #{rank}
-        </div>
-      )}
-      
-      <div className={`p-4 ${hasDiscount || rank <= 3 || isTopPick ? 'pt-12' : ''}`}>
-        {/* Actions row */}
-        <div className="flex justify-end gap-1 mb-2">
-          <button onClick={onFavorite} aria-label={isFavorite ? `Remove ${firm.name} from favorites` : `Add ${firm.name} to favorites`} aria-pressed={isFavorite} className={`p-1.5 rounded-lg transition-all ${isFavorite ? 'text-red-400 bg-red-500/20' : 'text-text-muted hover:text-red-400 hover:bg-dark-600'}`}>
-            <Heart className={`w-3.5 h-3.5 ${isFavorite ? 'fill-current' : ''}`} />
-          </button>
-          <button onClick={onCompare} aria-label={isComparing ? `Remove ${firm.name} from comparison` : `Add ${firm.name} to comparison`} aria-pressed={isComparing} className={`p-1.5 rounded-lg transition-all ${isComparing ? 'text-blue-400 bg-blue-500/20' : 'text-text-muted hover:text-blue-400 hover:bg-dark-600'}`}>
-            <GitCompare className="w-3.5 h-3.5" />
-          </button>
-          <button onClick={onRate} aria-label={hasReviewed ? `Update review for ${firm.name}` : `Rate ${firm.name}`} title={hasReviewed ? 'Update your review' : t.writeReview} className={`p-1.5 rounded-lg transition-all ${hasReviewed ? 'text-yellow-400 bg-yellow-500/20' : 'text-text-muted hover:text-yellow-400 hover:bg-dark-600'}`}>
-            <Star className={`w-3.5 h-3.5 ${hasReviewed ? 'fill-current' : ''}`} />
-          </button>
-          <button onClick={onPayout} aria-label={`Submit payout proof for ${firm.name}`} title={t.submitPayout} className="p-1.5 rounded-lg transition-all text-text-muted hover:text-accent hover:bg-dark-600">
-            <Banknote className="w-3.5 h-3.5" />
-          </button>
-          <PriceAlertButton firmId={firm.id} firmName={firm.name} firmSlug={firm.slug} currentPrice={firm.min_price || 0} />
-        </div>
-        {/* Logo + Name — wrapped in Link to the firm's internal page.
-            Internal page = SEO + detail content. The "Visit" button below
-            handles the affiliate redirect, so the two roles are separated
-            cleanly: discover here, click out there. */}
-        <Link href={`/prop-firm/${firm.slug}`} className="flex items-center gap-3 mb-2 group/title">
-          <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center overflow-hidden border border-gray-200 p-1 flex-shrink-0">
-            {firm.logo_url ? <Image src={firm.logo_url} alt={firm.name} width={48} height={48} className="object-contain" /> : <span className="text-lg font-bold text-accent">{firm.name.charAt(0)}</span>}
-          </div>
-          <div className="min-w-0">
-            <h3 className="font-bold text-white text-sm leading-tight mb-0.5 group-hover/title:text-emerald-400 transition-colors">{firm.name}</h3>
+      {/* a) En-tete : logo, nom, badges, favori */}
+      <div className="flex items-start gap-3">
+        <Link href={`/prop-firm/${firm.slug}`} className="flex h-[42px] w-[42px] flex-none items-center justify-center overflow-hidden rounded-xl border border-border bg-white p-1.5">
+          {firm.logo_url
+            ? <Image src={firm.logo_url} alt={firm.name} width={42} height={42} className="object-contain" />
+            : <span className="font-display text-lg font-bold text-accent">{firm.name.charAt(0)}</span>}
+        </Link>
+        <div className="min-w-0 flex-1">
+          <Link href={`/prop-firm/${firm.slug}`} className="block truncate font-display text-base font-semibold text-text-primary hover:text-accent">
+            {firm.name}
+          </Link>
+          <div className="mt-1 flex flex-wrap items-center gap-1.5">
+            {isTopPick ? (
+              <span className="rounded-md bg-accent-hover px-1.5 py-0.5 text-[11px] font-semibold text-white">Top Pick</span>
+            ) : rank <= 3 ? (
+              <span className="rounded-md border border-border bg-bg-base px-1.5 py-0.5 font-mono text-[11px] font-semibold text-text-secondary">#{rank}</span>
+            ) : null}
             <TrustBadge status={firm.trust_status || 'verified'} />
           </div>
-        </Link>
-        {/* Rating */}
-        <div className="flex items-center gap-2 flex-wrap mb-1">
-          <span className="flex items-center gap-1 text-sm">
-            <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
-            <span className="text-white font-medium">{firm.trustpilot_rating?.toFixed(1) || 'N/A'}</span>
-            {firm.trustpilot_reviews && <span className="text-text-muted text-xs">({formatReviewCount(firm.trustpilot_reviews)})</span>}
-          </span>
         </div>
-        {/* Community rating */}
+        <button
+          onClick={onFavorite}
+          aria-label={isFavorite ? `Remove ${firm.name} from favorites` : `Add ${firm.name} to favorites`}
+          aria-pressed={isFavorite}
+          className={`grid h-[34px] w-[34px] flex-none place-items-center rounded-lg transition-colors ${
+            isFavorite ? 'text-red-500 dark:text-red-400' : 'text-text-muted hover:text-red-500 dark:hover:text-red-400'
+          }`}
+        >
+          <Heart className={`h-[18px] w-[18px] ${isFavorite ? 'fill-current' : ''}`} />
+        </button>
+      </div>
+
+      {/* b) Ligne de preuves */}
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] text-text-secondary">
+        <span className="flex items-center gap-1">
+          <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+          <span className="font-mono font-semibold tabular-nums text-text-primary">{firm.trustpilot_rating?.toFixed(1) || 'N/A'}</span>
+          {firm.trustpilot_reviews ? <span className="text-text-muted">({formatReviewCount(firm.trustpilot_reviews)})</span> : null}
+        </span>
         {communityRating && communityRating.count > 0 && (
-          <div className="flex items-center gap-1 mt-0.5">
-            <MessageSquare className="w-3 h-3 text-text-secondary" />
-            <span className="text-text-secondary text-xs font-medium">{communityRating.avg.toFixed(1)}</span>
-            <span className="text-text-muted text-xs">{t.communityRating} ({communityRating.count})</span>
-          </div>
+          <span className="text-text-muted">{t.communityRating} {communityRating.avg.toFixed(1)} ({communityRating.count})</span>
         )}
-        {/* Payout badge */}
         {payoutAggregate && payoutAggregate.count > 0 && (
-          <div className="flex items-center gap-1 mt-0.5">
-            <Banknote className="w-3 h-3 text-accent" />
-            <span className="text-accent text-xs font-medium">{payoutAggregate.count} {t.payoutBadge}</span>
-          </div>
+          <span className="font-medium text-accent">{payoutAggregate.count} {t.payoutBadge}</span>
         )}
       </div>
-      
-      <div className="px-4 py-3 bg-bg-elevated/50 border-y border-border/50 grid grid-cols-2 gap-3">
-        <div>
-          <p className="text-[10px] text-text-muted uppercase">Price</p>
-          <p className="text-base font-bold text-white">${firm.min_price || 'N/A'}</p>
+
+      {/* c) Prix et split : deux cellules separees par un filet */}
+      <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-xl bg-border">
+        <div className="bg-bg-base px-3 py-2.5">
+          <dt className="text-[11px] uppercase tracking-wider text-text-muted">{t.price}</dt>
+          <dd className="mt-0.5 font-mono text-[19px] font-semibold tabular-nums text-text-primary">${firm.min_price || 'N/A'}</dd>
         </div>
-        <div>
-          <p className="text-[10px] text-text-muted uppercase">Split</p>
-          <p className="text-base font-bold text-accent">{formatProfitSplit(firm.profit_split, firm.max_profit_split)}</p>
+        <div className="bg-bg-base px-3 py-2.5">
+          <dt className="text-[11px] uppercase tracking-wider text-text-muted">{t.split}</dt>
+          <dd className="mt-0.5 font-mono text-[19px] font-semibold tabular-nums text-accent">{formatProfitSplit(firm.profit_split, firm.max_profit_split)}</dd>
         </div>
-      </div>
-      
-      <div className="p-4 space-y-3 flex-1">
-        <div className="flex flex-wrap gap-1">
-          {markets.map(m => (
-            <span key={m} className="px-1.5 py-0.5 bg-dark-700 text-text-secondary border border-border text-[10px] rounded-md">{m}</span>
-          ))}
-        </div>
-        <div className="flex flex-wrap gap-1">
-          {firm.allows_scalping && <span className="px-1.5 py-0.5 bg-accent/10 text-accent border border-accent/20 text-[10px] rounded-md flex items-center gap-0.5"><Check className="w-2.5 h-2.5" />Scalping</span>}
-          {firm.allows_news_trading && <span className="px-1.5 py-0.5 bg-accent/10 text-accent border border-accent/20 text-[10px] rounded-md flex items-center gap-0.5"><Check className="w-2.5 h-2.5" />News</span>}
-          {firm.allows_ea && <span className="px-1.5 py-0.5 bg-accent/10 text-accent border border-accent/20 text-[10px] rounded-md flex items-center gap-0.5"><Check className="w-2.5 h-2.5" />EAs</span>}
-          {firm.has_instant_funding && <span className="px-1.5 py-0.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] rounded-md flex items-center gap-0.5"><Zap className="w-2.5 h-2.5" />Instant</span>}
-        </div>
-        {firm.platforms && firm.platforms.length > 0 && (
-          <div className="flex flex-wrap gap-1">
-            {firm.platforms.slice(0, 3).map(p => (
-              <span key={p} className="px-1.5 py-0.5 bg-dark-700 text-text-secondary border border-border text-[10px] rounded-md">{p}</span>
-            ))}
-            {firm.platforms.length > 3 && <span className="text-[10px] text-text-muted">+{firm.platforms.length - 3}</span>}
-          </div>
+      </dl>
+
+      {/* d) Ce que la firme autorise. La hauteur est reservee meme sans
+             pastille, pour que les cartes restent alignees. */}
+      <div className="flex min-h-6 flex-wrap gap-1.5">
+        {pills.map(p => (
+          <span key={p} className="rounded-lg border border-accent-border bg-accent-subtle px-2 py-0.5 text-xs font-medium text-accent">✓ {p}</span>
+        ))}
+        {firm.has_instant_funding && (
+          <span className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-500 dark:text-amber-400">⚡ Instant</span>
         )}
       </div>
-      
-      <div className="p-4 pt-0">
-        {/* Single CTA with 3-tier differentiation:
-            - With discount  → solid emerald "Get -X%" (highest intent)
-            - Affiliate only → outline emerald "Visit Firm" (clear we earn commission)
-            - No affiliate   → neutral gray "Visit Site" (neutral, no incentive bias)
-            "Details" was removed earlier — clicking the logo / firm name reaches
-            the internal page. */}
+
+      {/* e) Promo */}
+      {hasDiscount && (
+        <div className="flex items-center justify-between gap-2 rounded-xl border border-dashed border-amber-500/40 bg-amber-500/10 px-3 py-2">
+          <span className="text-sm font-bold text-amber-500 dark:text-amber-400">−{firm.discount_percent}%</span>
+          {firm.discount_code && (
+            <>
+              <span className="font-mono text-[13px] font-semibold tracking-wide text-text-primary">{firm.discount_code}</span>
+              <button onClick={() => onCopyCode(firm.discount_code)} aria-label={`Copy discount code ${firm.discount_code}`} className="flex items-center gap-1 text-xs font-medium text-amber-500 dark:text-amber-400">
+                <Copy className="h-3 w-3" />Copy
+              </button>
+            </>
+          )}
+        </div>
+      )}
+
+      {/* f) Actions : sortie principale, puis ajout au comparateur */}
+      <div className="mt-auto flex gap-2">
         <a
           href={getFirmUrl(firm, 'compare-grid')}
           target="_blank"
           rel="noopener noreferrer"
-          className={`block w-full py-2.5 text-center text-sm font-medium rounded-md flex items-center justify-center gap-1.5 transition-colors ${
+          className={`flex min-h-10 flex-1 items-center justify-center gap-1.5 rounded-xl px-3 text-sm font-medium transition-colors ${
             hasDiscount
-              ? 'bg-accent-hover hover:brightness-110 text-white'
+              ? 'bg-accent-hover text-white hover:brightness-110'
               : firm.affiliate_url
-              ? 'bg-accent/10 hover:bg-accent/25 text-accent border border-accent/30'
-              : 'bg-dark-700 hover:bg-dark-600 text-text-secondary border border-border'
+              ? 'border border-accent text-accent hover:bg-accent-subtle'
+              : 'border border-border bg-bg-base text-text-secondary hover:border-border-hover'
           }`}
         >
-          {hasDiscount ? `Get -${firm.discount_percent}%` : firm.affiliate_url ? `Visit ${firm.name}` : 'Visit Site'}
-          <ExternalLink className="w-3.5 h-3.5" />
+          {hasDiscount ? `Get -${firm.discount_percent}%` : firm.affiliate_url ? `${t.visit} ${firm.name}` : 'Visit Site'}
+          <ExternalLink className="h-3.5 w-3.5" />
         </a>
+        <button
+          onClick={onCompare}
+          aria-pressed={isComparing}
+          aria-label={isComparing ? `Remove ${firm.name} from comparison` : `Add ${firm.name} to comparison`}
+          className={`flex min-h-10 items-center gap-2 rounded-xl border px-3 text-sm font-medium transition-colors ${
+            isComparing ? 'border-accent bg-accent-subtle text-accent' : 'border-border bg-bg-base text-text-secondary hover:border-border-hover'
+          }`}
+        >
+          <span className={`grid h-[15px] w-[15px] place-items-center rounded border ${
+            isComparing ? 'border-accent-hover bg-accent-hover text-white' : 'border-border-hover'
+          }`}>
+            {isComparing && <Check className="h-2.5 w-2.5" />}
+          </span>
+          {t.compare}
+        </button>
+      </div>
+
+      {/* g) Pied de carte : les actions secondaires, avec leur libelle */}
+      <div className="flex items-center justify-between border-t border-border pt-2.5 text-xs text-text-muted">
+        <button onClick={onRate} className={`flex min-h-8 items-center gap-1 ${hasReviewed ? 'text-yellow-500 dark:text-yellow-400' : 'hover:text-text-secondary'}`}>
+          <Star className={`h-3.5 w-3.5 ${hasReviewed ? 'fill-current' : ''}`} />{t.writeReview}
+        </button>
+        <button onClick={onPayout} className="flex min-h-8 items-center gap-1 hover:text-text-secondary">
+          <Banknote className="h-3.5 w-3.5" />{t.submitPayout}
+        </button>
+        <PriceAlertButton firmId={firm.id} firmName={firm.name} firmSlug={firm.slug} currentPrice={firm.min_price || 0} />
       </div>
     </div>
   )
@@ -1581,23 +1582,39 @@ const PropFirmCard = ({
 const CompareBar = ({ firms, onRemove, onClear }: { firms: PropFirm[]; onRemove: (id: string) => void; onClear: () => void }) => {
   if (firms.length === 0) return null
   const compareUrl = `/compare/${firms.map(f => f.slug).join('-vs-')}`
+  // Deux firmes au moins pour comparer : en dessous, le bouton le dit plutot
+  // que de mener a une page vide (23/09/2026).
+  const pret = firms.length >= 2
+  const indice = firms.length < 2
+    ? 'Select at least 2 firms'
+    : firms.length < 4
+    ? `Up to ${4 - firms.length} more`
+    : 'Maximum 4 firms'
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-dark-700 border-t border-border p-4 z-40">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <span className="text-sm text-text-secondary">Compare ({firms.length}/4):</span>
-          <div className="flex gap-2">
-            {firms.map(f => (
-              <div key={f.id} className="flex items-center gap-1 px-2 py-1 bg-dark-600 rounded-lg">
-                <span className="text-xs text-white">{f.name}</span>
-                <button onClick={() => onRemove(f.id)} aria-label={`Remove ${f.name} from comparison`} className="text-text-secondary hover:text-red-400"><X className="w-3 h-3" /></button>
-              </div>
-            ))}
-          </div>
+    <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-bg-elevated px-4 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.12)]">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3">
+        <div className="flex min-w-0 flex-wrap items-center gap-2">
+          <span className="sm:hidden text-sm text-text-secondary">{firms.length} selected</span>
+          {firms.map(f => (
+            <span key={f.id} className="hidden sm:flex items-center gap-2 rounded-xl border border-border bg-bg-base py-1.5 pl-1.5 pr-2.5">
+              <span className="flex h-[26px] w-[26px] items-center justify-center overflow-hidden rounded-lg bg-white p-0.5">
+                {f.logo_url
+                  ? <Image src={f.logo_url} alt={f.name} width={26} height={26} className="object-contain" />
+                  : <span className="text-xs font-bold text-accent">{f.name.charAt(0)}</span>}
+              </span>
+              <span className="text-[13px] font-medium text-text-primary">{f.name}</span>
+              <button onClick={() => onRemove(f.id)} aria-label={`Remove ${f.name} from comparison`} className="text-text-muted hover:text-text-primary"><X className="h-3 w-3" /></button>
+            </span>
+          ))}
+          <span className="text-xs text-text-muted">{indice}</span>
         </div>
-        <div className="flex gap-2">
-          <button onClick={onClear} className="px-3 py-1.5 text-text-secondary hover:text-white text-sm">Clear</button>
-          <Link href={compareUrl} className="px-4 py-1.5 bg-accent-hover hover:brightness-110 text-white text-sm font-medium rounded-lg">Compare Now</Link>
+        <div className="flex items-center gap-4">
+          <button onClick={onClear} className="text-sm text-text-muted underline hover:text-text-primary">Clear</button>
+          {pret ? (
+            <Link href={compareUrl} className="rounded-xl bg-accent-hover px-4 py-2.5 text-sm font-medium text-white hover:brightness-110">Compare Now</Link>
+          ) : (
+            <span aria-disabled="true" className="cursor-not-allowed rounded-xl border border-border bg-bg-base px-4 py-2.5 text-sm font-medium text-text-muted">Compare Now</span>
+          )}
         </div>
       </div>
     </div>
@@ -1605,28 +1622,28 @@ const CompareBar = ({ firms, onRemove, onClear }: { firms: PropFirm[]; onRemove:
 }
 
 const CardSkeleton = () => (
-  <div className="bg-dark-700/50 border border-border/50 rounded-xl overflow-hidden animate-pulse">
+  <div className="bg-bg-elevated border border-border/50 rounded-xl overflow-hidden animate-pulse">
     <div className="p-4">
       <div className="flex items-start gap-3">
-        <div className="w-14 h-14 rounded-xl bg-dark-600" />
+        <div className="w-14 h-14 rounded-xl bg-bg-elevated" />
         <div className="flex-1">
-          <div className="h-5 bg-dark-600 rounded w-2/3 mb-2" />
-          <div className="h-4 bg-dark-600 rounded w-1/3" />
+          <div className="h-5 bg-bg-elevated rounded w-2/3 mb-2" />
+          <div className="h-4 bg-bg-elevated rounded w-1/3" />
         </div>
       </div>
     </div>
     <div className="px-4 py-3 bg-bg-elevated/50 border-y border-border/50 grid grid-cols-2 gap-3">
-      <div className="h-10 bg-dark-600 rounded" />
-      <div className="h-10 bg-dark-600 rounded" />
+      <div className="h-10 bg-bg-elevated rounded" />
+      <div className="h-10 bg-bg-elevated rounded" />
     </div>
     <div className="p-4 space-y-3">
       <div className="flex gap-1">
-        <div className="h-5 w-12 bg-dark-600 rounded" />
-        <div className="h-5 w-12 bg-dark-600 rounded" />
+        <div className="h-5 w-12 bg-bg-elevated rounded" />
+        <div className="h-5 w-12 bg-bg-elevated rounded" />
       </div>
       <div className="flex gap-2">
-        <div className="h-8 flex-1 bg-dark-600 rounded-lg" />
-        <div className="h-8 flex-1 bg-dark-600 rounded-lg" />
+        <div className="h-8 flex-1 bg-bg-elevated rounded-lg" />
+        <div className="h-8 flex-1 bg-bg-elevated rounded-lg" />
       </div>
     </div>
   </div>
@@ -1644,7 +1661,7 @@ const ShadowPropFirmCard = ({ firm }: { firm: ShadowFirm }) => {
 
   return (
     <div
-      className={`bg-dark-700/30 border rounded-xl overflow-hidden transition-all flex flex-col opacity-60 hover:opacity-90 ${
+      className={`bg-bg-base/30 border rounded-xl overflow-hidden transition-all flex flex-col opacity-60 hover:opacity-90 ${
         isNotRecommended
           ? 'border-red-500/40 hover:border-red-500/60'
           : 'border-yellow-500/30 hover:border-yellow-500/50'
@@ -1701,13 +1718,13 @@ const ShadowPropFirmCard = ({ firm }: { firm: ShadowFirm }) => {
             className={`w-full py-2 text-center text-xs font-medium rounded-lg flex items-center justify-center gap-1 transition-colors ${
               isNotRecommended
                 ? 'bg-red-500/15 hover:bg-red-500/25 text-red-300 border border-red-500/30'
-                : 'bg-dark-600/60 hover:bg-dark-600 text-text-secondary'
+                : 'bg-bg-elevated/60 hover:bg-bg-elevated text-text-secondary'
             }`}
           >
             Visit site <ExternalLink className="w-3 h-3" />
           </a>
         ) : (
-          <div className="w-full py-2 text-center text-xs text-text-muted bg-dark-600/30 rounded-lg">
+          <div className="w-full py-2 text-center text-xs text-text-muted bg-bg-elevated/30 rounded-lg">
             No website available
           </div>
         )}
@@ -2191,21 +2208,26 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
           sticky at top-16, and this one is the lower z-index of the two. */}
       <section className="pt-6 pb-3 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <div className="flex items-center gap-3 mb-1">
-                <h1 className="text-h3 sm:text-h2 text-white font-display">{t.pageTitle}</h1>
-                <span className="px-2 py-0.5 bg-accent/10 text-accent border border-accent/30 text-[11px] font-medium uppercase tracking-wider rounded-md flex items-center gap-1"><BadgeCheck className="w-3 h-3" />Verified</span>
-              </div>
-              <p className="text-small text-text-muted">Every prop firm. One place. <span className="text-text-muted">·</span> <span className="text-text-secondary">Last updated: {formatMonthYear(new Date())}</span></p>
+              <h1 className="font-display text-h2 text-text-primary sm:text-h1">{t.pageTitle}</h1>
+              <p className="mt-2 text-body text-text-secondary">{t.pageSubtitle}</p>
+              <p className="mt-1 text-xs text-text-muted">Last updated: {formatMonthYear(new Date())}</p>
             </div>
-            <div className="flex items-center gap-2">
-              <button onClick={() => setViewMode('grid')} aria-label="Grid view" aria-pressed={viewMode === 'grid'} className={`p-2 rounded-md border transition-colors ${viewMode === 'grid' ? 'bg-accent/10 text-accent border-accent/30' : 'bg-dark-700 text-text-secondary border-border hover:border-border-hover'}`}>
-                <Grid3X3 className="w-4 h-4" />
-              </button>
-              <button onClick={() => setViewMode('list')} aria-label="List view" aria-pressed={viewMode === 'list'} className={`p-2 rounded-md border transition-colors ${viewMode === 'list' ? 'bg-accent/10 text-accent border-accent/30' : 'bg-dark-700 text-text-secondary border-border hover:border-border-hover'}`}>
-                <List className="w-4 h-4" />
-              </button>
+            {/* Controle segmente Grid / List, a la place des deux boutons carres. */}
+            <div className="flex gap-1.5 self-start rounded-xl border border-border bg-bg-elevated p-1 sm:self-auto">
+              {([['grid', t.gridView ?? 'Grid', Grid3X3], ['list', t.listView ?? 'List', List]] as const).map(([mode, label, Icon]) => (
+                <button
+                  key={mode}
+                  onClick={() => setViewMode(mode)}
+                  aria-pressed={viewMode === mode}
+                  className={`flex min-h-10 items-center gap-1.5 rounded-lg px-3 text-[13px] font-medium transition-colors ${
+                    viewMode === mode ? 'bg-accent-subtle text-accent' : 'text-text-secondary hover:text-text-primary'
+                  }`}
+                >
+                  <Icon className="h-4 w-4" />{label}
+                </button>
+              ))}
             </div>
           </div>
         </div>
@@ -2223,17 +2245,17 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
         <div className="max-w-7xl mx-auto">
           <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-2">
-              {/* Search */}
-              <div className="relative min-w-[160px] max-w-[200px]">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
-                <input type="text" value={filters.search} onChange={(e) => setFilters(f => ({ ...f, search: e.target.value }))} placeholder={t.searchPlaceholder} aria-label="Search prop firms" className="w-full pl-8 pr-3 py-1.5 bg-dark-700 border border-border rounded-lg text-white text-xs placeholder:text-text-muted focus:outline-none focus:border-accent" />
+              {/* Search — pleine largeur sur mobile, 14rem au-dela */}
+              <div className="relative w-full sm:w-56">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
+                <input type="text" value={filters.search} onChange={(e) => setFilters(f => ({ ...f, search: e.target.value }))} placeholder={t.searchPlaceholder} aria-label="Search prop firms" className="w-full rounded-xl border border-border bg-bg-base py-2.5 pl-9 pr-3 text-sm text-text-primary placeholder:text-text-muted focus:border-accent focus:outline-none" />
               </div>
               
               {/* Markets */}
               <FilterDropdown label={t.markets} count={filters.markets.length} isOpen={openDropdown === 'markets'} onToggle={() => toggleDropdown('markets')}>
                 <div className="flex flex-wrap gap-1.5">
                   {MARKET_OPTIONS.map(market => (
-                    <button key={market} onClick={() => setFilters(f => ({ ...f, markets: f.markets.includes(market) ? f.markets.filter(m => m !== market) : [...f.markets, market] }))} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.markets.includes(market) ? 'bg-accent-hover text-white' : 'bg-dark-600 text-text-secondary hover:bg-dark-500'}`}>
+                    <button key={market} onClick={() => setFilters(f => ({ ...f, markets: f.markets.includes(market) ? f.markets.filter(m => m !== market) : [...f.markets, market] }))} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.markets.includes(market) ? 'bg-accent-hover text-white' : 'bg-bg-elevated text-text-secondary hover:bg-bg-elevated'}`}>
                       {market}{filters.markets.includes(market) && <Check className="w-3 h-3" />}
                     </button>
                   ))}
@@ -2244,7 +2266,7 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
               <FilterDropdown label={t.platform} count={filters.platforms.length} isOpen={openDropdown === 'platforms'} onToggle={() => toggleDropdown('platforms')}>
                 <div className="flex flex-wrap gap-1.5 max-h-[200px] overflow-y-auto">
                   {availablePlatforms.map(platform => (
-                    <button key={platform} onClick={() => setFilters(f => ({ ...f, platforms: f.platforms.includes(platform) ? f.platforms.filter(p => p !== platform) : [...f.platforms, platform] }))} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.platforms.includes(platform) ? 'bg-accent-hover text-white' : 'bg-dark-600 text-text-secondary hover:bg-dark-500'}`}>
+                    <button key={platform} onClick={() => setFilters(f => ({ ...f, platforms: f.platforms.includes(platform) ? f.platforms.filter(p => p !== platform) : [...f.platforms, platform] }))} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.platforms.includes(platform) ? 'bg-accent-hover text-white' : 'bg-bg-elevated text-text-secondary hover:bg-bg-elevated'}`}>
                       {platform}{filters.platforms.includes(platform) && <Check className="w-3 h-3" />}
                     </button>
                   ))}
@@ -2255,7 +2277,7 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
               <FilterDropdown label={t.challenge} count={filters.challengeTypes.length} isOpen={openDropdown === 'challenge'} onToggle={() => toggleDropdown('challenge')}>
                 <div className="flex flex-wrap gap-1.5">
                   {CHALLENGE_TYPE_OPTIONS.map(type => (
-                    <button key={type} onClick={() => setFilters(f => ({ ...f, challengeTypes: f.challengeTypes.includes(type) ? f.challengeTypes.filter(t => t !== type) : [...f.challengeTypes, type] }))} className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1 ${filters.challengeTypes.includes(type) ? 'bg-accent-hover text-white' : 'bg-dark-600 text-text-secondary hover:bg-dark-500'}`}>
+                    <button key={type} onClick={() => setFilters(f => ({ ...f, challengeTypes: f.challengeTypes.includes(type) ? f.challengeTypes.filter(t => t !== type) : [...f.challengeTypes, type] }))} className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1 ${filters.challengeTypes.includes(type) ? 'bg-accent-hover text-white' : 'bg-bg-elevated text-text-secondary hover:bg-bg-elevated'}`}>
                       {type}{filters.challengeTypes.includes(type) && <Check className="w-3 h-3" />}
                     </button>
                   ))}
@@ -2266,7 +2288,7 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
               <FilterDropdown label={t.style} count={filters.tradingStyles.length} isOpen={openDropdown === 'style'} onToggle={() => toggleDropdown('style')}>
                 <div className="flex flex-wrap gap-1.5">
                   {TRADING_STYLE_OPTIONS.map(style => (
-                    <button key={style.key} onClick={() => setFilters(f => ({ ...f, tradingStyles: f.tradingStyles.includes(style.key) ? f.tradingStyles.filter(s => s !== style.key) : [...f.tradingStyles, style.key] }))} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.tradingStyles.includes(style.key) ? 'bg-accent-hover text-white' : 'bg-dark-600 text-text-secondary hover:bg-dark-500'}`}>
+                    <button key={style.key} onClick={() => setFilters(f => ({ ...f, tradingStyles: f.tradingStyles.includes(style.key) ? f.tradingStyles.filter(s => s !== style.key) : [...f.tradingStyles, style.key] }))} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${filters.tradingStyles.includes(style.key) ? 'bg-accent-hover text-white' : 'bg-bg-elevated text-text-secondary hover:bg-bg-elevated'}`}>
                       {style.label}{filters.tradingStyles.includes(style.key) && <Check className="w-3 h-3" />}
                     </button>
                   ))}
@@ -2277,7 +2299,7 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
               <FilterDropdown label={t.rating} count={filters.ratings.length} isOpen={openDropdown === 'rating'} onToggle={() => toggleDropdown('rating')}>
                 <div className="flex flex-wrap gap-1.5">
                   {RATING_OPTIONS.map(rating => (
-                    <button key={rating} onClick={() => setFilters(f => ({ ...f, ratings: f.ratings.includes(rating) ? f.ratings.filter(r => r !== rating) : [...f.ratings, rating] }))} className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1 ${filters.ratings.includes(rating) ? 'bg-accent-hover text-white' : 'bg-dark-600 text-text-secondary hover:bg-dark-500'}`}>
+                    <button key={rating} onClick={() => setFilters(f => ({ ...f, ratings: f.ratings.includes(rating) ? f.ratings.filter(r => r !== rating) : [...f.ratings, rating] }))} className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1 ${filters.ratings.includes(rating) ? 'bg-accent-hover text-white' : 'bg-bg-elevated text-text-secondary hover:bg-bg-elevated'}`}>
                       <Star className="w-3 h-3" />{rating}+{filters.ratings.includes(rating) && <Check className="w-3 h-3" />}
                     </button>
                   ))}
@@ -2290,7 +2312,7 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
                   {BEST_FOR_OPTIONS.map(opt => {
                     const Icon = opt.icon
                     return (
-                      <button key={opt.key} onClick={() => setFilters(f => ({ ...f, bestFor: f.bestFor.includes(opt.key) ? f.bestFor.filter(b => b !== opt.key) : [...f.bestFor, opt.key] }))} className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1 ${filters.bestFor.includes(opt.key) ? 'bg-accent-hover text-white' : 'bg-dark-600 text-text-secondary hover:bg-dark-500'}`}>
+                      <button key={opt.key} onClick={() => setFilters(f => ({ ...f, bestFor: f.bestFor.includes(opt.key) ? f.bestFor.filter(b => b !== opt.key) : [...f.bestFor, opt.key] }))} className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1 ${filters.bestFor.includes(opt.key) ? 'bg-accent-hover text-white' : 'bg-bg-elevated text-text-secondary hover:bg-bg-elevated'}`}>
                         <Icon className="w-3 h-3" />{opt.label}{filters.bestFor.includes(opt.key) && <Check className="w-3 h-3" />}
                       </button>
                     )
@@ -2307,30 +2329,42 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
               
               {/* Deals */}
               {stats.withDiscounts > 0 && (
-                <button onClick={() => setFilters(f => ({ ...f, hasDiscount: !f.hasDiscount }))} aria-pressed={filters.hasDiscount} aria-label={`Filter by deals only. ${stats.withDiscounts} firms with discounts`} className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1 ${filters.hasDiscount ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30' : 'bg-dark-700 text-text-secondary border border-border hover:border-border-hover'}`}>
-                  <Tag className="w-3 h-3" /> Deals ({stats.withDiscounts})
+                <button onClick={() => setFilters(f => ({ ...f, hasDiscount: !f.hasDiscount }))} aria-pressed={filters.hasDiscount} aria-label={`Filter by deals only. ${stats.withDiscounts} firms with discounts`} className={`flex items-center gap-1.5 rounded-xl border px-3.5 py-2.5 text-sm font-medium transition-colors ${filters.hasDiscount ? 'border-amber-500/40 bg-amber-500/10 text-amber-500 dark:text-amber-400' : 'border-border bg-bg-base text-text-secondary hover:border-border-hover'}`}>
+                  <Tag className="h-3.5 w-3.5" /> {t.deals} <span className="font-mono text-[11px]">({stats.withDiscounts})</span>
                 </button>
               )}
-              
-              {/* Sort */}
-              <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} aria-label="Sort firms by" className="px-2.5 py-1.5 bg-dark-700 border border-border rounded-lg text-text-secondary text-xs focus:outline-none focus:border-accent">
-                {SORT_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-              </select>
-              
-              {/* Reset */}
-              {activeFilterChips.length > 0 && (
-                <button onClick={resetFilters} aria-label="Reset all filters" className="px-2.5 py-1.5 rounded-lg text-xs font-medium text-text-muted hover:text-red-400 hover:bg-dark-700 flex items-center gap-1">
-                  <RotateCcw className="w-3 h-3" /> Reset
-                </button>
-              )}
+
+              {/* Verified : un vrai interrupteur, sur l'etat qui existait deja
+                  (verifiedOnly etait actif par defaut, sans commande visible). */}
+              <button
+                onClick={() => setFilters(f => ({ ...f, verifiedOnly: !f.verifiedOnly }))}
+                role="switch"
+                aria-checked={filters.verifiedOnly}
+                aria-label={`${t.verified} firms only`}
+                className="ml-auto flex items-center gap-2 rounded-xl px-1 py-2.5 text-sm font-medium text-text-secondary"
+              >
+                <span className={`relative h-5 w-[34px] rounded-full transition-colors ${filters.verifiedOnly ? 'bg-accent-hover' : 'bg-border-hover'}`}>
+                  <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white transition-all ${filters.verifiedOnly ? 'left-[16px]' : 'left-0.5'}`} />
+                </span>
+                {t.verified}
+              </button>
             </div>
-            
-            {/* Active Filter Chips */}
-            {activeFilterChips.length > 0 && (
-              <div className="flex flex-wrap items-center gap-1.5">
-                {activeFilterChips.map(chip => <FilterChip key={chip.key} label={chip.label} onRemove={chip.onRemove} />)}
-              </div>
-            )}
+
+            {/* Ligne 2 : filtres actifs, remise a zero, compte et tri */}
+            <div className="flex flex-wrap items-center gap-2">
+              {activeFilterChips.map(chip => <FilterChip key={chip.key} label={chip.label} onRemove={chip.onRemove} />)}
+              {activeFilterChips.length > 0 && (
+                <button onClick={resetFilters} aria-label="Reset all filters" className="flex items-center gap-1 text-sm text-text-muted underline hover:text-text-primary">
+                  <RotateCcw className="h-3.5 w-3.5" /> {t.reset}
+                </button>
+              )}
+              <span className="ml-auto text-sm text-text-muted">
+                {t.showing} <span className="font-mono text-text-primary">{filteredFirms.length}</span> {t.propFirms}
+              </span>
+              <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} aria-label="Sort firms by" className="rounded-xl border border-border bg-bg-base px-3 py-2 text-sm text-text-secondary focus:border-accent focus:outline-none">
+                {SORT_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{`${t.sort ?? 'Sort'}: ${opt.label}`}</option>)}
+              </select>
+            </div>
           </div>
         </div>
       </section>
@@ -2338,7 +2372,7 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
       {/* QUIZ BANNER */}
       <div className="px-4 pt-4">
         <div className="max-w-7xl mx-auto">
-          <div className="rounded-lg bg-dark-700/50 border border-border hover:border-border-hover transition-colors">
+          <div className="rounded-lg bg-bg-elevated border border-border hover:border-border-hover transition-colors">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 px-5 py-4">
               <div className="flex items-center gap-4 min-w-0">
                 <div className="w-10 h-10 rounded-md bg-accent/15 border border-accent/30 flex items-center justify-center flex-shrink-0">
@@ -2346,7 +2380,7 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
                 </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <p className="text-white font-medium text-sm">Not sure which firm to pick?</p>
+                    <p className="text-text-primary font-medium text-sm">Not sure which firm to pick?</p>
                     <span className="px-1.5 py-0.5 bg-accent/10 text-accent text-[10px] font-medium rounded border border-accent/30 uppercase tracking-wider">Free</span>
                   </div>
                   <p className="text-text-secondary text-xs">Discover the prop firm that fits your trading style in under 60 seconds</p>
@@ -2405,7 +2439,7 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
               {/* PAGINATION */}
               {totalPages > 1 && (
                 <nav aria-label="Pagination" className="flex items-center justify-center gap-2 mt-8">
-                  <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} aria-label="Previous page" className="p-2 rounded-lg bg-dark-700 text-text-secondary hover:bg-dark-600 disabled:opacity-50 disabled:cursor-not-allowed">
+                  <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} aria-label="Previous page" className="p-2 rounded-lg bg-bg-base text-text-secondary hover:bg-bg-elevated disabled:opacity-50 disabled:cursor-not-allowed">
                     <ChevronLeft className="w-4 h-4" />
                   </button>
                   <div className="flex gap-1">
@@ -2416,13 +2450,13 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
                       else if (currentPage >= totalPages - 2) page = totalPages - 4 + i
                       else page = currentPage - 2 + i
                       return (
-                        <button key={page} onClick={() => setCurrentPage(page)} aria-label={`Page ${page}`} aria-current={currentPage === page ? 'page' : undefined} className={`w-8 h-8 rounded-lg text-sm font-medium ${currentPage === page ? 'bg-accent-hover text-white' : 'bg-dark-700 text-text-secondary hover:bg-dark-600'}`}>
+                        <button key={page} onClick={() => setCurrentPage(page)} aria-label={`Page ${page}`} aria-current={currentPage === page ? 'page' : undefined} className={`w-8 h-8 rounded-lg text-sm font-medium ${currentPage === page ? 'bg-accent-hover text-white' : 'bg-bg-base text-text-secondary hover:bg-bg-elevated'}`}>
                           {page}
                         </button>
                       )
                     })}
                   </div>
-                  <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} aria-label="Next page" className="p-2 rounded-lg bg-dark-700 text-text-secondary hover:bg-dark-600 disabled:opacity-50 disabled:cursor-not-allowed">
+                  <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} aria-label="Next page" className="p-2 rounded-lg bg-bg-base text-text-secondary hover:bg-bg-elevated disabled:opacity-50 disabled:cursor-not-allowed">
                     <ChevronRight className="w-4 h-4" />
                   </button>
                 </nav>
@@ -2438,7 +2472,7 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
                   <div className="w-1 h-5 bg-yellow-500/60 rounded-full" />
                   <h2 className="text-sm font-semibold text-text-secondary">
                     Other results <span className="text-text-muted font-normal">— unverified or not recommended</span>
-                    <span className="ml-2 px-1.5 py-0.5 bg-dark-700 text-text-secondary text-[10px] rounded">{shadowMatches.length}</span>
+                    <span className="ml-2 px-1.5 py-0.5 bg-bg-base text-text-secondary text-[10px] rounded">{shadowMatches.length}</span>
                   </h2>
                 </div>
                 <p className="text-xs text-text-muted ml-3">
@@ -2456,10 +2490,10 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
           {/* EMPTY STATE — only when BOTH listed and shadow are empty */}
           {paginatedFirms.length === 0 && shadowMatches.length === 0 && (
             <div className="text-center py-16">
-              <div className="w-16 h-16 rounded-full bg-dark-700 flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 rounded-full bg-bg-base flex items-center justify-center mx-auto mb-4">
                 <Search className="w-8 h-8 text-text-muted" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">{t.noFirmsFound}</h3>
+              <h3 className="text-xl font-semibold text-text-primary mb-2">{t.noFirmsFound}</h3>
               <p className="text-text-muted mb-4">{t.tryAdjusting}</p>
               <button onClick={resetFilters} className="px-4 py-2 bg-accent-hover hover:brightness-110 text-white text-sm rounded-lg transition-colors">{t.resetFilters}</button>
             </div>
@@ -2476,7 +2510,7 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
                 <p className="text-tiny text-accent uppercase tracking-wider font-medium mb-2">
                   Personalized matching
                 </p>
-                <h3 className="text-h2 text-white mb-2">
+                <h3 className="text-h2 text-text-primary mb-2">
                   Still undecided?
                 </h3>
                 <p className="text-small text-text-secondary">
