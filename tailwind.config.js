@@ -38,48 +38,45 @@ module.exports = {
           800: '#166534',
           900: '#14532d',
         },
+        // Echelle legacy : les valeurs viennent des variables CSS de
+        // app/globals.css. Nuit = Graphite, Jour = Papier (inversee).
         dark: {
-          50: '#f8fafc',
-          100: '#f1f5f9',
-          200: '#e2e8f0',
-          300: '#cbd5e1',
-          400: '#94a3b8',
-          500: '#64748b',
-          600: '#475569',
-          700: '#334155',
-          750: '#273449', // surfaces hautes (cartes, barres) — palette 2c
-          800: '#1e293b',
-          900: '#0f172a',
-          950: '#020617',
+          50: 'rgb(var(--dark-50) / <alpha-value>)',
+          100: 'rgb(var(--dark-100) / <alpha-value>)',
+          200: 'rgb(var(--dark-200) / <alpha-value>)',
+          300: 'rgb(var(--dark-300) / <alpha-value>)',
+          400: 'rgb(var(--dark-400) / <alpha-value>)',
+          500: 'rgb(var(--dark-500) / <alpha-value>)',
+          600: 'rgb(var(--dark-600) / <alpha-value>)',
+          700: 'rgb(var(--dark-700) / <alpha-value>)',
+          750: 'rgb(var(--dark-750) / <alpha-value>)',
+          800: 'rgb(var(--dark-800) / <alpha-value>)',
+          900: 'rgb(var(--dark-900) / <alpha-value>)',
+          950: 'rgb(var(--dark-950) / <alpha-value>)',
         },
 
-        // --- NEW DESIGN SYSTEM v1.0 (Sprint 2+) ------------------------------
-        // 5 colors total + semantic states. See DESIGN_SYSTEM.md §2.
-        // Palette 2c « ardoise sombre » (septembre 2026) : contraste verifie
-        // WCAG AA sur ce fond. `text.muted` a ete eclairci expres — l'ancien
-        // #52525B devient illisible sur l'ardoise.
+        // --- DESIGN SYSTEM v1.0 — themes Papier (jour) / Graphite (nuit) -----
+        // Toutes les valeurs sont des variables CSS definies dans globals.css
+        // (:root = Papier, .dark = Graphite). Le format rgb(var() / alpha)
+        // garde les modificateurs d'opacite (bg-bg-elevated/60, bg-accent/10).
         bg: {
-          base: '#1E293B',
-          elevated: '#273449',
+          base: 'rgb(var(--bg-base) / <alpha-value>)',
+          elevated: 'rgb(var(--bg-elevated) / <alpha-value>)',
         },
         border: {
-          DEFAULT: '#334155',
-          hover: '#475569',
+          DEFAULT: 'rgb(var(--border) / <alpha-value>)',
+          hover: 'rgb(var(--border-hover) / <alpha-value>)',
         },
         text: {
-          primary: '#F1F5F9',
-          secondary: '#CBD5E1',
-          // #94A3B8 du handoff, eclairci : il tombait a 4,0:1 sur les surfaces
-          // dark-700 et sur les cartes selectionnees. #A3B1C4 tient 4,75:1 minimum.
-          muted: '#A3B1C4',
+          primary: 'rgb(var(--text-primary) / <alpha-value>)',
+          secondary: 'rgb(var(--text-secondary) / <alpha-value>)',
+          muted: 'rgb(var(--text-muted) / <alpha-value>)',
         },
         accent: {
-          DEFAULT: '#34D399', // texte, chiffres, liens
-          // Fond des boutons principaux (texte blanc). #047857 plutot que le
-          // #059669 du handoff : 5,48:1 au lieu de 3,77:1 (decision du 19/09/2026).
-          hover: '#047857',
-          subtle: 'rgba(52, 211, 153, 0.14)',
-          border: 'rgba(52, 211, 153, 0.3)',
+          DEFAULT: 'rgb(var(--accent) / <alpha-value>)',  // texte, chiffres, liens
+          hover: 'rgb(var(--accent-btn) / <alpha-value>)', // fond des boutons principaux (texte blanc)
+          subtle: 'rgb(var(--accent) / 0.14)',
+          border: 'rgb(var(--accent) / 0.3)',
         },
         warning: {
           DEFAULT: '#F59E0B',

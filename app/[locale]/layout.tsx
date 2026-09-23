@@ -144,9 +144,19 @@ export default function LocaleLayout({
     <html
       lang={locale}
       dir={dir}
-      className={`${fontSans.variable} ${fontDisplay.variable} ${fontMono.variable} dark`}
+      className={`${fontSans.variable} ${fontDisplay.variable} ${fontMono.variable}`}
+      // The theme script below adds or removes `dark` before React hydrates.
+      suppressHydrationWarning
     >
       <head>
+        {/* Theme before first paint: saved choice, else the system setting.
+            Paper (day) when light, Graphite (night) when dark. Without this,
+            a night-mode visitor would see a flash of the day theme. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('pfs-theme');var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.classList.toggle('dark',d);}catch(e){document.documentElement.classList.add('dark');}})();`,
+          }}
+        />
         <GoogleAnalytics />
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />

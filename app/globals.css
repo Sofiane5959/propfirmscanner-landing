@@ -5,22 +5,71 @@
 /**
  * PropFirmScanner — Global styles
  *
- * Sprint 2: dark mode is default. The `dark` class on <html> in layout.tsx
- * activates Tailwind's dark variants but our color tokens are already
- * dark-first (we don't need both light + dark — single dark theme).
+ * Deux themes, pilotes par la classe `dark` sur <html> :
+ *   :root  = Papier   (jour)
+ *   .dark  = Graphite (nuit)
+ * La classe est posee avant l'affichage par le script de app/[locale]/layout.tsx
+ * (choix enregistre, sinon reglage du systeme). Les valeurs sont des triplets
+ * RGB pour que Tailwind garde les opacites (bg-accent/10, bg-bg-elevated/60).
  */
 
 /* ----------------------------------------------------------------------------
-   BASE
+   THEMES
 ---------------------------------------------------------------------------- */
 @layer base {
-  html {
+  :root {
+    color-scheme: light;
+    --bg-base: 245 245 244; /* #F5F5F4 */
+    --bg-elevated: 255 255 255; /* #FFFFFF */
+    --border: 231 229 228; /* #E7E5E4 */
+    --border-hover: 198 194 190; /* #C6C2BE */
+    --text-primary: 28 25 23; /* #1C1917 */
+    --text-secondary: 68 64 60; /* #44403C */
+    --text-muted: 110 105 99; /* #6E6963 */
+    --accent: 4 120 87; /* #047857 */
+    --accent-btn: 4 120 87; /* #047857 */
+    --dark-50: 28 25 23; /* #1C1917 */
+    --dark-100: 41 37 36; /* #292524 */
+    --dark-200: 68 64 60; /* #44403C */
+    --dark-300: 68 64 60; /* #44403C */
+    --dark-400: 110 105 99; /* #6E6963 */
+    --dark-500: 138 133 127; /* #8A857F */
+    --dark-600: 214 211 209; /* #D6D3D1 */
+    --dark-700: 238 237 235; /* #EEEDEB */
+    --dark-750: 255 255 255; /* #FFFFFF */
+    --dark-800: 245 245 244; /* #F5F5F4 */
+    --dark-900: 231 229 228; /* #E7E5E4 */
+    --dark-950: 214 211 209; /* #D6D3D1 */
+  }
+
+  .dark {
     color-scheme: dark;
+    --bg-base: 28 28 31; /* #1C1C1F */
+    --bg-elevated: 38 38 42; /* #26262A */
+    --border: 58 58 64; /* #3A3A40 */
+    --border-hover: 85 85 92; /* #55555C */
+    --text-primary: 244 244 245; /* #F4F4F5 */
+    --text-secondary: 212 212 216; /* #D4D4D8 */
+    --text-muted: 161 161 170; /* #A1A1AA */
+    --accent: 52 211 153; /* #34D399 */
+    --accent-btn: 4 120 87; /* #047857 */
+    --dark-50: 250 250 250; /* #FAFAFA */
+    --dark-100: 244 244 245; /* #F4F4F5 */
+    --dark-200: 228 228 231; /* #E4E4E7 */
+    --dark-300: 212 212 216; /* #D4D4D8 */
+    --dark-400: 161 161 170; /* #A1A1AA */
+    --dark-500: 113 113 122; /* #71717A */
+    --dark-600: 85 85 92; /* #55555C */
+    --dark-700: 58 58 64; /* #3A3A40 */
+    --dark-750: 38 38 42; /* #26262A */
+    --dark-800: 28 28 31; /* #1C1C1F */
+    --dark-900: 18 18 20; /* #121214 */
+    --dark-950: 10 10 11; /* #0A0A0B */
   }
 
   body {
-    background-color: #1E293B; /* bg-base */
-    color: #F1F5F9;            /* text-primary */
+    background-color: rgb(var(--bg-base));
+    color: rgb(var(--text-primary));
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11'; /* Inter humanist alternates */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -36,10 +85,9 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* Selection */
   ::selection {
-    background-color: rgba(52, 211, 153, 0.25); /* accent */
-    color: #F1F5F9;                              /* text-primary */
+    background-color: rgb(var(--accent) / 0.25);
+    color: rgb(var(--text-primary));
   }
 
   /* Scrollbar — subtle */
@@ -51,12 +99,51 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: #334155; /* border */
+    background: rgb(var(--border));
     border-radius: 4px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #475569; /* border-hover */
+    background: rgb(var(--border-hover));
   }
+}
+
+/* ----------------------------------------------------------------------------
+   PONT TEMPORAIRE — THEME JOUR
+   Beaucoup de pages ecrivent encore des couleurs sombres en dur (text-white,
+   bg-gray-900, border-white/10...). Elles ne suivent pas les tokens et
+   resteraient blanc-sur-papier en mode jour. Ces regles les rattrapent le
+   temps de migrer les pages vers les tokens ; a supprimer ensuite.
+   Le texte blanc des boutons colores reste blanc.
+---------------------------------------------------------------------------- */
+@layer utilities {
+  html:not(.dark) .text-white,
+  html:not(.dark) .hover\:text-white:hover {
+    color: rgb(var(--text-primary));
+  }
+  html:not(.dark) :is(.bg-accent-hover, .bg-accent, .bg-purple-500, .bg-purple-600, .bg-blue-500, .bg-blue-600, .bg-red-500, .bg-red-600, [class*="bg-gradient-to"]).text-white,
+  html:not(.dark) :is(.bg-accent-hover, .bg-accent, .bg-purple-500, .bg-purple-600, .bg-blue-500, .bg-blue-600, .bg-red-500, .bg-red-600, [class*="bg-gradient-to"]) .text-white {
+    color: #fff;
+  }
+  html:not(.dark) .text-gray-300,
+  html:not(.dark) .text-gray-400 { color: rgb(var(--text-secondary)); }
+  html:not(.dark) .text-gray-500 { color: rgb(var(--text-muted)); }
+
+  html:not(.dark) .bg-gray-950 { background-color: rgb(var(--bg-base)); }
+  html:not(.dark) .bg-gray-900,
+  html:not(.dark) .bg-gray-900\/50 { background-color: rgb(var(--bg-elevated)); }
+  html:not(.dark) .bg-gray-800,
+  html:not(.dark) .bg-gray-800\/50 { background-color: rgb(var(--dark-700)); }
+
+  html:not(.dark) .border-gray-700,
+  html:not(.dark) .border-gray-800,
+  html:not(.dark) .border-white\/10,
+  html:not(.dark) .border-white\/5 { border-color: rgb(var(--border)); }
+
+  html:not(.dark) .bg-white\/5,
+  html:not(.dark) .hover\:bg-white\/5:hover,
+  html:not(.dark) .hover\:bg-white\/10:hover { background-color: rgb(var(--dark-700)); }
+
+  html:not(.dark) .glass { background-color: rgb(var(--bg-elevated) / 0.9); }
 }
 
 /* ----------------------------------------------------------------------------
