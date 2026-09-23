@@ -1,0 +1,1377 @@
+{
+  "_genere": "Fichier genere par `npm run firms:build` depuis data/firms/ftmo.xlsx. Ne pas modifier : corriger le tableur, puis relancer la commande.",
+  "slug": "ftmo",
+  "nom": "FTMO",
+  "logoUrl": "https://ftmo.com/app/themes/ftmo-com/public/images/favicon/apple-touch-icon.png",
+  "marches": [
+    "cfd",
+    "futures"
+  ],
+  "resume": null,
+  "presentation": "FTMO was established in Prague in 2015 and is one of the oldest prop firms still trading. It is not a broker and takes no deposits: every account it opens is a simulated account with fictitious funds, mirroring real market conditions. The rewards paid on the profits made there are real.\n\nThe firm says it serves more than 4.5 million traders across 140 countries, has paid over $650 million in rewards, and employs a team of more than 250 people.\n\nTwo lines sit side by side. The CFD challenges cover forex, indices, metals, energies, crypto and stocks, in one phase or two, with a Swing account type that keeps trading through the news and the weekend. FTMO Futures, launched in 2026, trades CME contracts on a monthly subscription.",
+  "anneeCreation": 2015,
+  "pays": "Czech Republic",
+  "ceoFondateur": "Otakar Šuffner",
+  "actifs": [],
+  "plateformes": [],
+  "moyensPaiement": [
+    "Card",
+    "Apple Pay",
+    "Google Pay",
+    "PayPal",
+    "Skrill",
+    "Revolut Pay",
+    "Bank transfer",
+    "Crypto"
+  ],
+  "levier": null,
+  "stylesTrading": [
+    "Swing",
+    "Day trading"
+  ],
+  "programmes": [
+    {
+      "slug": "1-step",
+      "nom": "1-Step Challenge",
+      "accroche": "One phase, 90% from day one",
+      "resume": "A single evaluation phase with a 10% target, a trailing end-of-day loss limit and a best-day rule. You keep 90% of the simulated profits as soon as you pass.",
+      "marche": "cfd",
+      "type": "evaluation",
+      "maxComptes": null,
+      "maxComptesStatut": null,
+      "maxComptesNote": null,
+      "plans": [
+        {
+          "taille": 10000,
+          "variante": null,
+          "devise": "EUR",
+          "deviseCompte": "USD",
+          "prix": 79,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 1000,
+              "perteMax": 1000,
+              "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 300,
+              "joursMin": 0,
+              "regularite": 0.5,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 1000,
+              "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 300,
+              "joursMin": 0,
+              "regularite": 0.5,
+              "maxContrats": null,
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 25000,
+          "variante": null,
+          "devise": "EUR",
+          "deviseCompte": "USD",
+          "prix": 199,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 2500,
+              "perteMax": 2500,
+              "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 750,
+              "joursMin": 0,
+              "regularite": 0.5,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 2500,
+              "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 750,
+              "joursMin": 0,
+              "regularite": 0.5,
+              "maxContrats": null,
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 50000,
+          "variante": null,
+          "devise": "EUR",
+          "deviseCompte": "USD",
+          "prix": 319,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 5000,
+              "perteMax": 5000,
+              "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 1500,
+              "joursMin": 0,
+              "regularite": 0.5,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 5000,
+              "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 1500,
+              "joursMin": 0,
+              "regularite": 0.5,
+              "maxContrats": null,
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 100000,
+          "variante": null,
+          "devise": "EUR",
+          "deviseCompte": "USD",
+          "prix": 499,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 10000,
+              "perteMax": 10000,
+              "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 3000,
+              "joursMin": 0,
+              "regularite": 0.5,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 10000,
+              "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 3000,
+              "joursMin": 0,
+              "regularite": 0.5,
+              "maxContrats": null,
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 200000,
+          "variante": null,
+          "devise": "EUR",
+          "deviseCompte": "USD",
+          "prix": 999,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 20000,
+              "perteMax": 20000,
+              "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 6000,
+              "joursMin": 0,
+              "regularite": 0.5,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 20000,
+              "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 6000,
+              "joursMin": 0,
+              "regularite": 0.5,
+              "maxContrats": null,
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "2-step",
+      "nom": "2-Step Challenge",
+      "accroche": "The historical FTMO route",
+      "resume": "Challenge then Verification, with a static loss limit and a 5% daily loss. The fee comes back with your first reward. This is also the only route to the Swing account type.",
+      "marche": "cfd",
+      "type": "evaluation",
+      "maxComptes": null,
+      "maxComptesStatut": null,
+      "maxComptesNote": null,
+      "plans": [
+        {
+          "taille": 10000,
+          "variante": null,
+          "devise": "EUR",
+          "deviseCompte": "USD",
+          "prix": 89,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 1000,
+              "perteMax": 1000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 500,
+              "joursMin": 4,
+              "regularite": "aucune",
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "evaluation_2",
+              "objectifProfit": 500,
+              "perteMax": 1000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 500,
+              "joursMin": 4,
+              "regularite": "aucune",
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 1000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 500,
+              "joursMin": 0,
+              "regularite": "aucune",
+              "maxContrats": null,
+              "partage": 0.8,
+              "partageBas": null,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 25000,
+          "variante": null,
+          "devise": "EUR",
+          "deviseCompte": "USD",
+          "prix": 250,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 2500,
+              "perteMax": 2500,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 1250,
+              "joursMin": 4,
+              "regularite": "aucune",
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "evaluation_2",
+              "objectifProfit": 1250,
+              "perteMax": 2500,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 1250,
+              "joursMin": 4,
+              "regularite": "aucune",
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 2500,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 1250,
+              "joursMin": 0,
+              "regularite": "aucune",
+              "maxContrats": null,
+              "partage": 0.8,
+              "partageBas": null,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 50000,
+          "variante": null,
+          "devise": "EUR",
+          "deviseCompte": "USD",
+          "prix": 345,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 5000,
+              "perteMax": 5000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 2500,
+              "joursMin": 4,
+              "regularite": "aucune",
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "evaluation_2",
+              "objectifProfit": 2500,
+              "perteMax": 5000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 2500,
+              "joursMin": 4,
+              "regularite": "aucune",
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 5000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 2500,
+              "joursMin": 0,
+              "regularite": "aucune",
+              "maxContrats": null,
+              "partage": 0.8,
+              "partageBas": null,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 100000,
+          "variante": null,
+          "devise": "EUR",
+          "deviseCompte": "USD",
+          "prix": 540,
+          "cartePromo": true,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 10000,
+              "perteMax": 10000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 5000,
+              "joursMin": 4,
+              "regularite": "aucune",
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "evaluation_2",
+              "objectifProfit": 5000,
+              "perteMax": 10000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 5000,
+              "joursMin": 4,
+              "regularite": "aucune",
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 10000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 5000,
+              "joursMin": 0,
+              "regularite": "aucune",
+              "maxContrats": null,
+              "partage": 0.8,
+              "partageBas": null,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 200000,
+          "variante": null,
+          "devise": "EUR",
+          "deviseCompte": "USD",
+          "prix": 1080,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 20000,
+              "perteMax": 20000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 10000,
+              "joursMin": 4,
+              "regularite": "aucune",
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "evaluation_2",
+              "objectifProfit": 10000,
+              "perteMax": 20000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 10000,
+              "joursMin": 4,
+              "regularite": "aucune",
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 20000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 10000,
+              "joursMin": 0,
+              "regularite": "aucune",
+              "maxContrats": null,
+              "partage": 0.8,
+              "partageBas": null,
+              "seuilPartage": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "futures-growth",
+      "nom": "Futures Growth",
+      "accroche": "No daily loss in the evaluation",
+      "resume": "A monthly subscription on CME markets, with no daily loss limit while you evaluate and payouts capped at half of your profit.",
+      "marche": "futures",
+      "type": "evaluation",
+      "maxComptes": null,
+      "maxComptesStatut": null,
+      "maxComptesNote": null,
+      "plans": [
+        {
+          "taille": 50000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 119,
+          "cartePromo": false,
+          "facturation": "subscription",
+          "intervalle": "monthly",
+          "fraisReset": 109,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 3000,
+              "perteMax": 2000,
+              "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": "aucune",
+              "joursMin": 0,
+              "regularite": 0.4,
+              "maxContrats": 5,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 2000,
+              "typePerteMax": "End of Day",
+              "plafondRetrait": 2500,
+              "retraitMinimum": 20,
+              "statuts": {},
+              "perteJour": "aucune",
+              "joursMin": 0,
+              "regularite": "aucune",
+              "maxContrats": 5,
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 100000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 169,
+          "cartePromo": false,
+          "facturation": "subscription",
+          "intervalle": "monthly",
+          "fraisReset": 159,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 6000,
+              "perteMax": 3500,
+              "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": "aucune",
+              "joursMin": 0,
+              "regularite": 0.4,
+              "maxContrats": 10,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 3500,
+              "typePerteMax": "End of Day",
+              "plafondRetrait": 3000,
+              "retraitMinimum": 20,
+              "statuts": {},
+              "perteJour": "aucune",
+              "joursMin": 0,
+              "regularite": "aucune",
+              "maxContrats": 10,
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 150000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 229,
+          "cartePromo": false,
+          "facturation": "subscription",
+          "intervalle": "monthly",
+          "fraisReset": 219,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 9000,
+              "perteMax": 5000,
+              "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": "aucune",
+              "joursMin": 0,
+              "regularite": 0.4,
+              "maxContrats": 15,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 5000,
+              "typePerteMax": "End of Day",
+              "plafondRetrait": 4000,
+              "retraitMinimum": 20,
+              "statuts": {},
+              "perteJour": "aucune",
+              "joursMin": 0,
+              "regularite": "aucune",
+              "maxContrats": 15,
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "futures-pro",
+      "nom": "Futures Pro",
+      "accroche": "Withdraw all of your profit",
+      "resume": "A wider end-of-day drawdown and a strict daily loss, in exchange for withdrawals of up to 100% of the profit and higher caps.",
+      "marche": "futures",
+      "type": "evaluation",
+      "maxComptes": null,
+      "maxComptesStatut": null,
+      "maxComptesNote": null,
+      "plans": [
+        {
+          "taille": 50000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 139,
+          "cartePromo": false,
+          "facturation": "subscription",
+          "intervalle": "monthly",
+          "fraisReset": 129,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 3000,
+              "perteMax": 3000,
+              "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 1000,
+              "joursMin": 0,
+              "regularite": 0.5,
+              "maxContrats": 5,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 3000,
+              "typePerteMax": "End of Day",
+              "plafondRetrait": 5000,
+              "retraitMinimum": 20,
+              "statuts": {},
+              "perteJour": 1000,
+              "joursMin": 0,
+              "regularite": "aucune",
+              "maxContrats": 5,
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 100000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 199,
+          "cartePromo": false,
+          "facturation": "subscription",
+          "intervalle": "monthly",
+          "fraisReset": 189,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 6000,
+              "perteMax": 4500,
+              "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 1500,
+              "joursMin": 0,
+              "regularite": 0.5,
+              "maxContrats": 10,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 4500,
+              "typePerteMax": "End of Day",
+              "plafondRetrait": 6000,
+              "retraitMinimum": 20,
+              "statuts": {},
+              "perteJour": 1500,
+              "joursMin": 0,
+              "regularite": "aucune",
+              "maxContrats": 10,
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 150000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 269,
+          "cartePromo": false,
+          "facturation": "subscription",
+          "intervalle": "monthly",
+          "fraisReset": 259,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 9000,
+              "perteMax": 6000,
+              "typePerteMax": "End of Day",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 2000,
+              "joursMin": 0,
+              "regularite": 0.5,
+              "maxContrats": 15,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 6000,
+              "typePerteMax": "End of Day",
+              "plafondRetrait": 8000,
+              "retraitMinimum": 20,
+              "statuts": {},
+              "perteJour": 2000,
+              "joursMin": 0,
+              "regularite": "aucune",
+              "maxContrats": 15,
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "offre": null,
+  "conditions": {
+    "trading": null,
+    "commission": null,
+    "retraits": null
+  },
+  "parcours": [
+    {
+      "etape": "evaluation",
+      "titre": "Evaluation",
+      "texte": "One phase on the 1-Step and the futures accounts, two on the 2-Step. No time limit on the CFD challenges."
+    },
+    {
+      "etape": "funded",
+      "titre": "FTMO Account",
+      "texte": "You trade a simulated account under the same loss limits, with no profit target and no minimum days."
+    },
+    {
+      "etape": "payout",
+      "titre": "Rewards",
+      "texte": "The first CFD reward comes 14 days after your first trade, then on demand. Processing is announced within one to two business days."
+    }
+  ],
+  "couts": [
+    {
+      "libelle": "Challenge fee",
+      "montant": "One-time",
+      "note": "Paid once, at purchase. Refunded in full with the first reward on the 2-Step; not refunded on the 1-Step.",
+      "programmes": [
+        "1-step",
+        "2-step"
+      ]
+    },
+    {
+      "libelle": "Reset",
+      "montant": "None",
+      "note": "There is no free reset on the CFD challenges: a new attempt means a new challenge. The Free Trial is free and unlimited.",
+      "programmes": [
+        "1-step",
+        "2-step"
+      ]
+    },
+    {
+      "libelle": "Subscription",
+      "montant": "Monthly",
+      "note": "FTMO Futures is billed every month until you pass or cancel. A failed account is replaced at the next renewal.",
+      "programmes": [
+        "futures-growth",
+        "futures-pro"
+      ]
+    },
+    {
+      "libelle": "Commissions",
+      "montant": "Per trade",
+      "note": "CFD: $5 per forex lot, 0.0014% on metals, 0.065% on crypto, 0.004% on stocks, nothing on indices, energies and other commodities.",
+      "programmes": [
+        "1-step",
+        "2-step"
+      ]
+    },
+    {
+      "libelle": "FTMO special deal",
+      "montant": "-20% on the $100K",
+      "note": "FTMO's own promotion, read on ftmo.com on 23 September 2026: EUR 399 instead of 499 on the 1-Step, EUR 439 instead of 540 on the 2-Step, for traders who do not already hold an active $100K challenge. No end date announced. Prices above are list prices.",
+      "programmes": [
+        "1-step",
+        "2-step"
+      ]
+    }
+  ],
+  "verdict": {
+    "texte": "Ten years in business, rules documented to the dollar and support in 21 languages: FTMO is the reference the rest of the market is compared to. The 2-Step is the most forgiving evaluation and refunds its fee; the 1-Step is faster and pays 90% straight away, in exchange for a trailing loss limit and a best-day rule. The Swing account is one of the few that lets you hold through the news and the weekend once funded. It is not the cheapest route, there is no free reset, and the futures line is young.",
+    "pourQui": [
+      "Swing traders: news, overnight and weekend positions stay allowed, funded included.",
+      "Traders who want the gentlest evaluation: static drawdown and 5% daily loss on the 2-Step.",
+      "Traders who want one phase and 90% from the start, on the 1-Step.",
+      "Traders who plan to grow: +25% every four months, up to $2,000,000."
+    ],
+    "pasPour": [],
+    "pointsForts": [],
+    "limites": [
+      "No free reset on the CFD challenges: every new attempt is a new purchase.",
+      "The 1-Step adds a best-day rule and a trailing loss limit the 2-Step does not have.",
+      "The futures line is recent, and its payouts are capped per request."
+    ]
+  },
+  "faq": [],
+  "trustpilotScore": 4.8,
+  "trustpilotReviewCount": 52781,
+  "trustpilotUrl": "https://www.trustpilot.com/review/ftmo.com",
+  "regles": [
+    {
+      "carte": "trading",
+      "regle": "Daily loss",
+      "texte": "Reset every day at 00:00 CE(S)T from the midnight balance, and measured on equity, open positions included.",
+      "statut": "confirmed",
+      "programmes": [
+        "1-step",
+        "2-step"
+      ],
+      "tailles": [],
+      "phase": null,
+      "bloquante": true,
+      "essentielle": true,
+      "source": "https://ftmo.com/en/trading-objectives/"
+    },
+    {
+      "carte": "trading",
+      "regle": "Time limit",
+      "texte": "None: the CFD challenges have no deadline.",
+      "statut": "confirmed",
+      "programmes": [
+        "1-step",
+        "2-step"
+      ],
+      "tailles": [],
+      "phase": "evaluation",
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://ftmo.com/en/trading-objectives/"
+    },
+    {
+      "carte": "trading",
+      "regle": "News trading",
+      "texte": "Allowed during the evaluation, on both Standard and Swing.",
+      "statut": "confirmed",
+      "programmes": [
+        "1-step",
+        "2-step"
+      ],
+      "tailles": [],
+      "phase": "evaluation",
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://ftmo.com/en/trading-objectives/"
+    },
+    {
+      "carte": "trading",
+      "regle": "News on a Standard FTMO Account",
+      "texte": "No position may be opened or closed from two minutes before to two minutes after selected macroeconomic releases, pending orders and stop-loss or take-profit executions included.",
+      "statut": "confirmed",
+      "programmes": [
+        "1-step",
+        "2-step"
+      ],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": true,
+      "essentielle": true,
+      "source": "https://ftmo.com/en/trading-objectives/"
+    },
+    {
+      "carte": "trading",
+      "regle": "Weekend on a Standard FTMO Account",
+      "texte": "Positions must be closed before the weekend and before any market interruption or rollover longer than two hours.",
+      "statut": "confirmed",
+      "programmes": [
+        "1-step",
+        "2-step"
+      ],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": true,
+      "essentielle": true,
+      "source": "https://ftmo.com/en/trading-objectives/"
+    },
+    {
+      "carte": "trading",
+      "regle": "Swing account type",
+      "texte": "Offered on the 2-Step only, and picked during checkout. It lifts every FTMO restriction on news, overnight and weekend positions, funded included, in exchange for lower leverage. FTMO does not publish its price.",
+      "statut": "confirmed",
+      "programmes": [
+        "2-step"
+      ],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://ftmo.com/en/faq/ftmo-swing-account-type/"
+    },
+    {
+      "carte": "trading",
+      "regle": "Leverage",
+      "texte": "Standard: up to 1:100 on forex, 1:50 on indices, metals and energies, 1:3.33 on commodities, crypto and stocks. Swing: up to 1:30 on forex, around 1:15 on indices, metals and energies, 1:1 on crypto and stocks. The exact figure belongs to the symbol.",
+      "statut": "confirmed",
+      "programmes": [
+        "1-step",
+        "2-step"
+      ],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://ftmo.com/en/trading-objectives/"
+    },
+    {
+      "carte": "trading",
+      "regle": "Best day rule",
+      "texte": "Your best day must stay under 50% of the profit made on winning days. Going over is not a breach: you keep trading until you are back under.",
+      "statut": "confirmed",
+      "programmes": [
+        "1-step"
+      ],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://ftmo.com/en/trading-objectives/"
+    },
+    {
+      "carte": "trading",
+      "regle": "Changing platform or account type",
+      "texte": "Possible as long as no trade has been placed, and after each reward.",
+      "statut": "confirmed",
+      "programmes": [
+        "1-step",
+        "2-step"
+      ],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "essentielle": false,
+      "source": "https://ftmo.com/en/trading-objectives/"
+    },
+    {
+      "carte": "trading",
+      "regle": "Trading day",
+      "texte": "Futures accounts trade from 6:00 PM to 4:10 PM ET.",
+      "statut": "confirmed",
+      "programmes": [
+        "futures-growth",
+        "futures-pro"
+      ],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://ftmo.com/en/futures/trading-objectives-and-rules/"
+    },
+    {
+      "carte": "trading",
+      "regle": "Consistency",
+      "texte": "Futures evaluation: your best day must stay under 40% of the total profit on Growth, and under 50% on Pro.",
+      "statut": "confirmed",
+      "programmes": [
+        "futures-growth",
+        "futures-pro"
+      ],
+      "tailles": [],
+      "phase": "evaluation",
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://ftmo.com/en/futures/trading-objectives-and-rules/"
+    },
+    {
+      "carte": "trading",
+      "regle": "Accounts at the same time",
+      "texte": "Unlimited futures evaluations, and up to three sim-funded accounts.",
+      "statut": "confirmed",
+      "programmes": [
+        "futures-growth",
+        "futures-pro"
+      ],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "essentielle": false,
+      "source": "https://ftmo.com/en/futures/trading-objectives-and-rules/"
+    },
+    {
+      "carte": "payouts",
+      "regle": "First reward",
+      "texte": "Available 14 days after your first trade on the FTMO Account, with the account in profit and no position or pending order left open. After that, on demand.",
+      "statut": "confirmed",
+      "programmes": [
+        "1-step",
+        "2-step"
+      ],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://ftmo.com/en/trading-objectives/"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Processing",
+      "texte": "Announced within one to two business days.",
+      "statut": "confirmed",
+      "programmes": [
+        "1-step",
+        "2-step"
+      ],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://ftmo.com/en/trading-objectives/"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Scaling plan",
+      "texte": "+25% capital every four months, up to $2,000,000 across your accounts, with at least 10% net profit over the period, two processed rewards and a positive balance. The split rises to 90% on the 2-Step.",
+      "statut": "confirmed",
+      "programmes": [
+        "2-step"
+      ],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://ftmo.com/en/reward-growth-and-scaling-plan/"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Payout eligibility",
+      "texte": "Growth: four qualifying days per cycle, each worth at least $150, $250 or $300 by account size. Pro: five qualifying days, each worth at least $200, $300 or $500.",
+      "statut": "confirmed",
+      "programmes": [
+        "futures-growth",
+        "futures-pro"
+      ],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://ftmo.com/en/futures/trading-objectives-and-rules/"
+    },
+    {
+      "carte": "payouts",
+      "regle": "New profit",
+      "texte": "At least half of the amount you request must come from new profit.",
+      "statut": "confirmed",
+      "programmes": [
+        "futures-growth",
+        "futures-pro"
+      ],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://ftmo.com/en/futures/trading-objectives-and-rules/"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Withdrawal share",
+      "texte": "Growth pays out up to 50% of the profit per request; Pro pays out up to 100%.",
+      "statut": "confirmed",
+      "programmes": [
+        "futures-growth",
+        "futures-pro"
+      ],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://ftmo.com/en/futures/trading-objectives-and-rules/"
+    },
+    {
+      "carte": "live",
+      "regle": "Daily loss once sim-funded",
+      "texte": "Growth: hitting it closes your positions and pauses trading until the next day, and you keep the account. Pro: hitting it closes the account.",
+      "statut": "confirmed",
+      "programmes": [
+        "futures-growth",
+        "futures-pro"
+      ],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": true,
+      "essentielle": true,
+      "source": "https://ftmo.com/en/futures/trading-objectives-and-rules/"
+    }
+  ],
+  "titre": "Ten years of funded trading, on CFDs and now futures",
+  "metaDescription": null,
+  "fluxDonnees": [],
+  "description": "FTMO runs one-step and two-step CFD challenges, a Swing account that keeps trading through the news and the weekend, and, since 2026, a futures line on CME markets. Every account is simulated; the rewards are real.",
+  "connuPour": [
+    {
+      "titre": "Ten years in business",
+      "detail": "Founded in Prague in 2015."
+    },
+    {
+      "titre": "Fee refunded on the 2-Step",
+      "detail": "Returned in full with your first reward."
+    },
+    {
+      "titre": "Swing account",
+      "detail": "News, overnight and weekend positions stay allowed, funded included."
+    },
+    {
+      "titre": "Scaling to $2,000,000",
+      "detail": "+25% capital every four months, under conditions."
+    }
+  ],
+  "preuves": [],
+  "plateformesDetail": [
+    {
+      "nom": "MetaTrader 4",
+      "selectionnable": true,
+      "note": "CFD challenges.",
+      "logoUrl": "https://www.metatrader4.com/favicon.ico"
+    },
+    {
+      "nom": "MetaTrader 5",
+      "selectionnable": true,
+      "note": "CFD challenges.",
+      "logoUrl": "https://www.metatrader5.com/favicon.ico"
+    },
+    {
+      "nom": "cTrader",
+      "selectionnable": true,
+      "note": "CFD challenges.",
+      "logoUrl": "https://ctrader.com/favicon.ico"
+    },
+    {
+      "nom": "TradingView",
+      "selectionnable": true,
+      "note": "CFD challenges, and futures with the Tradovate credentials.",
+      "logoUrl": "https://static.tradingview.com/static/images/favicon/apple-touch-icon-180x180.png"
+    },
+    {
+      "nom": "NinjaTrader",
+      "selectionnable": true,
+      "note": "FTMO Futures.",
+      "logoUrl": "https://ninjatrader.com/assets/dist/images/favicons/apple-touch-icon.png"
+    },
+    {
+      "nom": "Tradovate",
+      "selectionnable": true,
+      "note": "FTMO Futures.",
+      "logoUrl": "https://trader.tradovate.com/img/icons/iphone-retina.png"
+    }
+  ],
+  "categoriesActifs": [
+    "Forex",
+    "Indices",
+    "Metals",
+    "Energies",
+    "Crypto",
+    "Stocks",
+    "Futures"
+  ],
+  "categoriesActifsStatut": "confirmed",
+  "methodesRetrait": [
+    "Bank transfer",
+    "Crypto",
+    "Skrill",
+    "Visa Direct",
+    "Mastercard Send",
+    "Wise",
+    "Revolut"
+  ],
+  "prestataireRetrait": null,
+  "levierStatut": null,
+  "optionsAchat": [],
+  "formation": null,
+  "comptesApresReussite": []
+}

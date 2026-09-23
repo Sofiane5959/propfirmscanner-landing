@@ -326,10 +326,12 @@ export function ConditionsSection({ sheet, sel }: { sheet: FirmSheet; sel: FirmS
   const carteFrais = frais.length > 0 && (
     <article key="fees" className={cx(CARD, 'p-4 sm:p-5')}>
       <EnteteCarte icone={Receipt} titre={COPY.conditions.fees} />
-      <dl className={cx('grid gap-3', COLONNES[Math.min(frais.length, 3)])}>
+      {/* items-start : une tuile sans note ne s'etire plus jusqu'au bas de sa
+          rangee (retour du 23/09). */}
+      <dl className={cx('grid items-start gap-3', COLONNES[Math.min(frais.length, 3)])}>
         {frais.map((f) => (
           <div key={f.libelle} className="flex flex-col rounded-lg border border-border bg-bg-base p-4">
-            <dt className={LABEL}>{f.libelle}</dt>
+            <dt className="text-xs font-bold uppercase tracking-wider text-accent">{f.libelle}</dt>
             <dd className="mt-1 font-display text-xl font-bold tabular-nums text-text-primary">{f.valeur}</dd>
             {f.note && <p className="mt-1.5 text-[13px] leading-relaxed text-text-muted">{f.note}</p>}
           </div>
@@ -441,7 +443,7 @@ export function FinalCta({
           <p className={EYEBROW}>{COPY.final.eyebrow}</p>
           <h2 className="mt-1 font-display text-2xl font-bold">{COPY.final.title(sheet.nom)}</h2>
           <p className="mt-1 text-sm text-text-muted tabular-nums">
-            {programme.nom} · {sizeLabel(plan.taille, plan.devise)}
+            {programme.nom} · {sizeLabel(plan.taille, plan.deviseCompte)}
             {prix ? ` · ${prix}` : ''}
           </p>
         </div>

@@ -5,9 +5,11 @@
 import type { FirmSheet } from '@/lib/firm-sheet'
 
 import fiche_earn2trade from './earn2trade.json'
+import fiche_ftmo from './ftmo.json'
 import fiche_futureselite from './futureselite.json'
 
 export const FIRM_SHEETS: Record<string, FirmSheet> = {
   'earn2trade': fiche_earn2trade as unknown as FirmSheet,
+  'ftmo': fiche_ftmo as unknown as FirmSheet,
   'futureselite': fiche_futureselite as unknown as FirmSheet,
 }

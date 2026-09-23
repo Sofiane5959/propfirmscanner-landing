@@ -7,7 +7,7 @@
 // 5. Program comparison — une carte par programme ; la choisir pilote le
 //    configurateur.
 
-import { type FirmSheet, type SheetProgramme, marketsLabel, pct, sizeLabel } from '@/lib/firm-sheet'
+import { type FirmSheet, type SheetPhase, type SheetProgramme, marketsLabel, pct, sizeLabel } from '@/lib/firm-sheet'
 import { cellule, lignesSelection, parcoursPhases } from '@/lib/firm-profile'
 import { COPY } from './copy'
 import { prixPlan, prixRemise } from './format'
@@ -92,7 +92,7 @@ export function AccountConfigurator({
       titre: COPY.configurator.size,
       choix: sel.plansDeVariante.map((pl) => ({
         key: String(pl.taille),
-        label: sizeLabel(pl.taille, pl.devise),
+        label: sizeLabel(pl.taille, pl.deviseCompte),
         detail: pl.prix != null ? prixPlan(pl.prix, pl) : undefined,
       })),
       actif: String(plan.taille),
@@ -146,7 +146,7 @@ export function AccountConfigurator({
         <aside data-check="selection" aria-live="polite" className={cx(CARD_ACCENT, 'flex flex-col p-4 sm:p-5')}>
           <p className={EYEBROW}>{COPY.configurator.selection}</p>
           <h3 className="mt-1 font-display text-xl font-bold">
-            {programme.nom} · {sizeLabel(plan.taille, plan.devise)}
+            {programme.nom} · {sizeLabel(plan.taille, plan.deviseCompte)}
             {sel.variante ? ` · ${sel.variante}` : ''}
           </h3>
           {phases.length > 0 && (
@@ -210,7 +210,7 @@ function chiffresProgramme(p: SheetProgramme): { libelle: string; valeur: string
   const plans = p.plans.filter((pl) => pl.prix != null)
   const moinsCher = [...plans].sort((a, b) => (a.prix ?? 0) - (b.prix ?? 0))[0]
   const tailles = Array.from(new Set(p.plans.map((pl) => pl.taille))).sort((a, b) => a - b)
-  const devise = p.plans[0]?.devise ?? 'USD'
+  const devise = p.plans[0]?.deviseCompte ?? 'USD'
   const evaluations = p.type === 'instant' ? 0 : Math.max(0, ...p.plans.map((pl) => pl.phases.filter((ph) => ph.phase !== 'funded').length))
   const taux = p.plans
     .flatMap((pl) => pl.phases)
@@ -218,6 +218,20 @@ function chiffresProgramme(p: SheetProgramme): { libelle: string; valeur: string
     .flatMap((ph) => (ph.partageBas != null ? [ph.partageBas, ph.partage as number] : [ph.partage as number]))
   const min = Math.min(...taux)
   const max = Math.max(...taux)
+  // 23/09 : les chiffres ci-dessus se ressemblent d'un programme a l'autre.
+  // Ces trois-la ne dependent pas de la taille du compte et separent vraiment
+  // les routes : type de perte maximale, jours minimum, regle de regularite.
+  const commun = <T,>(lire: (ph: SheetPhase) => T | null | undefined): T | null => {
+    const valeurs = p.plans
+      .map((pl) => pl.phases.find((ph) => ph.phase !== 'funded'))
+      .filter((ph): ph is SheetPhase => !!ph)
+      .map(lire)
+    if (valeurs.length === 0 || valeurs.some((v) => v == null || v !== valeurs[0])) return null
+    return valeurs[0] as T
+  }
+  const typePerte = commun((ph) => ph.typePerteMax)
+  const joursMin = commun((ph) => ph.joursMin)
+  const regularite = commun((ph) => ph.regularite)
   const lignes: ({ libelle: string; valeur: string } | null)[] = [
     moinsCher?.prix != null ? { libelle: COPY.comparison.from, valeur: prixPlan(moinsCher.prix, moinsCher) } : null,
     tailles.length > 0
@@ -229,6 +243,11 @@ function chiffresProgramme(p: SheetProgramme): { libelle: string; valeur: string
         }
       : null,
     { libelle: COPY.comparison.evaluation, valeur: evaluations === 0 ? COPY.comparison.noEvaluation : COPY.comparison.phases(evaluations) },
+    typePerte ? { libelle: COPY.comparison.lossType, valeur: typePerte } : null,
+    joursMin != null ? { libelle: COPY.comparison.minDays, valeur: joursMin === 0 ? COPY.comparison.none : String(joursMin) } : null,
+    regularite != null
+      ? { libelle: COPY.comparison.consistency, valeur: regularite === 'aucune' ? COPY.comparison.none : pct(regularite as number) }
+      : null,
     taux.length > 0 ? { libelle: COPY.comparison.split, valeur: min === max ? pct(min) : `${pct(min)} – ${pct(max)}` } : null,
   ]
   return lignes.filter((x): x is { libelle: string; valeur: string } => x != null)

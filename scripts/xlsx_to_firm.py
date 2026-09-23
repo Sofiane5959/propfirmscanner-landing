@@ -167,7 +167,8 @@ def convertir(chemin):
     # prop_firm_challenges. /api/go ouvre alors son lien profond (plan, code,
     # identifiants d'affiliation). Ajoutee le 22/09/2026.
     for (prog, taille, variante, devise, prix, promo, facturation, intervalle,
-         frais_reset, frais_activation, _nb_phases, _controle, lien_plan) in lignes(wb["Plans"], 13):
+         frais_reset, frais_activation, _nb_phases, _controle, lien_plan,
+         devise_compte) in lignes(wb["Plans"], 14):
         cle = (txt(prog), nombre(taille), txt(variante))
         if cle[0] not in par_slug:
             avertissements.append(f"Plans : programme « {cle[0]} » absent de l'onglet Programmes, plan ignore.")
@@ -179,6 +180,8 @@ def convertir(chemin):
         if modele == "subscription" and not txt(intervalle):
             avertissements.append(f"Plans : abonnement sans intervalle sur {cle}.")
         plan = {"taille": cle[1], "variante": cle[2], "devise": txt(devise) or "USD",
+                # Colonne 14, ajoutee le 23/09/2026 : la devise du solde du compte.
+                "deviseCompte": txt(devise_compte) or txt(devise) or "USD",
                 "prix": nombre(prix), "cartePromo": oui(promo),
                 "facturation": modele, "intervalle": txt(intervalle) if modele == "subscription" else None,
                 "fraisReset": nombre(frais_reset), "fraisActivation": nombre(frais_activation),

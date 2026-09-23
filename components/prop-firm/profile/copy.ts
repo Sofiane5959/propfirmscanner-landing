@@ -82,6 +82,10 @@ export const COPY = {
     noEvaluation: 'None',
     phases: (n: number) => `${n} phase${n > 1 ? 's' : ''}`,
     split: 'Profit split',
+    lossType: 'Loss limit',
+    minDays: 'Minimum days',
+    consistency: 'Consistency',
+    none: 'None',
     same: (n: number) => (n === 2 ? 'Same on both' : `Same on all ${n}`),
   },
   rules: {

@@ -62,7 +62,14 @@ export interface SheetPhase {
 export interface SheetPlan {
   taille: number
   variante: string | null
+  /** Devise du prix. */
   devise: string
+  /**
+   * Devise du solde du compte : la taille, les objectifs et les limites. Elle
+   * suit le prix chez la plupart des firmes, mais pas toutes (FTMO facture en
+   * euros des comptes en dollars).
+   */
+  deviseCompte: string
   prix: number | null
   /** Le plan affiche dans la carte « MOST POPULAR PLAN ». */
   cartePromo: boolean

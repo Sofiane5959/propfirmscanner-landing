@@ -72,7 +72,11 @@ def projeter(fiche):
         erreurs.append("Plans : aucun prix renseigne ; min_price et max_price seraient vides.")
     devises = sorted({pl.get("devise") for pl in plans if pl.get("prix") is not None})
     if len(devises) > 1:
-        erreurs.append(f"Plans : plusieurs devises ({', '.join(devises)}) ; min_price melangerait des monnaies.")
+        # 23/09/2026 : une firme peut facturer deux gammes dans deux monnaies
+        # (FTMO : CFD en euros, futures en dollars). Comparer les deux n'a pas
+        # de sens, donc la projection laisse le prix vide plutot que de melanger.
+        avertissements.append(
+            f"Plans : plusieurs devises ({', '.join(devises)}) ; price_currency, min_price et max_price restent vides.")
 
     partages = [ph["partage"] for pl in plans for ph in pl.get("phases", []) if ph.get("partage") is not None]
     # Un partage par palier commence a son taux bas : profit_split dit ou la
@@ -108,8 +112,8 @@ def projeter(fiche):
         "has_instant_funding": any(p.get("type") == "instant" for p in fiche.get("programmes", [])),
         "platforms": ", ".join(plateformes_selectionnables(fiche)) or None,
         "price_currency": devises[0] if len(devises) == 1 else None,
-        "min_price": _entier_si_possible(min(prix)) if prix else None,
-        "max_price": _entier_si_possible(max(prix)) if prix else None,
+        "min_price": _entier_si_possible(min(prix)) if prix and len(devises) == 1 else None,
+        "max_price": _entier_si_possible(max(prix)) if prix and len(devises) == 1 else None,
         "profit_split": int(round(min(partages_bas) * 100)) if partages_bas else None,
         "max_profit_split": int(round(max(partages) * 100)) if partages else None,
         "discount_code": offre["code"] if offre_active else None,

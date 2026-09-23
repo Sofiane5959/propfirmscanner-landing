@@ -99,7 +99,7 @@ export function RulesByPhase({ sheet }: { sheet: FirmSheet }) {
             label={COPY.rules.size}
             options={sel.plansDeVariante.map((pl) => ({
               cle: pl.taille,
-              libelle: sizeLabel(pl.taille, pl.devise),
+              libelle: sizeLabel(pl.taille, pl.deviseCompte),
               detail: pl.prix != null ? prixPlan(pl.prix, pl) : undefined,
             }))}
             actif={plan.taille}
@@ -118,7 +118,7 @@ export function RulesByPhase({ sheet }: { sheet: FirmSheet }) {
         </div>
 
         <p className="mt-3 border-t border-border pt-2 text-xs text-text-muted">
-          {programme.nom} · {sizeLabel(plan.taille, plan.devise)}
+          {programme.nom} · {sizeLabel(plan.taille, plan.deviseCompte)}
           {sel.variante ? ` · ${sel.variante}` : ''}
           <span className="hidden md:inline"> — {tableau.colonnes.map((c) => c.libelle).join(' → ')}</span>
         </p>

@@ -237,7 +237,7 @@ export interface TableauRegles {
  * presente, une ligne par regle publiee dans au moins une phase.
  */
 export function tableauRegles(plan: SheetPlan, programme: SheetProgramme, ordonnees: SheetPhase[]): TableauRegles {
-  const parPhase = ordonnees.map((ph) => reglesDePhase(ph, plan.devise))
+  const parPhase = ordonnees.map((ph) => reglesDePhase(ph, plan.deviseCompte))
   const ordre = Object.keys(SENS_COMPARATIF)
   const cles = ordre.filter((cle) => parPhase.some((lignes) => lignes.some((l) => l.cle === cle)))
   return {
@@ -268,13 +268,13 @@ export function lignesSelection(plan: SheetPlan): { libelle: string; valeur: Cel
   const finance = plan.phases.find((ph) => ph.phase === 'funded') ?? null
   const premiere = evaluation ?? finance
   const trouver = (ph: SheetPhase | null, cle: string) =>
-    ph ? versCellule(reglesDePhase(ph, plan.devise).find((l) => l.cle === cle)) : null
+    ph ? versCellule(reglesDePhase(ph, plan.deviseCompte).find((l) => l.cle === cle)) : null
 
   const lignes: { libelle: string; valeur: Cellule | null }[] = [
     { libelle: 'Profit target', valeur: trouver(evaluation, 'objectifProfit') },
     {
       libelle: 'Maximum loss',
-      valeur: premiere?.perteMax != null ? { texte: money(premiere.perteMax, plan.devise) } : trouver(premiere, 'perteMax'),
+      valeur: premiere?.perteMax != null ? { texte: money(premiere.perteMax, plan.deviseCompte) } : trouver(premiere, 'perteMax'),
     },
     { libelle: 'Daily loss', valeur: trouver(premiere, 'perteJour') },
     { libelle: 'Maximum positions', valeur: trouver(premiere, 'maxContrats') },
@@ -422,7 +422,7 @@ export function fraisDeSelection(sheet: FirmSheet, programme: SheetProgramme, pl
 export function retraitsDeSelection(plan: SheetPlan): { libelle: string; valeur: Cellule }[] {
   const finance = plan.phases.find((ph) => ph.phase === 'funded')
   if (!finance) return []
-  const lignes = reglesDePhase(finance, plan.devise)
+  const lignes = reglesDePhase(finance, plan.deviseCompte)
   const garder: [string, string][] = [
     ['partage', 'Profit split'],
     ['plafondRetrait', 'Cap per request'],
