@@ -2,7 +2,7 @@
 -- NE PAS MODIFIER A LA MAIN : corriger le tableur, puis relancer
 --   npm run firms:build
 -- `npm run firms:check` echoue si ce fichier ne correspond plus a la fiche.
--- Fiche : data/firms/futureselite.json (sha256:dd2b37073bf089346318e431d6d974b808b02f2ff48b9a6497bf57b63f8994d3)
+-- Fiche : data/firms/futureselite.json (sha256:b86c947d1d9b27bef88358a7ba8fbc4e2a8502b0617e6ac63bfc02c5995aaf9b)
 --
 -- Recopie dans prop_firms les colonnes lues par /compare, /deals, le bandeau
 -- des offres, /best-for, le quiz, les favoris et les cartes Similar firms.
@@ -44,8 +44,8 @@ update prop_firms set
   max_price = 569,
   profit_split = 80,
   max_profit_split = 90,
-  discount_code = null,
-  discount_percent = null,
+  discount_code = 'SCANNED',
+  discount_percent = 20,
   discount_expires_at = null,
   updated_at = now()
 where slug = 'futureselite';
@@ -85,8 +85,8 @@ begin
      or (r.max_price is null or abs(r.max_price::numeric - 569) > 0.001)
      or (r.profit_split is null or abs(r.profit_split::numeric - 80) > 0.001)
      or (r.max_profit_split is null or abs(r.max_profit_split::numeric - 90) > 0.001)
-     or r.discount_code is not null
-     or r.discount_percent is not null
+     or r.discount_code is distinct from 'SCANNED'
+     or (r.discount_percent is null or abs(r.discount_percent::numeric - 20) > 0.001)
      or r.discount_expires_at is not null then
     raise exception 'Controle echoue : prop_firms futureselite ne correspond pas a la fiche';
   end if;
