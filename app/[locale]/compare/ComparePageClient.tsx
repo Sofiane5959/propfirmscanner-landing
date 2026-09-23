@@ -545,7 +545,7 @@ import {
   ChevronLeft, ChevronRight, RotateCcw,
   Heart, GitCompare, Zap, TrendingUp,
   DollarSign, Users, Flame, MessageSquare,
-  Banknote, Upload, ImageIcon, Sparkles
+  Banknote, Upload, ImageIcon, Sparkles, SlidersHorizontal
 } from 'lucide-react'
 import { PriceAlertButton } from '@/components/PriceAlert'
 import { toArray } from '@/lib/to-array'
@@ -1470,7 +1470,7 @@ const PropFirmCard = ({
           onClick={onFavorite}
           aria-label={isFavorite ? `Remove ${firm.name} from favorites` : `Add ${firm.name} to favorites`}
           aria-pressed={isFavorite}
-          className={`grid h-[34px] w-[34px] flex-none place-items-center rounded-lg transition-colors ${
+          className={`grid h-11 w-11 flex-none place-items-center rounded-lg transition-colors sm:h-[34px] sm:w-[34px] ${
             isFavorite ? 'text-red-500 dark:text-red-400' : 'text-text-muted hover:text-red-500 dark:hover:text-red-400'
           }`}
         >
@@ -1537,7 +1537,7 @@ const PropFirmCard = ({
           href={getFirmUrl(firm, 'compare-grid')}
           target="_blank"
           rel="noopener noreferrer"
-          className={`flex min-h-10 flex-1 items-center justify-center gap-1.5 rounded-xl px-3 text-sm font-medium transition-colors ${
+          className={`flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-xl px-3 text-sm font-medium transition-colors sm:min-h-10 ${
             hasDiscount
               ? 'bg-accent-hover text-white hover:brightness-110'
               : firm.affiliate_url
@@ -1552,7 +1552,7 @@ const PropFirmCard = ({
           onClick={onCompare}
           aria-pressed={isComparing}
           aria-label={isComparing ? `Remove ${firm.name} from comparison` : `Add ${firm.name} to comparison`}
-          className={`flex min-h-10 items-center gap-2 rounded-xl border px-3 text-sm font-medium transition-colors ${
+          className={`flex min-h-11 items-center gap-2 rounded-xl border px-3 text-sm font-medium transition-colors sm:min-h-10 ${
             isComparing ? 'border-accent bg-accent-subtle text-accent' : 'border-border bg-bg-base text-text-secondary hover:border-border-hover'
           }`}
         >
@@ -1567,10 +1567,10 @@ const PropFirmCard = ({
 
       {/* g) Pied de carte : les actions secondaires, avec leur libelle */}
       <div className="flex items-center justify-between border-t border-border pt-2.5 text-xs text-text-muted">
-        <button onClick={onRate} className={`flex min-h-8 items-center gap-1 ${hasReviewed ? 'text-yellow-500 dark:text-yellow-400' : 'hover:text-text-secondary'}`}>
+        <button onClick={onRate} className={`flex min-h-11 items-center gap-1 sm:min-h-8 ${hasReviewed ? 'text-yellow-500 dark:text-yellow-400' : 'hover:text-text-secondary'}`}>
           <Star className={`h-3.5 w-3.5 ${hasReviewed ? 'fill-current' : ''}`} />{t.writeReview}
         </button>
-        <button onClick={onPayout} className="flex min-h-8 items-center gap-1 hover:text-text-secondary">
+        <button onClick={onPayout} className="flex min-h-11 items-center gap-1 hover:text-text-secondary sm:min-h-8">
           <Banknote className="h-3.5 w-3.5" />{t.submitPayout}
         </button>
         <PriceAlertButton firmId={firm.id} firmName={firm.name} firmSlug={firm.slug} currentPrice={firm.min_price || 0} />
@@ -1766,6 +1766,9 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
   const [compareList, setCompareList] = useState<string[]>([])
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
+  // Mobile : les filtres tiennent derriere un bouton, comme la maquette.
+  // Sur ecran large ils restent toujours visibles (23/09/2026).
+  const [filtresOuverts, setFiltresOuverts] = useState(false)
   const [showQuizFloat, setShowQuizFloat] = useState(false)
   
   // Reviews state
@@ -2250,7 +2253,17 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
                 <input type="text" value={filters.search} onChange={(e) => setFilters(f => ({ ...f, search: e.target.value }))} placeholder={t.searchPlaceholder} aria-label="Search prop firms" className="w-full rounded-xl border border-border bg-bg-base py-2.5 pl-9 pr-3 text-sm text-text-primary placeholder:text-text-muted focus:border-accent focus:outline-none" />
               </div>
-              
+
+              <button
+                onClick={() => setFiltresOuverts(o => !o)}
+                aria-expanded={filtresOuverts}
+                className="flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-xl bg-accent-hover px-3 text-sm font-medium text-white md:hidden"
+              >
+                <SlidersHorizontal className="h-4 w-4" />
+                {t.filters ?? 'Filters'}{activeFilterChips.length > 0 ? ` (${activeFilterChips.length})` : ''}
+              </button>
+
+              <div className={`${filtresOuverts ? 'flex' : 'hidden'} w-full flex-wrap items-center gap-2 md:flex md:w-auto md:flex-1`}>
               {/* Markets */}
               <FilterDropdown label={t.markets} count={filters.markets.length} isOpen={openDropdown === 'markets'} onToggle={() => toggleDropdown('markets')}>
                 <div className="flex flex-wrap gap-1.5">
@@ -2348,6 +2361,7 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
                 </span>
                 {t.verified}
               </button>
+              </div>
             </div>
 
             {/* Ligne 2 : filtres actifs, remise a zero, compte et tri */}
