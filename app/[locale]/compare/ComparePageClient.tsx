@@ -805,13 +805,17 @@ const getFirmUrl = (firm: PropFirm, source = 'compare-card'): string => {
 // ORDRE DE LA LISTE : un code promo en cours, puis un lien affilie sans code,
 // puis le reste. Un code expire ne compte pas — il enverrait le visiteur vers
 // une remise qui ne s'applique plus.
-const codeEnCours = (firm: PropFirm): boolean => {
-  if (!firm.discount_code || !firm.discount_code.trim()) return false
+const remiseActive = (firm: PropFirm): boolean => {
   if ((firm.discount_percent ?? 0) <= 0) return false
   if (!firm.discount_expires_at) return true
   const fin = new Date(firm.discount_expires_at).getTime()
   return Number.isNaN(fin) || fin > Date.now()
 }
+
+// Le premier groupe demande les deux : la remise ET le code. Une remise
+// automatique, appliquee par le lien sans code, reste au groupe affiliation.
+const codeEnCours = (firm: PropFirm): boolean =>
+  remiseActive(firm) && !!firm.discount_code && !!firm.discount_code.trim()
 
 const rangCommercial = (firm: PropFirm): number => {
   if (codeEnCours(firm)) return 0
@@ -1357,7 +1361,7 @@ const PropFirmCard = ({
   onPayout: () => void
   t: Record<string, string>
 }) => {
-  const hasDiscount = firm.discount_percent && firm.discount_percent > 0
+  const hasDiscount = remiseActive(firm)
   const isTopPick = firm.priority_tier === 1
   
   if (isCompact) {
@@ -2029,7 +2033,7 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
   
   const stats = useMemo(() => {
     const verified = processedFirms.filter(f => f.trust_status === 'scanned' || f.trust_status === 'verified' || f.trust_status === 'trusted' || !f.trust_status)
-    const discounts = verified.filter(f => f.discount_percent != null && f.discount_percent > 0)
+    const discounts = verified.filter(remiseActive)
     return { total: verified.length, withDiscounts: discounts.length }
   }, [processedFirms])
   
@@ -2068,7 +2072,7 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
       result = result.filter(f => f.min_price && f.min_price <= filters.priceRange[1])
     }
     if (filters.hasDiscount) {
-      result = result.filter(f => f.discount_percent != null && f.discount_percent > 0)
+      result = result.filter(remiseActive)
     }
     result.sort((a, b) => {
       // 1. Three groups, in this order (23 September 2026):
