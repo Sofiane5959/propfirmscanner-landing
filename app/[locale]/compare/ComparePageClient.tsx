@@ -591,6 +591,7 @@ interface PropFirm {
   is_futures: boolean
   discount_code: string
   discount_percent: number
+  discount_expires_at?: string | null
   year_founded: number
   headquarters: string
   priority_tier: number | null
@@ -799,6 +800,22 @@ const getFirmUrl = (firm: PropFirm, source = 'compare-card'): string => {
     || (firm.website_url && firm.website_url !== '#')
   if (hasOutbound) return `/api/go/${firm.slug}?source=${source}`
   return `https://www.google.com/search?q=${encodeURIComponent(firm.name + ' prop firm')}`
+}
+
+// ORDRE DE LA LISTE : un code promo en cours, puis un lien affilie sans code,
+// puis le reste. Un code expire ne compte pas — il enverrait le visiteur vers
+// une remise qui ne s'applique plus.
+const codeEnCours = (firm: PropFirm): boolean => {
+  if (!firm.discount_code || !firm.discount_code.trim()) return false
+  if ((firm.discount_percent ?? 0) <= 0) return false
+  if (!firm.discount_expires_at) return true
+  const fin = new Date(firm.discount_expires_at).getTime()
+  return Number.isNaN(fin) || fin > Date.now()
+}
+
+const rangCommercial = (firm: PropFirm): number => {
+  if (codeEnCours(firm)) return 0
+  return firm.affiliate_url && firm.affiliate_url !== '#' ? 1 : 2
 }
 
 const isOutboundFirmUrl = (firm: PropFirm): boolean => {
@@ -2034,14 +2051,13 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
       result = result.filter(f => f.discount_percent != null && f.discount_percent > 0)
     }
     result.sort((a, b) => {
-      // 1. Priority tier first — Tier 1 (editor's picks) always at the top.
-      // 1. Firms with an affiliate partnership ALWAYS come first.
-      //    Rationale: these are the firms generating revenue for us, and the
-      //    user is best served by seeing partnered firms with verified deals
-      //    upfront. Unpartnered firms are still visible — just not at the top.
-      const aHasAff = a.affiliate_url && a.affiliate_url !== '#' ? 1 : 0
-      const bHasAff = b.affiliate_url && b.affiliate_url !== '#' ? 1 : 0
-      if (aHasAff !== bHasAff) return bHasAff - aHasAff
+      // 1. Three groups, in this order (23 September 2026):
+      //      a live promo code, then an affiliate link without a code, then
+      //      the rest. A firm we get paid on, and where the visitor saves
+      //      money, is the one that serves both sides best.
+      //    An expired code is no code: it would send the visitor to a deal
+      //    that no longer applies.
+      if (rangCommercial(a) !== rangCommercial(b)) return rangCommercial(a) - rangCommercial(b)
 
       // 2. Then priority tier (Top 10 editor's picks)
       //    Lower number = higher priority. NULL/undefined treated as Tier 3 (lowest).
@@ -2049,12 +2065,7 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
       const bTier = b.priority_tier ?? 3
       if (aTier !== bTier) return aTier - bTier
 
-      // 3. Within the same tier, discounted firms come first (promo boost)
-      const aPromo = (a.discount_percent ?? 0) > 0 ? 1 : 0
-      const bPromo = (b.discount_percent ?? 0) > 0 ? 1 : 0
-      if (bPromo !== aPromo) return bPromo - aPromo
-
-      // 4. Finally, apply the user-selected sort
+      // 3. Finally, apply the user-selected sort
       switch (sortBy) {
         case 'rating': return (b.trustpilot_rating || 0) - (a.trustpilot_rating || 0)
         case 'price': return (a.min_price || 9999) - (b.min_price || 9999)
