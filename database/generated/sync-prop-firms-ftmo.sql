@@ -16,20 +16,10 @@
 --    de la DERNIERE requete : executer d'abord ce select SEUL (le selectionner,
 --    puis Run) et exporter le resultat, qui sert au retour arriere. Ensuite
 --    seulement, executer le fichier entier.
-select slug, name, logo_url, country, trustpilot_rating, trustpilot_reviews, has_instant_funding, platforms, price_currency, min_price, max_price, profit_split, max_profit_split, discount_code, discount_percent, discount_expires_at
+select slug, name, logo_url, country, trustpilot_rating, trustpilot_reviews, has_instant_funding, platforms, profit_split, max_profit_split, discount_code, discount_percent, discount_expires_at
 from prop_firms where slug = 'ftmo';
 
 begin;
-
--- VERROU : cette firme n'est pas encore publiee (ni dans data/firms/rollout.ts,
--- ni dans data/firms/legacy). Ses copies prop_firms ne doivent pas changer avant
--- la publication de sa page : ce bloc annule tout. Il disparait tout seul du
--- fichier genere des que la firme est activee dans rollout.ts.
-do $garde$
-begin
-  raise exception 'ftmo n''est pas encore publiee : ce SQL ne doit pas etre execute.';
-end
-$garde$;
 
 do $ctrl$
 begin
@@ -48,9 +38,6 @@ update prop_firms set
   trustpilot_reviews = 52781,
   has_instant_funding = false,
   platforms = 'MetaTrader 4, MetaTrader 5, cTrader, TradingView, NinjaTrader, Tradovate',
-  price_currency = null,
-  min_price = null,
-  max_price = null,
   profit_split = 80,
   max_profit_split = 90,
   discount_code = null,
@@ -88,9 +75,6 @@ begin
      or (r.trustpilot_reviews is null or abs(r.trustpilot_reviews::numeric - 52781) > 0.001)
      or r.has_instant_funding is distinct from false
      or r.platforms is distinct from 'MetaTrader 4, MetaTrader 5, cTrader, TradingView, NinjaTrader, Tradovate'
-     or r.price_currency is not null
-     or r.min_price is not null
-     or r.max_price is not null
      or (r.profit_split is null or abs(r.profit_split::numeric - 80) > 0.001)
      or (r.max_profit_split is null or abs(r.max_profit_split::numeric - 90) > 0.001)
      or r.discount_code is not null
@@ -104,5 +88,5 @@ $verif$;
 commit;
 
 -- 4. Etat apres (lecture seule).
-select slug, name, logo_url, country, trustpilot_rating, trustpilot_reviews, has_instant_funding, platforms, price_currency, min_price, max_price, profit_split, max_profit_split, discount_code, discount_percent, discount_expires_at
+select slug, name, logo_url, country, trustpilot_rating, trustpilot_reviews, has_instant_funding, platforms, profit_split, max_profit_split, discount_code, discount_percent, discount_expires_at
 from prop_firms where slug = 'ftmo';

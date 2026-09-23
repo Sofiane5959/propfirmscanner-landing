@@ -13,6 +13,10 @@
 
 export const FIRM_PROFILE_ROLLOUT: Readonly<Record<string, readonly string[]>> = {
   futureselite: ['en'],
+  // 23/09/2026 : FTMO passe sur la nouvelle page pour l'apercu palette-2c.
+  // Attention, cette bascule vaut aussi en production des que la branche est
+  // fusionnee dans main.
+  ftmo: ['en'],
 }
 
 export function profilActif(slug: string, locale: string): boolean {
