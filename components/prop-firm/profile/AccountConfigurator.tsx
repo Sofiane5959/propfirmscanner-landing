@@ -137,7 +137,7 @@ export function AccountConfigurator({
                       onClick={() => etape.choisir(c.key)}
                       className={cx(CHOICE, actif ? CHOICE_ACTIVE : CHOICE_IDLE)}
                     >
-                      <span className="flex flex-wrap items-center gap-1.5">
+                      <span className="flex flex-wrap items-center justify-center gap-1.5">
                         <span className={cx('text-sm font-semibold', actif && 'text-accent')}>{c.label}</span>
                         {c.badge && (
                           <span className="rounded border border-warning/40 bg-warning/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-warning">

@@ -31,7 +31,10 @@ const EYEBROW_SECTION =
   'inline-flex items-center rounded-full border border-accent-border bg-accent/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] text-accent'
 export const LABEL = 'text-[11px] font-semibold uppercase tracking-wider text-text-muted'
 export const CHIP = 'rounded-md border border-border bg-bg-base px-2 py-1 text-xs text-text-secondary'
-export const CHOICE = cx('flex flex-col gap-0.5 rounded-lg border px-3 py-2.5 text-left transition-colors', FOCUS)
+export const CHOICE = cx(
+  'flex h-full flex-col items-center justify-center gap-0.5 rounded-lg border px-3 py-2.5 text-center transition-colors',
+  FOCUS
+)
 export const CHOICE_IDLE = 'border-border bg-bg-base hover:border-border-hover'
 export const CHOICE_ACTIVE = 'border-accent bg-accent/10'
 
