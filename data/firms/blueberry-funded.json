@@ -751,7 +751,7 @@
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
-          "fraisReset": null,
+          "fraisReset": 31,
           "fraisActivation": 0,
           "lienPlan": null,
           "phases": [
@@ -794,11 +794,11 @@
           "variante": null,
           "devise": "USD",
           "deviseCompte": "USD",
-          "prix": 83,
+          "prix": 82.5,
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
-          "fraisReset": null,
+          "fraisReset": 58,
           "fraisActivation": 0,
           "lienPlan": null,
           "phases": [
@@ -845,7 +845,7 @@
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
-          "fraisReset": null,
+          "fraisReset": 116,
           "fraisActivation": 0,
           "lienPlan": null,
           "phases": [
@@ -888,11 +888,11 @@
           "variante": null,
           "devise": "USD",
           "deviseCompte": "USD",
-          "prix": 302,
+          "prix": 302.5,
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
-          "fraisReset": null,
+          "fraisReset": 211,
           "fraisActivation": 0,
           "lienPlan": null,
           "phases": [
@@ -939,7 +939,7 @@
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
-          "fraisReset": null,
+          "fraisReset": 424,
           "fraisActivation": 0,
           "lienPlan": null,
           "phases": [
@@ -986,7 +986,7 @@
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
-          "fraisReset": null,
+          "fraisReset": 847,
           "fraisActivation": 0,
           "lienPlan": null,
           "phases": [
@@ -1796,12 +1796,12 @@
   "offre": {
     "code": "SCANNED",
     "remise": 0.3,
-    "portee": "non_confirmee",
-    "checkoutVerifie": false,
+    "portee": "universelle_verifiee",
+    "checkoutVerifie": true,
     "programmesEligibles": [],
     "taillesEligibles": [],
     "expireLe": null,
-    "statut": "needs_confirmation"
+    "statut": "confirmed"
   },
   "conditions": {
     "trading": null,
@@ -2271,8 +2271,8 @@
     {
       "carte": "trading",
       "regle": "Strategies",
-      "texte": "Martingale, grids, position stacking, going all-in, heavy scalping and reversing after a loss are not banned in themselves on accounts bought since 12 March 2026. They stay bound by the risk limits above.",
-      "statut": "confirmed",
+      "texte": "The help centre removed martingale, grids, position stacking, all-in trading and heavy scalping from the banned list for accounts bought since 12 March 2026, and the pricing page says they are allowed. The August 2026 fee document still lists martingale and grids as prohibited on funded accounts. The firm has not reconciled the two.",
+      "statut": "source_conflict",
       "programmes": [
         "prime",
         "flex-1-step",
@@ -2476,7 +2476,7 @@
     {
       "carte": "payouts",
       "regle": "Processing",
-      "texte": "Risk review within 24 hours, then one to two working days to pay: one to three working days in total after an eligible request.",
+      "texte": "Risk review within 24 hours, then one to two working days to pay. The firm currently announces 7 to 14 working days while it upgrades its payment infrastructure.",
       "statut": "confirmed",
       "programmes": [],
       "variantes": [],
@@ -2502,11 +2502,12 @@
     {
       "carte": "payouts",
       "regle": "Reset",
-      "texte": "One reset per account, requested within seven days of the breach and non-refundable. It returns you to the start of the current phase. Not offered on Instant, Synthetic or scaled accounts.",
+      "texte": "One reset per account, requested within seven days of the breach and non-refundable. It returns you to the start of the current phase, and a funded reset costs twice the challenge.",
       "statut": "confirmed",
       "programmes": [
         "prime",
-        "flex-1-step"
+        "flex-1-step",
+        "1-step"
       ],
       "variantes": [],
       "tailles": [],
@@ -2563,6 +2564,58 @@
       "bloquante": false,
       "essentielle": true,
       "source": "https://help.blueberryfunded.com/"
+    },
+    {
+      "carte": "trading",
+      "regle": "Minimum holding time",
+      "texte": "The August 2026 fee document requires a funded position to be held at least five minutes to count.",
+      "statut": "confirmed",
+      "programmes": [],
+      "variantes": [],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": true,
+      "essentielle": false,
+      "source": "https://blueberryfunded.com/wp-content/uploads/2026/08/BBF-Trading-Evaluation-Outline-and-Fees-August-2026.pdf"
+    },
+    {
+      "carte": "trading",
+      "regle": "Risk Limiter",
+      "texte": "The risk team may place a trader under a 1% limit per trade idea, with a mandatory stop-loss on every order. The decision is theirs, announced by email, and it follows every account you hold.",
+      "statut": "confirmed",
+      "programmes": [],
+      "variantes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "essentielle": false,
+      "source": "https://help.blueberryfunded.com/en/articles/14051055-risk-limiter"
+    },
+    {
+      "carte": "trading",
+      "regle": "Restricted countries",
+      "texte": "The help centre lists 16 countries, including the United States and Australia. The August 2026 fee document lists nine territories. The two official lists differ.",
+      "statut": "source_conflict",
+      "programmes": [],
+      "variantes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "essentielle": false,
+      "source": "https://help.blueberryfunded.com/en/articles/9550574-are-any-countries-restricted-from-purchasing-an-evaluation"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Termination without cause",
+      "texte": "Clause 18.2 of the terms reads: « The Company may terminate your use of the Services for any reason and without cause at any time. » Clause 18.4 lets the firm suspend an account instead, for a length it decides.",
+      "statut": "confirmed",
+      "programmes": [],
+      "variantes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://blueberryfunded.com/wp-content/uploads/2024/08/BBF-Technology-Access-and-Trader-Assessment-Program-Terms-and-Conditions.pdf"
     }
   ],
   "titre": "Six ways to reach a simulated funded CFD account",

@@ -2,7 +2,7 @@
 -- NE PAS MODIFIER A LA MAIN : corriger le tableur, puis relancer
 --   npm run firms:build
 -- `npm run firms:check` echoue si ce fichier ne correspond plus a la fiche.
--- Fiche : data/firms/blueberry-funded.json (sha256:da35775cb63217a65d6852f90e871ab4fe4a0423419dd29cf81bd9d18bf89728)
+-- Fiche : data/firms/blueberry-funded.json (sha256:9a0b305afee25d514628ee6f727249bdcc18e72c73d2db35906675c11c78467d)
 --
 -- Recopie dans prop_firms les colonnes lues par /compare, /deals, le bandeau
 -- des offres, /best-for, le quiz, les favoris et les cartes Similar firms.
@@ -54,8 +54,8 @@ update prop_firms set
   max_price = 2800,
   profit_split = 80,
   max_profit_split = 85,
-  discount_code = null,
-  discount_percent = null,
+  discount_code = 'SCANNED',
+  discount_percent = 30,
   discount_expires_at = null,
   updated_at = now()
 where slug = 'blueberry-funded';
@@ -95,8 +95,8 @@ begin
      or (r.max_price is null or abs(r.max_price::numeric - 2800) > 0.001)
      or (r.profit_split is null or abs(r.profit_split::numeric - 80) > 0.001)
      or (r.max_profit_split is null or abs(r.max_profit_split::numeric - 85) > 0.001)
-     or r.discount_code is not null
-     or r.discount_percent is not null
+     or r.discount_code is distinct from 'SCANNED'
+     or (r.discount_percent is null or abs(r.discount_percent::numeric - 30) > 0.001)
      or r.discount_expires_at is not null then
     raise exception 'Controle echoue : prop_firms blueberry-funded ne correspond pas a la fiche';
   end if;
