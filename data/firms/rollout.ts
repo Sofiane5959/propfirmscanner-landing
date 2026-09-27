@@ -17,6 +17,10 @@ export const FIRM_PROFILE_ROLLOUT: Readonly<Record<string, readonly string[]>> =
   // Attention, cette bascule vaut aussi en production des que la branche est
   // fusionnee dans main.
   ftmo: ['en'],
+  // 27/09/2026 : Earn2Trade rejoint le pilote, en anglais. Sa fiche est prete
+  // depuis le 22/09 ; sans cette ligne, /prop-firm/earn2trade servait encore
+  // l'ancienne page dans toutes les langues.
+  earn2trade: ['en'],
 }
 
 export function profilActif(slug: string, locale: string): boolean {
