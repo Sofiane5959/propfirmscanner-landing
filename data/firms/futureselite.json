@@ -1253,37 +1253,37 @@
       "nom": "Tradovate",
       "selectionnable": true,
       "note": null,
-      "logoUrl": null
+      "logoUrl": "https://trader.tradovate.com/img/icons/iphone-retina.png"
     },
     {
       "nom": "NinjaTrader",
       "selectionnable": true,
       "note": "Potential external licence cost in live trading.",
-      "logoUrl": null
+      "logoUrl": "https://ninjatrader.com/assets/dist/images/favicons/apple-touch-icon.png"
     },
     {
       "nom": "Quantower",
       "selectionnable": true,
       "note": null,
-      "logoUrl": null
+      "logoUrl": "https://www.quantower.com/favicon.ico"
     },
     {
       "nom": "ATAS",
       "selectionnable": true,
       "note": null,
-      "logoUrl": null
+      "logoUrl": "https://atas.net/wp-content/uploads/2026/01/atas_icon-300x300.png"
     },
     {
       "nom": "WealthCharts",
       "selectionnable": true,
       "note": null,
-      "logoUrl": null
+      "logoUrl": "https://www.wealthcharts.com/favicon.ico"
     },
     {
       "nom": "DeepCharts",
       "selectionnable": true,
       "note": "Written DeepChart in the purchase configurator and DeepCharts® on the official homepage; one product. The dashboard provides credentials and a Dxfeed agreement flow.",
-      "logoUrl": null
+      "logoUrl": "https://framerusercontent.com/images/AoZRfVkVLzahOuchkWO16EoZOo.png"
     },
     {
       "nom": "Volumetrica",
