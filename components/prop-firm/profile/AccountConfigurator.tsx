@@ -154,7 +154,7 @@ export function AccountConfigurator({
           ))}
         </div>
 
-        <aside data-check="selection" aria-live="polite" className={cx(CARD_ACCENT, 'flex flex-col p-4 sm:p-5')}>
+        <aside data-check="selection" aria-live="polite" className={cx(CARD_ACCENT, 'flex flex-col p-4 text-center sm:p-5')}>
           <p className={EYEBROW}>{COPY.configurator.selection}</p>
           <h3 className="mt-1 font-display text-xl font-bold">
             {programme.nom} · {sizeLabel(plan.taille, plan.deviseCompte)}
@@ -185,7 +185,7 @@ export function AccountConfigurator({
           {lignes.length > 0 && (
             <dl className="my-3 grid flex-1 auto-rows-[minmax(60px,1fr)] grid-cols-2 gap-2">
               {lignes.map((l) => (
-                <div key={l.libelle} className="flex flex-col justify-center rounded-lg border border-border bg-bg-base px-3 py-2">
+                <div key={l.libelle} className="flex flex-col items-center justify-center rounded-lg border border-border bg-bg-base px-3 py-2">
                   <dt className={LABEL}>{l.libelle}</dt>
                   <dd className="mt-0.5 font-semibold tabular-nums">
                     <Valeur cellule={l.valeur} />
@@ -195,12 +195,14 @@ export function AccountConfigurator({
             </dl>
           )}
 
+          <div className="text-left">
           <PromoGroup
             code={offre && offreAppliquee ? offre.code : null}
             claimHref={offre && offreAppliquee ? claimHref : null}
             continueHref={continueHref}
             continueLabel={COPY.commercial.continueTo(sheet.nom)}
           />
+          </div>
           {offre && !offreAppliquee && (
             <p className="mt-2 text-center text-xs text-text-muted">{COPY.configurator.notListed(offre.code)}</p>
           )}
