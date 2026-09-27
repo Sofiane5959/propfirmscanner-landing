@@ -309,7 +309,12 @@ export default async function PropFirmPage({ params }: Props) {
     .select(SIMILAR_COLUMNS)
     .neq('id', firm.id)
     .eq('is_futures', isFutures)
-    .order('trustpilot_rating', { ascending: false })
+    // Les firmes non listees ne sont jamais proposees en alternative : les
+    // ecarter ici laisse les 30 places aux candidates reelles.
+    .eq('listing_status', 'listed')
+    // nullsFirst: false — sans lui, un tri descendant remonte les firmes SANS
+    // note, et la section se vidait.
+    .order('trustpilot_rating', { ascending: false, nullsFirst: false })
     // Large a dessein : exiger un code promo actif elimine la plupart des
     // lignes, et demander 4 candidats pour en garder 3 ne laissait aucune
     // marge. Le tri par note fait que les 30 premieres sont les meilleures.
@@ -345,7 +350,8 @@ export default async function PropFirmPage({ params }: Props) {
       // Meme classe d'actifs ici aussi : une firme CFD n'est pas une
       // alternative a une firme futures, et le complement l'ignorait.
       .eq('is_futures', isFutures)
-      .order('trustpilot_rating', { ascending: false })
+      .eq('listing_status', 'listed')
+      .order('trustpilot_rating', { ascending: false, nullsFirst: false })
       .limit(30)
 
     similarFirms = [...similarFirms, ...((filler || []) as SimilarRow[]).filter(isComplete)]
