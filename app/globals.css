@@ -6,8 +6,8 @@
  * PropFirmScanner — Global styles
  *
  * Deux themes, pilotes par la classe `dark` sur <html> :
- *   :root  = Menthe   (jour)
- *   .dark  = Forêt (nuit)
+ *   :root  = Lin   (jour)
+ *   .dark  = Olive (nuit)
  * La classe est posee avant l'affichage par le script de app/[locale]/layout.tsx
  * (choix enregistre, sinon reglage du systeme). Les valeurs sont des triplets
  * RGB pour que Tailwind garde les opacites (bg-accent/10, bg-bg-elevated/60).
@@ -19,52 +19,52 @@
 @layer base {
   :root {
     color-scheme: light;
-    --bg-base: 239 246 242; /* #EFF6F2 */
+    --bg-base: 245 244 236; /* #F5F4EC */
     --bg-elevated: 255 255 255; /* #FFFFFF */
-    --border: 217 232 224; /* #D9E8E0 */
-    --border-hover: 175 201 188; /* #AFC9BC */
-    --text-primary: 16 32 26; /* #10201A */
-    --text-secondary: 51 71 63; /* #33473F */
-    --text-muted: 90 110 102; /* #5A6E66 */
-    --accent: 4 120 87; /* #047857 */
-    --accent-btn: 4 120 87; /* #047857 */
-    --dark-50: 16 32 26; /* #10201A */
-    --dark-100: 27 46 39; /* #1B2E27 */
-    --dark-200: 51 71 63; /* #33473F */
-    --dark-300: 51 71 63; /* #33473F */
-    --dark-400: 90 110 102; /* #5A6E66 */
-    --dark-500: 122 142 134; /* #7A8E86 */
-    --dark-600: 201 220 211; /* #C9DCD3 */
-    --dark-700: 227 239 233; /* #E3EFE9 */
+    --border: 228 226 211; /* #E4E2D3 */
+    --border-hover: 196 193 169; /* #C4C1A9 */
+    --text-primary: 29 31 20; /* #1D1F14 */
+    --text-secondary: 64 67 50; /* #404332 */
+    --text-muted: 99 102 82; /* #636652 */
+    --accent: 77 124 15; /* #4D7C0F */
+    --accent-btn: 77 124 15; /* #4D7C0F */
+    --dark-50: 29 31 20; /* #1D1F14 */
+    --dark-100: 42 45 31; /* #2A2D1F */
+    --dark-200: 64 67 50; /* #404332 */
+    --dark-300: 64 67 50; /* #404332 */
+    --dark-400: 99 102 82; /* #636652 */
+    --dark-500: 128 131 109; /* #80836D */
+    --dark-600: 214 212 195; /* #D6D4C3 */
+    --dark-700: 237 236 225; /* #EDECE1 */
     --dark-750: 255 255 255; /* #FFFFFF */
-    --dark-800: 239 246 242; /* #EFF6F2 */
-    --dark-900: 217 232 224; /* #D9E8E0 */
-    --dark-950: 201 220 211; /* #C9DCD3 */
+    --dark-800: 245 244 236; /* #F5F4EC */
+    --dark-900: 228 226 211; /* #E4E2D3 */
+    --dark-950: 214 212 195; /* #D6D4C3 */
   }
 
   .dark {
     color-scheme: dark;
-    --bg-base: 18 32 28; /* #12201C */
-    --bg-elevated: 26 45 39; /* #1A2D27 */
-    --border: 46 74 65; /* #2E4A41 */
-    --border-hover: 70 103 92; /* #46675C */
-    --text-primary: 239 247 243; /* #EFF7F3 */
-    --text-secondary: 198 218 210; /* #C6DAD2 */
-    --text-muted: 148 178 167; /* #94B2A7 */
-    --accent: 52 211 153; /* #34D399 */
-    --accent-btn: 4 120 87; /* #047857 */
-    --dark-50: 247 251 249; /* #F7FBF9 */
-    --dark-100: 239 247 243; /* #EFF7F3 */
-    --dark-200: 221 235 229; /* #DDEBE5 */
-    --dark-300: 198 218 210; /* #C6DAD2 */
-    --dark-400: 148 178 167; /* #94B2A7 */
-    --dark-500: 107 138 127; /* #6B8A7F */
-    --dark-600: 70 103 92; /* #46675C */
-    --dark-700: 46 74 65; /* #2E4A41 */
-    --dark-750: 26 45 39; /* #1A2D27 */
-    --dark-800: 18 32 28; /* #12201C */
-    --dark-900: 11 21 18; /* #0B1512 */
-    --dark-950: 7 14 12; /* #070E0C */
+    --bg-base: 26 28 20; /* #1A1C14 */
+    --bg-elevated: 36 39 28; /* #24271C */
+    --border: 58 62 45; /* #3A3E2D */
+    --border-hover: 86 91 68; /* #565B44 */
+    --text-primary: 244 245 236; /* #F4F5EC */
+    --text-secondary: 212 215 196; /* #D4D7C4 */
+    --text-muted: 167 171 147; /* #A7AB93 */
+    --accent: 190 242 100; /* #BEF264 */
+    --accent-btn: 77 124 15; /* #4D7C0F */
+    --dark-50: 250 251 245; /* #FAFBF5 */
+    --dark-100: 244 245 236; /* #F4F5EC */
+    --dark-200: 227 230 213; /* #E3E6D5 */
+    --dark-300: 212 215 196; /* #D4D7C4 */
+    --dark-400: 167 171 147; /* #A7AB93 */
+    --dark-500: 124 129 106; /* #7C816A */
+    --dark-600: 86 91 68; /* #565B44 */
+    --dark-700: 58 62 45; /* #3A3E2D */
+    --dark-750: 36 39 28; /* #24271C */
+    --dark-800: 26 28 20; /* #1A1C14 */
+    --dark-900: 17 19 9; /* #111309 */
+    --dark-950: 10 11 6; /* #0A0B06 */
   }
 
   body {

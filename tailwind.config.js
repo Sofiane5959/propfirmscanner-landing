@@ -39,7 +39,7 @@ module.exports = {
           900: '#14532d',
         },
         // Echelle legacy : les valeurs viennent des variables CSS de
-        // app/globals.css. Nuit = Forêt, Jour = Menthe (inversee).
+        // app/globals.css. Nuit = Olive, Jour = Lin (inversee).
         dark: {
           50: 'rgb(var(--dark-50) / <alpha-value>)',
           100: 'rgb(var(--dark-100) / <alpha-value>)',
@@ -55,9 +55,9 @@ module.exports = {
           950: 'rgb(var(--dark-950) / <alpha-value>)',
         },
 
-        // --- DESIGN SYSTEM v1.0 — themes Menthe (jour) / Forêt (nuit) -----
+        // --- DESIGN SYSTEM v1.0 — themes Lin (jour) / Olive (nuit) -----
         // Toutes les valeurs sont des variables CSS definies dans globals.css
-        // (:root = Menthe, .dark = Forêt). Le format rgb(var() / alpha)
+        // (:root = Lin, .dark = Olive). Le format rgb(var() / alpha)
         // garde les modificateurs d'opacite (bg-bg-elevated/60, bg-accent/10).
         bg: {
           base: 'rgb(var(--bg-base) / <alpha-value>)',

@@ -150,7 +150,7 @@ export default function LocaleLayout({
     >
       <head>
         {/* Theme before first paint: saved choice, else the system setting.
-            Menthe (day) when light, Forêt (night) when dark. Without this,
+            Lin (day) when light, Olive (night) when dark. Without this,
             a night-mode visitor would see a flash of the day theme. */}
         <script
           dangerouslySetInnerHTML={{
