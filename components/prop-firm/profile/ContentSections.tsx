@@ -289,12 +289,18 @@ export function ConditionsSection({ sheet, sel }: { sheet: FirmSheet; sel: FirmS
   const retraits = reglesDeCarte(sheet, 'payouts', programme, plan)
   const live = reglesDeCarte(sheet, 'live', programme, plan)
   const payoutsVide = retraits.length === 0 && live.length === 0 && !sheet.prestataireRetrait && sheet.methodesRetrait.length === 0
-  const essentielles = sheet.regles.some((r) => r.essentielle)
+  // Combien de lignes avant le repli : les essentielles de CETTE carte, ou le
+  // plafond par defaut quand le tableur n'en designe aucune.
+  // Les bloquantes ont deja leur encadre : le repli ne compte que les autres.
+  const visibles = (regles: FirmSheet['regles']) => {
+    const n = regles.filter((r) => r.essentielle && !r.bloquante).length
+    return n > 0 ? n : REGLES_VISIBLES
+  }
 
   const carteTrading = trading.length > 0 && (
     <article key="trading" className={cx(CARD, 'flex flex-col p-4 sm:p-5')}>
       <EnteteCarte icone={ListChecks} titre={COPY.conditions.trading} />
-      <ListeRegles regles={trading} nomPhase={nomPhase} visibles={essentielles ? trading.length : REGLES_VISIBLES} />
+      <ListeRegles regles={trading} nomPhase={nomPhase} visibles={visibles(trading)} />
     </article>
   )
   const cartePayouts = !payoutsVide && (
@@ -315,11 +321,7 @@ export function ConditionsSection({ sheet, sel }: { sheet: FirmSheet; sel: FirmS
           ))}
         </div>
       )}
-      <ListeRegles
-        regles={[...retraits, ...live]}
-        nomPhase={nomPhase}
-        visibles={essentielles ? retraits.length + live.length : REGLES_VISIBLES}
-      />
+      <ListeRegles regles={[...retraits, ...live]} nomPhase={nomPhase} visibles={visibles([...retraits, ...live])} />
     </article>
   )
   // Les frais en tuiles sur toute la largeur : un montant se lit d'un coup d'oeil.

@@ -67,7 +67,14 @@ export default function FirmProfilePage({
 
   return (
     <div className="bg-bg-base pb-8 font-sans text-text-primary">
-      <HeroSection sheet={sheet} promo={sel.promo} claimHref={lien('hero_claim', planHero)} continueHref={lien('hero_continue', planHero)} firmId={firmId} />
+      <HeroSection
+        sheet={sheet}
+        promo={sel.promo}
+        claimHref={lien('hero_claim', planHero)}
+        continueHref={lien('hero_continue', planHero)}
+        logoHref={lien('hero_logo', planHero)}
+        firmId={firmId}
+      />
       <KnownForStrip sheet={sheet} />
       <InfoCards sheet={sheet} />
       <AccountConfigurator

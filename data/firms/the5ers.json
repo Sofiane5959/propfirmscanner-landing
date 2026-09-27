@@ -2195,7 +2195,7 @@
       "variantes": [],
       "tailles": [],
       "phase": "evaluation",
-      "bloquante": false,
+      "bloquante": true,
       "essentielle": true,
       "source": "https://the5ers.com/bootcamp/"
     },
@@ -2408,7 +2408,7 @@
       "variantes": [],
       "tailles": [],
       "phase": null,
-      "bloquante": false,
+      "bloquante": true,
       "essentielle": true,
       "source": "https://the5ers.com/faqs/do-i-have-to-close-my-positions-overnight/"
     },
@@ -2458,7 +2458,7 @@
       "variantes": [],
       "tailles": [],
       "phase": null,
-      "bloquante": true,
+      "bloquante": false,
       "essentielle": true,
       "source": "https://the5ers.com/faqs/can-i-trade-during-news/"
     },
@@ -2509,7 +2509,7 @@
       "variantes": [],
       "tailles": [],
       "phase": null,
-      "bloquante": true,
+      "bloquante": false,
       "essentielle": true,
       "source": "https://the5ers.com/faqs/can-i-use-an-ea-expert-advisor-can-i-set-a-stealth-mode-stop-loss/"
     },
@@ -2524,7 +2524,7 @@
       "variantes": [],
       "tailles": [],
       "phase": null,
-      "bloquante": true,
+      "bloquante": false,
       "essentielle": true,
       "source": "https://the5ers.com/futures-faqs/is-high-frequency-algorithmic-trading-and-hedging-allowed/"
     },
@@ -2537,7 +2537,7 @@
       "variantes": [],
       "tailles": [],
       "phase": null,
-      "bloquante": true,
+      "bloquante": false,
       "essentielle": true,
       "source": "https://the5ers.com/faqs/can-i-copy-my-own-trades/"
     },
@@ -2652,7 +2652,7 @@
       "variantes": [],
       "tailles": [],
       "phase": null,
-      "bloquante": true,
+      "bloquante": false,
       "essentielle": false,
       "source": "https://the5ers.com/faqs/prohibited-trading-practices/"
     },
@@ -2667,7 +2667,7 @@
       "variantes": [],
       "tailles": [],
       "phase": null,
-      "bloquante": true,
+      "bloquante": false,
       "essentielle": false,
       "source": "https://the5ers.com/faqs/prohibited-trading-practices/"
     },

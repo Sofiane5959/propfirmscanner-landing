@@ -311,18 +311,14 @@ export function reglesDeCarte(
   programme: SheetProgramme,
   plan: SheetPlan
 ): SheetRegle[] {
-  const poids = (r: SheetRegle) => (r.bloquante ? 0 : r.statut !== 'confirmed' ? 1 : 2)
-  // Quand le tableur designe des regles essentielles, seules celles-la s'affichent.
-  const tri = sheet.regles.some((r) => r.essentielle)
+  // Les regles designees essentielles dans le tableur passent devant ; les
+  // autres suivent, et la carte les replie derriere « Show more ». Avant, elles
+  // disparaissaient : une fiche detaillee perdait la moitie de ses regles.
+  const poids = (r: SheetRegle) =>
+    (r.essentielle ? 0 : 10) + (r.bloquante ? 0 : r.statut !== 'confirmed' ? 1 : 2)
   return sheet.regles
     .map((r, i) => ({ r, i }))
-    .filter(
-      ({ r }) =>
-        r.carte === carte &&
-        (!tri || r.essentielle) &&
-        !estIncertain(r.statut) &&
-        regleApplicable(r, programme, plan)
-    )
+    .filter(({ r }) => r.carte === carte && !estIncertain(r.statut) && regleApplicable(r, programme, plan))
     .sort((a, b) => poids(a.r) - poids(b.r) || a.i - b.i)
     .map(({ r }) => r)
 }

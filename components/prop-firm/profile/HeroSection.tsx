@@ -3,7 +3,9 @@
 // 1. Hero — contrat visuel du 19 septembre 2026. Deux cartes de meme hauteur :
 //    a gauche l'identite (Trustpilot dans l'angle), le titre, le resume et les
 //    reperes Founded / Country / CEO ; a droite « Most popular plan ».
-//    Le logo n'est pas un lien : les sorties passent par Claim deal et Continue to.
+//    Le logo est une sortie a part entiere depuis le 27/09/2026 : il passe par
+//    /api/go comme les boutons, avec le plan vise et le code, sous son propre
+//    placement pour rester mesurable separement.
 
 import type { ReactNode } from 'react'
 import { ChevronDown, Star } from 'lucide-react'
@@ -54,12 +56,15 @@ export function HeroSection({
   promo,
   claimHref,
   continueHref,
+  logoHref,
   firmId,
 }: {
   sheet: FirmSheet
   promo: { programme: SheetProgramme; plan: SheetPlan } | null
   claimHref: string
   continueHref: string
+  /** Sortie portee par le logo, avec le meme plan et le meme code. */
+  logoHref: string
   /** Identifiant prop_firms, pour le favori ; null : pas de bouton Save. */
   firmId: string | null
 }) {
@@ -81,14 +86,20 @@ export function HeroSection({
         <div className="grid items-stretch gap-4 lg:grid-cols-[minmax(0,1.55fr)_minmax(330px,0.9fr)]">
           <article data-check="hero-left" className={cx(CARD, 'relative flex h-full flex-col p-5 sm:p-6')}>
             <div className={cx('flex items-center gap-3', trustpilot && 'sm:pr-44')}>
-              <div className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-xl bg-white p-1 font-display text-xl font-bold text-bg-base">
+              <a
+                href={logoHref}
+                target="_blank"
+                rel="sponsored noopener noreferrer"
+                aria-label={COPY.commercial.continueTo(sheet.nom)}
+                className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-xl bg-white p-1 font-display text-xl font-bold text-bg-base transition-shadow hover:ring-2 hover:ring-accent"
+              >
                 {sheet.logoUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={sheet.logoUrl} alt="" className="h-full w-full object-contain" />
                 ) : (
                   sheet.nom.charAt(0)
                 )}
-              </div>
+              </a>
               <div className="min-w-0">
                 <p className="font-display text-lg font-bold leading-tight">{sheet.nom}</p>
                 {sheet.marches.length > 0 && (
