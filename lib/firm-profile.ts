@@ -107,12 +107,14 @@ export function optionsParType(options: SheetOption[], programmeSlug: string): [
  * funded » pour un programme sans evaluation.
  */
 export function libellePhase(phase: SheetPhase, plan: SheetPlan, programme: SheetProgramme): string {
-  const deuxEtapes = plan.phases.some((ph) => ph.phase === 'evaluation_2')
+  const etapes = plan.phases.filter((ph) => ph.phase !== 'funded').length
   switch (phase.phase) {
     case 'evaluation':
-      return deuxEtapes ? 'Evaluation 1' : 'Evaluation'
+      return etapes > 1 ? 'Evaluation 1' : 'Evaluation'
     case 'evaluation_2':
       return 'Evaluation 2'
+    case 'evaluation_3':
+      return 'Evaluation 3'
     case 'funded':
       return programme.type === 'instant' ? 'Instant funded' : 'Funded'
   }
@@ -291,6 +293,9 @@ export function lignesSelection(plan: SheetPlan): { libelle: string; valeur: Cel
 export function regleApplicable(r: SheetRegle, programme: SheetProgramme, plan: SheetPlan): boolean {
   if (r.programmes.length > 0 && !r.programmes.includes(programme.slug)) return false
   if (r.tailles.length > 0 && !r.tailles.includes(plan.taille)) return false
+  // 27/09/2026 : une regle peut ne valoir que pour une variante — Day Trade
+  // ferme tout avant la cloture, Swing garde une position.
+  if (r.variantes.length > 0 && !(plan.variante && r.variantes.includes(plan.variante))) return false
   if (r.phase && !plan.phases.some((ph) => ph.phase === r.phase)) return false
   return true
 }

@@ -48,6 +48,9 @@
       "maxComptes": 5,
       "maxComptesStatut": "confirmed",
       "maxComptesNote": "Counts towards the shared cap of 5 funded accounts across Elite, Custom, Instant and Nitro.",
+      "statut": "active",
+      "offreFin": null,
+      "offreFinStatut": null,
       "plans": [
         {
           "taille": 25000,
@@ -249,6 +252,9 @@
       "maxComptes": null,
       "maxComptesStatut": "source_conflict",
       "maxComptesNote": "The official FAQ states 3 active funded Nitro accounts; the purchase configurator displayed MAX 4 FUNDED.",
+      "statut": "active",
+      "offreFin": null,
+      "offreFinStatut": null,
       "plans": [
         {
           "taille": 25000,
@@ -458,6 +464,9 @@
       "maxComptes": 10,
       "maxComptesStatut": "confirmed",
       "maxComptesNote": "Prime has its own cap: 10 active funded accounts.",
+      "statut": "active",
+      "offreFin": null,
+      "offreFinStatut": null,
       "plans": [
         {
           "taille": 25000,
@@ -667,6 +676,9 @@
       "maxComptes": 5,
       "maxComptesStatut": "confirmed",
       "maxComptesNote": "Counts towards the shared cap of 5 funded accounts across Elite, Custom, Instant and Nitro.",
+      "statut": "active",
+      "offreFin": null,
+      "offreFinStatut": null,
       "plans": [
         {
           "taille": 50000,
@@ -838,6 +850,7 @@
       "texte": "18:00 EST to 16:55 EST the following day. All positions must close before 16:55 EST.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -850,6 +863,7 @@
       "texte": "Not allowed. Automatic liquidation may occur.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": true,
@@ -862,6 +876,7 @@
       "texte": "Market closed Friday 16:55 EST to Sunday 18:00 EST. Holiday closures may differ.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -874,6 +889,7 @@
       "texte": "Fully automated AI or bots are not permitted.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": true,
@@ -886,6 +902,7 @@
       "texte": "Multiple limit orders at the same price to manipulate fills are prohibited.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": true,
@@ -898,6 +915,7 @@
       "texte": "Exploiting isolated fills in gapped or illiquid markets is prohibited.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": true,
@@ -910,6 +928,7 @@
       "texte": "Payout, breach and repeat patterns are prohibited.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": true,
@@ -922,6 +941,7 @@
       "texte": "The configurator displays \"No\" on every current plan, with no definition or duration threshold.",
       "statut": "needs_confirmation",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -938,6 +958,7 @@
         "nitro",
         "prime"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": "evaluation",
       "bloquante": false,
@@ -950,6 +971,7 @@
       "texte": "The configurator displays \"With restrictions\" without stating the event window.",
       "statut": "needs_confirmation",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
@@ -962,6 +984,7 @@
       "texte": "Veriff. Buyer, KYC holder and account operator must be the same person. Reviewed at upgrades.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -974,6 +997,7 @@
       "texte": "30 consecutive days without trades may permanently close a live account.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": true,
@@ -986,6 +1010,7 @@
       "texte": "A stop order is required on every open position on a live account.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -1002,6 +1027,7 @@
         "nitro",
         "prime"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": "evaluation",
       "bloquante": false,
@@ -1014,6 +1040,7 @@
       "texte": "Maximum 10 funded accounts overall; maximum 10 Prime; maximum 5 combined across Elite, Custom, Instant and Nitro.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -1026,6 +1053,7 @@
       "texte": "Average under 24 hours. Manual review may take longer.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -1038,6 +1066,7 @@
       "texte": "1 to 3 days after approval.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -1050,6 +1079,7 @@
       "texte": "Maximum $500 per request. Above that, standard Rise methods apply.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -1064,6 +1094,7 @@
       "programmes": [
         "elite"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -1078,6 +1109,7 @@
       "programmes": [
         "elite"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -1092,6 +1124,7 @@
       "programmes": [
         "prime"
       ],
+      "variantes": [],
       "tailles": [
         150000
       ],
@@ -1108,6 +1141,7 @@
       "programmes": [
         "instant"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -1122,6 +1156,7 @@
       "programmes": [
         "prime"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": "evaluation",
       "bloquante": false,
@@ -1134,6 +1169,7 @@
       "texte": "A risk-team decision. The fifth payout is a ceiling, not an automatic entitlement.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
@@ -1146,6 +1182,7 @@
       "texte": "Starts at $0 with a loss floor based on account size. 50K example: $2,000 loss floor and $1,000 cushion.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
@@ -1158,6 +1195,7 @@
       "texte": "15 profitable days meeting the size-specific daily minimum. Days need not be consecutive.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
@@ -1170,6 +1208,7 @@
       "texte": "Daily, $200 minimum, on profits above the cushion or unlocked reserve.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
@@ -1182,6 +1221,7 @@
       "texte": "Exchange market data is the trader’s responsibility on a live account. Amount not specified.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
@@ -1194,6 +1234,7 @@
       "texte": "Commissions and exchange fees are charged per instrument on each executed trade. The official FAQ still labels some exchange fees as 2024 rates.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
@@ -1206,6 +1247,7 @@
       "texte": "A paid platform licence may apply depending on the selected platform.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
@@ -1218,6 +1260,7 @@
       "texte": "No hidden administrative maintenance fee is stated: $0.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": false,

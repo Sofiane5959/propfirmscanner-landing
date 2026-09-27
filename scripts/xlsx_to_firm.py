@@ -95,7 +95,8 @@ def lignes(ws, nb_colonnes):
     return sortie
 
 
-PHASES = {"evaluation": "evaluation", "evaluation_2": "evaluation_2", "funded": "funded", "sim_funded": "funded"}
+PHASES = {"evaluation": "evaluation", "evaluation_2": "evaluation_2", "evaluation_3": "evaluation_3",
+          "funded": "funded", "sim_funded": "funded"}
 
 # Une valeur inconnue s'ecrit avec un statut, jamais en laissant croire a une
 # valeur. Une cellule vide, elle, masque la ligne.
@@ -147,9 +148,14 @@ def convertir(chemin):
 
     # --- Programmes, plans, phases ------------------------------------------
     programmes = []
+    # Colonnes 12 et 13 (apres nb_plans, auto) : la fin d'une campagne a duree
+    # limitee, et son statut quand la date n'est pas publiee. Ajoutees le
+    # 27/09/2026 avec le statut « limited_offer ».
     for (s_, nom_p, marche, type_, etat, accroche, resume_p,
-         max_comptes, max_statut, max_note) in lignes(wb["Programmes"], 10):
-        if (txt(etat) or "active") not in ("active", "promotional"):
+         max_comptes, max_statut, max_note, _nb_plans, offre_fin,
+         offre_fin_statut) in lignes(wb["Programmes"], 13):
+        etat_p = txt(etat) or "active"
+        if etat_p not in ("active", "promotional", "limited_offer"):
             continue
         max_n = None if statut(max_comptes) else nombre(max_comptes)
         programmes.append({"slug": txt(s_), "nom": txt(nom_p) or txt(s_), "accroche": txt(accroche), "resume": txt(resume_p),
@@ -159,6 +165,10 @@ def convertir(chemin):
                            "maxComptesStatut": statut(max_statut) or statut(max_comptes)
                            or ("confirmed" if max_n is not None else None),
                            "maxComptesNote": txt(max_note),
+                           "statut": etat_p,
+                           "offreFin": txt(offre_fin),
+                           "offreFinStatut": statut(offre_fin_statut) or statut(offre_fin)
+                           or ("confirmed" if txt(offre_fin) else None),
                            "plans": []})
     par_slug = {p["slug"]: p for p in programmes}
 
@@ -295,8 +305,9 @@ def convertir(chemin):
 
     # --- Regles : cartes Trading et Payouts, filtrees par la selection ------------
     regles = []
+    # Colonne 11 : variantes concernees, ajoutee le 27/09/2026.
     for (carte, regle, texte_r, statut_r, progs_r, tailles_r, phase_r, bloquante, essentielle,
-         source) in lignes(feuille(wb, "Regles"), 10):
+         source, variantes_r) in lignes(feuille(wb, "Regles"), 11):
         if txt(carte) not in ("trading", "payouts", "live"):
             avertissements.append(f"Regles : carte « {txt(carte)} » inconnue pour « {txt(regle)} », ligne ignoree.")
             continue
@@ -309,6 +320,7 @@ def convertir(chemin):
             "carte": txt(carte), "regle": txt(regle), "texte": txt(texte_r),
             "statut": statut(statut_r) or "confirmed",
             "programmes": liste(progs_r),
+            "variantes": liste(variantes_r),
             "tailles": [n for n in (nombre(x) for x in liste(tailles_r)) if n is not None],
             "phase": PHASES.get(txt(phase_r)) if txt(phase_r) else None,
             "bloquante": oui(bloquante), "essentielle": oui(essentielle), "source": txt(source),

@@ -9,7 +9,7 @@
 // aucune n'ajoute une information qui n'y serait pas.
 // =============================================================================
 
-export type PhaseKey = 'evaluation' | 'evaluation_2' | 'funded'
+export type PhaseKey = 'evaluation' | 'evaluation_2' | 'evaluation_3' | 'funded'
 
 /**
  * Pourquoi une valeur manque. `confirmed` accompagne une valeur publiee ; les
@@ -97,6 +97,14 @@ export interface SheetProgramme {
   resume: string | null
   marche: string
   type: 'evaluation' | 'instant'
+  /**
+   * « active » par defaut. « limited_offer » : campagne a duree limitee, servie
+   * comme les autres mais annoncee comme telle. « promotional » reste accepte.
+   */
+  statut: 'active' | 'promotional' | 'limited_offer'
+  /** Fin de la campagne : une date, ou un statut quand elle n'est pas publiee. */
+  offreFin: string | null
+  offreFinStatut: Statut | null
   /** Comptes finances actifs au plus, pour CE programme. */
   maxComptes: number | null
   maxComptesStatut: Statut | null
@@ -150,6 +158,8 @@ export interface SheetRegle {
   /** Vides = toute la firme. */
   programmes: string[]
   tailles: number[]
+  /** Vides = toutes les variantes du programme (Day Trade, Swing, NEW…). */
+  variantes: string[]
   phase: PhaseKey | null
   /** L'enfreindre fait perdre le compte. */
   bloquante: boolean
@@ -283,10 +293,11 @@ export interface SimilarFirm {
 export const PHASE_LABEL: Record<PhaseKey, string> = {
   evaluation: 'Evaluation',
   evaluation_2: 'Evaluation 2',
+  evaluation_3: 'Evaluation 3',
   funded: 'Funded',
 }
 
-const ORDRE_PHASE: Record<PhaseKey, number> = { evaluation: 0, evaluation_2: 1, funded: 2 }
+const ORDRE_PHASE: Record<PhaseKey, number> = { evaluation: 0, evaluation_2: 1, evaluation_3: 2, funded: 3 }
 
 export function orderedPhases(phases: SheetPhase[]): SheetPhase[] {
   return [...phases].sort((a, b) => ORDRE_PHASE[a.phase] - ORDRE_PHASE[b.phase])

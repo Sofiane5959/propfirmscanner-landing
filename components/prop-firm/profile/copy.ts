@@ -82,6 +82,8 @@ export const COPY = {
     noEvaluation: 'None',
     phases: (n: number) => `${n} phase${n > 1 ? 's' : ''}`,
     split: 'Profit split',
+    limitedOffer: 'Limited offer',
+    endsOn: (d: string) => `Ends ${d}`,
     lossType: 'Loss limit',
     minDays: 'Minimum days',
     consistency: 'Consistency',

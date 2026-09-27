@@ -2,7 +2,7 @@
 -- NE PAS MODIFIER A LA MAIN : corriger le tableur, puis relancer
 --   npm run firms:build
 -- `npm run firms:check` echoue si ce fichier ne correspond plus a la fiche.
--- Fiche : data/firms/futureselite.json (sha256:6d9fd853dedc5056e04f52e32db2c7aff02115ed6b0d90d3116c9855e3558b07)
+-- Fiche : data/firms/futureselite.json (sha256:d5a7b1df5c93c346191239aa91572711f70142af0c0254ebc7512ac516a02c05)
 --
 -- Recopie dans prop_firms les colonnes lues par /compare, /deals, le bandeau
 -- des offres, /best-for, le quiz, les favoris et les cartes Similar firms.

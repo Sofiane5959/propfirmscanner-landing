@@ -29,6 +29,9 @@
       "maxComptes": null,
       "maxComptesStatut": null,
       "maxComptesNote": null,
+      "statut": "active",
+      "offreFin": null,
+      "offreFinStatut": null,
       "plans": [
         {
           "taille": 25000,
@@ -183,6 +186,9 @@
       "maxComptes": null,
       "maxComptesStatut": null,
       "maxComptesNote": null,
+      "statut": "active",
+      "offreFin": null,
+      "offreFinStatut": null,
       "plans": [
         {
           "taille": 50000,
@@ -488,6 +494,7 @@
       "texte": "Close every position by 3:50 PM CT.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -500,6 +507,7 @@
       "texte": "Not allowed.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -512,6 +520,7 @@
       "texte": "Allowed.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -524,6 +533,7 @@
       "texte": "Free: NinjaTrader, Finamark (with a 90-day live trading licence), R | Trader Pro, Tradovate, TradingView and BlackArrow One. Others, such as Quantower, ATAS, MultiCharts or Sierra Chart, need your own licence.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -536,6 +546,7 @@
       "texte": "Futures only, listed on CME, COMEX, NYMEX and CBOT.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -548,6 +559,7 @@
       "texte": "Included for a non-professional CME status. Professional status: $140 per month per exchange, or $156 with NinjaTrader. Market depth (DOM) costs extra.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": "evaluation",
       "bloquante": false,
@@ -560,6 +572,7 @@
       "texte": "Based on the size of each withdrawal, not on total profit.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
@@ -572,6 +585,7 @@
       "texte": "Every Wednesday. Request by 2:00 PM CT the Friday before. Minimum $100 net.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
@@ -584,6 +598,7 @@
       "texte": "Rise $50 outside the US (1.5% in the US), Deel $50, Bayzat $5 to $40, direct crypto 0.735%. The firm picks the provider.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
@@ -596,6 +611,7 @@
       "texte": "Rise does not pay traders in Iowa, Minnesota, South Carolina, Guam, Puerto Rico, the U.S. Virgin Islands or Haiti.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
@@ -610,6 +626,7 @@
       "programmes": [
         "tcp"
       ],
+      "variantes": [],
       "tailles": [
         25000
       ],
@@ -626,6 +643,7 @@
       "programmes": [
         "tcp"
       ],
+      "variantes": [],
       "tailles": [
         50000
       ],
@@ -642,6 +660,7 @@
       "programmes": [
         "tcp"
       ],
+      "variantes": [],
       "tailles": [
         100000
       ],
@@ -658,6 +677,7 @@
       "programmes": [
         "gauntlet-mini"
       ],
+      "variantes": [],
       "tailles": [
         50000
       ],
@@ -674,6 +694,7 @@
       "programmes": [
         "gauntlet-mini"
       ],
+      "variantes": [],
       "tailles": [
         100000
       ],
@@ -690,6 +711,7 @@
       "programmes": [
         "gauntlet-mini"
       ],
+      "variantes": [],
       "tailles": [
         150000
       ],
@@ -706,6 +728,7 @@
       "programmes": [
         "gauntlet-mini"
       ],
+      "variantes": [],
       "tailles": [
         200000
       ],
@@ -722,6 +745,7 @@
       "programmes": [
         "tcp"
       ],
+      "variantes": [],
       "tailles": [
         25000
       ],
@@ -738,6 +762,7 @@
       "programmes": [
         "tcp"
       ],
+      "variantes": [],
       "tailles": [
         50000,
         100000
@@ -753,6 +778,7 @@
       "texte": "The floor only moves up at the close, but open losses count in real time: dipping below it during the day fails the account.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": true,
@@ -765,6 +791,7 @@
       "texte": "Not allowed.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": true,
@@ -777,6 +804,7 @@
       "texte": "Once the floor locks at your starting balance, withdrawing all your profit leaves no margin. Leave a buffer in the account.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": false,

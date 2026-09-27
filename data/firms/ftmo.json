@@ -40,6 +40,9 @@
       "maxComptes": null,
       "maxComptesStatut": null,
       "maxComptesNote": null,
+      "statut": "active",
+      "offreFin": null,
+      "offreFinStatut": null,
       "plans": [
         {
           "taille": 10000,
@@ -288,6 +291,9 @@
       "maxComptes": null,
       "maxComptesStatut": null,
       "maxComptesNote": null,
+      "statut": "active",
+      "offreFin": null,
+      "offreFinStatut": null,
       "plans": [
         {
           "taille": 10000,
@@ -616,6 +622,9 @@
       "maxComptes": null,
       "maxComptesStatut": null,
       "maxComptesNote": null,
+      "statut": "active",
+      "offreFin": null,
+      "offreFinStatut": null,
       "plans": [
         {
           "taille": 50000,
@@ -770,6 +779,9 @@
       "maxComptes": null,
       "maxComptesStatut": null,
       "maxComptesNote": null,
+      "statut": "active",
+      "offreFin": null,
+      "offreFinStatut": null,
       "plans": [
         {
           "taille": 50000,
@@ -1015,6 +1027,7 @@
         "1-step",
         "2-step"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": true,
@@ -1030,6 +1043,7 @@
         "1-step",
         "2-step"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": "evaluation",
       "bloquante": false,
@@ -1045,6 +1059,7 @@
         "1-step",
         "2-step"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": "evaluation",
       "bloquante": false,
@@ -1060,6 +1075,7 @@
         "1-step",
         "2-step"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": true,
@@ -1075,6 +1091,7 @@
         "1-step",
         "2-step"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": true,
@@ -1089,6 +1106,7 @@
       "programmes": [
         "2-step"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -1104,6 +1122,7 @@
         "1-step",
         "2-step"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -1118,6 +1137,7 @@
       "programmes": [
         "1-step"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -1133,6 +1153,7 @@
         "1-step",
         "2-step"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -1148,6 +1169,7 @@
         "futures-growth",
         "futures-pro"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -1163,6 +1185,7 @@
         "futures-growth",
         "futures-pro"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": "evaluation",
       "bloquante": false,
@@ -1178,6 +1201,7 @@
         "futures-growth",
         "futures-pro"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -1193,6 +1217,7 @@
         "1-step",
         "2-step"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
@@ -1208,6 +1233,7 @@
         "1-step",
         "2-step"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
@@ -1222,6 +1248,7 @@
       "programmes": [
         "2-step"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
@@ -1237,6 +1264,7 @@
         "futures-growth",
         "futures-pro"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
@@ -1252,6 +1280,7 @@
         "futures-growth",
         "futures-pro"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
@@ -1267,6 +1296,7 @@
         "futures-growth",
         "futures-pro"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
@@ -1282,6 +1312,7 @@
         "futures-growth",
         "futures-pro"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": true,

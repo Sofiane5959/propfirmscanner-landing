@@ -32,6 +32,8 @@ interface Choix {
   key: string
   label: string
   detail?: string
+  /** Etiquette courte a cote du nom, par exemple une campagne a duree limitee. */
+  badge?: string | null
 }
 
 interface Etape {
@@ -74,6 +76,8 @@ export function AccountConfigurator({
         return {
           key: p.slug,
           label: p.nom,
+          // Une campagne a duree limitee le dit des le choix du programme.
+          badge: p.statut === 'limited_offer' ? COPY.comparison.limitedOffer : null,
           detail:
             (p.accroche ?? (p.type === 'instant' ? COPY.configurator.noEvaluation : COPY.configurator.evaluation)) +
             (moinsCher?.prix != null ? ` · ${COPY.configurator.fromPrice(prixPlan(moinsCher.prix, moinsCher))}` : ''),
@@ -133,7 +137,14 @@ export function AccountConfigurator({
                       onClick={() => etape.choisir(c.key)}
                       className={cx(CHOICE, actif ? CHOICE_ACTIVE : CHOICE_IDLE)}
                     >
-                      <span className={cx('text-sm font-semibold', actif && 'text-accent')}>{c.label}</span>
+                      <span className="flex flex-wrap items-center gap-1.5">
+                        <span className={cx('text-sm font-semibold', actif && 'text-accent')}>{c.label}</span>
+                        {c.badge && (
+                          <span className="rounded border border-warning/40 bg-warning/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-warning">
+                            {c.badge}
+                          </span>
+                        )}
+                      </span>
                       {c.detail && <span className="text-xs text-text-muted tabular-nums">{c.detail}</span>}
                     </button>
                   )
@@ -279,6 +290,12 @@ export function ProgramComparison({ sel }: { sel: FirmSelection }) {
           return (
             <article key={p.slug} className={cx(CARD, 'flex flex-col gap-1.5 p-4')}>
               {p.accroche && <span className={EYEBROW}>{p.accroche}</span>}
+              {p.statut === 'limited_offer' && (
+                <span className="inline-flex w-fit items-center gap-1 rounded-md border border-warning/40 bg-warning/10 px-2 py-0.5 text-[11px] font-semibold text-warning">
+                  {COPY.comparison.limitedOffer}
+                  {p.offreFin ? ` · ${COPY.comparison.endsOn(p.offreFin)}` : ''}
+                </span>
+              )}
               {/* Nom du programme plus present (commentaire du 22/09). */}
               <h3 className="border-l-4 border-accent pl-2.5 font-display text-[22px] font-bold leading-tight text-text-primary">{p.nom}</h3>
               {p.resume && <span className="text-sm leading-relaxed text-text-muted">{p.resume}</span>}
