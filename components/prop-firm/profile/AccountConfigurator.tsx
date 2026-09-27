@@ -174,7 +174,10 @@ export function AccountConfigurator({
                     {prixRemise(remise, plan, offre)}
                     <span className="ml-2 align-middle text-base font-normal text-text-muted line-through">{prixPlan(plan.prix, plan)}</span>
                   </p>
-                  <p className="mt-1 text-sm font-semibold text-accent">{COPY.configurator.withCode(pct(offre.remise), offre.code)}</p>
+                  {/* 27/09 : l'economie se lit d'un coup d'oeil, comme dans le hero. */}
+                  <p className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-accent-hover px-2.5 py-1 font-display text-sm font-bold text-white">
+                    {COPY.configurator.withCode(pct(offre.remise), offre.code)}
+                  </p>
                 </>
               ) : (
                 <p className="font-display text-[38px] font-bold leading-none tabular-nums">{prixPlan(plan.prix, plan)}</p>
