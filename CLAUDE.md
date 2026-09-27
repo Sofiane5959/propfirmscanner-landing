@@ -2,7 +2,10 @@
 
 Comparateur de prop trading firms avec tunnel d'affiliation.
 Next.js 14.2.3, TypeScript, Tailwind, Supabase, next-intl.
-Déploiement Vercel via GitHub Desktop — pas de git en ligne de commande.
+Déploiement Vercel à chaque push. Claude committe et pousse lui-même sur
+`palette-2c` (décision de Sofiane, 27 septembre 2026, qui n'a pas toujours
+GitHub Desktop sous la main). `main` reste manuelle : jamais de push ni de
+fusion vers `main` sans demande explicite, puisqu'elle sert le site public.
 
 ## Pièges connus
 

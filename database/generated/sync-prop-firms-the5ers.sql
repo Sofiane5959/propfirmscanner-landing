@@ -21,16 +21,6 @@ from prop_firms where slug = 'the5ers';
 
 begin;
 
--- VERROU : cette firme n'est pas encore publiee (ni dans data/firms/rollout.ts,
--- ni dans data/firms/legacy). Ses copies prop_firms ne doivent pas changer avant
--- la publication de sa page : ce bloc annule tout. Il disparait tout seul du
--- fichier genere des que la firme est activee dans rollout.ts.
-do $garde$
-begin
-  raise exception 'the5ers n''est pas encore publiee : ce SQL ne doit pas etre execute.';
-end
-$garde$;
-
 do $ctrl$
 begin
   if not exists (select 1 from prop_firms where slug = 'the5ers') then

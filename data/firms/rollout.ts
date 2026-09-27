@@ -22,6 +22,7 @@ export const FIRM_PROFILE_ROLLOUT: Readonly<Record<string, readonly string[]>> =
   futureselite: [TOUTES],
   ftmo: [TOUTES],
   earn2trade: [TOUTES],
+  the5ers: [TOUTES],
 }
 
 export function profilActif(slug: string, locale: string): boolean {
