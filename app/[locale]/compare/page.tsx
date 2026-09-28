@@ -180,7 +180,7 @@ export default async function ComparePage() {
 // Loading skeleton
 function CompareSkeleton() {
   return (
-    <div className="min-h-screen bg-bg-elevated pt-20 px-4">
+    <div className="min-h-screen bg-bg-base pt-20 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header skeleton */}
         <div className="mb-8">

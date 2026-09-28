@@ -2198,7 +2198,7 @@ export default function ComparePageClient({ firms, shadowFirms = [], campagneSlu
   }
 
   return (
-    <div className="min-h-screen bg-bg-elevated pb-20">
+    <div className="min-h-screen bg-bg-base pb-20">
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
       {/* REVIEW MODAL */}
