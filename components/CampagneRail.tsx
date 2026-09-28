@@ -104,22 +104,30 @@ export function CampagneRail({ campagne }: { campagne: Campagne | null }) {
               className="h-9 w-9 shrink-0 rounded-lg border border-border bg-white object-contain p-1 lg:h-11 lg:w-11"
             />
           )}
-          <p className="font-display text-sm font-bold text-text-primary lg:text-base">{campagne.nom}</p>
+          <div className="min-w-0 lg:contents">
+            <p className="font-display text-sm font-bold text-text-primary lg:text-base">{campagne.nom}</p>
+            {/* Telephone : le taux et le temps restant sur une seule ligne. */}
+            <p className="flex items-baseline gap-2 lg:hidden">
+              <span className="font-display text-lg font-bold leading-none text-accent">{pourcent} OFF</span>
+              <span className="whitespace-nowrap text-[11px] font-semibold uppercase tracking-wide text-deal">
+                {temps} left
+              </span>
+            </p>
+          </div>
         </div>
 
         <p className="hidden font-display text-3xl font-bold leading-none text-accent lg:block lg:text-center">
           {pourcent} OFF
         </p>
-        <p className="font-display text-xl font-bold leading-none text-accent lg:hidden">{pourcent} OFF</p>
 
         {campagne.accroche && (
           <p className="hidden text-xs leading-relaxed text-text-secondary lg:block lg:text-center">{campagne.accroche}</p>
         )}
 
-        {/* Le compte a rebours porte l'urgence : pastille coloree, chiffres a
-            largeur fixe pour qu'ils ne sautent pas a chaque seconde, et visible
-            des le petit ecran — il ne restait qu'au bureau. */}
-        <p className="hidden items-center justify-center gap-1.5 rounded-lg bg-deal-subtle px-2 py-1 text-[11px] font-semibold uppercase tracking-wider text-deal sm:inline-flex lg:flex">
+        {/* Le compte a rebours porte l'urgence : pastille coloree et chiffres a
+            largeur fixe, pour qu'ils ne sautent pas a chaque seconde. Reserve au
+            rail ; sous 1024 px, le temps restant est deja sur la ligne du taux. */}
+        <p className="hidden items-center justify-center gap-1.5 rounded-lg bg-deal-subtle px-2 py-1 text-[11px] font-semibold uppercase tracking-wider text-deal lg:flex">
           Ends in <span className="font-mono tabular-nums">{temps}</span>
         </p>
 
@@ -127,7 +135,7 @@ export function CampagneRail({ campagne }: { campagne: Campagne | null }) {
           href={campagne.href}
           target="_blank"
           rel="sponsored noopener noreferrer"
-          className="ml-auto flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-accent-hover px-4 text-sm font-medium text-white hover:brightness-110 lg:ml-0"
+          className="ml-auto mr-7 flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-accent-hover px-4 text-sm font-medium text-white hover:brightness-110 lg:ml-0 lg:mr-0"
         >
           Get {pourcent} off
         </a>
