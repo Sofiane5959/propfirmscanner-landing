@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import { Metadata } from 'next'
 import { createClient } from '@supabase/supabase-js'
 import ComparePageClient from './ComparePageClient'
+import { campagneEnCours } from '@/lib/campagne'
 import { generateDynamicAlternates, localeHref } from '@/lib/seo'
 
 // Static Supabase client (no cookies - works for public data)
@@ -162,7 +163,11 @@ export default async function ComparePage() {
       
       {/* Main Content */}
       <Suspense fallback={<CompareSkeleton />}>
-        <ComparePageClient firms={firmsList} shadowFirms={shadowFirmsList} />
+        <ComparePageClient
+          firms={firmsList}
+          shadowFirms={shadowFirmsList}
+          campagneSlug={campagneEnCours('en')?.slug ?? null}
+        />
       </Suspense>
     </>
   )

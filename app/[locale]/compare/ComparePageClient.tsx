@@ -625,6 +625,12 @@ interface ShadowFirm {
 interface ComparePageClientProps {
   firms: PropFirm[]
   shadowFirms?: ShadowFirm[]
+  /**
+   * La firme qui porte la campagne datee du moment, lue dans les fiches. Elle
+   * ouvre la liste et porte le badge Top Pick tant que la campagne dure, puis
+   * reprend sa place toute seule.
+   */
+  campagneSlug?: string | null
 }
 
 interface FilterState {
@@ -1343,6 +1349,7 @@ const PropFirmCard = ({
   hasReviewed,
   payoutAggregate,
   onPayout,
+  estCampagne,
   t,
 }: { 
   firm: PropFirm
@@ -1359,10 +1366,12 @@ const PropFirmCard = ({
   hasReviewed: boolean
   payoutAggregate: PayoutAggregate | null
   onPayout: () => void
+  estCampagne?: boolean
   t: Record<string, string>
 }) => {
   const hasDiscount = remiseActive(firm)
-  const isTopPick = firm.priority_tier === 1
+  // Top Pick : coup de coeur editorial en base, ou campagne datee en cours.
+  const isTopPick = firm.priority_tier === 1 || estCampagne === true
   
   if (isCompact) {
     return (
@@ -1740,7 +1749,7 @@ const ShadowPropFirmCard = ({ firm }: { firm: ShadowFirm }) => {
 // =====================================================
 // MAIN COMPONENT
 // =====================================================
-export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePageClientProps) {
+export default function ComparePageClient({ firms, shadowFirms = [], campagneSlug = null }: ComparePageClientProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const pathname = usePathname()
@@ -2075,6 +2084,11 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
       result = result.filter(remiseActive)
     }
     result.sort((a, b) => {
+      // 0. La campagne du moment ouvre la liste (28 septembre 2026).
+      const aCampagne = campagneSlug != null && a.slug === campagneSlug ? 0 : 1
+      const bCampagne = campagneSlug != null && b.slug === campagneSlug ? 0 : 1
+      if (aCampagne !== bCampagne) return aCampagne - bCampagne
+
       // 1. Three groups, in this order (23 September 2026):
       //      a live promo code, then an affiliate link without a code, then
       //      the rest. A firm we get paid on, and where the visitor saves
@@ -2100,7 +2114,7 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
       }
     })
     return result
-  }, [processedFirms, firmMarkets, firmChallengeTypes, filters.verifiedOnly, filters.markets, filters.platforms, filters.tradingStyles, filters.ratings, filters.challengeTypes, filters.bestFor, filters.priceRange, filters.hasDiscount, debouncedSearch, sortBy])
+  }, [campagneSlug, processedFirms, firmMarkets, firmChallengeTypes, filters.verifiedOnly, filters.markets, filters.platforms, filters.tradingStyles, filters.ratings, filters.challengeTypes, filters.bestFor, filters.priceRange, filters.hasDiscount, debouncedSearch, sortBy])
 
   // ============================================================
   // SHADOW SEARCH
@@ -2449,6 +2463,7 @@ export default function ComparePageClient({ firms, shadowFirms = [] }: ComparePa
                     hasReviewed={userReviewedFirms.has(firm.id)}
                     payoutAggregate={payoutAggregates.get(firm.id) || null}
                     onPayout={() => setPayoutModalFirmId(firm.id)}
+                    estCampagne={campagneSlug != null && firm.slug === campagneSlug}
                     t={t}
                   />
                 ))}
