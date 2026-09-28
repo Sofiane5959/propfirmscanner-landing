@@ -70,6 +70,54 @@ def contenu_index(slugs):
     return "\n".join(lignes)
 
 
+def contenu_offres(offres):
+    """data/firms/offres.ts : l'offre de chaque fiche, et rien d'autre.
+
+    Les listes (/compare, /deals, ticker) doivent annoncer la meme remise que
+    la fiche et le bandeau. Importer les fiches completes suffirait, mais elles
+    pesent 300 Ko : ce fichier-ci ne porte que ce qu'une carte affiche.
+    """
+    def litteral(v):
+        if v is None:
+            return "null"
+        if isinstance(v, bool):
+            return "true" if v else "false"
+        if isinstance(v, (int, float)):
+            return repr(v)
+        return "'" + str(v).replace("\\", "\\\\").replace("'", "\\'") + "'"
+
+    lignes = [
+        "// GENERE PAR scripts/firms_build.py — ne pas modifier a la main.",
+        "// L'offre de chaque fiche, telle que l'onglet Offre la decrit. Source des",
+        "// remises annoncees dans les listes ; la fiche complete reste data/firms/<slug>.json.",
+        "",
+        "export interface OffreFiche {",
+        "  nom: string",
+        "  logoUrl: string | null",
+        "  code: string",
+        "  /** Fraction : 0.5 pour 50 %. */",
+        "  remise: number",
+        "  expireLe: string | null",
+        "  accroche: string | null",
+        "  /** Taux d'une campagne datee, qui remplace `remise` jusqu'a `campagneFin`. */",
+        "  remiseCampagne: number | null",
+        "  campagneFin: string | null",
+        "  statut: string",
+        "}",
+        "",
+        "export const OFFRES_FICHES: Record<string, OffreFiche> = {",
+    ]
+    for slug in sorted(offres):
+        o = offres[slug]
+        lignes.append(f"  '{slug}': {{")
+        for cle in ("nom", "logoUrl", "code", "remise", "expireLe", "accroche",
+                    "remiseCampagne", "campagneFin", "statut"):
+            lignes.append(f"    {cle}: {litteral(o.get(cle))},")
+        lignes.append("  },")
+    lignes += ["}", ""]
+    return "\n".join(lignes)
+
+
 def tableurs():
     return sorted(t for t in glob.glob(os.path.join(FICHES, "*.xlsx"))
                   if not os.path.basename(t).startswith("~$"))
@@ -79,6 +127,7 @@ def generer():
     """Retourne (sorties {chemin: texte}, erreurs, avertissements par fiche)."""
     sorties, erreurs, avertissements = {}, [], {}
     slugs = []
+    offres = {}
     publiees = firmes_publiees()
     for tableur in tableurs():
         conversion.avertissements.clear()
@@ -96,7 +145,10 @@ def generer():
         sorties[os.path.join(FICHES, f"{slug}.json")] = texte_json
         sorties[chemin_sql(slug)] = generer_sql(fiche, valeurs, texte_json, rel(tableur), slug in publiees)
         slugs.append(slug)
+        if fiche.get("offre"):
+            offres[slug] = dict(fiche["offre"], nom=fiche.get("nom"), logoUrl=fiche.get("logoUrl"))
     sorties[os.path.join(FICHES, "index.ts")] = contenu_index(sorted(slugs))
+    sorties[os.path.join(FICHES, "offres.ts")] = contenu_offres(offres)
     return sorties, erreurs, avertissements
 
 

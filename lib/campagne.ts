@@ -12,37 +12,38 @@
 // La plus forte remise gagne. A egalite, celle qui se termine le plus tot.
 // =============================================================================
 
-import { FIRM_SHEETS } from '@/data/firms'
+import { OFFRES_FICHES } from '@/data/firms/offres'
 import { buildAffiliateUrl } from '@/lib/affiliate'
 import type { Campagne } from '@/components/CampagneRail'
 
 export function campagneEnCours(locale: string, maintenant = Date.now()): Campagne | null {
-  const candidates = Object.values(FIRM_SHEETS)
-    .map((sheet) => {
-      const offre = sheet.offre
-      if (!offre || offre.statut !== 'confirmed') return null
+  const candidates = Object.entries(OFFRES_FICHES)
+    .map(([slug, offre]) => {
+      if (offre.statut !== 'confirmed') return null
       // Seule une campagne datee a sa place dans un bandeau a compte a rebours.
       if (offre.remiseCampagne == null || !offre.campagneFin) return null
       const fin = new Date(offre.campagneFin).getTime()
       if (Number.isNaN(fin) || fin <= maintenant) return null
-      return { sheet, offre: { ...offre, remise: offre.remiseCampagne, expireLe: offre.campagneFin }, fin }
+      return { slug, offre: { ...offre, remise: offre.remiseCampagne, expireLe: offre.campagneFin }, fin }
     })
     .filter((x): x is NonNullable<typeof x> => x != null)
     .sort((a, b) => b.offre.remise - a.offre.remise || a.fin - b.fin)
 
   const gagnante = candidates[0]
   if (!gagnante) return null
-  const { sheet, offre } = gagnante
+  const { slug, offre } = gagnante
   return {
-    slug: sheet.slug,
-    nom: sheet.nom,
-    logoUrl: sheet.logoUrl,
+    slug,
+    nom: offre.nom,
+    logoUrl: offre.logoUrl,
     code: offre.code,
     remise: offre.remise,
     accroche: offre.accroche,
     finLe: offre.expireLe as string,
     // Meme sortie que les boutons des fiches : /api/go, avec son propre
-    // placement pour que les clics du bandeau se mesurent a part.
-    href: buildAffiliateUrl(sheet.slug, { placement: 'campagne_rail', locale }),
+    // placement pour que les clics du bandeau se mesurent a part. C'est le
+    // tunnel qui choisit la destination — y compris le choix de checkout que
+    // le partenaire exige pour appliquer le coupon (voir optionParDefaut).
+    href: buildAffiliateUrl(slug, { placement: 'campagne_rail', locale }),
   }
 }

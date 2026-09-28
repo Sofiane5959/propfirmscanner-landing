@@ -8,6 +8,7 @@ import { Copy, CheckCircle2, BadgeCheck, ShieldCheck, ExternalLink } from 'lucid
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { AFFILIATE_LINK_PROPS } from '@/lib/affiliate'
 import { resolvePromotion } from '@/lib/promotion'
+import { appliquerOffresDesFiches } from '@/lib/offres-fiches'
 import { useHideOnScrollDown } from '@/hooks/useHideOnScrollDown'
 
 // =====================================================
@@ -215,7 +216,10 @@ export default function PromoTicker({ deals: initialDeals = [] }: PromoTickerPro
           // "no end date", not "expired". Dropping the finished ones here keeps
           // the banner from advertising an offer the firm page no longer
           // honours — the two used to disagree.
-          const live = data.filter((d) => resolvePromotion(d).isActive)
+        // L'offre d'une firme qui a une fiche vient de son tableur, pas de la
+        // base : c'est elle qui porte la campagne datee, et elle expire toute
+        // seule. Les autres firmes ressortent inchangees.
+        const live = appliquerOffresDesFiches(data).filter((d) => resolvePromotion(d).isActive)
           setDeals(live)
         }
       } catch (err) {

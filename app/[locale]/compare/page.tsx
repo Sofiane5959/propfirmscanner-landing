@@ -3,6 +3,7 @@ import { Metadata } from 'next'
 import { createClient } from '@supabase/supabase-js'
 import ComparePageClient from './ComparePageClient'
 import { campagneEnCours } from '@/lib/campagne'
+import { appliquerOffresDesFiches } from '@/lib/offres-fiches'
 import { generateDynamicAlternates, localeHref } from '@/lib/seo'
 
 // Static Supabase client (no cookies - works for public data)
@@ -145,7 +146,10 @@ export default async function ComparePage() {
     console.error('Error fetching shadow firms:', shadowResult.error)
   }
   
-  const firmsList = listedResult.data || []
+  // 28/09/2026 : le tableur prime sur prop_firms pour les firmes qui ont une
+  // fiche. Sans cela, le bandeau annoncait 60 % au-dessus d'une carte a 50 %,
+  // le temps qu'un SQL soit execute a la main.
+  const firmsList = appliquerOffresDesFiches(listedResult.data || [])
   const shadowFirmsList = shadowResult.data || []
   const structuredData = generateStructuredData(firmsList)
 

@@ -60,7 +60,37 @@ export const estIncertain = (statut: Statut | null | undefined) => Boolean(statu
  * dure, le taux permanent ensuite. Rien a modifier le jour ou la campagne
  * s'arrete — c'est la date du tableur qui decide.
  */
-export function offreDuJour(offre: SheetOffre, maintenant = Date.now()): SheetOffre {
+/**
+ * Le choix de checkout a poser quand le visiteur n'en a fait aucun.
+ *
+ * Certains partenaires refusent un lien profond incomplet. Earn2Trade renvoie
+ * /checkout?plan=TCP25&discount=scanned vers son selecteur de plans — prix
+ * plein, coupon nulle part — tant que le flux de donnees (`platform`) n'est pas
+ * dans l'URL ; avec lui, la meme URL reste sur le checkout et affiche
+ * « Coupon: scanned, -90 $ ». Le configurateur de la fiche transmet ce choix,
+ * mais un lien qui ne vient pas de lui — bandeau de campagne, carte /compare,
+ * /deals, favoris — n'avait rien a transmettre, et annoncait donc une remise
+ * que la page d'arrivee n'appliquait pas.
+ *
+ * La premiere option de l'onglet Options fait office de defaut : c'est celle
+ * que la fiche presente en premier, et le visiteur peut encore en changer chez
+ * le partenaire. Les options reservees a certains programmes sont ecartees
+ * d'abord : rien ici ne dit quel programme le visiteur regardait.
+ */
+export function optionParDefaut(sheet: FirmSheet): SheetOption | null {
+  const options = sheet.optionsAchat.filter((o) => o.parametre && o.valeur)
+  return options.find((o) => o.programmes.length === 0) ?? options[0] ?? null
+}
+
+export interface OffreDatee {
+  remise: number
+  expireLe: string | null
+  accroche: string | null
+  remiseCampagne: number | null
+  campagneFin: string | null
+}
+
+export function offreDuJour<T extends OffreDatee>(offre: T, maintenant = Date.now()): T {
   if (offre.remiseCampagne == null || !offre.campagneFin) return offre
   const fin = new Date(offre.campagneFin).getTime()
   if (Number.isNaN(fin) || fin <= maintenant) {

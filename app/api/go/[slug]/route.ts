@@ -23,6 +23,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import crypto from 'crypto'
+import { FIRM_SHEETS } from '@/data/firms'
+import { optionParDefaut } from '@/lib/firm-profile'
 
 // ============================================================
 // CONFIG
@@ -213,8 +215,26 @@ export async function GET(
   const SAFE = /^[a-z0-9_-]{1,40}$/i
   const rawOptKey = url.searchParams.get('opt_key')
   const rawOptValue = url.searchParams.get('opt_value')
-  const optKey = rawOptKey && SAFE.test(rawOptKey) ? rawOptKey : null
-  const optValue = rawOptValue && SAFE.test(rawOptValue) ? rawOptValue : null
+  const explicitOptKey = rawOptKey && SAFE.test(rawOptKey) ? rawOptKey : null
+  const explicitOptValue = rawOptValue && SAFE.test(rawOptValue) ? rawOptValue : null
+
+  // Le choix que le partenaire exige pour ouvrir son checkout, quand le lien
+  // n'en porte pas. Sans le flux de donnees, Earn2Trade renvoie le visiteur sur
+  // son selecteur de plans, au prix plein et sans coupon : le bandeau annoncait
+  // -60 % et la page d'arrivee affichait 150 $. Le defaut vient de la fiche
+  // (onglet Options), jamais d'ici, et le choix du configurateur le remplace.
+  const fiche = FIRM_SHEETS[slug]
+  const defaut = fiche ? optionParDefaut(fiche) : null
+  const optKey = explicitOptKey || (defaut && SAFE.test(defaut.parametre) ? defaut.parametre : null)
+  const optValue =
+    explicitOptKey && explicitOptValue
+      ? explicitOptValue
+      : defaut && SAFE.test(defaut.valeur)
+      ? defaut.valeur
+      : null
+  // Le defaut complete le lien, il ne corrige pas une destination qui a deja
+  // tranche : une URL qui porte deja ce parametre garde sa valeur.
+  const optEstDefaut = !explicitOptKey
   
   // ----------------------------------------------------------
   // 1. Look up the firm
@@ -407,7 +427,9 @@ export async function GET(
   if (wantsOpt || wantsSubid) {
     try {
       const dest = new URL(destination)
-      if (optKey && optValue) dest.searchParams.set(optKey, optValue)
+      if (optKey && optValue && !(optEstDefaut && dest.searchParams.has(optKey))) {
+        dest.searchParams.set(optKey, optValue)
+      }
       if (subidParam && clickId) dest.searchParams.set(subidParam, clickId)
       finalDestination = dest.toString()
     } catch {

@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { Shield } from 'lucide-react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { DealsGrid, PromoCodesBanner } from '@/components/DealsGrid';
+import { appliquerOffresDesFiches } from '@/lib/offres-fiches';
 
 // =============================================================================
 // LOCALE DETECTION
@@ -121,7 +122,7 @@ function useDealsStats(): { stats: DealsStats | null; loading: boolean } {
       // count as active codes or partners.
       const { data, error } = await supabase
         .from('prop_firms')
-        .select('discount_code, discount_percent, affiliate_url')
+        .select('slug, discount_code, discount_percent, affiliate_url')
         .eq('listing_status', 'listed');
 
       if (error || !data) {
@@ -129,21 +130,25 @@ function useDealsStats(): { stats: DealsStats | null; loading: boolean } {
         return;
       }
 
+      // Meme offre que les cartes et que les fiches : sinon « Max Discount »
+      // annonce 50 % pendant qu'une campagne a 60 % tourne.
+      const rows = appliquerOffresDesFiches(data);
+
       // "Active codes" = listed firms with a non-empty discount code.
       // We deliberately don't count "via link" deals here because the
       // header label says "Active Codes" — those firms have no code.
-      const activeCodes = data.filter(
+      const activeCodes = rows.filter(
         f => f.discount_code && f.discount_code.trim().length > 0
       ).length;
 
       // "Max discount" = highest discount % among any listed firm with a deal.
-      const maxDiscount = data.reduce((max, f) => {
+      const maxDiscount = rows.reduce((max: number, f) => {
         const d = f.discount_percent ?? 0;
         return d > max ? d : max;
       }, 0);
 
       // "Partners" = listed firms with an affiliate URL set.
-      const partnersCount = data.filter(
+      const partnersCount = rows.filter(
         f => f.affiliate_url && f.affiliate_url !== '#'
       ).length;
 
