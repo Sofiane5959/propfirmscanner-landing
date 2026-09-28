@@ -116,8 +116,11 @@ export function CampagneRail({ campagne }: { campagne: Campagne | null }) {
           <p className="hidden text-xs leading-relaxed text-text-secondary lg:block lg:text-center">{campagne.accroche}</p>
         )}
 
-        <p className="hidden text-center text-[11px] uppercase tracking-wider text-text-muted lg:block">
-          Ends in <span className="font-mono text-text-primary">{temps}</span>
+        {/* Le compte a rebours porte l'urgence : pastille coloree, chiffres a
+            largeur fixe pour qu'ils ne sautent pas a chaque seconde, et visible
+            des le petit ecran — il ne restait qu'au bureau. */}
+        <p className="hidden items-center justify-center gap-1.5 rounded-lg bg-deal-subtle px-2 py-1 text-[11px] font-semibold uppercase tracking-wider text-deal sm:inline-flex lg:flex">
+          Ends in <span className="font-mono tabular-nums">{temps}</span>
         </p>
 
         <a
