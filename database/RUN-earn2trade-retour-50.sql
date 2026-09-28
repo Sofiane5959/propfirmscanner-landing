@@ -1,7 +1,14 @@
 -- =============================================================================
 -- EARN2TRADE — retour a l'offre permanente : SCANNED a 50 %
 -- =============================================================================
--- A EXECUTER LE 1er OCTOBRE 2026. Ce fichier n'est pas optionnel : la
+-- A EXECUTER LE 1er OCTOBRE 2026.
+--
+-- TROIS GESTES LE MEME JOUR, dans cet ordre :
+--   1. ce fichier, pour la base ;
+--   2. RUN-earn2trade-retour-tier.sql, pour retirer la mise en avant ;
+--   3. demander a Claude de remettre le tableur a 50 % sans date de fin, et de
+--      pousser — sinon la fiche affichera encore 60 % jusqu'a l'expiration,
+--      puis plus rien du tout. Ce fichier n'est pas optionnel : la
 -- promotion de fin septembre porte une date de fin, donc sans lui la remise
 -- disparait de /compare et de /deals au lieu de revenir a 50 %.
 --

@@ -383,12 +383,12 @@
   ],
   "offre": {
     "code": "SCANNED",
-    "remise": 0.5,
-    "portee": "non_confirmee",
-    "checkoutVerifie": false,
+    "remise": 0.6,
+    "portee": "universelle_verifiee",
+    "checkoutVerifie": true,
     "programmesEligibles": [],
     "taillesEligibles": [],
-    "expireLe": null,
+    "expireLe": "2026-10-01T05:00:00+00:00",
     "statut": "confirmed"
   },
   "conditions": {
@@ -435,6 +435,12 @@
       "libelle": "Commissions",
       "montant": "Per contract",
       "note": "Once funded, per contract and per side: about $0.54 exchange fee ($0.46 on micros), $0.10 Rithmic, $0.02 NFA, plus platform fees.",
+      "programmes": []
+    },
+    {
+      "libelle": "End of September offer",
+      "montant": "-60% for 3 months",
+      "note": "Until 30 September, end of day Central Time, code SCANNED takes 60% off instead of 50%, on the first three monthly billings. Resets are cheaper over the same three months: $55 on TCP25, $65 on TCP50, $60 on GAU50. After that, the code returns to 50% on every billing.",
       "programmes": []
     }
   ],

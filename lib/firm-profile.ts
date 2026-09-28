@@ -55,7 +55,15 @@ export const estIncertain = (statut: Statut | null | undefined) => Boolean(statu
  * decision : toutes les sections recoivent cette fiche.
  */
 export function ficheAffichable(sheet: FirmSheet): FirmSheet {
-  return sheet.offre && sheet.offre.statut !== 'confirmed' ? { ...sheet, offre: null } : sheet
+  const offre = sheet.offre
+  if (!offre) return sheet
+  // 28/09/2026 : une offre datee disparait d'elle-meme le jour ou elle expire.
+  // Sans cela, une campagne de trois jours resterait affichee jusqu'a ce que
+  // quelqu'un pense a modifier le tableur — et la page promettrait une remise
+  // que le partenaire n'accorde plus.
+  const fin = offre.expireLe ? new Date(offre.expireLe) : null
+  const expiree = fin != null && !Number.isNaN(fin.getTime()) && fin.getTime() <= Date.now()
+  return offre.statut !== 'confirmed' || expiree ? { ...sheet, offre: null } : sheet
 }
 
 export function cellule(valeur: string | null | undefined, statut: Statut | null | undefined): Cellule | null {
