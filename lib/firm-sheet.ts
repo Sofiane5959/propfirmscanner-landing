@@ -121,6 +121,8 @@ export interface SheetOffre {
   programmesEligibles: string[]
   taillesEligibles: number[]
   expireLe: string | null
+  /** Phrase courte pour le bandeau de campagne : ce que l'offre donne en plus. */
+  accroche: string | null
   /**
    * Seule une offre « confirmed » s'affiche (code, remise, Copy code, Claim deal).
    * Le partenaire doit avoir confirme le code, le pourcentage et le lien.

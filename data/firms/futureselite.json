@@ -790,6 +790,7 @@
     "programmesEligibles": [],
     "taillesEligibles": [],
     "expireLe": null,
+    "accroche": null,
     "statut": "confirmed"
   },
   "conditions": {

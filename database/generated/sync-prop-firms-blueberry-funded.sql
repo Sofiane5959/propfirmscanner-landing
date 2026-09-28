@@ -2,7 +2,7 @@
 -- NE PAS MODIFIER A LA MAIN : corriger le tableur, puis relancer
 --   npm run firms:build
 -- `npm run firms:check` echoue si ce fichier ne correspond plus a la fiche.
--- Fiche : data/firms/blueberry-funded.json (sha256:a21dac6ff1d0b0656a7e0cbb6af4fedb0d18fda85b16f87eb3262234c5e9dd14)
+-- Fiche : data/firms/blueberry-funded.json (sha256:8735f228219ef0ef1d9ddc49b43753229326d5c0f7feb229c08b4dd38db7681b)
 --
 -- Recopie dans prop_firms les colonnes lues par /compare, /deals, le bandeau
 -- des offres, /best-for, le quiz, les favoris et les cartes Similar firms.

@@ -11,6 +11,8 @@ import PromoTicker from '@/components/PromoTicker'
 import Footer from '@/components/Footer'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 import { NewsletterPopup } from '@/components/NewsletterPopup'
+import { CampagneRail } from '@/components/CampagneRail'
+import { campagneEnCours } from '@/lib/campagne'
 import '../globals.css'
 import { generateAlternates, localeHref } from '@/lib/seo'
 
@@ -169,6 +171,8 @@ export default function LocaleLayout({
           <main className="pt-16">{children}</main>
           <Footer />
           <NewsletterPopup />
+          {/* Campagne datee, choisie dans les fiches : rien n'est ecrit ici. */}
+          <CampagneRail campagne={campagneEnCours(params.locale)} />
         </AuthProvider>
       </body>
     </html>
