@@ -65,7 +65,13 @@ fusion vers `main` sans demande explicite, puisqu'elle sert le site public.
   Ne jamais déduire un chiffre par analogie : les codes de plan Earn2Trade
   étaient `GAU50`, pas `GM50`, et la déduction a coûté plusieurs allers-retours.
 - Ne pas promettre au visiteur ce que le partenaire ne garantit pas. Le coupon
-  n'est certain que sur un deep link vers le checkout.
+  n'est certain que sur un deep link vers le checkout — et un deep link
+  incomplet ne vaut pas mieux : sans `platform`, Earn2Trade renvoie
+  `/checkout?plan=TCP25&discount=scanned` vers son sélecteur de plans, prix
+  plein et champ coupon vide, pendant que le bandeau annonce −60 %. Le tunnel
+  pose donc le premier choix de l'onglet Options de la fiche quand le lien n'en
+  porte pas (`optionParDefaut`). Vérifier une remise se fait sur la page
+  d'arrivée, pas sur l'URL : celle-ci portait bien le code.
 - Fiches firmes : `data/firms/<slug>.xlsx` est la seule source éditable.
   `npm run firms:build` régénère `data/firms/<slug>.json`, `data/firms/index.ts`
   et `database/generated/sync-prop-firms-<slug>.sql` ; `npm run firms:check`
