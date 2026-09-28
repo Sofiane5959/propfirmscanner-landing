@@ -138,7 +138,7 @@ export function CampagneRail({ campagne }: { campagne: Campagne | null }) {
           href={campagne.href}
           target="_blank"
           rel="sponsored noopener noreferrer"
-          className="ml-auto mr-7 flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-accent-hover px-4 text-sm font-medium text-white hover:brightness-110 lg:ml-0 lg:mr-0"
+          className="ml-auto mr-10 flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-accent-hover px-4 text-sm font-medium text-white hover:brightness-110 lg:ml-0 lg:mr-0"
         >
           Get {pourcent} off
         </a>
