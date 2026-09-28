@@ -95,7 +95,7 @@ export function CampagneRail({ campagne }: { campagne: Campagne | null }) {
       </button>
 
       <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 lg:flex-col lg:items-stretch lg:gap-2.5 lg:px-4 lg:py-4">
-        <div className="flex items-center gap-2.5 lg:flex-col lg:items-center lg:text-center">
+        <div className="flex min-w-0 flex-1 items-center gap-2.5 lg:flex-col lg:flex-none lg:items-center lg:text-center">
           {campagne.logoUrl && (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -108,7 +108,7 @@ export function CampagneRail({ campagne }: { campagne: Campagne | null }) {
             {/* Telephone : le temps restant suit le nom, le taux tient la ligne
                 du dessous. Sinon « 60% OFF » se coupe en deux a 375 px. */}
             <p className="flex items-baseline gap-2 lg:justify-center">
-              <span className="font-display text-sm font-bold text-text-primary lg:text-base">{campagne.nom}</span>
+              <span className="truncate font-display text-sm font-bold text-text-primary lg:text-base">{campagne.nom}</span>
               <span className="whitespace-nowrap text-[11px] font-semibold uppercase tracking-wide text-deal lg:hidden">
                 {temps} left
               </span>
