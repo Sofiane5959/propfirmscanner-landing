@@ -628,8 +628,8 @@ interface ComparePageClientProps {
   shadowFirms?: ShadowFirm[]
   /**
    * La firme qui porte la campagne datee du moment, lue dans les fiches. Elle
-   * ouvre la liste et porte le badge Top Pick tant que la campagne dure, puis
-   * reprend sa place toute seule.
+   * ouvre la liste tant que la campagne dure, puis reprend sa place toute
+   * seule. Le badge Top Pick, lui, suit lib/partenaires.ts.
    */
   campagneSlug?: string | null
 }
@@ -1350,7 +1350,6 @@ const PropFirmCard = ({
   hasReviewed,
   payoutAggregate,
   onPayout,
-  estCampagne,
   t,
 }: { 
   firm: PropFirm
@@ -1367,12 +1366,13 @@ const PropFirmCard = ({
   hasReviewed: boolean
   payoutAggregate: PayoutAggregate | null
   onPayout: () => void
-  estCampagne?: boolean
   t: Record<string, string>
 }) => {
   const hasDiscount = remiseActive(firm)
-  // Top Pick : coup de coeur editorial en base, ou campagne datee en cours.
-  const isTopPick = firm.priority_tier === 1 || estCampagne === true
+  // Top Pick : une seule firme le porte, celle que lib/partenaires.ts met en
+  // tete (28 septembre 2026, demande de Sofiane). Avant, la base le donnait a
+  // toutes les firmes de tier 1 — sept badges dans la liste, donc aucun signal.
+  const isTopPick = rangPartenaire(firm.slug) === 0
   
   if (isCompact) {
     return (
@@ -2472,7 +2472,6 @@ export default function ComparePageClient({ firms, shadowFirms = [], campagneSlu
                     hasReviewed={userReviewedFirms.has(firm.id)}
                     payoutAggregate={payoutAggregates.get(firm.id) || null}
                     onPayout={() => setPayoutModalFirmId(firm.id)}
-                    estCampagne={campagneSlug != null && firm.slug === campagneSlug}
                     t={t}
                   />
                 ))}
