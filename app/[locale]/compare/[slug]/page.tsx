@@ -307,7 +307,7 @@ export default async function ComparePage({ params }: Props) {
   }[firms.length] || 'grid-cols-2'
 
   return (
-    <div className="min-h-screen bg-bg-elevated">
+    <div className="min-h-screen bg-bg-base">
       {/* Header */}
       <div className="bg-dark-700/50 border-b border-border">
         <div className="max-w-7xl mx-auto px-4 py-6">

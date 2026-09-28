@@ -69,6 +69,18 @@ const SITE_URL = 'https://www.propfirmscanner.org'
 // SEO
 // ============================================================================
 
+/**
+ * La fiche d'une firme ne sert publiquement que si la firme est activee dans
+ * data/firms/rollout.ts pour cette langue, ou si elle etait deja servie par sa
+ * fiche avant la nouvelle page (copie figee dans data/firms/legacy). Ajouter un
+ * tableur (Earn2Trade, 21 septembre 2026) ne change donc rien en ligne tant que
+ * la firme n'est pas activee : ni le rendu, ni le titre, ni les donnees
+ * structurees.
+ */
+function ficheEnLigne(slug: string, locale: string) {
+  return FIRM_SHEETS[slug] && (profilActif(slug, locale) || LEGACY_SHEETS[slug]) ? FIRM_SHEETS[slug] : undefined
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const supabase = getStaticSupabaseClient()
   const locale = params.locale || 'en'
@@ -101,7 +113,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // anglais. La description vient de la fiche, plus de l'ancien verdict
   // (pres de 400 caracteres, coupe par Google). La canonique designe la
   // version anglaise, seule declaree.
-  const ficheMeta = FIRM_SHEETS[firm.slug]
+  const ficheMeta = ficheEnLigne(firm.slug, locale)
   if (ficheMeta) {
     const titreFiche = `${firm.name} Review ${year} — Fees, Rules & Promo Codes`
     const descriptionFiche = sheetMetaDescription(ficheMeta)
@@ -297,7 +309,12 @@ export default async function PropFirmPage({ params }: Props) {
     .select(SIMILAR_COLUMNS)
     .neq('id', firm.id)
     .eq('is_futures', isFutures)
-    .order('trustpilot_rating', { ascending: false })
+    // Les firmes non listees ne sont jamais proposees en alternative : les
+    // ecarter ici laisse les 30 places aux candidates reelles.
+    .eq('listing_status', 'listed')
+    // nullsFirst: false — sans lui, un tri descendant remonte les firmes SANS
+    // note, et la section se vidait.
+    .order('trustpilot_rating', { ascending: false, nullsFirst: false })
     // Large a dessein : exiger un code promo actif elimine la plupart des
     // lignes, et demander 4 candidats pour en garder 3 ne laissait aucune
     // marge. Le tri par note fait que les 30 premieres sont les meilleures.
@@ -333,7 +350,8 @@ export default async function PropFirmPage({ params }: Props) {
       // Meme classe d'actifs ici aussi : une firme CFD n'est pas une
       // alternative a une firme futures, et le complement l'ignorait.
       .eq('is_futures', isFutures)
-      .order('trustpilot_rating', { ascending: false })
+      .eq('listing_status', 'listed')
+      .order('trustpilot_rating', { ascending: false, nullsFirst: false })
       .limit(30)
 
     similarFirms = [...similarFirms, ...((filler || []) as SimilarRow[]).filter(isComplete)]
@@ -419,7 +437,7 @@ export default async function PropFirmPage({ params }: Props) {
   // Une firme servie par sa fiche : ses prix, et seulement eux. Additionner
   // les anciens challenges comptait les plans Elite deux fois (19 offres
   // annoncees pour 15 plans).
-  const ficheDonnees = FIRM_SHEETS[firm.slug]
+  const ficheDonnees = ficheEnLigne(firm.slug, locale)
   const allPrices: number[] = (
     ficheDonnees
       ? ficheDonnees.programmes.flatMap((p) => p.plans.map((pl) => pl.prix))
@@ -556,10 +574,12 @@ export default async function PropFirmPage({ params }: Props) {
               remise: codeActif(sf) ? sf.discount_percent : null,
             }))}
         />
-      ) : FIRM_SHEETS[firm.slug] ? (
+      ) : LEGACY_SHEETS[firm.slug] ? (
         <UniversalFirmPage
           // Copie figee de production : les langues non basculees ne changent pas.
-          sheet={LEGACY_SHEETS[firm.slug] ?? FIRM_SHEETS[firm.slug]}
+          // Seules les firmes deja servies par leur fiche y passent ; une nouvelle
+          // fiche non activee garde l'ancien rendu.
+          sheet={LEGACY_SHEETS[firm.slug]}
           ctaHref={buildAffiliateUrl(firm.slug, { placement: 'hero', locale })}
           logoHref={buildAffiliateUrl(firm.slug, { placement: 'logo', locale })}
           rating={firm.trustpilot_rating ?? null}

@@ -64,8 +64,16 @@ export function InfoCards({ sheet }: { sheet: FirmSheet }) {
   // Rien d'incertain a l'ecran : une liste en attente de confirmation ne s'affiche pas.
   const categories = estIncertain(sheet.categoriesActifsStatut) ? [] : sheet.categoriesActifs
   const levierSur = !estIncertain(sheet.levierStatut)
-  const dataFeeds = Array.from(new Set(sheet.optionsAchat.filter((o) => o.type === 'data_feed').map((o) => o.nom)))
+  // Les flux choisis a l'achat, sinon ceux que la fiche liste pour information.
+  const dataFeeds = Array.from(
+    new Set([...sheet.optionsAchat.filter((o) => o.type === 'data_feed').map((o) => o.nom), ...(sheet.fluxDonnees ?? [])])
+  )
   const levierReserve = reserve(sheet.levierStatut)
+  // Icones officielles des plateformes (onglet Plateformes, colonne logo_url).
+  const logos = new Map([
+    ...sheet.plateformesDetail.filter((p) => p.logoUrl).map((p) => [p.nom, p.logoUrl as string] as const),
+    ...sheet.optionsAchat.filter((o) => o.logoUrl).map((o) => [o.nom, o.logoUrl as string] as const),
+  ])
 
   const groupes: Groupe[] = [
     { label: COPY.info.platforms, valeurs: plateformesAffichees(sheet), statut: null },
@@ -92,23 +100,28 @@ export function InfoCards({ sheet }: { sheet: FirmSheet }) {
       <Container>
         <div className={cx('grid gap-3', COLONNES[visibles.length])}>
           {visibles.map((g) => {
-            const plateformes = g.label === COPY.info.platforms
+            // Plateformes et flux de donnees portent leur logo (commentaires du 22/09).
+            const plateformes = g.label === COPY.info.platforms || g.label === COPY.info.dataFeeds
             return (
             <article key={g.label} className={cx(CARD, 'p-4')}>
-              <p className={LABEL}>{g.label}</p>
+              {/* Titre de carte plus present que le petit libelle gris (commentaire du 22/09). */}
+              <h3 className="text-sm font-bold uppercase tracking-wider text-accent">{g.label}</h3>
               <div className="mt-2 flex flex-wrap items-center gap-1.5">
                 {g.valeurs.map((v) => (
                   <span key={v} className={cx(CHIP, plateformes && 'inline-flex items-center gap-1.5 pl-1.5')}>
                     {/* Pastille a l'initiale : elle distingue les plateformes d'un
                         coup d'oeil sans reprendre un logo qui ne nous appartient pas. */}
-                    {plateformes && (
+                    {plateformes && (logos.get(v) ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={logos.get(v)!} alt="" className="h-5 w-5 shrink-0 rounded bg-white object-contain" />
+                    ) : (
                       <span
                         aria-hidden="true"
                         className="grid h-5 w-5 shrink-0 place-items-center rounded bg-dark-700 text-[10px] font-bold text-text-primary"
                       >
                         {v.charAt(0)}
                       </span>
-                    )}
+                    ))}
                     {v}
                   </span>
                 ))}

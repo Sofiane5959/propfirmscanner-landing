@@ -9,6 +9,7 @@ import {
   Sparkles, Gift, ShieldCheck,
 } from 'lucide-react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { appliquerOffresDesFiches } from '@/lib/offres-fiches';
 
 // =============================================================================
 // LOCALE DETECTION
@@ -294,7 +295,10 @@ export function PromoCodesBanner() {
         .not('discount_code', 'is', null)
         .order('discount_percent', { ascending: false })
         .limit(8);
-      setFirms(data || []);
+        // L'offre d'une firme qui a une fiche vient de son tableur, pas de la
+        // base : c'est elle qui porte la campagne datee, et elle expire toute
+        // seule. Les autres firmes ressortent inchangees.
+        setFirms(appliquerOffresDesFiches(data || []));
       setLoading(false);
     };
     fetchFirms();
@@ -479,7 +483,10 @@ export function DealsGrid() {
         setError(err.message);
         return;
       }
-      setFirms((data || []).sort(dealsSort));
+      // L'offre d'une firme qui a une fiche vient de son tableur, pas de la
+      // base : c'est elle qui porte la campagne datee, et elle expire toute
+      // seule. Les autres firmes ressortent inchangees.
+      setFirms(appliquerOffresDesFiches(data || []).sort(dealsSort));
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to load deals');
     } finally {

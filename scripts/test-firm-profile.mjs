@@ -61,7 +61,25 @@ cas('rollout.ts exporte une liste slug → langues', /FIRM_PROFILE_ROLLOUT:\s*Re
 const route = readFileSync(join(RACINE, 'app/[locale]/prop-firm/[slug]/page.tsx'), 'utf8')
 cas('la route ne passe par FirmProfilePage que via profilActif', /FIRM_SHEETS\[firm\.slug\] && profilActif\(firm\.slug, locale\)/.test(route))
 cas('la route garde UniversalFirmPage pour le retour arriere', route.includes('<UniversalFirmPage'))
+// Un nouveau tableur ne change rien en ligne tant que la firme n'est pas activee.
+cas('UniversalFirmPage ne sert que les firmes deja servies par leur fiche', /: LEGACY_SHEETS\[firm\.slug\] \? \(\s*<UniversalFirmPage/.test(route))
+cas('titre et donnees structurees ne lisent une fiche qu\'une fois en ligne',
+  /const ficheMeta = ficheEnLigne\(/.test(route) && /const ficheDonnees = ficheEnLigne\(/.test(route))
+cas('aucune autre lecture directe de FIRM_SHEETS dans la route',
+  (route.match(/FIRM_SHEETS\[/g) || []).length === 4, String((route.match(/FIRM_SHEETS\[/g) || []).length))
 cas('la route garde l\'ancien rendu pour le retour arriere', route.includes('<PropFirmPageClient'))
+
+// Offre : rien ne s'affiche sans confirmation du partenaire (21 septembre 2026).
+const page = readFileSync(join(DOSSIER, 'FirmProfilePage.tsx'), 'utf8')
+cas('FirmProfilePage filtre l\'offre avant toute section', /const sheet = ficheAffichable\(ficheBrute\)/.test(page))
+// 22/09 : chaque bouton ouvre le lien profond du plan vise (code applique).
+cas('les liens sortants transmettent le plan vise', /challenge: lienPlan/.test(page)
+  && (page.match(/lien\('(hero|configurator|final)_(claim|continue)', plan(Hero|Selection)\)/g) || []).length === 6)
+for (const f of readdirSync(FICHES).filter((x) => x.endsWith('.json'))) {
+  const fiche = JSON.parse(readFileSync(join(FICHES, f), 'utf8'))
+  if (!fiche.offre) continue
+  cas(`${f} : statut d'offre renseigne`, ['confirmed', 'needs_confirmation'].includes(fiche.offre.statut), String(fiche.offre.statut))
+}
 
 console.log('\n' + '-'.repeat(60))
 for (const e of echecs) console.log('ECHEC :', e)

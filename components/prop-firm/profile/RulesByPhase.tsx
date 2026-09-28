@@ -13,7 +13,7 @@ import { tableauRegles } from '@/lib/firm-profile'
 import { COPY } from './copy'
 import { prixPlan } from './format'
 import { useFirmSelection } from './useFirmSelection'
-import { CARD, LABEL, Section, SectionHeading, StatusBadge, cx } from './ui'
+import { CARD, LABEL, Section, SectionHeading, StatusBadge, TexteEtage, cx } from './ui'
 
 
 function Onglets<T extends string | number>({
@@ -99,7 +99,7 @@ export function RulesByPhase({ sheet }: { sheet: FirmSheet }) {
             label={COPY.rules.size}
             options={sel.plansDeVariante.map((pl) => ({
               cle: pl.taille,
-              libelle: sizeLabel(pl.taille, pl.devise),
+              libelle: sizeLabel(pl.taille, pl.deviseCompte),
               detail: pl.prix != null ? prixPlan(pl.prix, pl) : undefined,
             }))}
             actif={plan.taille}
@@ -118,7 +118,7 @@ export function RulesByPhase({ sheet }: { sheet: FirmSheet }) {
         </div>
 
         <p className="mt-3 border-t border-border pt-2 text-xs text-text-muted">
-          {programme.nom} · {sizeLabel(plan.taille, plan.devise)}
+          {programme.nom} · {sizeLabel(plan.taille, plan.deviseCompte)}
           {sel.variante ? ` · ${sel.variante}` : ''}
           <span className="hidden md:inline"> — {tableau.colonnes.map((c) => c.libelle).join(' → ')}</span>
         </p>
@@ -139,12 +139,12 @@ export function RulesByPhase({ sheet }: { sheet: FirmSheet }) {
           <tbody>
             {tableau.lignes.map((l) => (
               <tr key={l.cle} className="block border-b border-border py-2.5 last:border-0 md:table-row md:py-0">
-                <td className="block font-semibold md:table-cell md:py-2.5 md:pr-4">{l.libelle}</td>
+                <td className="block align-top font-semibold md:table-cell md:py-2.5 md:pr-4">{l.libelle}</td>
                 {l.cellules.map((cellule, i) => (
                   <td
                     key={tableau.colonnes[i].cle}
                     className={cx(
-                      'tabular-nums md:table-cell md:whitespace-nowrap md:py-2.5 md:pr-4',
+                      'tabular-nums align-top md:table-cell md:py-2.5 md:pr-4',
                       i === iPhase ? 'block' : 'hidden'
                     )}
                   >
@@ -153,11 +153,11 @@ export function RulesByPhase({ sheet }: { sheet: FirmSheet }) {
                     ) : cellule.statut !== 'confirmed' ? (
                       <StatusBadge statut={cellule.statut} />
                     ) : (
-                      <span className="font-semibold text-text-primary">{cellule.valeur}</span>
+                      <TexteEtage texte={cellule.valeur ?? '—'} className="font-semibold text-text-primary" />
                     )}
                   </td>
                 ))}
-                <td className="block pt-1 text-text-muted md:table-cell md:py-2.5">{l.sens}</td>
+                <td className="block pt-1 align-top text-text-muted md:table-cell md:py-2.5">{l.sens}</td>
               </tr>
             ))}
           </tbody>

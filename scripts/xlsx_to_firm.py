@@ -2,22 +2,17 @@
 """
 Convertit le tableur rempli d'une firme en fiche JSON pour la page universelle.
 
-    python scripts/xlsx_to_firm.py data/firms/<slug>.xlsx
-
-Ecrit data/firms/<slug>.json et regenere data/firms/index.ts, qui liste toutes
-les fiches presentes. Le tableur est la source ; le JSON n'en est qu'une copie
-lisible par le site. On ne corrige jamais le JSON a la main.
+La commande a lancer est `npm run firms:build` (scripts/firms_build.py) : elle
+convertit tous les tableurs avec ce module, puis ecrit les JSON, l'index et le
+SQL de synchronisation. Ce fichier n'en est que la partie « lecture du tableur ».
+Le tableur est la source ; le JSON n'en est qu'une copie lisible par le site.
+On ne corrige jamais le JSON a la main.
 
 Le script ne complete rien : une cellule vide devient null ou une liste vide,
 et la page n'affiche pas l'emplacement correspondant. Une valeur inconnue porte
 un statut (not_published, not_applicable, needs_confirmation, source_conflict).
-
-    python scripts/xlsx_to_firm.py --check
-
-verifie que chaque JSON est exactement la conversion de son tableur.
 """
 import datetime as dt
-import glob
 import json
 import os
 import re
@@ -100,7 +95,8 @@ def lignes(ws, nb_colonnes):
     return sortie
 
 
-PHASES = {"evaluation": "evaluation", "evaluation_2": "evaluation_2", "funded": "funded", "sim_funded": "funded"}
+PHASES = {"evaluation": "evaluation", "evaluation_2": "evaluation_2", "evaluation_3": "evaluation_3",
+          "funded": "funded", "sim_funded": "funded"}
 
 # Une valeur inconnue s'ecrit avec un statut, jamais en laissant croire a une
 # valeur. Une cellule vide, elle, masque la ligne.
@@ -109,8 +105,8 @@ STATUTS = ("confirmed", "not_published", "not_applicable", "needs_confirmation",
 # Ce que /api/go/[slug] accepte comme opt_key / opt_value.
 PARAMETRE_SUR = re.compile(r"^[A-Za-z0-9_-]{1,40}$")
 
-GENERE = ("Fichier genere par scripts/xlsx_to_firm.py depuis data/firms/{slug}.xlsx. "
-          "Ne pas modifier : corriger le tableur, puis relancer le script.")
+GENERE = ("Fichier genere par `npm run firms:build` depuis data/firms/{slug}.xlsx. "
+          "Ne pas modifier : corriger le tableur, puis relancer la commande.")
 
 
 def statut(v):
@@ -124,6 +120,24 @@ def feuille(wb, nom):
     return wb[nom] if nom in wb.sheetnames else Workbook().active
 
 
+MODELE = os.path.join(RACINE, "MODELE-propfirm.xlsx")
+
+
+def exemples_du_modele():
+    """Le slug et le nom de l'exemple rempli dans le modele vierge. Pas le code :
+    le meme code partenaire peut servir chez plusieurs firmes."""
+    if not os.path.exists(MODELE):
+        return {}
+    wb = load_workbook(MODELE, read_only=True)
+    sortie = {}
+    for onglet, champs in (("Firme", ("slug", "nom")),):
+        for ligne in wb[onglet].iter_rows(min_row=2, max_col=3, values_only=True):
+            if ligne[0] in champs and isinstance(ligne[2], str) and len(ligne[2].strip()) >= 4:
+                sortie[ligne[0]] = ligne[2].strip()
+    wb.close()
+    return sortie
+
+
 def convertir(chemin):
     wb = load_workbook(chemin, data_only=True)
     f = formulaire(wb["Firme"])
@@ -134,9 +148,14 @@ def convertir(chemin):
 
     # --- Programmes, plans, phases ------------------------------------------
     programmes = []
+    # Colonnes 12 et 13 (apres nb_plans, auto) : la fin d'une campagne a duree
+    # limitee, et son statut quand la date n'est pas publiee. Ajoutees le
+    # 27/09/2026 avec le statut « limited_offer ».
     for (s_, nom_p, marche, type_, etat, accroche, resume_p,
-         max_comptes, max_statut, max_note) in lignes(wb["Programmes"], 10):
-        if (txt(etat) or "active") not in ("active", "promotional"):
+         max_comptes, max_statut, max_note, _nb_plans, offre_fin,
+         offre_fin_statut) in lignes(wb["Programmes"], 13):
+        etat_p = txt(etat) or "active"
+        if etat_p not in ("active", "promotional", "limited_offer"):
             continue
         max_n = None if statut(max_comptes) else nombre(max_comptes)
         programmes.append({"slug": txt(s_), "nom": txt(nom_p) or txt(s_), "accroche": txt(accroche), "resume": txt(resume_p),
@@ -146,12 +165,20 @@ def convertir(chemin):
                            "maxComptesStatut": statut(max_statut) or statut(max_comptes)
                            or ("confirmed" if max_n is not None else None),
                            "maxComptesNote": txt(max_note),
+                           "statut": etat_p,
+                           "offreFin": txt(offre_fin),
+                           "offreFinStatut": statut(offre_fin_statut) or statut(offre_fin)
+                           or ("confirmed" if txt(offre_fin) else None),
                            "plans": []})
     par_slug = {p["slug"]: p for p in programmes}
 
     plans = {}
+    # Colonne 13 (apres les deux colonnes auto) : lien_plan, le slug du plan dans
+    # prop_firm_challenges. /api/go ouvre alors son lien profond (plan, code,
+    # identifiants d'affiliation). Ajoutee le 22/09/2026.
     for (prog, taille, variante, devise, prix, promo, facturation, intervalle,
-         frais_reset, frais_activation) in lignes(wb["Plans"], 10):
+         frais_reset, frais_activation, _nb_phases, _controle, lien_plan,
+         devise_compte) in lignes(wb["Plans"], 14):
         cle = (txt(prog), nombre(taille), txt(variante))
         if cle[0] not in par_slug:
             avertissements.append(f"Plans : programme « {cle[0]} » absent de l'onglet Programmes, plan ignore.")
@@ -163,15 +190,25 @@ def convertir(chemin):
         if modele == "subscription" and not txt(intervalle):
             avertissements.append(f"Plans : abonnement sans intervalle sur {cle}.")
         plan = {"taille": cle[1], "variante": cle[2], "devise": txt(devise) or "USD",
+                # Colonne 14, ajoutee le 23/09/2026 : la devise du solde du compte.
+                "deviseCompte": txt(devise_compte) or txt(devise) or "USD",
                 "prix": nombre(prix), "cartePromo": oui(promo),
                 "facturation": modele, "intervalle": txt(intervalle) if modele == "subscription" else None,
                 "fraisReset": nombre(frais_reset), "fraisActivation": nombre(frais_activation),
-                "phases": []}
+                "lienPlan": None, "phases": []}
+        if txt(lien_plan):
+            if PARAMETRE_SUR.match(str(txt(lien_plan))):
+                plan["lienPlan"] = str(txt(lien_plan))
+            else:
+                avertissements.append(f"Plans : lien_plan « {txt(lien_plan)} » invalide sur {cle}, ignore.")
         plans[cle] = plan
         par_slug[cle[0]]["plans"].append(plan)
 
+    # Colonnes 16-17 (apres « controle ») : le partage par palier, ajoute le
+    # 21/09/2026 sans decaler les colonnes ni les formules existantes.
     for (prog, taille, variante, phase, objectif, perte_max, type_perte, perte_jour,
-         jours, regularite, contrats, partage, plafond, minimum) in lignes(wb["Phases"], 14):
+         jours, regularite, contrats, partage, plafond, minimum, _controle,
+         partage_bas, seuil_partage) in lignes(wb["Phases"], 17):
         cle = (txt(prog), nombre(taille), txt(variante))
         if cle not in plans:
             avertissements.append(f"Phases : aucun plan {cle} dans l'onglet Plans, phase ignoree.")
@@ -200,7 +237,14 @@ def convertir(chemin):
                                  fraction),
             "maxContrats": nombre(contrats),
             "partage": fraction(partage),
+            "partageBas": fraction(partage_bas),
+            "seuilPartage": nombre(seuil_partage),
         })
+        ph = plans[cle]["phases"][-1]
+        if (ph["partageBas"] is None) != (ph["seuilPartage"] is None):
+            avertissements.append(f"Phases : {cle} {ph['phase']} — partage_bas et seuil_partage vont ensemble.")
+        elif ph["partageBas"] is not None and (ph["partage"] is None or ph["partageBas"] >= ph["partage"]):
+            avertissements.append(f"Phases : {cle} {ph['phase']} — partage_bas doit etre inferieur a partage.")
 
     for cle, plan in plans.items():
         if not plan["phases"]:
@@ -222,7 +266,16 @@ def convertir(chemin):
             "programmesEligibles": liste(o.get("programmes_eligibles")),
             "taillesEligibles": [n for n in (nombre(x) for x in liste(o.get("tailles_eligibles"))) if n is not None],
             "expireLe": expire.date().isoformat() if isinstance(expire, dt.datetime) else txt(expire),
+            # Sans confirmation explicite du partenaire, l'offre ne s'affiche pas.
+            "accroche": txt(o.get("accroche")),
+            "remiseCampagne": fraction(o.get("remise_campagne")),
+            "campagneFin": (o.get("campagne_fin").isoformat()
+                            if isinstance(o.get("campagne_fin"), dt.datetime)
+                            else txt(o.get("campagne_fin"))),
+            "statut": statut(o.get("statut")) or "needs_confirmation",
         }
+        if statut(o.get("statut")) is None:
+            avertissements.append("Offre : statut vide, l'offre est traitee comme needs_confirmation et reste masquee.")
 
     c = formulaire(wb["Conditions"])
 
@@ -241,7 +294,7 @@ def convertir(chemin):
     # --- Parcours et couts ----------------------------------------------------
     # Onglets facultatifs : une firme dont ils sont vides n'affiche simplement
     # pas les sections correspondantes.
-    etapes_connues = ("evaluation", "funded", "payout")
+    etapes_connues = ("evaluation", "certification", "funded", "payout")
     parcours = []
     for ordre, etape, titre, texte in sorted(lignes(feuille(wb, "Parcours"), 4), key=lambda l: nombre(l[0]) or 0):
         if not (txt(titre) and txt(texte)):
@@ -257,8 +310,9 @@ def convertir(chemin):
 
     # --- Regles : cartes Trading et Payouts, filtrees par la selection ------------
     regles = []
+    # Colonne 11 : variantes concernees, ajoutee le 27/09/2026.
     for (carte, regle, texte_r, statut_r, progs_r, tailles_r, phase_r, bloquante, essentielle,
-         source) in lignes(feuille(wb, "Regles"), 10):
+         source, variantes_r) in lignes(feuille(wb, "Regles"), 11):
         if txt(carte) not in ("trading", "payouts", "live"):
             avertissements.append(f"Regles : carte « {txt(carte)} » inconnue pour « {txt(regle)} », ligne ignoree.")
             continue
@@ -271,6 +325,7 @@ def convertir(chemin):
             "carte": txt(carte), "regle": txt(regle), "texte": txt(texte_r),
             "statut": statut(statut_r) or "confirmed",
             "programmes": liste(progs_r),
+            "variantes": liste(variantes_r),
             "tailles": [n for n in (nombre(x) for x in liste(tailles_r)) if n is not None],
             "phase": PHASES.get(txt(phase_r)) if txt(phase_r) else None,
             "bloquante": oui(bloquante), "essentielle": oui(essentielle), "source": txt(source),
@@ -294,16 +349,23 @@ def convertir(chemin):
 
     plateformes_detail = []
     vus = set()
-    for nom_pf, selectionnable, note_pf in lignes(feuille(wb, "Plateformes"), 3):
+    # Colonne 4 : logo_url, l'icone officielle de la plateforme (22/09/2026).
+    for nom_pf, selectionnable, note_pf, logo_pf in lignes(feuille(wb, "Plateformes"), 4):
         cle_pf = str(txt(nom_pf)).lower()
         if cle_pf in vus:
             avertissements.append(f"Plateformes : « {txt(nom_pf)} » en double, seconde ligne ignoree.")
             continue
         vus.add(cle_pf)
-        plateformes_detail.append({"nom": txt(nom_pf), "selectionnable": oui(selectionnable), "note": txt(note_pf)})
+        logo = txt(logo_pf)
+        if logo and not str(logo).startswith("https://"):
+            avertissements.append(f"Plateformes : logo de « {txt(nom_pf)} » hors https, ignore.")
+            logo = None
+        plateformes_detail.append({"nom": txt(nom_pf), "selectionnable": oui(selectionnable), "note": txt(note_pf),
+                                   "logoUrl": logo})
 
     options_achat = []
-    for type_o, nom_o, detail_o, param_o, valeur_o, progs_o in lignes(feuille(wb, "OptionsAchat"), 6):
+    # Colonne 7 : logo_url, l'icone officielle de l'option (22/09/2026).
+    for type_o, nom_o, detail_o, param_o, valeur_o, progs_o, logo_o in lignes(feuille(wb, "OptionsAchat"), 7):
         if txt(type_o) not in ("plateforme", "data_feed"):
             avertissements.append(f"OptionsAchat : type « {txt(type_o)} » inconnu, ligne ignoree.")
             continue
@@ -313,7 +375,8 @@ def convertir(chemin):
             continue
         options_achat.append({"type": txt(type_o), "nom": txt(nom_o), "detail": txt(detail_o),
                               "parametre": str(txt(param_o)), "valeur": str(txt(valeur_o)),
-                              "programmes": liste(progs_o)})
+                              "programmes": liste(progs_o),
+                              "logoUrl": txt(logo_o) if str(txt(logo_o) or "").startswith("https://") else None})
 
     formation = None
     lignes_formation = sorted(lignes(feuille(wb, "Formation"), 3), key=lambda l: nombre(l[1]) or 0)
@@ -367,6 +430,10 @@ def convertir(chemin):
         "trustpilotUrl": txt(f.get("trustpilot_url")),
         "regles": regles,
         "titre": txt(f.get("titre")),
+        "metaDescription": txt(f.get("meta_description")),
+        # Flux de donnees proposes, pour la carte d'information (22/09/2026).
+        # Les options d'achat, elles, exigent un parametre transmis au paiement.
+        "fluxDonnees": liste(f.get("flux_donnees")),
         "description": txt(f.get("description")),
         "connuPour": connu_pour,
         "preuves": preuves,
@@ -381,76 +448,18 @@ def convertir(chemin):
         "comptesApresReussite": list(comptes.values()),
     }
 
-    # Garde-fou : l'exemple FuturesElite laisse dans le tableur d'une autre firme.
-    if slug != "futureselite" and ("SCANNED" in json.dumps(fiche) or "FuturesElite" in json.dumps(fiche)):
-        avertissements.append("Des valeurs de l'exemple FuturesElite sont restees dans ce tableur.")
+    # Garde-fou : les valeurs d'exemple du modele laissees dans le tableur d'une
+    # autre firme (colonne « Exemple » de MODELE-propfirm.xlsx).
+    exemples = exemples_du_modele()
+    if exemples and slug != exemples.get("slug"):
+        texte = json.dumps(fiche, ensure_ascii=False)
+        restes = sorted(v for v in exemples.values() if v in texte)
+        if restes:
+            avertissements.append(f"Valeurs de l'exemple du modele restees dans ce tableur : {', '.join(restes)}.")
 
     return fiche
 
 
-def regenerer_index():
-    fiches = sorted(os.path.splitext(os.path.basename(p))[0] for p in glob.glob(os.path.join(DOSSIER, "*.json")))
-    ident = lambda s: "fiche_" + re.sub(r"[^a-zA-Z0-9]", "_", s)
-    contenu = [
-        "// GENERE PAR scripts/xlsx_to_firm.py — ne pas modifier a la main.",
-        "// Une entree par fiche data/firms/<slug>.json. Une firme presente ici est",
-        "// rendue par la page universelle ; les autres gardent leur rendu actuel.",
-        "",
-        "import type { FirmSheet } from '@/lib/firm-sheet'",
-        "",
-    ]
-    contenu += [f"import {ident(s)} from './{s}.json'" for s in fiches]
-    contenu += ["", "export const FIRM_SHEETS: Record<string, FirmSheet> = {"]
-    contenu += [f"  '{s}': {ident(s)} as unknown as FirmSheet," for s in fiches]
-    contenu += ["}", ""]
-    with open(os.path.join(DOSSIER, "index.ts"), "w", encoding="utf-8", newline="\n") as fh:
-        fh.write("\n".join(contenu))
-    return fiches
-
-
-def verifier():
-    """Le JSON n'est qu'une sortie : il doit etre exactement la conversion du tableur."""
-    ecarts = []
-    tableurs = sorted(t for t in glob.glob(os.path.join(DOSSIER, "*.xlsx"))
-                      if not os.path.basename(t).startswith("~$"))
-    for tableur in tableurs:
-        fiche = convertir(tableur)
-        chemin = os.path.join(DOSSIER, f"{fiche['slug']}.json")
-        actuel = None
-        if os.path.exists(chemin):
-            with open(chemin, encoding="utf-8") as fh:
-                actuel = json.load(fh)
-        if actuel != fiche:
-            ecarts.append(os.path.relpath(chemin, RACINE))
-    orphelins = sorted(
-        os.path.relpath(j, RACINE) for j in glob.glob(os.path.join(DOSSIER, "*.json"))
-        if not os.path.exists(os.path.splitext(j)[0] + ".xlsx"))
-    for e in ecarts:
-        print(f"ECART : {e} ne correspond pas a son tableur. Relancer la conversion, ne pas l'editer.")
-    for o in orphelins:
-        print(f"ORPHELIN : {o} n'a pas de tableur.")
-    print(f"{len(tableurs)} tableur(s) verifie(s), {len(ecarts)} ecart(s), {len(orphelins)} orphelin(s).")
-    sys.exit(1 if ecarts or orphelins else 0)
-
-
 if __name__ == "__main__":
-    if sys.argv[1:] == ["--check"]:
-        verifier()
-    if len(sys.argv) != 2:
-        sys.exit("Usage : python scripts/xlsx_to_firm.py data/firms/<slug>.xlsx  |  --check")
-    fiche = convertir(sys.argv[1])
-    os.makedirs(DOSSIER, exist_ok=True)
-    sortie = os.path.join(DOSSIER, f"{fiche['slug']}.json")
-    with open(sortie, "w", encoding="utf-8", newline="\n") as fh:
-        json.dump(fiche, fh, ensure_ascii=False, indent=2)
-        fh.write("\n")
-    fiches = regenerer_index()
-
-    nb_plans = sum(len(p["plans"]) for p in fiche["programmes"])
-    nb_phases = sum(len(pl["phases"]) for p in fiche["programmes"] for pl in p["plans"])
-    print(f"{sortie}")
-    print(f"  {len(fiche['programmes'])} programmes · {nb_plans} plans · {nb_phases} phases · "
-          f"offre {'oui' if fiche['offre'] else 'non'} · {len(fiche['faq'])} FAQ")
-    print(f"  index : {len(fiches)} fiche(s) — {', '.join(fiches)}")
-    for a in avertissements:
-        print(f"  ATTENTION : {a}")
+    sys.exit("Ce script ne s'appelle plus directement : lancer `npm run firms:build` "
+             "(ou `npm run firms:check`), qui convertit tous les tableurs et genere JSON, index et SQL.")

@@ -5,6 +5,7 @@ import { useHideOnScrollDown } from '@/hooks/useHideOnScrollDown';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/providers/AuthProvider';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import {
   Shield,
   BarChart3,
@@ -492,6 +493,7 @@ export function Navbar() {
 
           {/* Right Section */}
           <div className="hidden lg:flex items-center gap-1 flex-shrink-0 ml-2">
+            <ThemeToggle />
             <LanguageSelector currentLocale={currentLocale} pathname={pathname} />
             
             {isLoading ? (
@@ -507,6 +509,11 @@ export function Navbar() {
                 {t.signIn}
               </Link>
             )}
+          </div>
+
+          {/* Mobile: theme toggle stays reachable without opening the menu */}
+          <div className="lg:hidden ml-auto mr-1">
+            <ThemeToggle />
           </div>
 
           {/* Mobile menu button */}

@@ -11,6 +11,8 @@ import PromoTicker from '@/components/PromoTicker'
 import Footer from '@/components/Footer'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 import { NewsletterPopup } from '@/components/NewsletterPopup'
+import { CampagneRail } from '@/components/CampagneRail'
+import { campagneEnCours } from '@/lib/campagne'
 import '../globals.css'
 import { generateAlternates, localeHref } from '@/lib/seo'
 
@@ -144,9 +146,18 @@ export default function LocaleLayout({
     <html
       lang={locale}
       dir={dir}
-      className={`${fontSans.variable} ${fontDisplay.variable} ${fontMono.variable} dark`}
+      className={`${fontSans.variable} ${fontDisplay.variable} ${fontMono.variable}`}
+      // The theme script below adds or removes `dark` before React hydrates.
+      suppressHydrationWarning
     >
       <head>
+        {/* Theme before first paint: saved choice, else day (Menthe +).
+            Night = Moka. Prevents a flash of the wrong theme. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('pfs-theme');var d=t==='dark';document.documentElement.classList.toggle('dark',d);}catch(e){}})();`,
+          }}
+        />
         <GoogleAnalytics />
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -159,6 +170,10 @@ export default function LocaleLayout({
           <main className="pt-16">{children}</main>
           <Footer />
           <NewsletterPopup />
+          {/* Campagne datee, choisie dans les fiches. Remonte ici le 28/09 apres
+              qu'un paquet de theme a ecrase ce fichier et fait disparaitre le
+              bandeau : tout paquet livrant layout.tsx doit etre fusionne, pas copie. */}
+          <CampagneRail campagne={campagneEnCours(params.locale)} />
         </AuthProvider>
       </body>
     </html>

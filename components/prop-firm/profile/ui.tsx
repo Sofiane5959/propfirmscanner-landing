@@ -31,7 +31,10 @@ const EYEBROW_SECTION =
   'inline-flex items-center rounded-full border border-accent-border bg-accent/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] text-accent'
 export const LABEL = 'text-[11px] font-semibold uppercase tracking-wider text-text-muted'
 export const CHIP = 'rounded-md border border-border bg-bg-base px-2 py-1 text-xs text-text-secondary'
-export const CHOICE = cx('flex flex-col gap-0.5 rounded-lg border px-3 py-2.5 text-left transition-colors', FOCUS)
+export const CHOICE = cx(
+  'flex h-full flex-col items-center justify-center gap-0.5 rounded-lg border px-3 py-2.5 text-center transition-colors',
+  FOCUS
+)
 export const CHOICE_IDLE = 'border-border bg-bg-base hover:border-border-hover'
 export const CHOICE_ACTIVE = 'border-accent bg-accent/10'
 
@@ -110,8 +113,27 @@ export function StatusBadge({ statut }: { statut: StatutManquant | 'confirmed' }
   )
 }
 
+/**
+ * Une valeur et ses precisions (« $1,500 · End of Day », « 50% under $1,500 ·
+ * 80% from $1,500 ») : la premiere partie en clair, les suivantes dessous, en
+ * petit. Sur une seule ligne, elles etiraient le tableau (commentaire du 22/09).
+ */
+export function TexteEtage({ texte, className }: { texte: string; className?: string }) {
+  const [tete, ...suite] = texte.split(' · ')
+  return (
+    <span className={cx('inline-flex flex-col', className)}>
+      <span>{tete}</span>
+      {suite.map((s) => (
+        <span key={s} className="text-xs font-normal leading-snug text-text-muted">
+          {s}
+        </span>
+      ))}
+    </span>
+  )
+}
+
 export function Valeur({ cellule }: { cellule: Cellule }) {
-  return cellule.statut ? <StatusBadge statut={cellule.statut} /> : <>{cellule.texte}</>
+  return cellule.statut ? <StatusBadge statut={cellule.statut} /> : <TexteEtage texte={cellule.texte} />
 }
 
 /**

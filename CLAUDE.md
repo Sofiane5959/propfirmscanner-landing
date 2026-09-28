@@ -2,7 +2,10 @@
 
 Comparateur de prop trading firms avec tunnel d'affiliation.
 Next.js 14.2.3, TypeScript, Tailwind, Supabase, next-intl.
-Déploiement Vercel via GitHub Desktop — pas de git en ligne de commande.
+Déploiement Vercel à chaque push. Claude committe et pousse lui-même sur
+`palette-2c` (décision de Sofiane, 27 septembre 2026, qui n'a pas toujours
+GitHub Desktop sous la main). `main` reste manuelle : jamais de push ni de
+fusion vers `main` sans demande explicite, puisqu'elle sert le site public.
 
 ## Pièges connus
 
@@ -62,12 +65,34 @@ Déploiement Vercel via GitHub Desktop — pas de git en ligne de commande.
   Ne jamais déduire un chiffre par analogie : les codes de plan Earn2Trade
   étaient `GAU50`, pas `GM50`, et la déduction a coûté plusieurs allers-retours.
 - Ne pas promettre au visiteur ce que le partenaire ne garantit pas. Le coupon
-  n'est certain que sur un deep link vers le checkout.
+  n'est certain que sur un deep link vers le checkout — et un deep link
+  incomplet ne vaut pas mieux : sans `platform`, Earn2Trade renvoie
+  `/checkout?plan=TCP25&discount=scanned` vers son sélecteur de plans, prix
+  plein et champ coupon vide, pendant que le bandeau annonce −60 %. Le tunnel
+  pose donc le premier choix de l'onglet Options de la fiche quand le lien n'en
+  porte pas (`optionParDefaut`). Vérifier une remise se fait sur la page
+  d'arrivée, pas sur l'URL : celle-ci portait bien le code.
+- Fiches firmes : `data/firms/<slug>.xlsx` est la seule source éditable.
+  `npm run firms:build` régénère `data/firms/<slug>.json`, `data/firms/index.ts`
+  et `database/generated/sync-prop-firms-<slug>.sql` ; `npm run firms:check`
+  échoue si l'un d'eux a été modifié à la main. Aucun script de remplissage
+  propre à une firme, aucune donnée métier dans un composant. Le SQL généré ne
+  s'exécute jamais depuis un script : Sofiane le lance dans Supabase.
+- Une offre (onglet Offre) n'est affichée sur la fiche ni recopiée dans
+  `prop_firms.discount_*` que si son `statut` est `confirmed`.
+
+- Un paquet de thème livre parfois `app/[locale]/layout.tsx`, `Navbar.tsx` ou
+  `globals.css`. Ces fichiers portent déjà des ajouts du dépôt : les FUSIONNER,
+  jamais les copier tels quels. Le 28 septembre 2026, copier le layout d'un
+  paquet a supprimé le montage de `CampagneRail`, et le bandeau de promotion a
+  disparu du site sans que rien ne le signale. Le même paquet livrait un
+  `Navbar.tsx` qui ne compilait pas : son générateur avait remplacé « Lin » par
+  le nom du thème jusque dans `Link`.
 
 ## Vérifications avant de conclure
 
 Lancer `npm run build` et `npx tsc --noEmit`. Ne pas annoncer qu'une tâche est
-terminée sans les avoir passés.
+terminée sans les avoir passés. Si une fiche firme a changé : `npm run firms:check`.
 
 Prérequis : un `.env.local` renseigné. Sans lui, `npm run build` échoue pendant
 *Collecting page data* — plusieurs routes API construisent leur client Supabase

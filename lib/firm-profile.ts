@@ -13,6 +13,7 @@
 
 import {
   type FirmSheet,
+  type SheetOffre,
   type SheetOption,
   type SheetPhase,
   type SheetPlan,
@@ -21,6 +22,7 @@ import {
   type Statut,
   QUESTIONS_GABARIT,
   faqItems,
+  formatPartage,
   meaningMaxLoss,
   money,
   pct,
@@ -30,6 +32,9 @@ import {
 const QUESTION_RETRAITS = QUESTIONS_GABARIT[3]
 /** « Does the promotional code apply to every account? », la 5e. */
 const QUESTION_PROMO = QUESTIONS_GABARIT[4]
+/** « Is [Firm] suitable for beginners? », la 1re. */
+const QUESTION_DEBUTANTS = QUESTIONS_GABARIT[0]
+const PREFIXE_REMISE = 'Before any discount — '
 
 /** Ce qu'affiche une case : un texte, ou le statut qui explique son absence. */
 export type Cellule = { texte: string; statut?: undefined } | { texte?: undefined; statut: StatutManquant }
@@ -43,6 +48,69 @@ export type StatutManquant = Exclude<Statut, 'confirmed'>
  */
 const INCERTAINS: ReadonlySet<Statut> = new Set<Statut>(['needs_confirmation', 'source_conflict'])
 export const estIncertain = (statut: Statut | null | undefined) => Boolean(statut && INCERTAINS.has(statut))
+
+/**
+ * La fiche telle que la page publique peut l'afficher : une offre non confirmee
+ * par le partenaire (21 septembre 2026, SCANNED inactif au checkout) est retiree,
+ * et la page se comporte comme une firme sans promotion. Un seul point de
+ * decision : toutes les sections recoivent cette fiche.
+ */
+/**
+ * L'offre telle qu'elle vaut a cet instant : le taux de campagne tant qu'elle
+ * dure, le taux permanent ensuite. Rien a modifier le jour ou la campagne
+ * s'arrete — c'est la date du tableur qui decide.
+ */
+/**
+ * Le choix de checkout a poser quand le visiteur n'en a fait aucun.
+ *
+ * Certains partenaires refusent un lien profond incomplet. Earn2Trade renvoie
+ * /checkout?plan=TCP25&discount=scanned vers son selecteur de plans — prix
+ * plein, coupon nulle part — tant que le flux de donnees (`platform`) n'est pas
+ * dans l'URL ; avec lui, la meme URL reste sur le checkout et affiche
+ * « Coupon: scanned, -90 $ ». Le configurateur de la fiche transmet ce choix,
+ * mais un lien qui ne vient pas de lui — bandeau de campagne, carte /compare,
+ * /deals, favoris — n'avait rien a transmettre, et annoncait donc une remise
+ * que la page d'arrivee n'appliquait pas.
+ *
+ * La premiere option de l'onglet Options fait office de defaut : c'est celle
+ * que la fiche presente en premier, et le visiteur peut encore en changer chez
+ * le partenaire. Les options reservees a certains programmes sont ecartees
+ * d'abord : rien ici ne dit quel programme le visiteur regardait.
+ */
+export function optionParDefaut(sheet: FirmSheet): SheetOption | null {
+  const options = sheet.optionsAchat.filter((o) => o.parametre && o.valeur)
+  return options.find((o) => o.programmes.length === 0) ?? options[0] ?? null
+}
+
+export interface OffreDatee {
+  remise: number
+  expireLe: string | null
+  accroche: string | null
+  remiseCampagne: number | null
+  campagneFin: string | null
+}
+
+export function offreDuJour<T extends OffreDatee>(offre: T, maintenant = Date.now()): T {
+  if (offre.remiseCampagne == null || !offre.campagneFin) return offre
+  const fin = new Date(offre.campagneFin).getTime()
+  if (Number.isNaN(fin) || fin <= maintenant) {
+    return { ...offre, accroche: null, remiseCampagne: null, campagneFin: null }
+  }
+  return { ...offre, remise: offre.remiseCampagne, expireLe: offre.campagneFin }
+}
+
+export function ficheAffichable(sheet: FirmSheet): FirmSheet {
+  const offre = sheet.offre ? offreDuJour(sheet.offre) : null
+  if (!offre) return sheet
+  // 28/09/2026 : une offre datee disparait d'elle-meme le jour ou elle expire.
+  // Sans cela, une campagne de trois jours resterait affichee jusqu'a ce que
+  // quelqu'un pense a modifier le tableur — et la page promettrait une remise
+  // que le partenaire n'accorde plus.
+  const fin = offre.expireLe ? new Date(offre.expireLe) : null
+  const expiree = fin != null && !Number.isNaN(fin.getTime()) && fin.getTime() <= Date.now()
+  if (offre.statut !== 'confirmed' || expiree) return { ...sheet, offre: null }
+  return { ...sheet, offre }
+}
 
 export function cellule(valeur: string | null | undefined, statut: Statut | null | undefined): Cellule | null {
   if (estIncertain(statut)) return null
@@ -93,12 +161,14 @@ export function optionsParType(options: SheetOption[], programmeSlug: string): [
  * funded » pour un programme sans evaluation.
  */
 export function libellePhase(phase: SheetPhase, plan: SheetPlan, programme: SheetProgramme): string {
-  const deuxEtapes = plan.phases.some((ph) => ph.phase === 'evaluation_2')
+  const etapes = plan.phases.filter((ph) => ph.phase !== 'funded').length
   switch (phase.phase) {
     case 'evaluation':
-      return deuxEtapes ? 'Evaluation 1' : 'Evaluation'
+      return etapes > 1 ? 'Evaluation 1' : 'Evaluation'
     case 'evaluation_2':
       return 'Evaluation 2'
+    case 'evaluation_3':
+      return 'Evaluation 3'
     case 'funded':
       return programme.type === 'instant' ? 'Instant funded' : 'Funded'
   }
@@ -156,7 +226,8 @@ export function reglesDePhase(phase: SheetPhase, devise: string): LigneRegle[] {
     {
       cle: 'joursMin',
       libelle: 'Minimum days',
-      valeur: phase.joursMin == null ? null : String(phase.joursMin),
+      // 0 jour minimum : la firme dit « no minimum », la page dit « None » comme ailleurs.
+      valeur: phase.joursMin == null ? null : phase.joursMin === 0 ? 'None' : String(phase.joursMin),
       statut: st.joursMin,
       sens: finance ? 'Trading days required before a payout request.' : 'Trading days required before the phase can be passed.',
     },
@@ -177,7 +248,7 @@ export function reglesDePhase(phase: SheetPhase, devise: string): LigneRegle[] {
       statut: st.maxContrats,
       sens: 'Largest position size allowed at the same time.',
     },
-    { cle: 'partage', libelle: 'Profit split', valeur: phase.partage == null ? null : pct(phase.partage), statut: st.partage, sens: 'Your share of the profit you withdraw.' },
+    { cle: 'partage', libelle: 'Profit split', valeur: formatPartage(phase, devise), statut: st.partage, sens: 'Your share of the profit you withdraw.' },
     { cle: 'plafondRetrait', libelle: 'Payout cap per request', valeur: argent(phase.plafondRetrait), statut: st.plafondRetrait, sens: 'The most a single payout request can be.' },
     { cle: 'retraitMinimum', libelle: 'Minimum payout per request', valeur: argent(phase.retraitMinimum), statut: st.retraitMinimum, sens: 'The smallest amount a payout request can be.' },
   ]
@@ -222,7 +293,7 @@ export interface TableauRegles {
  * presente, une ligne par regle publiee dans au moins une phase.
  */
 export function tableauRegles(plan: SheetPlan, programme: SheetProgramme, ordonnees: SheetPhase[]): TableauRegles {
-  const parPhase = ordonnees.map((ph) => reglesDePhase(ph, plan.devise))
+  const parPhase = ordonnees.map((ph) => reglesDePhase(ph, plan.deviseCompte))
   const ordre = Object.keys(SENS_COMPARATIF)
   const cles = ordre.filter((cle) => parPhase.some((lignes) => lignes.some((l) => l.cle === cle)))
   return {
@@ -253,13 +324,13 @@ export function lignesSelection(plan: SheetPlan): { libelle: string; valeur: Cel
   const finance = plan.phases.find((ph) => ph.phase === 'funded') ?? null
   const premiere = evaluation ?? finance
   const trouver = (ph: SheetPhase | null, cle: string) =>
-    ph ? versCellule(reglesDePhase(ph, plan.devise).find((l) => l.cle === cle)) : null
+    ph ? versCellule(reglesDePhase(ph, plan.deviseCompte).find((l) => l.cle === cle)) : null
 
   const lignes: { libelle: string; valeur: Cellule | null }[] = [
     { libelle: 'Profit target', valeur: trouver(evaluation, 'objectifProfit') },
     {
       libelle: 'Maximum loss',
-      valeur: premiere?.perteMax != null ? { texte: money(premiere.perteMax, plan.devise) } : trouver(premiere, 'perteMax'),
+      valeur: premiere?.perteMax != null ? { texte: money(premiere.perteMax, plan.deviseCompte) } : trouver(premiere, 'perteMax'),
     },
     { libelle: 'Daily loss', valeur: trouver(premiere, 'perteJour') },
     { libelle: 'Maximum positions', valeur: trouver(premiere, 'maxContrats') },
@@ -276,6 +347,9 @@ export function lignesSelection(plan: SheetPlan): { libelle: string; valeur: Cel
 export function regleApplicable(r: SheetRegle, programme: SheetProgramme, plan: SheetPlan): boolean {
   if (r.programmes.length > 0 && !r.programmes.includes(programme.slug)) return false
   if (r.tailles.length > 0 && !r.tailles.includes(plan.taille)) return false
+  // 27/09/2026 : une regle peut ne valoir que pour une variante — Day Trade
+  // ferme tout avant la cloture, Swing garde une position.
+  if (r.variantes.length > 0 && !(plan.variante && r.variantes.includes(plan.variante))) return false
   if (r.phase && !plan.phases.some((ph) => ph.phase === r.phase)) return false
   return true
 }
@@ -291,18 +365,14 @@ export function reglesDeCarte(
   programme: SheetProgramme,
   plan: SheetPlan
 ): SheetRegle[] {
-  const poids = (r: SheetRegle) => (r.bloquante ? 0 : r.statut !== 'confirmed' ? 1 : 2)
-  // Quand le tableur designe des regles essentielles, seules celles-la s'affichent.
-  const tri = sheet.regles.some((r) => r.essentielle)
+  // Les regles designees essentielles dans le tableur passent devant ; les
+  // autres suivent, et la carte les replie derriere « Show more ». Avant, elles
+  // disparaissaient : une fiche detaillee perdait la moitie de ses regles.
+  const poids = (r: SheetRegle) =>
+    (r.essentielle ? 0 : 10) + (r.bloquante ? 0 : r.statut !== 'confirmed' ? 1 : 2)
   return sheet.regles
     .map((r, i) => ({ r, i }))
-    .filter(
-      ({ r }) =>
-        r.carte === carte &&
-        (!tri || r.essentielle) &&
-        !estIncertain(r.statut) &&
-        regleApplicable(r, programme, plan)
-    )
+    .filter(({ r }) => r.carte === carte && !estIncertain(r.statut) && regleApplicable(r, programme, plan))
     .sort((a, b) => poids(a.r) - poids(b.r) || a.i - b.i)
     .map(({ r }) => r)
 }
@@ -313,6 +383,15 @@ export function reglesDeCarte(
  * plan) plutot que depuis le paragraphe libre de l'onglet Conditions.
  */
 export function faqProfil(sheet: FirmSheet): { question: string; reponse: string }[] {
+  // 22/09 : une FAQ redigee dans le tableur remplace la FAQ generee. Ses
+  // questions s'affichent telles quelles, dans l'ordre de l'onglet.
+  const redigees = sheet.faq.filter((q) => q.question && q.reponse)
+  if (redigees.length > 0) {
+    return redigees.map((q) => ({
+      question: q.question.replace(/\[Firm\]/g, sheet.nom),
+      reponse: q.reponse.replace(/\[Firm\]/g, sheet.nom),
+    }))
+  }
   const items = faqItems(sheet)
   const plafonds = sheet.programmes.some((p) => p.plans.some((pl) => pl.phases.some((ph) => ph.plafondRetrait != null)))
   const morceaux = [
@@ -336,13 +415,38 @@ export function faqProfil(sheet: FirmSheet): { question: string; reponse: string
       ? `Code ${o.code} gives ${pct(o.remise)} off. Enter it at checkout; the configurator shows the price with the code applied.`
       : null
 
-  return items.map((q) =>
-    q.question === QUESTION_RETRAITS && morceaux.length > 0
-      ? { question: q.question, reponse: morceaux.join(' ') }
-      : q.question === QUESTION_PROMO && reponsePromo
-        ? { question: q.question, reponse: reponsePromo }
+  // Regles du 21/09 : la FAQ ne repete ni le configurateur ni le verdict, et ne
+  // suggere aucune remise que la page n'affiche pas. La reponse generee pour les
+  // debutants ne faisait que renvoyer vers ces deux sections : elle sort, sauf si
+  // le tableur en donne une.
+  const debutantsSaisie = sheet.faq.some((q) => q.question === QUESTION_DEBUTANTS && q.reponse)
+  const questionDebutants = QUESTION_DEBUTANTS.replace(/\[Firm\]/g, sheet.nom)
+
+  // La question des retraits existe des que la fiche sait qui paie et comment,
+  // meme si l'onglet Conditions est vide ; elle garde sa place, apres le partage.
+  const avecRetraits =
+    morceaux.length > 0 && !items.some((q) => q.question === QUESTION_RETRAITS)
+      ? (() => {
+          const i = items.findIndex((q) => q.question === QUESTIONS_GABARIT[2].replace(/\[Firm\]/g, sheet.nom))
+          const ajout = { question: QUESTION_RETRAITS, reponse: '' }
+          return i >= 0 ? [...items.slice(0, i + 1), ajout, ...items.slice(i + 1)] : [...items, ajout]
+        })()
+      : items
+
+  return avecRetraits
+    .filter((q) => debutantsSaisie || q.question !== questionDebutants)
+    .map((q) =>
+      !sheet.offre && q.reponse.startsWith(PREFIXE_REMISE)
+        ? { ...q, reponse: `Public prices — ${q.reponse.slice(PREFIXE_REMISE.length)}` }
         : q
-  )
+    )
+    .map((q) =>
+      q.question === QUESTION_RETRAITS && morceaux.length > 0
+        ? { question: q.question, reponse: morceaux.join(' ') }
+        : q.question === QUESTION_PROMO && reponsePromo
+          ? { question: q.question, reponse: reponsePromo }
+          : q
+    )
 }
 
 export interface LigneFrais {
@@ -373,7 +477,7 @@ export function fraisDeSelection(sheet: FirmSheet, programme: SheetProgramme, pl
 export function retraitsDeSelection(plan: SheetPlan): { libelle: string; valeur: Cellule }[] {
   const finance = plan.phases.find((ph) => ph.phase === 'funded')
   if (!finance) return []
-  const lignes = reglesDePhase(finance, plan.devise)
+  const lignes = reglesDePhase(finance, plan.deviseCompte)
   const garder: [string, string][] = [
     ['partage', 'Profit split'],
     ['plafondRetrait', 'Cap per request'],

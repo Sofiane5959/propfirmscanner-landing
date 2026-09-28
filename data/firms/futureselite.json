@@ -1,5 +1,5 @@
 {
-  "_genere": "Fichier genere par scripts/xlsx_to_firm.py depuis data/firms/futureselite.xlsx. Ne pas modifier : corriger le tableur, puis relancer le script.",
+  "_genere": "Fichier genere par `npm run firms:build` depuis data/firms/futureselite.xlsx. Ne pas modifier : corriger le tableur, puis relancer la commande.",
   "slug": "futureselite",
   "nom": "FuturesElite",
   "logoUrl": "https://cdn.prod.website-files.com/690a53b4dc85f8bf1d3328d4/690a53b4dc85f8bf1d332987_Webclip.svg",
@@ -48,17 +48,22 @@
       "maxComptes": 5,
       "maxComptesStatut": "confirmed",
       "maxComptesNote": "Counts towards the shared cap of 5 funded accounts across Elite, Custom, Instant and Nitro.",
+      "statut": "active",
+      "offreFin": null,
+      "offreFinStatut": null,
       "plans": [
         {
           "taille": 25000,
           "variante": null,
           "devise": "USD",
+          "deviseCompte": "USD",
           "prix": 95,
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
           "fraisReset": 79,
           "fraisActivation": 0,
+          "lienPlan": null,
           "phases": [
             {
               "phase": "evaluation",
@@ -72,7 +77,9 @@
               "joursMin": 3,
               "regularite": 0.4,
               "maxContrats": 2,
-              "partage": null
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
             },
             {
               "phase": "funded",
@@ -86,7 +93,9 @@
               "joursMin": 6,
               "regularite": "aucune",
               "maxContrats": 2,
-              "partage": 0.9
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
             }
           ]
         },
@@ -94,12 +103,14 @@
           "taille": 50000,
           "variante": null,
           "devise": "USD",
+          "deviseCompte": "USD",
           "prix": 153,
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
           "fraisReset": 89,
           "fraisActivation": 0,
+          "lienPlan": null,
           "phases": [
             {
               "phase": "evaluation",
@@ -113,7 +124,9 @@
               "joursMin": 3,
               "regularite": 0.4,
               "maxContrats": 4,
-              "partage": null
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
             },
             {
               "phase": "funded",
@@ -127,7 +140,9 @@
               "joursMin": 6,
               "regularite": "aucune",
               "maxContrats": 4,
-              "partage": 0.9
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
             }
           ]
         },
@@ -135,12 +150,14 @@
           "taille": 100000,
           "variante": null,
           "devise": "USD",
+          "deviseCompte": "USD",
           "prix": 293,
           "cartePromo": true,
           "facturation": "one_time",
           "intervalle": null,
           "fraisReset": 159,
           "fraisActivation": 0,
+          "lienPlan": null,
           "phases": [
             {
               "phase": "evaluation",
@@ -154,7 +171,9 @@
               "joursMin": 3,
               "regularite": 0.4,
               "maxContrats": 8,
-              "partage": null
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
             },
             {
               "phase": "funded",
@@ -168,7 +187,9 @@
               "joursMin": 6,
               "regularite": "aucune",
               "maxContrats": 8,
-              "partage": 0.9
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
             }
           ]
         },
@@ -176,12 +197,14 @@
           "taille": 150000,
           "variante": null,
           "devise": "USD",
+          "deviseCompte": "USD",
           "prix": 353,
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
           "fraisReset": 229,
           "fraisActivation": 0,
+          "lienPlan": null,
           "phases": [
             {
               "phase": "evaluation",
@@ -195,7 +218,9 @@
               "joursMin": 3,
               "regularite": 0.4,
               "maxContrats": 12,
-              "partage": null
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
             },
             {
               "phase": "funded",
@@ -209,7 +234,9 @@
               "joursMin": 6,
               "regularite": "aucune",
               "maxContrats": 12,
-              "partage": 0.9
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
             }
           ]
         }
@@ -225,17 +252,22 @@
       "maxComptes": null,
       "maxComptesStatut": "source_conflict",
       "maxComptesNote": "The official FAQ states 3 active funded Nitro accounts; the purchase configurator displayed MAX 4 FUNDED.",
+      "statut": "active",
+      "offreFin": null,
+      "offreFinStatut": null,
       "plans": [
         {
           "taille": 25000,
           "variante": null,
           "devise": "USD",
+          "deviseCompte": "USD",
           "prix": 129,
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
           "fraisReset": 89,
           "fraisActivation": 0,
+          "lienPlan": null,
           "phases": [
             {
               "phase": "evaluation",
@@ -249,7 +281,9 @@
               "joursMin": 2,
               "regularite": 0.5,
               "maxContrats": 2,
-              "partage": null
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
             },
             {
               "phase": "funded",
@@ -265,7 +299,9 @@
               "joursMin": 1,
               "regularite": "aucune",
               "maxContrats": 2,
-              "partage": 0.9
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
             }
           ]
         },
@@ -273,12 +309,14 @@
           "taille": 50000,
           "variante": null,
           "devise": "USD",
+          "deviseCompte": "USD",
           "prix": 138,
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
           "fraisReset": 99,
           "fraisActivation": 0,
+          "lienPlan": null,
           "phases": [
             {
               "phase": "evaluation",
@@ -292,7 +330,9 @@
               "joursMin": 2,
               "regularite": 0.5,
               "maxContrats": 5,
-              "partage": null
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
             },
             {
               "phase": "funded",
@@ -308,7 +348,9 @@
               "joursMin": 1,
               "regularite": "aucune",
               "maxContrats": 5,
-              "partage": 0.9
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
             }
           ]
         },
@@ -316,12 +358,14 @@
           "taille": 100000,
           "variante": null,
           "devise": "USD",
+          "deviseCompte": "USD",
           "prix": 218,
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
           "fraisReset": 149,
           "fraisActivation": 0,
+          "lienPlan": null,
           "phases": [
             {
               "phase": "evaluation",
@@ -335,7 +379,9 @@
               "joursMin": 2,
               "regularite": 0.5,
               "maxContrats": 8,
-              "partage": null
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
             },
             {
               "phase": "funded",
@@ -351,7 +397,9 @@
               "joursMin": 1,
               "regularite": "aucune",
               "maxContrats": 8,
-              "partage": 0.9
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
             }
           ]
         },
@@ -359,12 +407,14 @@
           "taille": 150000,
           "variante": null,
           "devise": "USD",
+          "deviseCompte": "USD",
           "prix": 298,
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
           "fraisReset": 219,
           "fraisActivation": 0,
+          "lienPlan": null,
           "phases": [
             {
               "phase": "evaluation",
@@ -378,7 +428,9 @@
               "joursMin": 2,
               "regularite": 0.5,
               "maxContrats": 10,
-              "partage": null
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
             },
             {
               "phase": "funded",
@@ -394,7 +446,9 @@
               "joursMin": 1,
               "regularite": "aucune",
               "maxContrats": 10,
-              "partage": 0.9
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
             }
           ]
         }
@@ -410,17 +464,22 @@
       "maxComptes": 10,
       "maxComptesStatut": "confirmed",
       "maxComptesNote": "Prime has its own cap: 10 active funded accounts.",
+      "statut": "active",
+      "offreFin": null,
+      "offreFinStatut": null,
       "plans": [
         {
           "taille": 25000,
           "variante": null,
           "devise": "USD",
+          "deviseCompte": "USD",
           "prix": 96,
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
           "fraisReset": 89,
           "fraisActivation": 0,
+          "lienPlan": null,
           "phases": [
             {
               "phase": "evaluation",
@@ -434,7 +493,9 @@
               "joursMin": 1,
               "regularite": null,
               "maxContrats": 2,
-              "partage": null
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
             },
             {
               "phase": "funded",
@@ -450,7 +511,9 @@
               "joursMin": 3,
               "regularite": 0.4,
               "maxContrats": 2,
-              "partage": 0.9
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
             }
           ]
         },
@@ -458,12 +521,14 @@
           "taille": 50000,
           "variante": null,
           "devise": "USD",
+          "deviseCompte": "USD",
           "prix": 179,
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
           "fraisReset": 109,
           "fraisActivation": 0,
+          "lienPlan": null,
           "phases": [
             {
               "phase": "evaluation",
@@ -477,7 +542,9 @@
               "joursMin": 1,
               "regularite": null,
               "maxContrats": 4,
-              "partage": null
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
             },
             {
               "phase": "funded",
@@ -493,7 +560,9 @@
               "joursMin": 3,
               "regularite": 0.4,
               "maxContrats": 4,
-              "partage": 0.9
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
             }
           ]
         },
@@ -501,12 +570,14 @@
           "taille": 100000,
           "variante": null,
           "devise": "USD",
+          "deviseCompte": "USD",
           "prix": 279,
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
           "fraisReset": 159,
           "fraisActivation": 0,
+          "lienPlan": null,
           "phases": [
             {
               "phase": "evaluation",
@@ -520,7 +591,9 @@
               "joursMin": 1,
               "regularite": null,
               "maxContrats": 6,
-              "partage": null
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
             },
             {
               "phase": "funded",
@@ -536,7 +609,9 @@
               "joursMin": 3,
               "regularite": 0.4,
               "maxContrats": 6,
-              "partage": 0.9
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
             }
           ]
         },
@@ -544,12 +619,14 @@
           "taille": 150000,
           "variante": null,
           "devise": "USD",
+          "deviseCompte": "USD",
           "prix": 369,
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
           "fraisReset": 209,
           "fraisActivation": 0,
+          "lienPlan": null,
           "phases": [
             {
               "phase": "evaluation",
@@ -563,7 +640,9 @@
               "joursMin": 1,
               "regularite": null,
               "maxContrats": 10,
-              "partage": null
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
             },
             {
               "phase": "funded",
@@ -579,7 +658,9 @@
               "joursMin": 3,
               "regularite": 0.4,
               "maxContrats": 10,
-              "partage": 0.9
+              "partage": 0.9,
+              "partageBas": null,
+              "seuilPartage": null
             }
           ]
         }
@@ -595,17 +676,22 @@
       "maxComptes": 5,
       "maxComptesStatut": "confirmed",
       "maxComptesNote": "Counts towards the shared cap of 5 funded accounts across Elite, Custom, Instant and Nitro.",
+      "statut": "active",
+      "offreFin": null,
+      "offreFinStatut": null,
       "plans": [
         {
           "taille": 50000,
           "variante": null,
           "devise": "USD",
+          "deviseCompte": "USD",
           "prix": 349,
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
           "fraisReset": null,
           "fraisActivation": 0,
+          "lienPlan": null,
           "phases": [
             {
               "phase": "funded",
@@ -621,7 +707,9 @@
               "joursMin": 10,
               "regularite": 0.2,
               "maxContrats": 4,
-              "partage": 0.8
+              "partage": 0.8,
+              "partageBas": null,
+              "seuilPartage": null
             }
           ]
         },
@@ -629,12 +717,14 @@
           "taille": 100000,
           "variante": null,
           "devise": "USD",
+          "deviseCompte": "USD",
           "prix": 469,
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
           "fraisReset": null,
           "fraisActivation": 0,
+          "lienPlan": null,
           "phases": [
             {
               "phase": "funded",
@@ -650,7 +740,9 @@
               "joursMin": 10,
               "regularite": 0.2,
               "maxContrats": 8,
-              "partage": 0.8
+              "partage": 0.8,
+              "partageBas": null,
+              "seuilPartage": null
             }
           ]
         },
@@ -658,12 +750,14 @@
           "taille": 150000,
           "variante": null,
           "devise": "USD",
+          "deviseCompte": "USD",
           "prix": 569,
           "cartePromo": false,
           "facturation": "one_time",
           "intervalle": null,
           "fraisReset": null,
           "fraisActivation": 0,
+          "lienPlan": null,
           "phases": [
             {
               "phase": "funded",
@@ -679,7 +773,9 @@
               "joursMin": 10,
               "regularite": 0.2,
               "maxContrats": 12,
-              "partage": 0.8
+              "partage": 0.8,
+              "partageBas": null,
+              "seuilPartage": null
             }
           ]
         }
@@ -688,12 +784,16 @@
   ],
   "offre": {
     "code": "SCANNED",
-    "remise": 0.3,
+    "remise": 0.2,
     "portee": "non_confirmee",
     "checkoutVerifie": false,
     "programmesEligibles": [],
     "taillesEligibles": [],
-    "expireLe": null
+    "expireLe": null,
+    "accroche": null,
+    "remiseCampagne": null,
+    "campagneFin": null,
+    "statut": "confirmed"
   },
   "conditions": {
     "trading": "Overnight holding is not allowed; automatic liquidation may occur. Market closed Friday 16:55 EST to Sunday 18:00 EST. Fully automated AI or bots are not permitted. The configurator lists scalping as not allowed, without defining it. News trading is allowed in evaluation and restricted once funded, without a stated event window.",
@@ -745,7 +845,7 @@
   "faq": [],
   "trustpilotScore": 4.7,
   "trustpilotReviewCount": null,
-  "trustpilotUrl": null,
+  "trustpilotUrl": "https://www.trustpilot.com/review/futureselite.com",
   "regles": [
     {
       "carte": "trading",
@@ -753,6 +853,7 @@
       "texte": "18:00 EST to 16:55 EST the following day. All positions must close before 16:55 EST.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -765,6 +866,7 @@
       "texte": "Not allowed. Automatic liquidation may occur.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": true,
@@ -777,6 +879,7 @@
       "texte": "Market closed Friday 16:55 EST to Sunday 18:00 EST. Holiday closures may differ.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -789,6 +892,7 @@
       "texte": "Fully automated AI or bots are not permitted.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": true,
@@ -801,6 +905,7 @@
       "texte": "Multiple limit orders at the same price to manipulate fills are prohibited.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": true,
@@ -813,6 +918,7 @@
       "texte": "Exploiting isolated fills in gapped or illiquid markets is prohibited.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": true,
@@ -825,6 +931,7 @@
       "texte": "Payout, breach and repeat patterns are prohibited.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": true,
@@ -837,6 +944,7 @@
       "texte": "The configurator displays \"No\" on every current plan, with no definition or duration threshold.",
       "statut": "needs_confirmation",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -853,6 +961,7 @@
         "nitro",
         "prime"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": "evaluation",
       "bloquante": false,
@@ -865,6 +974,7 @@
       "texte": "The configurator displays \"With restrictions\" without stating the event window.",
       "statut": "needs_confirmation",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
@@ -877,6 +987,7 @@
       "texte": "Veriff. Buyer, KYC holder and account operator must be the same person. Reviewed at upgrades.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -889,6 +1000,7 @@
       "texte": "30 consecutive days without trades may permanently close a live account.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": true,
@@ -901,6 +1013,7 @@
       "texte": "A stop order is required on every open position on a live account.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -917,6 +1030,7 @@
         "nitro",
         "prime"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": "evaluation",
       "bloquante": false,
@@ -929,6 +1043,7 @@
       "texte": "Maximum 10 funded accounts overall; maximum 10 Prime; maximum 5 combined across Elite, Custom, Instant and Nitro.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -941,6 +1056,7 @@
       "texte": "Average under 24 hours. Manual review may take longer.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -953,6 +1069,7 @@
       "texte": "1 to 3 days after approval.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -965,6 +1082,7 @@
       "texte": "Maximum $500 per request. Above that, standard Rise methods apply.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -979,6 +1097,7 @@
       "programmes": [
         "elite"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -993,6 +1112,7 @@
       "programmes": [
         "elite"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -1007,6 +1127,7 @@
       "programmes": [
         "prime"
       ],
+      "variantes": [],
       "tailles": [
         150000
       ],
@@ -1023,6 +1144,7 @@
       "programmes": [
         "instant"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": null,
       "bloquante": false,
@@ -1037,6 +1159,7 @@
       "programmes": [
         "prime"
       ],
+      "variantes": [],
       "tailles": [],
       "phase": "evaluation",
       "bloquante": false,
@@ -1049,6 +1172,7 @@
       "texte": "A risk-team decision. The fifth payout is a ceiling, not an automatic entitlement.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
@@ -1061,6 +1185,7 @@
       "texte": "Starts at $0 with a loss floor based on account size. 50K example: $2,000 loss floor and $1,000 cushion.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
@@ -1073,6 +1198,7 @@
       "texte": "15 profitable days meeting the size-specific daily minimum. Days need not be consecutive.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
@@ -1085,6 +1211,7 @@
       "texte": "Daily, $200 minimum, on profits above the cushion or unlocked reserve.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
@@ -1097,6 +1224,7 @@
       "texte": "Exchange market data is the trader’s responsibility on a live account. Amount not specified.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
@@ -1109,6 +1237,7 @@
       "texte": "Commissions and exchange fees are charged per instrument on each executed trade. The official FAQ still labels some exchange fees as 2024 rates.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
@@ -1121,6 +1250,7 @@
       "texte": "A paid platform licence may apply depending on the selected platform.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
@@ -1133,6 +1263,7 @@
       "texte": "No hidden administrative maintenance fee is stated: $0.",
       "statut": "confirmed",
       "programmes": [],
+      "variantes": [],
       "tailles": [],
       "phase": "funded",
       "bloquante": false,
@@ -1141,6 +1272,8 @@
     }
   ],
   "titre": "Four routes to a funded futures account",
+  "metaDescription": null,
+  "fluxDonnees": [],
   "description": "Compare Elite, Nitro, Prime and Instant to choose between a traditional evaluation, a faster route or funding from purchase. Each program has its own loss limits, consistency rules and payout conditions.",
   "connuPour": [
     {
@@ -1165,37 +1298,44 @@
     {
       "nom": "Tradovate",
       "selectionnable": true,
-      "note": null
+      "note": null,
+      "logoUrl": "https://trader.tradovate.com/img/icons/iphone-retina.png"
     },
     {
       "nom": "NinjaTrader",
       "selectionnable": true,
-      "note": "Potential external licence cost in live trading."
+      "note": "Potential external licence cost in live trading.",
+      "logoUrl": "https://ninjatrader.com/assets/dist/images/favicons/apple-touch-icon.png"
     },
     {
       "nom": "Quantower",
       "selectionnable": true,
-      "note": null
+      "note": null,
+      "logoUrl": "https://www.quantower.com/favicon.ico"
     },
     {
       "nom": "ATAS",
       "selectionnable": true,
-      "note": null
+      "note": null,
+      "logoUrl": "https://atas.net/wp-content/uploads/2026/01/atas_icon-300x300.png"
     },
     {
       "nom": "WealthCharts",
       "selectionnable": true,
-      "note": null
+      "note": null,
+      "logoUrl": "https://www.wealthcharts.com/favicon.ico"
     },
     {
       "nom": "DeepCharts",
       "selectionnable": true,
-      "note": "Written DeepChart in the purchase configurator and DeepCharts® on the official homepage; one product. The dashboard provides credentials and a Dxfeed agreement flow."
+      "note": "Written DeepChart in the purchase configurator and DeepCharts® on the official homepage; one product. The dashboard provides credentials and a Dxfeed agreement flow.",
+      "logoUrl": "https://framerusercontent.com/images/AoZRfVkVLzahOuchkWO16EoZOo.png"
     },
     {
       "nom": "Volumetrica",
       "selectionnable": false,
-      "note": "Listed on the official homepage but not exposed in the purchase configurator."
+      "note": "Listed on the official homepage but not exposed in the purchase configurator.",
+      "logoUrl": null
     }
   ],
   "categoriesActifs": [],

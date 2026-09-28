@@ -9,7 +9,7 @@
 // aucune n'ajoute une information qui n'y serait pas.
 // =============================================================================
 
-export type PhaseKey = 'evaluation' | 'evaluation_2' | 'funded'
+export type PhaseKey = 'evaluation' | 'evaluation_2' | 'evaluation_3' | 'funded'
 
 /**
  * Pourquoi une valeur manque. `confirmed` accompagne une valeur publiee ; les
@@ -42,8 +42,15 @@ export interface SheetPhase {
   /** Fraction (0.4 = 40 %), « aucune », « non confirmee », ou null. */
   regularite: number | 'aucune' | 'non confirmee' | null
   maxContrats: number | null
-  /** Fraction : 0.9 = 90 %. */
+  /** Fraction : 0.9 = 90 %. Avec un palier, c'est le taux au-dessus du seuil. */
   partage: number | null
+  /**
+   * Partage par palier (Earn2Trade : 50 % sous 1 500 $, 80 % au-dela) : le taux
+   * sous le seuil et le seuil, en devise, par demande de retrait. Absents des
+   * copies figees de production.
+   */
+  partageBas?: number | null
+  seuilPartage?: number | null
   /** Plafond par demande de retrait, en devise. */
   plafondRetrait: number | null
   /** Minimum par demande de retrait, en devise. */
@@ -55,7 +62,14 @@ export interface SheetPhase {
 export interface SheetPlan {
   taille: number
   variante: string | null
+  /** Devise du prix. */
   devise: string
+  /**
+   * Devise du solde du compte : la taille, les objectifs et les limites. Elle
+   * suit le prix chez la plupart des firmes, mais pas toutes (FTMO facture en
+   * euros des comptes en dollars).
+   */
+  deviseCompte: string
   prix: number | null
   /** Le plan affiche dans la carte « MOST POPULAR PLAN ». */
   cartePromo: boolean
@@ -65,6 +79,12 @@ export interface SheetPlan {
   /** Carte Fees : reset apres une perte, et activation du compte finance (0 = aucun). */
   fraisReset: number | null
   fraisActivation: number | null
+  /**
+   * Slug du plan dans prop_firm_challenges : /api/go ouvre son lien profond,
+   * qui porte le plan, le code et nos identifiants d'affiliation. Vide : le
+   * lien general de la firme. Absent des copies figees.
+   */
+  lienPlan?: string | null
   phases: SheetPhase[]
 }
 
@@ -77,6 +97,14 @@ export interface SheetProgramme {
   resume: string | null
   marche: string
   type: 'evaluation' | 'instant'
+  /**
+   * « active » par defaut. « limited_offer » : campagne a duree limitee, servie
+   * comme les autres mais annoncee comme telle. « promotional » reste accepte.
+   */
+  statut: 'active' | 'promotional' | 'limited_offer'
+  /** Fin de la campagne : une date, ou un statut quand elle n'est pas publiee. */
+  offreFin: string | null
+  offreFinStatut: Statut | null
   /** Comptes finances actifs au plus, pour CE programme. */
   maxComptes: number | null
   maxComptesStatut: Statut | null
@@ -93,6 +121,20 @@ export interface SheetOffre {
   programmesEligibles: string[]
   taillesEligibles: number[]
   expireLe: string | null
+  /** Phrase courte pour le bandeau de campagne : ce que l'offre donne en plus. */
+  accroche: string | null
+  /**
+   * Campagne a duree limitee. Tant que `campagneFin` est a venir, `remiseCampagne`
+   * remplace `remise` ; apres, l'offre permanente reprend, sans rien a modifier.
+   */
+  remiseCampagne: number | null
+  campagneFin: string | null
+  /**
+   * Seule une offre « confirmed » s'affiche (code, remise, Copy code, Claim deal).
+   * Le partenaire doit avoir confirme le code, le pourcentage et le lien.
+   * Absent dans les copies figees de production, que la nouvelle page ne lit pas.
+   */
+  statut?: Statut
 }
 
 /** Une etape de « From evaluation to your first payout ». */
@@ -124,6 +166,8 @@ export interface SheetRegle {
   /** Vides = toute la firme. */
   programmes: string[]
   tailles: number[]
+  /** Vides = toutes les variantes du programme (Day Trade, Swing, NEW…). */
+  variantes: string[]
   phase: PhaseKey | null
   /** L'enfreindre fait perdre le compte. */
   bloquante: boolean
@@ -134,6 +178,7 @@ export interface SheetRegle {
 
 export const ETAPE_LABEL: Record<string, string> = {
   evaluation: 'Evaluation',
+  certification: 'Certification',
   funded: 'Funded',
   payout: 'Payout',
 }
@@ -148,6 +193,8 @@ export interface SheetPlateforme {
   nom: string
   selectionnable: boolean
   note: string | null
+  /** Icone officielle (site de l'editeur). Vide : pastille a l'initiale. */
+  logoUrl?: string | null
 }
 
 /** Un choix d'achat qui change le produit : il est transmis au lien de paiement. */
@@ -159,6 +206,8 @@ export interface SheetOption {
   valeur: string
   /** Slugs concernes ; vide = tous les programmes. */
   programmes: string[]
+  /** Icone officielle (site de l'editeur). Absente des copies figees. */
+  logoUrl?: string | null
 }
 
 export interface SheetCompte {
@@ -210,6 +259,10 @@ export interface FirmSheet {
   regles: SheetRegle[]
   /** Le H1 : une proposition de valeur. Null : le nom sert de H1. */
   titre: string | null
+  /** Meta description (onglet Firme). Vide : calculee depuis la presentation. */
+  metaDescription?: string | null
+  /** Flux de donnees proposes (carte d'information). Absent des copies figees. */
+  fluxDonnees?: string[]
   /** 2 a 3 lignes sous le H1. */
   description: string | null
   /** « What [Firm] is known for » : quatre faits au plus. */
@@ -248,10 +301,11 @@ export interface SimilarFirm {
 export const PHASE_LABEL: Record<PhaseKey, string> = {
   evaluation: 'Evaluation',
   evaluation_2: 'Evaluation 2',
+  evaluation_3: 'Evaluation 3',
   funded: 'Funded',
 }
 
-const ORDRE_PHASE: Record<PhaseKey, number> = { evaluation: 0, evaluation_2: 1, funded: 2 }
+const ORDRE_PHASE: Record<PhaseKey, number> = { evaluation: 0, evaluation_2: 1, evaluation_3: 2, funded: 3 }
 
 export function orderedPhases(phases: SheetPhase[]): SheetPhase[] {
   return [...phases].sort((a, b) => ORDRE_PHASE[a.phase] - ORDRE_PHASE[b.phase])
@@ -299,6 +353,19 @@ export function sizeLabel(n: number, devise: string): string {
   }).format(n)
 }
 
+/**
+ * Le partage d'une phase tel qu'il s'affiche : un taux, ou deux taux et leur
+ * seuil quand la firme paie par palier (« 50% under $1,500 · 80% from $1,500 »).
+ */
+export function formatPartage(phase: SheetPhase, devise: string): string | null {
+  if (phase.partage == null) return null
+  if (phase.partageBas != null && phase.seuilPartage != null) {
+    const seuil = money(phase.seuilPartage, devise)
+    return `${pct(phase.partageBas)} under ${seuil} · ${pct(phase.partage)} from ${seuil}`
+  }
+  return pct(phase.partage)
+}
+
 export function pct(fraction: number): string {
   return `${Math.round(fraction * 100)}%`
 }
@@ -321,6 +388,13 @@ export function paragraphs(texte: string | null): string[] {
  * Google coupe, et l'ancien verdict en faisait pres de 400.
  */
 export function sheetMetaDescription(sheet: FirmSheet): string {
+  // Ecrite dans le tableur (onglet Firme, meta_description) : elle prime.
+  if (sheet.metaDescription) {
+    const m = sheet.metaDescription.trim()
+    if (m.length <= 160) return m
+    const c = m.slice(0, 157)
+    return `${c.slice(0, c.lastIndexOf(' '))}…`
+  }
   const source = sheet.presentation ?? sheet.resume ?? ''
   const premiere = source.match(/^[\s\S]*?[.!?](\s|$)/)?.[0].trim() ?? ''
   const suite = `Fees, trading rules, profit split and promo codes for ${sheet.nom}.`
@@ -490,16 +564,20 @@ function reponsesRecomposees(sheet: FirmSheet): Record<string, string | null> {
       const devise = p.plans[0]?.devise ?? 'USD'
       const prix = p.plans.map((pl) => pl.prix).filter((x): x is number => x != null)
       const f = fourchette(prix, (n) => money(n, devise))
-      return f ? `${p.nom}: ${f}` : null
+      // Un abonnement se dit « per month » : sans quoi le lecteur croit a un paiement unique.
+      const mensuel = p.plans.some((pl) => pl.prix != null) &&
+        p.plans.filter((pl) => pl.prix != null).every((pl) => pl.facturation === 'subscription' && pl.intervalle === 'monthly')
+      return f ? `${p.nom}: ${f}${mensuel ? ' per month' : ''}` : null
     })
     .filter((x): x is string => x != null)
 
   const partages = programmes
     .map((p) => {
+      // Un palier compte ses deux taux : « 50% to 80% », jamais « 80% » seul.
       const valeurs = p.plans
         .flatMap((pl) => pl.phases)
         .filter((ph) => ph.phase === 'funded' && ph.partage != null)
-        .map((ph) => ph.partage as number)
+        .flatMap((ph) => (ph.partageBas != null ? [ph.partageBas, ph.partage as number] : [ph.partage as number]))
       const f = fourchette(valeurs, pct)
       return f ? `${p.nom}: ${f}` : null
     })
