@@ -7,6 +7,7 @@ import { formatMonthYear } from '@/lib/format'
 import Image from 'next/image'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { rangPartenaire } from '@/lib/partenaires'
 
 // =============================================================================
 // LOCALE DETECTION & TRANSLATIONS
@@ -2088,6 +2089,14 @@ export default function ComparePageClient({ firms, shadowFirms = [], campagneSlu
       const aCampagne = campagneSlug != null && a.slug === campagneSlug ? 0 : 1
       const bCampagne = campagneSlug != null && b.slug === campagneSlug ? 0 : 1
       if (aCampagne !== bCampagne) return aCampagne - bCampagne
+
+      // 0b. Puis les partenaires, dans l'ordre de lib/partenaires.ts
+      //     (28 septembre 2026). Ils ont tous un code promo en cours, donc cet
+      //     ordre choisit leur rang a l'interieur du premier groupe ; il ne
+      //     fait passer personne devant une meilleure offre.
+      const aPartenaire = rangPartenaire(a.slug)
+      const bPartenaire = rangPartenaire(b.slug)
+      if (aPartenaire !== bPartenaire) return aPartenaire - bPartenaire
 
       // 1. Three groups, in this order (23 September 2026):
       //      a live promo code, then an affiliate link without a code, then
