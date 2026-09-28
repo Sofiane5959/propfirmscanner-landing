@@ -114,8 +114,10 @@ export function CampagneRail({ campagne }: { campagne: Campagne | null }) {
               <span className="whitespace-nowrap font-display text-lg font-bold leading-none text-accent">
                 {pourcent} OFF
               </span>
+              {/* Sans le mot « left » : a 375 px, il poussait le compte a rebours
+                  sous le bouton. La couleur et la place disent deja ce que c'est. */}
               <span className="whitespace-nowrap text-[10px] font-semibold uppercase tracking-wide text-deal">
-                {temps} left
+                {temps}
               </span>
             </p>
           </div>
