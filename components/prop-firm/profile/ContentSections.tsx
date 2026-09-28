@@ -46,7 +46,7 @@ export function OptionalModules({ sheet }: { sheet: FirmSheet }) {
   const carteCompte = (c: (typeof comptes)[number], dansEtape: boolean) => (
     <article
       key={c.nom}
-      className={cx(CARD, 'flex flex-col p-4', dansEtape && 'border-accent-border bg-bg-base')}
+      className={cx(CARD, 'flex flex-col p-4', dansEtape && 'border-2 !border-accent bg-bg-base')}
     >
       <p className={EYEBROW}>{COPY.modules.accounts}</p>
       <h3 className={cx('mt-1 font-display text-base font-bold', dansEtape && 'text-accent')}>{c.nom}</h3>
