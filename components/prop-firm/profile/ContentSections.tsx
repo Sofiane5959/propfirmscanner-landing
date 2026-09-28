@@ -40,10 +40,16 @@ export function OptionalModules({ sheet }: { sheet: FirmSheet }) {
   const { parcours, formation, comptesApresReussite: comptes } = sheet
   // 22/09 : les comptes proposes apres la reussite suivent le parcours, dans
   // la meme section ; la formation a sa propre section.
+  // 28/09 : dans la frise, ces cartes se confondaient avec l'etape qui les
+  // porte. Elles gardent donc leur bordure accentuee et leur titre en vert :
+  // ce sont deux choix, pas une note de bas de page.
   const carteCompte = (c: (typeof comptes)[number], dansEtape: boolean) => (
-    <article key={c.nom} className={cx(CARD, 'flex flex-col p-4', dansEtape && 'bg-bg-base')}>
-      {!dansEtape && <p className={EYEBROW}>{COPY.modules.accounts}</p>}
-      <h3 className={cx('font-semibold', !dansEtape && 'mt-1')}>{c.nom}</h3>
+    <article
+      key={c.nom}
+      className={cx(CARD, 'flex flex-col p-4', dansEtape && 'border-accent-border bg-bg-base')}
+    >
+      <p className={EYEBROW}>{COPY.modules.accounts}</p>
+      <h3 className={cx('mt-1 font-display text-base font-bold', dansEtape && 'text-accent')}>{c.nom}</h3>
       {c.description && <p className="mt-1 text-sm text-text-muted">{c.description}</p>}
       {c.lignes.length > 0 && (
         <dl className="mt-auto divide-y divide-border pt-2 text-sm">
