@@ -75,6 +75,14 @@ fusion vers `main` sans demande explicite, puisqu'elle sert le site public.
 - Une offre (onglet Offre) n'est affichée sur la fiche ni recopiée dans
   `prop_firms.discount_*` que si son `statut` est `confirmed`.
 
+- Un paquet de thème livre parfois `app/[locale]/layout.tsx`, `Navbar.tsx` ou
+  `globals.css`. Ces fichiers portent déjà des ajouts du dépôt : les FUSIONNER,
+  jamais les copier tels quels. Le 28 septembre 2026, copier le layout d'un
+  paquet a supprimé le montage de `CampagneRail`, et le bandeau de promotion a
+  disparu du site sans que rien ne le signale. Le même paquet livrait un
+  `Navbar.tsx` qui ne compilait pas : son générateur avait remplacé « Lin » par
+  le nom du thème jusque dans `Link`.
+
 ## Vérifications avant de conclure
 
 Lancer `npm run build` et `npx tsc --noEmit`. Ne pas annoncer qu'une tâche est

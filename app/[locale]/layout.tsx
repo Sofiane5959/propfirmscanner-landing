@@ -11,6 +11,8 @@ import PromoTicker from '@/components/PromoTicker'
 import Footer from '@/components/Footer'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 import { NewsletterPopup } from '@/components/NewsletterPopup'
+import { CampagneRail } from '@/components/CampagneRail'
+import { campagneEnCours } from '@/lib/campagne'
 import '../globals.css'
 import { generateAlternates, localeHref } from '@/lib/seo'
 
@@ -168,6 +170,10 @@ export default function LocaleLayout({
           <main className="pt-16">{children}</main>
           <Footer />
           <NewsletterPopup />
+          {/* Campagne datee, choisie dans les fiches. Remonte ici le 28/09 apres
+              qu'un paquet de theme a ecrase ce fichier et fait disparaitre le
+              bandeau : tout paquet livrant layout.tsx doit etre fusionne, pas copie. */}
+          <CampagneRail campagne={campagneEnCours(params.locale)} />
         </AuthProvider>
       </body>
     </html>
