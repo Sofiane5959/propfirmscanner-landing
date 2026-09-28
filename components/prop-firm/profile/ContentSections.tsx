@@ -365,7 +365,7 @@ export function VerdictSection({ sheet }: { sheet: FirmSheet }) {
 
   const colonne = (titre: string, items: string[], ton: 'pour' | 'contre') => (
     <div className={cx('rounded-lg border p-4', ton === 'pour' ? 'border-accent-border bg-accent/5' : 'border-warning/30 bg-warning-subtle')}>
-      <p className={cx('flex items-center gap-2 text-sm font-bold uppercase tracking-wider', ton === 'pour' ? 'text-accent' : 'text-warning')}>
+      <p className={cx('flex items-center gap-2 text-sm font-bold uppercase tracking-wider', ton === 'pour' ? 'text-accent' : 'text-deal')}>
         {ton === 'pour' ? <Check className="h-4 w-4" aria-hidden="true" /> : <Info className="h-4 w-4" aria-hidden="true" />}
         {titre}
       </p>

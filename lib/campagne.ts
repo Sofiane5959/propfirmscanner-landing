@@ -20,10 +20,12 @@ export function campagneEnCours(locale: string, maintenant = Date.now()): Campag
   const candidates = Object.values(FIRM_SHEETS)
     .map((sheet) => {
       const offre = sheet.offre
-      if (!offre || offre.statut !== 'confirmed' || !offre.expireLe) return null
-      const fin = new Date(offre.expireLe).getTime()
+      if (!offre || offre.statut !== 'confirmed') return null
+      // Seule une campagne datee a sa place dans un bandeau a compte a rebours.
+      if (offre.remiseCampagne == null || !offre.campagneFin) return null
+      const fin = new Date(offre.campagneFin).getTime()
       if (Number.isNaN(fin) || fin <= maintenant) return null
-      return { sheet, offre, fin }
+      return { sheet, offre: { ...offre, remise: offre.remiseCampagne, expireLe: offre.campagneFin }, fin }
     })
     .filter((x): x is NonNullable<typeof x> => x != null)
     .sort((a, b) => b.offre.remise - a.offre.remise || a.fin - b.fin)

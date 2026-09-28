@@ -268,6 +268,10 @@ def convertir(chemin):
             "expireLe": expire.date().isoformat() if isinstance(expire, dt.datetime) else txt(expire),
             # Sans confirmation explicite du partenaire, l'offre ne s'affiche pas.
             "accroche": txt(o.get("accroche")),
+            "remiseCampagne": fraction(o.get("remise_campagne")),
+            "campagneFin": (o.get("campagne_fin").isoformat()
+                            if isinstance(o.get("campagne_fin"), dt.datetime)
+                            else txt(o.get("campagne_fin"))),
             "statut": statut(o.get("statut")) or "needs_confirmation",
         }
         if statut(o.get("statut")) is None:

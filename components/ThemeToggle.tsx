@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
 
 /**
- * Bascule jour (Lin) / nuit (Olive).
+ * Bascule jour (Menthe +) / nuit (Moka).
  * L'etat initial est pose par le script de app/[locale]/layout.tsx ; ce
  * composant ne fait que le lire, puis enregistre le choix du visiteur.
  */

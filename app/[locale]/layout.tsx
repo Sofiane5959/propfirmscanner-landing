@@ -11,8 +11,6 @@ import PromoTicker from '@/components/PromoTicker'
 import Footer from '@/components/Footer'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 import { NewsletterPopup } from '@/components/NewsletterPopup'
-import { CampagneRail } from '@/components/CampagneRail'
-import { campagneEnCours } from '@/lib/campagne'
 import '../globals.css'
 import { generateAlternates, localeHref } from '@/lib/seo'
 
@@ -151,12 +149,11 @@ export default function LocaleLayout({
       suppressHydrationWarning
     >
       <head>
-        {/* Theme before first paint: saved choice, else the system setting.
-            Lin (day) when light, Olive (night) when dark. Without this,
-            a night-mode visitor would see a flash of the day theme. */}
+        {/* Theme before first paint: saved choice, else day (Menthe +).
+            Night = Moka. Prevents a flash of the wrong theme. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('pfs-theme');var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.classList.toggle('dark',d);}catch(e){document.documentElement.classList.add('dark');}})();`,
+            __html: `(function(){try{var t=localStorage.getItem('pfs-theme');var d=t==='dark';document.documentElement.classList.toggle('dark',d);}catch(e){}})();`,
           }}
         />
         <GoogleAnalytics />
@@ -171,8 +168,6 @@ export default function LocaleLayout({
           <main className="pt-16">{children}</main>
           <Footer />
           <NewsletterPopup />
-          {/* Campagne datee, choisie dans les fiches : rien n'est ecrit ici. */}
-          <CampagneRail campagne={campagneEnCours(params.locale)} />
         </AuthProvider>
       </body>
     </html>

@@ -140,7 +140,7 @@ export function AccountConfigurator({
                       <span className="flex flex-wrap items-center justify-center gap-1.5">
                         <span className={cx('text-sm font-semibold', actif && 'text-accent')}>{c.label}</span>
                         {c.badge && (
-                          <span className="rounded border border-warning/40 bg-warning/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-warning">
+                          <span className="rounded border border-deal/30 bg-deal-subtle px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-deal">
                             {c.badge}
                           </span>
                         )}
@@ -296,7 +296,7 @@ export function ProgramComparison({ sel }: { sel: FirmSelection }) {
             <article key={p.slug} className={cx(CARD, 'flex flex-col gap-1.5 p-4')}>
               {p.accroche && <span className={EYEBROW}>{p.accroche}</span>}
               {p.statut === 'limited_offer' && (
-                <span className="inline-flex w-fit items-center gap-1 rounded-md border border-warning/40 bg-warning/10 px-2 py-0.5 text-[11px] font-semibold text-warning">
+                <span className="inline-flex w-fit items-center gap-1 rounded-md border border-deal/30 bg-deal-subtle px-2 py-0.5 text-[11px] font-semibold text-deal">
                   {COPY.comparison.limitedOffer}
                   {p.offreFin ? ` · ${COPY.comparison.endsOn(p.offreFin)}` : ''}
                 </span>

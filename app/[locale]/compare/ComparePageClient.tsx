@@ -1414,7 +1414,7 @@ const PropFirmCard = ({
             </div>
           </div>
           {hasDiscount && (
-            <span className="px-2 py-1 bg-amber-500/15 text-amber-400 border border-amber-500/30 text-[11px] font-semibold rounded-md uppercase tracking-wider">-{firm.discount_percent}%</span>
+            <span className="px-2 py-1 bg-deal-subtle text-deal border border-deal/30 text-[11px] font-semibold rounded-md uppercase tracking-wider">-{firm.discount_percent}%</span>
           )}
           <div className="flex items-center gap-1">
             <button onClick={onFavorite} aria-label={isFavorite ? `Remove ${firm.name} from favorites` : `Add ${firm.name} to favorites`} aria-pressed={isFavorite} className={`p-2 rounded-lg transition-all ${isFavorite ? 'text-red-400 bg-red-500/20' : 'text-text-muted hover:text-red-400 hover:bg-bg-elevated'}`}>
@@ -1525,18 +1525,18 @@ const PropFirmCard = ({
           <span key={p} className="rounded-lg border border-accent-border bg-accent-subtle px-2 py-0.5 text-xs font-medium text-accent">✓ {p}</span>
         ))}
         {firm.has_instant_funding && (
-          <span className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-500 dark:text-amber-400">⚡ Instant</span>
+          <span className="rounded-lg border border-deal/30 bg-deal-subtle px-2 py-0.5 text-xs font-medium text-deal">⚡ Instant</span>
         )}
       </div>
 
       {/* e) Promo */}
       {hasDiscount && (
-        <div className="flex items-center justify-between gap-2 rounded-xl border border-dashed border-amber-500/40 bg-amber-500/10 px-3 py-2">
-          <span className="text-sm font-bold text-amber-500 dark:text-amber-400">−{firm.discount_percent}%</span>
+        <div className="flex items-center justify-between gap-2 rounded-xl border border-dashed border-deal/30 bg-deal-subtle px-3 py-2">
+          <span className="text-sm font-bold text-deal">−{firm.discount_percent}%</span>
           {firm.discount_code && (
             <>
               <span className="font-mono text-[13px] font-semibold tracking-wide text-text-primary">{firm.discount_code}</span>
-              <button onClick={() => onCopyCode(firm.discount_code)} aria-label={`Copy discount code ${firm.discount_code}`} className="flex items-center gap-1 text-xs font-medium text-amber-500 dark:text-amber-400">
+              <button onClick={() => onCopyCode(firm.discount_code)} aria-label={`Copy discount code ${firm.discount_code}`} className="flex items-center gap-1 text-xs font-medium text-deal">
                 <Copy className="h-3 w-3" />Copy
               </button>
             </>
@@ -2360,7 +2360,7 @@ export default function ComparePageClient({ firms, shadowFirms = [], campagneSlu
               
               {/* Deals */}
               {stats.withDiscounts > 0 && (
-                <button onClick={() => setFilters(f => ({ ...f, hasDiscount: !f.hasDiscount }))} aria-pressed={filters.hasDiscount} aria-label={`Filter by deals only. ${stats.withDiscounts} firms with discounts`} className={`flex items-center gap-1.5 rounded-xl border px-3.5 py-2.5 text-sm font-medium transition-colors ${filters.hasDiscount ? 'border-amber-500/40 bg-amber-500/10 text-amber-500 dark:text-amber-400' : 'border-border bg-bg-base text-text-secondary hover:border-border-hover'}`}>
+                <button onClick={() => setFilters(f => ({ ...f, hasDiscount: !f.hasDiscount }))} aria-pressed={filters.hasDiscount} aria-label={`Filter by deals only. ${stats.withDiscounts} firms with discounts`} className={`flex items-center gap-1.5 rounded-xl border px-3.5 py-2.5 text-sm font-medium transition-colors ${filters.hasDiscount ? 'border-deal/30 bg-deal-subtle text-deal' : 'border-border bg-bg-base text-text-secondary hover:border-border-hover'}`}>
                   <Tag className="h-3.5 w-3.5" /> {t.deals} <span className="font-mono text-[11px]">({stats.withDiscounts})</span>
                 </button>
               )}

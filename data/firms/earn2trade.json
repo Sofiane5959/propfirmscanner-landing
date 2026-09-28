@@ -383,13 +383,15 @@
   ],
   "offre": {
     "code": "SCANNED",
-    "remise": 0.6,
+    "remise": 0.5,
     "portee": "universelle_verifiee",
     "checkoutVerifie": true,
     "programmesEligibles": [],
     "taillesEligibles": [],
-    "expireLe": "2026-10-01T05:00:00+00:00",
+    "expireLe": null,
     "accroche": "60% off the first three months, and the free reset stays",
+    "remiseCampagne": 0.6,
+    "campagneFin": "2026-10-01T05:00:00+00:00",
     "statut": "confirmed"
   },
   "conditions": {

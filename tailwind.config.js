@@ -39,7 +39,7 @@ module.exports = {
           900: '#14532d',
         },
         // Echelle legacy : les valeurs viennent des variables CSS de
-        // app/globals.css. Nuit = Olive, Jour = Lin (inversee).
+        // app/globals.css. Nuit = Moka, Jour = Menthe + (inversee).
         dark: {
           50: 'rgb(var(--dark-50) / <alpha-value>)',
           100: 'rgb(var(--dark-100) / <alpha-value>)',
@@ -55,9 +55,9 @@ module.exports = {
           950: 'rgb(var(--dark-950) / <alpha-value>)',
         },
 
-        // --- DESIGN SYSTEM v1.0 — themes Lin (jour) / Olive (nuit) -----
+        // --- DESIGN SYSTEM v1.0 — themes Menthe + / Moka -----
         // Toutes les valeurs sont des variables CSS definies dans globals.css
-        // (:root = Lin, .dark = Olive). Le format rgb(var() / alpha)
+        // (:root = Menthe +, .dark = Moka). Le format rgb(var() / alpha)
         // garde les modificateurs d'opacite (bg-bg-elevated/60, bg-accent/10).
         bg: {
           base: 'rgb(var(--bg-base) / <alpha-value>)',
@@ -77,6 +77,11 @@ module.exports = {
           hover: 'rgb(var(--accent-btn) / <alpha-value>)', // fond des boutons principaux (texte blanc)
           subtle: 'rgb(var(--accent) / 0.14)',
           border: 'rgb(var(--accent) / 0.3)',
+        },
+        // Promotions / codes promo (orange le jour, jaune la nuit)
+        deal: {
+          DEFAULT: 'rgb(var(--deal) / <alpha-value>)',
+          subtle: 'rgb(var(--deal) / 0.1)',
         },
         warning: {
           DEFAULT: '#F59E0B',

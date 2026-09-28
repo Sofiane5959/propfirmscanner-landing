@@ -124,6 +124,12 @@ export interface SheetOffre {
   /** Phrase courte pour le bandeau de campagne : ce que l'offre donne en plus. */
   accroche: string | null
   /**
+   * Campagne a duree limitee. Tant que `campagneFin` est a venir, `remiseCampagne`
+   * remplace `remise` ; apres, l'offre permanente reprend, sans rien a modifier.
+   */
+  remiseCampagne: number | null
+  campagneFin: string | null
+  /**
    * Seule une offre « confirmed » s'affiche (code, remise, Copy code, Claim deal).
    * Le partenaire doit avoir confirme le code, le pourcentage et le lien.
    * Absent dans les copies figees de production, que la nouvelle page ne lit pas.

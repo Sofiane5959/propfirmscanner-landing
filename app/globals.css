@@ -6,10 +6,10 @@
  * PropFirmScanner — Global styles
  *
  * Deux themes, pilotes par la classe `dark` sur <html> :
- *   :root  = Lin   (jour)
- *   .dark  = Olive (nuit)
+ *   :root  = Menthe + (jour, thème par défaut)
+ *   .dark  = Moka    (nuit)
  * La classe est posee avant l'affichage par le script de app/[locale]/layout.tsx
- * (choix enregistre, sinon reglage du systeme). Les valeurs sont des triplets
+ * (choix enregistre, sinon jour). Les valeurs sont des triplets
  * RGB pour que Tailwind garde les opacites (bg-accent/10, bg-bg-elevated/60).
  */
 
@@ -19,52 +19,54 @@
 @layer base {
   :root {
     color-scheme: light;
-    --bg-base: 245 244 236; /* #F5F4EC */
+    --bg-base: 232 239 235; /* #E8EFEB */
     --bg-elevated: 255 255 255; /* #FFFFFF */
-    --border: 228 226 211; /* #E4E2D3 */
-    --border-hover: 196 193 169; /* #C4C1A9 */
-    --text-primary: 29 31 20; /* #1D1F14 */
-    --text-secondary: 64 67 50; /* #404332 */
-    --text-muted: 99 102 82; /* #636652 */
-    --accent: 77 124 15; /* #4D7C0F */
-    --accent-btn: 77 124 15; /* #4D7C0F */
-    --dark-50: 29 31 20; /* #1D1F14 */
-    --dark-100: 42 45 31; /* #2A2D1F */
-    --dark-200: 64 67 50; /* #404332 */
-    --dark-300: 64 67 50; /* #404332 */
-    --dark-400: 99 102 82; /* #636652 */
-    --dark-500: 128 131 109; /* #80836D */
-    --dark-600: 214 212 195; /* #D6D4C3 */
-    --dark-700: 237 236 225; /* #EDECE1 */
+    --border: 210 225 217; /* #D2E1D9 */
+    --border-hover: 170 195 182; /* #AAC3B6 */
+    --text-primary: 16 32 26; /* #10201A */
+    --text-secondary: 51 71 63; /* #33473F */
+    --text-muted: 90 110 102; /* #5A6E66 */
+    --accent: 21 128 61; /* #15803D */
+    --accent-btn: 4 120 87; /* #047857 */
+    --deal: 194 65 12; /* #C2410C */
+    --dark-50: 16 32 26; /* #10201A */
+    --dark-100: 30 48 41; /* #1E3029 */
+    --dark-200: 51 71 63; /* #33473F */
+    --dark-300: 51 71 63; /* #33473F */
+    --dark-400: 90 110 102; /* #5A6E66 */
+    --dark-500: 130 153 142; /* #82998E */
+    --dark-600: 213 228 220; /* #D5E4DC */
+    --dark-700: 239 243 241; /* #EFF3F1 */
     --dark-750: 255 255 255; /* #FFFFFF */
-    --dark-800: 245 244 236; /* #F5F4EC */
-    --dark-900: 228 226 211; /* #E4E2D3 */
-    --dark-950: 214 212 195; /* #D6D4C3 */
+    --dark-800: 232 239 235; /* #E8EFEB */
+    --dark-900: 210 225 217; /* #D2E1D9 */
+    --dark-950: 213 228 220; /* #D5E4DC */
   }
 
   .dark {
     color-scheme: dark;
-    --bg-base: 26 28 20; /* #1A1C14 */
-    --bg-elevated: 36 39 28; /* #24271C */
-    --border: 58 62 45; /* #3A3E2D */
-    --border-hover: 86 91 68; /* #565B44 */
-    --text-primary: 244 245 236; /* #F4F5EC */
-    --text-secondary: 212 215 196; /* #D4D7C4 */
-    --text-muted: 167 171 147; /* #A7AB93 */
-    --accent: 190 242 100; /* #BEF264 */
-    --accent-btn: 77 124 15; /* #4D7C0F */
-    --dark-50: 250 251 245; /* #FAFBF5 */
-    --dark-100: 244 245 236; /* #F4F5EC */
-    --dark-200: 227 230 213; /* #E3E6D5 */
-    --dark-300: 212 215 196; /* #D4D7C4 */
-    --dark-400: 167 171 147; /* #A7AB93 */
-    --dark-500: 124 129 106; /* #7C816A */
-    --dark-600: 86 91 68; /* #565B44 */
-    --dark-700: 58 62 45; /* #3A3E2D */
-    --dark-750: 36 39 28; /* #24271C */
-    --dark-800: 26 28 20; /* #1A1C14 */
-    --dark-900: 17 19 9; /* #111309 */
-    --dark-950: 10 11 6; /* #0A0B06 */
+    --bg-base: 27 29 23; /* #1B1D17 */
+    --bg-elevated: 46 42 39; /* #2E2A27 */
+    --border: 68 60 55; /* #443C37 */
+    --border-hover: 90 79 72; /* #5A4F48 */
+    --text-primary: 246 242 238; /* #F6F2EE */
+    --text-secondary: 218 209 201; /* #DAD1C9 */
+    --text-muted: 175 163 152; /* #AFA398 */
+    --accent: 52 211 153; /* #34D399 */
+    --accent-btn: 4 120 87; /* #047857 */
+    --deal: 252 211 77; /* #FCD34D */
+    --dark-50: 250 247 245; /* #FAF7F5 */
+    --dark-100: 246 242 238; /* #F6F2EE */
+    --dark-200: 232 226 220; /* #E8E2DC */
+    --dark-300: 218 209 201; /* #DAD1C9 */
+    --dark-400: 175 163 152; /* #AFA398 */
+    --dark-500: 133 121 112; /* #857970 */
+    --dark-600: 90 79 72; /* #5A4F48 */
+    --dark-700: 68 60 55; /* #443C37 */
+    --dark-750: 46 42 39; /* #2E2A27 */
+    --dark-800: 27 29 23; /* #1B1D17 */
+    --dark-900: 27 24 22; /* #1B1816 */
+    --dark-950: 16 14 13; /* #100E0D */
   }
 
   body {

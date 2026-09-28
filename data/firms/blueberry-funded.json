@@ -1802,6 +1802,8 @@
     "taillesEligibles": [],
     "expireLe": null,
     "accroche": null,
+    "remiseCampagne": null,
+    "campagneFin": null,
     "statut": "confirmed"
   },
   "conditions": {

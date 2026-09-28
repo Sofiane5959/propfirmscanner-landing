@@ -13,6 +13,7 @@
 
 import {
   type FirmSheet,
+  type SheetOffre,
   type SheetOption,
   type SheetPhase,
   type SheetPlan,
@@ -54,8 +55,22 @@ export const estIncertain = (statut: Statut | null | undefined) => Boolean(statu
  * et la page se comporte comme une firme sans promotion. Un seul point de
  * decision : toutes les sections recoivent cette fiche.
  */
+/**
+ * L'offre telle qu'elle vaut a cet instant : le taux de campagne tant qu'elle
+ * dure, le taux permanent ensuite. Rien a modifier le jour ou la campagne
+ * s'arrete — c'est la date du tableur qui decide.
+ */
+export function offreDuJour(offre: SheetOffre, maintenant = Date.now()): SheetOffre {
+  if (offre.remiseCampagne == null || !offre.campagneFin) return offre
+  const fin = new Date(offre.campagneFin).getTime()
+  if (Number.isNaN(fin) || fin <= maintenant) {
+    return { ...offre, accroche: null, remiseCampagne: null, campagneFin: null }
+  }
+  return { ...offre, remise: offre.remiseCampagne, expireLe: offre.campagneFin }
+}
+
 export function ficheAffichable(sheet: FirmSheet): FirmSheet {
-  const offre = sheet.offre
+  const offre = sheet.offre ? offreDuJour(sheet.offre) : null
   if (!offre) return sheet
   // 28/09/2026 : une offre datee disparait d'elle-meme le jour ou elle expire.
   // Sans cela, une campagne de trois jours resterait affichee jusqu'a ce que
@@ -63,7 +78,8 @@ export function ficheAffichable(sheet: FirmSheet): FirmSheet {
   // que le partenaire n'accorde plus.
   const fin = offre.expireLe ? new Date(offre.expireLe) : null
   const expiree = fin != null && !Number.isNaN(fin.getTime()) && fin.getTime() <= Date.now()
-  return offre.statut !== 'confirmed' || expiree ? { ...sheet, offre: null } : sheet
+  if (offre.statut !== 'confirmed' || expiree) return { ...sheet, offre: null }
+  return { ...sheet, offre }
 }
 
 export function cellule(valeur: string | null | undefined, statut: Statut | null | undefined): Cellule | null {
