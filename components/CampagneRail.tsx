@@ -107,14 +107,16 @@ export function CampagneRail({ campagne }: { campagne: Campagne | null }) {
           <div className="min-w-0 lg:contents">
             {/* Telephone : le temps restant suit le nom, le taux tient la ligne
                 du dessous. Sinon « 60% OFF » se coupe en deux a 375 px. */}
-            <p className="flex items-baseline gap-2 lg:justify-center">
-              <span className="truncate font-display text-sm font-bold text-text-primary lg:text-base">{campagne.nom}</span>
-              <span className="whitespace-nowrap text-[11px] font-semibold uppercase tracking-wide text-deal lg:hidden">
+            <p className="truncate font-display text-sm font-bold text-text-primary lg:text-base">{campagne.nom}</p>
+            {/* Le taux et le temps restant partagent la ligne du dessous : le
+                nom garde la sienne, sinon il se faisait tronquer en « Earn… ». */}
+            <p className="flex items-baseline gap-2 lg:hidden">
+              <span className="whitespace-nowrap font-display text-lg font-bold leading-none text-accent">
+                {pourcent} OFF
+              </span>
+              <span className="whitespace-nowrap text-[10px] font-semibold uppercase tracking-wide text-deal">
                 {temps} left
               </span>
-            </p>
-            <p className="whitespace-nowrap font-display text-lg font-bold leading-none text-accent lg:hidden">
-              {pourcent} OFF
             </p>
           </div>
         </div>
