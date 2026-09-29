@@ -101,6 +101,8 @@ def contenu_offres(offres):
         "  accroche: string | null",
         "  /** Deux ou trois mots pour ce que l'offre donne en plus : « +1 free reset ». */",
         "  bonus: string | null",
+        "  /** Le code vaut sur tous les plans : le prix remise peut etre calcule. */",
+        "  surTousLesPlans: boolean",
         "  /** Taux d'une campagne datee, qui remplace `remise` jusqu'a `campagneFin`. */",
         "  remiseCampagne: number | null",
         "  campagneFin: string | null",
@@ -113,7 +115,7 @@ def contenu_offres(offres):
         o = offres[slug]
         lignes.append(f"  '{slug}': {{")
         for cle in ("nom", "logoUrl", "code", "remise", "expireLe", "accroche",
-                    "bonus", "remiseCampagne", "campagneFin", "statut"):
+                    "bonus", "surTousLesPlans", "remiseCampagne", "campagneFin", "statut"):
             lignes.append(f"    {cle}: {litteral(o.get(cle))},")
         lignes.append("  },")
     lignes += ["}", ""]
@@ -148,7 +150,13 @@ def generer():
         sorties[chemin_sql(slug)] = generer_sql(fiche, valeurs, texte_json, rel(tableur), slug in publiees)
         slugs.append(slug)
         if fiche.get("offre"):
-            offres[slug] = dict(fiche["offre"], nom=fiche.get("nom"), logoUrl=fiche.get("logoUrl"))
+            o = fiche["offre"]
+            offres[slug] = dict(
+                o, nom=fiche.get("nom"), logoUrl=fiche.get("logoUrl"),
+                # Un prix barre ne se calcule que si le code vaut partout.
+                surTousLesPlans=(o.get("portee") == "universelle_verifiee"
+                                 and not o.get("programmesEligibles")
+                                 and not o.get("taillesEligibles")))
     sorties[os.path.join(FICHES, "index.ts")] = contenu_index(sorted(slugs))
     sorties[os.path.join(FICHES, "offres.ts")] = contenu_offres(offres)
     return sorties, erreurs, avertissements

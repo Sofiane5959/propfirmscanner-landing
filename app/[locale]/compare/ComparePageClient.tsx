@@ -550,7 +550,7 @@ import {
 } from 'lucide-react'
 import { PriceAlertButton } from '@/components/PriceAlert'
 import { toArray } from '@/lib/to-array'
-import { bonusFiche } from '@/lib/offres-fiches'
+import { bonusFiche, prixRemiseFiche } from '@/lib/offres-fiches'
 
 // =====================================================
 // TYPES
@@ -1372,6 +1372,10 @@ const PropFirmCard = ({
   const hasDiscount = remiseActive(firm)
   // Ce que l'offre donne en plus du pourcentage, quand la firme a une fiche.
   const bonus = hasDiscount ? bonusFiche(firm.slug) : null
+  // Prix apres code, quand la fiche garantit que le code vaut sur tous les
+  // plans. Sinon la carte garde le prix plein (demande d'Eva Saint-Arroman,
+  // affiliation Earn2Trade, 29/09/2026 : montrer ce qu'on paie vraiment).
+  const prixApresCode = hasDiscount ? prixRemiseFiche(firm.slug, firm.min_price) : null
   // Top Pick : une seule firme le porte, celle que lib/partenaires.ts met en
   // tete (28 septembre 2026, demande de Sofiane). Avant, la base le donnait a
   // toutes les firmes de tier 1 — sept badges dans la liste, donc aucun signal.
@@ -1413,7 +1417,16 @@ const PropFirmCard = ({
                   <Banknote className="w-3 h-3" />{payoutAggregate.count} {t.payoutBadge}
                 </span>
               )}
-              <span>${firm.min_price || 'N/A'}</span>
+              <span>
+                {prixApresCode != null ? (
+                  <>
+                    <span className="font-semibold text-text-primary">${prixApresCode}</span>{' '}
+                    <span className="line-through">${firm.min_price}</span>
+                  </>
+                ) : (
+                  <>${firm.min_price || 'N/A'}</>
+                )}
+              </span>
               <span className="text-accent">{formatProfitSplit(firm.profit_split, firm.max_profit_split)}</span>
             </div>
           </div>
@@ -1517,7 +1530,16 @@ const PropFirmCard = ({
       <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-xl bg-border">
         <div className="bg-bg-base px-3 py-2.5">
           <dt className="text-[11px] uppercase tracking-wider text-text-muted">{t.price}</dt>
-          <dd className="mt-0.5 font-mono text-[19px] font-semibold tabular-nums text-text-primary">${firm.min_price || 'N/A'}</dd>
+          <dd className="mt-0.5 font-mono text-[19px] font-semibold tabular-nums text-text-primary">
+            {prixApresCode != null ? (
+              <>
+                ${prixApresCode}{' '}
+                <span className="text-[13px] font-normal text-text-muted line-through">${firm.min_price}</span>
+              </>
+            ) : (
+              <>${firm.min_price || 'N/A'}</>
+            )}
+          </dd>
         </div>
         <div className="bg-bg-base px-3 py-2.5">
           <dt className="text-[11px] uppercase tracking-wider text-text-muted">{t.split}</dt>

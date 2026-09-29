@@ -9,7 +9,7 @@ import {
   Sparkles, Gift, ShieldCheck,
 } from 'lucide-react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { appliquerOffresDesFiches, bonusFiche } from '@/lib/offres-fiches';
+import { appliquerOffresDesFiches, bonusFiche, prixRemiseFiche } from '@/lib/offres-fiches';
 
 // =============================================================================
 // LOCALE DETECTION
@@ -359,6 +359,7 @@ function DealCard({ firm, t }: { firm: PropFirm; t: Record<string, string> }) {
   const hasDiscount = (firm.discount_percent ?? 0) > 0;
   // Ce que l'offre donne en plus du pourcentage, quand la firme a une fiche.
   const bonus = hasDiscount ? bonusFiche(firm.slug) : null;
+  const prixApresCode = hasDiscount ? prixRemiseFiche(firm.slug, firm.min_price) : null;
   const hasAff = !!firm.affiliate_url;
 
   return (
@@ -408,7 +409,16 @@ function DealCard({ firm, t }: { firm: PropFirm; t: Record<string, string> }) {
       <div className="grid grid-cols-2 gap-3 px-5 mt-4">
         <div>
           <p className="text-[10px] text-text-muted uppercase tracking-wider">Price</p>
-          <p className="text-white font-bold">{firm.min_price ? `$${firm.min_price}` : '—'}</p>
+          <p className="text-white font-bold">
+            {prixApresCode != null ? (
+              <>
+                ${prixApresCode}{' '}
+                <span className="text-xs font-normal text-text-muted line-through">${firm.min_price}</span>
+              </>
+            ) : (
+              <>{firm.min_price ? `$${firm.min_price}` : '—'}</>
+            )}
+          </p>
         </div>
         <div>
           <p className="text-[10px] text-text-muted uppercase tracking-wider">Split</p>

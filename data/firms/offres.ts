@@ -12,6 +12,8 @@ export interface OffreFiche {
   accroche: string | null
   /** Deux ou trois mots pour ce que l'offre donne en plus : « +1 free reset ». */
   bonus: string | null
+  /** Le code vaut sur tous les plans : le prix remise peut etre calcule. */
+  surTousLesPlans: boolean
   /** Taux d'une campagne datee, qui remplace `remise` jusqu'a `campagneFin`. */
   remiseCampagne: number | null
   campagneFin: string | null
@@ -27,6 +29,7 @@ export const OFFRES_FICHES: Record<string, OffreFiche> = {
     expireLe: null,
     accroche: null,
     bonus: null,
+    surTousLesPlans: true,
     remiseCampagne: null,
     campagneFin: null,
     statut: 'confirmed',
@@ -39,6 +42,7 @@ export const OFFRES_FICHES: Record<string, OffreFiche> = {
     expireLe: null,
     accroche: 'One free reset comes with it: a second attempt, nothing more to pay. Until Sep 30.',
     bonus: '+1 free reset',
+    surTousLesPlans: true,
     remiseCampagne: 0.6,
     campagneFin: '2026-10-01T05:00:00+00:00',
     statut: 'confirmed',
@@ -51,6 +55,7 @@ export const OFFRES_FICHES: Record<string, OffreFiche> = {
     expireLe: null,
     accroche: null,
     bonus: null,
+    surTousLesPlans: false,
     remiseCampagne: null,
     campagneFin: null,
     statut: 'confirmed',

@@ -59,6 +59,26 @@ export function bonusFiche(slug: string, maintenant = Date.now()): string | null
 }
 
 /**
+ * Le prix d'entree une fois le code applique, quand la fiche garantit que le
+ * code vaut sur tous les plans. Null sinon : mieux vaut un prix plein exact
+ * qu'un prix barre que le partenaire n'accorderait pas sur ce plan-la.
+ */
+export function prixRemiseFiche(
+  slug: string,
+  prix: number | null | undefined,
+  maintenant = Date.now()
+): number | null {
+  if (prix == null || prix <= 0) return null
+  const brute = OFFRES_FICHES[slug]
+  if (!brute || brute.statut !== 'confirmed' || !brute.surTousLesPlans) return null
+  const offre = offreDuJour(brute, maintenant)
+  const fin = offre.expireLe ? new Date(offre.expireLe).getTime() : null
+  if (fin != null && !Number.isNaN(fin) && fin <= maintenant) return null
+  if (!(offre.remise > 0)) return null
+  return Math.round(prix * (1 - offre.remise))
+}
+
+/**
  * Recopie ces offres sur les lignes de prop_firms, pour que les cartes, les
  * filtres et les tris disent la meme chose que les fiches. Les firmes sans
  * fiche ressortent telles quelles.
