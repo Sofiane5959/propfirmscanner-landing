@@ -78,6 +78,21 @@ def projeter(fiche):
         avertissements.append(
             f"Plans : plusieurs devises ({', '.join(devises)}) ; price_currency, min_price et max_price ne sont pas projetes.")
 
+    # Une offre confirmee et testee au checkout n'a de valeur que si les boutons
+    # ouvrent le plan choisi : sans lien_plan, /api/go retombe sur le plan
+    # d'entree et le configurateur ne sert a rien (panne du 29/09/2026).
+    offre_ = fiche.get("offre") or {}
+    if offre_.get("statut") == "confirmed" and offre_.get("checkoutVerifie"):
+        sans_lien = [f"{p_['slug']} {pl['taille']}"
+                     for p_ in fiche.get("programmes", []) for pl in p_.get("plans", [])
+                     if not pl.get("lienPlan")]
+        if sans_lien:
+            avertissements.append(
+                "Plans : offre confirmee et testee au checkout, mais "
+                f"{len(sans_lien)} plan(s) sans lien_plan — les boutons ouvriront "
+                f"le plan d'entree, pas celui choisi ({', '.join(sans_lien[:3])}"
+                f"{'…' if len(sans_lien) > 3 else ''}).")
+
     partages = [ph["partage"] for pl in plans for ph in pl.get("phases", []) if ph.get("partage") is not None]
     # Un partage par palier commence a son taux bas : profit_split dit ou la
     # firme commence (CLAUDE.md), max_profit_split jusqu'ou elle va.

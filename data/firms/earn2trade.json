@@ -44,7 +44,7 @@
           "intervalle": "monthly",
           "fraisReset": null,
           "fraisActivation": null,
-          "lienPlan": null,
+          "lienPlan": "earn2trade-tcp25",
           "phases": [
             {
               "phase": "evaluation",
@@ -91,7 +91,7 @@
           "intervalle": "monthly",
           "fraisReset": null,
           "fraisActivation": null,
-          "lienPlan": null,
+          "lienPlan": "earn2trade-tcp50",
           "phases": [
             {
               "phase": "evaluation",
@@ -138,7 +138,7 @@
           "intervalle": "monthly",
           "fraisReset": 100,
           "fraisActivation": null,
-          "lienPlan": null,
+          "lienPlan": "earn2trade-tcp100",
           "phases": [
             {
               "phase": "evaluation",
@@ -201,7 +201,7 @@
           "intervalle": "monthly",
           "fraisReset": null,
           "fraisActivation": null,
-          "lienPlan": null,
+          "lienPlan": "earn2trade-gm50",
           "phases": [
             {
               "phase": "evaluation",
@@ -248,7 +248,7 @@
           "intervalle": "monthly",
           "fraisReset": 100,
           "fraisActivation": null,
-          "lienPlan": null,
+          "lienPlan": "earn2trade-gm100",
           "phases": [
             {
               "phase": "evaluation",
@@ -295,7 +295,7 @@
           "intervalle": "monthly",
           "fraisReset": 130,
           "fraisActivation": null,
-          "lienPlan": null,
+          "lienPlan": "earn2trade-gm150",
           "phases": [
             {
               "phase": "evaluation",
@@ -342,7 +342,7 @@
           "intervalle": "monthly",
           "fraisReset": 155,
           "fraisActivation": null,
-          "lienPlan": null,
+          "lienPlan": "earn2trade-gm200",
           "phases": [
             {
               "phase": "evaluation",
