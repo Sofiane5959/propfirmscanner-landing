@@ -34,7 +34,7 @@ export const OFFRES_FICHES: Record<string, OffreFiche> = {
     code: 'SCANNED',
     remise: 0.5,
     expireLe: null,
-    accroche: '60% off + a free reset with every evaluation. Ends Sep 30.',
+    accroche: 'Plus a free reset with every evaluation — until Sep 30.',
     remiseCampagne: 0.6,
     campagneFin: '2026-10-01T05:00:00+00:00',
     statut: 'confirmed',

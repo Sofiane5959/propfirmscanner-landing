@@ -241,6 +241,14 @@ function CommercialCard({
         </p>
       )}
 
+      {/* Ce que l'offre donne en plus du pourcentage. Chez Earn2Trade, la
+          reinitialisation offerte a chaque evaluation fait la moitie de
+          l'offre (Eva Saint-Arroman, affiliation, 29/09/2026) : elle ne vivait
+          que dans le bandeau du site. Vide dans le tableur : rien ne s'affiche. */}
+      {offre && applique && offre.accroche && (
+        <p className="text-sm leading-relaxed text-text-secondary">{offre.accroche}</p>
+      )}
+
       {plan?.prix != null && (
         <p className="tabular-nums text-text-muted">
           {offre && remise != null ? (

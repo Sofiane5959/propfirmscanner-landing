@@ -389,7 +389,7 @@
     "programmesEligibles": [],
     "taillesEligibles": [],
     "expireLe": null,
-    "accroche": "60% off + a free reset with every evaluation. Ends Sep 30.",
+    "accroche": "Plus a free reset with every evaluation — until Sep 30.",
     "remiseCampagne": 0.6,
     "campagneFin": "2026-10-01T05:00:00+00:00",
     "statut": "confirmed"
@@ -442,8 +442,8 @@
     },
     {
       "libelle": "End of September offer",
-      "montant": "-60% for 3 months",
-      "note": "Until 30 September, end of day Central Time, code SCANNED takes 60% off instead of 50%, on the first three monthly billings. Resets are cheaper over the same three months: $55 on TCP25, $65 on TCP50, $60 on GAU50. After that, the code returns to 50% on every billing.",
+      "montant": "-60% + free reset",
+      "note": "Until 30 September, end of day Central Time, code SCANNED takes 60% off instead of 50%, on the first three monthly billings, and every evaluation comes with a free reset. Reset prices over the same three months: $55 on TCP25, $65 on TCP50, $60 on GAU50. After that, the code returns to 50% on every billing.",
       "programmes": []
     }
   ],
