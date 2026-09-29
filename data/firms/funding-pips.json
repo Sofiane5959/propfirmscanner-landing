@@ -2286,7 +2286,7 @@
           "valeur": "Your profit after split multiplied by 12.5, up to $2M"
         },
         {
-          "libelle": "Daily loss",
+          "libelle": "Daily loss limit",
           "valeur": "2% or 3% depending on the official page — to be confirmed"
         },
         {

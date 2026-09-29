@@ -2,7 +2,7 @@
 -- NE PAS MODIFIER A LA MAIN : corriger le tableur, puis relancer
 --   npm run firms:build
 -- `npm run firms:check` echoue si ce fichier ne correspond plus a la fiche.
--- Fiche : data/firms/funding-pips.json (sha256:aae1572a5684ae6d051fffcd88a9cc02be5d30a7c4beb10ea27798d869e56bb7)
+-- Fiche : data/firms/funding-pips.json (sha256:9cd06834f4aabefddb5bb3ab478017d93fac62296644ac9fc604d4875e766cce)
 --
 -- Recopie dans prop_firms les colonnes lues par /compare, /deals, le bandeau
 -- des offres, /best-for, le quiz, les favoris et les cartes Similar firms.
