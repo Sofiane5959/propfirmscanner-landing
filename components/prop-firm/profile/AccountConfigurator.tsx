@@ -201,6 +201,7 @@ export function AccountConfigurator({
           <div className="text-left">
           <PromoGroup
             code={offre && offreAppliquee ? offre.code : null}
+            bonus={offre && offreAppliquee ? offre.bonus : null}
             claimHref={offre && offreAppliquee ? claimHref : null}
             continueHref={continueHref}
             continueLabel={COPY.commercial.continueTo(sheet.nom)}

@@ -9,7 +9,7 @@ import {
   Sparkles, Gift, ShieldCheck,
 } from 'lucide-react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { appliquerOffresDesFiches } from '@/lib/offres-fiches';
+import { appliquerOffresDesFiches, bonusFiche } from '@/lib/offres-fiches';
 
 // =============================================================================
 // LOCALE DETECTION
@@ -327,6 +327,11 @@ export function PromoCodesBanner() {
               <p className="text-white font-medium text-sm truncate">{f.name}</p>
               <p className="text-yellow-400 text-xs font-semibold">
                 {f.discount_percent}% {t.off}
+                {bonusFiche(f.slug) && (
+                  <span className="ml-1.5 rounded bg-accent-hover px-1.5 py-0.5 text-[10px] font-bold uppercase text-white">
+                    {bonusFiche(f.slug)}
+                  </span>
+                )}
               </p>
             </div>
             <div className="flex items-center gap-1.5 flex-shrink-0">
@@ -352,6 +357,8 @@ function DealCard({ firm, t }: { firm: PropFirm; t: Record<string, string> }) {
   const internalUrl = `/prop-firm/${firm.slug}`;
   const hasCode = !!(firm.discount_code && firm.discount_code.trim().length > 0);
   const hasDiscount = (firm.discount_percent ?? 0) > 0;
+  // Ce que l'offre donne en plus du pourcentage, quand la firme a une fiche.
+  const bonus = hasDiscount ? bonusFiche(firm.slug) : null;
   const hasAff = !!firm.affiliate_url;
 
   return (
@@ -413,6 +420,13 @@ function DealCard({ firm, t }: { firm: PropFirm; t: Record<string, string> }) {
 
       {hasDiscount && (
         <div className="px-5 mt-4">
+          {/* Le bonus accompagne le code : le pourcentage seul taisait la
+              moitie de l'offre chez Earn2Trade. */}
+          {bonus && (
+            <p className="mb-2 rounded-lg bg-accent-hover px-3 py-1.5 text-center text-xs font-bold uppercase tracking-wide text-white">
+              {bonus}
+            </p>
+          )}
           {hasCode ? (
             <div className="flex items-center gap-2">
               <code className="flex-1 px-3 py-2 bg-bg-elevated border border-dashed border-border-hover rounded-lg text-accent font-mono text-sm text-center truncate">

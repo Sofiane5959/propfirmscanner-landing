@@ -458,6 +458,7 @@ export function FinalCta({
         <div className="rounded-lg border border-accent-border bg-bg-base p-3">
           <PromoGroup
             code={offre && sel.offreAppliquee ? offre.code : null}
+            bonus={offre && sel.offreAppliquee ? offre.bonus : null}
             claimHref={offre && sel.offreAppliquee ? claimHref : null}
             continueHref={continueHref}
             continueLabel={COPY.commercial.continueTo(sheet.nom)}

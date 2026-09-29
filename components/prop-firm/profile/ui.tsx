@@ -184,17 +184,28 @@ function CodeCopiable({ code }: { code: string }) {
  */
 export function PromoGroup({
   code,
+  bonus = null,
   claimHref,
   continueHref,
   continueLabel,
 }: {
   code: string | null
+  /** Ce que l'offre donne en plus du pourcentage : « +1 free reset ». */
+  bonus?: string | null
   claimHref: string | null
   continueHref: string
   continueLabel: string
 }) {
   return (
     <div className="grid gap-2.5">
+      {/* Le bonus accompagne le code partout ou il s'affiche : sans lui, un
+          encadre promettait une remise et taisait la moitie de l'offre
+          (Eva Saint-Arroman, affiliation Earn2Trade, 29/09/2026). */}
+      {code && bonus && (
+        <p className="rounded-lg bg-accent-hover px-3 py-1.5 text-center font-display text-sm font-bold uppercase tracking-wide text-white">
+          {bonus}
+        </p>
+      )}
       {code && (
         <div>
           <p className={cx(LABEL, 'mb-1.5')}>{COPY.commercial.code}</p>

@@ -39,6 +39,7 @@ export function campagneEnCours(locale: string, maintenant = Date.now()): Campag
     code: offre.code,
     remise: offre.remise,
     accroche: offre.accroche,
+    bonus: offre.bonus,
     finLe: offre.expireLe as string,
     // Meme sortie que les boutons des fiches : /api/go, avec son propre
     // placement pour que les clics du bandeau se mesurent a part. C'est le

@@ -28,6 +28,8 @@ export interface Campagne {
   /** Fraction : 0.6 pour 60 %. */
   remise: number
   accroche: string | null
+  /** Ce que l'offre donne en plus du pourcentage : « +1 free reset ». */
+  bonus: string | null
   /** Date ISO de fin. Le bandeau se retire de lui-meme apres. */
   finLe: string
   href: string
@@ -137,6 +139,12 @@ export function CampagneRail({ campagne }: { campagne: Campagne | null }) {
         <p className="hidden items-center justify-center gap-1.5 rounded-lg bg-deal-subtle px-2 py-1 text-[11px] font-semibold uppercase tracking-wider text-deal lg:flex">
           Ends in <span className="font-mono tabular-nums">{temps}</span>
         </p>
+
+        {campagne.bonus && (
+          <p className="hidden rounded-lg bg-accent-hover px-2 py-1 text-center font-display text-sm font-bold uppercase tracking-wide text-white lg:block">
+            {campagne.bonus}
+          </p>
+        )}
 
         <a
           href={campagne.href}

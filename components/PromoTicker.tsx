@@ -8,7 +8,7 @@ import { Copy, CheckCircle2, BadgeCheck, ShieldCheck, ExternalLink } from 'lucid
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { AFFILIATE_LINK_PROPS } from '@/lib/affiliate'
 import { resolvePromotion } from '@/lib/promotion'
-import { appliquerOffresDesFiches } from '@/lib/offres-fiches'
+import { appliquerOffresDesFiches, bonusFiche } from '@/lib/offres-fiches'
 import { useHideOnScrollDown } from '@/hooks/useHideOnScrollDown'
 
 // =====================================================
@@ -78,6 +78,8 @@ const DealPill = ({ deal }: { deal: PromoDeal }) => {
   // Some firms (FTMO, FundedNext) apply discounts automatically via the
   // affiliate link — no code to copy.
   const hasCode = !!(deal.discount_code && deal.discount_code.trim().length > 0)
+  // Ce que l'offre donne en plus du pourcentage, quand la firme a une fiche.
+  const bonus = bonusFiche(deal.slug)
   
   const pillClass =
     'flex-shrink-0 flex items-center gap-2 px-3 py-1.5 bg-dark-700/80 hover:bg-dark-600/80 border border-border/50 hover:border-accent/30 rounded-full transition-all group'
@@ -107,6 +109,14 @@ const DealPill = ({ deal }: { deal: PromoDeal }) => {
       <span className="px-1.5 py-0.5 bg-gradient-to-r from-red-500 to-orange-500 text-white text-[10px] font-bold rounded">
         {deal.discount_percent}% OFF
       </span>
+
+      {/* Le pourcentage ne dit pas tout : chez Earn2Trade, la moitie de l'offre
+          est un reset offert. La mention vient de la fiche. */}
+      {bonus && (
+        <span className="whitespace-nowrap rounded bg-accent-hover px-1.5 py-0.5 text-[10px] font-bold uppercase text-white">
+          {bonus}
+        </span>
+      )}
       
       {hasCode ? (
         <>
