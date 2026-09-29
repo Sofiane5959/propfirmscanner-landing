@@ -70,6 +70,35 @@ def contenu_index(slugs):
     return "\n".join(lignes)
 
 
+def contenu_partages(partages):
+    """data/firms/partages.ts : ou commence et ou finit le partage, par fiche.
+
+    Les listes lisent prop_firms, qui attend qu'un SQL soit execute. Sans ces
+    deux valeurs, une carte annonce « 80% » pour une firme qui commence a 50 %.
+    Elles viennent de la projection, comme le SQL genere.
+    """
+    lignes = [
+        "// GENERE PAR scripts/firms_build.py — ne pas modifier a la main.",
+        "// Le partage des profits de chaque fiche : ou la firme commence, ou elle",
+        "// plafonne. Source des deux chiffres affiches par les cartes.",
+        "",
+        "export interface PartageFiche {",
+        "  profitSplit: number | null",
+        "  maxProfitSplit: number | null",
+        "}",
+        "",
+        "export const PARTAGES_FICHES: Record<string, PartageFiche> = {",
+    ]
+    for slug in sorted(partages):
+        bas, haut = partages[slug]
+        if bas is None and haut is None:
+            continue
+        lignes.append(f"  '{slug}': {{ profitSplit: {bas if bas is not None else 'null'}, "
+                      f"maxProfitSplit: {haut if haut is not None else 'null'} }},")
+    lignes += ["}", ""]
+    return "\n".join(lignes)
+
+
 def contenu_offres(offres):
     """data/firms/offres.ts : l'offre de chaque fiche, et rien d'autre.
 
@@ -132,6 +161,7 @@ def generer():
     sorties, erreurs, avertissements = {}, [], {}
     slugs = []
     offres = {}
+    partages = {}
     publiees = firmes_publiees()
     for tableur in tableurs():
         conversion.avertissements.clear()
@@ -149,6 +179,7 @@ def generer():
         sorties[os.path.join(FICHES, f"{slug}.json")] = texte_json
         sorties[chemin_sql(slug)] = generer_sql(fiche, valeurs, texte_json, rel(tableur), slug in publiees)
         slugs.append(slug)
+        partages[slug] = (valeurs.get("profit_split"), valeurs.get("max_profit_split"))
         if fiche.get("offre"):
             o = fiche["offre"]
             offres[slug] = dict(
@@ -159,6 +190,7 @@ def generer():
                                  and not o.get("taillesEligibles")))
     sorties[os.path.join(FICHES, "index.ts")] = contenu_index(sorted(slugs))
     sorties[os.path.join(FICHES, "offres.ts")] = contenu_offres(offres)
+    sorties[os.path.join(FICHES, "partages.ts")] = contenu_partages(partages)
     return sorties, erreurs, avertissements
 
 

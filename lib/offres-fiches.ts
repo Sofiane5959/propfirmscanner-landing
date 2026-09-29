@@ -19,12 +19,18 @@
 // =============================================================================
 
 import { OFFRES_FICHES } from '@/data/firms/offres'
+import { PARTAGES_FICHES } from '@/data/firms/partages'
 import { offreDuJour } from '@/lib/firm-profile'
 
 export interface OffreListe {
   discount_code: string | null
   discount_percent: number | null
   discount_expires_at: string | null
+}
+
+interface PartageListe {
+  profit_split: number | null
+  max_profit_split: number | null
 }
 
 /** L'offre en vigueur de chaque fiche, a cet instant. */
@@ -88,5 +94,15 @@ export function appliquerOffresDesFiches<T extends { slug: string }>(
   maintenant = Date.now()
 ): T[] {
   const offres = offresDesFiches(maintenant)
-  return firms.map((f) => (offres[f.slug] ? { ...f, ...offres[f.slug] } : f))
+  return firms.map((f) => {
+    const fiche = PARTAGES_FICHES[f.slug]
+    // Le partage suit la meme regle que l'offre : la fiche prime sur la base,
+    // qui attend son SQL. Une carte qui n'annonce que le plafond laisse croire
+    // que la firme commence a 80 % (CLAUDE.md).
+    const partage: PartageListe | null = fiche
+      ? { profit_split: fiche.profitSplit, max_profit_split: fiche.maxProfitSplit }
+      : null
+    if (!offres[f.slug] && !partage) return f
+    return { ...f, ...(partage ?? {}), ...(offres[f.slug] ?? {}) }
+  })
 }
