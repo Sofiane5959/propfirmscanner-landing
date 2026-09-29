@@ -40,7 +40,7 @@ export const OFFRES_FICHES: Record<string, OffreFiche> = {
     code: 'SCANNED',
     remise: 0.5,
     expireLe: null,
-    accroche: 'One free reset comes with it: a second attempt, nothing more to pay. Until Sep 30.',
+    accroche: 'Flash offer — free reset included. Until Sep 30 only.',
     bonus: '+1 free reset',
     surTousLesPlans: true,
     remiseCampagne: 0.6,
