@@ -791,6 +791,7 @@
     "taillesEligibles": [],
     "expireLe": null,
     "accroche": null,
+    "bonus": null,
     "remiseCampagne": null,
     "campagneFin": null,
     "statut": "confirmed"

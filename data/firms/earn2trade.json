@@ -390,6 +390,7 @@
     "taillesEligibles": [],
     "expireLe": null,
     "accroche": "One free reset comes with it: a second attempt, nothing more to pay. Until Sep 30.",
+    "bonus": "+1 free reset",
     "remiseCampagne": 0.6,
     "campagneFin": "2026-10-01T05:00:00+00:00",
     "statut": "confirmed"

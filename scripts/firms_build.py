@@ -99,6 +99,8 @@ def contenu_offres(offres):
         "  remise: number",
         "  expireLe: string | null",
         "  accroche: string | null",
+        "  /** Deux ou trois mots pour ce que l'offre donne en plus : « +1 free reset ». */",
+        "  bonus: string | null",
         "  /** Taux d'une campagne datee, qui remplace `remise` jusqu'a `campagneFin`. */",
         "  remiseCampagne: number | null",
         "  campagneFin: string | null",
@@ -111,7 +113,7 @@ def contenu_offres(offres):
         o = offres[slug]
         lignes.append(f"  '{slug}': {{")
         for cle in ("nom", "logoUrl", "code", "remise", "expireLe", "accroche",
-                    "remiseCampagne", "campagneFin", "statut"):
+                    "bonus", "remiseCampagne", "campagneFin", "statut"):
             lignes.append(f"    {cle}: {litteral(o.get(cle))},")
         lignes.append("  },")
     lignes += ["}", ""]

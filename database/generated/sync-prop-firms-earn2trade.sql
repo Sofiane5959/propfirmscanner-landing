@@ -2,7 +2,7 @@
 -- NE PAS MODIFIER A LA MAIN : corriger le tableur, puis relancer
 --   npm run firms:build
 -- `npm run firms:check` echoue si ce fichier ne correspond plus a la fiche.
--- Fiche : data/firms/earn2trade.json (sha256:e7572bd1ac4ebf52fa74b80e72bb05f33a242c7939157da06abf1159f736b5e9)
+-- Fiche : data/firms/earn2trade.json (sha256:01ebb2994a3291e6ead3df83cdc794d6c4c600cab13c8fc7b044c949a6c3b237)
 --
 -- Recopie dans prop_firms les colonnes lues par /compare, /deals, le bandeau
 -- des offres, /best-for, le quiz, les favoris et les cartes Similar firms.

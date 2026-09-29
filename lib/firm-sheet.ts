@@ -124,6 +124,12 @@ export interface SheetOffre {
   /** Phrase courte pour le bandeau de campagne : ce que l'offre donne en plus. */
   accroche: string | null
   /**
+   * La meme chose en deux ou trois mots (« +1 free reset »), pour la pastille
+   * de la fiche et de la carte /compare. Une offre qui ne donne qu'un
+   * pourcentage n'en a pas.
+   */
+  bonus: string | null
+  /**
    * Campagne a duree limitee. Tant que `campagneFin` est a venir, `remiseCampagne`
    * remplace `remise` ; apres, l'offre permanente reprend, sans rien a modifier.
    */

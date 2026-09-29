@@ -241,10 +241,17 @@ function CommercialCard({
         </p>
       )}
 
-      {/* Ce que l'offre donne en plus du pourcentage. Chez Earn2Trade, la
-          reinitialisation offerte a chaque evaluation fait la moitie de
-          l'offre (Eva Saint-Arroman, affiliation, 29/09/2026) : elle ne vivait
-          que dans le bandeau du site. Vide dans le tableur : rien ne s'affiche. */}
+      {/* Ce que l'offre donne en plus du pourcentage. Chez Earn2Trade, le reset
+          offert fait la moitie de l'offre (Eva Saint-Arroman, affiliation,
+          29/09/2026), et il ne se lisait qu'en petit : d'ou la pastille pleine,
+          au meme poids visuel que le taux. Vides dans le tableur, les deux
+          lignes disparaissent. */}
+      {offre && applique && offre.bonus && (
+        <p className="self-start rounded-lg bg-accent-hover px-3 py-1.5 font-display text-base font-bold uppercase tracking-wide text-white">
+          {offre.bonus}
+        </p>
+      )}
+
       {offre && applique && offre.accroche && (
         <p className="text-sm leading-relaxed text-text-secondary">{offre.accroche}</p>
       )}

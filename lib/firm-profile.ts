@@ -86,6 +86,7 @@ export interface OffreDatee {
   remise: number
   expireLe: string | null
   accroche: string | null
+  bonus: string | null
   remiseCampagne: number | null
   campagneFin: string | null
 }
@@ -94,7 +95,7 @@ export function offreDuJour<T extends OffreDatee>(offre: T, maintenant = Date.no
   if (offre.remiseCampagne == null || !offre.campagneFin) return offre
   const fin = new Date(offre.campagneFin).getTime()
   if (Number.isNaN(fin) || fin <= maintenant) {
-    return { ...offre, accroche: null, remiseCampagne: null, campagneFin: null }
+    return { ...offre, accroche: null, bonus: null, remiseCampagne: null, campagneFin: null }
   }
   return { ...offre, remise: offre.remiseCampagne, expireLe: offre.campagneFin }
 }

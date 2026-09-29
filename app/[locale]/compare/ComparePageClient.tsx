@@ -550,6 +550,7 @@ import {
 } from 'lucide-react'
 import { PriceAlertButton } from '@/components/PriceAlert'
 import { toArray } from '@/lib/to-array'
+import { bonusFiche } from '@/lib/offres-fiches'
 
 // =====================================================
 // TYPES
@@ -1369,6 +1370,8 @@ const PropFirmCard = ({
   t: Record<string, string>
 }) => {
   const hasDiscount = remiseActive(firm)
+  // Ce que l'offre donne en plus du pourcentage, quand la firme a une fiche.
+  const bonus = hasDiscount ? bonusFiche(firm.slug) : null
   // Top Pick : une seule firme le porte, celle que lib/partenaires.ts met en
   // tete (28 septembre 2026, demande de Sofiane). Avant, la base le donnait a
   // toutes les firmes de tier 1 — sept badges dans la liste, donc aucun signal.
@@ -1416,6 +1419,9 @@ const PropFirmCard = ({
           </div>
           {hasDiscount && (
             <span className="px-2 py-1 bg-deal-subtle text-deal border border-deal/30 text-[11px] font-semibold rounded-md uppercase tracking-wider">-{firm.discount_percent}%</span>
+          )}
+          {bonus && (
+            <span className="whitespace-nowrap rounded-md bg-accent-hover px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-white">{bonus}</span>
           )}
           <div className="flex items-center gap-1">
             <button onClick={onFavorite} aria-label={isFavorite ? `Remove ${firm.name} from favorites` : `Add ${firm.name} to favorites`} aria-pressed={isFavorite} className={`p-2 rounded-lg transition-all ${isFavorite ? 'text-red-400 bg-red-500/20' : 'text-text-muted hover:text-red-400 hover:bg-bg-elevated'}`}>
@@ -1532,15 +1538,24 @@ const PropFirmCard = ({
 
       {/* e) Promo */}
       {hasDiscount && (
-        <div className="flex items-center justify-between gap-2 rounded-xl border border-dashed border-deal/30 bg-deal-subtle px-3 py-2">
-          <span className="text-sm font-bold text-deal">−{firm.discount_percent}%</span>
-          {firm.discount_code && (
-            <>
-              <span className="font-mono text-[13px] font-semibold tracking-wide text-text-primary">{firm.discount_code}</span>
-              <button onClick={() => onCopyCode(firm.discount_code)} aria-label={`Copy discount code ${firm.discount_code}`} className="flex items-center gap-1 text-xs font-medium text-deal">
-                <Copy className="h-3 w-3" />Copy
-              </button>
-            </>
+        <div className="space-y-2 rounded-xl border border-dashed border-deal/30 bg-deal-subtle px-3 py-2">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-sm font-bold text-deal">−{firm.discount_percent}%</span>
+            {firm.discount_code && (
+              <>
+                <span className="font-mono text-[13px] font-semibold tracking-wide text-text-primary">{firm.discount_code}</span>
+                <button onClick={() => onCopyCode(firm.discount_code)} aria-label={`Copy discount code ${firm.discount_code}`} className="flex items-center gap-1 text-xs font-medium text-deal">
+                  <Copy className="h-3 w-3" />Copy
+                </button>
+              </>
+            )}
+          </div>
+          {/* Le pourcentage ne dit pas tout : une offre peut donner autre chose
+              (un reset offert chez Earn2Trade). La ligne vient de la fiche. */}
+          {bonus && (
+            <p className="rounded-lg bg-accent-hover px-2 py-1 text-center text-[11px] font-bold uppercase tracking-wider text-white">
+              {bonus}
+            </p>
           )}
         </div>
       )}

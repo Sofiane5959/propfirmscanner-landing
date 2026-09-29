@@ -45,6 +45,20 @@ export function offresDesFiches(maintenant = Date.now()): Record<string, OffreLi
 }
 
 /**
+ * Ce que l'offre donne en plus du pourcentage, en deux ou trois mots, pour la
+ * pastille des cartes. Null si la firme n'a pas de fiche, si son offre n'est
+ * pas confirmee, si elle a expire, ou si elle ne donne qu'une remise.
+ */
+export function bonusFiche(slug: string, maintenant = Date.now()): string | null {
+  const brute = OFFRES_FICHES[slug]
+  if (!brute || brute.statut !== 'confirmed') return null
+  const offre = offreDuJour(brute, maintenant)
+  const fin = offre.expireLe ? new Date(offre.expireLe).getTime() : null
+  if (fin != null && !Number.isNaN(fin) && fin <= maintenant) return null
+  return offre.bonus
+}
+
+/**
  * Recopie ces offres sur les lignes de prop_firms, pour que les cartes, les
  * filtres et les tris disent la meme chose que les fiches. Les firmes sans
  * fiche ressortent telles quelles.
