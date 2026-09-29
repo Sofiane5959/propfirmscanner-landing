@@ -2,7 +2,7 @@
   "_genere": "Fichier genere par `npm run firms:build` depuis data/firms/funding-pips.xlsx. Ne pas modifier : corriger le tableur, puis relancer la commande.",
   "slug": "funding-pips",
   "nom": "FundingPips",
-  "logoUrl": "https://fundingpips.com/favicon.ico",
+  "logoUrl": "https://fundingpips.com/apple-icon.png",
   "marches": [
     "cfd"
   ],

@@ -216,7 +216,9 @@ export function reglesDePhase(phase: SheetPhase, devise: string): LigneRegle[] {
     },
     {
       cle: 'perteJour',
-      libelle: 'Daily loss',
+      // « Daily loss limit » plutot que « Daily loss » : la tuile donne un
+      // plafond, pas une perte constatee (remarque de Sofiane, 29/09/2026).
+      libelle: 'Daily loss limit',
       valeur: perteJour,
       statut: st.perteJour,
       sens:
@@ -333,7 +335,7 @@ export function lignesSelection(plan: SheetPlan): { libelle: string; valeur: Cel
       libelle: 'Maximum loss',
       valeur: premiere?.perteMax != null ? { texte: money(premiere.perteMax, plan.deviseCompte) } : trouver(premiere, 'perteMax'),
     },
-    { libelle: 'Daily loss', valeur: trouver(premiere, 'perteJour') },
+    { libelle: 'Daily loss limit', valeur: trouver(premiere, 'perteJour') },
     { libelle: 'Maximum positions', valeur: trouver(premiere, 'maxContrats') },
     { libelle: 'Profit split', valeur: trouver(finance, 'partage') },
     { libelle: 'Payout cap', valeur: trouver(finance, 'plafondRetrait') },

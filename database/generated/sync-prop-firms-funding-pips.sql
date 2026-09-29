@@ -2,7 +2,7 @@
 -- NE PAS MODIFIER A LA MAIN : corriger le tableur, puis relancer
 --   npm run firms:build
 -- `npm run firms:check` echoue si ce fichier ne correspond plus a la fiche.
--- Fiche : data/firms/funding-pips.json (sha256:d70af2150b09c6983b2d24f3fc01bfb198eaf6e9a0e404c62c2ca5a1fdfe9dfb)
+-- Fiche : data/firms/funding-pips.json (sha256:aae1572a5684ae6d051fffcd88a9cc02be5d30a7c4beb10ea27798d869e56bb7)
 --
 -- Recopie dans prop_firms les colonnes lues par /compare, /deals, le bandeau
 -- des offres, /best-for, le quiz, les favoris et les cartes Similar firms.
@@ -32,7 +32,7 @@ $ctrl$;
 -- 2. Projection de la fiche.
 update prop_firms set
   name = 'FundingPips',
-  logo_url = 'https://fundingpips.com/favicon.ico',
+  logo_url = 'https://fundingpips.com/apple-icon.png',
   country = 'United Arab Emirates',
   trustpilot_rating = 4.5,
   trustpilot_reviews = 69365,
@@ -73,7 +73,7 @@ declare r prop_firms%rowtype;
 begin
   select * into r from prop_firms where slug = 'funding-pips';
   if r.name is distinct from 'FundingPips'
-     or r.logo_url is distinct from 'https://fundingpips.com/favicon.ico'
+     or r.logo_url is distinct from 'https://fundingpips.com/apple-icon.png'
      or r.country is distinct from 'United Arab Emirates'
      or (r.trustpilot_rating is null or abs(r.trustpilot_rating::numeric - 4.5) > 0.001)
      or (r.trustpilot_reviews is null or abs(r.trustpilot_reviews::numeric - 69365) > 0.001)
