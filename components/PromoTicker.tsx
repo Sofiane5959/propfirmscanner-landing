@@ -366,7 +366,11 @@ export default function PromoTicker({ deals: initialDeals = [] }: PromoTickerPro
           }
         }
         .animate-ticker {
-          animation: ticker 60s linear infinite;
+          /* 110s plutot que 60 (29/09/2026, demande de Sofiane) : le bandeau
+             defile deux fois moins vite, donc chaque code reste lisible deux
+             fois plus longtemps. Il tourne toujours sans fin, et s'arrete au
+             survol comme avant. */
+          animation: ticker 110s linear infinite;
           width: max-content;
           will-change: transform;
         }
