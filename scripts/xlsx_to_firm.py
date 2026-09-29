@@ -241,8 +241,11 @@ def convertir(chemin):
             "seuilPartage": nombre(seuil_partage),
         })
         ph = plans[cle]["phases"][-1]
-        if (ph["partageBas"] is None) != (ph["seuilPartage"] is None):
-            avertissements.append(f"Phases : {cle} {ph['phase']} — partage_bas et seuil_partage vont ensemble.")
+        # partage_bas seul est une fourchette : le taux depend d'autre chose que
+        # d'un palier de profit (chez FundingPips, du rythme de retrait choisi).
+        # Un seuil seul, lui, ne veut rien dire : il faut savoir ce qu'il separe.
+        if ph["seuilPartage"] is not None and ph["partageBas"] is None:
+            avertissements.append(f"Phases : {cle} {ph['phase']} — seuil_partage sans partage_bas.")
         elif ph["partageBas"] is not None and (ph["partage"] is None or ph["partageBas"] >= ph["partage"]):
             avertissements.append(f"Phases : {cle} {ph['phase']} — partage_bas doit etre inferieur a partage.")
 

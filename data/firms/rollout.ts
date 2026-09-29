@@ -24,6 +24,7 @@ export const FIRM_PROFILE_ROLLOUT: Readonly<Record<string, readonly string[]>> =
   earn2trade: [TOUTES],
   the5ers: [TOUTES],
   'blueberry-funded': [TOUTES],
+  'funding-pips': [TOUTES],
 }
 
 export function profilActif(slug: string, locale: string): boolean {

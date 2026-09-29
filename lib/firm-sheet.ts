@@ -369,6 +369,10 @@ export function formatPartage(phase: SheetPhase, devise: string): string | null 
     const seuil = money(phase.seuilPartage, devise)
     return `${pct(phase.partageBas)} under ${seuil} · ${pct(phase.partage)} from ${seuil}`
   }
+  // Sans seuil, le taux varie pour une autre raison — le rythme de retrait chez
+  // FundingPips. La fiche annonce alors la fourchette, et la carte Payouts dit
+  // ce qui fait passer d'un bout a l'autre.
+  if (phase.partageBas != null) return `${pct(phase.partageBas)} to ${pct(phase.partage)}`
   return pct(phase.partage)
 }
 

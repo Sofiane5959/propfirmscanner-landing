@@ -1,0 +1,2315 @@
+{
+  "_genere": "Fichier genere par `npm run firms:build` depuis data/firms/funding-pips.xlsx. Ne pas modifier : corriger le tableur, puis relancer la commande.",
+  "slug": "funding-pips",
+  "nom": "FundingPips",
+  "logoUrl": "https://fundingpips.com/favicon.ico",
+  "marches": [
+    "cfd"
+  ],
+  "resume": null,
+  "presentation": "FundingPips was founded in 2022 by Khaled Ayesh. Every account is simulated: you trade a demo environment, and what you earn comes from the firm's reward programme, not from a live market position.\n\nFive models sit side by side. Zero funds you from purchase with no evaluation. 1-Step Flex asks for a single 12% phase. Standard, Pro and Flex are two-step evaluations with very different risk profiles, from 6% of static drawdown on Pro to 12% on Flex.\n\nWhat you keep depends on how often you withdraw rather than on the model alone: weekly pays the least, monthly the most. Read the reward rules of the model you pick before you buy, because the Master account is where this firm concentrates its constraints.",
+  "anneeCreation": 2022,
+  "pays": "United Arab Emirates",
+  "ceoFondateur": "Khaled Ayesh",
+  "actifs": [
+    "41 simulated CFDs: 28 forex pairs",
+    "2 metals",
+    "7 cash indices",
+    "2 energies",
+    "2 crypto"
+  ],
+  "plateformes": [],
+  "moyensPaiement": [],
+  "levier": "1:100 forex · 1:30 metals · 1:20 indices · 1:10 energies · 1:2 crypto on the evaluation models",
+  "stylesTrading": [
+    "Day trading",
+    "Scalping",
+    "Swing with the add-on"
+  ],
+  "programmes": [
+    {
+      "slug": "standard-2-step",
+      "nom": "2-Step Standard",
+      "accroche": "The most room to breathe day to day",
+      "resume": "8% then 5% against a 5% daily loss — the widest of the range — and 10% of static drawdown. Three minimum days per phase, and a 3% daily loss variant at purchase for those who prefer it.",
+      "marche": "cfd",
+      "type": "evaluation",
+      "maxComptes": null,
+      "maxComptesStatut": null,
+      "maxComptesNote": null,
+      "statut": "active",
+      "offreFin": null,
+      "offreFinStatut": null,
+      "plans": [
+        {
+          "taille": 5000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 44,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 400,
+              "perteMax": 500,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 250,
+              "joursMin": 3,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "evaluation_2",
+              "objectifProfit": 250,
+              "perteMax": 500,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 250,
+              "joursMin": 3,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 500,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": 50,
+              "statuts": {},
+              "perteJour": 250,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": 1,
+              "partageBas": 0.6,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 10000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 80,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 800,
+              "perteMax": 1000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 500,
+              "joursMin": 3,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "evaluation_2",
+              "objectifProfit": 500,
+              "perteMax": 1000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 500,
+              "joursMin": 3,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 1000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": 100,
+              "statuts": {},
+              "perteJour": 500,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": 1,
+              "partageBas": 0.6,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 25000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 216,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 2000,
+              "perteMax": 2500,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 1250,
+              "joursMin": 3,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "evaluation_2",
+              "objectifProfit": 1250,
+              "perteMax": 2500,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 1250,
+              "joursMin": 3,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 2500,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": 250,
+              "statuts": {},
+              "perteJour": 1250,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": 1,
+              "partageBas": 0.6,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 50000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 349,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 4000,
+              "perteMax": 5000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 2500,
+              "joursMin": 3,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "evaluation_2",
+              "objectifProfit": 2500,
+              "perteMax": 5000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 2500,
+              "joursMin": 3,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 5000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": 500,
+              "statuts": {},
+              "perteJour": 2500,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": 1,
+              "partageBas": 0.6,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 100000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 652,
+          "cartePromo": true,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 8000,
+              "perteMax": 10000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 5000,
+              "joursMin": 3,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "evaluation_2",
+              "objectifProfit": 5000,
+              "perteMax": 10000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 5000,
+              "joursMin": 3,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 10000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": 1000,
+              "statuts": {},
+              "perteJour": 5000,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": 1,
+              "partageBas": 0.6,
+              "seuilPartage": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "pro-2-step",
+      "nom": "2-Step Pro",
+      "accroche": "The cheapest ticket, the tightest drawdown",
+      "resume": "The same 6% target in both phases, so no step up in pressure. In exchange, 6% of static drawdown and 3% a day — the tightest of the range — and the cheapest ticket, from $33.",
+      "marche": "cfd",
+      "type": "evaluation",
+      "maxComptes": null,
+      "maxComptesStatut": null,
+      "maxComptesNote": null,
+      "statut": "active",
+      "offreFin": null,
+      "offreFinStatut": null,
+      "plans": [
+        {
+          "taille": 5000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 33,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 300,
+              "perteMax": 300,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 150,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "evaluation_2",
+              "objectifProfit": 300,
+              "perteMax": 300,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 150,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 300,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": 50,
+              "statuts": {},
+              "perteJour": 150,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": 1,
+              "partageBas": 0.8,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 10000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 62,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 600,
+              "perteMax": 600,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 300,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "evaluation_2",
+              "objectifProfit": 600,
+              "perteMax": 600,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 300,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 600,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": 100,
+              "statuts": {},
+              "perteJour": 300,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": 1,
+              "partageBas": 0.8,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 25000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 149,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 1500,
+              "perteMax": 1500,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 750,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "evaluation_2",
+              "objectifProfit": 1500,
+              "perteMax": 1500,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 750,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 1500,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": 250,
+              "statuts": {},
+              "perteJour": 750,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": 1,
+              "partageBas": 0.8,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 50000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 249,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 3000,
+              "perteMax": 3000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 1500,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "evaluation_2",
+              "objectifProfit": 3000,
+              "perteMax": 3000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 1500,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 3000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": 500,
+              "statuts": {},
+              "perteJour": 1500,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": 1,
+              "partageBas": 0.8,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 100000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 466,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 6000,
+              "perteMax": 6000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 3000,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "evaluation_2",
+              "objectifProfit": 6000,
+              "perteMax": 6000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 3000,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 6000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": 1000,
+              "statuts": {},
+              "perteJour": 3000,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": 1,
+              "partageBas": 0.8,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 200000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 919,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 12000,
+              "perteMax": 12000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 6000,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "evaluation_2",
+              "objectifProfit": 12000,
+              "perteMax": 12000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 6000,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 12000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": 2000,
+              "statuts": {},
+              "perteJour": 6000,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": 1,
+              "partageBas": 0.8,
+              "seuilPartage": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "flex-2-step",
+      "nom": "2-Step Flex",
+      "accroche": "The largest drawdown of the catalogue",
+      "resume": "10% then 8% against 12% of static drawdown, the widest of the range. The split is chosen at purchase and locked for the life of the account, so read it before you pay.",
+      "marche": "cfd",
+      "type": "evaluation",
+      "maxComptes": null,
+      "maxComptesStatut": null,
+      "maxComptesNote": null,
+      "statut": "active",
+      "offreFin": null,
+      "offreFinStatut": null,
+      "plans": [
+        {
+          "taille": 5000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 39,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 500,
+              "perteMax": 600,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 200,
+              "joursMin": 1,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "evaluation_2",
+              "objectifProfit": 400,
+              "perteMax": 600,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 200,
+              "joursMin": 1,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 600,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": 50,
+              "statuts": {},
+              "perteJour": 200,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": 1,
+              "partageBas": 0.8,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 10000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 70,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 1000,
+              "perteMax": 1200,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 400,
+              "joursMin": 1,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "evaluation_2",
+              "objectifProfit": 800,
+              "perteMax": 1200,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 400,
+              "joursMin": 1,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 1200,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": 100,
+              "statuts": {},
+              "perteJour": 400,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": 1,
+              "partageBas": 0.8,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 25000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 188,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 2500,
+              "perteMax": 3000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 1000,
+              "joursMin": 1,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "evaluation_2",
+              "objectifProfit": 2000,
+              "perteMax": 3000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 1000,
+              "joursMin": 1,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 3000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": 250,
+              "statuts": {},
+              "perteJour": 1000,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": 1,
+              "partageBas": 0.8,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 50000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 299,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 5000,
+              "perteMax": 6000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 2000,
+              "joursMin": 1,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "evaluation_2",
+              "objectifProfit": 4000,
+              "perteMax": 6000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 2000,
+              "joursMin": 1,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 6000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": 500,
+              "statuts": {},
+              "perteJour": 2000,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": 1,
+              "partageBas": 0.8,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 100000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 555,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 10000,
+              "perteMax": 12000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 4000,
+              "joursMin": 1,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "evaluation_2",
+              "objectifProfit": 8000,
+              "perteMax": 12000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 4000,
+              "joursMin": 1,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 12000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": 1000,
+              "statuts": {},
+              "perteJour": 4000,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": 1,
+              "partageBas": 0.8,
+              "seuilPartage": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "flex-1-step",
+      "nom": "1-Step Flex",
+      "accroche": "One phase, target equal to drawdown",
+      "resume": "A 12% target against 12% of static drawdown, with no minimum days. The daily loss is 2% or 3% depending on the variant bought, and the Master keeps a permanent Striking System.",
+      "marche": "cfd",
+      "type": "evaluation",
+      "maxComptes": null,
+      "maxComptesStatut": null,
+      "maxComptesNote": null,
+      "statut": "active",
+      "offreFin": null,
+      "offreFinStatut": null,
+      "plans": [
+        {
+          "taille": 5000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 74,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 600,
+              "perteMax": 600,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 150,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 600,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": 50,
+              "statuts": {},
+              "perteJour": 150,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": 1,
+              "partageBas": 0.8,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 10000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 111,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 1200,
+              "perteMax": 1200,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 300,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 1200,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": 100,
+              "statuts": {},
+              "perteJour": 300,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": 1,
+              "partageBas": 0.8,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 25000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 255,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 3000,
+              "perteMax": 3000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 750,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 3000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": 250,
+              "statuts": {},
+              "perteJour": 750,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": 1,
+              "partageBas": 0.8,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 50000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 353,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 6000,
+              "perteMax": 6000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 1500,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 6000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": 500,
+              "statuts": {},
+              "perteJour": 1500,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": 1,
+              "partageBas": 0.8,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 100000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 666,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "evaluation",
+              "objectifProfit": 12000,
+              "perteMax": 12000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": null,
+              "statuts": {},
+              "perteJour": 3000,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": null,
+              "partageBas": null,
+              "seuilPartage": null
+            },
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 12000,
+              "typePerteMax": "Static",
+              "plafondRetrait": null,
+              "retraitMinimum": 1000,
+              "statuts": {},
+              "perteJour": 3000,
+              "joursMin": 0,
+              "regularite": null,
+              "maxContrats": null,
+              "partage": 1,
+              "partageBas": 0.8,
+              "seuilPartage": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "zero",
+      "nom": "Zero",
+      "accroche": "Funded from purchase, 95% of the rewards",
+      "resume": "No evaluation and the highest share of the range, against the densest rule set: 5% trailing drawdown, seven profitable days per 30-day window, floating losses capped at 1%, no weekend holding at all.",
+      "marche": "cfd",
+      "type": "instant",
+      "maxComptes": null,
+      "maxComptesStatut": null,
+      "maxComptesNote": null,
+      "statut": "active",
+      "offreFin": null,
+      "offreFinStatut": null,
+      "plans": [
+        {
+          "taille": 5000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 60,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 250,
+              "typePerteMax": "Trailing Equity",
+              "plafondRetrait": null,
+              "retraitMinimum": 50,
+              "statuts": {},
+              "perteJour": 150,
+              "joursMin": 7,
+              "regularite": 0.15,
+              "maxContrats": null,
+              "partage": 0.95,
+              "partageBas": null,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 10000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 88,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 500,
+              "typePerteMax": "Trailing Equity",
+              "plafondRetrait": null,
+              "retraitMinimum": 100,
+              "statuts": {},
+              "perteJour": 300,
+              "joursMin": 7,
+              "regularite": 0.15,
+              "maxContrats": null,
+              "partage": 0.95,
+              "partageBas": null,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 25000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 188,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 1250,
+              "typePerteMax": "Trailing Equity",
+              "plafondRetrait": null,
+              "retraitMinimum": 250,
+              "statuts": {},
+              "perteJour": 750,
+              "joursMin": 7,
+              "regularite": 0.15,
+              "maxContrats": null,
+              "partage": 0.95,
+              "partageBas": null,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 50000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 244,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 2500,
+              "typePerteMax": "Trailing Equity",
+              "plafondRetrait": null,
+              "retraitMinimum": 500,
+              "statuts": {},
+              "perteJour": 1500,
+              "joursMin": 7,
+              "regularite": 0.15,
+              "maxContrats": null,
+              "partage": 0.95,
+              "partageBas": null,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 100000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 444,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 5000,
+              "typePerteMax": "Trailing Equity",
+              "plafondRetrait": null,
+              "retraitMinimum": 1000,
+              "statuts": {},
+              "perteJour": 3000,
+              "joursMin": 7,
+              "regularite": 0.15,
+              "maxContrats": null,
+              "partage": 0.95,
+              "partageBas": null,
+              "seuilPartage": null
+            }
+          ]
+        },
+        {
+          "taille": 200000,
+          "variante": null,
+          "devise": "USD",
+          "deviseCompte": "USD",
+          "prix": 888,
+          "cartePromo": false,
+          "facturation": "one_time",
+          "intervalle": null,
+          "fraisReset": null,
+          "fraisActivation": 0,
+          "lienPlan": null,
+          "phases": [
+            {
+              "phase": "funded",
+              "objectifProfit": null,
+              "perteMax": 10000,
+              "typePerteMax": "Trailing Equity",
+              "plafondRetrait": null,
+              "retraitMinimum": 2000,
+              "statuts": {},
+              "perteJour": 6000,
+              "joursMin": 7,
+              "regularite": 0.15,
+              "maxContrats": null,
+              "partage": 0.95,
+              "partageBas": null,
+              "seuilPartage": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "offre": null,
+  "conditions": {
+    "trading": "41 simulated CFDs on forex, metals, indices, energies and crypto. Leverage runs from 1:100 on forex down to 1:2 on crypto, and a temporary tiered leverage applies to metals, energies and indices on the standard Master accounts. Maximum 20 lots per click, 1 lot on crypto.",
+    "commission": "$5 per lot round turn on forex and metals, $7 on Zero, $10 with the swing or swap-free add-on and on Prime. Nothing on indices and energies; crypto costs 0.04% of the notional. Swap-free exists on MetaTrader 5 only and removes swaps on forex and metals alone.",
+    "retraits": "You pick the cycle, and the cycle sets your share. The minimum is 1% of the Master size, 2% on the on-demand cycle. Processing is announced in one to three working days by card, crypto, Rise or bank transfer, plus the bank's own delay."
+  },
+  "parcours": [
+    {
+      "etape": "evaluation",
+      "titre": "Evaluation",
+      "texte": "One or two phases depending on the model, with no deadline. Zero skips this step and starts funded."
+    },
+    {
+      "etape": "funded",
+      "titre": "Master account",
+      "texte": "No profit target, but the rule set tightens: risk per trade idea, news windows, consistency and profitable days depend on the model and on the reward cycle you choose."
+    },
+    {
+      "etape": "payout",
+      "titre": "Rewards",
+      "texte": "Weekly, bi-weekly, on demand or monthly. The later you withdraw, the larger your share — from 60% up to 100% on the Standard model."
+    }
+  ],
+  "couts": [
+    {
+      "libelle": "Account fee",
+      "montant": "One-time",
+      "note": "Paid once per account, from $29 to $888 depending on model and size.",
+      "programmes": []
+    },
+    {
+      "libelle": "Commissions",
+      "montant": "$5 per lot",
+      "note": "Round turn on forex and metals. Nothing on indices and energies; 0.04% of notional on crypto.",
+      "programmes": [
+        "standard-2-step",
+        "pro-2-step",
+        "flex-2-step",
+        "flex-1-step"
+      ]
+    },
+    {
+      "libelle": "Commissions",
+      "montant": "$7 per lot",
+      "note": "Round turn on forex and metals, higher than on the evaluation models.",
+      "programmes": [
+        "zero"
+      ]
+    },
+    {
+      "libelle": "Swing or swap-free add-on",
+      "montant": "$10 per lot",
+      "note": "Replaces the standard commission on forex and metals. Swap-free is MetaTrader 5 only and removes swaps on forex and metals alone.",
+      "programmes": []
+    },
+    {
+      "libelle": "Reset",
+      "montant": "7% to 20% off",
+      "note": "Zero resets at 20% off within 7 days of the breach. Evaluation phases reset at 8%, a Master at 7% — and a Master reset sends the account back to phase 1.",
+      "programmes": []
+    },
+    {
+      "libelle": "Registration fee refund",
+      "montant": "At the 4th reward",
+      "note": "On the 2-Step Standard model.",
+      "programmes": [
+        "standard-2-step"
+      ]
+    }
+  ],
+  "verdict": {
+    "texte": "FundingPips has one of the widest CFD catalogues around: instant funding, one or two phases, five or six sizes depending on the model, three platforms and four reward rhythms. The 2-Step Standard is the most balanced route, with 5% a day and 10% overall; the Pro lowers the targets but leaves only 6% of drawdown. The swing add-on makes the standard models usable overnight and over the weekend, while Zero stays strictly incompatible with holding into Saturday.\n\nThe point to watch is the density of the Master rules. Striking System, risk per trade idea, news windows, consistency and profitable days all change with the model, the split, the size, the purchase date and the add-ons — so read the rules of the exact plan you are buying, not the firm's summary.",
+    "pourQui": [
+      "Day traders who want to choose their own drawdown level",
+      "Traders who want MetaTrader 5, cTrader or Match-Trader",
+      "Traders who would rather wait a month and keep 100% of the rewards",
+      "Swing traders willing to buy the add-on on a standard model"
+    ],
+    "pasPour": [],
+    "pointsForts": [],
+    "limites": [
+      "Every account is simulated, and the rewards come from the firm, not from the market",
+      "Master rules vary widely between models and reward cycles",
+      "Zero forbids news trading and weekend holding, and breaking either ends the account",
+      "Two official pages currently disagree on the 2-Step Flex target and split",
+      "Prime is MetaTrader 5 only"
+    ]
+  },
+  "faq": [
+    {
+      "question": "Does FundingPips offer MetaTrader 4?",
+      "reponse": "No. The supported platforms are MetaTrader 5, cTrader and Match-Trader."
+    },
+    {
+      "question": "Can I hold positions overnight or over the weekend?",
+      "reponse": "Yes during the standard evaluations. On a Master account, overnight and weekend holding need the swing add-on; without it, positions close automatically. Zero never allows weekend holding."
+    },
+    {
+      "question": "Is news trading allowed?",
+      "reponse": "The standard evaluations set no technical window, but deliberately trading a release is not allowed. On a Master account, profit taken by opening or closing near a release can be removed. Zero forbids opening, closing or holding in the ten minutes either side."
+    },
+    {
+      "question": "Which instruments can I trade?",
+      "reponse": "FundingPips publishes 41 simulated CFDs: 28 forex pairs, two metals, seven cash indices, two energies and two cryptocurrencies."
+    },
+    {
+      "question": "Which model is the most forgiving?",
+      "reponse": "The 2-Step Standard has the most conventional daily and overall limits. The 1-Step Flex and 2-Step Flex allow 12% of drawdown but add other constraints, so the answer depends on your phase, your reward cycle and your style."
+    },
+    {
+      "question": "Is there instant funding?",
+      "reponse": "Yes, with Zero. There is no evaluation, but the risk, consistency, news and weekend rules are the strictest of the range."
+    },
+    {
+      "question": "How long does a reward take?",
+      "reponse": "FundingPips announces one to three working days of processing, then whatever your card, bank or provider adds."
+    }
+  ],
+  "trustpilotScore": 4.5,
+  "trustpilotReviewCount": 69365,
+  "trustpilotUrl": "https://www.trustpilot.com/review/fundingpips.com",
+  "regles": [
+    {
+      "carte": "trading",
+      "regle": "Maximum loss",
+      "texte": "5% trailing on your highest equity. Once the account is up 5%, the floor locks at the starting balance. It does not reset after a reward.",
+      "statut": "confirmed",
+      "programmes": [
+        "zero"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": true,
+      "essentielle": true,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/34502157694865-FundingPips-Zero"
+    },
+    {
+      "carte": "trading",
+      "regle": "Maximum loss",
+      "texte": "Static: the floor is set at purchase and never moves, whatever you earn.",
+      "statut": "confirmed",
+      "programmes": [
+        "standard-2-step",
+        "pro-2-step",
+        "flex-2-step",
+        "flex-1-step"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": true,
+      "essentielle": true,
+      "source": "https://fundingpips.com/trading-objectives"
+    },
+    {
+      "carte": "trading",
+      "regle": "Floating loss",
+      "texte": "All open positions combined may not lose more than 1% of the starting size at any moment.",
+      "statut": "confirmed",
+      "programmes": [
+        "zero"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": true,
+      "essentielle": true,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/34502157694865-FundingPips-Zero"
+    },
+    {
+      "carte": "trading",
+      "regle": "Risk per trade idea",
+      "texte": "3% below $50K, 2% from $50K.",
+      "statut": "confirmed",
+      "programmes": [
+        "zero"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "essentielle": false,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/34502157694865-FundingPips-Zero"
+    },
+    {
+      "carte": "trading",
+      "regle": "Risk per trade idea",
+      "texte": "No direct limit below $25K, 3% at $25K, 2% above.",
+      "statut": "confirmed",
+      "programmes": [
+        "flex-2-step"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": false,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/47835196271249-2-Step-Flex"
+    },
+    {
+      "carte": "trading",
+      "regle": "Striking System",
+      "texte": "A trade idea losing 1% triggers a strike. Warnings carry over from one cycle to the next.",
+      "statut": "confirmed",
+      "programmes": [
+        "flex-1-step"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/34501697434385-1-Step-Flex"
+    },
+    {
+      "carte": "trading",
+      "regle": "Striking System",
+      "texte": "Applies above $25K on the newer 8% accounts, and on the monthly reward cycle.",
+      "statut": "confirmed",
+      "programmes": [
+        "standard-2-step",
+        "pro-2-step"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": false,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/34501809112081-2-Step-Standard"
+    },
+    {
+      "carte": "trading",
+      "regle": "Profitable days",
+      "texte": "Seven days at 0.25% or more in every rolling 30-day window.",
+      "statut": "confirmed",
+      "programmes": [
+        "zero"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": true,
+      "essentielle": true,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/34502157694865-FundingPips-Zero"
+    },
+    {
+      "carte": "trading",
+      "regle": "Consistency",
+      "texte": "Your best day may not exceed 15% of your cumulative profit.",
+      "statut": "confirmed",
+      "programmes": [
+        "zero"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/34502157694865-FundingPips-Zero"
+    },
+    {
+      "carte": "trading",
+      "regle": "Inactivity",
+      "texte": "Thirty calendar days without a fully closed trade ends the account.",
+      "statut": "confirmed",
+      "programmes": [
+        "standard-2-step",
+        "pro-2-step",
+        "flex-2-step",
+        "flex-1-step",
+        "zero"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": true,
+      "essentielle": false,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/34505029138449-Trading-Conduct-and-Security-Standards"
+    },
+    {
+      "carte": "trading",
+      "regle": "Minimum days",
+      "texte": "Three days per phase, or none if you buy the 3% daily loss variant.",
+      "statut": "confirmed",
+      "programmes": [
+        "standard-2-step"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/34501809112081-2-Step-Standard"
+    },
+    {
+      "carte": "trading",
+      "regle": "Minimum days",
+      "texte": "The checkout shows none, while the help centre still asks for two days per phase on accounts created since 26 August 2026. Check the rules of your own account before you rely on either.",
+      "statut": "source_conflict",
+      "programmes": [
+        "pro-2-step"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/34502027344017-2-Step-Pro-Model"
+    },
+    {
+      "carte": "trading",
+      "regle": "News",
+      "texte": "You may manage a position through an announcement, but deliberately trading the release is not allowed.",
+      "statut": "confirmed",
+      "programmes": [
+        "standard-2-step",
+        "pro-2-step",
+        "flex-2-step",
+        "flex-1-step"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": "evaluation",
+      "bloquante": false,
+      "essentielle": false,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/34504137479441-News-Trading-Weekend-Holding"
+    },
+    {
+      "carte": "trading",
+      "regle": "News",
+      "texte": "Five minutes either side of a high-impact release, ten minutes around a speech. A position opened at least five hours earlier is exempt. Profit taken inside the window can be removed; a loss still counts.",
+      "statut": "confirmed",
+      "programmes": [
+        "standard-2-step",
+        "pro-2-step",
+        "flex-2-step",
+        "flex-1-step"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/34504137479441-News-Trading-Weekend-Holding"
+    },
+    {
+      "carte": "trading",
+      "regle": "News",
+      "texte": "You may not open, close or hold a position in the ten minutes before or after a restricted release. Breaking it ends the account.",
+      "statut": "confirmed",
+      "programmes": [
+        "zero"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": true,
+      "essentielle": true,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/34502157694865-FundingPips-Zero"
+    },
+    {
+      "carte": "trading",
+      "regle": "Weekend",
+      "texte": "Everything must be closed before the Friday close. The swing add-on does not change this.",
+      "statut": "confirmed",
+      "programmes": [
+        "zero"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": true,
+      "essentielle": true,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/34502157694865-FundingPips-Zero"
+    },
+    {
+      "carte": "trading",
+      "regle": "Weekend and overnight",
+      "texte": "Free during the evaluation. On the Master account, positions are closed automatically at the end of the day unless you bought the swing add-on.",
+      "statut": "confirmed",
+      "programmes": [
+        "standard-2-step",
+        "pro-2-step",
+        "flex-2-step",
+        "flex-1-step"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/34504137479441-News-Trading-Weekend-Holding"
+    },
+    {
+      "carte": "trading",
+      "regle": "Automatic close",
+      "texte": "20:45–21:00 UTC in summer, 21:45–22:00 UTC in winter. It is not a breach, but that day does not count as a profitable day.",
+      "statut": "confirmed",
+      "programmes": [
+        "standard-2-step",
+        "pro-2-step",
+        "flex-2-step",
+        "flex-1-step"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": false,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/34504137479441-News-Trading-Weekend-Holding"
+    },
+    {
+      "carte": "trading",
+      "regle": "Copy trading",
+      "texte": "Copying between different users, and letting someone else trade your account, are both forbidden. Copying between your own accounts follows the official tool and its conditions.",
+      "statut": "confirmed",
+      "programmes": [
+        "standard-2-step",
+        "pro-2-step",
+        "flex-2-step",
+        "flex-1-step",
+        "zero"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": true,
+      "essentielle": false,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/34505029138449-Trading-Conduct-and-Security-Standards"
+    },
+    {
+      "carte": "trading",
+      "regle": "Expert advisors",
+      "texte": "Allowed, provided the strategy itself is. Automating a forbidden strategy does not make it allowed.",
+      "statut": "confirmed",
+      "programmes": [
+        "standard-2-step",
+        "pro-2-step",
+        "flex-2-step",
+        "flex-1-step",
+        "zero"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "essentielle": false,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/34505029138449-Trading-Conduct-and-Security-Standards"
+    },
+    {
+      "carte": "trading",
+      "regle": "VPN and VPS",
+      "texte": "Both are forbidden by the current Responsible Trading Policy, and device and IP activity is logged.",
+      "statut": "confirmed",
+      "programmes": [
+        "standard-2-step",
+        "pro-2-step",
+        "flex-2-step",
+        "flex-1-step",
+        "zero"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": true,
+      "essentielle": false,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/34505029138449-Trading-Conduct-and-Security-Standards"
+    },
+    {
+      "carte": "trading",
+      "regle": "Forbidden strategies",
+      "texte": "Gap trading, HFT, latency arbitrage, tick scalping, hedging across accounts, server exploits and churning all end the account.",
+      "statut": "confirmed",
+      "programmes": [
+        "standard-2-step",
+        "pro-2-step",
+        "flex-2-step",
+        "flex-1-step",
+        "zero"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": true,
+      "essentielle": false,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/34505029138449-Trading-Conduct-and-Security-Standards"
+    },
+    {
+      "carte": "trading",
+      "regle": "Per-click size",
+      "texte": "Twenty lots per order, one lot on crypto.",
+      "statut": "confirmed",
+      "programmes": [
+        "standard-2-step",
+        "pro-2-step",
+        "flex-2-step",
+        "flex-1-step",
+        "zero"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "essentielle": false,
+      "source": "https://fundingpips.com/trading-objectives"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Reward cycles",
+      "texte": "Weekly pays 60%, bi-weekly 80%, on demand 90% with a 35% consistency score and 2% of profit, monthly 100% after 30 days with 35% consistency and seven days at 0.5%.",
+      "statut": "confirmed",
+      "programmes": [
+        "standard-2-step"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/34504564970385-Reward-Methods"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Reward cycles",
+      "texte": "Weekly pays 80% every seven days. Monthly pays 100%, with a 35% consistency score, seven days at 0.5% and the Striking System.",
+      "statut": "confirmed",
+      "programmes": [
+        "pro-2-step"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/34502027344017-2-Step-Pro-Model"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Reward cycle",
+      "texte": "Bi-weekly, 95% of the rewards, every 14 days.",
+      "statut": "confirmed",
+      "programmes": [
+        "zero"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": null,
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/34502157694865-FundingPips-Zero"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Reward cycles",
+      "texte": "The bi-weekly share is 80% on the current model page and 85% on the official comparison table: read it at checkout before you buy. Monthly pays 100% on accounts bought from 15 August 2026, with a 35% consistency score and seven days at 0.5%.",
+      "statut": "source_conflict",
+      "programmes": [
+        "flex-1-step"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/34501697434385-1-Step-Flex"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Reward cycles",
+      "texte": "The split is chosen at purchase and locked for the life of the account. The standard variant pays 80% or 85% bi-weekly depending on the official page consulted — read it at checkout — the high split variant 95% with three profitable days per cycle, and the monthly route 100%.",
+      "statut": "source_conflict",
+      "programmes": [
+        "flex-2-step"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": true,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/47835196271249-2-Step-Flex"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Minimum reward",
+      "texte": "1% of the Master size, 2% on the on-demand cycle.",
+      "statut": "confirmed",
+      "programmes": [
+        "standard-2-step",
+        "pro-2-step",
+        "flex-2-step",
+        "flex-1-step",
+        "zero"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": false,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/34504564970385-Reward-Methods"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Before you request",
+      "texte": "Close every position and pending order, wait fifteen minutes, and expect trading to be disabled while the request is processed.",
+      "statut": "confirmed",
+      "programmes": [
+        "standard-2-step",
+        "pro-2-step",
+        "flex-2-step",
+        "flex-1-step",
+        "zero"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": false,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/34504564970385-Reward-Methods"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Methods",
+      "texte": "Card and crypto from 1% of the account, Rise and bank transfer from $500. Processing is announced in one to three working days, plus the bank's own delay.",
+      "statut": "confirmed",
+      "programmes": [
+        "standard-2-step",
+        "pro-2-step",
+        "flex-2-step",
+        "flex-1-step",
+        "zero"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": false,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/34504564970385-Reward-Methods"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Beneficiary",
+      "texte": "The account receiving the money must be in your own name.",
+      "statut": "confirmed",
+      "programmes": [
+        "standard-2-step",
+        "pro-2-step",
+        "flex-2-step",
+        "flex-1-step",
+        "zero"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": false,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/34504564970385-Reward-Methods"
+    },
+    {
+      "carte": "payouts",
+      "regle": "Registration fee",
+      "texte": "Refunded at your fourth reward.",
+      "statut": "confirmed",
+      "programmes": [
+        "standard-2-step"
+      ],
+      "variantes": [],
+      "tailles": [],
+      "phase": "funded",
+      "bloquante": false,
+      "essentielle": false,
+      "source": "https://help.fundingpips.com/hc/en-us/articles/34501809112081-2-Step-Standard"
+    }
+  ],
+  "titre": "Five routes from evaluation to simulated funding",
+  "metaDescription": "FundingPips review 2026: five simulated funding models, targets, loss limits, reward cycles from 60% to 100%, platforms and fees.",
+  "fluxDonnees": [],
+  "description": "Choose between instant simulated funding, a one-step evaluation or three two-step models. Each route has its own targets, loss limits, reward cycles and Master-account rules.",
+  "connuPour": [
+    {
+      "titre": "Five account models",
+      "detail": "Zero, 1-Step Flex, 2-Step Standard, 2-Step Pro and 2-Step Flex."
+    },
+    {
+      "titre": "Flexible reward cycles",
+      "detail": "Weekly, bi-weekly, on demand or monthly, depending on the model."
+    },
+    {
+      "titre": "Three platforms",
+      "detail": "MetaTrader 5, cTrader and Match-Trader."
+    },
+    {
+      "titre": "A path beyond the Master",
+      "detail": "Eligible Master traders can move to a Prime account with daily rewards."
+    }
+  ],
+  "preuves": [],
+  "plateformesDetail": [
+    {
+      "nom": "MetaTrader 5",
+      "selectionnable": true,
+      "note": "The only platform for Prime and for swap-free. Not available to US residents.",
+      "logoUrl": "https://www.metatrader5.com/i/favicons/apple-touch-icon-180x180.png"
+    },
+    {
+      "nom": "cTrader",
+      "selectionnable": true,
+      "note": "Not available to US residents or citizens.",
+      "logoUrl": "https://ctrader.com/favicon.ico"
+    },
+    {
+      "nom": "Match-Trader",
+      "selectionnable": true,
+      "note": "Available in the United States and Canada.",
+      "logoUrl": null
+    }
+  ],
+  "categoriesActifs": [
+    "Forex",
+    "Metals",
+    "Indices",
+    "Energies",
+    "Crypto"
+  ],
+  "categoriesActifsStatut": "confirmed",
+  "methodesRetrait": [
+    "Card",
+    "Crypto (USDT/USDC)",
+    "Rise",
+    "Bank transfer"
+  ],
+  "prestataireRetrait": "Rise",
+  "levierStatut": "confirmed",
+  "optionsAchat": [],
+  "formation": null,
+  "comptesApresReussite": [
+    {
+      "nom": "Prime account",
+      "description": "Not something you can buy: an invitation, or the third reward on a Master account. The Master and its evaluations close when Prime opens.",
+      "lignes": [
+        {
+          "libelle": "Access",
+          "valeur": "On invitation or after the third reward"
+        },
+        {
+          "libelle": "Size",
+          "valeur": "Your profit after split multiplied by 12.5, up to $2M"
+        },
+        {
+          "libelle": "Daily loss",
+          "valeur": "2% or 3% depending on the official page — to be confirmed"
+        },
+        {
+          "libelle": "Maximum loss",
+          "valeur": "8% trailing, measured at the end of the day"
+        },
+        {
+          "libelle": "Floor lock",
+          "valeur": "Locks after a close at +3%"
+        },
+        {
+          "libelle": "Platform",
+          "valeur": "MetaTrader 5 only"
+        },
+        {
+          "libelle": "Rewards",
+          "valeur": "Daily, 80%, with no cap on the number of requests"
+        },
+        {
+          "libelle": "Total allocation",
+          "valeur": "$400K across active Prime accounts"
+        }
+      ]
+    }
+  ]
+}

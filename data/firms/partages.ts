@@ -11,6 +11,7 @@ export const PARTAGES_FICHES: Record<string, PartageFiche> = {
   'blueberry-funded': { profitSplit: 80, maxProfitSplit: 85 },
   'earn2trade': { profitSplit: 50, maxProfitSplit: 80 },
   'ftmo': { profitSplit: 80, maxProfitSplit: 90 },
+  'funding-pips': { profitSplit: 60, maxProfitSplit: 100 },
   'futureselite': { profitSplit: 80, maxProfitSplit: 90 },
   'the5ers': { profitSplit: 50, maxProfitSplit: 80 },
 }

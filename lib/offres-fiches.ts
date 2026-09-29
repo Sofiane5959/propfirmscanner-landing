@@ -99,8 +99,15 @@ export function appliquerOffresDesFiches<T extends { slug: string }>(
     // Le partage suit la meme regle que l'offre : la fiche prime sur la base,
     // qui attend son SQL. Une carte qui n'annonce que le plafond laisse croire
     // que la firme commence a 80 % (CLAUDE.md).
-    const partage: PartageListe | null = fiche
-      ? { profit_split: fiche.profitSplit, max_profit_split: fiche.maxProfitSplit }
+    // Une valeur absente de la fiche laisse celle de la base : mieux vaut le
+    // chiffre d'hier qu'une case vide.
+    const partage: Partial<PartageListe> | null = fiche
+      ? Object.fromEntries(
+          Object.entries({
+            profit_split: fiche.profitSplit,
+            max_profit_split: fiche.maxProfitSplit,
+          }).filter(([, v]) => v != null)
+        )
       : null
     if (!offres[f.slug] && !partage) return f
     return { ...f, ...(partage ?? {}), ...(offres[f.slug] ?? {}) }
