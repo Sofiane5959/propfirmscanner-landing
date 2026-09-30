@@ -200,6 +200,8 @@ export function AccountConfigurator({
 
           <div className="text-left">
           <PromoGroup
+            firmSlug={sheet.slug}
+            placement="fiche_configurateur"
             code={offre && offreAppliquee ? offre.code : null}
             bonus={offre && offreAppliquee ? offre.bonus : null}
             claimHref={offre && offreAppliquee ? claimHref : null}

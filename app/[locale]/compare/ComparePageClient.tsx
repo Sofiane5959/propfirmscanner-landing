@@ -551,6 +551,7 @@ import {
 import { PriceAlertButton } from '@/components/PriceAlert'
 import { toArray } from '@/lib/to-array'
 import { bonusFiche, prixRemiseFiche } from '@/lib/offres-fiches'
+import { suivre } from '@/lib/suivi'
 
 // =====================================================
 // TYPES
@@ -1361,7 +1362,7 @@ const PropFirmCard = ({
   onFavorite: () => void
   isComparing: boolean
   onCompare: () => void
-  onCopyCode: (code: string) => void
+  onCopyCode: (code: string, firmSlug?: string) => void
   communityRating: ReviewAggregate | null
   onRate: () => void
   hasReviewed: boolean
@@ -1566,7 +1567,7 @@ const PropFirmCard = ({
             {firm.discount_code && (
               <>
                 <span className="font-mono text-[13px] font-semibold tracking-wide text-text-primary">{firm.discount_code}</span>
-                <button onClick={() => onCopyCode(firm.discount_code)} aria-label={`Copy discount code ${firm.discount_code}`} className="flex items-center gap-1 text-xs font-medium text-deal">
+                <button onClick={() => onCopyCode(firm.discount_code, firm.slug)} aria-label={`Copy discount code ${firm.discount_code}`} className="flex items-center gap-1 text-xs font-medium text-deal">
                   <Copy className="h-3 w-3" />Copy
                 </button>
               </>
@@ -1921,8 +1922,11 @@ export default function ComparePageClient({ firms, shadowFirms = [], campagneSlu
     })
   }, [])
   
-  const handleCopyCode = useCallback((code: string) => {
+  // Le code copie est le geste le plus proche de l'achat qu'on sache mesurer
+  // sans cookie. La carte donne la firme d'ou il vient (voir lib/suivi.ts).
+  const handleCopyCode = useCallback((code: string, firmSlug?: string) => {
     navigator.clipboard.writeText(code)
+    if (firmSlug) suivre({ evenement: 'code_copie', firmSlug, code, placement: 'compare' })
     setToast({ message: `Code "${code}" copied!`, type: 'success' })
   }, [])
   

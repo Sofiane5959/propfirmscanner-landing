@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { appliquerOffresDesFiches, bonusFiche, prixRemiseFiche } from '@/lib/offres-fiches';
+import { suivre } from '@/lib/suivi';
 
 // =============================================================================
 // LOCALE DETECTION
@@ -245,13 +246,19 @@ function dealsSort(a: PropFirm, b: PropFirm): number {
 // COPY BUTTON
 // =============================================================================
 
-function CopyCodeButton({ code, label }: { code: string; label: { copy: string; copied: string } }) {
+function CopyCodeButton({ code, label, firmSlug, placement }: {
+  code: string;
+  label: { copy: string; copied: string };
+  firmSlug?: string;
+  placement?: string;
+}) {
   const [copied, setCopied] = useState(false);
   const handle = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     try {
       await navigator.clipboard.writeText(code);
+      if (firmSlug) suivre({ evenement: 'code_copie', firmSlug, code, placement: placement || 'deals' });
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -338,7 +345,7 @@ export function PromoCodesBanner() {
               <code className="px-2 py-1 bg-bg-elevated border border-dashed border-border-hover rounded text-accent text-xs font-mono">
                 {f.discount_code}
               </code>
-              <CopyCodeButton code={f.discount_code as string} label={{ copy: t.copy, copied: t.copied }} />
+              <CopyCodeButton code={f.discount_code as string} label={{ copy: t.copy, copied: t.copied }} firmSlug={f.slug} placement="deals_banniere" />
             </div>
           </div>
         ))}
@@ -442,7 +449,7 @@ function DealCard({ firm, t }: { firm: PropFirm; t: Record<string, string> }) {
               <code className="flex-1 px-3 py-2 bg-bg-elevated border border-dashed border-border-hover rounded-lg text-accent font-mono text-sm text-center truncate">
                 {firm.discount_code}
               </code>
-              <CopyCodeButton code={firm.discount_code as string} label={{ copy: t.copy, copied: t.copied }} />
+              <CopyCodeButton code={firm.discount_code as string} label={{ copy: t.copy, copied: t.copied }} firmSlug={firm.slug} placement="deals_carte" />
             </div>
           ) : (
             <div className="flex items-center justify-center gap-2 px-3 py-2 bg-bg-elevated/60 border border-border rounded-lg">

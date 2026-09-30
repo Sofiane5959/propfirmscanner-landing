@@ -282,6 +282,8 @@ function CommercialCard({
 
       <div className="text-left">
         <PromoGroup
+          firmSlug={sheet.slug}
+          placement="fiche_hero"
           code={offre ? offre.code : null}
           claimHref={offre ? claimHref : null}
           continueHref={continueHref}

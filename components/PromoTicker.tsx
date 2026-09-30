@@ -9,6 +9,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { AFFILIATE_LINK_PROPS } from '@/lib/affiliate'
 import { resolvePromotion } from '@/lib/promotion'
 import { appliquerOffresDesFiches, bonusFiche } from '@/lib/offres-fiches'
+import { suivre } from '@/lib/suivi'
 import { useHideOnScrollDown } from '@/hooks/useHideOnScrollDown'
 
 // =====================================================
@@ -35,13 +36,14 @@ interface PromoTickerProps {
 // =====================================================
 // COPY BUTTON
 // =====================================================
-const CopyButton = ({ code }: { code: string }) => {
+const CopyButton = ({ code, firmSlug }: { code: string; firmSlug?: string }) => {
   const [copied, setCopied] = useState(false)
   
   const handleCopy = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
     navigator.clipboard.writeText(code)
+    if (firmSlug) suivre({ evenement: 'code_copie', firmSlug, code, placement: 'ticker' })
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
@@ -126,7 +128,7 @@ const DealPill = ({ deal }: { deal: PromoDeal }) => {
           </code>
           
           {/* Copy Button */}
-          <CopyButton code={deal.discount_code as string} />
+          <CopyButton code={deal.discount_code as string} firmSlug={deal.slug} />
         </>
       ) : (
         // No code needed — discount applied automatically via the affiliate link

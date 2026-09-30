@@ -457,6 +457,8 @@ export function FinalCta({
         </div>
         <div className="rounded-lg border border-accent-border bg-bg-base p-3">
           <PromoGroup
+            firmSlug={sheet.slug}
+            placement="fiche_final"
             code={offre && sel.offreAppliquee ? offre.code : null}
             bonus={offre && sel.offreAppliquee ? offre.bonus : null}
             claimHref={offre && sel.offreAppliquee ? claimHref : null}

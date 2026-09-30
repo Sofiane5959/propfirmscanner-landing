@@ -9,6 +9,7 @@ import { AlertTriangle, ExternalLink, Minus } from 'lucide-react'
 
 import type { Cellule, StatutManquant } from '@/lib/firm-profile'
 import { AFFILIATE_LINK_PROPS } from '@/lib/affiliate'
+import { suivre } from '@/lib/suivi'
 import { COPY } from './copy'
 
 export const cx = (...classes: (string | false | null | undefined)[]) => classes.filter(Boolean).join(' ')
@@ -140,11 +141,13 @@ export function Valeur({ cellule }: { cellule: Cellule }) {
  * Le code et son bouton copient tous les deux : on clique d'abord sur le code
  * lui-meme. Le retour (« Copied ») s'affiche sur le bouton.
  */
-function CodeCopiable({ code }: { code: string }) {
+function CodeCopiable({ code, firmSlug, placement }: { code: string; firmSlug?: string; placement?: string }) {
   const [texte, setTexte] = useState<string>(COPY.copy.idle)
   const copier = async () => {
     try {
       await navigator.clipboard.writeText(code)
+      // Mesure du geste, pas de la personne : voir lib/suivi.ts.
+      if (firmSlug) suivre({ evenement: 'code_copie', firmSlug, code, placement: placement || 'fiche' })
       setTexte(COPY.copy.done)
       setTimeout(() => setTexte(COPY.copy.idle), 1300)
     } catch {
@@ -188,6 +191,8 @@ export function PromoGroup({
   claimHref,
   continueHref,
   continueLabel,
+  firmSlug,
+  placement,
 }: {
   code: string | null
   /** Ce que l'offre donne en plus du pourcentage : « +1 free reset ». */
@@ -195,6 +200,9 @@ export function PromoGroup({
   claimHref: string | null
   continueHref: string
   continueLabel: string
+  /** Pour la mesure : quelle firme, et depuis quel encadre. */
+  firmSlug?: string
+  placement?: string
 }) {
   return (
     <div className="grid gap-2.5">
@@ -209,7 +217,7 @@ export function PromoGroup({
       {code && (
         <div>
           <p className={cx(LABEL, 'mb-1.5')}>{COPY.commercial.code}</p>
-          <CodeCopiable code={code} />
+          <CodeCopiable code={code} firmSlug={firmSlug} placement={placement} />
         </div>
       )}
       <div className="flex flex-col gap-2 sm:flex-row">
