@@ -10,6 +10,7 @@ import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { TrendingUp, ExternalLink, RefreshCw, ArrowLeft } from 'lucide-react'
+import JournalClics from './JournalClics'
 
 // ============================================================
 // AUTH NOTE
@@ -480,6 +481,10 @@ export default function AnalyticsPage() {
             </div>
           </>
         )}
+
+        {/* Le journal, et l'entonnoir codes copies -> sorties. Il lit ses
+            propres donnees : voir JournalClics.tsx. */}
+        <JournalClics includeBots={includeBots} />
       </div>
     </div>
   )
