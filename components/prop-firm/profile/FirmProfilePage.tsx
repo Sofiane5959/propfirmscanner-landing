@@ -16,6 +16,7 @@
 // emplacement de suivi.
 // =============================================================================
 
+import { useEffect } from 'react'
 import type { FirmSheet, SimilarFirm } from '@/lib/firm-sheet'
 import { buildAffiliateUrl } from '@/lib/affiliate'
 import { ficheAffichable } from '@/lib/firm-profile'
@@ -32,6 +33,7 @@ import { HeroSection } from './HeroSection'
 import { InfoCards, KnownForStrip } from './InfoStrips'
 import { RulesByPhase } from './RulesByPhase'
 import { useFirmSelection } from './useFirmSelection'
+import { suivre } from '@/lib/suivi'
 
 export default function FirmProfilePage({
   sheet: ficheBrute,
@@ -51,6 +53,13 @@ export default function FirmProfilePage({
   // Une offre non confirmee ne sort jamais d'ici : les sections ne la voient pas.
   const sheet = ficheAffichable(ficheBrute)
   const sel = useFirmSelection(sheet)
+
+  // La fiche vue sert de denominateur : sans elle, « 12 codes copies » ne dit
+  // pas si la page convertit bien ou si elle recoit enormement de monde. Une
+  // fois par ouverture, sans identifiant de visiteur (voir lib/suivi.ts).
+  useEffect(() => {
+    suivre({ evenement: 'fiche_vue', firmSlug, placement: 'fiche', locale })
+  }, [firmSlug, locale])
 
   // Le plan vise ouvre le paiement de CE plan, code applique (lien profond du
   // plan en base) : le plan affiche dans le hero, sinon la selection en cours.
