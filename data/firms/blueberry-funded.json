@@ -1801,8 +1801,8 @@
     "programmesEligibles": [],
     "taillesEligibles": [],
     "expireLe": null,
-    "accroche": null,
-    "bonus": null,
+    "accroche": "Works on every account type, and it has no end date.",
+    "bonus": "No expiry",
     "remiseCampagne": null,
     "campagneFin": null,
     "statut": "confirmed"
@@ -1855,6 +1855,12 @@
       "libelle": "Add-ons",
       "montant": "+20% to +40%",
       "note": "Sold at checkout: a 7-day payout cycle, on-demand payouts, a 3-day fast track, and a 2% per-idea risk limit instead of 1.5%. Availability depends on the program.",
+      "programmes": []
+    },
+    {
+      "libelle": "Public campaigns",
+      "montant": "Prime only, dated",
+      "note": "Blueberry runs its own codes from time to time. They are limited to Prime accounts and to a deadline; SCANNED has neither limit and applies to every account type (confirmed by Blueberry support, 30 September 2026).",
       "programmes": []
     }
   ],
