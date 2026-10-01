@@ -550,7 +550,7 @@ import {
 } from 'lucide-react'
 import { PriceAlertButton } from '@/components/PriceAlert'
 import { toArray } from '@/lib/to-array'
-import { bonusFiche, prixRemiseFiche } from '@/lib/offres-fiches'
+import { appliquerOffresDesFiches, bonusFiche, prixRemiseFiche } from '@/lib/offres-fiches'
 import { suivre } from '@/lib/suivi'
 
 // =====================================================
@@ -1421,7 +1421,7 @@ const PropFirmCard = ({
               <span>
                 {prixApresCode != null ? (
                   <>
-                    <span className="font-semibold text-text-primary">${prixApresCode}</span>{' '}
+                    <span className="font-semibold text-deal">${prixApresCode}</span>{' '}
                     <span className="line-through">${firm.min_price}</span>
                   </>
                 ) : (
@@ -1534,7 +1534,7 @@ const PropFirmCard = ({
           <dd className="mt-0.5 font-mono text-[19px] font-semibold tabular-nums text-text-primary">
             {prixApresCode != null ? (
               <>
-                ${prixApresCode}{' '}
+                <span className="text-deal">${prixApresCode}</span>{' '}
                 <span className="text-[13px] font-normal text-text-muted line-through">${firm.min_price}</span>
               </>
             ) : (
@@ -1788,7 +1788,7 @@ const ShadowPropFirmCard = ({ firm }: { firm: ShadowFirm }) => {
 // =====================================================
 // MAIN COMPONENT
 // =====================================================
-export default function ComparePageClient({ firms, shadowFirms = [], campagneSlug = null }: ComparePageClientProps) {
+export default function ComparePageClient({ firms: firmsBrutes, shadowFirms = [], campagneSlug = null }: ComparePageClientProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const pathname = usePathname()
@@ -2052,6 +2052,11 @@ export default function ComparePageClient({ firms, shadowFirms = [], campagneSlu
   }, [debouncedFilters, sortBy, router, pathname])
   
   const processedFirms = useMemo(() => {
+    // L'offre est recalculee ici, au rendu, et pas seulement sur le serveur :
+    // une page servie depuis le cache porterait sinon l'offre du jour ou elle a
+    // ete rendue. Le 1er octobre 2026, la campagne Earn2Trade avait expire dans
+    // le rendu de la veille, et la carte n'affichait plus aucune remise.
+    const firms = appliquerOffresDesFiches(firmsBrutes)
     const filtered = firms.filter(f => !isBlocklisted(f.name)).map(normalizeFirmArrays)
     const seen = new Map<string, PropFirm>()
     filtered.forEach(firm => {
@@ -2064,7 +2069,7 @@ export default function ComparePageClient({ firms, shadowFirms = [], campagneSlu
       }
     })
     return Array.from(seen.values())
-  }, [firms])
+  }, [firmsBrutes])
   
   const firmMarkets = useMemo(() => {
     const map = new Map<string, string[]>()

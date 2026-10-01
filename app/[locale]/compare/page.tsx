@@ -205,3 +205,11 @@ function CompareSkeleton() {
     </div>
   )
 }
+
+// Une offre datee ne survit pas au cache. Le 1er octobre 2026, la campagne
+// Earn2Trade a expire pendant que cette page servait encore le rendu de la
+// veille : la carte portait une remise expiree, donc plus de remise du tout,
+// au lieu de revenir au taux permanent. Dix minutes de cache au maximum, et le
+// client recalcule de toute facon a l'affichage (voir appliquerOffresDesFiches
+// dans ComparePageClient).
+export const revalidate = 600
