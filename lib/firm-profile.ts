@@ -13,6 +13,7 @@
 
 import {
   type FirmSheet,
+  type SheetCampagne,
   type SheetOffre,
   type SheetOption,
   type SheetPhase,
@@ -98,6 +99,40 @@ export function offreDuJour<T extends OffreDatee>(offre: T, maintenant = Date.no
     return { ...offre, accroche: null, bonus: null, remiseCampagne: null, campagneFin: null }
   }
   return { ...offre, remise: offre.remiseCampagne, expireLe: offre.campagneFin }
+}
+
+/**
+ * La campagne qui court a cet instant, s'il y en a une. A chevauchement, la
+ * plus courte gagne : une offre du jour passe devant une offre du mois.
+ */
+export function campagneActive(sheet: FirmSheet, maintenant = Date.now()): SheetCampagne | null {
+  const ouvertes = (sheet.campagnes || [])
+    .filter((c) => (c.statut ?? 'confirmed') === 'confirmed')
+    .map((c) => ({ c, debut: new Date(c.debut).getTime(), fin: new Date(c.fin).getTime() }))
+    .filter((x) => !Number.isNaN(x.debut) && !Number.isNaN(x.fin) && x.debut <= maintenant && maintenant < x.fin)
+    .sort((a, b) => a.fin - a.debut - (b.fin - b.debut))
+  return ouvertes[0]?.c ?? null
+}
+
+/**
+ * Ce que le serveur transmet au navigateur : la fiche, la campagne du moment
+ * repliee dans l'offre, et AUCUNE autre campagne. Les offres a venir sont
+ * souvent sous embargo — elles ne doivent pas se lire dans le code de la page.
+ */
+export function ficheDuJour(sheet: FirmSheet, maintenant = Date.now()): FirmSheet {
+  const campagne = campagneActive(sheet, maintenant)
+  const offre = sheet.offre
+  if (!campagne || !offre) return { ...sheet, campagnes: [] }
+  return {
+    ...sheet,
+    campagnes: [],
+    offre: {
+      ...offre,
+      remise: campagne.remise ?? offre.remise,
+      accroche: campagne.detail ?? offre.accroche,
+      bonus: campagne.titre,
+    },
+  }
 }
 
 export function ficheAffichable(sheet: FirmSheet): FirmSheet {

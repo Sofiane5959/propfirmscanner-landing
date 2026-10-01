@@ -7,6 +7,7 @@ import UniversalFirmPage from '@/components/prop-firm/UniversalFirmPage'
 import FirmProfilePage from '@/components/prop-firm/profile/FirmProfilePage'
 import { FIRM_SHEETS } from '@/data/firms'
 import { profilActif } from '@/data/firms/rollout'
+import { ficheDuJour } from '@/lib/firm-profile'
 import { LEGACY_SHEETS } from '@/data/firms/legacy'
 import { sheetMetaDescription } from '@/lib/firm-sheet'
 import { buildAffiliateUrl } from '@/lib/affiliate'
@@ -553,8 +554,11 @@ export default async function PropFirmPage({ params }: Props) {
           passe par la page universelle finale. Retirer la ligne suffit a
           revenir au rendu precedent. */}
       {FIRM_SHEETS[firm.slug] && profilActif(firm.slug, locale) ? (
+        /* ficheDuJour : la campagne du moment est repliee dans l'offre, les
+           suivantes ne quittent pas le serveur — un calendrier d'offres est
+           souvent sous embargo (Earn2Trade, octobre 2026). */
         <FirmProfilePage
-          sheet={FIRM_SHEETS[firm.slug]}
+          sheet={ficheDuJour(FIRM_SHEETS[firm.slug])}
           firmSlug={firm.slug}
           firmId={firm.id}
           locale={locale}

@@ -796,6 +796,7 @@
     "campagneFin": null,
     "statut": "confirmed"
   },
+  "campagnes": [],
   "conditions": {
     "trading": "Overnight holding is not allowed; automatic liquidation may occur. Market closed Friday 16:55 EST to Sunday 18:00 EST. Fully automated AI or bots are not permitted. The configurator lists scalping as not allowed, without defining it. News trading is allowed in evaluation and restricted once funded, without a stated event window.",
     "commission": "Commissions and exchange fees are charged per instrument on each executed trade.",

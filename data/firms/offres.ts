@@ -40,7 +40,7 @@ export const OFFRES_FICHES: Record<string, OffreFiche> = {
     code: 'SCANNED',
     remise: 0.5,
     expireLe: null,
-    accroche: 'Earn2Trade turns 10: anniversary offers until 18 October.',
+    accroche: null,
     bonus: null,
     surTousLesPlans: true,
     remiseCampagne: null,

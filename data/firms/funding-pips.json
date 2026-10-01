@@ -1538,6 +1538,7 @@
     }
   ],
   "offre": null,
+  "campagnes": [],
   "conditions": {
     "trading": "41 simulated CFDs on forex, metals, indices, energies and crypto. Leverage runs from 1:100 on forex down to 1:2 on crypto, and a temporary tiered leverage applies to metals, energies and indices on the standard Master accounts. Maximum 20 lots per click, 1 lot on crypto.",
     "commission": "$5 per lot round turn on forex and metals, $7 on Zero, $10 with the swing or swap-free add-on and on Prime. Nothing on indices and energies; crypto costs 0.04% of the notional. Swap-free exists on MetaTrader 5 only and removes swaps on forex and metals alone.",

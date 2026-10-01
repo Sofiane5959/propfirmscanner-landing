@@ -2,7 +2,7 @@
 -- NE PAS MODIFIER A LA MAIN : corriger le tableur, puis relancer
 --   npm run firms:build
 -- `npm run firms:check` echoue si ce fichier ne correspond plus a la fiche.
--- Fiche : data/firms/ftmo.json (sha256:6b71012d3d258fdec3d76c57ee29899e325eb78553ab3aa579a7f651c3cb800c)
+-- Fiche : data/firms/ftmo.json (sha256:423c2ec9240869909db51776f93d12a44ef87a7c1a26828eeb29427497e43393)
 --
 -- Recopie dans prop_firms les colonnes lues par /compare, /deals, le bandeau
 -- des offres, /best-for, le quiz, les favoris et les cartes Similar firms.

@@ -2068,6 +2068,7 @@
     }
   ],
   "offre": null,
+  "campagnes": [],
   "conditions": {
     "trading": null,
     "commission": null,

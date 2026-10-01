@@ -144,6 +144,22 @@ export interface SheetOffre {
 }
 
 /** Une etape de « From evaluation to your first payout ». */
+/**
+ * Une offre a fenetre : elle n'existe qu'entre `debut` et `fin`. Sert aux
+ * calendriers — dix offres quotidiennes chez Earn2Trade en octobre 2026.
+ * Le serveur ne transmet au navigateur que celle qui court : les suivantes
+ * restent chez nous tant que leur jour n'est pas venu.
+ */
+export interface SheetCampagne {
+  debut: string
+  fin: string
+  titre: string
+  detail: string | null
+  /** Fraction. Vide : la campagne ne change pas le taux de l'offre. */
+  remise: number | null
+  statut?: Statut
+}
+
 export interface SheetEtape {
   /** evaluation, funded, payout — ou un libelle propre a la firme. */
   etape: string
@@ -241,6 +257,8 @@ export interface FirmSheet {
   stylesTrading: string[]
   programmes: SheetProgramme[]
   offre: SheetOffre | null
+  /** Calendrier d'offres datees. Vide pour presque toutes les firmes. */
+  campagnes: SheetCampagne[]
   /** Onglets facultatifs : vides, leurs sections n'existent pas. */
   parcours: SheetEtape[]
   couts: SheetCout[]

@@ -308,6 +308,18 @@ def convertir(chemin):
             continue
         parcours.append({"etape": txt(etape), "titre": txt(titre), "texte": txt(texte)})
 
+    # Campagnes : une offre par fenetre, lues telles quelles. C'est la
+    # resolution (lib/firm-profile) qui decide laquelle court, pas la conversion.
+    campagnes = []
+    for debut, fin_c, titre_c, detail_c, remise_c, statut_c in lignes(feuille(wb, "Campagnes"), 6):
+        iso = lambda v: (v.isoformat() if isinstance(v, dt.datetime) else txt(v))
+        if not iso(debut) or not iso(fin_c) or not txt(titre_c):
+            avertissements.append("Campagnes : une ligne sans debut, fin ou titre a ete ignoree.")
+            continue
+        campagnes.append({"debut": iso(debut), "fin": iso(fin_c), "titre": txt(titre_c),
+                          "detail": txt(detail_c), "remise": fraction(remise_c),
+                          "statut": statut(statut_c) or "confirmed"})
+
     couts = [{"libelle": txt(libelle), "montant": txt(montant), "note": txt(note), "programmes": liste(progs_c)}
              for _, libelle, montant, note, progs_c in sorted(lignes(feuille(wb, "Couts"), 5), key=lambda l: nombre(l[0]) or 0)
              if txt(libelle)]
@@ -422,6 +434,7 @@ def convertir(chemin):
         "stylesTrading": liste(f.get("styles_trading")),
         "programmes": programmes,
         "offre": offre,
+        "campagnes": campagnes,
         "conditions": {"trading": txt(c.get("trading")), "commission": txt(c.get("commission")),
                        "retraits": txt(c.get("retraits"))},
         "parcours": parcours,
