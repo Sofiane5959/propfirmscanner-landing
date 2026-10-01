@@ -28,7 +28,7 @@ export const OFFRES_FICHES: Record<string, OffreFiche> = {
     remise: 0.3,
     expireLe: null,
     accroche: 'Works on every account type, and it has no end date.',
-    bonus: 'No expiry',
+    bonus: null,
     surTousLesPlans: true,
     remiseCampagne: null,
     campagneFin: null,

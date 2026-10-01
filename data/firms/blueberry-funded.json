@@ -1802,7 +1802,7 @@
     "taillesEligibles": [],
     "expireLe": null,
     "accroche": "Works on every account type, and it has no end date.",
-    "bonus": "No expiry",
+    "bonus": null,
     "remiseCampagne": null,
     "campagneFin": null,
     "statut": "confirmed"
