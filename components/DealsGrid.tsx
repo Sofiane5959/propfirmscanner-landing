@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import {
   ExternalLink, Tag, Star, Copy, Check,
-  Sparkles, Gift, ShieldCheck,
+  Sparkles, Gift, ShieldCheck, Search,
 } from 'lucide-react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { appliquerOffresDesFiches, bonusFiche, prixRemiseFiche } from '@/lib/offres-fiches';
@@ -52,6 +52,14 @@ const translations: Record<Locale, Record<string, string>> = {
     affiliateNotice:
       'We may earn a commission when you use our links — at no extra cost to you. This is what keeps the comparison free.',
     readMore: 'Read more',
+    search: 'Search a firm…',
+    sortDiscount: 'Biggest discount',
+    sortPrice: 'Lowest price',
+    sortRating: 'Best rated',
+    codeOnly: 'With a code',
+    showMore: 'Show more firms',
+    nothing: 'No firm matches your search.',
+    counted: 'deals',
   },
   fr: {
     quickCopy: 'Copie rapide des codes promo',
@@ -62,6 +70,14 @@ const translations: Record<Locale, Record<string, string>> = {
     allFirmsSubtitle: 'Toutes les firms que nous suivons. Les meilleures offres en haut.',
     visit: 'Visiter',
     details: 'Détails',
+    search: 'Chercher une firme…',
+    sortDiscount: 'Plus forte remise',
+    sortPrice: 'Prix le plus bas',
+    sortRating: 'Mieux notées',
+    codeOnly: 'Avec un code',
+    showMore: 'Voir plus de firmes',
+    nothing: 'Aucune firme ne correspond.',
+    counted: 'offres',
     viaLink: 'via lien',
     noCode: 'Pas de code — la réduction est appliquée via notre lien',
     copied: 'Copié !',
@@ -377,7 +393,7 @@ function DealCard({ firm, t }: { firm: PropFirm; t: Record<string, string> }) {
     >
       {hasDiscount && (
         <div className="relative">
-          <div className="absolute top-3 right-3 z-10 px-2 py-1 rounded-md bg-gradient-to-r from-red-500 to-orange-500 text-white text-[11px] font-bold">
+          <div className="absolute top-3 right-3 z-10 rounded-md border border-deal/30 bg-deal-subtle px-2 py-1 text-[11px] font-bold text-deal">
             {firm.discount_percent}% {t.off}
           </div>
         </div>
@@ -499,6 +515,15 @@ export function DealsGrid() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // La page listait quatre-vingt-onze firmes sans aucune commande. Trois
+  // reglages suffisent a la rendre utilisable, et ce sont ceux de /compare,
+  // pour que le visiteur ne reapprenne rien.
+  const [recherche, setRecherche] = useState('');
+  const [tri, setTri] = useState<'remise' | 'prix' | 'note'>('remise');
+  const [avecCodeSeulement, setAvecCodeSeulement] = useState(false);
+  // Le reste du catalogue arrive par paquets : sinon la page defile sans fin.
+  const [montrees, setMontrees] = useState(12);
+
   const fetchFirms = useCallback(async () => {
     setLoading(true);
     try {
@@ -529,8 +554,29 @@ export function DealsGrid() {
     fetchFirms();
   }, [fetchFirms]);
 
-  const dealFirms = firms.filter(f => (f.discount_percent ?? 0) > 0);
-  const remainingFirms = firms.filter(f => (f.discount_percent ?? 0) === 0 || f.discount_percent == null);
+  const q = recherche.trim().toLowerCase();
+  const correspond = (f: PropFirm) => !q || f.name.toLowerCase().includes(q);
+
+  const trier = (liste: PropFirm[]) => {
+    if (tri === 'prix') {
+      return [...liste].sort((a, b) => (a.min_price ?? 1e9) - (b.min_price ?? 1e9));
+    }
+    if (tri === 'note') {
+      return [...liste].sort((a, b) => (b.trustpilot_rating ?? 0) - (a.trustpilot_rating ?? 0));
+    }
+    return liste;   // deja trie par dealsSort : remise et partenaires d'abord
+  };
+
+  const dealFirms = trier(
+    firms.filter(f => (f.discount_percent ?? 0) > 0)
+      .filter(f => !avecCodeSeulement || (f.discount_code && f.discount_code.trim()))
+      .filter(correspond)
+  );
+  const remainingFirms = trier(
+    firms.filter(f => (f.discount_percent ?? 0) === 0 || f.discount_percent == null)
+      .filter(() => !avecCodeSeulement)
+      .filter(correspond)
+  );
 
   if (loading) {
     return (
@@ -551,6 +597,49 @@ export function DealsGrid() {
 
   return (
     <>
+      {/* Barre de commandes : chercher, trier, filtrer. Les memes gestes que
+          sur /compare, pour que le visiteur ne reapprenne rien. */}
+      <div className="mb-6 flex flex-wrap items-center gap-2 rounded-2xl border border-border/50 bg-dark-700/40 p-3">
+        <div className="relative min-w-[12rem] flex-1">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
+          <input
+            value={recherche}
+            onChange={e => { setRecherche(e.target.value); setMontrees(12); }}
+            placeholder={t.search}
+            aria-label={t.search}
+            className="min-h-11 w-full rounded-xl border border-border bg-bg-base py-2 pl-9 pr-3 text-sm text-text-primary placeholder:text-text-muted"
+          />
+        </div>
+
+        <select
+          value={tri}
+          onChange={e => setTri(e.target.value as 'remise' | 'prix' | 'note')}
+          aria-label={t.sortDiscount}
+          className="min-h-11 rounded-xl border border-border bg-bg-base px-3 text-sm text-text-primary"
+        >
+          <option value="remise">{t.sortDiscount}</option>
+          <option value="prix">{t.sortPrice}</option>
+          <option value="note">{t.sortRating}</option>
+        </select>
+
+        <button
+          type="button"
+          onClick={() => { setAvecCodeSeulement(v => !v); setMontrees(12); }}
+          aria-pressed={avecCodeSeulement}
+          className={`min-h-11 rounded-xl border px-4 text-sm font-medium transition-colors ${
+            avecCodeSeulement
+              ? 'border-deal/30 bg-deal-subtle text-deal'
+              : 'border-border bg-bg-base text-text-secondary hover:border-border-hover'
+          }`}
+        >
+          {t.codeOnly}
+        </button>
+
+        <span className="ml-auto pr-1 text-sm text-text-muted">
+          <span className="font-semibold text-text-primary">{dealFirms.length}</span> {t.counted}
+        </span>
+      </div>
+
       {dealFirms.length > 0 ? (
         <section className="mb-12">
           <div className="flex items-center gap-3 mb-4">
@@ -588,11 +677,26 @@ export function DealsGrid() {
             </div>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {remainingFirms.map(f => (
+            {remainingFirms.slice(0, montrees).map(f => (
               <DealCard key={f.id} firm={f} t={t} />
             ))}
           </div>
+          {remainingFirms.length > montrees && (
+            <div className="mt-6 text-center">
+              <button
+                type="button"
+                onClick={() => setMontrees(n => n + 12)}
+                className="min-h-11 rounded-xl border border-border bg-bg-base px-5 text-sm font-medium text-text-secondary hover:border-border-hover"
+              >
+                {t.showMore} ({remainingFirms.length - montrees})
+              </button>
+            </div>
+          )}
         </section>
+      )}
+
+      {dealFirms.length === 0 && remainingFirms.length === 0 && (
+        <p className="py-12 text-center text-sm text-text-secondary">{t.nothing}</p>
       )}
 
       <p className="text-center text-text-muted text-xs max-w-2xl mx-auto mt-12">
