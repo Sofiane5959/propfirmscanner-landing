@@ -2,7 +2,7 @@
  * Font setup using next/font for performance (no FOUT, auto-subset).
  *
  * Inter        — body text everywhere
- * Space Grotesk — display/heading typeface (distinctive, modern, free)
+ * Inter 600-800 — titres (Space Grotesk retiree avec le passage a l'ambre)
  * JetBrains Mono — tabular numbers in data displays (compare tables, stats)
  *
  * Import this file in your root layout.tsx and apply variables to <html> or <body>.
@@ -16,7 +16,7 @@
  *     </body>
  *   </html>
  */
-import { Inter, Space_Grotesk, JetBrains_Mono } from 'next/font/google'
+import { Inter, JetBrains_Mono } from 'next/font/google'
 
 export const fontSans = Inter({
   subsets: ['latin'],
@@ -24,11 +24,11 @@ export const fontSans = Inter({
   variable: '--font-sans',
 })
 
-export const fontDisplay = Space_Grotesk({
+export const fontDisplay = Inter({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-display',
-  weight: ['500', '600', '700'],
+  weight: ['600', '700', '800'],
 })
 
 export const fontMono = JetBrains_Mono({

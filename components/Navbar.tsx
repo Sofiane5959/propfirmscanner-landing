@@ -429,10 +429,10 @@ export function Navbar() {
           
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2 flex-shrink-0">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-accent flex items-center justify-center">
-              <span className="text-white font-bold text-sm">P</span>
+            <div className="w-8 h-8 rounded-lg bg-accent-hover flex items-center justify-center">
+              <span className="text-on-accent font-extrabold text-sm">P</span>
             </div>
-            <span className="text-white font-bold text-lg hidden sm:block">
+            <span className="text-text-primary font-extrabold text-lg tracking-tight hidden sm:block">
               PropFirm<span className="text-accent">Scanner</span>
             </span>
           </Link>

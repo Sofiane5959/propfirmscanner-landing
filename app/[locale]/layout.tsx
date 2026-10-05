@@ -155,7 +155,7 @@ export default function LocaleLayout({
             Night = Moka. Prevents a flash of the wrong theme. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('pfs-theme');var d=t==='dark';document.documentElement.classList.toggle('dark',d);}catch(e){}})();`,
+            __html: `(function(){try{var t=localStorage.getItem('pfs-theme');var d=t?t==='dark':!(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches);document.documentElement.classList.toggle('dark',d);}catch(e){}})();`,
           }}
         />
         <GoogleAnalytics />

@@ -24,18 +24,17 @@ const baseClasses =
   'inline-flex items-center justify-center gap-2 font-medium rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base disabled:opacity-50 disabled:pointer-events-none'
 
 const variantClasses: Record<ButtonVariant, string> = {
-  // Nuit (Moka) : accent #34D399 sous un texte blanc tombe a 1,92:1, bien en
-  // dessous du minimum lisible. Le fond passe donc sur accent-hover #047857,
-  // qui remonte a 5,48:1. Jour (Menthe +) inchange : #15803D donne deja 5,02:1.
-  primary: 'bg-accent text-white hover:bg-accent-hover dark:bg-accent-hover dark:hover:bg-accent-hover/90',
+  // Action = ambre (--accent-btn #F59E0B) + texte sombre --on-accent : 8,5:1
+  // dans les deux themes. Jamais de texte blanc sur l'ambre (moins de 2:1).
+  primary: 'bg-accent-hover text-on-accent hover:bg-accent-hover/90',
   secondary:
-    'bg-bg-elevated text-text-primary border border-border hover:border-border-hover',
+    'bg-bg-elevated text-text-primary border border-border-hover hover:border-text-primary',
   ghost: 'text-text-secondary hover:text-text-primary hover:bg-bg-elevated',
 }
 
 const sizeClasses: Record<ButtonSize, string> = {
-  md: 'px-4 py-2 text-small',
-  lg: 'px-6 py-3 text-body',
+  md: 'min-h-[44px] px-4 py-2 text-small font-semibold',
+  lg: 'min-h-[50px] px-6 py-3 text-body font-bold',
 }
 
 export function buttonVariants({

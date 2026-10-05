@@ -55,9 +55,9 @@ module.exports = {
           950: 'rgb(var(--dark-950) / <alpha-value>)',
         },
 
-        // --- DESIGN SYSTEM v1.0 — themes Menthe + / Moka -----
+        // --- DESIGN SYSTEM v2.0 — themes Sombre (defaut) / Clair, action ambre -----
         // Toutes les valeurs sont des variables CSS definies dans globals.css
-        // (:root = Menthe +, .dark = Moka). Le format rgb(var() / alpha)
+        // (:root = Clair, .dark = Sombre). Le format rgb(var() / alpha)
         // garde les modificateurs d'opacite (bg-bg-elevated/60, bg-accent/10).
         bg: {
           base: 'rgb(var(--bg-base) / <alpha-value>)',
@@ -74,10 +74,14 @@ module.exports = {
         },
         accent: {
           DEFAULT: 'rgb(var(--accent) / <alpha-value>)',  // texte, chiffres, liens
-          hover: 'rgb(var(--accent-btn) / <alpha-value>)', // fond des boutons principaux (texte blanc)
+          hover: 'rgb(var(--accent-btn) / <alpha-value>)', // fond des boutons principaux = ambre (texte on-accent)
           subtle: 'rgb(var(--accent) / 0.14)',
           border: 'rgb(var(--accent) / 0.3)',
         },
+        // Texte sur l'ambre des boutons (jamais de blanc)
+        'on-accent': 'rgb(var(--on-accent) / <alpha-value>)',
+        // Chiffres favorables (profit split, hausse) : donnee, jamais bouton
+        positive: 'rgb(var(--positive) / <alpha-value>)',
         // Promotions / codes promo (orange le jour, jaune la nuit)
         deal: {
           DEFAULT: 'rgb(var(--deal) / <alpha-value>)',
@@ -106,10 +110,10 @@ module.exports = {
       fontSize: {
         // NEW design system sizes — see DESIGN_SYSTEM.md §3
         // Tailwind defaults (text-xs, text-sm, text-base, etc.) still work.
-        display: ['56px', { lineHeight: '64px', letterSpacing: '-0.02em', fontWeight: '600' }],
-        h1: ['40px', { lineHeight: '48px', letterSpacing: '-0.02em', fontWeight: '600' }],
-        h2: ['28px', { lineHeight: '36px', letterSpacing: '-0.01em', fontWeight: '600' }],
-        h3: ['20px', { lineHeight: '28px', letterSpacing: '0', fontWeight: '600' }],
+        display: ['56px', { lineHeight: '64px', letterSpacing: '-0.025em', fontWeight: '800' }],
+        h1: ['40px', { lineHeight: '48px', letterSpacing: '-0.025em', fontWeight: '800' }],
+        h2: ['28px', { lineHeight: '36px', letterSpacing: '-0.015em', fontWeight: '700' }],
+        h3: ['20px', { lineHeight: '28px', letterSpacing: '0', fontWeight: '700' }],
         body: ['16px', { lineHeight: '24px', letterSpacing: '0', fontWeight: '400' }],
         small: ['14px', { lineHeight: '20px', letterSpacing: '0', fontWeight: '400' }],
         tiny: ['12px', { lineHeight: '16px', letterSpacing: '0', fontWeight: '500' }],
