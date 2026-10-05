@@ -24,7 +24,10 @@ const baseClasses =
   'inline-flex items-center justify-center gap-2 font-medium rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base disabled:opacity-50 disabled:pointer-events-none'
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: 'bg-accent text-white hover:bg-accent-hover',
+  // Nuit (Moka) : accent #34D399 sous un texte blanc tombe a 1,92:1, bien en
+  // dessous du minimum lisible. Le fond passe donc sur accent-hover #047857,
+  // qui remonte a 5,48:1. Jour (Menthe +) inchange : #15803D donne deja 5,02:1.
+  primary: 'bg-accent text-white hover:bg-accent-hover dark:bg-accent-hover dark:hover:bg-accent-hover/90',
   secondary:
     'bg-bg-elevated text-text-primary border border-border hover:border-border-hover',
   ghost: 'text-text-secondary hover:text-text-primary hover:bg-bg-elevated',
