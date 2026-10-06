@@ -736,6 +736,86 @@ const UI_FR: typeof UI_EN = {
   otherResultsText: "Ces firmes ne sont pas listées sur PropFirmScanner : nous n'avons pas vérifié leurs promesses, ou nous les déconseillons. Prudence.",
   filters: 'Filtres', grid: 'Grille', list: 'Liste', bestCode: 'Meilleur code du moment', copyOpen: 'Copier & ouvrir', disclosure: 'Liens affiliés : nous touchons une commission, sans coût pour toi. Le classement reste indépendant.',
 }
+const UI_DE: typeof UI_EN = {
+  quickAll: 'Alle', quickSwing: 'Swing / Wochenende', quickScalping: 'Scalping', quickNews: 'News', quickEa: 'EAs / Bots',
+  quickFutures: 'Futures', quickInstant: 'Instant Funding', quickBeginners: 'Einsteiger',
+  sortRecommended: 'Empfohlen', sortPrice: 'Günstigste', sortSplit: 'Bester Split', sortDiscount: 'Größter Rabatt', sortReviews: 'Meiste Bewertungen',
+  getOffer: 'Sichern', copy: 'Kopieren', visitSite: 'Zur Website',
+  updatedOn: 'Aktualisiert', verifiedFirms: 'geprüfte Firmen', activeCodes: 'aktive Promo-Codes', howWeRank: 'So ranken wir →',
+  dealOfDay: 'Angebot des Tages', dealCta: 'Angebot sichern', code: 'Code',
+  quizTitle: 'Unsicher bei der Wahl?', quizText: 'Beantworte 5 kurze Fragen und wir finden die Firma, die zu deinem Stil passt.', quizCta: 'Quiz starten (60 s)',
+  stillEyebrow: 'Persönliche Empfehlung', stillTitle: 'Immer noch unentschlossen?', stillText: 'Ein paar kurze Fragen und du bekommst deine Top 3 in unter 60 Sekunden. Ohne Konto.', stillCta: 'Quiz starten', findMatch: 'Meine Firma finden',
+  loadMore: '{n} weitere Firmen anzeigen', shownOf: '{a} von {b} angezeigt', seeFirms: '{n} Firmen anzeigen', clearAll: 'Alles zurücksetzen', closeFilters: 'Filter schließen',
+  compareN: '{n} vergleichen →', selectAtLeast2: 'Wähle mindestens 2 Firmen', upToMore: 'Noch {n} möglich', maxFirms: 'Maximal 4 Firmen', clear: 'Leeren', selected: 'ausgewählt',
+  favoritesN: '{n} Favoriten', otherResults: 'Weitere Ergebnisse', otherResultsSub: '— ungeprüft oder nicht empfohlen',
+  otherResultsText: 'Diese Firmen sind auf PropFirmScanner nicht gelistet. Wir haben ihre Angaben nicht geprüft oder empfehlen sie nicht. Sei vorsichtig.',
+  filters: 'Filter', grid: 'Raster', list: 'Liste', bestCode: 'Bester Code gerade', copyOpen: 'Kopieren & öffnen', disclosure: 'Affiliate-Links: wir erhalten eine Provision, ohne Mehrkosten für dich. Das Ranking bleibt unabhängig.',
+}
+
+const UI_ES: typeof UI_EN = {
+  quickAll: 'Todas', quickSwing: 'Swing / fin de semana', quickScalping: 'Scalping', quickNews: 'Noticias', quickEa: 'EAs / bots',
+  quickFutures: 'Futuros', quickInstant: 'Instant funding', quickBeginners: 'Principiantes',
+  sortRecommended: 'Recomendadas', sortPrice: 'Más baratas', sortSplit: 'Mejor split', sortDiscount: 'Mayor descuento', sortReviews: 'Más valoradas',
+  getOffer: 'Conseguir', copy: 'Copiar', visitSite: 'Ver la web',
+  updatedOn: 'Actualizado', verifiedFirms: 'firmas verificadas', activeCodes: 'códigos promo activos', howWeRank: 'Cómo clasificamos →',
+  dealOfDay: 'Oferta del día', dealCta: 'Aprovechar', code: 'Código',
+  quizTitle: '¿No sabes cuál elegir?', quizText: 'Responde 5 preguntas rápidas y te proponemos la firma que encaja con tu estilo.', quizCta: 'Hacer el test (60 s)',
+  stillEyebrow: 'Recomendación personalizada', stillTitle: '¿Sigues dudando?', stillText: 'Unas preguntas rápidas y tienes tus 3 mejores opciones en menos de 60 segundos. Sin cuenta.', stillCta: 'Hacer el test', findMatch: 'Encontrar mi firma',
+  loadMore: 'Ver {n} firmas más', shownOf: '{a} de {b} mostradas', seeFirms: 'Ver {n} firmas', clearAll: 'Borrar todo', closeFilters: 'Cerrar filtros',
+  compareN: 'Comparar las {n} →', selectAtLeast2: 'Elige al menos 2 firmas', upToMore: '{n} más posibles', maxFirms: 'Máximo 4 firmas', clear: 'Vaciar', selected: 'elegidas',
+  favoritesN: '{n} favoritas', otherResults: 'Otros resultados', otherResultsSub: '— sin verificar o no recomendadas',
+  otherResultsText: 'Estas firmas no están listadas en PropFirmScanner: no hemos verificado sus promesas, o no las recomendamos. Ve con cuidado.',
+  filters: 'Filtros', grid: 'Cuadrícula', list: 'Lista', bestCode: 'Mejor código ahora', copyOpen: 'Copiar y abrir', disclosure: 'Enlaces de afiliado: cobramos una comisión, sin coste para ti. La clasificación sigue siendo independiente.',
+}
+
+const UI_PT: typeof UI_EN = {
+  quickAll: 'Todas', quickSwing: 'Swing / fim de semana', quickScalping: 'Scalping', quickNews: 'Notícias', quickEa: 'EAs / bots',
+  quickFutures: 'Futuros', quickInstant: 'Instant funding', quickBeginners: 'Iniciantes',
+  sortRecommended: 'Recomendadas', sortPrice: 'Mais baratas', sortSplit: 'Melhor split', sortDiscount: 'Maior desconto', sortReviews: 'Mais avaliadas',
+  getOffer: 'Obter', copy: 'Copiar', visitSite: 'Ver o site',
+  updatedOn: 'Atualizado', verifiedFirms: 'firmas verificadas', activeCodes: 'códigos promo ativos', howWeRank: 'Como classificamos →',
+  dealOfDay: 'Oferta do dia', dealCta: 'Aproveitar', code: 'Código',
+  quizTitle: 'Não sabe qual escolher?', quizText: 'Responda a 5 perguntas rápidas e indicamos a firma que combina com o seu estilo.', quizCta: 'Fazer o quiz (60 s)',
+  stillEyebrow: 'Recomendação personalizada', stillTitle: 'Ainda em dúvida?', stillText: 'Algumas perguntas rápidas e você tem as suas 3 melhores opções em menos de 60 segundos. Sem conta.', stillCta: 'Fazer o quiz', findMatch: 'Encontrar a minha firma',
+  loadMore: 'Ver mais {n} firmas', shownOf: '{a} de {b} exibidas', seeFirms: 'Ver {n} firmas', clearAll: 'Limpar tudo', closeFilters: 'Fechar filtros',
+  compareN: 'Comparar as {n} →', selectAtLeast2: 'Escolha pelo menos 2 firmas', upToMore: 'Mais {n} possíveis', maxFirms: 'No máximo 4 firmas', clear: 'Limpar', selected: 'escolhidas',
+  favoritesN: '{n} favoritas', otherResults: 'Outros resultados', otherResultsSub: '— não verificadas ou não recomendadas',
+  otherResultsText: 'Estas firmas não estão listadas no PropFirmScanner: não verificámos as suas promessas, ou não as recomendamos. Tenha cuidado.',
+  filters: 'Filtros', grid: 'Grelha', list: 'Lista', bestCode: 'Melhor código agora', copyOpen: 'Copiar e abrir', disclosure: 'Links de afiliado: recebemos uma comissão, sem custo para si. A classificação continua independente.',
+}
+
+const UI_AR: typeof UI_EN = {
+  quickAll: 'الكل', quickSwing: 'سوينغ / عطلة نهاية الأسبوع', quickScalping: 'سكالبينغ', quickNews: 'الأخبار', quickEa: 'الروبوتات (EAs)',
+  quickFutures: 'العقود الآجلة', quickInstant: 'تمويل فوري', quickBeginners: 'المبتدئون',
+  sortRecommended: 'موصى بها', sortPrice: 'الأرخص', sortSplit: 'أفضل نسبة أرباح', sortDiscount: 'أكبر خصم', sortReviews: 'الأكثر تقييماً',
+  getOffer: 'احصل على', copy: 'نسخ', visitSite: 'زيارة الموقع',
+  updatedOn: 'آخر تحديث', verifiedFirms: 'شركة موثّقة', activeCodes: 'كود خصم فعّال', howWeRank: 'كيف نرتّب الشركات →',
+  dealOfDay: 'عرض اليوم', dealCta: 'اغتنم العرض', code: 'الكود',
+  quizTitle: 'لست متأكداً من اختيارك؟', quizText: 'أجب عن 5 أسئلة سريعة ونقترح عليك الشركة التي تناسب أسلوبك.', quizCta: 'ابدأ الاختبار (60 ثانية)',
+  stillEyebrow: 'توصية مخصّصة', stillTitle: 'ما زلت متردداً؟', stillText: 'بضعة أسئلة سريعة وتحصل على أفضل 3 شركات لك في أقل من 60 ثانية. دون حساب.', stillCta: 'ابدأ الاختبار', findMatch: 'اعثر على شركتي',
+  loadMore: 'عرض {n} شركة إضافية', shownOf: '{a} من {b} معروضة', seeFirms: 'عرض {n} شركة', clearAll: 'مسح الكل', closeFilters: 'إغلاق عوامل التصفية',
+  compareN: 'قارن بين {n} →', selectAtLeast2: 'اختر شركتين على الأقل', upToMore: 'يمكن إضافة {n} أخرى', maxFirms: '4 شركات كحد أقصى', clear: 'إفراغ', selected: 'مختارة',
+  favoritesN: '{n} مفضّلة', otherResults: 'نتائج أخرى', otherResultsSub: '— غير موثّقة أو غير موصى بها',
+  otherResultsText: 'هذه الشركات غير مُدرجة على PropFirmScanner: لم نتحقق من وعودها، أو لا ننصح بها. توخَّ الحذر.',
+  filters: 'عوامل التصفية', grid: 'شبكة', list: 'قائمة', bestCode: 'أفضل كود الآن', copyOpen: 'انسخ وافتح', disclosure: 'روابط تابعة: نتقاضى عمولة دون أي تكلفة إضافية عليك. يبقى الترتيب مستقلاً.',
+}
+
+const UI_HI: typeof UI_EN = {
+  quickAll: 'सभी', quickSwing: 'स्विंग / वीकेंड', quickScalping: 'स्कैल्पिंग', quickNews: 'न्यूज़', quickEa: 'EAs / बॉट्स',
+  quickFutures: 'फ्यूचर्स', quickInstant: 'इंस्टैंट फंडिंग', quickBeginners: 'शुरुआती',
+  sortRecommended: 'अनुशंसित', sortPrice: 'सबसे सस्ती', sortSplit: 'सर्वश्रेष्ठ स्प्लिट', sortDiscount: 'सबसे बड़ी छूट', sortReviews: 'सबसे ज़्यादा रिव्यू',
+  getOffer: 'पाएँ', copy: 'कॉपी', visitSite: 'साइट देखें',
+  updatedOn: 'अपडेट', verifiedFirms: 'सत्यापित फर्म', activeCodes: 'सक्रिय प्रोमो कोड', howWeRank: 'हम रैंक कैसे करते हैं →',
+  dealOfDay: 'आज की डील', dealCta: 'डील पाएँ', code: 'कोड',
+  quizTitle: 'तय नहीं कर पा रहे?', quizText: '5 छोटे सवालों के जवाब दें, हम आपकी शैली के हिसाब से फर्म बताएँगे।', quizCta: 'क्विज़ लें (60 से.)',
+  stillEyebrow: 'व्यक्तिगत सुझाव', stillTitle: 'अब भी असमंजस में?', stillText: 'कुछ छोटे सवाल और 60 सेकंड से कम में अपनी टॉप 3 फर्म पाएँ। बिना खाता बनाए।', stillCta: 'क्विज़ लें', findMatch: 'मेरी फर्म खोजें',
+  loadMore: '{n} और फर्म देखें', shownOf: '{b} में से {a} दिख रही हैं', seeFirms: '{n} फर्म देखें', clearAll: 'सब हटाएँ', closeFilters: 'फ़िल्टर बंद करें',
+  compareN: '{n} की तुलना करें →', selectAtLeast2: 'कम से कम 2 फर्म चुनें', upToMore: '{n} और जोड़ सकते हैं', maxFirms: 'अधिकतम 4 फर्म', clear: 'खाली करें', selected: 'चुनी गईं',
+  favoritesN: '{n} पसंदीदा', otherResults: 'अन्य परिणाम', otherResultsSub: '— असत्यापित या अनुशंसित नहीं',
+  otherResultsText: 'ये फर्म PropFirmScanner पर सूचीबद्ध नहीं हैं: हमने इनके दावों की जाँच नहीं की, या हम इन्हें सुझाते नहीं। सावधानी बरतें।',
+  filters: 'फ़िल्टर', grid: 'ग्रिड', list: 'सूची', bestCode: 'अभी का सबसे अच्छा कोड', copyOpen: 'कॉपी करें और खोलें', disclosure: 'एफ़िलिएट लिंक: हमें कमीशन मिलता है, आपको कोई अतिरिक्त लागत नहीं। रैंकिंग स्वतंत्र रहती है।',
+}
+
 type CleRapide = 'quickSwing' | 'quickScalping' | 'quickNews' | 'quickEa' | 'quickFutures' | 'quickInstant' | 'quickBeginners'
 // Raccourcis par style : un clic pose (ou retire) un seul filtre existant.
 const RACCOURCIS: { cle: CleRapide; champ: 'tradingStyles' | 'markets' | 'challengeTypes' | 'bestFor'; valeur: string }[] = [
@@ -1890,7 +1970,9 @@ export default function ComparePageClient({ firms: firmsBrutes, shadowFirms = []
   
   const currentLocale = getLocaleFromPath(pathname)
   const t = translations[currentLocale] || translations.en
-  const u = currentLocale === 'fr' ? UI_FR : UI_EN
+  // Chaque langue a ses propres libelles ; l'anglais ne sert que de secours.
+  const u = ({ fr: UI_FR, de: UI_DE, es: UI_ES, pt: UI_PT, ar: UI_AR, hi: UI_HI } as
+    Partial<Record<Locale, typeof UI_EN>>)[currentLocale] ?? UI_EN
   
   const [filters, setFilters] = useState<FilterState>(() => ({
     search: searchParams.get('q') || '',
