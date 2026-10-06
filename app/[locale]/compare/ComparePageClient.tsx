@@ -72,6 +72,9 @@ const translations: Record<Locale, Record<string, string>> = {
     rateBtn: 'Rate',
     communityRating: 'Community',
     writeReview: 'Rate this firm',
+    rateShort: 'Rate',
+    payoutShort: 'Payout proof',
+    autoApplied: 'Applied via our link',
     shareExperience: 'Share your experience',
     yourRating: 'Your rating',
     tradingStyleUsed: 'Your trading style',
@@ -146,6 +149,9 @@ const translations: Record<Locale, Record<string, string>> = {
     rateBtn: 'Noter',
     communityRating: 'Communaute',
     writeReview: 'Noter cette firm',
+    rateShort: 'Noter',
+    payoutShort: 'Preuve de paiement',
+    autoApplied: 'Appliqué via notre lien',
     shareExperience: 'Partagez votre experience',
     yourRating: 'Votre note',
     tradingStyleUsed: 'Votre style de trading',
@@ -219,6 +225,9 @@ const translations: Record<Locale, Record<string, string>> = {
     rateBtn: 'Bewerten',
     communityRating: 'Community',
     writeReview: 'Bewerten',
+    rateShort: 'Bewerten',
+    payoutShort: 'Auszahlungsnachweis',
+    autoApplied: 'Über unseren Link aktiv',
     shareExperience: 'Teile deine Erfahrung',
     yourRating: 'Deine Bewertung',
     tradingStyleUsed: 'Dein Trading-Stil',
@@ -292,6 +301,9 @@ const translations: Record<Locale, Record<string, string>> = {
     rateBtn: 'Valorar',
     communityRating: 'Comunidad',
     writeReview: 'Valorar firma',
+    rateShort: 'Valorar',
+    payoutShort: 'Prueba de pago',
+    autoApplied: 'Aplicado con nuestro enlace',
     shareExperience: 'Comparte tu experiencia',
     yourRating: 'Tu valoracion',
     tradingStyleUsed: 'Tu estilo de trading',
@@ -365,6 +377,9 @@ const translations: Record<Locale, Record<string, string>> = {
     rateBtn: 'Avaliar',
     communityRating: 'Comunidade',
     writeReview: 'Avaliar firma',
+    rateShort: 'Avaliar',
+    payoutShort: 'Prova de pagamento',
+    autoApplied: 'Aplicado pelo nosso link',
     shareExperience: 'Compartilhe sua experiencia',
     yourRating: 'Sua avaliacao',
     tradingStyleUsed: 'Seu estilo de trading',
@@ -438,6 +453,9 @@ const translations: Record<Locale, Record<string, string>> = {
     rateBtn: 'تقييم',
     communityRating: 'المجتمع',
     writeReview: 'تقييم الشركة',
+    rateShort: 'تقييم',
+    payoutShort: 'إثبات الدفع',
+    autoApplied: 'يُطبَّق عبر رابطنا',
     shareExperience: 'شارك تجربتك',
     yourRating: 'تقييمك',
     tradingStyleUsed: 'اسلوب تداولك',
@@ -511,6 +529,9 @@ const translations: Record<Locale, Record<string, string>> = {
     rateBtn: 'रेट करें',
     communityRating: 'कम्युनिटी',
     writeReview: 'रेट करें',
+    rateShort: 'रेट करें',
+    payoutShort: 'पेआउट प्रूफ',
+    autoApplied: 'हमारे लिंक से लागू',
     shareExperience: 'अपना अनुभव साझा करें',
     yourRating: 'आपकी रेटिंग',
     tradingStyleUsed: 'आपका ट्रेडिंग स्टाइल',
@@ -1470,11 +1491,13 @@ const PropFirmCard = ({
   // Seules la presentation et les classes changent ; les donnees et les
   // rappels (favori, comparaison, note, preuve de paiement, alerte) sont ceux
   // d'avant.
-  const pills = [
-    firm.allows_scalping && t.scalping,
-    firm.allows_news_trading && 'News',
-    firm.allows_ea && 'EAs',
-  ].filter(Boolean) as string[]
+  // Les trois regles sont toujours affichees (autorise / interdit / inconnu)
+  // pour que toutes les cartes aient la meme structure, donnee ou pas.
+  const regles: { label: string; ok: boolean | null }[] = [
+    { label: t.scalping, ok: firm.allows_scalping ?? null },
+    { label: 'News', ok: firm.allows_news_trading ?? null },
+    { label: 'EAs', ok: firm.allows_ea ?? null },
+  ]
 
   return (
     <div className={`flex flex-col gap-3 rounded-2xl border bg-bg-elevated p-4 transition-colors ${
@@ -1491,11 +1514,13 @@ const PropFirmCard = ({
           <Link href={`/prop-firm/${firm.slug}`} className="block truncate font-display text-base font-semibold text-text-primary hover:text-accent">
             {firm.name}
           </Link>
-          <div className="mt-1 flex flex-wrap items-center gap-1.5">
+          {/* Hauteur fixe (h-5) : avec ou sans Top Pick / rang, la note et les
+              chiffres tombent a la meme hauteur sur toute la rangee. */}
+          <div className="mt-1 flex h-5 items-center gap-1.5 overflow-hidden">
             {isTopPick ? (
-              <span className="rounded-md bg-accent-hover px-1.5 py-0.5 text-[11px] font-semibold text-white">Top Pick</span>
+              <span className="inline-flex h-5 items-center rounded-md bg-accent-hover px-1.5 text-[11px] font-semibold text-on-accent">Top Pick</span>
             ) : rank <= 3 ? (
-              <span className="rounded-md border border-border bg-bg-base px-1.5 py-0.5 font-mono text-[11px] font-semibold text-text-secondary">#{rank}</span>
+              <span className="inline-flex h-5 items-center rounded-md border border-border bg-bg-base px-1.5 font-mono text-[11px] font-semibold text-text-secondary">#{rank}</span>
             ) : null}
             <TrustBadge status={firm.trust_status || 'verified'} />
           </div>
@@ -1513,7 +1538,7 @@ const PropFirmCard = ({
       </div>
 
       {/* b) Ligne de preuves */}
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] text-text-secondary">
+      <div className="flex h-5 items-center gap-x-3 overflow-hidden whitespace-nowrap text-[13px] text-text-secondary">
         <span className="flex items-center gap-1">
           <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
           <span className="font-mono font-semibold tabular-nums text-text-primary">{firm.trustpilot_rating?.toFixed(1) || 'N/A'}</span>
@@ -1548,35 +1573,51 @@ const PropFirmCard = ({
         </div>
       </dl>
 
-      {/* d) Ce que la firme autorise. La hauteur est reservee meme sans
-             pastille, pour que les cartes restent alignees. */}
-      <div className="flex min-h-6 flex-wrap gap-1.5">
-        {pills.map(p => (
-          <span key={p} className="rounded-lg border border-accent-border bg-accent-subtle px-2 py-0.5 text-xs font-medium text-accent">✓ {p}</span>
+      {/* d) Ce que la firme autorise : toujours les trois regles. */}
+      <div className="flex h-6 items-center gap-1.5 overflow-hidden">
+        {regles.map(r => (
+          <span
+            key={r.label}
+            title={r.ok === null ? 'Non renseigné' : r.ok ? 'Autorisé' : 'Interdit'}
+            className={`inline-flex h-6 items-center whitespace-nowrap rounded-lg px-2 text-xs font-medium ${
+              r.ok === true
+                ? 'border border-accent-border bg-accent-subtle text-accent'
+                : r.ok === false
+                ? 'border border-border text-text-muted line-through'
+                : 'border border-dashed border-border text-text-muted'
+            }`}
+          >
+            {r.ok === true ? '✓' : r.ok === false ? '✕' : '?'} {r.label}
+          </span>
         ))}
         {firm.has_instant_funding && (
-          <span className="rounded-lg border border-deal/30 bg-deal-subtle px-2 py-0.5 text-xs font-medium text-deal">⚡ Instant</span>
+          <span className="inline-flex h-6 items-center whitespace-nowrap rounded-lg border border-deal/30 bg-deal-subtle px-2 text-xs font-medium text-deal">⚡ Instant</span>
         )}
       </div>
 
-      {/* e) Promo */}
+      {/* Bas de carte colle en bas (mt-auto) : promo, actions et pied
+          s'alignent sur toute la rangee, quelle que soit la hauteur du haut. */}
+      <div className="mt-auto flex flex-col gap-3">
+      {/* e) Promo : meme hauteur avec ou sans code. */}
       {hasDiscount && (
         <div className="space-y-2 rounded-xl border border-dashed border-deal/30 bg-deal-subtle px-3 py-2">
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex min-h-7 items-center justify-between gap-2">
             <span className="text-sm font-bold text-deal">−{firm.discount_percent}%</span>
-            {firm.discount_code && (
+            {firm.discount_code ? (
               <>
-                <span className="font-mono text-[13px] font-semibold tracking-wide text-text-primary">{firm.discount_code}</span>
-                <button onClick={() => onCopyCode(firm.discount_code, firm.slug)} aria-label={`Copy discount code ${firm.discount_code}`} className="flex items-center gap-1 text-xs font-medium text-deal">
+                <span className="ml-auto truncate font-mono text-[13px] font-semibold tracking-wide text-text-primary">{firm.discount_code}</span>
+                <button onClick={() => onCopyCode(firm.discount_code, firm.slug)} aria-label={`Copy discount code ${firm.discount_code}`} className="flex flex-none items-center gap-1 rounded-md border border-border-hover px-2 py-1 text-xs font-medium text-text-primary hover:border-text-primary">
                   <Copy className="h-3 w-3" />Copy
                 </button>
               </>
+            ) : (
+              <span className="text-xs text-text-muted">{t.autoApplied}</span>
             )}
           </div>
           {/* Le pourcentage ne dit pas tout : une offre peut donner autre chose
               (un reset offert chez Earn2Trade). La ligne vient de la fiche. */}
           {bonus && (
-            <p className="rounded-lg bg-accent-hover px-2 py-1 text-center text-[11px] font-bold uppercase tracking-wider text-white">
+            <p className="rounded-lg bg-accent-hover px-2 py-1 text-center text-[11px] font-bold uppercase tracking-wider text-on-accent">
               {bonus}
             </p>
           )}
@@ -1584,32 +1625,32 @@ const PropFirmCard = ({
       )}
 
       {/* f) Actions : sortie principale, puis ajout au comparateur */}
-      <div className="mt-auto flex gap-2">
+      <div className="flex gap-2">
         <a
           href={getFirmUrl(firm, 'compare-grid')}
           target="_blank"
           rel="noopener noreferrer"
-          className={`flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-xl px-3 text-sm font-medium transition-colors sm:min-h-10 ${
+          className={`flex min-h-11 min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-3 text-sm font-semibold transition-colors sm:min-h-10 ${
             hasDiscount
-              ? 'bg-accent-hover text-white hover:brightness-110'
+              ? 'bg-accent-hover text-on-accent hover:brightness-110'
               : firm.affiliate_url
               ? 'border border-accent text-accent hover:bg-accent-subtle'
               : 'border border-border bg-bg-base text-text-secondary hover:border-border-hover'
           }`}
         >
           {hasDiscount ? `Get -${firm.discount_percent}%` : firm.affiliate_url ? `${t.visit} ${firm.name}` : 'Visit Site'}
-          <ExternalLink className="h-3.5 w-3.5" />
+          <ExternalLink className="h-3.5 w-3.5 flex-none" />
         </a>
         <button
           onClick={onCompare}
           aria-pressed={isComparing}
           aria-label={isComparing ? `Remove ${firm.name} from comparison` : `Add ${firm.name} to comparison`}
-          className={`flex min-h-11 items-center gap-2 rounded-xl border px-3 text-sm font-medium transition-colors sm:min-h-10 ${
+          className={`flex min-h-11 flex-none items-center gap-2 whitespace-nowrap rounded-xl border px-3 text-sm font-medium transition-colors sm:min-h-10 ${
             isComparing ? 'border-accent bg-accent-subtle text-accent' : 'border-border bg-bg-base text-text-secondary hover:border-border-hover'
           }`}
         >
           <span className={`grid h-[15px] w-[15px] place-items-center rounded border ${
-            isComparing ? 'border-accent-hover bg-accent-hover text-white' : 'border-border-hover'
+            isComparing ? 'border-accent-hover bg-accent-hover text-on-accent' : 'border-border-hover'
           }`}>
             {isComparing && <Check className="h-2.5 w-2.5" />}
           </span>
@@ -1617,15 +1658,16 @@ const PropFirmCard = ({
         </button>
       </div>
 
-      {/* g) Pied de carte : les actions secondaires, avec leur libelle */}
-      <div className="flex items-center justify-between border-t border-border pt-2.5 text-xs text-text-muted">
-        <button onClick={onRate} className={`flex min-h-11 items-center gap-1 sm:min-h-8 ${hasReviewed ? 'text-yellow-500 dark:text-yellow-400' : 'hover:text-text-secondary'}`}>
-          <Star className={`h-3.5 w-3.5 ${hasReviewed ? 'fill-current' : ''}`} />{t.writeReview}
+      {/* g) Pied de carte : actions secondaires, libelles courts sur une ligne */}
+      <div className="flex items-center justify-between gap-2 whitespace-nowrap border-t border-border pt-2.5 text-xs text-text-muted">
+        <button onClick={onRate} title={t.writeReview} className={`flex min-h-11 items-center gap-1 sm:min-h-8 ${hasReviewed ? 'text-yellow-500 dark:text-yellow-400' : 'hover:text-text-secondary'}`}>
+          <Star className={`h-3.5 w-3.5 ${hasReviewed ? 'fill-current' : ''}`} />{t.rateShort}
         </button>
-        <button onClick={onPayout} className="flex min-h-11 items-center gap-1 hover:text-text-secondary sm:min-h-8">
-          <Banknote className="h-3.5 w-3.5" />{t.submitPayout}
+        <button onClick={onPayout} title={t.submitPayout} className="flex min-h-11 items-center gap-1 hover:text-text-secondary sm:min-h-8">
+          <Banknote className="h-3.5 w-3.5" />{t.payoutShort}
         </button>
         <PriceAlertButton firmId={firm.id} firmName={firm.name} firmSlug={firm.slug} currentPrice={firm.min_price || 0} />
+      </div>
       </div>
     </div>
   )
@@ -1663,7 +1705,7 @@ const CompareBar = ({ firms, onRemove, onClear }: { firms: PropFirm[]; onRemove:
         <div className="flex items-center gap-4">
           <button onClick={onClear} className="text-sm text-text-muted underline hover:text-text-primary">Clear</button>
           {pret ? (
-            <Link href={compareUrl} className="rounded-xl bg-accent-hover px-4 py-2.5 text-sm font-medium text-white hover:brightness-110">Compare Now</Link>
+            <Link href={compareUrl} className="rounded-xl bg-accent-hover px-4 py-2.5 text-sm font-semibold text-on-accent hover:brightness-110">Compare Now</Link>
           ) : (
             <span aria-disabled="true" className="cursor-not-allowed rounded-xl border border-border bg-bg-base px-4 py-2.5 text-sm font-medium text-text-muted">Compare Now</span>
           )}

@@ -24,8 +24,8 @@ const baseClasses =
   'inline-flex items-center justify-center gap-2 font-medium rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base disabled:opacity-50 disabled:pointer-events-none'
 
 const variantClasses: Record<ButtonVariant, string> = {
-  // Action = ambre (--accent-btn #F59E0B) + texte sombre --on-accent : 8,5:1
-  // dans les deux themes. Jamais de texte blanc sur l'ambre (moins de 2:1).
+  // Action = emeraude (--accent-btn #10B981) + texte sombre --on-accent : 7:1
+  // dans les deux themes. Pas de texte blanc dessus (2,5:1).
   primary: 'bg-accent-hover text-on-accent hover:bg-accent-hover/90',
   secondary:
     'bg-bg-elevated text-text-primary border border-border-hover hover:border-text-primary',

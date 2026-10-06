@@ -2,7 +2,7 @@
  * Font setup using next/font for performance (no FOUT, auto-subset).
  *
  * Inter        — body text everywhere
- * Inter 600-800 — titres (Space Grotesk retiree avec le passage a l'ambre)
+ * Inter 600-800 — titres (Space Grotesk retiree, design system v2)
  * JetBrains Mono — tabular numbers in data displays (compare tables, stats)
  *
  * Import this file in your root layout.tsx and apply variables to <html> or <body>.

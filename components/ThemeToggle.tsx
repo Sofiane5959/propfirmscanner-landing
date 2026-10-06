@@ -18,7 +18,7 @@ export function ThemeToggle({ withLabel = false }: { withLabel?: boolean }) {
   const toggle = () => {
     const next = !document.documentElement.classList.contains('dark');
     document.documentElement.classList.toggle('dark', next);
-    try { localStorage.setItem('pfs-theme', next ? 'dark' : 'light'); } catch {}
+    try { localStorage.setItem('pfs-theme-v2', next ? 'dark' : 'light'); } catch {}
     setDark(next);
   };
 

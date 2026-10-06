@@ -8,10 +8,11 @@
  * Deux themes, pilotes par la classe `dark` sur <html> :
  *   .dark  = Sombre (marine #0F172A, theme par defaut)
  *   :root  = Clair  (#F7F8FA)
- * Action = ambre (--accent-btn #F59E0B) avec texte sombre (--on-accent),
- * jamais de blanc sur l'ambre. Voir le design system PropFirmScanner.
+ * Action = vert emeraude (--accent-btn #10B981) avec texte sombre
+ * (--on-accent #04231A, 7:1) ; codes promo en ambre (--deal). Option 1A
+ * du design system PropFirmScanner.
  * La classe est posee avant l'affichage par le script de app/[locale]/layout.tsx
- * (choix enregistre, sinon reglage du telephone, sinon sombre). Les valeurs sont des triplets
+ * (choix enregistre, sinon sombre). Les valeurs sont des triplets
  * RGB pour que Tailwind garde les opacites (bg-accent/10, bg-bg-elevated/60).
  */
 
@@ -28,9 +29,9 @@
     --text-primary: 15 23 42; /* #0F172A */
     --text-secondary: 51 65 85; /* #334155 */
     --text-muted: 90 100 118; /* #5A6476 */
-    --accent: 180 83 9; /* #B45309 */
-    --accent-btn: 245 158 11; /* #F59E0B */
-    --on-accent: 31 19 0; /* #1F1300 */
+    --accent: 4 120 87; /* #047857 */
+    --accent-btn: 16 185 129; /* #10B981 */
+    --on-accent: 4 35 26; /* #04231A */
     --positive: 4 120 87; /* #047857 */
     --deal: 146 64 14; /* #92400E */
     --dark-50: 15 23 42; /* #0F172A */
@@ -56,9 +57,9 @@
     --text-primary: 241 245 249; /* #F1F5F9 */
     --text-secondary: 203 213 225; /* #CBD5E1 */
     --text-muted: 148 163 184; /* #94A3B8 */
-    --accent: 251 191 36; /* #FBBF24 */
-    --accent-btn: 245 158 11; /* #F59E0B */
-    --on-accent: 31 19 0; /* #1F1300 */
+    --accent: 52 211 153; /* #34D399 */
+    --accent-btn: 16 185 129; /* #10B981 */
+    --on-accent: 4 35 26; /* #04231A */
     --positive: 52 211 153; /* #34D399 */
     --deal: 251 191 36; /* #FBBF24 */
     --dark-50: 248 250 252; /* #F8FAFC */
@@ -156,10 +157,10 @@
 
 
 /* ----------------------------------------------------------------------------
-   PONT AMBRE — texte sur les boutons d'action
+   PONT BOUTONS — texte sur les boutons d'action
    ~250 boutons ecrivent encore `bg-accent-hover ... text-white`. Le blanc sur
-   l'ambre tombe sous 2:1 ; ces regles posent le texte sombre --on-accent
-   (8,5:1) dans les deux themes. A supprimer quand les pages utilisent
+   l'emeraude #10B981 tombe a 2,5:1 ; ces regles posent le texte sombre
+   --on-accent (7:1) dans les deux themes. A supprimer quand les pages utilisent
    `text-on-accent` (ou le composant <Button>).
 ---------------------------------------------------------------------------- */
 @layer utilities {

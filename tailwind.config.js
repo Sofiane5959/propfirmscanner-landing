@@ -55,7 +55,7 @@ module.exports = {
           950: 'rgb(var(--dark-950) / <alpha-value>)',
         },
 
-        // --- DESIGN SYSTEM v2.0 — themes Sombre (defaut) / Clair, action ambre -----
+        // --- DESIGN SYSTEM v2.0 — themes Sombre (defaut) / Clair, action verte (option 1A) -----
         // Toutes les valeurs sont des variables CSS definies dans globals.css
         // (:root = Clair, .dark = Sombre). Le format rgb(var() / alpha)
         // garde les modificateurs d'opacite (bg-bg-elevated/60, bg-accent/10).
@@ -74,11 +74,11 @@ module.exports = {
         },
         accent: {
           DEFAULT: 'rgb(var(--accent) / <alpha-value>)',  // texte, chiffres, liens
-          hover: 'rgb(var(--accent-btn) / <alpha-value>)', // fond des boutons principaux = ambre (texte on-accent)
+          hover: 'rgb(var(--accent-btn) / <alpha-value>)', // fond des boutons principaux = emeraude #10B981 (texte on-accent)
           subtle: 'rgb(var(--accent) / 0.14)',
           border: 'rgb(var(--accent) / 0.3)',
         },
-        // Texte sur l'ambre des boutons (jamais de blanc)
+        // Texte sur le vert des boutons (jamais de blanc)
         'on-accent': 'rgb(var(--on-accent) / <alpha-value>)',
         // Chiffres favorables (profit split, hausse) : donnee, jamais bouton
         positive: 'rgb(var(--positive) / <alpha-value>)',
