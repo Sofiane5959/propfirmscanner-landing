@@ -6,9 +6,9 @@ import { usePathname } from 'next/navigation';
 import { useAuth } from '@/providers/AuthProvider';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import {
-  Home, ChevronRight, BookOpen, GraduationCap, Trophy,
-  CheckCircle2, Play, Clock, Users, Star, Lock,
-  Zap, Award, Loader2, ArrowRight,
+  Home, ChevronRight, BookOpen, Trophy,
+  CheckCircle2, Play, Users, Check, X,
+  Award, Loader2, ArrowRight, Headphones, Infinity as InfinityIcon,
 } from 'lucide-react';
 
 // =============================================================================
@@ -19,6 +19,11 @@ type Locale = (typeof locales)[number];
 function getLocaleFromPath(pathname: string): Locale {
   const s = pathname.split('/')[1];
   return locales.includes(s as Locale) ? (s as Locale) : 'en';
+}
+
+// 'en' n'a pas de préfixe, les autres locales en ont un.
+function localeHref(locale: string, p: string) {
+  return locale === 'en' ? p : `/${locale}${p}`;
 }
 
 // =============================================================================
@@ -32,13 +37,9 @@ const courses = [
     subtitle: 'For Beginners',
     price: 69.99,
     originalPrice: 149.99,
-    badge: 'Now Live 🚀',
-    badgeColor: 'bg-accent-hover',
     description: 'Everything you need to know to start your prop firm journey. Perfect for traders who are new to funded accounts.',
     duration: '~2 hours',
     lessons: 10,
-    students: '2,400+',
-    rating: 4.8,
     features: [
       'What are prop firms & how they work',
       'Understanding challenge rules',
@@ -49,8 +50,6 @@ const courses = [
       'Introduction to trading psychology',
       'Payout process explained',
     ],
-    gradient: 'from-accent/20 to-teal-500/20',
-    borderColor: 'border-accent/30',
     icon: BookOpen,
     live: true,
     courseUrl: '/education/fundamentals',
@@ -62,13 +61,9 @@ const courses = [
     subtitle: 'Advanced Strategies',
     price: 199,
     originalPrice: 499.99,
-    badge: 'Early Bird 🔥',
-    badgeColor: 'bg-orange-500',
     description: 'Advanced strategies and techniques used by consistently funded traders. Take your prop firm trading to the next level.',
     duration: '12+ hours',
     lessons: 36,
-    students: '890+',
-    rating: 4.9,
     features: [
       'Advanced risk management systems',
       'Multi-account strategies',
@@ -81,31 +76,172 @@ const courses = [
       'Tax optimization for traders',
       'Building a trading business',
     ],
-    gradient: 'from-purple-500/20 to-pink-500/20',
-    borderColor: 'border-purple-500/30',
     icon: Trophy,
     live: false,
     courseUrl: null,
   },
 ];
 
-const benefits = [
-  { icon: Play, title: 'Audio Lessons', description: 'High-quality audio narration you can follow anytime' },
-  { icon: Users, title: 'Community Access', description: 'Join our private Discord with fellow traders' },
-  { icon: Award, title: 'Interactive Quizzes', description: 'Test your knowledge after every lesson' },
-  { icon: Zap, title: 'Lifetime Access', description: 'Access all updates and new content forever' },
-];
+type Course = (typeof courses)[number];
 
-const testimonials = [
-  { name: 'Alex M.', role: 'Funded Trader', content: 'The beginner course gave me all the foundation I needed. Passed my first challenge within 2 weeks!', rating: 5 },
-  { name: 'Sarah K.', role: 'Full-time Trader', content: 'The advanced course transformed my approach to risk management. Now managing 3 funded accounts.', rating: 5 },
-  { name: 'David R.', role: 'Part-time Trader', content: 'Worth every penny. The psychology module alone saved me from blowing multiple accounts.', rating: 5 },
-];
+const benefitIcons = [Headphones, Users, Award, InfinityIcon];
+
+// =============================================================================
+// TEXTS (FR + EN ; les autres locales retombent sur EN)
+// =============================================================================
+const T = {
+  en: {
+    home: 'Home',
+    education: 'Education',
+    title: 'PropFirmScanner Academy',
+    subtitle: 'Learn to pass your challenge and keep your funded account.',
+    trust: ['Instant access after payment', 'Secure payment with Stripe', 'Lifetime access, updates included'],
+    paymentTitle: 'Payment confirmed',
+    paymentText: 'Your course is now unlocked. Start learning below.',
+    close: 'Close',
+    ownedText: 'You have access — pick up where you left off',
+    continue: 'Continue',
+    continueLearning: 'Continue learning',
+    level: { fundamentals: 'Beginner', mastery: 'Advanced' } as Record<string, string>,
+    pillLive: 'Available',
+    pillSoon: 'Coming soon · waitlist',
+    pitch: {
+      fundamentals: 'Everything to pass your first challenge: rules, risk management, choosing a firm.',
+      mastery: 'Scaling accounts, multi-firm setups, drawdown optimisation: the method to trade funded for a living.',
+    } as Record<string, string>,
+    duration: 'Duration',
+    durationValue: { fundamentals: '~2 h', mastery: '12 h+' } as Record<string, string>,
+    lessons: 'Lessons',
+    access: 'Access',
+    lifetime: 'Lifetime',
+    finalPrice: 'Final price',
+    features: null as Record<string, string[]> | null,
+    earlyBird: 'early bird price for the waitlist',
+    save: 'Save',
+    buy: 'Start the course',
+    processing: 'Processing…',
+    buyError: 'Something went wrong. Please try again.',
+    connError: 'Connection error. Please try again.',
+    alreadyBought: 'Already purchased? Access here',
+    emailPlaceholder: 'your@email.com',
+    emailLabel: 'Your email',
+    join: 'Join the waitlist',
+    joinedTitle: "You're on the list!",
+    joinedText: "We'll email you first, at the early bird price.",
+    joinError: 'Something went wrong. Try again.',
+    includedTitle: "What's included",
+    benefits: [
+      { title: 'Audio lessons', description: 'Listen on the go and pick up where you left off.' },
+      { title: 'Private Discord', description: 'Ask your questions to other students and the team.' },
+      { title: 'Interactive quizzes', description: 'Check you master each rule before your challenge.' },
+      { title: 'Lifetime access', description: 'Updates included when firm rules change.' },
+    ],
+    programTitle: 'Curriculum — Fundamentals',
+    ctaTitle: 'Ready to pass your challenge?',
+    ctaText: 'Start with Prop Firm Fundamentals: the rules, the risk and the right firm, before you pay for a challenge.',
+    compare: 'Compare prop firms',
+  },
+  fr: {
+    home: 'Accueil',
+    education: 'Éducation',
+    title: 'Académie PropFirmScanner',
+    subtitle: 'Apprends à passer ton challenge et à garder ton compte financé.',
+    trust: ['Accès immédiat après paiement', 'Paiement sécurisé Stripe', 'Accès à vie et mises à jour incluses'],
+    paymentTitle: 'Paiement confirmé',
+    paymentText: 'Ta formation est débloquée. Tu peux commencer ci-dessous.',
+    close: 'Fermer',
+    ownedText: "Tu as accès — reprends où tu t'es arrêté",
+    continue: 'Reprendre',
+    continueLearning: 'Reprendre la formation',
+    level: { fundamentals: 'Débutant', mastery: 'Avancé' } as Record<string, string>,
+    pillLive: 'Disponible',
+    pillSoon: "Bientôt · liste d'attente",
+    pitch: {
+      fundamentals: 'Tout pour réussir ton premier challenge : règles, gestion du risque, choix de la firme.',
+      mastery: 'Scaler ses comptes, multi-firmes, optimiser le drawdown : la méthode pour vivre du trading financé.',
+    } as Record<string, string>,
+    duration: 'Durée',
+    durationValue: { fundamentals: '~2 h', mastery: '12 h+' } as Record<string, string>,
+    lessons: 'Leçons',
+    access: 'Accès',
+    lifetime: 'À vie',
+    finalPrice: 'Prix final',
+    features: {
+      fundamentals: [
+        'Comment marchent les prop firms',
+        'Comprendre les règles du challenge',
+        "Gestion du risque (5 règles d'or)",
+        'Choisir sa première firme',
+        'Configurer son compte',
+        'Erreurs de débutant à éviter',
+        'Introduction à la psychologie du trading',
+        'Le processus de paiement expliqué',
+      ],
+      mastery: [
+        'Gestion du risque avancée',
+        'Stratégies multi-comptes',
+        'Scaler un compte financé',
+        'Optimiser le drawdown',
+        'Psychologie du trading financé',
+        'Construire un edge régulier',
+        'Trading de news',
+        'EAs et automatisation',
+        'Optimisation fiscale pour traders',
+        'Construire une activité de trading',
+      ],
+    } as Record<string, string[]> | null,
+    earlyBird: "prix early bird pour la liste d'attente",
+    save: 'Économise',
+    buy: 'Commencer la formation',
+    processing: 'Redirection…',
+    buyError: 'Un problème est survenu. Réessaie.',
+    connError: 'Erreur de connexion. Réessaie.',
+    alreadyBought: 'Déjà acheté ? Accède ici',
+    emailPlaceholder: 'ton@email.com',
+    emailLabel: 'Ton email',
+    join: 'Rejoindre la liste',
+    joinedTitle: 'Tu es sur la liste !',
+    joinedText: 'On te prévient en premier, au prix early bird.',
+    joinError: 'Un problème est survenu. Réessaie.',
+    includedTitle: 'Ce qui est inclus',
+    benefits: [
+      { title: 'Leçons audio', description: "Écoute dans les transports, reprends où tu t'es arrêté." },
+      { title: 'Discord privé', description: "Pose tes questions aux autres élèves et à l'équipe." },
+      { title: 'Quiz interactifs', description: 'Vérifie que tu maîtrises chaque règle avant ton challenge.' },
+      { title: 'Accès à vie', description: 'Mises à jour incluses quand les règles des firmes changent.' },
+    ],
+    programTitle: 'Programme — Fundamentals',
+    ctaTitle: 'Prêt à passer ton challenge ?',
+    ctaText: 'Commence par Prop Firm Fundamentals : les règles, le risque et la bonne firme, avant de payer un challenge.',
+    compare: 'Comparer les prop firms',
+  },
+};
+
+type Texts = typeof T.en;
+function getT(locale: string): Texts {
+  return locale === 'fr' ? T.fr : T.en;
+}
+function featuresFor(t: Texts, course: Course): string[] {
+  return t.features?.[course.id] ?? course.features;
+}
+
+// =============================================================================
+// CLASS RECIPES
+// =============================================================================
+const btnPrimary =
+  'flex min-h-12 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-accent-hover px-4 text-sm font-semibold text-on-accent shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_1px_2px_rgba(4,35,26,0.2)] hover:brightness-105 disabled:opacity-60';
+const btnSecondary =
+  'flex min-h-12 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl border border-border-hover bg-bg-elevated px-4 text-sm font-semibold text-text-primary hover:border-text-primary dark:bg-transparent';
+const btnBlue =
+  'flex min-h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-sky-700 px-4 text-sm font-semibold text-white hover:brightness-110 disabled:opacity-50 dark:bg-sky-400 dark:text-slate-950';
+const card =
+  'relative overflow-hidden rounded-2xl border bg-bg-elevated p-5 shadow-[0_1px_2px_rgba(28,25,23,0.05),0_10px_28px_-16px_rgba(28,25,23,0.22)] dark:bg-gradient-to-b dark:from-white/[0.035] dark:to-transparent dark:shadow-none';
+const sectionHeading = 'font-display text-xl font-extrabold tracking-tight text-text-primary mt-10 mb-4';
 
 // =============================================================================
 // PAYMENT SUCCESS BANNER
 // =============================================================================
-function PaymentSuccessBanner() {
+function PaymentSuccessBanner({ t }: { t: Texts }) {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -117,18 +253,22 @@ function PaymentSuccessBanner() {
   if (!show) return null;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 pt-8">
-      <div className="bg-accent/10 border border-accent/30 rounded-2xl p-6 flex items-start gap-4">
-        <div className="w-12 h-12 bg-accent/20 rounded-full flex items-center justify-center shrink-0">
-          <CheckCircle2 className="w-6 h-6 text-accent" />
+    <div className="mx-auto max-w-7xl px-4 pt-5">
+      <div role="status" className="flex items-start gap-3 rounded-2xl border border-accent-border bg-accent-subtle p-4">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/15">
+          <CheckCircle2 className="h-5 w-5 text-accent" />
         </div>
-        <div>
-          <h3 className="text-white font-bold text-lg mb-1">🎉 Payment confirmed!</h3>
-          <p className="text-text-secondary text-sm mb-2">
-            Your course is now unlocked. Start learning below!
-          </p>
+        <div className="min-w-0">
+          <p className="font-display text-base font-bold text-text-primary">{t.paymentTitle}</p>
+          <p className="text-sm text-text-secondary">{t.paymentText}</p>
         </div>
-        <button onClick={() => setShow(false)} className="text-text-muted hover:text-white ml-auto shrink-0 text-lg">✕</button>
+        <button
+          onClick={() => setShow(false)}
+          aria-label={t.close}
+          className="ml-auto flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-text-muted hover:text-text-primary"
+        >
+          <X className="h-4 w-4" />
+        </button>
       </div>
     </div>
   );
@@ -137,7 +277,7 @@ function PaymentSuccessBanner() {
 // =============================================================================
 // BUY BUTTON
 // =============================================================================
-function BuyButton({ productType }: { productType: string }) {
+function BuyButton({ productType, t, className = '' }: { productType: string; t: Texts; className?: string }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -154,28 +294,23 @@ function BuyButton({ productType }: { productType: string }) {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        setError('Something went wrong. Please try again.');
+        setError(t.buyError);
         setLoading(false);
       }
     } catch {
-      setError('Connection error. Please try again.');
+      setError(t.connError);
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex flex-col gap-1 items-end">
-      <button
-        onClick={handleBuy}
-        disabled={loading}
-        className="px-6 py-3 bg-accent-hover hover:brightness-110 disabled:opacity-60 text-white font-semibold rounded-xl transition-colors text-sm flex items-center gap-2"
-      >
+    <div className={`flex flex-col gap-1 ${className}`}>
+      <button onClick={handleBuy} disabled={loading} className={`${btnPrimary} w-full text-[15px]`}>
         {loading
-          ? <><Loader2 className="w-4 h-4 animate-spin" /> Processing...</>
-          : 'Get Access →'
-        }
+          ? <><Loader2 className="h-4 w-4 animate-spin" /> {t.processing}</>
+          : <>{t.buy} <ArrowRight className="h-4 w-4" /></>}
       </button>
-      {error && <span className="text-red-400 text-xs">{error}</span>}
+      {error && <span className="text-xs text-rose-700 dark:text-rose-300/80">{error}</span>}
     </div>
   );
 }
@@ -183,15 +318,12 @@ function BuyButton({ productType }: { productType: string }) {
 // =============================================================================
 // CONTINUE LEARNING BUTTON
 // =============================================================================
-function ContinueLearningButton({ courseUrl, locale }: { courseUrl: string; locale: string }) {
-  const fullUrl = `/${locale}${courseUrl}`;
+function ContinueLearningButton({ courseUrl, locale, label, className = '' }: { courseUrl: string; locale: string; label: string; className?: string }) {
   return (
-    <Link
-      href={fullUrl}
-      className="inline-flex items-center gap-2 px-6 py-3 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-xl transition-colors text-sm"
-    >
-      <Play className="w-4 h-4 fill-white" />
-      Continue Learning →
+    <Link href={localeHref(locale, courseUrl)} className={`${btnPrimary} ${className}`}>
+      <Play className="h-4 w-4" />
+      {label}
+      <ArrowRight className="h-4 w-4" />
     </Link>
   );
 }
@@ -199,7 +331,7 @@ function ContinueLearningButton({ courseUrl, locale }: { courseUrl: string; loca
 // =============================================================================
 // WAITLIST INLINE
 // =============================================================================
-function WaitlistInCard() {
+function WaitlistInCard({ t }: { t: Texts }) {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
@@ -222,55 +354,36 @@ function WaitlistInCard() {
 
   if (status === 'success') {
     return (
-      <div className="flex items-center gap-3 p-4 bg-accent/10 border border-accent/30 rounded-xl">
-        <CheckCircle2 className="w-5 h-5 text-accent flex-shrink-0" />
+      <div role="status" className="flex items-center gap-3 rounded-xl border border-accent-border bg-accent-subtle p-4">
+        <CheckCircle2 className="h-5 w-5 shrink-0 text-accent" />
         <div>
-          <p className="text-accent font-semibold text-sm">You&apos;re on the list!</p>
-          <p className="text-text-secondary text-xs">We&apos;ll email you first at early bird price.</p>
+          <p className="text-sm font-semibold text-accent">{t.joinedTitle}</p>
+          <p className="text-xs text-text-secondary">{t.joinedText}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-2">
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="your@email.com"
-        required
-        className="w-full px-4 py-2.5 bg-bg-elevated/80 border border-border rounded-xl text-white placeholder-text-muted focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 text-sm"
-        disabled={status === 'loading'}
-      />
-      <button
-        type="submit"
-        disabled={status === 'loading' || !email.trim()}
-        className="w-full py-2.5 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-white font-semibold rounded-xl transition-all disabled:opacity-50 text-sm flex items-center justify-center gap-2"
-      >
-        {status === 'loading'
-          ? <Loader2 className="w-4 h-4 animate-spin" />
-          : 'Join Waitlist — Early Bird $199'
-        }
-      </button>
-      {status === 'error' && <p className="text-red-400 text-xs">Something went wrong. Try again.</p>}
-    </form>
-  );
-}
-
-// =============================================================================
-// COMING SOON OVERLAY
-// =============================================================================
-function ComingSoonOverlay() {
-  return (
-    <div className="pointer-events-none absolute inset-0 bg-bg-base/80 backdrop-blur-sm z-20 flex items-start justify-center rounded-2xl pt-24">
-      <div className="text-center">
-        <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full text-white font-bold text-lg mb-3 animate-pulse">
-          <Lock className="w-5 h-5" /> Coming Soon
-        </div>
-        <p className="text-text-secondary text-sm">Course launching soon. Join waitlist!</p>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2 sm:flex-row">
+        <label className="sr-only" htmlFor="waitlist-email">{t.emailLabel}</label>
+        <input
+          id="waitlist-email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder={t.emailPlaceholder}
+          required
+          disabled={status === 'loading'}
+          className="min-h-11 w-full flex-1 rounded-xl border border-border-hover bg-bg-base px-3.5 text-sm text-text-primary placeholder:text-text-muted focus:border-sky-700 focus:outline-none focus:ring-1 focus:ring-sky-700 dark:focus:border-sky-400 dark:focus:ring-sky-400"
+        />
+        <button type="submit" disabled={status === 'loading' || !email.trim()} className={btnBlue}>
+          {status === 'loading' ? <Loader2 className="h-4 w-4 animate-spin" /> : t.join}
+        </button>
       </div>
-    </div>
+      {status === 'error' && <p className="text-xs text-rose-700 dark:text-rose-300/80">{t.joinError}</p>}
+    </form>
   );
 }
 
@@ -282,113 +395,109 @@ function CourseCard({
   hasFundamentals,
   locale,
   authLoading,
+  t,
 }: {
-  course: typeof courses[0];
+  course: Course;
   hasFundamentals: boolean;
   locale: string;
   authLoading: boolean;
+  t: Texts;
 }) {
-  const Icon = course.icon;
   const isFundamentals = course.id === 'fundamentals';
+  const featured = course.live;
   const userOwns = isFundamentals && hasFundamentals;
+  const savePct = Math.round((1 - course.price / course.originalPrice) * 100);
+
+  const facts = [
+    { label: t.duration, value: t.durationValue[course.id] ?? course.duration },
+    { label: t.lessons, value: String(course.lessons) },
+    course.live
+      ? { label: t.access, value: t.lifetime }
+      : { label: t.finalPrice, value: `$${course.originalPrice}` },
+  ];
 
   return (
-    <div className={`relative bg-gradient-to-br ${course.gradient} rounded-2xl border ${course.borderColor} overflow-hidden`}>
-      {/* Badge */}
-      <div className="absolute top-4 right-4 z-10">
-        <span className={`px-3 py-1 ${course.badgeColor} text-white text-xs font-bold rounded-full`}>
-          {course.badge}
-        </span>
-      </div>
-
-      {/* Coming soon overlay for non-live courses */}
-      {!course.live && <ComingSoonOverlay />}
-
-      {/* Owned badge */}
-      {userOwns && (
-        <div className="absolute top-4 left-4 z-10">
-          <span className="flex items-center gap-1 px-3 py-1 bg-accent-hover text-white text-xs font-bold rounded-full">
-            <CheckCircle2 className="w-3 h-3" /> Owned
-          </span>
-        </div>
+    <article
+      className={`${card} flex flex-col gap-4 ${featured ? 'border-accent-border' : 'border-border hover:border-border-hover'}`}
+    >
+      {featured && (
+        <span aria-hidden className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-400 to-emerald-500" />
       )}
 
-      <div className="p-8">
-        {/* Header */}
-        <div className="flex items-start gap-4 mb-6">
-          <div className="p-3 bg-white/10 rounded-xl">
-            <Icon className="w-8 h-8 text-white" />
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-xs font-semibold uppercase tracking-[0.06em] text-text-muted">
+          {t.level[course.id]}
+        </span>
+        {course.live ? (
+          <span className="inline-flex h-6 items-center gap-1.5 rounded-md bg-accent/15 px-2 text-[11px] font-semibold text-accent">
+            <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent" />
+            {userOwns ? <><Check className="h-3 w-3" />{t.access}</> : t.pillLive}
+          </span>
+        ) : (
+          <span className="inline-flex h-6 items-center rounded-md bg-sky-500/10 px-2 text-[11px] font-semibold text-sky-800 dark:text-sky-300">
+            {t.pillSoon}
+          </span>
+        )}
+      </div>
+
+      <div>
+        <h3 className="font-display text-[22px] font-extrabold leading-7 tracking-tight text-text-primary">{course.title}</h3>
+        <p className="mt-1 text-sm text-text-secondary">{t.pitch[course.id] ?? course.description}</p>
+      </div>
+
+      <div className="grid grid-cols-3 gap-px overflow-hidden rounded-xl border border-border bg-border">
+        {facts.map((f) => (
+          <div key={f.label} className="bg-bg-base px-3 py-3">
+            <p className="text-[10px] font-medium uppercase tracking-[0.1em] text-text-muted">{f.label}</p>
+            <p className="mt-1 font-mono text-base font-bold tabular-nums tracking-tight text-text-primary">{f.value}</p>
           </div>
-          <div>
-            <p className="text-accent text-sm font-medium mb-1">{course.subtitle}</p>
-            <h3 className="text-2xl font-bold text-white">{course.title}</h3>
-          </div>
-        </div>
+        ))}
+      </div>
 
-        <p className="text-text-secondary mb-6">{course.description}</p>
+      <ul className="grid gap-x-4 gap-y-2 sm:grid-cols-2">
+        {featuresFor(t, course).map((feature) => (
+          <li key={feature} className="flex items-start gap-2 text-[13px] text-text-secondary">
+            <Check className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+            <span>{feature}</span>
+          </li>
+        ))}
+      </ul>
 
-        {/* Stats */}
-        <div className="flex items-center gap-6 mb-6 text-sm flex-wrap">
-          <div className="flex items-center gap-1.5 text-text-secondary"><Clock className="w-4 h-4" />{course.duration}</div>
-          <div className="flex items-center gap-1.5 text-text-secondary"><Play className="w-4 h-4" />{course.lessons} lessons</div>
-          <div className="flex items-center gap-1.5 text-text-secondary"><Users className="w-4 h-4" />{course.students}</div>
-          <div className="flex items-center gap-1.5 text-yellow-400"><Star className="w-4 h-4 fill-current" />{course.rating}</div>
-        </div>
+      <div className="mt-auto flex flex-wrap items-baseline gap-x-2.5 gap-y-1 border-t border-border pt-4">
+        <span className="font-mono text-[30px] font-extrabold tabular-nums tracking-tight text-text-primary">${course.price}</span>
+        <s className="font-mono text-sm tabular-nums text-text-muted">${course.originalPrice}</s>
+        <span className="inline-flex h-5 items-center rounded-md bg-accent/15 px-1.5 font-mono text-[11px] font-semibold tabular-nums text-accent">
+          −{savePct}%
+        </span>
+        {!course.live && <span className="w-full text-[13px] text-text-muted">{t.earlyBird}</span>}
+      </div>
 
-        {/* Features */}
-        <div className="space-y-3 mb-8">
-          {course.features.map((feature, i) => (
-            <div key={i} className="flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
-              <span className="text-text-secondary text-sm">{feature}</span>
+      {course.live && course.productType ? (
+        <div className="flex flex-col gap-2">
+          {authLoading ? (
+            <div className="flex min-h-12 items-center justify-center rounded-xl border border-border">
+              <Loader2 className="h-4 w-4 animate-spin text-text-secondary" />
             </div>
-          ))}
-        </div>
-
-        {/* Footer — price + CTA */}
-        <div className="flex items-center justify-between pt-6 border-t border-white/10 gap-4">
-          <div>
-            <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-bold text-white">${course.price}</span>
-              <span className="text-text-muted line-through">${course.originalPrice}</span>
-            </div>
-            <p className="text-accent text-sm">
-              Save {Math.round((1 - course.price / course.originalPrice) * 100)}%
-            </p>
-          </div>
-
-          {course.live && course.productType ? (
-            <div className="flex flex-col gap-2 items-end">
-              {authLoading ? (
-                <div className="px-6 py-3 bg-dark-600 rounded-xl">
-                  <Loader2 className="w-4 h-4 animate-spin text-text-secondary" />
-                </div>
-              ) : userOwns ? (
-                <ContinueLearningButton courseUrl={course.courseUrl!} locale={locale} />
-              ) : (
-                <>
-                  <BuyButton productType={course.productType} />
-                  {course.courseUrl && (
-                    <Link
-                      href={`/${locale}${course.courseUrl}`}
-                      className="text-xs text-accent hover:text-accent underline underline-offset-2 transition-colors"
-                    >
-                      Already purchased? Access here
-                    </Link>
-                  )}
-                </>
-              )}
-            </div>
+          ) : userOwns ? (
+            <ContinueLearningButton courseUrl={course.courseUrl!} locale={locale} label={t.continueLearning} />
           ) : (
-            // Au-dessus du voile « Coming Soon » : le formulaire etait recouvert
-            // et ne pouvait pas etre clique (7/10/2026).
-            <div className="relative z-30">
-              <WaitlistInCard />
-            </div>
+            <>
+              <BuyButton productType={course.productType} t={t} />
+              {course.courseUrl && (
+                <Link
+                  href={localeHref(locale, course.courseUrl)}
+                  className="inline-flex min-h-11 items-center justify-center text-xs text-text-secondary underline underline-offset-2 hover:text-accent"
+                >
+                  {t.alreadyBought}
+                </Link>
+              )}
+            </>
           )}
         </div>
-      </div>
-    </div>
+      ) : (
+        <WaitlistInCard t={t} />
+      )}
+    </article>
   );
 }
 
@@ -398,6 +507,7 @@ function CourseCard({
 export default function EducationPage() {
   const pathname = usePathname();
   const locale = getLocaleFromPath(pathname);
+  const t = getT(locale);
   const { user, isLoading: authLoading } = useAuth();
   const supabase = createClientComponentClient();
 
@@ -422,81 +532,56 @@ export default function EducationPage() {
   }, [user, supabase]);
 
   const isLoading = authLoading || profileLoading;
+  const fundamentals = courses[0];
 
   return (
     <div className="min-h-screen bg-bg-base">
-      <PaymentSuccessBanner />
+      <PaymentSuccessBanner t={t} />
 
-      {/* HERO */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-bg-elevated via-bg-elevated to-bg-base border-b border-border">
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl -translate-y-1/2" />
-          <div className="absolute top-1/2 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl -translate-y-1/2" />
-        </div>
-        <div className="relative z-10 max-w-6xl mx-auto px-4 pt-6 pb-16">
-          {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-sm text-text-secondary mb-8">
-            <Link href="/" className="flex items-center gap-1 hover:text-accent transition-colors">
-              <Home className="w-4 h-4" /> Home
+      {/* HEADER */}
+      <section className="px-4 pt-5 pb-3">
+        <div className="mx-auto max-w-7xl">
+          <nav aria-label="Breadcrumb" className="mb-3 flex items-center gap-1.5 text-[13px] text-text-muted">
+            <Link href={localeHref(locale, '/')} className="flex items-center gap-1 hover:text-text-primary">
+              <Home className="h-3.5 w-3.5" /> {t.home}
             </Link>
-            <ChevronRight className="w-4 h-4" />
-            <span className="text-white">Education</span>
+            <ChevronRight className="h-3.5 w-3.5" />
+            <span className="text-text-secondary">{t.education}</span>
           </nav>
-
-          <div className="text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 border border-accent/30 rounded-full text-accent text-sm font-medium mb-6">
-              <GraduationCap className="w-4 h-4" /> PropFirmScanner Academy
-            </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Learn to Get{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-blue-400">
-                Funded
+          <h1 className="font-display text-[28px] font-extrabold leading-9 tracking-tight text-text-primary sm:text-h2">
+            {t.title}
+          </h1>
+          <p className="mt-1 text-small text-text-secondary">{t.subtitle}</p>
+          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[13px] text-text-muted">
+            {t.trust.map((item, i) => (
+              <span key={item} className="flex items-center gap-1.5">
+                {i === 0 && <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent" />}
+                {item}
               </span>
-            </h1>
-            <p className="text-xl text-text-secondary mb-8">
-              Master prop firm trading with our comprehensive courses. From beginner basics to advanced strategies.
-            </p>
-            <div className="flex flex-wrap justify-center gap-6 text-sm text-text-secondary">
-              <div className="flex items-center gap-2"><Users className="w-5 h-5 text-accent" /><span>3,000+ Students</span></div>
-              <div className="flex items-center gap-2"><Star className="w-5 h-5 text-yellow-400 fill-current" /><span>4.8 Average Rating</span></div>
-              <div className="flex items-center gap-2"><Trophy className="w-5 h-5 text-purple-400" /><span>78% Pass Rate</span></div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* OWNED COURSE QUICK ACCESS — shown only if user owns fundamentals */}
-      {!isLoading && hasFundamentals && (
-        <div className="max-w-6xl mx-auto px-4 pt-8">
-          <div className="bg-accent/10 border border-accent/30 rounded-2xl p-5 flex items-center justify-between gap-4">
+      <div className="mx-auto max-w-7xl px-4 pb-16">
+        {/* OWNED COURSE QUICK ACCESS */}
+        {!isLoading && hasFundamentals && (
+          <div className="mt-4 flex flex-col gap-3 rounded-2xl border border-accent-border bg-accent-subtle p-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-accent/20 rounded-xl flex items-center justify-center shrink-0">
-                <BookOpen className="w-5 h-5 text-accent" />
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/15">
+                <BookOpen className="h-5 w-5 text-accent" />
               </div>
               <div>
-                <p className="text-white font-semibold text-sm">Prop Firm Fundamentals</p>
-                <p className="text-accent text-xs">You have access — pick up where you left off</p>
+                <p className="text-sm font-semibold text-text-primary">{fundamentals.title}</p>
+                <p className="text-xs text-accent">{t.ownedText}</p>
               </div>
             </div>
-            <Link
-              href={`/${locale}/education/fundamentals`}
-              className="shrink-0 flex items-center gap-2 px-4 py-2 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-xl transition-colors text-sm"
-            >
-              <Play className="w-4 h-4 fill-white" /> Continue <ArrowRight className="w-4 h-4" />
-            </Link>
+            <ContinueLearningButton courseUrl="/education/fundamentals" locale={locale} label={t.continue} className="shrink-0" />
           </div>
-        </div>
-      )}
+        )}
 
-      {/* COURSES GRID */}
-      <section className="max-w-6xl mx-auto px-4 py-16">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-white mb-4">Choose Your Path</h2>
-          <p className="text-text-secondary max-w-2xl mx-auto">
-            Whether you&apos;re just starting out or looking to scale your funded accounts, we have the right course for you.
-          </p>
-        </div>
-        <div className="grid md:grid-cols-2 gap-8">
+        {/* COURSES */}
+        <div className="mt-5 grid gap-4 lg:grid-cols-2">
           {courses.map((course) => (
             <CourseCard
               key={course.id}
@@ -504,86 +589,57 @@ export default function EducationPage() {
               hasFundamentals={hasFundamentals}
               locale={locale}
               authLoading={isLoading}
+              t={t}
             />
           ))}
         </div>
-      </section>
 
-      {/* WHAT'S INCLUDED */}
-      <section className="bg-bg-elevated/50 border-y border-border">
-        <div className="max-w-6xl mx-auto px-4 py-16">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-white mb-4">What&apos;s Included</h2>
-            <p className="text-text-secondary">Every course comes with these premium features</p>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {benefits.map((benefit, i) => {
-              const Icon = benefit.icon;
-              return (
-                <div key={i} className="bg-bg-elevated rounded-xl border border-border p-6 text-center">
-                  <div className="inline-flex items-center justify-center w-12 h-12 bg-accent/10 rounded-xl mb-4">
-                    <Icon className="w-6 h-6 text-accent" />
-                  </div>
-                  <h3 className="text-white font-semibold mb-2">{benefit.title}</h3>
-                  <p className="text-text-muted text-sm">{benefit.description}</p>
+        {/* WHAT'S INCLUDED */}
+        <h2 className={sectionHeading}>{t.includedTitle}</h2>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {t.benefits.map((benefit, i) => {
+            const Icon = benefitIcons[i];
+            return (
+              <div key={benefit.title} className={`${card} border-border p-4`}>
+                <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-accent/15">
+                  <Icon className="h-[18px] w-[18px] text-accent" />
                 </div>
-              );
-            })}
-          </div>
+                <p className="text-sm font-semibold text-text-primary">{benefit.title}</p>
+                <p className="mt-1 text-[13px] text-text-muted">{benefit.description}</p>
+              </div>
+            );
+          })}
         </div>
-      </section>
 
-      {/* TESTIMONIALS */}
-      <section className="max-w-6xl mx-auto px-4 py-16">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-white mb-4">Student Success Stories</h2>
-          <p className="text-text-secondary">Join thousands of traders who transformed their journey</p>
-        </div>
-        <div className="grid md:grid-cols-3 gap-6">
-          {testimonials.map((t, i) => (
-            <div key={i} className="bg-bg-elevated/50 rounded-xl border border-border p-6">
-              <div className="flex gap-1 mb-4">
-                {Array.from({ length: t.rating }).map((_, j) => (
-                  <Star key={j} className="w-4 h-4 text-yellow-400 fill-current" />
-                ))}
-              </div>
-              <p className="text-text-secondary mb-4">&quot;{t.content}&quot;</p>
-              <div>
-                <p className="text-white font-medium">{t.name}</p>
-                <p className="text-text-muted text-sm">{t.role}</p>
-              </div>
-            </div>
+        {/* CURRICULUM */}
+        <h2 className={sectionHeading}>{t.programTitle}</h2>
+        <ol className={`${card} divide-y divide-border border-border p-0`}>
+          {featuresFor(t, fundamentals).map((feature, i) => (
+            <li key={feature} className="flex items-center gap-4 px-5 py-3.5">
+              <span className="font-mono text-sm font-bold tabular-nums text-accent">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <span className="text-sm font-medium text-text-primary">{feature}</span>
+            </li>
           ))}
-        </div>
-      </section>
+        </ol>
 
-      {/* CTA BOTTOM */}
-      <section className="max-w-4xl mx-auto px-4 pb-16">
-        <div className="bg-gradient-to-r from-accent/20 to-blue-500/20 rounded-2xl border border-accent/30 p-8 md:p-12 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">Ready to Get Funded?</h2>
-          <p className="text-text-secondary mb-6 max-w-xl mx-auto">
-            Start with Prop Firm Fundamentals and get your first funded account in 30 days.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+        {/* CTA BOTTOM */}
+        <div className={`${card} mt-10 border-border p-6 text-center sm:p-8`}>
+          <h2 className="font-display text-2xl font-extrabold tracking-tight text-text-primary">{t.ctaTitle}</h2>
+          <p className="mx-auto mt-2 max-w-xl text-sm text-text-secondary">{t.ctaText}</p>
+          <div className="mt-5 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-start">
             {!isLoading && hasFundamentals ? (
-              <Link
-                href={`/${locale}/education/fundamentals`}
-                className="inline-flex items-center gap-2 px-8 py-3 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-xl transition-colors"
-              >
-                <Play className="w-5 h-5 fill-white" /> Continue Learning
-              </Link>
+              <ContinueLearningButton courseUrl="/education/fundamentals" locale={locale} label={t.continueLearning} />
             ) : (
-              <BuyButton productType="course_fundamentals" />
+              <BuyButton productType="course_fundamentals" t={t} className="sm:w-64" />
             )}
-            <Link
-              href={`/${locale}/compare`}
-              className="px-8 py-3 bg-dark-700 hover:bg-dark-600 text-white font-semibold rounded-xl transition-colors"
-            >
-              Browse Prop Firms
+            <Link href={localeHref(locale, '/compare')} className={btnSecondary}>
+              {t.compare}
             </Link>
           </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 }

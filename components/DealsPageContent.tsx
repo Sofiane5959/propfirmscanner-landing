@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { Shield } from 'lucide-react';
+import Link from 'next/link';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { DealsGrid, PromoCodesBanner } from '@/components/DealsGrid';
+import { DealsGrid } from '@/components/DealsGrid';
 import { appliquerOffresDesFiches } from '@/lib/offres-fiches';
 
 // =============================================================================
@@ -28,74 +28,44 @@ function getLocaleFromPath(pathname: string): Locale {
 
 const translations: Record<Locale, Record<string, string>> = {
   en: {
-    badge: 'Verified & Trusted',
-    title: 'Deals &',
-    titleHighlight: 'Discounts',
-    description:
-      'Save money on your next prop firm challenge with our exclusive partner deals. Every code is verified and updated in real time.',
-    activeCodes: 'Active Codes',
-    maxDiscount: 'Max Discount',
-    partners: 'Partners',
+    title: 'Prop firm promo codes',
+    subtitle: 'Every code is tested on the firm’s checkout page before we publish it.',
+    verified: 'Verified',
+    activeCodes: 'active codes',
+    upTo: 'up to',
+    howWeEarn: 'How we make money →',
   },
   fr: {
-    badge: 'Vérifié & Fiable',
-    title: 'Offres &',
-    titleHighlight: 'Réductions',
-    description:
-      'Économisez sur votre prochain challenge avec nos offres partenaires exclusives. Chaque code est vérifié et mis à jour en temps réel.',
-    activeCodes: 'Codes Actifs',
-    maxDiscount: 'Réduction Max',
-    partners: 'Partenaires',
+    title: 'Codes promo prop firms',
+    subtitle: 'Chaque code est testé sur la page de paiement de la firme avant d’être publié.',
+    verified: 'Vérifiés',
+    activeCodes: 'codes actifs',
+    upTo: 'jusqu’à',
+    howWeEarn: 'Comment on gagne de l’argent →',
   },
   de: {
-    badge: 'Verifiziert & Vertrauenswürdig',
-    title: 'Angebote &',
-    titleHighlight: 'Rabatte',
-    description:
-      'Sparen Sie bei Ihrer nächsten Challenge mit unseren exklusiven Partner-Angeboten. Jeder Code ist verifiziert und in Echtzeit aktualisiert.',
-    activeCodes: 'Aktive Codes',
-    maxDiscount: 'Max Rabatt',
-    partners: 'Partner',
+    title: 'Prop-Firm-Rabattcodes',
+    verified: 'Geprüft',
+    activeCodes: 'aktive Codes',
+    upTo: 'bis zu',
   },
   es: {
-    badge: 'Verificado y Confiable',
-    title: 'Ofertas y',
-    titleHighlight: 'Descuentos',
-    description:
-      'Ahorra en tu próximo challenge con nuestras ofertas exclusivas. Cada código está verificado y actualizado en tiempo real.',
-    activeCodes: 'Códigos Activos',
-    maxDiscount: 'Descuento Máx',
-    partners: 'Socios',
+    title: 'Códigos promocionales de prop firms',
+    verified: 'Verificados',
+    activeCodes: 'códigos activos',
+    upTo: 'hasta',
   },
   pt: {
-    badge: 'Verificado e Confiável',
-    title: 'Ofertas e',
-    titleHighlight: 'Descontos',
-    description:
-      'Economize no seu próximo challenge com nossas ofertas exclusivas. Cada código é verificado e atualizado em tempo real.',
-    activeCodes: 'Códigos Ativos',
-    maxDiscount: 'Desconto Máx',
-    partners: 'Parceiros',
+    title: 'Códigos promocionais de prop firms',
+    verified: 'Verificados',
+    activeCodes: 'códigos ativos',
+    upTo: 'até',
   },
   ar: {
-    badge: 'موثق وموثوق',
-    title: 'عروض و',
-    titleHighlight: 'خصومات',
-    description:
-      'وفر المال على تحديك القادم مع عروض شركائنا الحصرية. كل رمز موثق ومحدث في الوقت الفعلي.',
     activeCodes: 'أكواد نشطة',
-    maxDiscount: 'أقصى خصم',
-    partners: 'شركاء',
   },
   hi: {
-    badge: 'सत्यापित और विश्वसनीय',
-    title: 'डील्स और',
-    titleHighlight: 'छूट',
-    description:
-      'हमारे विशेष पार्टनर ऑफ़र के साथ अपने अगले challenge पर पैसे बचाएं। हर कोड सत्यापित है।',
     activeCodes: 'सक्रिय कोड',
-    maxDiscount: 'अधिकतम छूट',
-    partners: 'पार्टनर',
   },
 };
 
@@ -168,74 +138,52 @@ function useDealsStats(): { stats: DealsStats | null; loading: boolean } {
 
 export default function DealsPageContent() {
   const pathname = usePathname();
-  const t = { ...translations.en, ...translations[getLocaleFromPath(pathname)] };
+  const locale = getLocaleFromPath(pathname);
+  const t = { ...translations.en, ...translations[locale] };
+  const href = (p: string) => (locale === 'en' ? p : `/${locale}${p}`);
   const { stats, loading } = useDealsStats();
+  // Le mois de verification, dans la langue de la page.
+  const mois = new Date().toLocaleDateString(locale, { month: 'long', year: 'numeric' });
+  const remiseMax = stats?.maxDiscount ?? 0;
 
   return (
     <div className="min-h-screen bg-bg-base">
-      {/* Hero */}
-      <header className="relative overflow-hidden bg-gradient-to-b from-bg-elevated via-bg-elevated to-bg-base border-b border-border">
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl transform -translate-y-1/2" />
-          <div className="absolute top-1/2 right-1/4 w-96 h-96 bg-yellow-500/5 rounded-full blur-3xl transform -translate-y-1/2" />
-        </div>
-
-        <div className="relative z-10 max-w-6xl mx-auto px-4 py-14">
-          <div className="flex flex-col items-center text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 border border-accent/30 rounded-full mb-6">
-              <Shield className="w-4 h-4 text-accent" />
-              <span className="text-accent text-sm font-medium">{t.badge}</span>
-            </div>
-
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              {t.title}{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-yellow-400">
-                {t.titleHighlight}
+      <section className="px-4 pt-5 pb-3">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="font-display text-[28px] font-extrabold leading-9 tracking-tight text-text-primary sm:text-h2">
+            {t.title}
+          </h1>
+          <p className="mt-1 text-small text-text-secondary">{t.subtitle}</p>
+          {/* Ligne de confiance — chiffres calcules en direct, jamais inventes. */}
+          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] text-text-muted">
+            <span className="inline-flex items-center gap-1.5">
+              <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent" />
+              <span suppressHydrationWarning>{t.verified} · {mois}</span>
+            </span>
+            <span>
+              <b className="font-mono font-semibold tabular-nums text-text-primary">
+                {loading ? '—' : stats?.activeCodes ?? 0}
+              </b>{' '}
+              {t.activeCodes}
+            </span>
+            {!loading && remiseMax > 0 && (
+              <span>
+                {t.upTo}{' '}
+                <b className="font-mono font-semibold tabular-nums text-text-primary">
+                  {locale === 'fr' ? `−${remiseMax}\u202F%` : `−${remiseMax}%`}
+                </b>
               </span>
-            </h1>
-
-            <p className="text-text-secondary text-lg max-w-2xl mb-8">{t.description}</p>
-
-            {/* Stats — computed live from the DB. We render stable placeholders
-                while loading so layout doesn't jump, but never invent numbers. */}
-            <div className="flex items-center gap-8">
-              <Stat value={loading ? '—' : String(stats?.activeCodes ?? 0)} label={t.activeCodes} />
-              <Divider />
-              <Stat
-                value={loading ? '—' : `${stats?.maxDiscount ?? 0}%`}
-                label={t.maxDiscount}
-                highlight
-              />
-              <Divider />
-              <Stat value={loading ? '—' : String(stats?.partnersCount ?? 0)} label={t.partners} />
-            </div>
+            )}
+            <Link href={href('/how-we-make-money')} className="underline-offset-2 hover:text-text-primary hover:underline">
+              {t.howWeEarn}
+            </Link>
           </div>
         </div>
-      </header>
+      </section>
 
-      <main className="max-w-6xl mx-auto px-4 py-12">
-        <PromoCodesBanner />
+      <main className="max-w-7xl mx-auto px-4 pt-3 pb-12">
         <DealsGrid />
       </main>
     </div>
   );
-}
-
-// =============================================================================
-// SMALL UI HELPERS
-// =============================================================================
-
-function Stat({ value, label, highlight = false }: { value: string; label: string; highlight?: boolean }) {
-  return (
-    <div className="flex flex-col items-center">
-      <span className={`text-3xl font-bold ${highlight ? 'text-accent' : 'text-white'}`}>
-        {value}
-      </span>
-      <span className="text-text-muted text-sm">{label}</span>
-    </div>
-  );
-}
-
-function Divider() {
-  return <div className="w-px h-12 bg-dark-700" />;
 }

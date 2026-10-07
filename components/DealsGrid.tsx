@@ -5,8 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import {
-  ExternalLink, Tag, Star, Copy, Check,
-  Sparkles, Gift, ShieldCheck, Search,
+  ArrowUpRight, Star, Copy, Check, Gift, BadgeCheck, Search, Timer, RotateCcw,
 } from 'lucide-react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { appliquerOffresDesFiches, bonusFiche, prixRemiseFiche } from '@/lib/offres-fiches';
@@ -29,67 +28,102 @@ function getLocaleFromPath(pathname: string): Locale {
 }
 
 // =============================================================================
-// TRANSLATIONS (subset — full set kept short for maintainability)
+// TRANSLATIONS — en + fr complete; the other locales fall back to English for
+// any key they don't carry ({ ...translations.en, ...translations[locale] }).
 // =============================================================================
 
 const translations: Record<Locale, Record<string, string>> = {
   en: {
-    quickCopy: 'Quick Copy Promo Codes',
-    clickToCopy: 'Click any code to copy instantly',
-    activeDeals: 'Active Deals',
-    verifiedDiscounts: 'Verified discounts you can use right now',
-    allFirms: 'All Prop Firms',
-    allFirmsSubtitle: 'Every firm we track. Best deals first, then the rest.',
-    visit: 'Visit',
+    dealOfDay: 'Deal of the day',
+    endsIn: 'Ends in',
+    days: 'days',
+    hours: 'hours',
+    minutes: 'min',
+    grab: 'Get {pct} off',
+    getDeal: 'Get {pct}',
+    from: 'From',
+    sheet: 'Review',
+    codeLabel: 'Code',
+    discountLabel: 'Discount',
+    viaOurLink: 'Applied via our link',
+    expiresOn: 'Expires {date}',
+    expiresIn: 'Expires in {n} d',
+    noEndDate: 'No end date',
+    verifiedBadge: 'Verified',
+    allFirms: 'All firms',
+    allFirmsSubtitle: 'Firms without an active deal right now.',
+    colFirm: 'Firm',
+    colPrice: 'From',
+    colSplit: 'Split',
+    colRating: 'Rating',
+    seeOffer: 'View offer',
     details: 'Details',
-    viaLink: 'via link',
-    noCode: 'No code needed — discount applied via our link',
-    copied: 'Copied!',
-    copy: 'Copy code',
-    off: 'OFF',
+    copied: 'Copied',
+    copy: 'Copy',
     noDealsYet: 'New deals coming soon',
     noDealsBody: 'No active codes right now. Browse all firms below.',
     loading: 'Loading deals…',
+    errorTitle: 'Couldn’t load deals right now',
+    errorBody: 'Refresh the page or try again in a minute.',
+    retry: 'Try again',
     affiliateNotice:
-      'We may earn a commission when you use our links — at no extra cost to you. This is what keeps the comparison free.',
-    readMore: 'Read more',
+      'Affiliate links: we earn a commission at no cost to you. The ranking stays independent.',
+    readMore: 'How we make money',
     search: 'Search a firm…',
     sortDiscount: 'Biggest discount',
     sortPrice: 'Lowest price',
     sortRating: 'Best rated',
+    sortLabel: 'Sort',
     codeOnly: 'With a code',
     showMore: 'Show more firms',
     nothing: 'No firm matches your search.',
     counted: 'deals',
   },
   fr: {
-    quickCopy: 'Copie rapide des codes promo',
-    clickToCopy: 'Cliquez sur un code pour le copier',
-    activeDeals: 'Offres actives',
-    verifiedDiscounts: 'Réductions vérifiées utilisables tout de suite',
-    allFirms: 'Toutes les Prop Firms',
-    allFirmsSubtitle: 'Toutes les firms que nous suivons. Les meilleures offres en haut.',
-    visit: 'Visiter',
+    dealOfDay: 'Offre du jour',
+    endsIn: 'Se termine dans',
+    days: 'jours',
+    hours: 'heures',
+    minutes: 'min',
+    grab: 'Profiter de {pct}',
+    getDeal: 'Obtenir {pct}',
+    from: 'Dès',
+    sheet: 'Fiche',
+    codeLabel: 'Code',
+    discountLabel: 'Remise',
+    viaOurLink: 'Appliquée via notre lien',
+    expiresOn: 'Expire le {date}',
+    expiresIn: 'Expire dans {n} j',
+    noEndDate: 'Sans date de fin',
+    verifiedBadge: 'Vérifiée',
+    allFirms: 'Toutes les firmes',
+    allFirmsSubtitle: 'Les firmes sans offre en cours.',
+    colFirm: 'Firme',
+    colPrice: 'Prix dès',
+    colSplit: 'Split',
+    colRating: 'Note',
+    seeOffer: 'Voir l’offre',
     details: 'Détails',
     search: 'Chercher une firme…',
-    sortDiscount: 'Plus forte remise',
+    sortDiscount: 'Plus grosse remise',
     sortPrice: 'Prix le plus bas',
     sortRating: 'Mieux notées',
-    codeOnly: 'Avec un code',
+    sortLabel: 'Trier',
+    codeOnly: 'Avec code',
     showMore: 'Voir plus de firmes',
     nothing: 'Aucune firme ne correspond.',
     counted: 'offres',
-    viaLink: 'via lien',
-    noCode: 'Pas de code — la réduction est appliquée via notre lien',
-    copied: 'Copié !',
+    copied: 'Copié',
     copy: 'Copier',
-    off: 'DE RÉDUC.',
     noDealsYet: 'Nouvelles offres bientôt',
-    noDealsBody: 'Aucun code actif pour l’instant. Parcourez les firms ci-dessous.',
+    noDealsBody: 'Aucun code actif pour l’instant. Parcours les firmes ci-dessous.',
     loading: 'Chargement des offres…',
+    errorTitle: 'Impossible de charger les offres',
+    errorBody: 'Recharge la page ou réessaie dans une minute.',
+    retry: 'Réessayer',
     affiliateNotice:
-      'Nous pouvons toucher une commission via nos liens — sans coût supplémentaire pour vous.',
-    readMore: 'En savoir plus',
+      'Liens affiliés : nous touchons une commission, sans coût pour toi. Le classement reste indépendant.',
+    readMore: 'Comment on gagne de l’argent',
   },
   de: {
     search: 'Firma suchen…',
@@ -100,25 +134,13 @@ const translations: Record<Locale, Record<string, string>> = {
     showMore: 'Mehr Firmen anzeigen',
     nothing: 'Keine Firma entspricht deiner Suche.',
     counted: 'Angebote',
-    quickCopy: 'Promo-Codes schnell kopieren',
-    clickToCopy: 'Klicke einen Code, um ihn zu kopieren',
-    activeDeals: 'Aktive Angebote',
-    verifiedDiscounts: 'Geprüfte Rabatte, sofort nutzbar',
     allFirms: 'Alle Prop Firms',
-    allFirmsSubtitle: 'Alle Firmen. Beste Angebote zuerst.',
-    visit: 'Besuchen',
     details: 'Details',
-    viaLink: 'via Link',
-    noCode: 'Kein Code nötig — Rabatt wird über unseren Link angewendet',
     copied: 'Kopiert!',
     copy: 'Kopieren',
-    off: 'RABATT',
     noDealsYet: 'Bald neue Angebote',
     noDealsBody: 'Aktuell keine aktiven Codes. Durchsuche alle Firmen unten.',
     loading: 'Angebote werden geladen…',
-    affiliateNotice:
-      'Über unsere Links erhalten wir ggf. eine Provision — ohne Mehrkosten für dich.',
-    readMore: 'Mehr lesen',
   },
   es: {
     search: 'Buscar una firma…',
@@ -129,25 +151,13 @@ const translations: Record<Locale, Record<string, string>> = {
     showMore: 'Ver más firmas',
     nothing: 'Ninguna firma coincide con tu búsqueda.',
     counted: 'ofertas',
-    quickCopy: 'Copia rápida de códigos',
-    clickToCopy: 'Haz clic en un código para copiarlo',
-    activeDeals: 'Ofertas activas',
-    verifiedDiscounts: 'Descuentos verificados disponibles ahora',
     allFirms: 'Todas las Prop Firms',
-    allFirmsSubtitle: 'Todas las firmas. Mejores ofertas primero.',
-    visit: 'Visitar',
     details: 'Detalles',
-    viaLink: 'vía enlace',
-    noCode: 'Sin código — el descuento se aplica vía nuestro enlace',
     copied: '¡Copiado!',
     copy: 'Copiar',
-    off: 'DESCUENTO',
     noDealsYet: 'Nuevas ofertas próximamente',
     noDealsBody: 'Sin códigos activos. Navega por todas las firmas abajo.',
     loading: 'Cargando ofertas…',
-    affiliateNotice:
-      'Podemos recibir una comisión por nuestros enlaces — sin coste adicional para ti.',
-    readMore: 'Saber más',
   },
   pt: {
     search: 'Procurar uma firma…',
@@ -158,25 +168,13 @@ const translations: Record<Locale, Record<string, string>> = {
     showMore: 'Ver mais firmas',
     nothing: 'Nenhuma firma corresponde à sua busca.',
     counted: 'ofertas',
-    quickCopy: 'Cópia rápida de códigos',
-    clickToCopy: 'Clique em qualquer código para copiar',
-    activeDeals: 'Ofertas ativas',
-    verifiedDiscounts: 'Descontos verificados disponíveis agora',
     allFirms: 'Todas as Prop Firms',
-    allFirmsSubtitle: 'Todas as firmas. Melhores ofertas primeiro.',
-    visit: 'Visitar',
     details: 'Detalhes',
-    viaLink: 'via link',
-    noCode: 'Sem código — desconto aplicado via nosso link',
     copied: 'Copiado!',
     copy: 'Copiar',
-    off: 'DESCONTO',
     noDealsYet: 'Novas ofertas em breve',
     noDealsBody: 'Sem códigos ativos. Explore todas as firmas abaixo.',
     loading: 'Carregando ofertas…',
-    affiliateNotice:
-      'Podemos receber uma comissão dos nossos links — sem custo extra para você.',
-    readMore: 'Saiba mais',
   },
   ar: {
     search: 'ابحث عن شركة…',
@@ -187,25 +185,13 @@ const translations: Record<Locale, Record<string, string>> = {
     showMore: 'عرض المزيد من الشركات',
     nothing: 'لا توجد شركة تطابق بحثك.',
     counted: 'عروض',
-    quickCopy: 'نسخ سريع لرموز الخصم',
-    clickToCopy: 'انقر على أي رمز للنسخ فوراً',
-    activeDeals: 'العروض النشطة',
-    verifiedDiscounts: 'خصومات موثقة متاحة الآن',
     allFirms: 'جميع شركات التداول',
-    allFirmsSubtitle: 'جميع الشركات. أفضل العروض أولاً.',
-    visit: 'زيارة',
     details: 'التفاصيل',
-    viaLink: 'عبر الرابط',
-    noCode: 'لا حاجة لرمز — الخصم يُطبَّق عبر رابطنا',
     copied: 'تم النسخ!',
     copy: 'نسخ',
-    off: 'خصم',
     noDealsYet: 'عروض جديدة قريباً',
     noDealsBody: 'لا توجد رموز نشطة. تصفح الشركات أدناه.',
     loading: 'جاري تحميل العروض…',
-    affiliateNotice:
-      'قد نحصل على عمولة عبر روابطنا — دون تكلفة إضافية عليك.',
-    readMore: 'المزيد',
   },
   hi: {
     search: 'फ़र्म खोजें…',
@@ -216,27 +202,17 @@ const translations: Record<Locale, Record<string, string>> = {
     showMore: 'और फ़र्म देखें',
     nothing: 'आपकी खोज से कोई फ़र्म मेल नहीं खाती।',
     counted: 'ऑफ़र',
-    quickCopy: 'त्वरित कॉपी प्रोमो कोड',
-    clickToCopy: 'किसी भी कोड को तुरंत कॉपी करने के लिए क्लिक करें',
-    activeDeals: 'सक्रिय डील्स',
-    verifiedDiscounts: 'सत्यापित डिस्काउंट जो आप अभी उपयोग कर सकते हैं',
     allFirms: 'सभी प्रॉप फर्म्स',
-    allFirmsSubtitle: 'हमारी ट्रैक की गई सभी फर्म्स। सबसे अच्छी डील्स पहले।',
-    visit: 'विज़िट',
     details: 'विवरण',
-    viaLink: 'लिंक के माध्यम से',
-    noCode: 'कोड की आवश्यकता नहीं — डिस्काउंट हमारे लिंक के माध्यम से',
     copied: 'कॉपी हो गया!',
     copy: 'कॉपी',
-    off: 'छूट',
     noDealsYet: 'जल्द ही नई डील्स',
     noDealsBody: 'अभी कोई सक्रिय कोड नहीं। नीचे सभी फर्म्स देखें।',
     loading: 'डील्स लोड हो रहे हैं…',
-    affiliateNotice:
-      'हमारे लिंक के माध्यम से हमें कमीशन मिल सकता है — आपके लिए अतिरिक्त लागत के बिना।',
-    readMore: 'और पढ़ें',
   },
 };
+
+type T = Record<string, string>;
 
 // =============================================================================
 // TYPES
@@ -250,15 +226,77 @@ interface PropFirm {
   trustpilot_rating: number | null;
   trustpilot_reviews: number | null;
   min_price: number | null;
+  profit_split: number | null;
   max_profit_split: number | null;
   discount_code: string | null;
   discount_percent: number | null;
+  discount_expires_at: string | null;
   affiliate_url: string | null;
   website_url: string | null;
   priority_tier: number | null;
   trust_status: string | null;
   listing_status: string | null;
 }
+
+const COLONNES =
+  'id, slug, name, logo_url, trustpilot_rating, trustpilot_reviews, min_price, profit_split, max_profit_split, discount_code, discount_percent, discount_expires_at, affiliate_url, website_url, priority_tier, trust_status, listing_status';
+
+// =============================================================================
+// SMALL HELPERS
+// =============================================================================
+
+const JOUR = 86_400_000;
+
+/** Fin de l'offre en ms, ou null si la base / la fiche n'en donne pas. */
+function finOffre(f: PropFirm): number | null {
+  if (!f.discount_expires_at) return null;
+  const fin = new Date(f.discount_expires_at).getTime();
+  return Number.isNaN(fin) ? null : fin;
+}
+
+/** Une remise datee et depassee ne compte plus : meme regle que /compare. */
+function remiseActive(f: PropFirm, maintenant = Date.now()): boolean {
+  if ((f.discount_percent ?? 0) <= 0) return false;
+  const fin = finOffre(f);
+  return fin == null || fin > maintenant;
+}
+
+const aCode = (f: PropFirm) => !!(f.discount_code && f.discount_code.trim().length > 0);
+const aSortie = (f: PropFirm) =>
+  !!((f.affiliate_url && f.affiliate_url !== '#') || (f.website_url && f.website_url !== '#'));
+
+/** « −50 % » en français (espace fine insécable), « −50% » ailleurs. */
+function pct(n: number, locale: string) {
+  return locale === 'fr' ? `−${n} %` : `−${n}%`;
+}
+
+function prix(n: number) {
+  return `$${n.toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
+}
+
+/** Partage : « 50→80% » quand la firme commence plus bas que son plafond. */
+function partage(f: PropFirm): string | null {
+  const debut = f.profit_split;
+  const max = f.max_profit_split;
+  if (debut != null && max != null && debut !== max) return `${debut}→${max}%`;
+  const v = debut ?? max;
+  return v != null ? `${v}%` : null;
+}
+
+/**
+ * Le prix barre n'apparait que si la firme a un code (CLAUDE.md) et que la
+ * fiche garantit la remise sur tous les plans (prixRemiseFiche).
+ */
+function prixRemise(f: PropFirm): number | null {
+  if (!aCode(f) || !remiseActive(f)) return null;
+  return prixRemiseFiche(f.slug, f.min_price);
+}
+
+const estVerifiee = (f: PropFirm) =>
+  ['scanned', 'verified', 'trusted'].includes((f.trust_status ?? '').toLowerCase());
+
+const fill = (s: string, vars: Record<string, string | number>) =>
+  s.replace(/\{(\w+)\}/g, (_, k) => String(vars[k] ?? ''));
 
 // =============================================================================
 // SORT — best deals first, every firm visible
@@ -300,8 +338,16 @@ function dealsSort(a: PropFirm, b: PropFirm): number {
 }
 
 // =============================================================================
-// COPY BUTTON
+// BUILDING BLOCKS
 // =============================================================================
+
+const CARTE =
+  'relative overflow-hidden rounded-2xl border border-border bg-bg-elevated shadow-[0_1px_2px_rgba(28,25,23,0.05),0_10px_28px_-16px_rgba(28,25,23,0.22)] dark:bg-gradient-to-b dark:from-white/[0.035] dark:to-transparent dark:shadow-none';
+const BTN_ACHAT =
+  'flex min-h-12 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-accent-hover px-4 text-sm font-semibold text-on-accent shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_1px_2px_rgba(4,35,26,0.2)] transition hover:brightness-105';
+const BTN_SECONDAIRE_BASE =
+  'flex items-center justify-center whitespace-nowrap rounded-xl border border-border-hover bg-bg-elevated px-4 text-sm font-semibold text-text-primary transition-colors hover:border-text-primary dark:bg-transparent';
+const BTN_SECONDAIRE = `${BTN_SECONDAIRE_BASE} min-h-12`;
 
 function CopyCodeButton({ code, label, firmSlug, placement }: {
   code: string;
@@ -324,90 +370,200 @@ function CopyCodeButton({ code, label, firmSlug, placement }: {
   };
   return (
     <button
+      type="button"
       onClick={handle}
-      className={`p-2 rounded-lg transition-colors ${
-        copied ? 'bg-accent/10 text-accent' : 'bg-dark-600 hover:bg-dark-500 text-text-secondary'
+      className={`ml-auto inline-flex min-h-11 flex-none items-center gap-1.5 rounded-lg border px-2.5 text-xs font-semibold transition-colors sm:min-h-8 ${
+        copied
+          ? 'border-accent-border bg-accent/15 text-accent'
+          : 'border-amber-500/40 bg-bg-elevated text-text-primary hover:border-amber-500 dark:border-amber-300/30 dark:bg-transparent dark:hover:border-amber-300/60'
       }`}
-      title={copied ? label.copied : label.copy}
-      aria-label={copied ? label.copied : label.copy}
+      aria-label={`${copied ? label.copied : label.copy} ${code}`}
     >
-      {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+      {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+      {copied ? label.copied : label.copy}
     </button>
   );
 }
 
-// =============================================================================
-// PROMO CODES BANNER — quick-copy strip (only firms with codes)
-// =============================================================================
-
-export function PromoCodesBanner() {
-  const pathname = usePathname();
-  // Repli sur l'anglais : plusieurs cles n'existent qu'en en/fr, elles
-  // s'affichaient vides en de/es/pt/ar/hi (7/10/2026).
-  const t = { ...translations.en, ...translations[getLocaleFromPath(pathname)] };
-  const [firms, setFirms] = useState<PropFirm[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchFirms = async () => {
-      const supabase = createClientComponentClient();
-      const { data } = await supabase
-        .from('prop_firms')
-        .select(
-          'id, slug, name, logo_url, trustpilot_rating, trustpilot_reviews, min_price, max_profit_split, discount_code, discount_percent, affiliate_url, website_url, priority_tier, trust_status, listing_status'
-        )
-        .eq('listing_status', 'listed')
-        .gt('discount_percent', 0)
-        .not('discount_code', 'is', null)
-        .order('discount_percent', { ascending: false })
-        .limit(8);
-        // L'offre d'une firme qui a une fiche vient de son tableur, pas de la
-        // base : c'est elle qui porte la campagne datee, et elle expire toute
-        // seule. Les autres firmes ressortent inchangees.
-        setFirms(appliquerOffresDesFiches(data || []));
-      setLoading(false);
-    };
-    fetchFirms();
-  }, []);
-
-  if (loading || firms.length === 0) return null;
-
+function LogoTile({ firm, size = 44 }: { firm: PropFirm; size?: number }) {
   return (
-    <section className="mb-8 bg-gradient-to-br from-yellow-500/10 via-amber-500/5 to-transparent border border-yellow-500/20 rounded-2xl p-6">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 rounded-xl bg-yellow-500/20 flex items-center justify-center">
-          <Gift className="w-5 h-5 text-yellow-400" />
-        </div>
-        <div>
-          <h2 className="text-lg font-bold text-white">{t.quickCopy}</h2>
-          <p className="text-text-secondary text-sm">{t.clickToCopy}</p>
-        </div>
-      </div>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        {firms.map(f => (
-          <div
-            key={f.id}
-            className="flex items-center justify-between gap-3 px-4 py-3 bg-dark-700/60 border border-border rounded-xl"
-          >
-            <div className="min-w-0">
-              <p className="text-white font-medium text-sm truncate">{f.name}</p>
-              <p className="text-yellow-400 text-xs font-semibold">
-                {f.discount_percent}% {t.off}
-                {bonusFiche(f.slug) && (
-                  <span className="ml-1.5 rounded bg-accent-hover px-1.5 py-0.5 text-[10px] font-bold uppercase text-white">
-                    {bonusFiche(f.slug)}
-                  </span>
-                )}
-              </p>
-            </div>
-            <div className="flex items-center gap-1.5 flex-shrink-0">
-              <code className="px-2 py-1 bg-bg-elevated border border-dashed border-border-hover rounded text-accent text-xs font-mono">
-                {f.discount_code}
-              </code>
-              <CopyCodeButton code={f.discount_code as string} label={{ copy: t.copy, copied: t.copied }} firmSlug={f.slug} placement="deals_banniere" />
-            </div>
+    <span
+      className="flex flex-none items-center justify-center overflow-hidden rounded-xl border border-border bg-white p-1"
+      style={{ width: size, height: size }}
+    >
+      {firm.logo_url ? (
+        <Image
+          src={firm.logo_url}
+          alt=""
+          width={size}
+          height={size}
+          className="h-full w-full object-contain"
+        />
+      ) : (
+        <span className="font-display text-base font-extrabold text-slate-900">{firm.name.charAt(0)}</span>
+      )}
+    </span>
+  );
+}
+
+function Rating({ value }: { value: number | null }) {
+  if (value == null) return <span className="text-text-muted">—</span>;
+  return (
+    <span className="inline-flex items-center gap-1">
+      <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" aria-hidden />
+      <span className="font-mono font-semibold tabular-nums text-text-primary">{value.toFixed(1)}</span>
+    </span>
+  );
+}
+
+/** Le bloc coupon : pastille ambre, puis le code (ou « appliquée via notre lien »). */
+function CouponBlock({ firm, t, locale, placement, className = '' }: {
+  firm: PropFirm; t: T; locale: string; placement: string; className?: string;
+}) {
+  const code = aCode(firm) ? (firm.discount_code as string).trim() : null;
+  return (
+    <div
+      className={`flex items-center gap-3 rounded-xl border border-dashed border-amber-400/70 bg-gradient-to-r from-amber-50 via-amber-50/60 to-transparent p-2 dark:border-amber-300/30 dark:from-amber-400/[0.12] dark:via-amber-400/[0.05] ${className}`}
+    >
+      <span className="inline-flex h-9 flex-none items-center rounded-lg bg-amber-400 px-2.5 font-mono text-[15px] font-extrabold tabular-nums text-amber-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.45),0_1px_2px_rgba(120,53,15,0.25)]">
+        {pct(firm.discount_percent ?? 0, locale)}
+      </span>
+      <span className="min-w-0 flex-1 leading-tight">
+        <span className="block text-[10px] uppercase tracking-[0.08em] text-text-muted">
+          {code ? t.codeLabel : t.discountLabel}
+        </span>
+        {code ? (
+          <span className="block truncate font-mono text-[13px] font-bold text-text-primary">{code}</span>
+        ) : (
+          <span className="block truncate text-[13px] font-semibold text-text-primary">{t.viaOurLink}</span>
+        )}
+      </span>
+      {code && (
+        <CopyCodeButton code={code} label={{ copy: t.copy, copied: t.copied }} firmSlug={firm.slug} placement={placement} />
+      )}
+    </div>
+  );
+}
+
+function BonusPill({ text }: { text: string }) {
+  return (
+    <span className="inline-flex h-5 items-center rounded-md bg-accent/15 px-1.5 text-[11px] font-semibold text-accent">
+      {text}
+    </span>
+  );
+}
+
+/** « Dès $76 $95 » : prix remise en ambre, prix plein barre. */
+function PrixDes({ firm, t, grand = false }: { firm: PropFirm; t: T; grand?: boolean }) {
+  const remise = prixRemise(firm);
+  const taille = grand ? 'text-[15px]' : 'text-[13px]';
+  if (firm.min_price == null || firm.min_price <= 0) return null;
+  return (
+    <span className={`text-text-muted ${grand ? 'text-[13px]' : 'text-[12.5px]'}`}>
+      {t.from}{' '}
+      {remise != null ? (
+        <>
+          <b className={`font-mono font-bold tabular-nums text-deal ${taille}`}>{prix(remise)}</b>{' '}
+          <s className="font-mono tabular-nums">{prix(firm.min_price)}</s>
+        </>
+      ) : (
+        <b className={`font-mono font-bold tabular-nums text-text-primary ${taille}`}>{prix(firm.min_price)}</b>
+      )}
+    </span>
+  );
+}
+
+function Expiry({ firm, t, locale }: { firm: PropFirm; t: T; locale: string }) {
+  const fin = finOffre(firm);
+  if (fin == null) return <span className="text-[12.5px] text-text-muted">{t.noEndDate}</span>;
+  const jours = Math.max(0, Math.ceil((fin - Date.now()) / JOUR));
+  if (jours <= 3) {
+    return (
+      <span className="inline-flex items-center gap-1 text-[12.5px] font-semibold text-deal">
+        <Timer className="h-3.5 w-3.5" aria-hidden />
+        {fill(t.expiresIn, { n: jours })}
+      </span>
+    );
+  }
+  const date = new Date(fin).toLocaleDateString(locale, { day: 'numeric', month: 'short' });
+  return (
+    <span className="text-[12.5px] text-text-muted">
+      {fill(t.expiresOn, { date: '' })}
+      <b className="font-semibold text-text-primary">{date}</b>
+    </span>
+  );
+}
+
+/** Compte a rebours — rendu seulement quand l'offre porte une vraie date de fin. */
+function Countdown({ fin, t }: { fin: number; t: T }) {
+  const [maintenant, setMaintenant] = useState(() => Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setMaintenant(Date.now()), 30_000);
+    return () => clearInterval(id);
+  }, []);
+  const reste = Math.max(0, fin - maintenant);
+  const cases: [number, string][] = [
+    [Math.floor(reste / JOUR), t.days],
+    [Math.floor((reste % JOUR) / 3_600_000), t.hours],
+    [Math.floor((reste % 3_600_000) / 60_000), t.minutes],
+  ];
+  return (
+    <div>
+      <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-text-muted">{t.endsIn}</span>
+      <div className="mt-1.5 grid grid-cols-3 gap-px overflow-hidden rounded-xl border border-border bg-border" role="timer">
+        {cases.map(([v, lab]) => (
+          <div key={lab} className="bg-bg-base px-2 py-2 text-center">
+            <b className="block font-mono text-[20px] font-bold tabular-nums tracking-tight text-text-primary">
+              {String(v).padStart(2, '0')}
+            </b>
+            <small className="text-[10px] uppercase tracking-[0.08em] text-text-muted">{lab}</small>
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+// =============================================================================
+// OFFRE DU JOUR — la plus grosse remise du moment
+// =============================================================================
+
+function DealOfDay({ firm, t, locale }: { firm: PropFirm; t: T; locale: string }) {
+  const p = firm.discount_percent ?? 0;
+  const bonus = bonusFiche(firm.slug);
+  const fin = finOffre(firm);
+  return (
+    <section className={`${CARTE} mb-6 grid gap-5 p-5 sm:p-6 md:grid-cols-[minmax(0,1fr)_17.5rem] md:items-center md:gap-8`}>
+      <span aria-hidden className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-amber-400 via-amber-300 to-emerald-400" />
+      <div className="min-w-0">
+        <div className="flex items-center gap-2.5">
+          <LogoTile firm={firm} size={32} />
+          <span className="truncate text-[12px] font-bold uppercase tracking-[0.08em] text-deal">
+            {t.dealOfDay} · {firm.name}
+          </span>
+        </div>
+        <p className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <span className="font-mono text-[44px] font-extrabold leading-none tabular-nums tracking-tight text-text-primary sm:text-[56px]">
+            {pct(p, locale)}
+          </span>
+          {bonus && <span className="font-display text-lg font-bold text-deal">+ {bonus}</span>}
+        </p>
+        <CouponBlock firm={firm} t={t} locale={locale} placement="deals_hero" className="mt-4 max-w-[420px]" />
+      </div>
+      <div className="flex flex-col gap-3">
+        {fin != null && <Countdown fin={fin} t={t} />}
+        <a
+          href={buildAffiliateUrl(firm.slug, { placement: 'deals-hero', locale })}
+          target="_blank"
+          rel="noopener noreferrer sponsored"
+          className={`${BTN_ACHAT} w-full text-[15px]`}
+        >
+          {fill(t.grab, { pct: pct(p, locale) })}
+          <ArrowUpRight className="h-4 w-4" aria-hidden />
+        </a>
+        <div className="text-center">
+          <PrixDes firm={firm} t={t} grand />
+        </div>
       </div>
     </section>
   );
@@ -417,133 +573,110 @@ export function PromoCodesBanner() {
 // DEAL CARD
 // =============================================================================
 
-function DealCard({ firm, t, locale }: { firm: PropFirm; t: Record<string, string>; locale: string }) {
-  const hasOutbound = !!(firm.affiliate_url || firm.website_url);
-  // Regle du depot : toute sortie vers une firme passe par buildAffiliateUrl().
-  const visitUrl = hasOutbound ? buildAffiliateUrl(firm.slug, { placement: 'deals-grid', locale }) : null;
+function DealCard({ firm, t, locale }: { firm: PropFirm; t: T; locale: string }) {
   const internalUrl = `${locale === 'en' ? '' : `/${locale}`}/prop-firm/${firm.slug}`;
-  const hasCode = !!(firm.discount_code && firm.discount_code.trim().length > 0);
-  const hasDiscount = (firm.discount_percent ?? 0) > 0;
+  const p = firm.discount_percent ?? 0;
   // Ce que l'offre donne en plus du pourcentage, quand la firme a une fiche.
-  const bonus = hasDiscount ? bonusFiche(firm.slug) : null;
-  const prixApresCode = hasDiscount ? prixRemiseFiche(firm.slug, firm.min_price) : null;
-  const hasAff = !!firm.affiliate_url;
+  const bonus = bonusFiche(firm.slug);
 
   return (
-    <div
-      className={`bg-dark-700/50 border rounded-2xl overflow-hidden flex flex-col ${
-        hasAff && hasDiscount ? 'border-accent/40' : 'border-border/50'
-      }`}
-    >
-      {hasDiscount && (
-        <div className="relative">
-          <div className="absolute top-3 right-3 z-10 rounded-md border border-deal/30 bg-deal-subtle px-2 py-1 text-[11px] font-bold text-deal">
-            {firm.discount_percent}% {t.off}
-          </div>
-        </div>
-      )}
-
-      <Link href={internalUrl} className="flex items-center gap-3 px-5 pt-5 group/title">
-        <div className="w-12 h-12 rounded-xl bg-white border border-gray-200 p-1 flex items-center justify-center overflow-hidden flex-shrink-0">
-          {firm.logo_url ? (
-            <Image src={firm.logo_url} alt={firm.name} width={48} height={48} className="object-contain" />
-          ) : (
-            <span className="text-lg font-bold text-accent">{firm.name.charAt(0)}</span>
-          )}
-        </div>
+    <article className={`${CARTE} flex flex-col gap-4 p-5 transition-colors hover:border-border-hover`}>
+      <div className="flex items-center gap-3">
+        <LogoTile firm={firm} />
         <div className="min-w-0 flex-1">
-          <h3 className="font-semibold text-white text-base group-hover/title:text-emerald-400 transition-colors truncate">
+          <Link href={internalUrl} className="block truncate font-display text-[15px] font-bold text-text-primary hover:underline">
             {firm.name}
-          </h3>
-          {firm.trustpilot_rating && (
-            <div className="flex items-center gap-1 text-xs text-text-secondary mt-0.5">
-              <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
-              <span className="text-white font-medium">{firm.trustpilot_rating.toFixed(1)}</span>
-              {firm.trustpilot_reviews != null && (
-                <span>
-                  (
-                  {firm.trustpilot_reviews >= 1000
-                    ? `${(firm.trustpilot_reviews / 1000).toFixed(1)}K`
-                    : firm.trustpilot_reviews}
-                  )
-                </span>
-              )}
-            </div>
-          )}
-        </div>
-      </Link>
-
-      <div className="grid grid-cols-2 gap-3 px-5 mt-4">
-        <div>
-          <p className="text-[10px] text-text-muted uppercase tracking-wider">Price</p>
-          <p className="text-white font-bold">
-            {prixApresCode != null ? (
-              <>
-                ${prixApresCode}{' '}
-                <span className="text-xs font-normal text-text-muted line-through">${firm.min_price}</span>
-              </>
-            ) : (
-              <>{firm.min_price ? `$${firm.min_price}` : '—'}</>
+          </Link>
+          <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12.5px] text-text-muted">
+            <Rating value={firm.trustpilot_rating} />
+            {estVerifiee(firm) && (
+              <span className="inline-flex h-5 items-center gap-1 rounded-md bg-accent/15 px-1.5 text-[11px] font-semibold text-accent">
+                <BadgeCheck className="h-3 w-3" aria-hidden />
+                {t.verifiedBadge}
+              </span>
             )}
-          </p>
-        </div>
-        <div>
-          <p className="text-[10px] text-text-muted uppercase tracking-wider">Split</p>
-          <p className="text-accent font-bold">
-            {firm.max_profit_split ? `${firm.max_profit_split}%` : '—'}
-          </p>
+          </div>
         </div>
       </div>
 
-      {hasDiscount && (
-        <div className="px-5 mt-4">
-          {/* Le bonus accompagne le code : le pourcentage seul taisait la
-              moitie de l'offre chez Earn2Trade. */}
-          {bonus && (
-            <p className="mb-2 rounded-lg bg-accent-hover px-3 py-1.5 text-center text-xs font-bold uppercase tracking-wide text-white">
-              {bonus}
-            </p>
-          )}
-          {hasCode ? (
-            <div className="flex items-center gap-2">
-              <code className="flex-1 px-3 py-2 bg-bg-elevated border border-dashed border-border-hover rounded-lg text-accent font-mono text-sm text-center truncate">
-                {firm.discount_code}
-              </code>
-              <CopyCodeButton code={firm.discount_code as string} label={{ copy: t.copy, copied: t.copied }} firmSlug={firm.slug} placement="deals_carte" />
-            </div>
-          ) : (
-            <div className="flex items-center justify-center gap-2 px-3 py-2 bg-bg-elevated/60 border border-border rounded-lg">
-              <ExternalLink className="w-3.5 h-3.5 text-text-secondary" />
-              <span className="text-text-secondary text-xs">{t.noCode}</span>
-            </div>
-          )}
-        </div>
-      )}
+      <div>
+        <CouponBlock firm={firm} t={t} locale={locale} placement="deals_carte" />
+        {/* Le bonus accompagne le code : le pourcentage seul taisait la
+            moitie de l'offre chez Earn2Trade. */}
+        {bonus && <div className="mt-2"><BonusPill text={`+ ${bonus}`} /></div>}
+      </div>
 
-      <div className="p-5 mt-auto">
-        {hasOutbound ? (
+      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+        <PrixDes firm={firm} t={t} />
+        <Expiry firm={firm} t={t} locale={locale} />
+      </div>
+
+      <div className="mt-auto grid grid-cols-[minmax(0,1fr)_auto] gap-2">
+        {aSortie(firm) ? (
+          <>
+            <a
+              href={buildAffiliateUrl(firm.slug, { placement: 'deals-grid', locale })}
+              target="_blank"
+              rel="noopener noreferrer sponsored"
+              className={BTN_ACHAT}
+            >
+              {fill(t.getDeal, { pct: pct(p, locale) })}
+              <ArrowUpRight className="h-4 w-4" aria-hidden />
+            </a>
+            <Link href={internalUrl} className={BTN_SECONDAIRE}>{t.sheet}</Link>
+          </>
+        ) : (
+          <Link href={internalUrl} className={`${BTN_SECONDAIRE} col-span-2`}>{t.details}</Link>
+        )}
+      </div>
+    </article>
+  );
+}
+
+// =============================================================================
+// TOUTES LES FIRMES — liste compacte des firmes sans offre en cours
+// =============================================================================
+
+function FirmRow({ firm, t, locale }: { firm: PropFirm; t: T; locale: string }) {
+  const internalUrl = `${locale === 'en' ? '' : `/${locale}`}/prop-firm/${firm.slug}`;
+  const split = partage(firm);
+  return (
+    <li className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2 bg-bg-elevated px-4 py-3 sm:grid-cols-[minmax(0,2.2fr)_1fr_1fr_1fr_8.5rem] dark:bg-bg-base">
+      <Link href={internalUrl} className="flex min-w-0 items-center gap-3">
+        <LogoTile firm={firm} size={36} />
+        <span className="truncate text-sm font-semibold text-text-primary hover:underline">{firm.name}</span>
+      </Link>
+
+      {/* Mobile : les trois valeurs sur une ligne sous le nom */}
+      <div className="col-span-2 row-start-2 flex flex-wrap gap-x-4 gap-y-1 text-[12.5px] text-text-muted sm:hidden">
+        <span>{t.colPrice} <b className="font-mono font-semibold tabular-nums text-text-primary">{firm.min_price ? prix(firm.min_price) : '—'}</b></span>
+        <span>{t.colSplit} <b className="font-mono font-semibold tabular-nums text-accent">{split ?? '—'}</b></span>
+        <Rating value={firm.trustpilot_rating} />
+      </div>
+
+      <span className="hidden font-mono text-sm tabular-nums text-text-primary sm:block">
+        {firm.min_price ? prix(firm.min_price) : '—'}
+      </span>
+      <span className="hidden font-mono text-sm font-semibold tabular-nums text-accent sm:block">{split ?? '—'}</span>
+      <span className="hidden text-sm sm:block"><Rating value={firm.trustpilot_rating} /></span>
+
+      <div className="col-start-2 row-start-1 sm:col-start-auto sm:row-start-auto">
+        {aSortie(firm) ? (
           <a
-            href={visitUrl as string}
+            href={buildAffiliateUrl(firm.slug, { placement: 'deals-all', locale })}
             target="_blank"
-            rel="noopener noreferrer"
-            className={`flex items-center justify-center gap-2 w-full py-3 rounded-xl font-medium transition-colors ${
-              hasAff && hasDiscount
-                ? 'bg-accent-hover hover:brightness-110 text-white'
-                : 'bg-dark-600 hover:bg-dark-500 text-white'
-            }`}
+            rel="noopener noreferrer sponsored"
+            className={`${BTN_SECONDAIRE_BASE} min-h-11 px-3 text-[13px] sm:min-h-9 sm:w-full`}
           >
-            {t.visit} <ExternalLink className="w-4 h-4" />
+            {t.seeOffer}
           </a>
         ) : (
-          <Link
-            href={internalUrl}
-            className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-medium bg-dark-600 hover:bg-dark-500 text-white transition-colors"
-          >
+          <Link href={internalUrl} className={`${BTN_SECONDAIRE_BASE} min-h-11 px-3 text-[13px] sm:min-h-9 sm:w-full`}>
             {t.details}
           </Link>
         )}
       </div>
-    </div>
+    </li>
   );
 }
 
@@ -551,11 +684,15 @@ function DealCard({ firm, t, locale }: { firm: PropFirm; t: Record<string, strin
 // DEALS GRID — every listed firm, deals first, no firm hidden
 // =============================================================================
 
+type Tri = 'remise' | 'prix' | 'note';
+
 export function DealsGrid() {
   const pathname = usePathname();
+  const locale = getLocaleFromPath(pathname);
   // Repli sur l'anglais : plusieurs cles n'existent qu'en en/fr, elles
   // s'affichaient vides en de/es/pt/ar/hi (7/10/2026).
-  const t = { ...translations.en, ...translations[getLocaleFromPath(pathname)] };
+  const t = { ...translations.en, ...translations[locale] };
+  const href = (p: string) => (locale === 'en' ? p : `/${locale}${p}`);
 
   const [firms, setFirms] = useState<PropFirm[]>([]);
   const [loading, setLoading] = useState(true);
@@ -565,20 +702,19 @@ export function DealsGrid() {
   // reglages suffisent a la rendre utilisable, et ce sont ceux de /compare,
   // pour que le visiteur ne reapprenne rien.
   const [recherche, setRecherche] = useState('');
-  const [tri, setTri] = useState<'remise' | 'prix' | 'note'>('remise');
+  const [tri, setTri] = useState<Tri>('remise');
   const [avecCodeSeulement, setAvecCodeSeulement] = useState(false);
   // Le reste du catalogue arrive par paquets : sinon la page defile sans fin.
   const [montrees, setMontrees] = useState(12);
 
   const fetchFirms = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const supabase = createClientComponentClient();
       const { data, error: err } = await supabase
         .from('prop_firms')
-        .select(
-          'id, slug, name, logo_url, trustpilot_rating, trustpilot_reviews, min_price, max_profit_split, discount_code, discount_percent, affiliate_url, website_url, priority_tier, trust_status, listing_status'
-        )
+        .select(COLONNES)
         .eq('listing_status', 'listed');
 
       if (err) {
@@ -588,7 +724,7 @@ export function DealsGrid() {
       // L'offre d'une firme qui a une fiche vient de son tableur, pas de la
       // base : c'est elle qui porte la campagne datee, et elle expire toute
       // seule. Les autres firmes ressortent inchangees.
-      setFirms(appliquerOffresDesFiches(data || []).sort(dealsSort));
+      setFirms(appliquerOffresDesFiches((data || []) as PropFirm[]).sort(dealsSort));
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to load deals');
     } finally {
@@ -613,128 +749,165 @@ export function DealsGrid() {
     return liste;   // deja trie par dealsSort : remise et partenaires d'abord
   };
 
+  const avecOffre = firms.filter(f => remiseActive(f));
+
+  // Offre du jour : la plus forte remise parmi les firmes qu'on peut ouvrir.
+  // A egalite, l'ordre de dealsSort (partenaires, top 10) departage.
+  const offreDuJour = avecOffre
+    .filter(aSortie)
+    .reduce<PropFirm | null>(
+      (best, f) => (!best || (f.discount_percent ?? 0) > (best.discount_percent ?? 0) ? f : best),
+      null
+    );
+
   const dealFirms = trier(
-    firms.filter(f => (f.discount_percent ?? 0) > 0)
-      .filter(f => !avecCodeSeulement || (f.discount_code && f.discount_code.trim()))
+    avecOffre
+      .filter(f => !avecCodeSeulement || aCode(f))
       .filter(correspond)
   );
   const remainingFirms = trier(
-    firms.filter(f => (f.discount_percent ?? 0) === 0 || f.discount_percent == null)
+    firms.filter(f => !remiseActive(f))
       .filter(() => !avecCodeSeulement)
       .filter(correspond)
   );
 
+  const ongletsTri: { value: Tri; label: string }[] = [
+    { value: 'remise', label: t.sortDiscount },
+    { value: 'prix', label: t.sortPrice },
+    { value: 'note', label: t.sortRating },
+  ];
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-16">
-        <Sparkles className="w-5 h-5 text-accent animate-pulse mr-2" />
-        <span className="text-text-secondary">{t.loading}</span>
+      <div aria-busy="true" aria-live="polite">
+        <span className="sr-only">{t.loading}</span>
+        <div className={`${CARTE} mb-6 h-56 animate-pulse`} />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {[0, 1, 2].map(i => <div key={i} className={`${CARTE} h-72 animate-pulse`} />)}
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="text-center py-12 text-text-secondary">
-        Couldn’t load deals right now. Refresh the page or come back in a minute.
+      <div className={`${CARTE} mx-auto max-w-lg p-8 text-center`} role="alert">
+        <p className="font-display text-lg font-extrabold text-text-primary">{t.errorTitle}</p>
+        <p className="mt-1 text-small text-text-secondary">{t.errorBody}</p>
+        <button
+          type="button"
+          onClick={fetchFirms}
+          className={`${BTN_SECONDAIRE} mx-auto mt-5 inline-flex gap-1.5`}
+        >
+          <RotateCcw className="h-4 w-4" aria-hidden />
+          {t.retry}
+        </button>
       </div>
     );
   }
 
   return (
     <>
+      {offreDuJour && <DealOfDay firm={offreDuJour} t={t} locale={locale} />}
+
       {/* Barre de commandes : chercher, trier, filtrer. Les memes gestes que
           sur /compare, pour que le visiteur ne reapprenne rien. */}
-      <div className="mb-6 flex flex-wrap items-center gap-2 rounded-2xl border border-border/50 bg-dark-700/40 p-3">
-        <div className="relative min-w-[12rem] flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
-          <input
-            value={recherche}
-            onChange={e => { setRecherche(e.target.value); setMontrees(12); }}
-            placeholder={t.search}
-            aria-label={t.search}
-            className="min-h-11 w-full rounded-xl border border-border bg-bg-base py-2 pl-9 pr-3 text-sm text-text-primary placeholder:text-text-muted"
-          />
+      <div className="mb-5 flex flex-col gap-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="relative min-w-[12rem] flex-1 sm:max-w-sm">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" aria-hidden />
+            <input
+              type="search"
+              value={recherche}
+              onChange={e => { setRecherche(e.target.value); setMontrees(12); }}
+              placeholder={t.search}
+              aria-label={t.search}
+              className="min-h-11 w-full rounded-xl border border-border-hover bg-bg-elevated py-2 pl-9 pr-3 text-sm text-text-primary placeholder:text-text-muted focus:border-text-primary focus:outline-none dark:bg-transparent"
+            />
+          </div>
+          <button
+            type="button"
+            onClick={() => { setAvecCodeSeulement(v => !v); setMontrees(12); }}
+            aria-pressed={avecCodeSeulement}
+            className={`min-h-11 rounded-full border px-4 text-[13px] transition-colors ${
+              avecCodeSeulement
+                ? 'border-text-primary bg-text-primary font-semibold text-bg-elevated dark:border-accent dark:bg-accent/15 dark:text-accent'
+                : 'border-border-hover bg-bg-elevated text-text-secondary hover:border-text-primary hover:text-text-primary dark:bg-transparent'
+            }`}
+          >
+            {t.codeOnly}
+          </button>
         </div>
 
-        <select
-          value={tri}
-          onChange={e => setTri(e.target.value as 'remise' | 'prix' | 'note')}
-          aria-label={t.sortDiscount}
-          className="min-h-11 rounded-xl border border-border bg-bg-base px-3 text-sm text-text-primary"
-        >
-          <option value="remise">{t.sortDiscount}</option>
-          <option value="prix">{t.sortPrice}</option>
-          <option value="note">{t.sortRating}</option>
-        </select>
-
-        <button
-          type="button"
-          onClick={() => { setAvecCodeSeulement(v => !v); setMontrees(12); }}
-          aria-pressed={avecCodeSeulement}
-          className={`min-h-11 rounded-xl border px-4 text-sm font-medium transition-colors ${
-            avecCodeSeulement
-              ? 'border-deal/30 bg-deal-subtle text-deal'
-              : 'border-border bg-bg-base text-text-secondary hover:border-border-hover'
-          }`}
-        >
-          {t.codeOnly}
-        </button>
-
-        <span className="ml-auto pr-1 text-sm text-text-muted">
-          <span className="font-semibold text-text-primary">{dealFirms.length}</span> {t.counted}
-        </span>
+        <div className="flex items-center gap-1">
+          <div
+            role="group"
+            aria-label={t.sortLabel}
+            className="-mx-4 flex flex-1 items-center gap-1 overflow-x-auto px-4 [scrollbar-width:none] sm:mx-0 sm:px-0"
+          >
+            {ongletsTri.map(o => (
+              <button
+                key={o.value}
+                type="button"
+                onClick={() => setTri(o.value)}
+                aria-pressed={tri === o.value}
+                className={`min-h-9 flex-none whitespace-nowrap rounded-lg px-3 text-[13px] transition-colors ${
+                  tri === o.value
+                    ? 'bg-text-primary font-semibold text-bg-elevated dark:bg-accent/15 dark:text-accent'
+                    : 'text-text-secondary hover:bg-bg-elevated hover:text-text-primary'
+                }`}
+              >
+                {o.label}
+              </button>
+            ))}
+          </div>
+          <span className="ml-auto flex-none whitespace-nowrap pl-2 text-[13px] text-text-muted">
+            <span className="font-mono font-semibold tabular-nums text-text-primary">{dealFirms.length}</span> {t.counted}
+          </span>
+        </div>
       </div>
 
       {dealFirms.length > 0 ? (
-        <section className="mb-12">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center">
-              <Tag className="w-5 h-5 text-accent" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-white">{t.activeDeals}</h2>
-              <p className="text-text-secondary text-sm">{t.verifiedDiscounts}</p>
-            </div>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {dealFirms.map(f => (
-              <DealCard key={f.id} firm={f} t={t} locale={getLocaleFromPath(pathname)} />
-            ))}
-          </div>
+        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {dealFirms.map(f => (
+            <DealCard key={f.id} firm={f} t={t} locale={locale} />
+          ))}
         </section>
-      ) : (
-        <section className="mb-12 bg-dark-700/30 border border-border/50 rounded-2xl p-8 text-center">
-          <Gift className="w-10 h-10 text-text-muted mx-auto mb-3" />
-          <h3 className="text-white font-semibold mb-2">{t.noDealsYet}</h3>
-          <p className="text-text-secondary text-sm">{t.noDealsBody}</p>
+      ) : (q === '' && (
+        <section className={`${CARTE} p-8 text-center`}>
+          <Gift className="mx-auto mb-3 h-8 w-8 text-text-muted" aria-hidden />
+          <h2 className="font-display text-lg font-extrabold text-text-primary">{t.noDealsYet}</h2>
+          <p className="mt-1 text-small text-text-secondary">{t.noDealsBody}</p>
         </section>
-      )}
+      ))}
 
       {remainingFirms.length > 0 && (
-        <section className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-dark-600/50 flex items-center justify-center">
-              <ShieldCheck className="w-5 h-5 text-text-secondary" />
+        <section>
+          <h2 className="mb-1 mt-10 font-display text-xl font-extrabold tracking-tight text-text-primary">{t.allFirms}</h2>
+          <p className="mb-4 text-small text-text-secondary">{t.allFirmsSubtitle}</p>
+          <div className="overflow-hidden rounded-2xl border border-border">
+            <div className="hidden grid-cols-[minmax(0,2.2fr)_1fr_1fr_1fr_8.5rem] gap-x-3 border-b border-border bg-bg-base px-4 py-2.5 text-[10px] font-medium uppercase tracking-[0.1em] text-text-muted sm:grid dark:bg-bg-elevated">
+              <span>{t.colFirm}</span>
+              <span>{t.colPrice}</span>
+              <span>{t.colSplit}</span>
+              <span>{t.colRating}</span>
+              <span aria-hidden />
             </div>
-            <div>
-              <h2 className="text-xl font-bold text-white">{t.allFirms}</h2>
-              <p className="text-text-secondary text-sm">{t.allFirmsSubtitle}</p>
-            </div>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {remainingFirms.slice(0, montrees).map(f => (
-              <DealCard key={f.id} firm={f} t={t} locale={getLocaleFromPath(pathname)} />
-            ))}
+            <ul className="divide-y divide-border">
+              {remainingFirms.slice(0, montrees).map(f => (
+                <FirmRow key={f.id} firm={f} t={t} locale={locale} />
+              ))}
+            </ul>
           </div>
           {remainingFirms.length > montrees && (
-            <div className="mt-6 text-center">
+            <div className="mt-5 text-center">
               <button
                 type="button"
                 onClick={() => setMontrees(n => n + 12)}
-                className="min-h-11 rounded-xl border border-border bg-bg-base px-5 text-sm font-medium text-text-secondary hover:border-border-hover"
+                className={`${BTN_SECONDAIRE_BASE} mx-auto inline-flex min-h-11`}
               >
-                {t.showMore} ({remainingFirms.length - montrees})
+                {t.showMore}{' '}
+                <span className="ml-1 font-mono tabular-nums text-text-muted">({remainingFirms.length - montrees})</span>
               </button>
             </div>
           )}
@@ -742,15 +915,14 @@ export function DealsGrid() {
       )}
 
       {dealFirms.length === 0 && remainingFirms.length === 0 && (
-        <p className="py-12 text-center text-sm text-text-secondary">{t.nothing}</p>
+        <p className="py-12 text-center text-small text-text-secondary">{t.nothing}</p>
       )}
 
-      <p className="text-center text-text-muted text-xs max-w-2xl mx-auto mt-12">
+      <p className="mt-12 text-xs text-text-muted">
         {t.affiliateNotice}{' '}
-        <Link href="/how-we-make-money" className="text-accent hover:underline">
+        <Link href={href('/how-we-make-money')} className="underline underline-offset-2 hover:text-text-primary">
           {t.readMore}
         </Link>
-        .
       </p>
     </>
   );

@@ -71,9 +71,8 @@ export function CampagneRail({ campagne }: { campagne: Campagne | null }) {
   }, [campagne, fin])
 
   // Le rail reste sur /compare : c'est la page la plus visitee, et la surface
-  // qui pousse le plus fort — decompte, pastille, bouton. Les paquets de design
-  // l'y masquent au motif que l'en-tete porte deja l'offre du jour ; Sofiane
-  // prefere les deux (7/10/2026).
+  // qui pousse le plus fort. Les paquets de design l'y masquent au motif que
+  // l'en-tete porte deja l'offre du jour ; Sofiane prefere les deux (7/10/2026).
   if (!campagne || ferme || temps === null) return null
 
   const fermer = () => {

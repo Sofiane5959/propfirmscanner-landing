@@ -4,11 +4,7 @@ import { useState, useMemo } from 'react';
 import { blogPosts as postsSource } from '@/lib/blog-data';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { 
-  Clock, ArrowRight, Search, Star, BookOpen, 
-  Shield, Brain, TrendingUp, Filter, User,
-  Calendar, ChevronRight, Mail, Sparkles, Home
-} from 'lucide-react';
+import { Search, Mail, Check, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 
 // =============================================================================
 // LOCALE DETECTION & TRANSLATIONS
@@ -25,252 +21,83 @@ function getLocaleFromPath(pathname: string): Locale {
   return 'en';
 }
 
-const translations: Record<Locale, Record<string, string>> = {
-  en: {
-    // Header
-    blogTitle: 'Prop Firm',
-    blogTitleHighlight: 'Blog',
-    blogSubtitle: 'Expert guides, rule explanations, and strategies to help you get funded.',
-    searchPlaceholder: 'Search articles...',
-    // Breadcrumb
-    home: 'Home',
-    blog: 'Blog',
-    // Categories
-    all: 'All',
-    guides: 'Guides',
-    rulesDecoded: 'Rules Decoded',
-    reviews: 'Reviews',
-    psychology: 'Psychology',
-    // Sections
-    featuredArticles: 'Featured Articles',
-    latestArticles: 'Latest Articles',
-    searchResults: 'Search Results',
-    // Empty state
-    noArticlesFound: 'No articles found',
-    tryDifferentSearch: 'Try a different search term or category',
-    // Pagination
-    previous: 'Previous',
-    next: 'Next',
-    // Sidebar
-    newsletter: 'Newsletter',
-    newsletterDesc: 'Get weekly prop firm tips, deals, and strategy insights.',
-    emailPlaceholder: 'Enter your email',
-    subscribe: 'Subscribe',
-    subscribing: 'Subscribing...',
-    subscribed: 'Subscribed!',
-    popularArticles: 'Popular Articles',
-    popularTags: 'Popular Tags',
-    // CTA
-    readyToGetFunded: 'Ready to Get Funded?',
-    compareDesc: 'Compare 70+ prop firms and find your perfect match.',
-    comparePropFirms: 'Compare Prop Firms',
-    // Card
-    minRead: 'min read',
-    readMore: 'Read More',
-  },
+const en = {
+  blogTitle: 'The funded trader blog',
+  blogSubtitle: 'Rules decoded, firm reviews and methods to pass — and keep — your funded account.',
+  searchPlaceholder: 'Search an article…',
+  searchLabel: 'Search the blog',
+  all: 'All',
+  guides: 'Guides',
+  rulesDecoded: 'Rules Decoded',
+  reviews: 'Reviews',
+  psychology: 'Psychology',
+  featured: 'Featured',
+  latestArticles: 'Latest articles',
+  searchResults: 'Search results',
+  noArticlesFound: 'No articles found',
+  tryDifferentSearch: 'Try a different search term or category.',
+  previous: 'Previous',
+  next: 'Next',
+  pageLabel: 'Page',
+  newsletterTitle: 'New promo codes, before everyone else',
+  newsletterDesc: 'One email a week: verified codes, rule changes, new firms. Unsubscribe in one click.',
+  emailPlaceholder: 'you@email.com',
+  emailLabel: 'Your email address',
+  subscribe: 'Subscribe',
+  subscribing: 'Subscribing…',
+  subscribed: 'You are subscribed. See you in your inbox.',
+  readyToGetFunded: 'Ready to pick your firm?',
+  compareDesc: 'Compare rules, prices and active promo codes side by side.',
+  comparePropFirms: 'Compare prop firms',
+};
+
+type Dict = typeof en;
+
+const translations: Record<Locale, Partial<Dict>> = {
+  en,
   fr: {
-    blogTitle: 'Blog',
-    blogTitleHighlight: 'Prop Firm',
-    blogSubtitle: 'Guides experts, explications des règles et stratégies pour vous aider à être financé.',
-    searchPlaceholder: 'Rechercher des articles...',
-    home: 'Accueil',
-    blog: 'Blog',
+    blogTitle: 'Le blog des traders funded',
+    blogSubtitle: 'Règles décodées, avis de firmes et méthodes pour passer — et garder — ton compte financé.',
+    searchPlaceholder: 'Rechercher un article…',
+    searchLabel: 'Rechercher dans le blog',
     all: 'Tout',
     guides: 'Guides',
-    rulesDecoded: 'Règles Décryptées',
+    rulesDecoded: 'Règles décodées',
     reviews: 'Avis',
     psychology: 'Psychologie',
-    featuredArticles: 'Articles en Vedette',
-    latestArticles: 'Derniers Articles',
-    searchResults: 'Résultats de Recherche',
+    featured: 'À la une',
+    latestArticles: 'Derniers articles',
+    searchResults: 'Résultats de recherche',
     noArticlesFound: 'Aucun article trouvé',
-    tryDifferentSearch: 'Essayez un autre terme de recherche ou une autre catégorie',
+    tryDifferentSearch: 'Essaie un autre mot-clé ou une autre catégorie.',
     previous: 'Précédent',
     next: 'Suivant',
-    newsletter: 'Newsletter',
-    newsletterDesc: 'Recevez des conseils hebdomadaires sur les prop firms, offres et stratégies.',
-    emailPlaceholder: 'Entrez votre email',
-    subscribe: 'S\'abonner',
-    subscribing: 'Inscription...',
-    subscribed: 'Inscrit !',
-    popularArticles: 'Articles Populaires',
-    popularTags: 'Tags Populaires',
-    readyToGetFunded: 'Prêt à Être Financé ?',
-    compareDesc: 'Comparez 70+ prop firms et trouvez votre match parfait.',
-    comparePropFirms: 'Comparer les Prop Firms',
-    minRead: 'min de lecture',
-    readMore: 'Lire Plus',
+    pageLabel: 'Page',
+    newsletterTitle: 'Les nouveaux codes promo, avant tout le monde',
+    newsletterDesc: 'Un e-mail par semaine : codes vérifiés, changements de règles, nouvelles firmes. Désinscription en un clic.',
+    emailPlaceholder: 'ton@email.com',
+    emailLabel: 'Ton adresse e-mail',
+    subscribe: "S'abonner",
+    subscribing: 'Inscription…',
+    subscribed: 'C’est noté. À très vite dans ta boîte mail.',
+    readyToGetFunded: 'Prêt à choisir ta firme ?',
+    compareDesc: 'Compare les règles, les prix et les codes promo actifs, côte à côte.',
+    comparePropFirms: 'Comparer les prop firms',
   },
-  de: {
-    blogTitle: 'Prop Firm',
-    blogTitleHighlight: 'Blog',
-    blogSubtitle: 'Experten-Guides, Regelerklärungen und Strategien, um finanziert zu werden.',
-    searchPlaceholder: 'Artikel suchen...',
-    home: 'Startseite',
-    blog: 'Blog',
-    all: 'Alle',
-    guides: 'Guides',
-    rulesDecoded: 'Regeln Erklärt',
-    reviews: 'Bewertungen',
-    psychology: 'Psychologie',
-    featuredArticles: 'Empfohlene Artikel',
-    latestArticles: 'Neueste Artikel',
-    searchResults: 'Suchergebnisse',
-    noArticlesFound: 'Keine Artikel gefunden',
-    tryDifferentSearch: 'Versuchen Sie einen anderen Suchbegriff oder Kategorie',
-    previous: 'Zurück',
-    next: 'Weiter',
-    newsletter: 'Newsletter',
-    newsletterDesc: 'Erhalten Sie wöchentlich Prop-Firm-Tipps, Angebote und Strategien.',
-    emailPlaceholder: 'E-Mail eingeben',
-    subscribe: 'Abonnieren',
-    subscribing: 'Wird abonniert...',
-    subscribed: 'Abonniert!',
-    popularArticles: 'Beliebte Artikel',
-    popularTags: 'Beliebte Tags',
-    readyToGetFunded: 'Bereit für Finanzierung?',
-    compareDesc: 'Vergleichen Sie 70+ Prop Firms und finden Sie Ihren perfekten Match.',
-    comparePropFirms: 'Prop Firms Vergleichen',
-    minRead: 'Min. Lesezeit',
-    readMore: 'Mehr Lesen',
-  },
-  es: {
-    blogTitle: 'Blog',
-    blogTitleHighlight: 'Prop Firm',
-    blogSubtitle: 'Guías expertas, explicaciones de reglas y estrategias para ayudarte a ser financiado.',
-    searchPlaceholder: 'Buscar artículos...',
-    home: 'Inicio',
-    blog: 'Blog',
-    all: 'Todo',
-    guides: 'Guías',
-    rulesDecoded: 'Reglas Decodificadas',
-    reviews: 'Reseñas',
-    psychology: 'Psicología',
-    featuredArticles: 'Artículos Destacados',
-    latestArticles: 'Últimos Artículos',
-    searchResults: 'Resultados de Búsqueda',
-    noArticlesFound: 'No se encontraron artículos',
-    tryDifferentSearch: 'Intenta con otro término de búsqueda o categoría',
-    previous: 'Anterior',
-    next: 'Siguiente',
-    newsletter: 'Newsletter',
-    newsletterDesc: 'Recibe consejos semanales sobre prop firms, ofertas y estrategias.',
-    emailPlaceholder: 'Ingresa tu email',
-    subscribe: 'Suscribirse',
-    subscribing: 'Suscribiendo...',
-    subscribed: '¡Suscrito!',
-    popularArticles: 'Artículos Populares',
-    popularTags: 'Tags Populares',
-    readyToGetFunded: '¿Listo para ser Financiado?',
-    compareDesc: 'Compara 70+ prop firms y encuentra tu match perfecto.',
-    comparePropFirms: 'Comparar Prop Firms',
-    minRead: 'min de lectura',
-    readMore: 'Leer Más',
-  },
-  pt: {
-    blogTitle: 'Blog',
-    blogTitleHighlight: 'Prop Firm',
-    blogSubtitle: 'Guias especializados, explicações de regras e estratégias para ajudá-lo a ser financiado.',
-    searchPlaceholder: 'Pesquisar artigos...',
-    home: 'Início',
-    blog: 'Blog',
-    all: 'Todos',
-    guides: 'Guias',
-    rulesDecoded: 'Regras Decodificadas',
-    reviews: 'Avaliações',
-    psychology: 'Psicologia',
-    featuredArticles: 'Artigos em Destaque',
-    latestArticles: 'Últimos Artigos',
-    searchResults: 'Resultados da Pesquisa',
-    noArticlesFound: 'Nenhum artigo encontrado',
-    tryDifferentSearch: 'Tente um termo de pesquisa ou categoria diferente',
-    previous: 'Anterior',
-    next: 'Próximo',
-    newsletter: 'Newsletter',
-    newsletterDesc: 'Receba dicas semanais sobre prop firms, ofertas e estratégias.',
-    emailPlaceholder: 'Digite seu email',
-    subscribe: 'Inscrever-se',
-    subscribing: 'Inscrevendo...',
-    subscribed: 'Inscrito!',
-    popularArticles: 'Artigos Populares',
-    popularTags: 'Tags Populares',
-    readyToGetFunded: 'Pronto para ser Financiado?',
-    compareDesc: 'Compare 70+ prop firms e encontre seu match perfeito.',
-    comparePropFirms: 'Comparar Prop Firms',
-    minRead: 'min de leitura',
-    readMore: 'Ler Mais',
-  },
-  ar: {
-    blogTitle: 'مدونة',
-    blogTitleHighlight: 'شركات التداول',
-    blogSubtitle: 'أدلة خبراء وشرح القواعد واستراتيجيات لمساعدتك في الحصول على التمويل.',
-    searchPlaceholder: 'البحث في المقالات...',
-    home: 'الرئيسية',
-    blog: 'المدونة',
-    all: 'الكل',
-    guides: 'الأدلة',
-    rulesDecoded: 'القواعد مفسرة',
-    reviews: 'المراجعات',
-    psychology: 'علم النفس',
-    featuredArticles: 'مقالات مميزة',
-    latestArticles: 'أحدث المقالات',
-    searchResults: 'نتائج البحث',
-    noArticlesFound: 'لم يتم العثور على مقالات',
-    tryDifferentSearch: 'جرب مصطلح بحث أو فئة مختلفة',
-    previous: 'السابق',
-    next: 'التالي',
-    newsletter: 'النشرة الإخبارية',
-    newsletterDesc: 'احصل على نصائح أسبوعية حول شركات التداول والعروض والاستراتيجيات.',
-    emailPlaceholder: 'أدخل بريدك الإلكتروني',
-    subscribe: 'اشترك',
-    subscribing: 'جاري الاشتراك...',
-    subscribed: 'تم الاشتراك!',
-    popularArticles: 'المقالات الشائعة',
-    popularTags: 'العلامات الشائعة',
-    readyToGetFunded: 'هل أنت مستعد للتمويل؟',
-    compareDesc: 'قارن أكثر من 70 شركة تداول وابحث عن الأنسب لك.',
-    comparePropFirms: 'مقارنة شركات التداول',
-    minRead: 'دقيقة قراءة',
-    readMore: 'اقرأ المزيد',
-  },
-  hi: {
-    blogTitle: 'प्रॉप फर्म',
-    blogTitleHighlight: 'ब्लॉग',
-    blogSubtitle: 'विशेषज्ञ गाइड्स, नियम स्पष्टीकरण और फंडेड होने में मदद के लिए रणनीतियां।',
-    searchPlaceholder: 'आर्टिकल्स खोजें...',
-    home: 'होम',
-    blog: 'ब्लॉग',
-    all: 'सभी',
-    guides: 'गाइड्स',
-    rulesDecoded: 'नियम समझाए गए',
-    reviews: 'रिव्यूज',
-    psychology: 'मनोविज्ञान',
-    featuredArticles: 'फीचर्ड आर्टिकल्स',
-    latestArticles: 'नवीनतम आर्टिकल्स',
-    searchResults: 'खोज परिणाम',
-    noArticlesFound: 'कोई आर्टिकल नहीं मिला',
-    tryDifferentSearch: 'कोई अलग सर्च टर्म या कैटेगरी आज़माएं',
-    previous: 'पिछला',
-    next: 'अगला',
-    newsletter: 'न्यूज़लेटर',
-    newsletterDesc: 'साप्ताहिक प्रॉप फर्म टिप्स, डील्स और स्ट्रैटेजी इनसाइट्स पाएं।',
-    emailPlaceholder: 'अपना ईमेल दर्ज करें',
-    subscribe: 'सब्सक्राइब करें',
-    subscribing: 'सब्सक्राइब हो रहा है...',
-    subscribed: 'सब्सक्राइब्ड!',
-    popularArticles: 'लोकप्रिय आर्टिकल्स',
-    popularTags: 'लोकप्रिय टैग्स',
-    readyToGetFunded: 'फंडेड होने के लिए तैयार?',
-    compareDesc: '70+ प्रॉप फर्म्स की तुलना करें और अपना परफेक्ट मैच खोजें।',
-    comparePropFirms: 'प्रॉप फर्म्स की तुलना करें',
-    minRead: 'मिनट पढ़ें',
-    readMore: 'और पढ़ें',
-  },
+  // Other locales: only the category / pagination labels whose meaning did
+  // not change are kept; everything else falls back to English.
+  de: { all: 'Alle', guides: 'Guides', rulesDecoded: 'Regeln erklärt', reviews: 'Bewertungen', psychology: 'Psychologie', previous: 'Zurück', next: 'Weiter', noArticlesFound: 'Keine Artikel gefunden' },
+  es: { all: 'Todo', guides: 'Guías', rulesDecoded: 'Reglas decodificadas', reviews: 'Reseñas', psychology: 'Psicología', previous: 'Anterior', next: 'Siguiente', noArticlesFound: 'No se encontraron artículos' },
+  pt: { all: 'Todos', guides: 'Guias', rulesDecoded: 'Regras decodificadas', reviews: 'Avaliações', psychology: 'Psicologia', previous: 'Anterior', next: 'Próximo', noArticlesFound: 'Nenhum artigo encontrado' },
+  ar: { all: 'الكل', guides: 'الأدلة', rulesDecoded: 'القواعد مفسرة', reviews: 'المراجعات', psychology: 'علم النفس', previous: 'السابق', next: 'التالي', noArticlesFound: 'لم يتم العثور على مقالات' },
+  hi: { all: 'सभी', guides: 'गाइड्स', rulesDecoded: 'नियम समझाए गए', reviews: 'रिव्यूज', psychology: 'मनोविज्ञान', previous: 'पिछला', next: 'अगला', noArticlesFound: 'कोई आर्टिकल नहीं मिला' },
 };
 
 // =============================================================================
 // TYPES
 // =============================================================================
+
+type Category = 'Guides' | 'Rules Decoded' | 'Reviews' | 'Psychology';
 
 interface BlogPost {
   slug: string;
@@ -279,53 +106,16 @@ interface BlogPost {
   date: string;
   updatedDate?: string;
   readTime: string;
-  category: 'Guides' | 'Rules Decoded' | 'Reviews' | 'Psychology';
+  category: Category;
   featured: boolean;
   tags: string[];
+  index: number;
 }
-
-// =============================================================================
-// CATEGORY STYLING
-// =============================================================================
-
-const CATEGORY_COLORS: Record<string, { bg: string; gradient: string; accent: string }> = {
-  'Guides': { 
-    bg: 'bg-accent/20', 
-    gradient: 'from-accent/40 via-accent/30 to-teal-500/40',
-    accent: 'emerald'
-  },
-  'Rules Decoded': { 
-    bg: 'bg-blue-500/20', 
-    gradient: 'from-blue-600/40 via-blue-500/30 to-indigo-500/40',
-    accent: 'blue'
-  },
-  'Reviews': { 
-    bg: 'bg-purple-500/20', 
-    gradient: 'from-purple-600/40 via-purple-500/30 to-pink-500/40',
-    accent: 'purple'
-  },
-  'Psychology': { 
-    bg: 'bg-orange-500/20', 
-    gradient: 'from-orange-600/40 via-orange-500/30 to-amber-500/40',
-    accent: 'orange'
-  },
-};
-
-const CATEGORY_ICONS: Record<string, typeof BookOpen> = {
-  'Guides': BookOpen,
-  'Rules Decoded': Shield,
-  'Reviews': TrendingUp,
-  'Psychology': Brain,
-};
-
-// =============================================================================
-// BLOG DATA - Full 20 articles
-// =============================================================================
 
 // Une seule source pour la liste ET les pages d'article : lib/blog-data.ts.
 // L'ancienne liste recopiee ici avait 6 articles absents de la lib (cartes en
 // 404) et en cachait 6 autres (7/10/2026).
-const blogPosts: BlogPost[] = postsSource.map((p) => ({
+const blogPosts: BlogPost[] = postsSource.map((p, i) => ({
   slug: p.slug,
   title: p.title,
   description: p.description,
@@ -335,150 +125,169 @@ const blogPosts: BlogPost[] = postsSource.map((p) => ({
   category: p.category,
   featured: p.featured,
   tags: p.tags,
+  index: i + 1,
 }));
 
 // =============================================================================
-// HELPER: Get category translation key
+// HELPERS
 // =============================================================================
 
-function getCategoryKey(category: string): string {
-  const map: Record<string, string> = {
-    'All': 'all',
-    'Guides': 'guides',
+function getCategoryKey(category: string): keyof Dict {
+  const map: Record<string, keyof Dict> = {
+    All: 'all',
+    Guides: 'guides',
     'Rules Decoded': 'rulesDecoded',
-    'Reviews': 'reviews',
-    'Psychology': 'psychology',
+    Reviews: 'reviews',
+    Psychology: 'psychology',
   };
-  return map[category] || category.toLowerCase();
+  return map[category] || 'all';
 }
 
-// =============================================================================
-// ANIMATION STYLES
-// =============================================================================
+const MONTHS = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
 
-const animationStyles = `
-  @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+/** "January 5, 2025" / "January 2025" -> localized date; unparseable strings are returned as-is. */
+function formatPostDate(raw: string, locale: string): string {
+  const m = raw.trim().match(/^([A-Za-z]+)\s+(?:(\d{1,2}),?\s+)?(\d{4})$/);
+  if (m) {
+    const month = MONTHS.indexOf(m[1].toLowerCase());
+    if (month >= 0) {
+      const d = new Date(Date.UTC(Number(m[3]), month, m[2] ? Number(m[2]) : 1));
+      return d.toLocaleDateString(locale, m[2]
+        ? { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }
+        : { month: 'long', year: 'numeric', timeZone: 'UTC' });
+    }
   }
-  .animate-fadeInUp { animation: fadeInUp 0.6s ease-out forwards; }
-`;
+  const ts = Date.parse(raw);
+  if (!Number.isNaN(ts)) {
+    return new Date(ts).toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+  }
+  return raw;
+}
+
+/** "10 min read" -> "10 min" */
+function shortReadTime(readTime: string): string {
+  const n = readTime.match(/\d+/);
+  return n ? `${n[0]} min` : readTime;
+}
+
+const COVER_STYLES: Record<Category, string> = {
+  Guides: 'from-emerald-800 to-teal-700',
+  'Rules Decoded': 'from-amber-800 to-amber-600',
+  Reviews: 'from-sky-800 to-blue-900',
+  Psychology: 'from-violet-900 to-violet-600',
+};
+
+function coverGlyph(post: BlogPost): string {
+  switch (post.category) {
+    case 'Guides': return String(post.index).padStart(2, '0');
+    case 'Rules Decoded': return '§';
+    case 'Reviews': return '★';
+    default: return 'ψ';
+  }
+}
+
+const CARD =
+  'rounded-2xl border border-border bg-bg-elevated shadow-[0_1px_2px_rgba(28,25,23,0.05),0_10px_28px_-16px_rgba(28,25,23,0.22)] dark:bg-gradient-to-b dark:from-white/[0.035] dark:to-transparent dark:shadow-none hover:border-border-hover transition-colors';
 
 // =============================================================================
 // COMPONENTS
 // =============================================================================
 
-function Breadcrumb({ t, locale }: { t: Record<string, string>; locale: Locale }) {
+function Cover({
+  post,
+  label,
+  size = 'md',
+  className = '',
+}: {
+  post: BlogPost;
+  label?: string;
+  size?: 'sm' | 'md' | 'lg';
+  className?: string;
+}) {
+  const glyphSize =
+    size === 'sm' ? 'text-[60px] -top-2.5 -right-2' : size === 'lg' ? 'text-[140px] -top-6 -right-2.5' : 'text-[110px] -top-5 -right-2';
   return (
-    <nav className="flex items-center gap-2 text-sm mb-6">
-      <Link href={`/${locale}`} className="text-text-muted hover:text-white flex items-center gap-1 transition-colors">
-        <Home className="w-4 h-4" />
-        {t.home}
-      </Link>
-      <span className="text-text-muted">/</span>
-      <span className="text-accent">{t.blog}</span>
-    </nav>
+    <div
+      aria-hidden
+      className={`relative flex items-end overflow-hidden rounded-xl bg-gradient-to-br text-white ${COVER_STYLES[post.category]} ${
+        size === 'sm' ? 'p-2' : 'p-4'
+      } ${className}`}
+    >
+      <span className={`pointer-events-none absolute select-none font-mono font-extrabold leading-none tracking-[-0.05em] opacity-[0.13] ${glyphSize}`}>
+        {coverGlyph(post)}
+      </span>
+      {label && (
+        <span className="relative rounded-md bg-black/25 px-2 py-1 text-[11px] font-bold uppercase tracking-[0.1em]">{label}</span>
+      )}
+    </div>
   );
 }
 
-function FeaturedCard({ post, locale, t }: { post: BlogPost; locale: Locale; t: Record<string, string> }) {
-  const colors = CATEGORY_COLORS[post.category];
-  const Icon = CATEGORY_ICONS[post.category];
-  const categoryLabel = t[getCategoryKey(post.category)] || post.category;
-
+function Meta({ items }: { items: string[] }) {
   return (
-    <Link 
-      href={`/${locale}/blog/${post.slug}`}
-      className="group relative bg-bg-elevated border border-border rounded-xl overflow-hidden hover:border-border-hover transition-all duration-300"
-    >
-      {/* Gradient overlay */}
-      <div className={`absolute inset-0 bg-gradient-to-br ${colors.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
-      
-      <div className="relative p-6">
-        <div className="flex items-center gap-2 mb-3">
-          <span className={`flex items-center gap-1.5 px-2.5 py-1 ${colors.bg} rounded-full text-xs font-medium`}>
-            <Icon className="w-3 h-3" />
-            {categoryLabel}
-          </span>
-          <span className="flex items-center gap-1 text-xs text-text-muted">
-            <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
-            Featured
-          </span>
-        </div>
-        
-        <h3 className="text-lg font-bold text-white mb-2 group-hover:text-accent transition-colors line-clamp-2">
-          {post.title}
-        </h3>
-        
-        <p className="text-text-secondary text-sm mb-4 line-clamp-2">
-          {post.description}
-        </p>
-        
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3 text-xs text-text-muted">
-            <span className="flex items-center gap-1">
-              <Clock className="w-3 h-3" />
-              {post.readTime.replace('min read', t.minRead)}
-            </span>
-          </div>
-          <span className="text-accent text-sm font-medium flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-            {t.readMore} <ArrowRight className="w-4 h-4" />
-          </span>
-        </div>
-      </div>
-    </Link>
-  );
-}
-
-function ArticleCard({ post, locale, t }: { post: BlogPost; locale: Locale; t: Record<string, string> }) {
-  const colors = CATEGORY_COLORS[post.category];
-  const Icon = CATEGORY_ICONS[post.category];
-  const categoryLabel = t[getCategoryKey(post.category)] || post.category;
-
-  return (
-    <Link 
-      href={`/${locale}/blog/${post.slug}`}
-      className="group bg-bg-elevated/50 border border-border rounded-xl p-5 hover:border-border-hover hover:bg-bg-elevated transition-all duration-300"
-    >
-      <div className="flex items-center gap-2 mb-3">
-        <span className={`flex items-center gap-1.5 px-2.5 py-1 ${colors.bg} rounded-full text-xs font-medium`}>
-          <Icon className="w-3 h-3" />
-          {categoryLabel}
+    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[12.5px] text-text-muted">
+      {items.map((it, i) => (
+        <span key={i} className="flex items-center gap-2">
+          {i > 0 && <span aria-hidden>·</span>}
+          <span className={/\d/.test(it) ? 'font-mono tabular-nums' : ''}>{it}</span>
         </span>
-      </div>
-      
-      <h3 className="text-base font-semibold text-white mb-2 group-hover:text-accent transition-colors line-clamp-2">
+      ))}
+    </div>
+  );
+}
+
+function FeaturedCard({ post, href, t, locale }: { post: BlogPost; href: string; t: Dict; locale: Locale }) {
+  return (
+    <Link href={href} className={`group flex flex-col gap-3 p-3.5 ${CARD}`}>
+      <Cover post={post} size="lg" className="h-56" label={`${t[getCategoryKey(post.category)]} · ${t.featured}`} />
+      <h3 className="font-display text-[22px] font-bold leading-tight tracking-[-0.015em] text-text-primary group-hover:text-accent">
         {post.title}
       </h3>
-      
-      <p className="text-text-muted text-sm mb-3 line-clamp-2">
-        {post.description}
-      </p>
-      
-      <div className="flex items-center gap-3 text-xs text-text-muted">
-        <span className="flex items-center gap-1">
-          <Calendar className="w-3 h-3" />
-          {post.date}
-        </span>
-        <span className="flex items-center gap-1">
-          <Clock className="w-3 h-3" />
-          {post.readTime.replace('min read', t.minRead)}
-        </span>
+      <p className="text-sm leading-relaxed text-text-secondary">{post.description}</p>
+      <Meta items={[shortReadTime(post.readTime), formatPostDate(post.date, locale)]} />
+    </Link>
+  );
+}
+
+function CompactCard({ post, href }: { post: BlogPost; href: string }) {
+  return (
+    <Link href={href} className={`group flex items-center gap-3 p-3 ${CARD}`}>
+      <Cover post={post} size="sm" className="h-[68px] w-[84px] flex-none" />
+      <div className="min-w-0">
+        <h4 className="line-clamp-2 text-sm font-semibold leading-snug text-text-primary group-hover:text-accent">{post.title}</h4>
+        <div className="mt-1">
+          <Meta items={[shortReadTime(post.readTime)]} />
+        </div>
       </div>
     </Link>
   );
 }
 
-function NewsletterSignup({ t }: { t: Record<string, string> }) {
+function ArticleCard({ post, href, t, locale }: { post: BlogPost; href: string; t: Dict; locale: Locale }) {
+  return (
+    <Link href={href} className={`group flex flex-col gap-2.5 p-3 ${CARD}`}>
+      <Cover post={post} className="h-32" label={t[getCategoryKey(post.category)]} />
+      <h3 className="mt-0.5 text-[15.5px] font-semibold leading-snug tracking-[-0.01em] text-text-primary group-hover:text-accent">
+        {post.title}
+      </h3>
+      <p className="line-clamp-2 text-[13px] leading-normal text-text-secondary">{post.description}</p>
+      <div className="mt-auto pt-1">
+        <Meta items={[shortReadTime(post.readTime), formatPostDate(post.date, locale)]} />
+      </div>
+    </Link>
+  );
+}
+
+function NewsletterSignup({ t }: { t: Dict }) {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success'>('idle');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-    
+
     setStatus('loading');
-    
+
     try {
       await fetch('/api/newsletter', {
         method: 'POST',
@@ -493,93 +302,43 @@ function NewsletterSignup({ t }: { t: Record<string, string> }) {
   };
 
   return (
-    <div className="bg-gradient-to-br from-accent/10 to-blue-500/10 border border-accent/20 rounded-xl p-5">
-      <div className="flex items-center gap-2 mb-3">
-        <Mail className="w-5 h-5 text-accent" />
-        <h3 className="font-semibold text-white">{t.newsletter}</h3>
-      </div>
-      <p className="text-text-secondary text-sm mb-4">{t.newsletterDesc}</p>
-      
-      {status === 'success' ? (
-        <div className="flex items-center gap-2 text-accent text-sm">
-          <Sparkles className="w-4 h-4" />
-          {t.subscribed}
+    <section className="mt-10 grid items-center gap-5 rounded-2xl border border-accent-border bg-bg-elevated bg-gradient-to-r from-accent-subtle to-transparent p-5 sm:p-6 md:grid-cols-[1.4fr_1fr]">
+      <div className="flex gap-3">
+        <span className="hidden h-10 w-10 flex-none items-center justify-center rounded-xl bg-accent/15 text-accent sm:flex">
+          <Mail className="h-5 w-5" />
+        </span>
+        <div>
+          <h2 className="font-display text-[19px] font-bold tracking-tight text-text-primary">{t.newsletterTitle}</h2>
+          <p className="mt-1 text-[13.5px] text-text-secondary">{t.newsletterDesc}</p>
         </div>
+      </div>
+
+      {status === 'success' ? (
+        <p role="status" className="flex items-center gap-2 text-sm font-semibold text-accent">
+          <Check className="h-4 w-4" />
+          {t.subscribed}
+        </p>
       ) : (
-        <form onSubmit={handleSubmit} className="flex gap-2">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-2 sm:flex-row">
           <input
             type="email"
+            required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder={t.emailPlaceholder}
-            className="flex-1 px-3 py-2 bg-dark-700 border border-border rounded-lg text-white text-sm placeholder:text-text-muted focus:outline-none focus:border-accent"
+            aria-label={t.emailLabel}
+            className="h-11 min-w-0 flex-1 rounded-xl border border-border-hover bg-bg-elevated px-3 text-sm text-text-primary placeholder:text-text-muted focus:border-accent focus:outline-none"
           />
           <button
             type="submit"
             disabled={status === 'loading'}
-            className="px-4 py-2 bg-accent-hover hover:brightness-110 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
+            className="flex min-h-11 items-center justify-center whitespace-nowrap rounded-xl bg-accent-hover px-4 text-sm font-semibold text-on-accent shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_1px_2px_rgba(4,35,26,0.2)] hover:brightness-105 disabled:opacity-60"
           >
             {status === 'loading' ? t.subscribing : t.subscribe}
           </button>
         </form>
       )}
-    </div>
-  );
-}
-
-function PopularPosts({ posts, locale, t }: { posts: BlogPost[]; locale: Locale; t: Record<string, string> }) {
-  const popular = posts.filter(p => p.featured).slice(0, 5);
-  
-  return (
-    <div className="bg-bg-elevated/50 border border-border rounded-xl p-5">
-      <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
-        <TrendingUp className="w-4 h-4 text-accent" />
-        {t.popularArticles}
-      </h3>
-      <div className="space-y-3">
-        {popular.map((post, i) => (
-          <Link
-            key={post.slug}
-            href={`/${locale}/blog/${post.slug}`}
-            className="flex items-start gap-3 group"
-          >
-            <span className="text-accent font-bold text-sm mt-0.5">0{i + 1}</span>
-            <span className="text-text-secondary text-sm group-hover:text-white transition-colors line-clamp-2">
-              {post.title}
-            </span>
-          </Link>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function TagsCloud({ posts, t }: { posts: BlogPost[]; t: Record<string, string> }) {
-  const allTags = posts.flatMap(p => p.tags);
-  const tagCounts = allTags.reduce((acc, tag) => {
-    acc[tag] = (acc[tag] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-  
-  const topTags = Object.entries(tagCounts)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 12)
-    .map(([tag]) => tag);
-
-  return (
-    <div className="bg-bg-elevated/50 border border-border rounded-xl p-5">
-      <h3 className="font-semibold text-white mb-4">{t.popularTags}</h3>
-      <div className="flex flex-wrap gap-2">
-        {topTags.map(tag => (
-          <span
-            key={tag}
-            className="px-3 py-1 bg-dark-700 hover:bg-dark-600 text-text-secondary hover:text-white text-xs rounded-full transition-colors cursor-pointer"
-          >
-            #{tag}
-          </span>
-        ))}
-      </div>
-    </div>
+    </section>
   );
 }
 
@@ -590,8 +349,9 @@ function TagsCloud({ posts, t }: { posts: BlogPost[]; t: Record<string, string> 
 export default function BlogPage() {
   const pathname = usePathname();
   const locale = getLocaleFromPath(pathname);
-  const t = translations[locale];
-  
+  const t: Dict = { ...en, ...translations[locale] };
+  const href = (p: string) => (locale === 'en' ? p : `/${locale}${p}`);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
@@ -602,7 +362,7 @@ export default function BlogPage() {
   // Category counts
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = { All: blogPosts.length };
-    blogPosts.forEach(post => {
+    blogPosts.forEach((post) => {
       counts[post.category] = (counts[post.category] || 0) + 1;
     });
     return counts;
@@ -610,27 +370,24 @@ export default function BlogPage() {
 
   // Filter posts
   const filteredPosts = useMemo(() => {
-    return blogPosts.filter(post => {
-      const matchesSearch = searchQuery === '' || 
+    return blogPosts.filter((post) => {
+      const matchesSearch =
+        searchQuery === '' ||
         post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         post.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        post.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-      
+        post.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+
       const matchesCategory = activeCategory === 'All' || post.category === activeCategory;
-      
+
       return matchesSearch && matchesCategory;
     });
   }, [searchQuery, activeCategory]);
 
   // Featured posts (only on first page, no search, all category)
-  const featuredPosts = useMemo(() => {
-    return blogPosts.filter(p => p.featured);
-  }, []);
+  const featuredPosts = useMemo(() => blogPosts.filter((p) => p.featured), []);
 
   // Regular posts (non-featured for pagination)
-  const regularPosts = useMemo(() => {
-    return blogPosts.filter(p => !p.featured);
-  }, []);
+  const regularPosts = useMemo(() => blogPosts.filter((p) => !p.featured), []);
 
   // Paginated posts
   const paginatedPosts = useMemo(() => {
@@ -640,195 +397,176 @@ export default function BlogPage() {
 
   const totalPages = Math.ceil(regularPosts.length / postsPerPage);
 
+  const showFeatured = featuredPosts.length > 0 && activeCategory === 'All' && !searchQuery && currentPage === 1;
+  const [mainFeatured, ...sideFeatured] = featuredPosts;
+  const listed = searchQuery || activeCategory !== 'All' ? filteredPosts : paginatedPosts;
+
+  const sectionTitle = searchQuery
+    ? t.searchResults
+    : activeCategory === 'All'
+      ? t.latestArticles
+      : t[getCategoryKey(activeCategory)];
+  const sectionCount = searchQuery || activeCategory !== 'All' ? filteredPosts.length : regularPosts.length;
+
+  const chipBase = 'inline-flex min-h-9 items-center gap-1.5 rounded-full border px-3.5 text-[13px] transition-colors';
+  const chipOn =
+    'border-text-primary bg-text-primary font-semibold text-bg-elevated dark:border-accent dark:bg-accent/15 dark:text-accent';
+  const chipOff =
+    'border-border-hover bg-bg-elevated text-text-secondary hover:border-text-primary hover:text-text-primary dark:bg-transparent';
+  const pageBtn =
+    'inline-flex min-h-11 items-center justify-center gap-1 rounded-xl border border-border-hover bg-bg-elevated px-3.5 text-sm font-semibold text-text-primary hover:border-text-primary disabled:cursor-not-allowed disabled:opacity-40 dark:bg-transparent';
+
   return (
-    <>
-      {/* Inject animation styles */}
-      <style dangerouslySetInnerHTML={{ __html: animationStyles }} />
-      
-      <div className="min-h-screen bg-bg-base">
-        {/* Hero Header */}
-        <header className="relative overflow-hidden bg-gradient-to-b from-bg-elevated via-bg-elevated to-bg-base border-b border-border">
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl transform -translate-y-1/2" />
-            <div className="absolute top-1/2 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl transform -translate-y-1/2" />
-          </div>
+    <div className="min-h-screen bg-bg-base pb-16">
+      {/* Header */}
+      <section className="px-4 pb-3 pt-5">
+        <div className="mx-auto max-w-7xl">
+          <h1 className="font-display text-[28px] font-extrabold leading-9 tracking-tight text-text-primary sm:text-h2">
+            {t.blogTitle}
+          </h1>
+          <p className="mt-1 text-small text-text-secondary">{t.blogSubtitle}</p>
 
-          <div className="relative z-10 max-w-6xl mx-auto px-4 pt-6 pb-12">
-            {/* Breadcrumb */}
-            <Breadcrumb t={t} locale={locale} />
-            
-            <div className="text-center">
-              <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-                {t.blogTitle} <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-blue-400">{t.blogTitleHighlight}</span>
-              </h1>
-              <p className="text-xl text-text-secondary max-w-2xl mx-auto mb-8">
-                {t.blogSubtitle}
-              </p>
-
-              {/* Search Bar */}
-              <div className="max-w-xl mx-auto">
-                <div className="relative">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => {
-                      setSearchQuery(e.target.value);
+          {/* Chips + search */}
+          <div className="mt-4 flex flex-col gap-3 md:flex-row md:items-center">
+            <div className="flex flex-wrap gap-2" role="group">
+              {categories.map((cat) => {
+                const active = activeCategory === cat;
+                return (
+                  <button
+                    key={cat}
+                    type="button"
+                    aria-pressed={active}
+                    onClick={() => {
+                      setActiveCategory(cat);
                       setCurrentPage(1);
                     }}
-                    placeholder={t.searchPlaceholder}
-                    className="w-full pl-12 pr-4 py-3.5 bg-bg-elevated border border-border rounded-xl text-white placeholder-text-muted focus:outline-none focus:border-accent transition-colors"
-                  />
-                </div>
-              </div>
+                    className={`${chipBase} ${active ? chipOn : chipOff}`}
+                  >
+                    {t[getCategoryKey(cat)]}
+                    <span className="font-mono text-[11px] tabular-nums opacity-75">{categoryCounts[cat] || 0}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <div className="relative w-full md:ml-auto md:w-64">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
+              <input
+                type="search"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setCurrentPage(1);
+                }}
+                placeholder={t.searchPlaceholder}
+                aria-label={t.searchLabel}
+                className="h-11 w-full rounded-full border border-border-hover bg-bg-elevated pl-9 pr-4 text-sm text-text-primary placeholder:text-text-muted focus:border-accent focus:outline-none md:h-9 dark:bg-transparent"
+              />
             </div>
           </div>
-        </header>
+        </div>
+      </section>
 
-        {/* Main Content */}
-        <main className="max-w-6xl mx-auto px-4 py-10">
-          {/* Categories with Counts */}
-          <div className="flex flex-wrap gap-2 mb-10">
-            {categories.map((cat) => {
-              const Icon = cat === 'All' ? Filter : CATEGORY_ICONS[cat];
-              const catLabel = t[getCategoryKey(cat)] || cat;
-              return (
-                <button
-                  key={cat}
-                  onClick={() => {
-                    setActiveCategory(cat);
-                    setCurrentPage(1);
-                  }}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                    activeCategory === cat
-                      ? 'bg-accent-hover text-white shadow-lg shadow-emerald-500/25'
-                      : 'bg-dark-700 text-text-secondary hover:bg-dark-600 hover:text-white'
-                  }`}
-                >
-                  {Icon && <Icon className="w-4 h-4" />}
-                  {catLabel}
-                  <span className={`px-1.5 py-0.5 rounded-full text-xs ${
-                    activeCategory === cat
-                      ? 'bg-accent-hover text-white'
-                      : 'bg-dark-600 text-text-secondary'
-                  }`}>
-                    {categoryCounts[cat] || 0}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="flex flex-col lg:flex-row gap-8">
-            {/* Main Content */}
-            <div className="flex-1">
-              {/* Featured Posts */}
-              {featuredPosts.length > 0 && activeCategory === 'All' && !searchQuery && currentPage === 1 && (
-                <section className="mb-12">
-                  <div className="flex items-center gap-2 mb-6">
-                    <Star className="w-5 h-5 text-yellow-400" />
-                    <h2 className="text-xl font-bold text-white">{t.featuredArticles}</h2>
-                  </div>
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {featuredPosts.map((post) => (
-                      <FeaturedCard key={post.slug} post={post} locale={locale} t={t} />
-                    ))}
-                  </div>
-                </section>
+      <main className="px-4">
+        <div className="mx-auto max-w-7xl">
+          {/* Featured */}
+          {showFeatured && mainFeatured && (
+            <section className="mt-4 grid gap-4 lg:grid-cols-[1.6fr_1fr]" aria-label={t.featured}>
+              <FeaturedCard post={mainFeatured} href={href(`/blog/${mainFeatured.slug}`)} t={t} locale={locale} />
+              {sideFeatured.length > 0 && (
+                <div className="flex flex-col gap-3">
+                  {sideFeatured.slice(0, 3).map((post) => (
+                    <CompactCard key={post.slug} post={post} href={href(`/blog/${post.slug}`)} />
+                  ))}
+                </div>
               )}
+            </section>
+          )}
 
-              {/* All/Filtered Posts */}
-              <section>
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-white">
-                    {searchQuery 
-                      ? `${t.searchResults} (${filteredPosts.length})`
-                      : activeCategory === 'All' 
-                        ? `${t.latestArticles} (${regularPosts.length})` 
-                        : `${t[getCategoryKey(activeCategory)] || activeCategory} (${filteredPosts.length})`
-                    }
-                  </h2>
+          {/* Latest / filtered */}
+          <section>
+            <h2 className="mb-4 mt-10 flex items-baseline gap-2 font-display text-xl font-extrabold tracking-tight text-text-primary">
+              {sectionTitle}
+              <span className="font-mono text-sm font-semibold tabular-nums text-text-muted">{sectionCount}</span>
+            </h2>
+
+            {filteredPosts.length > 0 ? (
+              <>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {listed.map((post) => (
+                    <ArticleCard key={post.slug} post={post} href={href(`/blog/${post.slug}`)} t={t} locale={locale} />
+                  ))}
                 </div>
 
-                {filteredPosts.length > 0 ? (
-                  <>
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {(searchQuery || activeCategory !== 'All' ? filteredPosts : paginatedPosts).map((post) => (
-                        <ArticleCard key={post.slug} post={post} locale={locale} t={t} />
+                {/* Pagination */}
+                {!searchQuery && activeCategory === 'All' && totalPages > 1 && (
+                  <nav className="mt-8 flex items-center justify-center gap-2" aria-label="Pagination">
+                    <button
+                      type="button"
+                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                      className={pageBtn}
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                      <span className="hidden sm:inline">{t.previous}</span>
+                    </button>
+                    <div className="flex gap-1">
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                        <button
+                          key={page}
+                          type="button"
+                          onClick={() => setCurrentPage(page)}
+                          aria-current={currentPage === page ? 'page' : undefined}
+                          aria-label={`${t.pageLabel} ${page}`}
+                          className={`h-11 w-11 rounded-xl font-mono text-sm tabular-nums transition-colors ${
+                            currentPage === page
+                              ? 'bg-text-primary font-semibold text-bg-elevated dark:bg-accent/15 dark:text-accent'
+                              : 'text-text-secondary hover:text-text-primary'
+                          }`}
+                        >
+                          {page}
+                        </button>
                       ))}
                     </div>
-                    
-                    {/* Pagination */}
-                    {!searchQuery && activeCategory === 'All' && totalPages > 1 && (
-                      <div className="flex justify-center items-center gap-2 mt-10">
-                        <button
-                          onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                          disabled={currentPage === 1}
-                          className="px-4 py-2 bg-dark-700 text-text-secondary rounded-lg hover:bg-dark-600 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                        >
-                          {t.previous}
-                        </button>
-                        <div className="flex gap-1">
-                          {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                            <button
-                              key={page}
-                              onClick={() => setCurrentPage(page)}
-                              className={`w-10 h-10 rounded-lg font-medium transition-colors ${
-                                currentPage === page
-                                  ? 'bg-accent-hover text-white'
-                                  : 'bg-dark-700 text-text-secondary hover:bg-dark-600 hover:text-white'
-                              }`}
-                            >
-                              {page}
-                            </button>
-                          ))}
-                        </div>
-                        <button
-                          onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                          disabled={currentPage === totalPages}
-                          className="px-4 py-2 bg-dark-700 text-text-secondary rounded-lg hover:bg-dark-600 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                        >
-                          {t.next}
-                        </button>
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <div className="text-center py-16">
-                    <div className="w-16 h-16 bg-dark-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Search className="w-8 h-8 text-text-muted" />
-                    </div>
-                    <h3 className="text-white font-medium mb-2">{t.noArticlesFound}</h3>
-                    <p className="text-text-muted text-sm">{t.tryDifferentSearch}</p>
-                  </div>
+                    <button
+                      type="button"
+                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                      disabled={currentPage === totalPages}
+                      className={pageBtn}
+                    >
+                      <span className="hidden sm:inline">{t.next}</span>
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                  </nav>
                 )}
-              </section>
-            </div>
-
-            {/* Sidebar */}
-            <aside className="lg:w-80 flex-shrink-0 space-y-6">
-              <NewsletterSignup t={t} />
-              <PopularPosts posts={blogPosts} locale={locale} t={t} />
-              <TagsCloud posts={blogPosts} t={t} />
-              
-              {/* CTA Card */}
-              <div className="bg-gradient-to-br from-accent/20 to-blue-500/20 border border-accent/30 rounded-xl p-5">
-                <h3 className="font-semibold text-white mb-2">{t.readyToGetFunded}</h3>
-                <p className="text-text-secondary text-sm mb-4">
-                  {t.compareDesc}
-                </p>
-                <Link
-                  href={`/${locale}/compare`}
-                  className="flex items-center justify-center gap-2 w-full py-2.5 bg-accent-hover hover:brightness-110 text-white text-sm font-medium rounded-lg transition-colors"
-                >
-                  {t.comparePropFirms}
-                  <ChevronRight className="w-4 h-4" />
-                </Link>
+              </>
+            ) : (
+              <div className={`px-5 py-14 text-center ${CARD}`}>
+                <Search className="mx-auto mb-3 h-8 w-8 text-text-muted" />
+                <h3 className="font-semibold text-text-primary">{t.noArticlesFound}</h3>
+                <p className="mt-1 text-sm text-text-muted">{t.tryDifferentSearch}</p>
               </div>
-            </aside>
-          </div>
-        </main>
-      </div>
-    </>
+            )}
+          </section>
+
+          {/* Newsletter band */}
+          <NewsletterSignup t={t} />
+
+          {/* Slim compare CTA */}
+          <Link
+            href={href('/compare')}
+            className={`group mt-4 flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between ${CARD}`}
+          >
+            <div>
+              <h2 className="font-display text-base font-bold text-text-primary">{t.readyToGetFunded}</h2>
+              <p className="mt-0.5 text-[13.5px] text-text-secondary">{t.compareDesc}</p>
+            </div>
+            <span className="inline-flex min-h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-sky-700 px-4 text-sm font-semibold text-white group-hover:brightness-110 dark:bg-sky-400 dark:text-slate-950">
+              {t.comparePropFirms}
+              <ArrowRight className="h-4 w-4" />
+            </span>
+          </Link>
+        </div>
+      </main>
+    </div>
   );
 }
