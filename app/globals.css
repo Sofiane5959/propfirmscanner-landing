@@ -6,8 +6,8 @@
  * PropFirmScanner — Global styles
  *
  * Deux themes, pilotes par la classe `dark` sur <html> :
- *   .dark  = Sombre (marine #0F172A, theme par defaut)
- *   :root  = Clair  (#F7F8FA)
+ *   .dark  = Sombre (encre bleutee #0A0F1C, cartes #131B2D, texte #E6EAF2 non blanc pur pour le confort ; defaut)
+ *   :root  = Clair  (ivoire #F8F6F1, cartes blanches ombrees, ambre en accent ; 7/10/2026)
  * Action = vert emeraude (--accent-btn #10B981) avec texte sombre
  * (--on-accent #04231A, 7:1) ; codes promo en ambre (--deal). Option 1A
  * du design system PropFirmScanner.
@@ -22,58 +22,58 @@
 @layer base {
   :root {
     color-scheme: light;
-    --bg-base: 247 248 250; /* #F7F8FA */
+    --bg-base: 248 246 241; /* #F8F6F1 */
     --bg-elevated: 255 255 255; /* #FFFFFF */
-    --border: 226 231 239; /* #E2E7EF */
-    --border-hover: 138 148 166; /* #8A94A6 */
-    --text-primary: 15 23 42; /* #0F172A */
-    --text-secondary: 51 65 85; /* #334155 */
-    --text-muted: 90 100 118; /* #5A6476 */
+    --border: 231 226 216; /* #E7E2D8 */
+    --border-hover: 148 140 132; /* #948C84 */
+    --text-primary: 28 25 23; /* #1C1917 */
+    --text-secondary: 68 64 60; /* #44403C */
+    --text-muted: 113 106 100; /* #716A64 */
     --accent: 4 120 87; /* #047857 */
     --accent-btn: 16 185 129; /* #10B981 */
     --on-accent: 4 35 26; /* #04231A */
     --positive: 4 120 87; /* #047857 */
-    --deal: 146 64 14; /* #92400E */
-    --dark-50: 15 23 42; /* #0F172A */
-    --dark-100: 30 41 59; /* #1E293B */
-    --dark-200: 51 65 85; /* #334155 */
-    --dark-300: 51 65 85; /* #334155 */
-    --dark-400: 90 100 118; /* #5A6476 */
-    --dark-500: 138 148 166; /* #8A94A6 */
-    --dark-600: 213 220 230; /* #D5DCE6 */
-    --dark-700: 238 241 245; /* #EEF1F5 */
+    --deal: 180 83 9; /* #B45309 */
+    --dark-50: 28 25 23; /* #1C1917 */
+    --dark-100: 41 37 36; /* #292524 */
+    --dark-200: 68 64 60; /* #44403C */
+    --dark-300: 68 64 60; /* #44403C */
+    --dark-400: 107 99 88; /* #6B6358 */
+    --dark-500: 148 140 132; /* #948C84 */
+    --dark-600: 231 226 216; /* #E7E2D8 */
+    --dark-700: 243 240 234; /* #F3F0EA */
     --dark-750: 255 255 255; /* #FFFFFF */
-    --dark-800: 247 248 250; /* #F7F8FA */
-    --dark-900: 226 231 239; /* #E2E7EF */
-    --dark-950: 213 220 230; /* #D5DCE6 */
+    --dark-800: 248 246 241; /* #F8F6F1 */
+    --dark-900: 231 226 216; /* #E7E2D8 */
+    --dark-950: 222 216 205; /* #DED8CD */
   }
 
   .dark {
     color-scheme: dark;
-    --bg-base: 15 23 42; /* #0F172A */
-    --bg-elevated: 22 33 58; /* #16213A */
-    --border: 36 50 77; /* #24324D */
-    --border-hover: 100 116 139; /* #64748B */
-    --text-primary: 241 245 249; /* #F1F5F9 */
-    --text-secondary: 203 213 225; /* #CBD5E1 */
-    --text-muted: 148 163 184; /* #94A3B8 */
+    --bg-base: 10 15 28; /* #0A0F1C */
+    --bg-elevated: 19 27 45; /* #131B2D */
+    --border: 48 61 88; /* #303D58 */
+    --border-hover: 91 107 135; /* #5B6B87 */
+    --text-primary: 230 234 242; /* #E6EAF2 */
+    --text-secondary: 190 200 216; /* #BEC8D8 */
+    --text-muted: 143 156 178; /* #8F9CB2 */
     --accent: 52 211 153; /* #34D399 */
     --accent-btn: 16 185 129; /* #10B981 */
     --on-accent: 4 35 26; /* #04231A */
     --positive: 52 211 153; /* #34D399 */
     --deal: 251 191 36; /* #FBBF24 */
-    --dark-50: 248 250 252; /* #F8FAFC */
-    --dark-100: 241 245 249; /* #F1F5F9 */
-    --dark-200: 226 232 240; /* #E2E8F0 */
-    --dark-300: 203 213 225; /* #CBD5E1 */
-    --dark-400: 148 163 184; /* #94A3B8 */
-    --dark-500: 100 116 139; /* #64748B */
-    --dark-600: 58 74 107; /* #3A4A6B */
-    --dark-700: 36 50 77; /* #24324D */
-    --dark-750: 22 33 58; /* #16213A */
-    --dark-800: 15 23 42; /* #0F172A */
-    --dark-900: 12 19 36; /* #0C1324 */
-    --dark-950: 8 13 26; /* #080D1A */
+    --dark-50: 240 243 248; /* #F0F3F8 */
+    --dark-100: 230 234 242; /* #E6EAF2 */
+    --dark-200: 210 218 230; /* #D2DAE6 */
+    --dark-300: 190 200 216; /* #BEC8D8 */
+    --dark-400: 143 156 178; /* #8F9CB2 */
+    --dark-500: 91 107 135; /* #5B6B87 */
+    --dark-600: 62 77 106; /* #3E4D6A */
+    --dark-700: 48 61 88; /* #303D58 */
+    --dark-750: 19 27 45; /* #131B2D */
+    --dark-800: 10 15 28; /* #0A0F1C */
+    --dark-900: 7 11 21; /* #070B15 */
+    --dark-950: 4 7 15; /* #04070F */
   }
 
   body {

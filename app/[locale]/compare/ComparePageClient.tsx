@@ -149,7 +149,7 @@ const translations: Record<Locale, Record<string, string>> = {
     communityRating: 'Communaute',
     writeReview: 'Noter cette firm',
     rateShort: 'Noter',
-    payoutShort: 'Preuve de paiement',
+    payoutShort: 'Preuve payout',
     autoApplied: 'Appliqué via notre lien',
     shareExperience: 'Partagez votre experience',
     yourRating: 'Votre note',
@@ -719,7 +719,7 @@ const UI_EN = {
   compareN: 'Compare {n} →', selectAtLeast2: 'Select at least 2 firms', upToMore: 'Up to {n} more', maxFirms: 'Maximum 4 firms', clear: 'Clear', selected: 'selected',
   favoritesN: '{n} favorites', otherResults: 'Other results', otherResultsSub: '— unverified or not recommended',
   otherResultsText: "These firms aren't currently listed on PropFirmScanner. We haven't verified their claims, or we don't recommend them. Proceed with caution.",
-  filters: 'Filters', grid: 'Grid', list: 'List', bestCode: 'Best code right now', copyOpen: 'Copy & open', disclosure: 'Affiliate links: we earn a commission at no cost to you. The ranking stays independent.',
+  addCompare: 'Compare', inCompare: 'Added', compareHint: 'Tick “Compare” on 2 to 4 firms to see them side by side.', filters: 'Filters', grid: 'Grid', list: 'List', bestCode: 'Best code right now', copyOpen: 'Copy & open', disclosure: 'Affiliate links: we earn a commission at no cost to you. The ranking stays independent.',
 }
 const UI_FR: typeof UI_EN = {
   quickAll: 'Tous', quickSwing: 'Swing / week-end', quickScalping: 'Scalping', quickNews: 'News', quickEa: 'EAs / bots',
@@ -734,9 +734,10 @@ const UI_FR: typeof UI_EN = {
   compareN: 'Comparer les {n} →', selectAtLeast2: 'Choisis au moins 2 firmes', upToMore: 'Encore {n} possibles', maxFirms: '4 firmes maximum', clear: 'Vider', selected: 'choisies',
   favoritesN: '{n} favoris', otherResults: 'Autres résultats', otherResultsSub: '— non vérifiées ou déconseillées',
   otherResultsText: "Ces firmes ne sont pas listées sur PropFirmScanner : nous n'avons pas vérifié leurs promesses, ou nous les déconseillons. Prudence.",
-  filters: 'Filtres', grid: 'Grille', list: 'Liste', bestCode: 'Meilleur code du moment', copyOpen: 'Copier & ouvrir', disclosure: 'Liens affiliés : nous touchons une commission, sans coût pour toi. Le classement reste indépendant.',
+  addCompare: 'Comparer', inCompare: 'Ajoutée', compareHint: 'Coche « Comparer » sur 2 à 4 firmes pour les voir côte à côte.', filters: 'Filtres', grid: 'Grille', list: 'Liste', bestCode: 'Meilleur code du moment', copyOpen: 'Copier & ouvrir', disclosure: 'Liens affiliés : nous touchons une commission, sans coût pour toi. Le classement reste indépendant.',
 }
 const UI_DE: typeof UI_EN = {
+  addCompare: 'Vergleichen', inCompare: 'Hinzugefügt', compareHint: 'Hake „Vergleichen“ bei 2 bis 4 Firmen an, um sie nebeneinander zu sehen.',
   quickAll: 'Alle', quickSwing: 'Swing / Wochenende', quickScalping: 'Scalping', quickNews: 'News', quickEa: 'EAs / Bots',
   quickFutures: 'Futures', quickInstant: 'Instant Funding', quickBeginners: 'Einsteiger',
   sortRecommended: 'Empfohlen', sortPrice: 'Günstigste', sortSplit: 'Bester Split', sortDiscount: 'Größter Rabatt', sortReviews: 'Meiste Bewertungen',
@@ -753,6 +754,7 @@ const UI_DE: typeof UI_EN = {
 }
 
 const UI_ES: typeof UI_EN = {
+  addCompare: 'Comparar', inCompare: 'Añadida', compareHint: 'Marca «Comparar» en 2 a 4 firmas para verlas una al lado de otra.',
   quickAll: 'Todas', quickSwing: 'Swing / fin de semana', quickScalping: 'Scalping', quickNews: 'Noticias', quickEa: 'EAs / bots',
   quickFutures: 'Futuros', quickInstant: 'Instant funding', quickBeginners: 'Principiantes',
   sortRecommended: 'Recomendadas', sortPrice: 'Más baratas', sortSplit: 'Mejor split', sortDiscount: 'Mayor descuento', sortReviews: 'Más valoradas',
@@ -769,6 +771,7 @@ const UI_ES: typeof UI_EN = {
 }
 
 const UI_PT: typeof UI_EN = {
+  addCompare: 'Comparar', inCompare: 'Adicionada', compareHint: 'Marque «Comparar» em 2 a 4 firmas para as ver lado a lado.',
   quickAll: 'Todas', quickSwing: 'Swing / fim de semana', quickScalping: 'Scalping', quickNews: 'Notícias', quickEa: 'EAs / bots',
   quickFutures: 'Futuros', quickInstant: 'Instant funding', quickBeginners: 'Iniciantes',
   sortRecommended: 'Recomendadas', sortPrice: 'Mais baratas', sortSplit: 'Melhor split', sortDiscount: 'Maior desconto', sortReviews: 'Mais avaliadas',
@@ -785,6 +788,7 @@ const UI_PT: typeof UI_EN = {
 }
 
 const UI_AR: typeof UI_EN = {
+  addCompare: 'قارن', inCompare: 'تمت الإضافة', compareHint: 'حدّد «قارن» على شركتين إلى أربع شركات لعرضها جنباً إلى جنب.',
   quickAll: 'الكل', quickSwing: 'سوينغ / عطلة نهاية الأسبوع', quickScalping: 'سكالبينغ', quickNews: 'الأخبار', quickEa: 'الروبوتات (EAs)',
   quickFutures: 'العقود الآجلة', quickInstant: 'تمويل فوري', quickBeginners: 'المبتدئون',
   sortRecommended: 'موصى بها', sortPrice: 'الأرخص', sortSplit: 'أفضل نسبة أرباح', sortDiscount: 'أكبر خصم', sortReviews: 'الأكثر تقييماً',
@@ -801,6 +805,7 @@ const UI_AR: typeof UI_EN = {
 }
 
 const UI_HI: typeof UI_EN = {
+  addCompare: 'तुलना करें', inCompare: 'जोड़ी गई', compareHint: '2 से 4 फर्म पर «तुलना करें» चुनें और उन्हें साथ-साथ देखें।',
   quickAll: 'सभी', quickSwing: 'स्विंग / वीकेंड', quickScalping: 'स्कैल्पिंग', quickNews: 'न्यूज़', quickEa: 'EAs / बॉट्स',
   quickFutures: 'फ्यूचर्स', quickInstant: 'इंस्टैंट फंडिंग', quickBeginners: 'शुरुआती',
   sortRecommended: 'अनुशंसित', sortPrice: 'सबसे सस्ती', sortSplit: 'सर्वश्रेष्ठ स्प्लिट', sortDiscount: 'सबसे बड़ी छूट', sortReviews: 'सबसे ज़्यादा रिव्यू',
@@ -1633,9 +1638,11 @@ const PropFirmCard = ({
   ]
 
   return (
-    <div className={`flex flex-col gap-3 rounded-2xl border bg-bg-elevated p-4 transition-colors ${
-      isTopPick ? 'border-accent-border hover:border-accent' : 'border-border hover:border-border-hover'
+    <div className={`relative flex flex-col gap-4 overflow-hidden rounded-2xl border bg-bg-elevated p-5 shadow-[0_1px_2px_rgba(28,25,23,0.05),0_10px_28px_-16px_rgba(28,25,23,0.22)] transition-[border-color,box-shadow] hover:shadow-[0_1px_2px_rgba(28,25,23,0.06),0_16px_36px_-16px_rgba(28,25,23,0.3)] dark:bg-gradient-to-b dark:from-white/[0.035] dark:to-transparent dark:shadow-none dark:hover:shadow-none ${
+      isTopPick ? 'border-amber-300 hover:border-amber-400 dark:border-accent/60 dark:hover:border-accent' : 'border-border hover:border-border-hover'
     }`}>
+      {/* Top Pick : fine barre or -> vert en haut de carte. */}
+      {isTopPick && <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-amber-400 via-amber-300 to-emerald-400" />}
       {/* a) En-tete : logo, nom, badges, favori */}
       <div className="flex items-start gap-3">
         <Link href={`/prop-firm/${firm.slug}`} className="flex h-[42px] w-[42px] flex-none items-center justify-center overflow-hidden rounded-xl border border-border bg-white p-1.5">
@@ -1656,9 +1663,6 @@ const PropFirmCard = ({
               <span className="inline-flex h-5 items-center rounded-md border border-border bg-bg-base px-1.5 font-mono text-[11px] font-semibold text-text-secondary">#{rank}</span>
             ) : null}
             <TrustBadge status={firm.trust_status || 'verified'} />
-            {firm.has_instant_funding && (
-              <span className="inline-flex h-5 flex-none items-center rounded-md border border-deal/30 bg-deal-subtle px-1.5 text-[11px] font-medium text-deal">⚡ Instant</span>
-            )}
           </div>
         </div>
         <button
@@ -1674,7 +1678,7 @@ const PropFirmCard = ({
       </div>
 
       {/* b) Ligne de preuves */}
-      <div className="flex h-5 items-center gap-x-3 overflow-hidden whitespace-nowrap text-[13px] text-text-secondary">
+      <div className="-my-1 flex h-7 items-center gap-x-3 whitespace-nowrap text-[13px] text-text-secondary">
         <span className="flex items-center gap-1">
           <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
           <span className="font-mono font-semibold tabular-nums text-text-primary">{firm.trustpilot_rating?.toFixed(1) || 'N/A'}</span>
@@ -1686,13 +1690,25 @@ const PropFirmCard = ({
         {payoutAggregate && payoutAggregate.count > 0 && (
           <span className="font-medium text-accent">{payoutAggregate.count} {t.payoutBadge}</span>
         )}
+        {/* Noter / preuve de paiement : a droite de la note, libelles courts
+            et petits (7/10/2026). */}
+        <span className="ml-auto flex min-w-0 items-center gap-0.5 text-[11px] text-text-muted">
+          <button onClick={onRate} title={t.writeReview} aria-label={`${t.writeReview} — ${firm.name}`}
+            className={`flex min-h-9 flex-none items-center gap-1 rounded-md px-1.5 transition-colors sm:min-h-6 ${hasReviewed ? 'text-yellow-500 dark:text-yellow-400' : 'hover:bg-bg-base hover:text-text-primary'}`}>
+            <Star className={`h-3 w-3 ${hasReviewed ? 'fill-current' : ''}`} />{t.rateShort}
+          </button>
+          <button onClick={onPayout} title={t.submitPayout} aria-label={`${t.submitPayout} — ${firm.name}`}
+            className="flex min-h-9 min-w-0 items-center gap-1 rounded-md px-1.5 transition-colors hover:bg-bg-base hover:text-text-primary sm:min-h-6">
+            <Banknote className="h-3 w-3 flex-none" /><span className="truncate">{t.payoutShort}</span>
+          </button>
+        </span>
       </div>
 
       {/* c) Prix et split : deux cellules separees par un filet */}
-      <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-xl bg-border">
-        <div className="bg-bg-base px-3 py-2.5">
-          <dt className="text-[11px] uppercase tracking-wider text-text-muted">{t.price}</dt>
-          <dd className="mt-0.5 font-mono text-[19px] font-semibold tabular-nums text-text-primary">
+      <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-border bg-border">
+        <div className="bg-bg-base px-3.5 py-3.5">
+          <dt className="text-[10px] font-medium uppercase tracking-[0.1em] text-text-muted">{t.price}</dt>
+          <dd className="mt-1 font-mono text-[20px] font-bold tabular-nums tracking-tight text-text-primary">
             {prixApresCode != null ? (
               <>
                 <span className="text-deal">${prixApresCode}</span>{' '}
@@ -1703,48 +1719,58 @@ const PropFirmCard = ({
             )}
           </dd>
         </div>
-        <div className="bg-bg-base px-3 py-2.5">
-          <dt className="text-[11px] uppercase tracking-wider text-text-muted">{t.split}</dt>
-          <dd className="mt-0.5 font-mono text-[19px] font-semibold tabular-nums text-accent">{formatProfitSplit(firm.profit_split, firm.max_profit_split)}</dd>
+        <div className="bg-bg-base px-3.5 py-3.5">
+          <dt className="text-[10px] font-medium uppercase tracking-[0.1em] text-text-muted">{t.split}</dt>
+          <dd className="mt-1 font-mono text-[20px] font-bold tabular-nums tracking-tight text-accent">{formatProfitSplit(firm.profit_split, firm.max_profit_split)}</dd>
         </div>
       </dl>
 
-      {/* d) Ce que la firme autorise : toujours les trois regles. */}
+      {/* d) Ce que la firme autorise : seulement ce qu'on sait (7/10/2026).
+             Une regle non renseignee n'affiche rien. */}
+      {(regles.some(r => r.ok !== null) || firm.has_instant_funding) && (
       <div className="flex h-6 items-center gap-1.5 overflow-hidden">
-        {regles.map(r => (
+        {regles.filter(r => r.ok !== null).map(r => (
           <span
             key={r.label}
-            title={r.ok === null ? 'Non renseigné' : r.ok ? 'Autorisé' : 'Interdit'}
-            className={`inline-flex h-6 items-center whitespace-nowrap rounded-lg px-2 text-xs font-medium ${
+            title={r.ok ? 'Autorisé' : 'Interdit'}
+            className={`inline-flex h-6 flex-none items-center whitespace-nowrap rounded-md px-1.5 text-[11px] font-medium ${
               r.ok === true
                 ? 'border border-accent-border bg-accent-subtle text-accent'
-                : r.ok === false
-                ? 'border border-border text-text-muted line-through'
-                : 'border border-dashed border-border text-text-muted'
+                : 'border border-rose-400/25 bg-rose-500/5 text-rose-700 line-through decoration-1 dark:text-rose-300/80'
             }`}
           >
-            {r.ok === true ? '✓' : r.ok === false ? '✕' : '?'} {r.label}
+            {r.ok ? '✓' : '✕'} {r.label}
           </span>
         ))}
+        {firm.has_instant_funding && (
+          <span className="inline-flex h-6 flex-none items-center whitespace-nowrap rounded-md border border-accent-border bg-accent-subtle px-1.5 text-[11px] font-medium text-accent">⚡ Instant</span>
+        )}
       </div>
+      )}
 
       {/* Bas de carte colle en bas (mt-auto) : promo, actions et pied
           s'alignent sur toute la rangee, quelle que soit la hauteur du haut. */}
-      <div className="mt-auto flex flex-col gap-3">
+      <div className="mt-auto flex flex-col gap-3.5">
       {/* e) Promo : meme hauteur avec ou sans code. */}
       {hasDiscount && (
-        <div className="space-y-2 rounded-xl border border-dashed border-deal/30 bg-deal-subtle px-3 py-2">
-          <div className="flex min-h-7 items-center justify-between gap-2">
-            <span className="text-sm font-bold text-deal">−{firm.discount_percent}%</span>
+        <div className="space-y-2 rounded-xl border border-dashed border-amber-400/70 bg-gradient-to-r from-amber-50 via-amber-50/60 to-transparent p-2 dark:border-amber-300/30 dark:from-amber-400/[0.12] dark:via-amber-400/[0.05]">
+          {/* Coupon : la remise en pastille ambre pleine, lisible d'un coup d'oeil. */}
+          <div className="flex items-center gap-2.5">
+            <span className="inline-flex h-9 flex-none items-center rounded-lg bg-amber-400 px-2.5 font-mono text-[15px] font-extrabold tabular-nums text-amber-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.45),0_1px_2px_rgba(120,53,15,0.25)]">
+              −{firm.discount_percent}%
+            </span>
             {firm.discount_code ? (
               <>
-                <span className="ml-auto truncate font-mono text-[13px] font-semibold tracking-wide text-text-primary">{firm.discount_code}</span>
-                <button onClick={() => onCopyCode(firm.discount_code, firm.slug)} aria-label={`Copy discount code ${firm.discount_code}`} className="flex flex-none items-center gap-1 rounded-md border border-border-hover px-2 py-1 text-xs font-medium text-text-primary hover:border-text-primary">
+                <span className="min-w-0 flex-1 leading-tight">
+                  <span className="block text-[10px] font-medium uppercase tracking-[0.08em] text-text-muted">{u.code}</span>
+                  <span className="block truncate font-mono text-[13px] font-bold tracking-wide text-text-primary">{firm.discount_code}</span>
+                </span>
+                <button onClick={() => onCopyCode(firm.discount_code, firm.slug)} aria-label={`Copy discount code ${firm.discount_code}`} className="flex min-h-8 flex-none items-center gap-1 rounded-lg border border-amber-500/40 bg-bg-elevated px-2.5 text-xs font-semibold text-text-primary transition-colors hover:border-amber-500 hover:bg-amber-50 dark:border-amber-300/30 dark:bg-transparent dark:hover:bg-amber-400/10">
                   <Copy className="h-3 w-3" />{u.copy}
                 </button>
               </>
             ) : (
-              <span className="text-xs text-text-muted">{t.autoApplied}</span>
+              <span className="min-w-0 flex-1 text-xs leading-tight text-text-secondary">{t.autoApplied}</span>
             )}
           </div>
           {/* Le pourcentage ne dit pas tout : une offre peut donner autre chose
@@ -1763,9 +1789,9 @@ const PropFirmCard = ({
           href={getFirmUrl(firm, 'compare-grid')}
           target="_blank"
           rel="noopener noreferrer"
-          className={`flex min-h-11 min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-3 text-sm font-semibold transition-colors sm:min-h-10 ${
+          className={`flex min-h-12 min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-3 text-sm font-semibold transition-colors sm:min-h-11 ${
             hasDiscount
-              ? 'bg-accent-hover text-on-accent hover:brightness-110'
+              ? 'bg-accent-hover text-on-accent shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_1px_2px_rgba(4,35,26,0.2)] hover:brightness-105'
               : firm.affiliate_url
               ? 'border border-accent text-accent hover:bg-accent-subtle'
               : 'border border-border bg-bg-base text-text-secondary hover:border-border-hover'
@@ -1778,27 +1804,19 @@ const PropFirmCard = ({
           onClick={onCompare}
           aria-pressed={isComparing}
           aria-label={isComparing ? `Remove ${firm.name} from comparison` : `Add ${firm.name} to comparison`}
-          className={`flex min-h-11 flex-none items-center gap-2 whitespace-nowrap rounded-xl border px-3 text-sm font-medium transition-colors sm:min-h-10 ${
-            isComparing ? 'border-accent bg-accent-subtle text-accent' : 'border-border bg-bg-base text-text-secondary hover:border-border-hover'
+          className={`flex min-h-12 flex-none items-center gap-2 whitespace-nowrap rounded-xl border px-3 text-sm font-medium transition-colors sm:min-h-11 ${
+            isComparing ? 'border-sky-700 bg-sky-700 text-white dark:border-sky-400 dark:bg-sky-400 dark:text-slate-950' : 'border-sky-700/40 bg-sky-500/10 text-sky-800 hover:bg-sky-500/20 dark:border-sky-400/50 dark:text-sky-300'
           }`}
         >
-          <span className={`grid h-[15px] w-[15px] place-items-center rounded border ${
-            isComparing ? 'border-accent-hover bg-accent-hover text-on-accent' : 'border-border-hover'
-          }`}>
-            {isComparing && <Check className="h-2.5 w-2.5" />}
-          </span>
-          {t.compare}
+          {isComparing
+            ? <Check className="h-4 w-4" />
+            : <GitCompare className="h-4 w-4" />}
+          {isComparing ? u.inCompare : u.addCompare}
         </button>
       </div>
 
-      {/* g) Pied de carte : actions secondaires, libelles courts sur une ligne */}
-      <div className="flex items-center justify-between gap-2 whitespace-nowrap border-t border-border pt-2.5 text-xs text-text-muted">
-        <button onClick={onRate} title={t.writeReview} className={`flex min-h-11 items-center gap-1 sm:min-h-8 ${hasReviewed ? 'text-yellow-500 dark:text-yellow-400' : 'hover:text-text-secondary'}`}>
-          <Star className={`h-3.5 w-3.5 ${hasReviewed ? 'fill-current' : ''}`} />{t.rateShort}
-        </button>
-        <button onClick={onPayout} title={t.submitPayout} className="flex min-h-11 items-center gap-1 hover:text-text-secondary sm:min-h-8">
-          <Banknote className="h-3.5 w-3.5" />{t.payoutShort}
-        </button>
+      {/* g) Alerte prix (membres connectes) : discrete, sous les boutons. */}
+      <div className="flex justify-end empty:hidden [&:not(:has(button))]:hidden">
         <PriceAlertButton firmId={firm.id} firmName={firm.name} firmSlug={firm.slug} currentPrice={firm.min_price || 0} />
       </div>
       </div>
@@ -1838,9 +1856,9 @@ const CompareBar = ({ firms, onRemove, onClear, u }: { firms: PropFirm[]; onRemo
         <div className="flex items-center gap-4">
           <button onClick={onClear} className="text-sm text-text-muted underline hover:text-text-primary">{u.clear}</button>
           {pret ? (
-            <Link href={compareUrl} className="rounded-xl bg-accent-hover px-4 py-2.5 text-sm font-semibold text-on-accent hover:brightness-110">{fill(u.compareN, { n: firms.length })}</Link>
+            <Link href={compareUrl} className="rounded-xl bg-sky-700 px-4 py-2.5 text-sm font-semibold text-white hover:brightness-110 dark:bg-sky-400 dark:text-slate-950">{fill(u.compareN, { n: firms.length })}</Link>
           ) : (
-            <span aria-disabled="true" className="cursor-not-allowed rounded-xl border border-border bg-bg-base px-4 py-2.5 text-sm font-medium text-text-muted">{fill(u.compareN, { n: firms.length })}</span>
+            <span aria-disabled="true" className="cursor-not-allowed rounded-xl border border-border bg-bg-base px-4 py-2.5 text-sm font-medium text-text-muted">{u.addCompare}</span>
           )}
         </div>
       </div>
@@ -2469,34 +2487,33 @@ export default function ComparePageClient({ firms: firmsBrutes, shadowFirms = []
           content. Pinning it cost 118px of a phone screen for a title nobody
           re-reads, and it sat behind the offers banner anyway: both were
           sticky at top-16, and this one is the lower z-index of the two. */}
-      <section className="pt-6 pb-3 px-4">
+      <section className="px-4 pt-5 pb-3">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <h1 className="font-display text-h2 text-text-primary sm:text-h1">{t.pageTitle}</h1>
-              <p className="mt-2 text-body text-text-secondary">{t.pageSubtitle}</p>
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+            <div className="min-w-0">
+              <h1 className="font-display text-[28px] font-extrabold leading-9 tracking-tight text-text-primary sm:text-h2">{t.pageTitle}</h1>
+              <p className="mt-1 text-small text-text-secondary">{t.pageSubtitle}</p>
               {/* Ligne de confiance : fraicheur, volume, independance. */}
-              <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] text-text-muted">
+              <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] text-text-muted">
                 <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true" />{u.updatedOn} {new Date().toLocaleDateString(currentLocale, { month: 'long', year: 'numeric' })}</span>
                 <span><span className="font-mono font-semibold text-text-primary">{stats.total}</span> {u.verifiedFirms}</span>
                 {stats.withDiscounts > 0 && <span><span className="font-mono font-semibold text-text-primary">{stats.withDiscounts}</span> {u.activeCodes}</span>}
                 <Link href={`/${currentLocale}/how-we-make-money`} className="text-text-secondary underline-offset-2 hover:underline">{u.howWeRank}</Link>
               </div>
             </div>
-            {/* Offre du jour (ordinateur) : remplace le popup qui couvrait les cartes. */}
+            {/* Offre du jour (ordinateur), sur une ligne, alignee sur la ligne de confiance. */}
             {offreDuJour && (
-              <div className="hidden items-center gap-3 rounded-2xl border border-dashed border-deal/40 bg-deal-subtle px-4 py-3 md:flex">
-                <div className="min-w-0">
-                  <p className="text-xs text-text-muted">{u.dealOfDay} · {offreDuJour.name}</p>
-                  <p className="text-[15px] font-bold text-deal">−{offreDuJour.discount_percent}%{bonusFiche(offreDuJour.slug) ? ` + ${bonusFiche(offreDuJour.slug)}` : ''}</p>
-                  {offreDuJour.discount_code && <p className="text-xs text-text-muted">{u.code} <span className="font-mono font-semibold text-text-primary">{offreDuJour.discount_code}</span></p>}
-                </div>
+              <div className="hidden flex-none items-center gap-3 rounded-xl border border-amber-300 bg-amber-50 py-1.5 pl-3 pr-1.5 shadow-sm md:flex dark:border-dashed dark:border-deal/40 dark:bg-deal-subtle dark:shadow-none">
+                <span className="text-xs text-text-muted">{u.dealOfDay}</span>
+                <span className="text-sm font-semibold text-text-primary">{offreDuJour.name}</span>
+                <span className="text-sm font-bold text-deal">−{offreDuJour.discount_percent}%</span>
+                {offreDuJour.discount_code && <span className="font-mono text-xs font-semibold text-text-primary">{offreDuJour.discount_code}</span>}
                 <a
                   href={getFirmUrl(offreDuJour, 'compare-hero')}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => { if (offreDuJour.discount_code) handleCopyCode(offreDuJour.discount_code, offreDuJour.slug) }}
-                  className="flex min-h-10 flex-none items-center gap-1.5 whitespace-nowrap rounded-xl bg-accent-hover px-4 text-sm font-semibold text-on-accent hover:brightness-110"
+                  className="flex min-h-9 items-center gap-1.5 whitespace-nowrap rounded-lg bg-accent-hover px-3 text-sm font-semibold text-on-accent hover:brightness-110"
                 >
                   {u.dealCta} <ExternalLink className="h-3.5 w-3.5" />
                 </a>
@@ -2504,7 +2521,7 @@ export default function ComparePageClient({ firms: firmsBrutes, shadowFirms = []
             )}
           </div>
           {/* Raccourcis par style : la plupart des visiteurs filtrent d'abord par style. */}
-          <div className="-mx-4 mt-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
+          <div className="-mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
             {(() => {
               const aucun = filters.tradingStyles.length + filters.markets.length + filters.challengeTypes.length + filters.bestFor.length === 0
               return (
@@ -2512,7 +2529,7 @@ export default function ComparePageClient({ firms: firmsBrutes, shadowFirms = []
                   <button
                     onClick={() => setFilters(f => ({ ...f, tradingStyles: [], markets: [], challengeTypes: [], bestFor: [] }))}
                     aria-pressed={aucun}
-                    className={`min-h-9 flex-none whitespace-nowrap rounded-full border px-3.5 text-[13px] transition-colors ${aucun ? 'border-text-primary bg-text-primary font-semibold text-bg-base' : 'border-border-hover text-text-secondary hover:border-text-primary'}`}
+                    className={`min-h-9 flex-none whitespace-nowrap rounded-full border px-3.5 text-[13px] transition-colors ${aucun ? 'border-text-primary bg-text-primary font-semibold text-bg-elevated dark:border-accent dark:bg-accent/15 dark:text-accent' : 'border-border-hover bg-bg-elevated text-text-secondary hover:border-text-primary hover:text-text-primary dark:bg-transparent'}`}
                   >
                     {u.quickAll}
                   </button>
@@ -2526,7 +2543,7 @@ export default function ComparePageClient({ firms: firmsBrutes, shadowFirms = []
                           return { ...f, [r.champ]: liste.includes(r.valeur) ? liste.filter(x => x !== r.valeur) : [...liste, r.valeur] }
                         })}
                         aria-pressed={actif}
-                        className={`min-h-9 flex-none whitespace-nowrap rounded-full border px-3.5 text-[13px] transition-colors ${actif ? 'border-text-primary bg-text-primary font-semibold text-bg-base' : 'border-border-hover text-text-secondary hover:border-text-primary'}`}
+                        className={`min-h-9 flex-none whitespace-nowrap rounded-full border px-3.5 text-[13px] transition-colors ${actif ? 'border-text-primary bg-text-primary font-semibold text-bg-elevated dark:border-accent dark:bg-accent/15 dark:text-accent' : 'border-border-hover bg-bg-elevated text-text-secondary hover:border-text-primary hover:text-text-primary dark:bg-transparent'}`}
                       >
                         {u[r.cle]}
                       </button>
@@ -2544,14 +2561,14 @@ export default function ComparePageClient({ firms: firmsBrutes, shadowFirms = []
           the navbar and banner collapse, so it always sits flush against
           whatever is above it. */}
       <section
-        className={`pt-3 pb-4 px-4 border-b border-border sticky top-16 z-30 bg-bg-elevated/95 transition-transform duration-300 motion-reduce:transition-none ${
+        className={`py-3 px-4 border-b border-border sticky top-16 z-30 bg-bg-elevated/95 shadow-[0_1px_0_rgb(var(--border)),0_6px_16px_-10px_rgba(28,25,23,0.15)] dark:shadow-none transition-transform duration-300 motion-reduce:transition-none ${
           filtresOuverts ? '' : 'backdrop-blur-sm'
         } ${
           headerHidden && !filtresOuverts ? '-translate-y-16' : 'transform-none'
         }`}
       >
         <div className="max-w-7xl mx-auto">
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             <div className="flex flex-wrap items-center gap-2">
               {/* Search — pleine largeur sur mobile, 14rem au-dela */}
               <div className="relative w-full sm:w-56">
@@ -2685,6 +2702,7 @@ export default function ComparePageClient({ firms: firmsBrutes, shadowFirms = []
             </div>
 
             {/* Ligne 2 : filtres actifs, remise a zero, compte et tri */}
+            {activeFilterChips.length > 0 && (
             <div className="flex flex-wrap items-center gap-2">
               {activeFilterChips.map(chip => <FilterChip key={chip.key} label={chip.label} onRemove={chip.onRemove} />)}
               {activeFilterChips.length > 0 && (
@@ -2692,10 +2710,8 @@ export default function ComparePageClient({ firms: firmsBrutes, shadowFirms = []
                   <RotateCcw className="h-3.5 w-3.5" /> {t.reset}
                 </button>
               )}
-              <span className="ml-auto hidden text-sm text-text-muted md:inline">
-                <span className="font-mono text-text-primary">{filteredFirms.length}</span> {t.propFirms}
-              </span>
             </div>
+            )}
             {/* Ligne 3 : tri en onglets visibles + vue grille / tableau */}
             <div className="-mx-4 flex items-center gap-1 overflow-x-auto px-4 [scrollbar-width:none] md:mx-0 md:px-0">
               {ONGLETS_TRI.map(o => (
@@ -2703,12 +2719,15 @@ export default function ComparePageClient({ firms: firmsBrutes, shadowFirms = []
                   key={o.value}
                   onClick={() => setSortBy(o.value)}
                   aria-pressed={sortBy === o.value}
-                  className={`min-h-9 flex-none whitespace-nowrap rounded-lg px-3 text-[13px] transition-colors ${sortBy === o.value ? 'bg-bg-base font-semibold text-text-primary ring-1 ring-border' : 'text-text-secondary hover:text-text-primary'}`}
+                  className={`min-h-9 flex-none whitespace-nowrap rounded-lg px-3 text-[13px] transition-colors ${sortBy === o.value ? 'bg-text-primary font-semibold text-bg-elevated dark:bg-accent/15 dark:text-accent' : 'text-text-secondary hover:bg-bg-base hover:text-text-primary'}`}
                 >
                   {u[o.cle]}
                 </button>
               ))}
-              <div className="ml-auto hidden flex-none gap-1 rounded-xl border border-border bg-bg-base p-1 md:flex">
+              <span className="ml-auto hidden flex-none text-sm text-text-muted md:inline">
+                <span className="font-mono text-text-primary">{filteredFirms.length}</span> {t.propFirms}
+              </span>
+              <div className="ml-3 hidden flex-none gap-1 rounded-xl border border-border bg-bg-base p-1 md:flex">
                 {([['grid', u.grid, Grid3X3], ['list', u.list, List]] as const).map(([mode, label, Icon]) => (
                   <button
                     key={mode}
@@ -2730,12 +2749,19 @@ export default function ComparePageClient({ firms: firmsBrutes, shadowFirms = []
       {/* MAIN CONTENT */}
       <section className="px-4 pt-6">
         <div className="max-w-7xl mx-auto">
-          <div className={favorites.length > 0 ? 'mb-4 flex items-center justify-end' : 'hidden'}>
+          <div className="mb-4 flex flex-wrap items-center gap-3">
+            {/* Le comparateur cote a cote, annonce une fois au-dessus de la grille. */}
+            {compareFirms.length === 0 && paginatedFirms.length > 1 && (
+              <p className="flex items-center gap-2 text-[13px] text-text-secondary">
+                <span className="grid h-6 w-6 flex-none place-items-center rounded-md bg-sky-400/15 text-sky-700 dark:text-sky-300"><GitCompare className="h-3.5 w-3.5" /></span>
+                {u.compareHint}
+              </p>
+            )}
             {/* Counter "Showing X prop firms" intentionally hidden per design — 
                 displaying it implies a number we'd need to keep accurate, and the
                 grid below already conveys the count visually. */}
             {favorites.length > 0 && (
-              <span className="text-xs text-text-muted">{fill(u.favoritesN, { n: favorites.length })}</span>
+              <span className="ml-auto text-xs text-text-muted">{fill(u.favoritesN, { n: favorites.length })}</span>
             )}
           </div>
           
@@ -2876,7 +2902,7 @@ export default function ComparePageClient({ firms: firmsBrutes, shadowFirms = []
       )}
 
       {/* MOBILE : le meilleur code reste sous le pouce (cache des qu'on compare). */}
-      {offreDuJour && compareFirms.length === 0 && (
+      {offreDuJour && compareFirms.length === 0 && !filtresOuverts && (
         <div className="fixed inset-x-0 bottom-0 z-30 flex items-center gap-3 border-t border-border bg-bg-elevated/95 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 backdrop-blur md:hidden">
           <div className="min-w-0 flex-1 text-xs leading-tight text-text-muted">
             <span className="block truncate text-sm font-semibold text-text-primary">

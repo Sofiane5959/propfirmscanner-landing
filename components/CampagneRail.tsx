@@ -18,6 +18,7 @@
 // =============================================================================
 
 import { useEffect, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { X } from 'lucide-react'
 
 export interface Campagne {
@@ -70,7 +71,11 @@ export function CampagneRail({ campagne }: { campagne: Campagne | null }) {
     return () => clearInterval(id)
   }, [campagne, fin])
 
-  if (!campagne || ferme || temps === null) return null
+  // Sur /compare, l'offre du jour est dans l'en-tete de la page et la barre du
+  // bas mobile : le rail recouvrait les filtres (7/10/2026).
+  const pathname = usePathname() || ''
+  const surCompare = /\/compare\/?$/.test(pathname)
+  if (!campagne || ferme || temps === null || surCompare) return null
 
   const fermer = () => {
     setFerme(true)

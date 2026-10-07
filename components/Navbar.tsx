@@ -382,6 +382,9 @@ export function Navbar() {
   // take the menu with it.
   const headerHidden = useHideOnScrollDown({ disabled: mobileMenuOpen });
   const pathname = usePathname();
+  // Sans le prefixe de langue (/fr/compare -> /compare) : sinon aucun lien
+  // n'etait jamais marque comme page active (7/10/2026).
+  const cheminSansLangue = (pathname || '/').replace(/^\/(en|fr|de|es|pt|ar|hi)(?=\/|$)/, '') || '/';
   const { user, isLoading, signInWithGoogle, signOut } = useAuth();
   
   const currentLocale = getLocaleFromPath(pathname);
@@ -441,13 +444,13 @@ export function Navbar() {
           <div className="hidden lg:flex items-center gap-0.5 flex-1 ml-4">
             {mainNavigation.map((item) => {
               const Icon = item.icon;
-              const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+              const isActive = cheminSansLangue === item.href || cheminSansLangue.startsWith(item.href + '/');
               return (
                 <Link
                   key={item.href}
                   href={item.href}
                   className={`flex items-center gap-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-all
-                    ${isActive ? 'bg-accent/10 text-accent' : 'text-text-secondary hover:text-white hover:bg-white/5'}`}
+                    ${isActive ? 'bg-text-primary/[0.07] font-semibold text-text-primary dark:bg-accent/10 dark:text-accent' : 'text-text-secondary hover:text-text-primary hover:bg-text-primary/[0.05]'}`}
                 >
                   <Icon className="w-4 h-4" />
                   {item.name}
@@ -459,13 +462,13 @@ export function Navbar() {
 
             {productLinks.map((item) => {
               const Icon = item.icon;
-              const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+              const isActive = cheminSansLangue === item.href || cheminSansLangue.startsWith(item.href + '/');
               return (
                 <Link
                   key={item.href}
                   href={item.href}
                   className={`flex items-center gap-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-all
-                    ${isActive ? 'bg-accent/10 text-accent' : 'text-text-secondary hover:text-white hover:bg-white/5'}`}
+                    ${isActive ? 'bg-text-primary/[0.07] font-semibold text-text-primary dark:bg-accent/10 dark:text-accent' : 'text-text-secondary hover:text-text-primary hover:bg-text-primary/[0.05]'}`}
                 >
                   <Icon className="w-4 h-4" />
                   {item.name}
@@ -532,14 +535,14 @@ export function Navbar() {
           <div className="px-4 py-4 space-y-2">
             {mainNavigation.map((item) => {
               const Icon = item.icon;
-              const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+              const isActive = cheminSansLangue === item.href || cheminSansLangue.startsWith(item.href + '/');
               return (
                 <Link
                   key={item.href}
                   href={item.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all
-                    ${isActive ? 'bg-accent/10 text-accent' : 'text-text-secondary hover:text-white hover:bg-white/5'}`}
+                    ${isActive ? 'bg-text-primary/[0.07] font-semibold text-text-primary dark:bg-accent/10 dark:text-accent' : 'text-text-secondary hover:text-text-primary hover:bg-text-primary/[0.05]'}`}
                 >
                   <Icon className="w-5 h-5" />
                   {item.name}
@@ -551,14 +554,14 @@ export function Navbar() {
               <p className="px-4 py-2 text-xs font-semibold text-text-muted uppercase tracking-wider">{t.products}</p>
               {productLinks.map((item) => {
                 const Icon = item.icon;
-                const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+                const isActive = cheminSansLangue === item.href || cheminSansLangue.startsWith(item.href + '/');
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
                     onClick={() => setMobileMenuOpen(false)}
                     className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all
-                      ${isActive ? 'bg-accent/10 text-accent' : 'text-text-secondary hover:text-white hover:bg-white/5'}`}
+                      ${isActive ? 'bg-text-primary/[0.07] font-semibold text-text-primary dark:bg-accent/10 dark:text-accent' : 'text-text-secondary hover:text-text-primary hover:bg-text-primary/[0.05]'}`}
                   >
                     <Icon className="w-5 h-5" />
                     {item.name}
