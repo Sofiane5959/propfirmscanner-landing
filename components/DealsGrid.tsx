@@ -11,6 +11,7 @@ import {
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { appliquerOffresDesFiches, bonusFiche, prixRemiseFiche } from '@/lib/offres-fiches';
 import { suivre } from '@/lib/suivi';
+import { buildAffiliateUrl } from '@/lib/affiliate';
 
 // =============================================================================
 // LOCALE DETECTION
@@ -91,6 +92,14 @@ const translations: Record<Locale, Record<string, string>> = {
     readMore: 'En savoir plus',
   },
   de: {
+    search: 'Firma suchen…',
+    sortDiscount: 'Höchster Rabatt',
+    sortPrice: 'Niedrigster Preis',
+    sortRating: 'Beste Bewertung',
+    codeOnly: 'Mit Code',
+    showMore: 'Mehr Firmen anzeigen',
+    nothing: 'Keine Firma entspricht deiner Suche.',
+    counted: 'Angebote',
     quickCopy: 'Promo-Codes schnell kopieren',
     clickToCopy: 'Klicke einen Code, um ihn zu kopieren',
     activeDeals: 'Aktive Angebote',
@@ -112,6 +121,14 @@ const translations: Record<Locale, Record<string, string>> = {
     readMore: 'Mehr lesen',
   },
   es: {
+    search: 'Buscar una firma…',
+    sortDiscount: 'Mayor descuento',
+    sortPrice: 'Precio más bajo',
+    sortRating: 'Mejor valoradas',
+    codeOnly: 'Con código',
+    showMore: 'Ver más firmas',
+    nothing: 'Ninguna firma coincide con tu búsqueda.',
+    counted: 'ofertas',
     quickCopy: 'Copia rápida de códigos',
     clickToCopy: 'Haz clic en un código para copiarlo',
     activeDeals: 'Ofertas activas',
@@ -133,6 +150,14 @@ const translations: Record<Locale, Record<string, string>> = {
     readMore: 'Saber más',
   },
   pt: {
+    search: 'Procurar uma firma…',
+    sortDiscount: 'Maior desconto',
+    sortPrice: 'Menor preço',
+    sortRating: 'Melhor avaliadas',
+    codeOnly: 'Com código',
+    showMore: 'Ver mais firmas',
+    nothing: 'Nenhuma firma corresponde à sua busca.',
+    counted: 'ofertas',
     quickCopy: 'Cópia rápida de códigos',
     clickToCopy: 'Clique em qualquer código para copiar',
     activeDeals: 'Ofertas ativas',
@@ -154,6 +179,14 @@ const translations: Record<Locale, Record<string, string>> = {
     readMore: 'Saiba mais',
   },
   ar: {
+    search: 'ابحث عن شركة…',
+    sortDiscount: 'أكبر خصم',
+    sortPrice: 'أقل سعر',
+    sortRating: 'الأعلى تقييماً',
+    codeOnly: 'مع كود',
+    showMore: 'عرض المزيد من الشركات',
+    nothing: 'لا توجد شركة تطابق بحثك.',
+    counted: 'عروض',
     quickCopy: 'نسخ سريع لرموز الخصم',
     clickToCopy: 'انقر على أي رمز للنسخ فوراً',
     activeDeals: 'العروض النشطة',
@@ -175,6 +208,14 @@ const translations: Record<Locale, Record<string, string>> = {
     readMore: 'المزيد',
   },
   hi: {
+    search: 'फ़र्म खोजें…',
+    sortDiscount: 'सबसे बड़ी छूट',
+    sortPrice: 'सबसे कम कीमत',
+    sortRating: 'सबसे अच्छी रेटिंग',
+    codeOnly: 'कोड के साथ',
+    showMore: 'और फ़र्म देखें',
+    nothing: 'आपकी खोज से कोई फ़र्म मेल नहीं खाती।',
+    counted: 'ऑफ़र',
     quickCopy: 'त्वरित कॉपी प्रोमो कोड',
     clickToCopy: 'किसी भी कोड को तुरंत कॉपी करने के लिए क्लिक करें',
     activeDeals: 'सक्रिय डील्स',
@@ -301,7 +342,9 @@ function CopyCodeButton({ code, label, firmSlug, placement }: {
 
 export function PromoCodesBanner() {
   const pathname = usePathname();
-  const t = translations[getLocaleFromPath(pathname)];
+  // Repli sur l'anglais : plusieurs cles n'existent qu'en en/fr, elles
+  // s'affichaient vides en de/es/pt/ar/hi (7/10/2026).
+  const t = { ...translations.en, ...translations[getLocaleFromPath(pathname)] };
   const [firms, setFirms] = useState<PropFirm[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -374,10 +417,11 @@ export function PromoCodesBanner() {
 // DEAL CARD
 // =============================================================================
 
-function DealCard({ firm, t }: { firm: PropFirm; t: Record<string, string> }) {
+function DealCard({ firm, t, locale }: { firm: PropFirm; t: Record<string, string>; locale: string }) {
   const hasOutbound = !!(firm.affiliate_url || firm.website_url);
-  const visitUrl = hasOutbound ? `/api/go/${firm.slug}?source=deals-grid` : null;
-  const internalUrl = `/prop-firm/${firm.slug}`;
+  // Regle du depot : toute sortie vers une firme passe par buildAffiliateUrl().
+  const visitUrl = hasOutbound ? buildAffiliateUrl(firm.slug, { placement: 'deals-grid', locale }) : null;
+  const internalUrl = `${locale === 'en' ? '' : `/${locale}`}/prop-firm/${firm.slug}`;
   const hasCode = !!(firm.discount_code && firm.discount_code.trim().length > 0);
   const hasDiscount = (firm.discount_percent ?? 0) > 0;
   // Ce que l'offre donne en plus du pourcentage, quand la firme a une fiche.
@@ -509,7 +553,9 @@ function DealCard({ firm, t }: { firm: PropFirm; t: Record<string, string> }) {
 
 export function DealsGrid() {
   const pathname = usePathname();
-  const t = translations[getLocaleFromPath(pathname)];
+  // Repli sur l'anglais : plusieurs cles n'existent qu'en en/fr, elles
+  // s'affichaient vides en de/es/pt/ar/hi (7/10/2026).
+  const t = { ...translations.en, ...translations[getLocaleFromPath(pathname)] };
 
   const [firms, setFirms] = useState<PropFirm[]>([]);
   const [loading, setLoading] = useState(true);
@@ -653,7 +699,7 @@ export function DealsGrid() {
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
             {dealFirms.map(f => (
-              <DealCard key={f.id} firm={f} t={t} />
+              <DealCard key={f.id} firm={f} t={t} locale={getLocaleFromPath(pathname)} />
             ))}
           </div>
         </section>
@@ -678,7 +724,7 @@ export function DealsGrid() {
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
             {remainingFirms.slice(0, montrees).map(f => (
-              <DealCard key={f.id} firm={f} t={t} />
+              <DealCard key={f.id} firm={f} t={t} locale={getLocaleFromPath(pathname)} />
             ))}
           </div>
           {remainingFirms.length > montrees && (

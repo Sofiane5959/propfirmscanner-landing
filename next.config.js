@@ -44,6 +44,24 @@ const nextConfig = {
   // Optimizations
   poweredByHeader: false,
   reactStrictMode: true,
+  // Anciennes adresses d'articles affichees par la liste du blog sans article
+  // derriere (404). Redirigees en 308 vers l'article le plus proche, ou vers
+  // le blog (7/10/2026).
+  async redirects() {
+    const anciens = {
+      'revenge-trading': 'revenge-trading-how-to-stop',
+      'ea-bot-trading-rules': 'ea-trading-prop-firms',
+      'best-prop-firms-for-beginners': 'first-prop-firm-guide',
+      'overtrading-psychology': 'trading-psychology-tips',
+      'funded-next-review': null,
+      'instant-funding-vs-challenge': null,
+    }
+    const locales = 'fr|de|es|pt|ar|hi'
+    return Object.entries(anciens).flatMap(([ancien, cible]) => [
+      { source: `/blog/${ancien}`, destination: cible ? `/blog/${cible}` : '/blog', permanent: true },
+      { source: `/:locale(${locales})/blog/${ancien}`, destination: cible ? `/:locale/blog/${cible}` : '/:locale/blog', permanent: true },
+    ])
+  },
 }
 
 module.exports = withNextIntl(nextConfig);

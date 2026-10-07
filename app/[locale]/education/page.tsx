@@ -263,7 +263,7 @@ function WaitlistInCard() {
 // =============================================================================
 function ComingSoonOverlay() {
   return (
-    <div className="absolute inset-0 bg-bg-base/80 backdrop-blur-sm z-20 flex items-center justify-center rounded-2xl">
+    <div className="pointer-events-none absolute inset-0 bg-bg-base/80 backdrop-blur-sm z-20 flex items-start justify-center rounded-2xl pt-24">
       <div className="text-center">
         <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full text-white font-bold text-lg mb-3 animate-pulse">
           <Lock className="w-5 h-5" /> Coming Soon
@@ -380,7 +380,11 @@ function CourseCard({
               )}
             </div>
           ) : (
-            <WaitlistInCard />
+            // Au-dessus du voile « Coming Soon » : le formulaire etait recouvert
+            // et ne pouvait pas etre clique (7/10/2026).
+            <div className="relative z-30">
+              <WaitlistInCard />
+            </div>
           )}
         </div>
       </div>

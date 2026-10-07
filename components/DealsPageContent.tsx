@@ -168,7 +168,7 @@ function useDealsStats(): { stats: DealsStats | null; loading: boolean } {
 
 export default function DealsPageContent() {
   const pathname = usePathname();
-  const t = translations[getLocaleFromPath(pathname)];
+  const t = { ...translations.en, ...translations[getLocaleFromPath(pathname)] };
   const { stats, loading } = useDealsStats();
 
   return (
