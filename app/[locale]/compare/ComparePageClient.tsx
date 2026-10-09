@@ -6,7 +6,7 @@ import { useHideOnScrollDown } from '@/hooks/useHideOnScrollDown'
 import Image from 'next/image'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { rangPartenaire } from '@/lib/partenaires'
+import { guidePartenaire, rangPartenaire } from '@/lib/partenaires'
 
 // =============================================================================
 // LOCALE DETECTION & TRANSLATIONS
@@ -566,9 +566,10 @@ import {
   ChevronLeft, ChevronRight, RotateCcw,
   Heart, GitCompare, Zap, TrendingUp,
   DollarSign, Users, Flame, MessageSquare,
-  Banknote, Upload, ImageIcon, Sparkles, SlidersHorizontal
+  Banknote, Upload, ImageIcon, Sparkles, SlidersHorizontal, BookOpen
 } from 'lucide-react'
 import { PriceAlertButton } from '@/components/PriceAlert'
+import { localePath } from '@/lib/seo'
 import { toArray } from '@/lib/to-array'
 import { appliquerOffresDesFiches, bonusFiche, prixRemiseFiche } from '@/lib/offres-fiches'
 import { suivre } from '@/lib/suivi'
@@ -1540,7 +1541,11 @@ const PropFirmCard = ({
   // tete (28 septembre 2026, demande de Sofiane). Avant, la base le donnait a
   // toutes les firmes de tier 1 — sept badges dans la liste, donc aucun signal.
   const isTopPick = rangPartenaire(firm.slug) === 0
-  
+  // La page-guide de ce partenaire, quand il en a une (table dans
+  // lib/partenaires.ts). Le lien part de la carte en mode grille.
+  const guide = guidePartenaire(firm.slug)
+  const locale = getLocaleFromPath(usePathname() || '/')
+
   if (isCompact) {
     return (
       <div className={`group bg-bg-elevated hover:bg-bg-base border rounded-lg p-3 transition-colors ${
@@ -1781,6 +1786,20 @@ const PropFirmCard = ({
             </p>
           )}
         </div>
+      )}
+
+      {/* e-bis) La page-guide du partenaire, quand il en a une. Lien interne :
+             il porte le mot-cle vers la page qui traite du code promo, et
+             laisse au visiteur une lecture avant de payer. Table dans
+             lib/partenaires.ts — rien de specifique a une firme ici. */}
+      {guide && (
+        <Link
+          href={localePath(locale, guide.chemin)}
+          className="-mt-1 flex items-center gap-1 text-[11px] font-medium text-text-muted underline-offset-2 hover:text-accent hover:underline"
+        >
+          <BookOpen className="h-3 w-3 flex-none" />
+          {firm.name} {guide.libelle.toLowerCase()}
+        </Link>
       )}
 
       {/* f) Actions : sortie principale, puis ajout au comparateur */}

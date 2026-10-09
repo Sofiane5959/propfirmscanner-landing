@@ -24,6 +24,10 @@ const STATIC_PAGES: { path: string; priority: number; changeFrequency: MetadataR
   { path: '/', priority: 1.0, changeFrequency: 'daily' },
   { path: '/compare', priority: 0.9, changeFrequency: 'daily' },
   { path: '/deals', priority: 0.9, changeFrequency: 'daily' },
+  // Les deux pages SEO Earn2Trade. `forEachLocale` lit `localesFor`, qui les
+  // declare anglaises seulement (lib/seo.ts) : une URL chacune, pas sept.
+  { path: '/earn2trade-promo-code', priority: 0.8, changeFrequency: 'weekly' },
+  { path: '/earn2trade-rules', priority: 0.7, changeFrequency: 'monthly' },
   { path: '/blog', priority: 0.7, changeFrequency: 'weekly' },
   { path: '/guide', priority: 0.6, changeFrequency: 'monthly' },
   { path: '/faq', priority: 0.6, changeFrequency: 'monthly' },
