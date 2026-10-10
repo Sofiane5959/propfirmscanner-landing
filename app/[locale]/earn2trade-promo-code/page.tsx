@@ -32,9 +32,14 @@
 //     quelle dans la FAQ (le brief en citait une liste approximative) ;
 //   - les sept plans et leurs chiffres : lus dans la fiche, pas recopies.
 //
-// NON RESOLU, donc absent de la page : le code s'applique-t-il aux
-// renouvellements mensuels ? Voir le [VERIFY] de la section « Monthly
-// subscription » plus bas.
+// Confirme par Sofiane le 10 octobre 2026 : SCANNED est un code PERMANENT,
+// sans date de fin. La page le dit — c'est un argument, et cela evite la
+// mention « offre limitee » que portent les pages concurrentes.
+//
+// NON RESOLU, donc absent de la page : la remise revient-elle sur chaque
+// renouvellement mensuel, ou seulement sur le premier paiement ? « Permanent »
+// repond a la duree de validite du code, pas a celle de la remise. Voir le
+// [VERIFY] de la section « Monthly subscription » plus bas.
 //
 // `revalidate` : la page affiche les campagnes ouvertes a l'instant du rendu.
 // Sans revalidation, une page mise en cache le 9 octobre continuerait
@@ -178,6 +183,10 @@ export default function Earn2TradePromoCodePage({ params }: { params: { locale: 
         'No, offers are not cumulative. During a site-wide sale the campaign price applies and the coupon field is overwritten, so use our link: the discount still shows and the visit stays attributed to us.',
     },
     {
+      question: `Does the ${offre.code} code expire?`,
+      reponse: `No. ${offre.code} is a permanent partner code, not a limited-time coupon: it has no end date. During a site-wide Earn2Trade sale the campaign price takes over, then the code applies again.`,
+    },
+    {
       question: 'Is Earn2Trade legit?',
       reponse: `Earn2Trade has been running since ${sheet.anneeCreation ?? 2016} and is futures-only, on CME Group markets. Traders who pass the evaluation are funded by partner proprietary trading firms.`,
     },
@@ -267,9 +276,11 @@ export default function Earn2TradePromoCodePage({ params }: { params: { locale: 
             Works on Trader Career Path (TCP) and Gauntlet Mini (GAU) — {remiseAffichee}% off the
             evaluation.
           </p>
+          {/* « Permanent » est une information, pas une promesse de remise a
+              chaque renouvellement : voir le [VERIFY] plus bas. */}
           <p className="mt-2 flex items-center gap-1.5 text-xs text-text-muted">
             <BadgeCheck className="h-3.5 w-3.5 text-accent" />
-            Last checked: {verifieLeAffiche()} by PropFirm Scanner
+            Permanent code, no end date · last checked {verifieLeAffiche()} by PropFirm Scanner
           </p>
         </div>
 
@@ -495,12 +506,15 @@ export default function Earn2TradePromoCodePage({ params }: { params: { locale: 
               <p className="mt-1 text-sm text-text-secondary">
                 You pay every month until you pass, so budget for more than one cycle. A discount
                 code saves money on the first payment.
-                {/* [VERIFY] — Le code s'applique-t-il aussi aux renouvellements
-                    mensuels ? Eva (Earn2Trade) n'a pas repondu, et le checkout
-                    ne le montre pas : il n'affiche que le premier paiement.
-                    Tant que ce n'est pas verifie, la page ne promet rien sur
-                    les renouvellements (regle du depot : ne pas promettre au
-                    visiteur ce que le partenaire ne garantit pas). */}
+                {/* [VERIFY] — La remise revient-elle sur chaque renouvellement
+                    mensuel ? Sofiane a confirme que le code est permanent
+                    (10/10/2026), ce qui repond a sa validite dans le temps,
+                    pas a son effet sur un reabonnement : le checkout n'affiche
+                    que le premier paiement. Tant que ce n'est pas verifie, la
+                    page ne promet rien sur les renouvellements — regle du
+                    depot : ne pas promettre ce que le partenaire ne garantit
+                    pas. Le jour ou c'est confirme, remplacer la derniere
+                    phrase par « une remise qui revient chaque mois ». */}
               </p>
             </li>
           </ol>
