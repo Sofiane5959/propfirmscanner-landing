@@ -45,8 +45,40 @@ const FIRM_PAGE_LOCALES = ['en', 'fr'] as const;
  */
 const FIRM_PATH = /^\/prop-firm\//;
 
+/**
+ * Pages redigees en anglais, et en anglais seulement.
+ *
+ * Les deux pages SEO Earn2Trade portent une redaction unique : un mot-cle
+ * anglais (« earn2trade promo code »), des exemples chiffres et une FAQ ecrits
+ * a la main. Rien de tout cela n'existe dans les six autres langues.
+ * En declarer sept alternates inviterait Google a indexer six copies de la
+ * meme page anglaise — exactement ce que le commentaire sur les fiches firmes
+ * decrit plus haut.
+ *
+ * /fr/earn2trade-promo-code repond quand meme : c'est la meme page, et son
+ * canonical pointe vers l'anglais. Le jour ou une traduction existe, il suffit
+ * de retirer le chemin de cette liste : canonical, hreflang et sitemap
+ * suivent, ils lisent tous les trois `localesFor`.
+ */
+const EN_ONLY_PATHS = ['/earn2trade-promo-code', '/earn2trade-rules'];
+
+const EN_ONLY = ['en'] as const;
+
 export function localesFor(path: string): readonly string[] {
+  if (EN_ONLY_PATHS.includes(path)) return EN_ONLY;
   return FIRM_PATH.test(path) ? FIRM_PAGE_LOCALES : locales;
+}
+
+/**
+ * Le meme chemin que `localeHref`, sans le domaine : pour un lien interne.
+ *
+ * L'anglais n'a pas de prefixe — `/en/compare` repond 307 vers `/compare`.
+ * Un lien interne vers une redirection se suit quand meme, mais il dilue le
+ * signal et ralentit le visiteur ; autant pointer la bonne adresse.
+ */
+export function localePath(locale: string, path: string): string {
+  const clean = path === '/' ? '' : path.replace(/\/$/, '');
+  return locale === 'en' ? clean || '/' : `/${locale}${clean}`;
 }
 
 // Conserve pour compatibilite : la valeur historique, desormais reservee aux
