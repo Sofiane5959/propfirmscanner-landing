@@ -66,8 +66,25 @@ export async function generateMetadata({
       siteName: 'PropFirm Scanner',
       title: titre,
       description,
+      images: [
+        {
+          // La banniere officielle d'Earn2Trade (kit affilie), recompressee a
+          // 55 Ko. Sans image, un lien colle sur TikTok, WhatsApp ou X
+          // s'affiche en carte vide — c'est pourtant la que ces pages seront
+          // partagees. 1200x628 est la taille que lisent les trois.
+          url: 'https://www.propfirmscanner.org/og/earn2trade-promo-code.jpg',
+          width: 1200,
+          height: 628,
+          alt: 'Earn2Trade — 50% discount on all subscriptions',
+        },
+      ],
     },
-    twitter: { card: 'summary_large_image', title: titre, description },
+    twitter: {
+      card: 'summary_large_image',
+      title: titre,
+      description,
+      images: ['https://www.propfirmscanner.org/og/earn2trade-promo-code.jpg'],
+    },
   }
 }
 
