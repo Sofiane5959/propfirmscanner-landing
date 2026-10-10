@@ -32,14 +32,16 @@
 //     quelle dans la FAQ (le brief en citait une liste approximative) ;
 //   - les sept plans et leurs chiffres : lus dans la fiche, pas recopies.
 //
-// Confirme par Sofiane le 10 octobre 2026 : SCANNED est un code PERMANENT,
-// sans date de fin. La page le dit — c'est un argument, et cela evite la
-// mention « offre limitee » que portent les pages concurrentes.
+// Confirme par Eva (affiliation Earn2Trade), rapporte par Sofiane le
+// 10 octobre 2026 : SCANNED est PERMANENT — pas de date de fin — et la remise
+// revient sur CHAQUE prelevement mensuel, pas seulement sur le premier.
 //
-// NON RESOLU, donc absent de la page : la remise revient-elle sur chaque
-// renouvellement mensuel, ou seulement sur le premier paiement ? « Permanent »
-// repond a la duree de validite du code, pas a celle de la remise. Voir le
-// [VERIFY] de la section « Monthly subscription » plus bas.
+// C'est l'argument le plus fort de la page, et le plus fragile : une
+// evaluation se paie par abonnement, donc la remise se compte en mois, pas en
+// une fois. Il tient sur la parole du partenaire, pas sur une page publique
+// (les comparateurs se contredisent sur ce point). Si Earn2Trade change de
+// politique, c'est la premiere phrase a retirer : section « Monthly
+// subscription » et la question correspondante de la FAQ.
 //
 // `revalidate` : la page affiche les campagnes ouvertes a l'instant du rendu.
 // Sans revalidation, une page mise en cache le 9 octobre continuerait
@@ -187,6 +189,12 @@ export default function Earn2TradePromoCodePage({ params }: { params: { locale: 
       reponse: `No. ${offre.code} is a permanent partner code, not a limited-time coupon: it has no end date. During a site-wide Earn2Trade sale the campaign price takes over, then the code applies again.`,
     },
     {
+      question: `Does ${offre.code} apply to monthly renewals?`,
+      // Confirme par l'affiliation Earn2Trade le 10 octobre 2026. A retirer si
+      // leur politique change : c'est une promesse sur un prelevement a venir.
+      reponse: `Yes. The evaluation is a monthly subscription, and ${offre.code} discounts every payment while you are in it — not just the first one. Earn2Trade's affiliate team confirmed this on ${verifieLeAffiche()}, so the saving repeats each month until you pass.`,
+    },
+    {
       question: 'Is Earn2Trade legit?',
       reponse: `Earn2Trade has been running since ${sheet.anneeCreation ?? 2016} and is futures-only, on CME Group markets. Traders who pass the evaluation are funded by partner proprietary trading firms.`,
     },
@@ -274,7 +282,14 @@ export default function Earn2TradePromoCodePage({ params }: { params: { locale: 
           </div>
           <p className="mt-3 text-sm text-text-secondary">
             Works on Trader Career Path (TCP) and Gauntlet Mini (GAU) — {remiseAffichee}% off the
-            evaluation.
+            evaluation.{' '}
+            {/* Le taux affiche peut etre celui d'une campagne ; la phrase
+                mensuelle, elle, parle du code permanent. Pas de pourcentage
+                ici : il changerait de sens pendant une campagne. */}
+            <strong className="text-text-primary">
+              The discount comes back on every monthly renewal
+            </strong>
+            , not just the first payment.
           </p>
           {/* « Permanent » est une information, pas une promesse de remise a
               chaque renouvellement : voir le [VERIFY] plus bas. */}
@@ -504,17 +519,14 @@ export default function Earn2TradePromoCodePage({ params }: { params: { locale: 
             <li className="rounded-xl border border-border bg-bg-elevated p-4">
               <h3 className="text-sm font-bold">Monthly subscription</h3>
               <p className="mt-1 text-sm text-text-secondary">
-                You pay every month until you pass, so budget for more than one cycle. A discount
-                code saves money on the first payment.
-                {/* [VERIFY] — La remise revient-elle sur chaque renouvellement
-                    mensuel ? Sofiane a confirme que le code est permanent
-                    (10/10/2026), ce qui repond a sa validite dans le temps,
-                    pas a son effet sur un reabonnement : le checkout n'affiche
-                    que le premier paiement. Tant que ce n'est pas verifie, la
-                    page ne promet rien sur les renouvellements — regle du
-                    depot : ne pas promettre ce que le partenaire ne garantit
-                    pas. Le jour ou c'est confirme, remplacer la derniere
-                    phrase par « une remise qui revient chaque mois ». */}
+                You pay every month until you pass, so budget for more than one cycle — and this is
+                where {offre.code} pays off: the discount applies to{' '}
+                <strong className="text-text-primary">every monthly payment</strong>, not only the
+                first one. Confirmed with Earn2Trade&apos;s affiliate team on {verifieLeAffiche()}.
+                {/* Le dernier [VERIFY] du brief, leve le 10 octobre 2026 par
+                    l'affiliation Earn2Trade : la remise porte sur chaque
+                    prelevement. A verifier de nouveau a chaque passage sur
+                    VERIFIE_LE — c'est une promesse sur un paiement futur. */}
               </p>
             </li>
           </ol>
