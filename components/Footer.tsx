@@ -55,6 +55,7 @@ const translations: Record<Locale, Record<string, string>> = {
     bestFirms: 'Best Firms 2025',
     passChallenge: 'Pass Your Challenge',
     faq: 'FAQ',
+    earn2tradePromo: 'Earn2Trade promo code',
     popularFirms: 'Popular Firms',
     legal: 'Legal',
     privacyPolicy: 'Privacy Policy',
@@ -76,6 +77,7 @@ const translations: Record<Locale, Record<string, string>> = {
     bestFirms: 'Meilleures Firms 2025',
     passChallenge: 'Reussir son Challenge',
     faq: 'FAQ',
+    earn2tradePromo: 'Code promo Earn2Trade',
     popularFirms: 'Firms Populaires',
     legal: 'Legal',
     privacyPolicy: 'Politique de Confidentialite',
@@ -97,6 +99,7 @@ const translations: Record<Locale, Record<string, string>> = {
     bestFirms: 'Beste Firms 2025',
     passChallenge: 'Challenge bestehen',
     faq: 'FAQ',
+    earn2tradePromo: 'Earn2Trade Gutscheincode',
     popularFirms: 'Beliebte Firms',
     legal: 'Rechtliches',
     privacyPolicy: 'Datenschutz',
@@ -118,6 +121,7 @@ const translations: Record<Locale, Record<string, string>> = {
     bestFirms: 'Mejores Firms 2025',
     passChallenge: 'Superar el Challenge',
     faq: 'FAQ',
+    earn2tradePromo: 'Código promocional Earn2Trade',
     popularFirms: 'Firms Populares',
     legal: 'Legal',
     privacyPolicy: 'Politica de Privacidad',
@@ -139,6 +143,7 @@ const translations: Record<Locale, Record<string, string>> = {
     bestFirms: 'Melhores Firms 2025',
     passChallenge: 'Passar no Challenge',
     faq: 'FAQ',
+    earn2tradePromo: 'Código promocional Earn2Trade',
     popularFirms: 'Firms Populares',
     legal: 'Legal',
     privacyPolicy: 'Politica de Privacidade',
@@ -160,6 +165,7 @@ const translations: Record<Locale, Record<string, string>> = {
     bestFirms: 'افضل الشركات 2025',
     passChallenge: 'اجتياز التحدي',
     faq: 'الاسئلة الشائعة',
+    earn2tradePromo: 'كود خصم Earn2Trade',
     popularFirms: 'شركات شائعة',
     legal: 'قانوني',
     privacyPolicy: 'سياسة الخصوصية',
@@ -181,6 +187,7 @@ const translations: Record<Locale, Record<string, string>> = {
     bestFirms: 'बेस्ट Firms 2025',
     passChallenge: 'Challenge पास करें',
     faq: 'FAQ',
+    earn2tradePromo: 'Earn2Trade प्रोमो कोड',
     popularFirms: 'लोकप्रिय Firms',
     legal: 'कानूनी',
     privacyPolicy: 'गोपनीयता नीति',
@@ -303,6 +310,16 @@ export default function Footer() {
                   {t.faq}
                 </Link>
               </li>
+              {/* Lien interne vers la page du code promo. Il est ici parce que
+                  le pied de page part dans le HTML du serveur : sur /compare,
+                  les cartes — et donc le lien de la carte Earn2Trade — sont
+                  rendues par le navigateur, ce que les robots lisent plus tard
+                  et moins bien. */}
+              <li>
+                <Link href="/earn2trade-promo-code" className="text-text-secondary hover:text-accent text-sm transition-colors">
+                  {t.earn2tradePromo}
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -310,6 +327,11 @@ export default function Footer() {
           <div>
             <h3 className="text-white font-semibold mb-4">{t.popularFirms}</h3>
             <ul className="space-y-3">
+              <li>
+                <Link href="/prop-firm/earn2trade" className="text-text-secondary hover:text-accent text-sm transition-colors">
+                  Earn2Trade
+                </Link>
+              </li>
               <li>
                 <Link href="/prop-firm/ftmo" className="text-text-secondary hover:text-accent text-sm transition-colors">
                   FTMO
