@@ -439,8 +439,8 @@
     {
       "debut": "2026-10-08T05:00:00+00:00",
       "fin": "2026-10-09T04:59:00+00:00",
-      "titre": "Day 4 · TCP25 -60%",
-      "detail": "60% off the TCP25 today, activation fee waived.",
+      "titre": "Day 4 · TCP25 + no fee",
+      "detail": "50% off every plan today, and 60% on the TCP25 — activation fee waived.",
       "remise": null,
       "statut": "confirmed"
     },
@@ -455,8 +455,8 @@
     {
       "debut": "2026-10-12T05:00:00+00:00",
       "fin": "2026-10-13T04:59:00+00:00",
-      "titre": "Day 6 · -60% 50K",
-      "detail": "60% off the TCP50 or the Gauntlet Mini 50K, plus a free evaluation after your first payout.",
+      "titre": "Day 6 · 50K + free eval",
+      "detail": "50% off every plan today, and 60% on the TCP50 or the Gauntlet Mini 50K — plus a free evaluation after your first payout.",
       "remise": null,
       "statut": "confirmed"
     },
@@ -471,8 +471,8 @@
     {
       "debut": "2026-10-14T05:00:00+00:00",
       "fin": "2026-10-15T04:59:00+00:00",
-      "titre": "Day 8 · TCP100 -60%",
-      "detail": "60% off the TCP100 today, with resets at $50.",
+      "titre": "Day 8 · TCP100 + $50 resets",
+      "detail": "50% off every plan today, and 60% on the TCP100 — resets at $50.",
       "remise": null,
       "statut": "confirmed"
     },
