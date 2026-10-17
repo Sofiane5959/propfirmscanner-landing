@@ -333,10 +333,17 @@ export default function Earn2TradePromoCodePage({ params }: { params: { locale: 
                   <span className="font-semibold text-text-primary">{c.titre}</span>
                   {c.detail && <span className="text-text-secondary"> — {c.detail}</span>}
                   <span className="block text-xs text-text-muted">
+                    {/* Dans le fuseau d'Earn2Trade, pas celui du serveur. Les
+                        fenetres du calendrier ferment a 23h59 heure de
+                        Chicago, ce qui s'ecrit 04:59 UTC le LENDEMAIN : la
+                        date brute annoncait « Until 19 October » une offre qui
+                        s'arrete le 18 au soir. La firme est a Chicago — c'est
+                        aussi l'heure de ses regles de trading (3:50 PM CT). */}
                     Until{' '}
                     {new Date(c.fin).toLocaleDateString('en-GB', {
                       day: 'numeric',
                       month: 'long',
+                      timeZone: 'America/Chicago',
                     })}
                   </span>
                 </li>
