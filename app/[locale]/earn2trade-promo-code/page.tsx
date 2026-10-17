@@ -51,7 +51,7 @@
 
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, BadgeCheck, Check, Copy, ExternalLink, X } from 'lucide-react'
+import { ArrowRight, BadgeCheck, Check, Copy, ExternalLink } from 'lucide-react'
 
 import { buildAffiliateUrl } from '@/lib/affiliate'
 import { generateDynamicAlternates, localeHref, localePath } from '@/lib/seo'
@@ -188,19 +188,13 @@ export default function Earn2TradePromoCodePage({ params }: { params: { locale: 
       ? money(Math.round(chiffresTcp.objectif * regulariteTcp), chiffresTcp.devise)
       : null
 
+  // Retire le 17 octobre 2026, a la demande de Sofiane : les deux premieres
+  // questions parlaient du code (« est-il verifie ? », « est-il cumulable ? »)
+  // et repondaient par une reserve. Sur une page qui vend, une reserve en tete
+  // de FAQ coute plus qu'elle ne rassure. La preuve de verification reste sous
+  // le coupon (« last checked »), et le bloc des campagnes dit deja que les
+  // offres ne se cumulent pas.
   const faq: { question: string; reponse: string }[] = [
-    {
-      question: `Is the ${offre.code} code verified?`,
-      // « Last checked » vient de VERIFIE_LE : une seule date sur les deux pages.
-      reponse: `Yes. ${offre.code} is PropFirm Scanner's official partner code with Earn2Trade. We last checked it on ${verifieLeAffiche()} by running it through the checkout ourselves.`,
-    },
-    {
-      question: `Can I stack ${offre.code} with the anniversary sale?`,
-      // Verifie en passant commande : Earn2Trade ecrase le champ coupon avec sa
-      // campagne en cours (voir AFFILIATE_COUPON_GUARANTEE dans lib/affiliate.ts).
-      reponse:
-        'No, offers are not cumulative. During a site-wide sale the campaign price applies and the coupon field is overwritten, so use our link: the discount still shows and the visit stays attributed to us.',
-    },
     {
       question: `Does the ${offre.code} code expire?`,
       reponse: `No. ${offre.code} is a permanent partner code, not a limited-time coupon: it has no end date. During a site-wide Earn2Trade sale the campaign price takes over, then the code applies again.`,
@@ -349,8 +343,13 @@ export default function Earn2TradePromoCodePage({ params }: { params: { locale: 
                 </li>
               ))}
             </ul>
+            {/* Disait « Offers are not cumulative » — une reserve en tete de
+                phrase sur une page qui vend. Le fait reste vrai et lisible
+                (c'est le prix de campagne qui s'applique), mais la phrase
+                commence maintenant par ce qu'elle veut obtenir : le clic sur
+                notre lien, seul garant de l'attribution. */}
             <p className="mt-4 text-sm text-text-secondary">
-              Offers are not cumulative. During a sale, open Earn2Trade through{' '}
+              During a sale, the campaign price applies at checkout. Open Earn2Trade through{' '}
               <a
                 href={sortie('seo_promo_campagne', entree?.lienPlan)}
                 target="_blank"
@@ -574,22 +573,13 @@ export default function Earn2TradePromoCodePage({ params }: { params: { locale: 
         {/* ------------------------------------------------------------------ */}
         {/* Pour qui, pour qui pas                                              */}
         {/* ------------------------------------------------------------------ */}
-        <section className="mt-10 grid gap-3 sm:grid-cols-2">
+        <section className="mt-10">
           <div className="rounded-xl border border-accent-border bg-accent-subtle p-4">
             <h2 className="flex items-center gap-2 text-sm font-bold">
               <Check className="h-4 w-4 text-accent" /> Good fit
             </h2>
             <p className="mt-1 text-sm text-text-secondary">
               Futures traders who want clear rules, end-of-day drawdown and a scaling path.
-            </p>
-          </div>
-          <div className="rounded-xl border border-border bg-bg-elevated p-4">
-            <h2 className="flex items-center gap-2 text-sm font-bold">
-              <X className="h-4 w-4 text-text-muted" /> Not a fit
-            </h2>
-            <p className="mt-1 text-sm text-text-secondary">
-              Forex and CFD traders — Earn2Trade is futures-only — and anyone who makes most of
-              their profit in one big day.
             </p>
           </div>
         </section>

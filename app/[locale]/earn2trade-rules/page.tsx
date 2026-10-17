@@ -13,7 +13,7 @@
 
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { AlertTriangle, ArrowRight, Check, ExternalLink, X } from 'lucide-react'
+import { AlertTriangle, ArrowRight, Check, ExternalLink } from 'lucide-react'
 
 import { buildAffiliateUrl } from '@/lib/affiliate'
 import { generateDynamicAlternates, localeHref, localePath } from '@/lib/seo'
@@ -380,21 +380,13 @@ export default function Earn2TradeRulesPage({ params }: { params: { locale: stri
         {/* ------------------------------------------------------------------ */}
         {/* Pour qui                                                            */}
         {/* ------------------------------------------------------------------ */}
-        <section className="mt-10 grid gap-3 sm:grid-cols-2">
+        <section className="mt-10">
           <div className="rounded-xl border border-accent-border bg-accent-subtle p-4">
             <h2 className="flex items-center gap-2 text-sm font-bold">
               <Check className="h-4 w-4 text-accent" /> Who it suits
             </h2>
             <p className="mt-1 text-sm text-text-secondary">
               Futures traders who want strict but clear rules and a scaling path.
-            </p>
-          </div>
-          <div className="rounded-xl border border-border bg-bg-elevated p-4">
-            <h2 className="flex items-center gap-2 text-sm font-bold">
-              <X className="h-4 w-4 text-text-muted" /> Who it does not
-            </h2>
-            <p className="mt-1 text-sm text-text-secondary">
-              Forex and CFD traders, and traders who make most of their profit in one big day.
             </p>
           </div>
         </section>
