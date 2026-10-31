@@ -389,10 +389,10 @@
     "programmesEligibles": [],
     "taillesEligibles": [],
     "expireLe": null,
-    "accroche": null,
-    "bonus": null,
-    "remiseCampagne": null,
-    "campagneFin": null,
+    "accroche": "60% off every evaluation and 50% off resets — both apply to your first two months of subscription, purchase date included.",
+    "bonus": "+50% off resets",
+    "remiseCampagne": 0.6,
+    "campagneFin": "2026-11-02T04:59:00+00:00",
     "statut": "confirmed"
   },
   "campagnes": [
