@@ -6,10 +6,13 @@
  * PropFirmScanner — Global styles
  *
  * Deux themes, pilotes par la classe `dark` sur <html> :
- *   :root  = Menthe + (jour, thème par défaut)
- *   .dark  = Moka    (nuit)
+ *   .dark  = Sombre (encre bleutee #0A0F1C, cartes #131B2D, texte #E6EAF2 non blanc pur pour le confort ; defaut)
+ *   :root  = Clair  (ivoire #F8F6F1, cartes blanches ombrees, ambre en accent ; 7/10/2026)
+ * Action = vert emeraude (--accent-btn #10B981) avec texte sombre
+ * (--on-accent #04231A, 7:1) ; codes promo en ambre (--deal). Option 1A
+ * du design system PropFirmScanner.
  * La classe est posee avant l'affichage par le script de app/[locale]/layout.tsx
- * (choix enregistre, sinon jour). Les valeurs sont des triplets
+ * (choix enregistre, sinon sombre). Les valeurs sont des triplets
  * RGB pour que Tailwind garde les opacites (bg-accent/10, bg-bg-elevated/60).
  */
 
@@ -19,54 +22,58 @@
 @layer base {
   :root {
     color-scheme: light;
-    --bg-base: 232 239 235; /* #E8EFEB */
+    --bg-base: 248 246 241; /* #F8F6F1 */
     --bg-elevated: 255 255 255; /* #FFFFFF */
-    --border: 210 225 217; /* #D2E1D9 */
-    --border-hover: 170 195 182; /* #AAC3B6 */
-    --text-primary: 16 32 26; /* #10201A */
-    --text-secondary: 51 71 63; /* #33473F */
-    --text-muted: 90 110 102; /* #5A6E66 */
-    --accent: 21 128 61; /* #15803D */
-    --accent-btn: 4 120 87; /* #047857 */
-    --deal: 194 65 12; /* #C2410C */
-    --dark-50: 16 32 26; /* #10201A */
-    --dark-100: 30 48 41; /* #1E3029 */
-    --dark-200: 51 71 63; /* #33473F */
-    --dark-300: 51 71 63; /* #33473F */
-    --dark-400: 90 110 102; /* #5A6E66 */
-    --dark-500: 130 153 142; /* #82998E */
-    --dark-600: 213 228 220; /* #D5E4DC */
-    --dark-700: 239 243 241; /* #EFF3F1 */
+    --border: 231 226 216; /* #E7E2D8 */
+    --border-hover: 148 140 132; /* #948C84 */
+    --text-primary: 28 25 23; /* #1C1917 */
+    --text-secondary: 68 64 60; /* #44403C */
+    --text-muted: 113 106 100; /* #716A64 */
+    --accent: 4 120 87; /* #047857 */
+    --accent-btn: 16 185 129; /* #10B981 */
+    --on-accent: 4 35 26; /* #04231A */
+    --positive: 4 120 87; /* #047857 */
+    --deal: 180 83 9; /* #B45309 */
+    --dark-50: 28 25 23; /* #1C1917 */
+    --dark-100: 41 37 36; /* #292524 */
+    --dark-200: 68 64 60; /* #44403C */
+    --dark-300: 68 64 60; /* #44403C */
+    --dark-400: 107 99 88; /* #6B6358 */
+    --dark-500: 148 140 132; /* #948C84 */
+    --dark-600: 231 226 216; /* #E7E2D8 */
+    --dark-700: 243 240 234; /* #F3F0EA */
     --dark-750: 255 255 255; /* #FFFFFF */
-    --dark-800: 232 239 235; /* #E8EFEB */
-    --dark-900: 210 225 217; /* #D2E1D9 */
-    --dark-950: 213 228 220; /* #D5E4DC */
+    --dark-800: 248 246 241; /* #F8F6F1 */
+    --dark-900: 231 226 216; /* #E7E2D8 */
+    --dark-950: 222 216 205; /* #DED8CD */
   }
 
   .dark {
     color-scheme: dark;
-    --bg-base: 27 29 23; /* #1B1D17 */
-    --bg-elevated: 46 42 39; /* #2E2A27 */
-    --border: 68 60 55; /* #443C37 */
-    --border-hover: 90 79 72; /* #5A4F48 */
-    --text-primary: 246 242 238; /* #F6F2EE */
-    --text-secondary: 218 209 201; /* #DAD1C9 */
-    --text-muted: 175 163 152; /* #AFA398 */
+    --bg-base: 10 15 28; /* #0A0F1C */
+    --bg-elevated: 19 27 45; /* #131B2D */
+    --border: 48 61 88; /* #303D58 */
+    --border-hover: 91 107 135; /* #5B6B87 */
+    --text-primary: 230 234 242; /* #E6EAF2 */
+    --text-secondary: 190 200 216; /* #BEC8D8 */
+    --text-muted: 143 156 178; /* #8F9CB2 */
     --accent: 52 211 153; /* #34D399 */
-    --accent-btn: 4 120 87; /* #047857 */
-    --deal: 252 211 77; /* #FCD34D */
-    --dark-50: 250 247 245; /* #FAF7F5 */
-    --dark-100: 246 242 238; /* #F6F2EE */
-    --dark-200: 232 226 220; /* #E8E2DC */
-    --dark-300: 218 209 201; /* #DAD1C9 */
-    --dark-400: 175 163 152; /* #AFA398 */
-    --dark-500: 133 121 112; /* #857970 */
-    --dark-600: 90 79 72; /* #5A4F48 */
-    --dark-700: 68 60 55; /* #443C37 */
-    --dark-750: 46 42 39; /* #2E2A27 */
-    --dark-800: 27 29 23; /* #1B1D17 */
-    --dark-900: 27 24 22; /* #1B1816 */
-    --dark-950: 16 14 13; /* #100E0D */
+    --accent-btn: 16 185 129; /* #10B981 */
+    --on-accent: 4 35 26; /* #04231A */
+    --positive: 52 211 153; /* #34D399 */
+    --deal: 251 191 36; /* #FBBF24 */
+    --dark-50: 240 243 248; /* #F0F3F8 */
+    --dark-100: 230 234 242; /* #E6EAF2 */
+    --dark-200: 210 218 230; /* #D2DAE6 */
+    --dark-300: 190 200 216; /* #BEC8D8 */
+    --dark-400: 143 156 178; /* #8F9CB2 */
+    --dark-500: 91 107 135; /* #5B6B87 */
+    --dark-600: 62 77 106; /* #3E4D6A */
+    --dark-700: 48 61 88; /* #303D58 */
+    --dark-750: 19 27 45; /* #131B2D */
+    --dark-800: 10 15 28; /* #0A0F1C */
+    --dark-900: 7 11 21; /* #070B15 */
+    --dark-950: 4 7 15; /* #04070F */
   }
 
   body {
@@ -122,8 +129,8 @@
   html:not(.dark) .hover\:text-white:hover {
     color: rgb(var(--text-primary));
   }
-  html:not(.dark) :is(.bg-accent-hover, .bg-accent, .bg-purple-500, .bg-purple-600, .bg-blue-500, .bg-blue-600, .bg-red-500, .bg-red-600, [class*="bg-gradient-to"]).text-white,
-  html:not(.dark) :is(.bg-accent-hover, .bg-accent, .bg-purple-500, .bg-purple-600, .bg-blue-500, .bg-blue-600, .bg-red-500, .bg-red-600, [class*="bg-gradient-to"]) .text-white {
+  html:not(.dark) :is(.bg-purple-500, .bg-purple-600, .bg-blue-500, .bg-blue-600, .bg-red-500, .bg-red-600, [class*="bg-gradient-to"]).text-white,
+  html:not(.dark) :is(.bg-purple-500, .bg-purple-600, .bg-blue-500, .bg-blue-600, .bg-red-500, .bg-red-600, [class*="bg-gradient-to"]) .text-white {
     color: #fff;
   }
   html:not(.dark) .text-gray-300,
@@ -146,6 +153,22 @@
   html:not(.dark) .hover\:bg-white\/10:hover { background-color: rgb(var(--dark-700)); }
 
   html:not(.dark) .glass { background-color: rgb(var(--bg-elevated) / 0.9); }
+}
+
+
+/* ----------------------------------------------------------------------------
+   PONT BOUTONS — texte sur les boutons d'action
+   ~250 boutons ecrivent encore `bg-accent-hover ... text-white`. Le blanc sur
+   l'emeraude #10B981 tombe a 2,5:1 ; ces regles posent le texte sombre
+   --on-accent (7:1) dans les deux themes. A supprimer quand les pages utilisent
+   `text-on-accent` (ou le composant <Button>).
+---------------------------------------------------------------------------- */
+@layer utilities {
+  html body :is(.bg-accent-hover, .bg-accent).text-white,
+  html body :is(.bg-accent-hover, .bg-accent) .text-white,
+  html body :is(.bg-accent-hover, .bg-accent).hover\:text-white:hover {
+    color: rgb(var(--on-accent));
+  }
 }
 
 /* ----------------------------------------------------------------------------

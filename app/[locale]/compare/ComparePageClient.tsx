@@ -3,7 +3,6 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import { useHideOnScrollDown } from '@/hooks/useHideOnScrollDown'
-import { formatMonthYear } from '@/lib/format'
 import Image from 'next/image'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
@@ -27,7 +26,7 @@ function getLocaleFromPath(pathname: string): Locale {
 const translations: Record<Locale, Record<string, string>> = {
   en: {
     pageTitle: 'Compare Prop Firms',
-    pageSubtitle: 'Find your perfect match with smart filters',
+    pageSubtitle: 'Prices, profit splits, rules and promo codes, verified. Independent ranking.',
     searchPlaceholder: 'Search firms...',
     markets: 'Markets',
     platform: 'Platform',
@@ -72,6 +71,9 @@ const translations: Record<Locale, Record<string, string>> = {
     rateBtn: 'Rate',
     communityRating: 'Community',
     writeReview: 'Rate this firm',
+    rateShort: 'Rate',
+    payoutShort: 'Payout proof',
+    autoApplied: 'Applied via our link',
     shareExperience: 'Share your experience',
     yourRating: 'Your rating',
     tradingStyleUsed: 'Your trading style',
@@ -101,14 +103,14 @@ const translations: Record<Locale, Record<string, string>> = {
   },
   fr: {
     pageTitle: 'Comparer les Prop Firms',
-    pageSubtitle: 'Trouvez votre match parfait avec des filtres intelligents',
+    pageSubtitle: 'Prix, profit split, règles et codes promo vérifiés. Classement indépendant.',
     searchPlaceholder: 'Rechercher...',
-    markets: 'Marches',
+    markets: 'Marchés',
     platform: 'Plateforme',
     challenge: 'Challenge',
     style: 'Style',
     rating: 'Note',
-    bestFor: 'Ideal pour',
+    bestFor: 'Idéal pour',
     price: 'Prix',
     deals: 'Promos',
     reset: 'Reset',
@@ -123,7 +125,7 @@ const translations: Record<Locale, Record<string, string>> = {
     compare: 'Comparer',
     compareNow: 'Comparer',
     clear: 'Effacer',
-    verified: 'Verifie',
+    verified: 'Vérifiées',
     avoid: 'A eviter',
     underReview: 'En revision',
     new: 'Nouveau',
@@ -146,6 +148,9 @@ const translations: Record<Locale, Record<string, string>> = {
     rateBtn: 'Noter',
     communityRating: 'Communaute',
     writeReview: 'Noter cette firm',
+    rateShort: 'Noter',
+    payoutShort: 'Preuve payout',
+    autoApplied: 'Appliqué via notre lien',
     shareExperience: 'Partagez votre experience',
     yourRating: 'Votre note',
     tradingStyleUsed: 'Votre style de trading',
@@ -176,7 +181,7 @@ const translations: Record<Locale, Record<string, string>> = {
     pageTitle: 'Prop Firms Vergleichen',
     pageSubtitle: 'Finden Sie Ihr perfektes Match mit smarten Filtern',
     searchPlaceholder: 'Suchen...',
-    markets: 'Markte',
+    markets: 'Märkte',
     platform: 'Plattform',
     challenge: 'Challenge',
     style: 'Stil',
@@ -219,6 +224,9 @@ const translations: Record<Locale, Record<string, string>> = {
     rateBtn: 'Bewerten',
     communityRating: 'Community',
     writeReview: 'Bewerten',
+    rateShort: 'Bewerten',
+    payoutShort: 'Auszahlungsnachweis',
+    autoApplied: 'Über unseren Link aktiv',
     shareExperience: 'Teile deine Erfahrung',
     yourRating: 'Deine Bewertung',
     tradingStyleUsed: 'Dein Trading-Stil',
@@ -292,6 +300,9 @@ const translations: Record<Locale, Record<string, string>> = {
     rateBtn: 'Valorar',
     communityRating: 'Comunidad',
     writeReview: 'Valorar firma',
+    rateShort: 'Valorar',
+    payoutShort: 'Prueba de pago',
+    autoApplied: 'Aplicado con nuestro enlace',
     shareExperience: 'Comparte tu experiencia',
     yourRating: 'Tu valoracion',
     tradingStyleUsed: 'Tu estilo de trading',
@@ -365,6 +376,9 @@ const translations: Record<Locale, Record<string, string>> = {
     rateBtn: 'Avaliar',
     communityRating: 'Comunidade',
     writeReview: 'Avaliar firma',
+    rateShort: 'Avaliar',
+    payoutShort: 'Prova de pagamento',
+    autoApplied: 'Aplicado pelo nosso link',
     shareExperience: 'Compartilhe sua experiencia',
     yourRating: 'Sua avaliacao',
     tradingStyleUsed: 'Seu estilo de trading',
@@ -438,6 +452,9 @@ const translations: Record<Locale, Record<string, string>> = {
     rateBtn: 'تقييم',
     communityRating: 'المجتمع',
     writeReview: 'تقييم الشركة',
+    rateShort: 'تقييم',
+    payoutShort: 'إثبات الدفع',
+    autoApplied: 'يُطبَّق عبر رابطنا',
     shareExperience: 'شارك تجربتك',
     yourRating: 'تقييمك',
     tradingStyleUsed: 'اسلوب تداولك',
@@ -511,6 +528,9 @@ const translations: Record<Locale, Record<string, string>> = {
     rateBtn: 'रेट करें',
     communityRating: 'कम्युनिटी',
     writeReview: 'रेट करें',
+    rateShort: 'रेट करें',
+    payoutShort: 'पेआउट प्रूफ',
+    autoApplied: 'हमारे लिंक से लागू',
     shareExperience: 'अपना अनुभव साझा करें',
     yourRating: 'आपकी रेटिंग',
     tradingStyleUsed: 'आपका ट्रेडिंग स्टाइल',
@@ -683,6 +703,144 @@ const SORT_OPTIONS = [
   { value: 'discount', label: 'Best Deals' },
   { value: 'reviews', label: 'Most Reviews' },
 ]
+
+
+// Libelles de la refonte /compare (6 octobre 2026). Anglais par defaut, francais
+// complet ; les autres langues retombent sur l'anglais en attendant traduction.
+const UI_EN = {
+  quickAll: 'All', quickSwing: 'Swing / weekend', quickScalping: 'Scalping', quickNews: 'News', quickEa: 'EAs / bots',
+  quickFutures: 'Futures', quickInstant: 'Instant funding', quickBeginners: 'Beginners',
+  sortRecommended: 'Recommended', sortPrice: 'Cheapest', sortSplit: 'Best split', sortDiscount: 'Biggest discount', sortReviews: 'Most reviewed',
+  getOffer: 'Get', copy: 'Copy', visitSite: 'Visit site',
+  updatedOn: 'Updated', verifiedFirms: 'verified firms', activeCodes: 'active promo codes', howWeRank: 'How we rank →',
+  dealOfDay: 'Deal of the day', dealCta: 'Get the deal', code: 'Code',
+  quizTitle: 'Not sure which firm to pick?', quizText: 'Answer 5 quick questions and we match you with the firm that fits your style.', quizCta: 'Take the quiz (60 s)',
+  stillEyebrow: 'Personalized matching', stillTitle: 'Still undecided?', stillText: 'Answer a few quick questions and get your top 3 matches in under 60 seconds. No account required.', stillCta: 'Take the quiz', findMatch: 'Find my match',
+  loadMore: 'Show {n} more firms', shownOf: '{a} of {b} shown', seeFirms: 'Show {n} firms', clearAll: 'Clear all', closeFilters: 'Close filters',
+  compareN: 'Compare {n} →', selectAtLeast2: 'Select at least 2 firms', upToMore: 'Up to {n} more', maxFirms: 'Maximum 4 firms', clear: 'Clear', selected: 'selected',
+  favoritesN: '{n} favorites', otherResults: 'Other results', otherResultsSub: '— unverified or not recommended',
+  otherResultsText: "These firms aren't currently listed on PropFirmScanner. We haven't verified their claims, or we don't recommend them. Proceed with caution.",
+  addCompare: 'Compare', inCompare: 'Added', compareHint: 'Tick “Compare” on 2 to 4 firms to see them side by side.', filters: 'Filters', grid: 'Grid', list: 'List', bestCode: 'Best code right now', copyOpen: 'Copy & open', disclosure: 'Affiliate links: we earn a commission at no cost to you. The ranking stays independent.',
+}
+const UI_FR: typeof UI_EN = {
+  quickAll: 'Tous', quickSwing: 'Swing / week-end', quickScalping: 'Scalping', quickNews: 'News', quickEa: 'EAs / bots',
+  quickFutures: 'Futures', quickInstant: 'Instant funding', quickBeginners: 'Débutants',
+  sortRecommended: 'Recommandées', sortPrice: 'Moins chères', sortSplit: 'Meilleur split', sortDiscount: 'Plus grosse remise', sortReviews: "Plus d'avis",
+  getOffer: 'Obtenir', copy: 'Copier', visitSite: 'Voir le site',
+  updatedOn: 'Mis à jour', verifiedFirms: 'firmes vérifiées', activeCodes: 'codes promo actifs', howWeRank: 'Comment on classe →',
+  dealOfDay: 'Offre du jour', dealCta: 'Profiter', code: 'Code',
+  quizTitle: 'Pas sûr de ton choix ?', quizText: 'Réponds à 5 questions, on te propose la firme adaptée à ton style.', quizCta: 'Faire le quiz (60 s)',
+  stillEyebrow: 'Recommandation personnalisée', stillTitle: 'Toujours indécis ?', stillText: 'Quelques questions rapides et tu obtiens tes 3 meilleures firmes en moins de 60 secondes. Sans compte.', stillCta: 'Faire le quiz', findMatch: 'Trouver ma firme',
+  loadMore: 'Voir {n} firmes de plus', shownOf: '{a} sur {b} affichées', seeFirms: 'Voir {n} firmes', clearAll: 'Tout effacer', closeFilters: 'Fermer les filtres',
+  compareN: 'Comparer les {n} →', selectAtLeast2: 'Choisis au moins 2 firmes', upToMore: 'Encore {n} possibles', maxFirms: '4 firmes maximum', clear: 'Vider', selected: 'choisies',
+  favoritesN: '{n} favoris', otherResults: 'Autres résultats', otherResultsSub: '— non vérifiées ou déconseillées',
+  otherResultsText: "Ces firmes ne sont pas listées sur PropFirmScanner : nous n'avons pas vérifié leurs promesses, ou nous les déconseillons. Prudence.",
+  addCompare: 'Comparer', inCompare: 'Ajoutée', compareHint: 'Coche « Comparer » sur 2 à 4 firmes pour les voir côte à côte.', filters: 'Filtres', grid: 'Grille', list: 'Liste', bestCode: 'Meilleur code du moment', copyOpen: 'Copier & ouvrir', disclosure: 'Liens affiliés : nous touchons une commission, sans coût pour toi. Le classement reste indépendant.',
+}
+const UI_DE: typeof UI_EN = {
+  addCompare: 'Vergleichen', inCompare: 'Hinzugefügt', compareHint: 'Hake „Vergleichen“ bei 2 bis 4 Firmen an, um sie nebeneinander zu sehen.',
+  quickAll: 'Alle', quickSwing: 'Swing / Wochenende', quickScalping: 'Scalping', quickNews: 'News', quickEa: 'EAs / Bots',
+  quickFutures: 'Futures', quickInstant: 'Instant Funding', quickBeginners: 'Einsteiger',
+  sortRecommended: 'Empfohlen', sortPrice: 'Günstigste', sortSplit: 'Bester Split', sortDiscount: 'Größter Rabatt', sortReviews: 'Meiste Bewertungen',
+  getOffer: 'Sichern', copy: 'Kopieren', visitSite: 'Zur Website',
+  updatedOn: 'Aktualisiert', verifiedFirms: 'geprüfte Firmen', activeCodes: 'aktive Promo-Codes', howWeRank: 'So ranken wir →',
+  dealOfDay: 'Angebot des Tages', dealCta: 'Angebot sichern', code: 'Code',
+  quizTitle: 'Unsicher bei der Wahl?', quizText: 'Beantworte 5 kurze Fragen und wir finden die Firma, die zu deinem Stil passt.', quizCta: 'Quiz starten (60 s)',
+  stillEyebrow: 'Persönliche Empfehlung', stillTitle: 'Immer noch unentschlossen?', stillText: 'Ein paar kurze Fragen und du bekommst deine Top 3 in unter 60 Sekunden. Ohne Konto.', stillCta: 'Quiz starten', findMatch: 'Meine Firma finden',
+  loadMore: '{n} weitere Firmen anzeigen', shownOf: '{a} von {b} angezeigt', seeFirms: '{n} Firmen anzeigen', clearAll: 'Alles zurücksetzen', closeFilters: 'Filter schließen',
+  compareN: '{n} vergleichen →', selectAtLeast2: 'Wähle mindestens 2 Firmen', upToMore: 'Noch {n} möglich', maxFirms: 'Maximal 4 Firmen', clear: 'Leeren', selected: 'ausgewählt',
+  favoritesN: '{n} Favoriten', otherResults: 'Weitere Ergebnisse', otherResultsSub: '— ungeprüft oder nicht empfohlen',
+  otherResultsText: 'Diese Firmen sind auf PropFirmScanner nicht gelistet. Wir haben ihre Angaben nicht geprüft oder empfehlen sie nicht. Sei vorsichtig.',
+  filters: 'Filter', grid: 'Raster', list: 'Liste', bestCode: 'Bester Code gerade', copyOpen: 'Kopieren & öffnen', disclosure: 'Affiliate-Links: wir erhalten eine Provision, ohne Mehrkosten für dich. Das Ranking bleibt unabhängig.',
+}
+
+const UI_ES: typeof UI_EN = {
+  addCompare: 'Comparar', inCompare: 'Añadida', compareHint: 'Marca «Comparar» en 2 a 4 firmas para verlas una al lado de otra.',
+  quickAll: 'Todas', quickSwing: 'Swing / fin de semana', quickScalping: 'Scalping', quickNews: 'Noticias', quickEa: 'EAs / bots',
+  quickFutures: 'Futuros', quickInstant: 'Instant funding', quickBeginners: 'Principiantes',
+  sortRecommended: 'Recomendadas', sortPrice: 'Más baratas', sortSplit: 'Mejor split', sortDiscount: 'Mayor descuento', sortReviews: 'Más valoradas',
+  getOffer: 'Conseguir', copy: 'Copiar', visitSite: 'Ver la web',
+  updatedOn: 'Actualizado', verifiedFirms: 'firmas verificadas', activeCodes: 'códigos promo activos', howWeRank: 'Cómo clasificamos →',
+  dealOfDay: 'Oferta del día', dealCta: 'Aprovechar', code: 'Código',
+  quizTitle: '¿No sabes cuál elegir?', quizText: 'Responde 5 preguntas rápidas y te proponemos la firma que encaja con tu estilo.', quizCta: 'Hacer el test (60 s)',
+  stillEyebrow: 'Recomendación personalizada', stillTitle: '¿Sigues dudando?', stillText: 'Unas preguntas rápidas y tienes tus 3 mejores opciones en menos de 60 segundos. Sin cuenta.', stillCta: 'Hacer el test', findMatch: 'Encontrar mi firma',
+  loadMore: 'Ver {n} firmas más', shownOf: '{a} de {b} mostradas', seeFirms: 'Ver {n} firmas', clearAll: 'Borrar todo', closeFilters: 'Cerrar filtros',
+  compareN: 'Comparar las {n} →', selectAtLeast2: 'Elige al menos 2 firmas', upToMore: '{n} más posibles', maxFirms: 'Máximo 4 firmas', clear: 'Vaciar', selected: 'elegidas',
+  favoritesN: '{n} favoritas', otherResults: 'Otros resultados', otherResultsSub: '— sin verificar o no recomendadas',
+  otherResultsText: 'Estas firmas no están listadas en PropFirmScanner: no hemos verificado sus promesas, o no las recomendamos. Ve con cuidado.',
+  filters: 'Filtros', grid: 'Cuadrícula', list: 'Lista', bestCode: 'Mejor código ahora', copyOpen: 'Copiar y abrir', disclosure: 'Enlaces de afiliado: cobramos una comisión, sin coste para ti. La clasificación sigue siendo independiente.',
+}
+
+const UI_PT: typeof UI_EN = {
+  addCompare: 'Comparar', inCompare: 'Adicionada', compareHint: 'Marque «Comparar» em 2 a 4 firmas para as ver lado a lado.',
+  quickAll: 'Todas', quickSwing: 'Swing / fim de semana', quickScalping: 'Scalping', quickNews: 'Notícias', quickEa: 'EAs / bots',
+  quickFutures: 'Futuros', quickInstant: 'Instant funding', quickBeginners: 'Iniciantes',
+  sortRecommended: 'Recomendadas', sortPrice: 'Mais baratas', sortSplit: 'Melhor split', sortDiscount: 'Maior desconto', sortReviews: 'Mais avaliadas',
+  getOffer: 'Obter', copy: 'Copiar', visitSite: 'Ver o site',
+  updatedOn: 'Atualizado', verifiedFirms: 'firmas verificadas', activeCodes: 'códigos promo ativos', howWeRank: 'Como classificamos →',
+  dealOfDay: 'Oferta do dia', dealCta: 'Aproveitar', code: 'Código',
+  quizTitle: 'Não sabe qual escolher?', quizText: 'Responda a 5 perguntas rápidas e indicamos a firma que combina com o seu estilo.', quizCta: 'Fazer o quiz (60 s)',
+  stillEyebrow: 'Recomendação personalizada', stillTitle: 'Ainda em dúvida?', stillText: 'Algumas perguntas rápidas e você tem as suas 3 melhores opções em menos de 60 segundos. Sem conta.', stillCta: 'Fazer o quiz', findMatch: 'Encontrar a minha firma',
+  loadMore: 'Ver mais {n} firmas', shownOf: '{a} de {b} exibidas', seeFirms: 'Ver {n} firmas', clearAll: 'Limpar tudo', closeFilters: 'Fechar filtros',
+  compareN: 'Comparar as {n} →', selectAtLeast2: 'Escolha pelo menos 2 firmas', upToMore: 'Mais {n} possíveis', maxFirms: 'No máximo 4 firmas', clear: 'Limpar', selected: 'escolhidas',
+  favoritesN: '{n} favoritas', otherResults: 'Outros resultados', otherResultsSub: '— não verificadas ou não recomendadas',
+  otherResultsText: 'Estas firmas não estão listadas no PropFirmScanner: não verificámos as suas promessas, ou não as recomendamos. Tenha cuidado.',
+  filters: 'Filtros', grid: 'Grelha', list: 'Lista', bestCode: 'Melhor código agora', copyOpen: 'Copiar e abrir', disclosure: 'Links de afiliado: recebemos uma comissão, sem custo para si. A classificação continua independente.',
+}
+
+const UI_AR: typeof UI_EN = {
+  addCompare: 'قارن', inCompare: 'تمت الإضافة', compareHint: 'حدّد «قارن» على شركتين إلى أربع شركات لعرضها جنباً إلى جنب.',
+  quickAll: 'الكل', quickSwing: 'سوينغ / عطلة نهاية الأسبوع', quickScalping: 'سكالبينغ', quickNews: 'الأخبار', quickEa: 'الروبوتات (EAs)',
+  quickFutures: 'العقود الآجلة', quickInstant: 'تمويل فوري', quickBeginners: 'المبتدئون',
+  sortRecommended: 'موصى بها', sortPrice: 'الأرخص', sortSplit: 'أفضل نسبة أرباح', sortDiscount: 'أكبر خصم', sortReviews: 'الأكثر تقييماً',
+  getOffer: 'احصل على', copy: 'نسخ', visitSite: 'زيارة الموقع',
+  updatedOn: 'آخر تحديث', verifiedFirms: 'شركة موثّقة', activeCodes: 'كود خصم فعّال', howWeRank: 'كيف نرتّب الشركات →',
+  dealOfDay: 'عرض اليوم', dealCta: 'اغتنم العرض', code: 'الكود',
+  quizTitle: 'لست متأكداً من اختيارك؟', quizText: 'أجب عن 5 أسئلة سريعة ونقترح عليك الشركة التي تناسب أسلوبك.', quizCta: 'ابدأ الاختبار (60 ثانية)',
+  stillEyebrow: 'توصية مخصّصة', stillTitle: 'ما زلت متردداً؟', stillText: 'بضعة أسئلة سريعة وتحصل على أفضل 3 شركات لك في أقل من 60 ثانية. دون حساب.', stillCta: 'ابدأ الاختبار', findMatch: 'اعثر على شركتي',
+  loadMore: 'عرض {n} شركة إضافية', shownOf: '{a} من {b} معروضة', seeFirms: 'عرض {n} شركة', clearAll: 'مسح الكل', closeFilters: 'إغلاق عوامل التصفية',
+  compareN: 'قارن بين {n} →', selectAtLeast2: 'اختر شركتين على الأقل', upToMore: 'يمكن إضافة {n} أخرى', maxFirms: '4 شركات كحد أقصى', clear: 'إفراغ', selected: 'مختارة',
+  favoritesN: '{n} مفضّلة', otherResults: 'نتائج أخرى', otherResultsSub: '— غير موثّقة أو غير موصى بها',
+  otherResultsText: 'هذه الشركات غير مُدرجة على PropFirmScanner: لم نتحقق من وعودها، أو لا ننصح بها. توخَّ الحذر.',
+  filters: 'عوامل التصفية', grid: 'شبكة', list: 'قائمة', bestCode: 'أفضل كود الآن', copyOpen: 'انسخ وافتح', disclosure: 'روابط تابعة: نتقاضى عمولة دون أي تكلفة إضافية عليك. يبقى الترتيب مستقلاً.',
+}
+
+const UI_HI: typeof UI_EN = {
+  addCompare: 'तुलना करें', inCompare: 'जोड़ी गई', compareHint: '2 से 4 फर्म पर «तुलना करें» चुनें और उन्हें साथ-साथ देखें।',
+  quickAll: 'सभी', quickSwing: 'स्विंग / वीकेंड', quickScalping: 'स्कैल्पिंग', quickNews: 'न्यूज़', quickEa: 'EAs / बॉट्स',
+  quickFutures: 'फ्यूचर्स', quickInstant: 'इंस्टैंट फंडिंग', quickBeginners: 'शुरुआती',
+  sortRecommended: 'अनुशंसित', sortPrice: 'सबसे सस्ती', sortSplit: 'सर्वश्रेष्ठ स्प्लिट', sortDiscount: 'सबसे बड़ी छूट', sortReviews: 'सबसे ज़्यादा रिव्यू',
+  getOffer: 'पाएँ', copy: 'कॉपी', visitSite: 'साइट देखें',
+  updatedOn: 'अपडेट', verifiedFirms: 'सत्यापित फर्म', activeCodes: 'सक्रिय प्रोमो कोड', howWeRank: 'हम रैंक कैसे करते हैं →',
+  dealOfDay: 'आज की डील', dealCta: 'डील पाएँ', code: 'कोड',
+  quizTitle: 'तय नहीं कर पा रहे?', quizText: '5 छोटे सवालों के जवाब दें, हम आपकी शैली के हिसाब से फर्म बताएँगे।', quizCta: 'क्विज़ लें (60 से.)',
+  stillEyebrow: 'व्यक्तिगत सुझाव', stillTitle: 'अब भी असमंजस में?', stillText: 'कुछ छोटे सवाल और 60 सेकंड से कम में अपनी टॉप 3 फर्म पाएँ। बिना खाता बनाए।', stillCta: 'क्विज़ लें', findMatch: 'मेरी फर्म खोजें',
+  loadMore: '{n} और फर्म देखें', shownOf: '{b} में से {a} दिख रही हैं', seeFirms: '{n} फर्म देखें', clearAll: 'सब हटाएँ', closeFilters: 'फ़िल्टर बंद करें',
+  compareN: '{n} की तुलना करें →', selectAtLeast2: 'कम से कम 2 फर्म चुनें', upToMore: '{n} और जोड़ सकते हैं', maxFirms: 'अधिकतम 4 फर्म', clear: 'खाली करें', selected: 'चुनी गईं',
+  favoritesN: '{n} पसंदीदा', otherResults: 'अन्य परिणाम', otherResultsSub: '— असत्यापित या अनुशंसित नहीं',
+  otherResultsText: 'ये फर्म PropFirmScanner पर सूचीबद्ध नहीं हैं: हमने इनके दावों की जाँच नहीं की, या हम इन्हें सुझाते नहीं। सावधानी बरतें।',
+  filters: 'फ़िल्टर', grid: 'ग्रिड', list: 'सूची', bestCode: 'अभी का सबसे अच्छा कोड', copyOpen: 'कॉपी करें और खोलें', disclosure: 'एफ़िलिएट लिंक: हमें कमीशन मिलता है, आपको कोई अतिरिक्त लागत नहीं। रैंकिंग स्वतंत्र रहती है।',
+}
+
+type CleRapide = 'quickSwing' | 'quickScalping' | 'quickNews' | 'quickEa' | 'quickFutures' | 'quickInstant' | 'quickBeginners'
+// Raccourcis par style : un clic pose (ou retire) un seul filtre existant.
+const RACCOURCIS: { cle: CleRapide; champ: 'tradingStyles' | 'markets' | 'challengeTypes' | 'bestFor'; valeur: string }[] = [
+  { cle: 'quickSwing', champ: 'tradingStyles', valeur: 'swing' },
+  { cle: 'quickScalping', champ: 'tradingStyles', valeur: 'scalping' },
+  { cle: 'quickNews', champ: 'tradingStyles', valeur: 'news' },
+  { cle: 'quickEa', champ: 'tradingStyles', valeur: 'ea' },
+  { cle: 'quickFutures', champ: 'markets', valeur: 'Futures' },
+  { cle: 'quickInstant', champ: 'challengeTypes', valeur: 'Instant' },
+  { cle: 'quickBeginners', champ: 'bestFor', valeur: 'beginners' },
+]
+const ONGLETS_TRI: { value: string; cle: 'sortRecommended' | 'sortPrice' | 'sortSplit' | 'sortDiscount' | 'sortReviews' }[] = [
+  { value: 'rating', cle: 'sortRecommended' },
+  { value: 'price', cle: 'sortPrice' },
+  { value: 'split', cle: 'sortSplit' },
+  { value: 'discount', cle: 'sortDiscount' },
+  { value: 'reviews', cle: 'sortReviews' },
+]
+const fill = (s: string, v: Record<string, string | number>) => s.replace(/\{(\w+)\}/g, (_, k) => String(v[k] ?? ''))
 
 const BLOCKLIST_FIRMS = ['fundedtech', 'fake prop firm', 'test firm']
 
@@ -1344,7 +1502,7 @@ const PayoutProofModal = ({
 // PROP FIRM CARD
 // =====================================================
 const PropFirmCard = ({ 
-  firm, isCompact, rank, markets,
+  firm, isCompact, rank, markets, u,
   isFavorite, onFavorite,
   isComparing, onCompare,
   onCopyCode,
@@ -1358,6 +1516,7 @@ const PropFirmCard = ({
   firm: PropFirm
   isCompact: boolean
   rank: number
+  u: typeof UI_EN
   markets: string[]
   isFavorite: boolean
   onFavorite: () => void
@@ -1457,12 +1616,12 @@ const PropFirmCard = ({
                 same internal page. Only outbound CTA remains: the affiliate. */}
             <a href={getFirmUrl(firm, 'compare-list')} target="_blank" rel="noopener noreferrer" className={`px-3 py-1.5 text-xs font-medium rounded-md flex items-center gap-1 transition-colors ${
               hasDiscount
-                ? 'bg-accent-hover hover:brightness-110 text-white'
+                ? 'bg-accent-hover hover:brightness-110 text-on-accent font-semibold'
                 : firm.affiliate_url
                 ? 'bg-accent/10 hover:bg-accent/25 text-accent border border-accent/30'
                 : 'bg-bg-base hover:bg-bg-elevated text-text-secondary border border-border'
             }`}>
-              {hasDiscount ? `Get -${firm.discount_percent}%` : t.visit} <ExternalLink className="w-3 h-3" />
+              {hasDiscount ? `${u.getOffer} -${firm.discount_percent}%` : t.visit} <ExternalLink className="w-3 h-3" />
             </a>
           </div>
         </div>
@@ -1475,16 +1634,20 @@ const PropFirmCard = ({
   // Seules la presentation et les classes changent ; les donnees et les
   // rappels (favori, comparaison, note, preuve de paiement, alerte) sont ceux
   // d'avant.
-  const pills = [
-    firm.allows_scalping && t.scalping,
-    firm.allows_news_trading && 'News',
-    firm.allows_ea && 'EAs',
-  ].filter(Boolean) as string[]
+  // Les trois regles sont toujours affichees (autorise / interdit / inconnu)
+  // pour que toutes les cartes aient la meme structure, donnee ou pas.
+  const regles: { label: string; ok: boolean | null }[] = [
+    { label: t.scalping, ok: firm.allows_scalping ?? null },
+    { label: 'News', ok: firm.allows_news_trading ?? null },
+    { label: 'EAs', ok: firm.allows_ea ?? null },
+  ]
 
   return (
-    <div className={`flex flex-col gap-3 rounded-2xl border bg-bg-elevated p-4 transition-colors ${
-      isTopPick ? 'border-accent-border hover:border-accent' : 'border-border hover:border-border-hover'
+    <div className={`relative flex flex-col gap-4 overflow-hidden rounded-2xl border bg-bg-elevated p-5 shadow-[0_1px_2px_rgba(28,25,23,0.05),0_10px_28px_-16px_rgba(28,25,23,0.22)] transition-[border-color,box-shadow] hover:shadow-[0_1px_2px_rgba(28,25,23,0.06),0_16px_36px_-16px_rgba(28,25,23,0.3)] dark:bg-gradient-to-b dark:from-white/[0.035] dark:to-transparent dark:shadow-none dark:hover:shadow-none ${
+      isTopPick ? 'border-amber-300 hover:border-amber-400 dark:border-accent/60 dark:hover:border-accent' : 'border-border hover:border-border-hover'
     }`}>
+      {/* Top Pick : fine barre or -> vert en haut de carte. */}
+      {isTopPick && <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-amber-400 via-amber-300 to-emerald-400" />}
       {/* a) En-tete : logo, nom, badges, favori */}
       <div className="flex items-start gap-3">
         <Link href={`/prop-firm/${firm.slug}`} className="flex h-[42px] w-[42px] flex-none items-center justify-center overflow-hidden rounded-xl border border-border bg-white p-1.5">
@@ -1496,11 +1659,13 @@ const PropFirmCard = ({
           <Link href={`/prop-firm/${firm.slug}`} className="block truncate font-display text-base font-semibold text-text-primary hover:text-accent">
             {firm.name}
           </Link>
-          <div className="mt-1 flex flex-wrap items-center gap-1.5">
+          {/* Hauteur fixe (h-5) : avec ou sans Top Pick / rang, la note et les
+              chiffres tombent a la meme hauteur sur toute la rangee. */}
+          <div className="mt-1 flex h-5 items-center gap-1.5 overflow-hidden [&>*]:flex-none [&>*]:whitespace-nowrap">
             {isTopPick ? (
-              <span className="rounded-md bg-accent-hover px-1.5 py-0.5 text-[11px] font-semibold text-white">Top Pick</span>
+              <span className="inline-flex h-5 items-center rounded-md bg-accent-hover px-1.5 text-[11px] font-semibold text-on-accent">Top Pick</span>
             ) : rank <= 3 ? (
-              <span className="rounded-md border border-border bg-bg-base px-1.5 py-0.5 font-mono text-[11px] font-semibold text-text-secondary">#{rank}</span>
+              <span className="inline-flex h-5 items-center rounded-md border border-border bg-bg-base px-1.5 font-mono text-[11px] font-semibold text-text-secondary">#{rank}</span>
             ) : null}
             <TrustBadge status={firm.trust_status || 'verified'} />
           </div>
@@ -1518,7 +1683,7 @@ const PropFirmCard = ({
       </div>
 
       {/* b) Ligne de preuves */}
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] text-text-secondary">
+      <div className="-my-1 flex h-7 items-center gap-x-3 whitespace-nowrap text-[13px] text-text-secondary">
         <span className="flex items-center gap-1">
           <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
           <span className="font-mono font-semibold tabular-nums text-text-primary">{firm.trustpilot_rating?.toFixed(1) || 'N/A'}</span>
@@ -1530,13 +1695,25 @@ const PropFirmCard = ({
         {payoutAggregate && payoutAggregate.count > 0 && (
           <span className="font-medium text-accent">{payoutAggregate.count} {t.payoutBadge}</span>
         )}
+        {/* Noter / preuve de paiement : a droite de la note, libelles courts
+            et petits (7/10/2026). */}
+        <span className="ml-auto flex min-w-0 items-center gap-0.5 text-[11px] text-text-muted">
+          <button onClick={onRate} title={t.writeReview} aria-label={`${t.writeReview} — ${firm.name}`}
+            className={`flex min-h-9 flex-none items-center gap-1 rounded-md px-1.5 transition-colors sm:min-h-6 ${hasReviewed ? 'text-yellow-500 dark:text-yellow-400' : 'hover:bg-bg-base hover:text-text-primary'}`}>
+            <Star className={`h-3 w-3 ${hasReviewed ? 'fill-current' : ''}`} />{t.rateShort}
+          </button>
+          <button onClick={onPayout} title={t.submitPayout} aria-label={`${t.submitPayout} — ${firm.name}`}
+            className="flex min-h-9 min-w-0 items-center gap-1 rounded-md px-1.5 transition-colors hover:bg-bg-base hover:text-text-primary sm:min-h-6">
+            <Banknote className="h-3 w-3 flex-none" /><span className="truncate">{t.payoutShort}</span>
+          </button>
+        </span>
       </div>
 
       {/* c) Prix et split : deux cellules separees par un filet */}
-      <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-xl bg-border">
-        <div className="bg-bg-base px-3 py-2.5">
-          <dt className="text-[11px] uppercase tracking-wider text-text-muted">{t.price}</dt>
-          <dd className="mt-0.5 font-mono text-[19px] font-semibold tabular-nums text-text-primary">
+      <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-border bg-border">
+        <div className="bg-bg-base px-3.5 py-3.5">
+          <dt className="text-[10px] font-medium uppercase tracking-[0.1em] text-text-muted">{t.price}</dt>
+          <dd className="mt-1 font-mono text-[20px] font-bold tabular-nums tracking-tight text-text-primary">
             {prixApresCode != null ? (
               <>
                 <span className="text-deal">${prixApresCode}</span>{' '}
@@ -1547,41 +1724,64 @@ const PropFirmCard = ({
             )}
           </dd>
         </div>
-        <div className="bg-bg-base px-3 py-2.5">
-          <dt className="text-[11px] uppercase tracking-wider text-text-muted">{t.split}</dt>
-          <dd className="mt-0.5 font-mono text-[19px] font-semibold tabular-nums text-accent">{formatProfitSplit(firm.profit_split, firm.max_profit_split)}</dd>
+        <div className="bg-bg-base px-3.5 py-3.5">
+          <dt className="text-[10px] font-medium uppercase tracking-[0.1em] text-text-muted">{t.split}</dt>
+          <dd className="mt-1 font-mono text-[20px] font-bold tabular-nums tracking-tight text-accent">{formatProfitSplit(firm.profit_split, firm.max_profit_split)}</dd>
         </div>
       </dl>
 
-      {/* d) Ce que la firme autorise. La hauteur est reservee meme sans
-             pastille, pour que les cartes restent alignees. */}
-      <div className="flex min-h-6 flex-wrap gap-1.5">
-        {pills.map(p => (
-          <span key={p} className="rounded-lg border border-accent-border bg-accent-subtle px-2 py-0.5 text-xs font-medium text-accent">✓ {p}</span>
+      {/* d) Ce que la firme autorise : seulement ce qu'on sait (7/10/2026).
+             Une regle non renseignee n'affiche rien. */}
+      {(regles.some(r => r.ok !== null) || firm.has_instant_funding) && (
+      <div className="flex h-6 items-center gap-1.5 overflow-hidden">
+        {regles.filter(r => r.ok !== null).map(r => (
+          <span
+            key={r.label}
+            title={r.ok ? 'Autorisé' : 'Interdit'}
+            className={`inline-flex h-6 flex-none items-center whitespace-nowrap rounded-md px-1.5 text-[11px] font-medium ${
+              r.ok === true
+                ? 'border border-accent-border bg-accent-subtle text-accent'
+                : 'border border-rose-400/25 bg-rose-500/5 text-rose-700 line-through decoration-1 dark:text-rose-300/80'
+            }`}
+          >
+            {r.ok ? '✓' : '✕'} {r.label}
+          </span>
         ))}
         {firm.has_instant_funding && (
-          <span className="rounded-lg border border-deal/30 bg-deal-subtle px-2 py-0.5 text-xs font-medium text-deal">⚡ Instant</span>
+          <span className="inline-flex h-6 flex-none items-center whitespace-nowrap rounded-md border border-accent-border bg-accent-subtle px-1.5 text-[11px] font-medium text-accent">⚡ Instant</span>
         )}
       </div>
+      )}
 
-      {/* e) Promo */}
+      {/* Bas de carte colle en bas (mt-auto) : promo, actions et pied
+          s'alignent sur toute la rangee, quelle que soit la hauteur du haut. */}
+      <div className="mt-auto flex flex-col gap-3.5">
+      {/* e) Promo : meme hauteur avec ou sans code. */}
       {hasDiscount && (
-        <div className="space-y-2 rounded-xl border border-dashed border-deal/30 bg-deal-subtle px-3 py-2">
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-sm font-bold text-deal">−{firm.discount_percent}%</span>
-            {firm.discount_code && (
+        <div className="space-y-2 rounded-xl border border-dashed border-amber-400/70 bg-gradient-to-r from-amber-50 via-amber-50/60 to-transparent p-2 dark:border-amber-300/30 dark:from-amber-400/[0.12] dark:via-amber-400/[0.05]">
+          {/* Coupon : la remise en pastille ambre pleine, lisible d'un coup d'oeil. */}
+          <div className="flex items-center gap-2.5">
+            <span className="inline-flex h-9 flex-none items-center rounded-lg bg-amber-400 px-2.5 font-mono text-[15px] font-extrabold tabular-nums text-amber-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.45),0_1px_2px_rgba(120,53,15,0.25)]">
+              −{firm.discount_percent}%
+            </span>
+            {firm.discount_code ? (
               <>
-                <span className="font-mono text-[13px] font-semibold tracking-wide text-text-primary">{firm.discount_code}</span>
-                <button onClick={() => onCopyCode(firm.discount_code, firm.slug)} aria-label={`Copy discount code ${firm.discount_code}`} className="flex items-center gap-1 text-xs font-medium text-deal">
-                  <Copy className="h-3 w-3" />Copy
+                <span className="min-w-0 flex-1 leading-tight">
+                  <span className="block text-[10px] font-medium uppercase tracking-[0.08em] text-text-muted">{u.code}</span>
+                  <span className="block truncate font-mono text-[13px] font-bold tracking-wide text-text-primary">{firm.discount_code}</span>
+                </span>
+                <button onClick={() => onCopyCode(firm.discount_code, firm.slug)} aria-label={`Copy discount code ${firm.discount_code}`} className="flex min-h-8 flex-none items-center gap-1 rounded-lg border border-amber-500/40 bg-bg-elevated px-2.5 text-xs font-semibold text-text-primary transition-colors hover:border-amber-500 hover:bg-amber-50 dark:border-amber-300/30 dark:bg-transparent dark:hover:bg-amber-400/10">
+                  <Copy className="h-3 w-3" />{u.copy}
                 </button>
               </>
+            ) : (
+              <span className="min-w-0 flex-1 text-xs leading-tight text-text-secondary">{t.autoApplied}</span>
             )}
           </div>
           {/* Le pourcentage ne dit pas tout : une offre peut donner autre chose
               (un reset offert chez Earn2Trade). La ligne vient de la fiche. */}
           {bonus && (
-            <p className="rounded-lg bg-accent-hover px-2 py-1 text-center text-[11px] font-bold uppercase tracking-wider text-white">
+            <p className="rounded-lg bg-accent-hover px-2 py-1 text-center text-[11px] font-bold uppercase tracking-wider text-on-accent">
               {bonus}
             </p>
           )}
@@ -1603,69 +1803,62 @@ const PropFirmCard = ({
       )}
 
       {/* f) Actions : sortie principale, puis ajout au comparateur */}
-      <div className="mt-auto flex gap-2">
+      <div className="flex gap-2">
         <a
           href={getFirmUrl(firm, 'compare-grid')}
           target="_blank"
           rel="noopener noreferrer"
-          className={`flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-xl px-3 text-sm font-medium transition-colors sm:min-h-10 ${
+          className={`flex min-h-12 min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-3 text-sm font-semibold transition-colors sm:min-h-11 ${
             hasDiscount
-              ? 'bg-accent-hover text-white hover:brightness-110'
+              ? 'bg-accent-hover text-on-accent shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_1px_2px_rgba(4,35,26,0.2)] hover:brightness-105'
               : firm.affiliate_url
               ? 'border border-accent text-accent hover:bg-accent-subtle'
               : 'border border-border bg-bg-base text-text-secondary hover:border-border-hover'
           }`}
         >
-          {hasDiscount ? `Get -${firm.discount_percent}%` : firm.affiliate_url ? `${t.visit} ${firm.name}` : 'Visit Site'}
-          <ExternalLink className="h-3.5 w-3.5" />
+          {hasDiscount ? `${u.getOffer} -${firm.discount_percent}%` : firm.affiliate_url ? `${t.visit} ${firm.name}` : u.visitSite}
+          <ExternalLink className="h-3.5 w-3.5 flex-none" />
         </a>
         <button
           onClick={onCompare}
           aria-pressed={isComparing}
           aria-label={isComparing ? `Remove ${firm.name} from comparison` : `Add ${firm.name} to comparison`}
-          className={`flex min-h-11 items-center gap-2 rounded-xl border px-3 text-sm font-medium transition-colors sm:min-h-10 ${
-            isComparing ? 'border-accent bg-accent-subtle text-accent' : 'border-border bg-bg-base text-text-secondary hover:border-border-hover'
+          className={`flex min-h-12 flex-none items-center gap-2 whitespace-nowrap rounded-xl border px-3 text-sm font-medium transition-colors sm:min-h-11 ${
+            isComparing ? 'border-sky-700 bg-sky-700 text-white dark:border-sky-400 dark:bg-sky-400 dark:text-slate-950' : 'border-sky-700/40 bg-sky-500/10 text-sky-800 hover:bg-sky-500/20 dark:border-sky-400/50 dark:text-sky-300'
           }`}
         >
-          <span className={`grid h-[15px] w-[15px] place-items-center rounded border ${
-            isComparing ? 'border-accent-hover bg-accent-hover text-white' : 'border-border-hover'
-          }`}>
-            {isComparing && <Check className="h-2.5 w-2.5" />}
-          </span>
-          {t.compare}
+          {isComparing
+            ? <Check className="h-4 w-4" />
+            : <GitCompare className="h-4 w-4" />}
+          {isComparing ? u.inCompare : u.addCompare}
         </button>
       </div>
 
-      {/* g) Pied de carte : les actions secondaires, avec leur libelle */}
-      <div className="flex items-center justify-between border-t border-border pt-2.5 text-xs text-text-muted">
-        <button onClick={onRate} className={`flex min-h-11 items-center gap-1 sm:min-h-8 ${hasReviewed ? 'text-yellow-500 dark:text-yellow-400' : 'hover:text-text-secondary'}`}>
-          <Star className={`h-3.5 w-3.5 ${hasReviewed ? 'fill-current' : ''}`} />{t.writeReview}
-        </button>
-        <button onClick={onPayout} className="flex min-h-11 items-center gap-1 hover:text-text-secondary sm:min-h-8">
-          <Banknote className="h-3.5 w-3.5" />{t.submitPayout}
-        </button>
+      {/* g) Alerte prix (membres connectes) : discrete, sous les boutons. */}
+      <div className="flex justify-end empty:hidden [&:not(:has(button))]:hidden">
         <PriceAlertButton firmId={firm.id} firmName={firm.name} firmSlug={firm.slug} currentPrice={firm.min_price || 0} />
+      </div>
       </div>
     </div>
   )
 }
 
-const CompareBar = ({ firms, onRemove, onClear }: { firms: PropFirm[]; onRemove: (id: string) => void; onClear: () => void }) => {
+const CompareBar = ({ firms, onRemove, onClear, u }: { firms: PropFirm[]; onRemove: (id: string) => void; onClear: () => void; u: typeof UI_EN }) => {
   if (firms.length === 0) return null
   const compareUrl = `/compare/${firms.map(f => f.slug).join('-vs-')}`
   // Deux firmes au moins pour comparer : en dessous, le bouton le dit plutot
   // que de mener a une page vide (23/09/2026).
   const pret = firms.length >= 2
   const indice = firms.length < 2
-    ? 'Select at least 2 firms'
+    ? u.selectAtLeast2
     : firms.length < 4
-    ? `Up to ${4 - firms.length} more`
-    : 'Maximum 4 firms'
+    ? fill(u.upToMore, { n: 4 - firms.length })
+    : u.maxFirms
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-bg-elevated px-4 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.12)]">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3">
         <div className="flex min-w-0 flex-wrap items-center gap-2">
-          <span className="sm:hidden text-sm text-text-secondary">{firms.length} selected</span>
+          <span className="sm:hidden text-sm text-text-secondary">{firms.length} {u.selected}</span>
           {firms.map(f => (
             <span key={f.id} className="hidden sm:flex items-center gap-2 rounded-xl border border-border bg-bg-base py-1.5 pl-1.5 pr-2.5">
               <span className="flex h-[26px] w-[26px] items-center justify-center overflow-hidden rounded-lg bg-white p-0.5">
@@ -1680,11 +1873,11 @@ const CompareBar = ({ firms, onRemove, onClear }: { firms: PropFirm[]; onRemove:
           <span className="text-xs text-text-muted">{indice}</span>
         </div>
         <div className="flex items-center gap-4">
-          <button onClick={onClear} className="text-sm text-text-muted underline hover:text-text-primary">Clear</button>
+          <button onClick={onClear} className="text-sm text-text-muted underline hover:text-text-primary">{u.clear}</button>
           {pret ? (
-            <Link href={compareUrl} className="rounded-xl bg-accent-hover px-4 py-2.5 text-sm font-medium text-white hover:brightness-110">Compare Now</Link>
+            <Link href={compareUrl} className="rounded-xl bg-sky-700 px-4 py-2.5 text-sm font-semibold text-white hover:brightness-110 dark:bg-sky-400 dark:text-slate-950">{fill(u.compareN, { n: firms.length })}</Link>
           ) : (
-            <span aria-disabled="true" className="cursor-not-allowed rounded-xl border border-border bg-bg-base px-4 py-2.5 text-sm font-medium text-text-muted">Compare Now</span>
+            <span aria-disabled="true" className="cursor-not-allowed rounded-xl border border-border bg-bg-base px-4 py-2.5 text-sm font-medium text-text-muted">{u.addCompare}</span>
           )}
         </div>
       </div>
@@ -1814,6 +2007,9 @@ export default function ComparePageClient({ firms: firmsBrutes, shadowFirms = []
   
   const currentLocale = getLocaleFromPath(pathname)
   const t = translations[currentLocale] || translations.en
+  // Chaque langue a ses propres libelles ; l'anglais ne sert que de secours.
+  const u = ({ fr: UI_FR, de: UI_DE, es: UI_ES, pt: UI_PT, ar: UI_AR, hi: UI_HI } as
+    Partial<Record<Locale, typeof UI_EN>>)[currentLocale] ?? UI_EN
   
   const [filters, setFilters] = useState<FilterState>(() => ({
     search: searchParams.get('q') || '',
@@ -1833,7 +2029,8 @@ export default function ComparePageClient({ firms: firmsBrutes, shadowFirms = []
   // Shared with the navbar and the offers banner: when those slide away the
   // filter bar takes their place instead of leaving a 4rem gap above itself.
   const headerHidden = useHideOnScrollDown()
-  const [currentPage, setCurrentPage] = useState(1)
+  // « Voir plus » remplace la pagination : on reste ou on est (6/10/2026).
+  const [visibleCount, setVisibleCount] = useState(24)
   const [compareList, setCompareList] = useState<string[]>([])
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
@@ -1936,7 +2133,7 @@ export default function ComparePageClient({ firms: firmsBrutes, shadowFirms = []
   const toggleCompare = useCallback((id: string) => {
     setCompareList(prev => {
       if (prev.includes(id)) return prev.filter(f => f !== id)
-      if (prev.length >= 4) { setToast({ message: 'Maximum 4 firms to compare', type: 'error' }); return prev }
+      if (prev.length >= 4) { setToast({ message: u.maxFirms, type: 'error' }); return prev }
       return [...prev, id]
     })
   }, [])
@@ -2112,6 +2309,16 @@ export default function ComparePageClient({ firms: firmsBrutes, shadowFirms = []
     return { total: verified.length, withDiscounts: discounts.length }
   }, [processedFirms])
   
+  // Offre du jour : la campagne en cours, sinon le premier partenaire, sinon la
+  // plus grosse remise active. Remplace le popup sur cette page (6/10/2026).
+  const offreDuJour = useMemo(() => {
+    const actives = processedFirms.filter(remiseActive)
+    return actives.find(f => campagneSlug != null && f.slug === campagneSlug)
+      ?? actives.find(f => rangPartenaire(f.slug) === 0)
+      ?? [...actives].sort((a, b) => (b.discount_percent || 0) - (a.discount_percent || 0))[0]
+      ?? null
+  }, [processedFirms, campagneSlug])
+
   const filteredFirms = useMemo(() => {
     let result = [...processedFirms]
     if (filters.verifiedOnly) result = result.filter(f => f.trust_status === 'scanned' || f.trust_status === 'verified' || f.trust_status === 'trusted' || !f.trust_status)
@@ -2230,8 +2437,7 @@ export default function ComparePageClient({ firms: firmsBrutes, shadowFirms = []
     })
   }, [debouncedSearch, shadowFirms, processedFirms])
   
-  useEffect(() => { setCurrentPage(1) }, [filters, sortBy])
-  useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }) }, [currentPage])
+  useEffect(() => { setVisibleCount(itemsPerPage) }, [filters, sortBy])
 
   // Show floating quiz button after scrolling 400px
   useEffect(() => {
@@ -2240,8 +2446,7 @@ export default function ComparePageClient({ firms: firmsBrutes, shadowFirms = []
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
   
-  const paginatedFirms = useMemo(() => filteredFirms.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage), [filteredFirms, currentPage, itemsPerPage])
-  const totalPages = Math.ceil(filteredFirms.length / itemsPerPage)
+  const paginatedFirms = useMemo(() => filteredFirms.slice(0, visibleCount), [filteredFirms, visibleCount])
   const compareFirms = useMemo(() => processedFirms.filter(f => compareList.includes(f.id)), [processedFirms, compareList])
 
   const reviewModalFirm = useMemo(() => reviewModalFirmId ? processedFirms.find(f => f.id === reviewModalFirmId) || null : null, [reviewModalFirmId, processedFirms])
@@ -2301,29 +2506,71 @@ export default function ComparePageClient({ firms: firmsBrutes, shadowFirms = []
           content. Pinning it cost 118px of a phone screen for a title nobody
           re-reads, and it sat behind the offers banner anyway: both were
           sticky at top-16, and this one is the lower z-index of the two. */}
-      <section className="pt-6 pb-3 px-4">
+      <section className="px-4 pt-5 pb-3">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <h1 className="font-display text-h2 text-text-primary sm:text-h1">{t.pageTitle}</h1>
-              <p className="mt-2 text-body text-text-secondary">{t.pageSubtitle}</p>
-              <p className="mt-1 text-xs text-text-muted">Last updated: {formatMonthYear(new Date())}</p>
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+            <div className="min-w-0">
+              <h1 className="font-display text-[28px] font-extrabold leading-9 tracking-tight text-text-primary sm:text-h2">{t.pageTitle}</h1>
+              <p className="mt-1 text-small text-text-secondary">{t.pageSubtitle}</p>
+              {/* Ligne de confiance : fraicheur, volume, independance. */}
+              <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] text-text-muted">
+                <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true" />{u.updatedOn} {new Date().toLocaleDateString(currentLocale, { month: 'long', year: 'numeric' })}</span>
+                <span><span className="font-mono font-semibold text-text-primary">{stats.total}</span> {u.verifiedFirms}</span>
+                {stats.withDiscounts > 0 && <span><span className="font-mono font-semibold text-text-primary">{stats.withDiscounts}</span> {u.activeCodes}</span>}
+                <Link href={`/${currentLocale}/how-we-make-money`} className="text-text-secondary underline-offset-2 hover:underline">{u.howWeRank}</Link>
+              </div>
             </div>
-            {/* Controle segmente Grid / List, a la place des deux boutons carres. */}
-            <div className="flex gap-1.5 self-start rounded-xl border border-border bg-bg-elevated p-1 sm:self-auto">
-              {([['grid', t.gridView ?? 'Grid', Grid3X3], ['list', t.listView ?? 'List', List]] as const).map(([mode, label, Icon]) => (
-                <button
-                  key={mode}
-                  onClick={() => setViewMode(mode)}
-                  aria-pressed={viewMode === mode}
-                  className={`flex min-h-10 items-center gap-1.5 rounded-lg px-3 text-[13px] font-medium transition-colors ${
-                    viewMode === mode ? 'bg-accent-subtle text-accent' : 'text-text-secondary hover:text-text-primary'
-                  }`}
+            {/* Offre du jour (ordinateur), sur une ligne, alignee sur la ligne de confiance. */}
+            {offreDuJour && (
+              <div className="hidden flex-none items-center gap-3 rounded-xl border border-amber-300 bg-amber-50 py-1.5 pl-3 pr-1.5 shadow-sm md:flex dark:border-dashed dark:border-deal/40 dark:bg-deal-subtle dark:shadow-none">
+                <span className="text-xs text-text-muted">{u.dealOfDay}</span>
+                <span className="text-sm font-semibold text-text-primary">{offreDuJour.name}</span>
+                <span className="text-sm font-bold text-deal">−{offreDuJour.discount_percent}%</span>
+                {offreDuJour.discount_code && <span className="font-mono text-xs font-semibold text-text-primary">{offreDuJour.discount_code}</span>}
+                <a
+                  href={getFirmUrl(offreDuJour, 'compare-hero')}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => { if (offreDuJour.discount_code) handleCopyCode(offreDuJour.discount_code, offreDuJour.slug) }}
+                  className="flex min-h-9 items-center gap-1.5 whitespace-nowrap rounded-lg bg-accent-hover px-3 text-sm font-semibold text-on-accent hover:brightness-110"
                 >
-                  <Icon className="h-4 w-4" />{label}
-                </button>
-              ))}
-            </div>
+                  {u.dealCta} <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+              </div>
+            )}
+          </div>
+          {/* Raccourcis par style : la plupart des visiteurs filtrent d'abord par style. */}
+          <div className="-mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
+            {(() => {
+              const aucun = filters.tradingStyles.length + filters.markets.length + filters.challengeTypes.length + filters.bestFor.length === 0
+              return (
+                <>
+                  <button
+                    onClick={() => setFilters(f => ({ ...f, tradingStyles: [], markets: [], challengeTypes: [], bestFor: [] }))}
+                    aria-pressed={aucun}
+                    className={`min-h-9 flex-none whitespace-nowrap rounded-full border px-3.5 text-[13px] transition-colors ${aucun ? 'border-text-primary bg-text-primary font-semibold text-bg-elevated dark:border-accent dark:bg-accent/15 dark:text-accent' : 'border-border-hover bg-bg-elevated text-text-secondary hover:border-text-primary hover:text-text-primary dark:bg-transparent'}`}
+                  >
+                    {u.quickAll}
+                  </button>
+                  {RACCOURCIS.map(r => {
+                    const actif = (filters[r.champ] as string[]).includes(r.valeur)
+                    return (
+                      <button
+                        key={r.cle}
+                        onClick={() => setFilters(f => {
+                          const liste = f[r.champ] as string[]
+                          return { ...f, [r.champ]: liste.includes(r.valeur) ? liste.filter(x => x !== r.valeur) : [...liste, r.valeur] }
+                        })}
+                        aria-pressed={actif}
+                        className={`min-h-9 flex-none whitespace-nowrap rounded-full border px-3.5 text-[13px] transition-colors ${actif ? 'border-text-primary bg-text-primary font-semibold text-bg-elevated dark:border-accent dark:bg-accent/15 dark:text-accent' : 'border-border-hover bg-bg-elevated text-text-secondary hover:border-text-primary hover:text-text-primary dark:bg-transparent'}`}
+                      >
+                        {u[r.cle]}
+                      </button>
+                    )
+                  })}
+                </>
+              )
+            })()}
           </div>
         </div>
       </section>
@@ -2333,12 +2580,14 @@ export default function ComparePageClient({ firms: firmsBrutes, shadowFirms = []
           the navbar and banner collapse, so it always sits flush against
           whatever is above it. */}
       <section
-        className={`pt-3 pb-4 px-4 border-b border-border sticky top-16 z-30 bg-bg-elevated/95 backdrop-blur-sm transition-transform duration-300 motion-reduce:transition-none ${
-          headerHidden ? '-translate-y-16' : 'translate-y-0'
+        className={`py-3 px-4 border-b border-border sticky top-16 z-30 bg-bg-elevated/95 shadow-[0_1px_0_rgb(var(--border)),0_6px_16px_-10px_rgba(28,25,23,0.15)] dark:shadow-none transition-transform duration-300 motion-reduce:transition-none ${
+          filtresOuverts ? '' : 'backdrop-blur-sm'
+        } ${
+          headerHidden && !filtresOuverts ? '-translate-y-16' : 'transform-none'
         }`}
       >
         <div className="max-w-7xl mx-auto">
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             <div className="flex flex-wrap items-center gap-2">
               {/* Search — pleine largeur sur mobile, 14rem au-dela */}
               <div className="relative w-full sm:w-56">
@@ -2349,13 +2598,22 @@ export default function ComparePageClient({ firms: firmsBrutes, shadowFirms = []
               <button
                 onClick={() => setFiltresOuverts(o => !o)}
                 aria-expanded={filtresOuverts}
-                className="flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-xl bg-accent-hover px-3 text-sm font-medium text-white md:hidden"
+                className="flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-xl border border-border-hover px-3 text-sm font-medium text-text-primary md:hidden"
               >
                 <SlidersHorizontal className="h-4 w-4" />
-                {t.filters ?? 'Filters'}{activeFilterChips.length > 0 ? ` (${activeFilterChips.length})` : ''}
+                {u.filters}{activeFilterChips.length > 0 ? ` (${activeFilterChips.length})` : ''}
               </button>
 
-              <div className={`${filtresOuverts ? 'flex' : 'hidden'} w-full flex-wrap items-center gap-2 md:flex md:w-auto md:flex-1`}>
+              {/* Mobile : les filtres s'ouvrent dans un panneau du bas (6/10/2026).
+                  La section n'a ni transform ni flou quand il est ouvert, sinon
+                  le panneau « fixed » serait cale sur elle et non sur l'ecran. */}
+              {filtresOuverts && <div className="fixed inset-0 z-40 bg-black/50 md:hidden" onClick={() => setFiltresOuverts(false)} aria-hidden="true" />}
+              <div className={`${filtresOuverts ? 'fixed inset-x-0 bottom-0 z-50 flex max-h-[82vh] flex-row flex-wrap content-start items-center overflow-y-auto rounded-t-2xl border-t border-border bg-bg-elevated p-4 pb-6 shadow-2xl' : 'hidden'} gap-2 md:static md:z-auto md:flex md:max-h-none md:w-auto md:flex-1 md:flex-row md:flex-wrap md:items-center md:overflow-visible md:rounded-none md:border-0 md:bg-transparent md:p-0 md:pb-0 md:shadow-none`}>
+              <div className="mb-2 flex basis-full justify-center md:hidden" aria-hidden="true"><span className="block h-1 w-10 rounded-full bg-border-hover" /></div>
+              <div className="mb-2 flex w-full basis-full items-center justify-between md:hidden">
+                <span className="text-base font-bold text-text-primary">{u.filters}</span>
+                <button onClick={resetFilters} className="text-sm text-text-muted underline">{u.clearAll}</button>
+              </div>
               {/* Markets */}
               <FilterDropdown label={t.markets} count={filters.markets.length} isOpen={openDropdown === 'markets'} onToggle={() => toggleDropdown('markets')}>
                 <div className="flex flex-wrap gap-1.5">
@@ -2426,7 +2684,7 @@ export default function ComparePageClient({ firms: firmsBrutes, shadowFirms = []
               </FilterDropdown>
               
               {/* Price */}
-              <FilterDropdown label={filters.priceRange[1] < 1000 ? `≤$${filters.priceRange[1]}` : 'Price'} count={filters.priceRange[1] < 1000 ? 1 : 0} isOpen={openDropdown === 'price'} onToggle={() => toggleDropdown('price')}>
+              <FilterDropdown label={filters.priceRange[1] < 1000 ? `≤$${filters.priceRange[1]}` : t.price} count={filters.priceRange[1] < 1000 ? 1 : 0} isOpen={openDropdown === 'price'} onToggle={() => toggleDropdown('price')}>
                 <div className="w-[220px]">
                   <PriceSlider value={filters.priceRange} onChange={(v) => setFilters(f => ({ ...f, priceRange: v }))} />
                 </div>
@@ -2453,10 +2711,17 @@ export default function ComparePageClient({ firms: firmsBrutes, shadowFirms = []
                 </span>
                 {t.verified}
               </button>
+              <button
+                onClick={() => setFiltresOuverts(false)}
+                className="mt-3 flex min-h-[50px] w-full basis-full items-center justify-center rounded-xl bg-accent-hover text-[15px] font-bold text-on-accent md:hidden"
+              >
+                {fill(u.seeFirms, { n: filteredFirms.length })}
+              </button>
               </div>
             </div>
 
             {/* Ligne 2 : filtres actifs, remise a zero, compte et tri */}
+            {activeFilterChips.length > 0 && (
             <div className="flex flex-wrap items-center gap-2">
               {activeFilterChips.map(chip => <FilterChip key={chip.key} label={chip.label} onRemove={chip.onRemove} />)}
               {activeFilterChips.length > 0 && (
@@ -2464,55 +2729,58 @@ export default function ComparePageClient({ firms: firmsBrutes, shadowFirms = []
                   <RotateCcw className="h-3.5 w-3.5" /> {t.reset}
                 </button>
               )}
-              <span className="ml-auto text-sm text-text-muted">
-                {t.showing} <span className="font-mono text-text-primary">{filteredFirms.length}</span> {t.propFirms}
+            </div>
+            )}
+            {/* Ligne 3 : tri en onglets visibles + vue grille / tableau */}
+            <div className="-mx-4 flex items-center gap-1 overflow-x-auto px-4 [scrollbar-width:none] md:mx-0 md:px-0">
+              {ONGLETS_TRI.map(o => (
+                <button
+                  key={o.value}
+                  onClick={() => setSortBy(o.value)}
+                  aria-pressed={sortBy === o.value}
+                  className={`min-h-9 flex-none whitespace-nowrap rounded-lg px-3 text-[13px] transition-colors ${sortBy === o.value ? 'bg-text-primary font-semibold text-bg-elevated dark:bg-accent/15 dark:text-accent' : 'text-text-secondary hover:bg-bg-base hover:text-text-primary'}`}
+                >
+                  {u[o.cle]}
+                </button>
+              ))}
+              <span className="ml-auto hidden flex-none text-sm text-text-muted md:inline">
+                <span className="font-mono text-text-primary">{filteredFirms.length}</span> {t.propFirms}
               </span>
-              <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} aria-label="Sort firms by" className="rounded-xl border border-border bg-bg-base px-3 py-2 text-sm text-text-secondary focus:border-accent focus:outline-none">
-                {SORT_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{`${t.sort ?? 'Sort'}: ${opt.label}`}</option>)}
-              </select>
+              <div className="ml-3 hidden flex-none gap-1 rounded-xl border border-border bg-bg-base p-1 md:flex">
+                {([['grid', u.grid, Grid3X3], ['list', u.list, List]] as const).map(([mode, label, Icon]) => (
+                  <button
+                    key={mode}
+                    onClick={() => setViewMode(mode)}
+                    aria-pressed={viewMode === mode}
+                    className={`flex min-h-8 items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-medium transition-colors ${
+                      viewMode === mode ? 'bg-bg-elevated text-text-primary' : 'text-text-muted hover:text-text-primary'
+                    }`}
+                  >
+                    <Icon className="h-3.5 w-3.5" />{label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
       
-      {/* QUIZ BANNER */}
-      <div className="px-4 pt-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="rounded-lg bg-bg-elevated border border-border hover:border-border-hover transition-colors">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 px-5 py-4">
-              <div className="flex items-center gap-4 min-w-0">
-                <div className="w-10 h-10 rounded-md bg-accent/15 border border-accent/30 flex items-center justify-center flex-shrink-0">
-                  <Sparkles className="w-5 h-5 text-accent" />
-                </div>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <p className="text-text-primary font-medium text-sm">Not sure which firm to pick?</p>
-                    <span className="px-1.5 py-0.5 bg-accent/10 text-accent text-[10px] font-medium rounded border border-accent/30 uppercase tracking-wider">Free</span>
-                  </div>
-                  <p className="text-text-secondary text-xs">Discover the prop firm that fits your trading style in under 60 seconds</p>
-                </div>
-              </div>
-              <Link
-                href="/en/quiz?start=true"
-                className="flex-shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-accent-hover hover:brightness-110 text-white font-medium text-sm rounded-md transition-colors whitespace-nowrap"
-              >
-                Find my perfect firm
-                <ChevronRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* MAIN CONTENT */}
       <section className="px-4 pt-6">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-end mb-4">
+          <div className="mb-4 flex flex-wrap items-center gap-3">
+            {/* Le comparateur cote a cote, annonce une fois au-dessus de la grille. */}
+            {compareFirms.length === 0 && paginatedFirms.length > 1 && (
+              <p className="flex items-center gap-2 text-[13px] text-text-secondary">
+                <span className="grid h-6 w-6 flex-none place-items-center rounded-md bg-sky-400/15 text-sky-700 dark:text-sky-300"><GitCompare className="h-3.5 w-3.5" /></span>
+                {u.compareHint}
+              </p>
+            )}
             {/* Counter "Showing X prop firms" intentionally hidden per design — 
                 displaying it implies a number we'd need to keep accurate, and the
                 grid below already conveys the count visually. */}
             {favorites.length > 0 && (
-              <span className="text-xs text-text-muted">{favorites.length} favorites</span>
+              <span className="ml-auto text-xs text-text-muted">{fill(u.favoritesN, { n: favorites.length })}</span>
             )}
           </div>
           
@@ -2520,12 +2788,13 @@ export default function ComparePageClient({ firms: firmsBrutes, shadowFirms = []
           {paginatedFirms.length > 0 && (
             <>
               <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4' : 'space-y-3'}>
-                {paginatedFirms.map((firm, i) => (
+                {paginatedFirms.flatMap((firm, i) => [
                   <PropFirmCard
                     key={firm.id}
                     firm={firm}
                     isCompact={viewMode === 'list'}
-                    rank={(currentPage - 1) * itemsPerPage + i + 1}
+                    rank={i + 1}
+                    u={u}
                     markets={firmMarkets.get(firm.id) || ['Forex']}
                     isFavorite={favorites.includes(firm.id)}
                     onFavorite={() => toggleFavorite(firm.id)}
@@ -2538,35 +2807,38 @@ export default function ComparePageClient({ firms: firmsBrutes, shadowFirms = []
                     payoutAggregate={payoutAggregates.get(firm.id) || null}
                     onPayout={() => setPayoutModalFirmId(firm.id)}
                     t={t}
-                  />
-                ))}
+                  />,
+                  // Le quiz prend la place d'une carte apres la 3e firme, au lieu
+                  // d'un bandeau qui repoussait toute la liste (6/10/2026).
+                  ...(i === 2 && viewMode === 'grid' && !debouncedSearch ? [
+                    <div key="quiz" className="flex flex-col justify-center gap-3 rounded-2xl border border-dashed border-border-hover bg-gradient-to-b from-accent/5 to-transparent p-5">
+                      <span className="grid h-10 w-10 place-items-center rounded-xl bg-accent/15 text-accent"><Sparkles className="h-5 w-5" /></span>
+                      <p className="text-[17px] font-bold text-text-primary">{u.quizTitle}</p>
+                      <p className="text-sm text-text-secondary">{u.quizText}</p>
+                      <Link href={`/${currentLocale}/quiz?start=true`} className="mt-1 flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-accent-hover px-4 text-sm font-semibold text-on-accent hover:brightness-110">
+                        {u.quizCta} <ChevronRight className="h-4 w-4" />
+                      </Link>
+                    </div>,
+                  ] : []),
+                ])}
               </div>
               
-              {/* PAGINATION */}
-              {totalPages > 1 && (
-                <nav aria-label="Pagination" className="flex items-center justify-center gap-2 mt-8">
-                  <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} aria-label="Previous page" className="p-2 rounded-lg bg-bg-base text-text-secondary hover:bg-bg-elevated disabled:opacity-50 disabled:cursor-not-allowed">
-                    <ChevronLeft className="w-4 h-4" />
+              {/* VOIR PLUS */}
+              {filteredFirms.length > paginatedFirms.length && (
+                <div className="mt-8 flex flex-col items-center gap-2">
+                  <button
+                    onClick={() => setVisibleCount(n => n + itemsPerPage)}
+                    className="min-h-11 rounded-xl border border-border-hover px-6 text-sm font-semibold text-text-primary transition-colors hover:border-text-primary"
+                  >
+                    {fill(u.loadMore, { n: Math.min(itemsPerPage, filteredFirms.length - paginatedFirms.length) })}
                   </button>
-                  <div className="flex gap-1">
-                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                      let page: number
-                      if (totalPages <= 5) page = i + 1
-                      else if (currentPage <= 3) page = i + 1
-                      else if (currentPage >= totalPages - 2) page = totalPages - 4 + i
-                      else page = currentPage - 2 + i
-                      return (
-                        <button key={page} onClick={() => setCurrentPage(page)} aria-label={`Page ${page}`} aria-current={currentPage === page ? 'page' : undefined} className={`w-8 h-8 rounded-lg text-sm font-medium ${currentPage === page ? 'bg-accent-hover text-white' : 'bg-bg-base text-text-secondary hover:bg-bg-elevated'}`}>
-                          {page}
-                        </button>
-                      )
-                    })}
-                  </div>
-                  <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} aria-label="Next page" className="p-2 rounded-lg bg-bg-base text-text-secondary hover:bg-bg-elevated disabled:opacity-50 disabled:cursor-not-allowed">
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                </nav>
+                  <p className="text-xs text-text-muted">{fill(u.shownOf, { a: paginatedFirms.length, b: filteredFirms.length })}</p>
+                </div>
               )}
+              <p className="mt-6 text-xs text-text-muted">
+                {u.disclosure}{' '}
+                <Link href={`/${currentLocale}/how-we-make-money`} className="underline hover:text-text-secondary">{u.howWeRank.replace(' →', '')}</Link>
+              </p>
             </>
           )}
 
@@ -2577,12 +2849,12 @@ export default function ComparePageClient({ firms: firmsBrutes, shadowFirms = []
                 <div className="flex items-center gap-2 mb-1">
                   <div className="w-1 h-5 bg-yellow-500/60 rounded-full" />
                   <h2 className="text-sm font-semibold text-text-secondary">
-                    Other results <span className="text-text-muted font-normal">— unverified or not recommended</span>
+                    {u.otherResults} <span className="text-text-muted font-normal">{u.otherResultsSub}</span>
                     <span className="ml-2 px-1.5 py-0.5 bg-bg-base text-text-secondary text-[10px] rounded">{shadowMatches.length}</span>
                   </h2>
                 </div>
                 <p className="text-xs text-text-muted ml-3">
-                  These firms aren&apos;t currently listed on PropFirmScanner. We haven&apos;t verified their claims, or we don&apos;t recommend them. Proceed with caution.
+                  {u.otherResultsText}
                 </p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -2614,20 +2886,20 @@ export default function ComparePageClient({ firms: firmsBrutes, shadowFirms = []
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
               <div className="max-w-xl">
                 <p className="text-tiny text-accent uppercase tracking-wider font-medium mb-2">
-                  Personalized matching
+                  {u.stillEyebrow}
                 </p>
                 <h3 className="text-h2 text-text-primary mb-2">
-                  Still undecided?
+                  {u.stillTitle}
                 </h3>
                 <p className="text-small text-text-secondary">
-                  Answer 4 quick questions and get your top 3 matches in under 60 seconds. No account required.
+                  {u.stillText}
                 </p>
               </div>
               <Link
-                href="/en/quiz?start=true"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-accent-hover hover:brightness-110 text-white font-medium text-sm rounded-md transition-colors whitespace-nowrap"
+                href={`/${currentLocale}/quiz?start=true`}
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-accent-hover hover:brightness-110 text-on-accent font-semibold text-sm rounded-xl transition-colors whitespace-nowrap"
               >
-                Take the quiz
+                {u.stillCta}
                 <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
@@ -2637,19 +2909,40 @@ export default function ComparePageClient({ firms: firmsBrutes, shadowFirms = []
 
       {/* FLOATING QUIZ BUTTON */}
       {showQuizFloat && (
-        <div className="fixed bottom-20 right-4 z-40 animate-fade-in">
+        <div className="fixed bottom-20 right-4 z-40 hidden animate-fade-in md:block">
           <Link
-            href="/en/quiz?start=true"
-            className="inline-flex items-center gap-2 px-4 py-3 bg-accent-hover hover:brightness-110 text-white font-medium text-sm rounded-md shadow-lg transition-colors"
+            href={`/${currentLocale}/quiz?start=true`}
+            className="inline-flex items-center gap-2 px-4 py-3 bg-accent-hover hover:brightness-110 text-on-accent font-semibold text-sm rounded-xl shadow-lg transition-colors"
           >
-            Find my match
+            {u.findMatch}
             <ChevronRight className="w-4 h-4" />
           </Link>
         </div>
       )}
 
+      {/* MOBILE : le meilleur code reste sous le pouce (cache des qu'on compare). */}
+      {offreDuJour && compareFirms.length === 0 && !filtresOuverts && (
+        <div className="fixed inset-x-0 bottom-0 z-30 flex items-center gap-3 border-t border-border bg-bg-elevated/95 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 backdrop-blur md:hidden">
+          <div className="min-w-0 flex-1 text-xs leading-tight text-text-muted">
+            <span className="block truncate text-sm font-semibold text-text-primary">
+              {offreDuJour.discount_code ? `${u.code} ${offreDuJour.discount_code}` : u.bestCode}
+            </span>
+            −{offreDuJour.discount_percent}% · {offreDuJour.name}
+          </div>
+          <a
+            href={getFirmUrl(offreDuJour, 'compare-sticky')}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => { if (offreDuJour.discount_code) handleCopyCode(offreDuJour.discount_code, offreDuJour.slug) }}
+            className="flex min-h-11 flex-none items-center gap-1.5 whitespace-nowrap rounded-xl bg-accent-hover px-4 text-sm font-semibold text-on-accent"
+          >
+            {offreDuJour.discount_code ? u.copyOpen : u.dealCta} <ExternalLink className="h-3.5 w-3.5" />
+          </a>
+        </div>
+      )}
+
       {/* COMPARE BAR */}
-      <CompareBar firms={compareFirms} onRemove={(id) => setCompareList(prev => prev.filter(f => f !== id))} onClear={() => setCompareList([])} />
+      <CompareBar u={u} firms={compareFirms} onRemove={(id) => setCompareList(prev => prev.filter(f => f !== id))} onClear={() => setCompareList([])} />
     </div>
   )
 }

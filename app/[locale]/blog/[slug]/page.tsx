@@ -2,8 +2,9 @@ import { Metadata } from 'next';
 import { generateDynamicAlternates } from '@/lib/seo'
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { Clock, Calendar, ArrowLeft, ArrowRight, User, Share2, BookOpen, Shield, Brain, TrendingUp, ChevronRight, Home } from 'lucide-react';
-import { blogPosts, getPostBySlug, getRelatedPosts, CATEGORY_COLORS } from '@/lib/blog-data';
+import { ArrowLeft, ArrowRight, ChevronRight, Share2, Sparkles, Scale } from 'lucide-react';
+import { blogPosts, getPostBySlug, getRelatedPosts } from '@/lib/blog-data';
+import type { BlogPost } from '@/lib/blog-data';
 
 // =============================================================================
 // TYPES
@@ -14,15 +15,190 @@ interface Props {
 }
 
 // =============================================================================
-// CATEGORY ICONS
+// UI LABELS (FR / EN — other locales fall back to EN)
 // =============================================================================
 
-const CATEGORY_ICONS: Record<string, typeof BookOpen> = {
-  'Guides': BookOpen,
-  'Rules Decoded': Shield,
-  'Reviews': TrendingUp,
-  'Psychology': Brain,
+const LABELS = {
+  en: {
+    home: 'Home',
+    blog: 'Blog',
+    toc: 'Table of contents',
+    backToBlog: 'Back to blog',
+    team: 'The PropFirmScanner team',
+    updated: 'Updated',
+    published: 'Published',
+    share: 'Share',
+    shareOn: 'Share on',
+    tags: 'Tags',
+    ctaTitle: 'Ready to find your firm?',
+    ctaDesc: 'Compare rules, prices and active promo codes side by side, then pick the one that fits how you trade.',
+    ctaCompare: 'Compare prop firms',
+    ctaDeals: 'See the deals',
+    quizTitle: 'Find your firm in 60 s',
+    quizDesc: 'A few questions about your style, and we suggest firms that fit.',
+    quizBtn: 'Take the quiz',
+    compareTitle: 'Compare side by side',
+    compareDesc: 'Prices, drawdown, profit split and payouts in one table.',
+    compareBtn: 'Open the comparator',
+    previous: 'Previous article',
+    next: 'Next article',
+    related: 'Related articles',
+    readArticle: 'Read the article',
+    categories: { Guides: 'Guides', 'Rules Decoded': 'Rules Decoded', Reviews: 'Reviews', Psychology: 'Psychology' } as Record<string, string>,
+  },
+  fr: {
+    home: 'Accueil',
+    blog: 'Blog',
+    toc: 'Sommaire',
+    backToBlog: 'Retour au blog',
+    team: "L'équipe PropFirmScanner",
+    updated: 'Mis à jour le',
+    published: 'Publié le',
+    share: 'Partager',
+    shareOn: 'Partager sur',
+    tags: 'Tags',
+    ctaTitle: 'Prêt à trouver ta firme ?',
+    ctaDesc: 'Compare les règles, les prix et les codes promo actifs côte à côte, puis choisis celle qui colle à ta façon de trader.',
+    ctaCompare: 'Comparer les prop firms',
+    ctaDeals: 'Voir les promos',
+    quizTitle: 'Trouve ta firme en 60 s',
+    quizDesc: 'Quelques questions sur ton style, et on te propose des firmes adaptées.',
+    quizBtn: 'Faire le quiz',
+    compareTitle: 'Comparer côte à côte',
+    compareDesc: 'Prix, drawdown, partage des gains et paiements dans un seul tableau.',
+    compareBtn: 'Ouvrir le comparateur',
+    previous: 'Article précédent',
+    next: 'Article suivant',
+    related: 'Articles liés',
+    readArticle: "Lire l'article",
+    categories: { Guides: 'Guides', 'Rules Decoded': 'Règles décodées', Reviews: 'Avis', Psychology: 'Psychologie' } as Record<string, string>,
+  },
 };
+
+type Labels = (typeof LABELS)['en'];
+
+function getLabels(locale: string): Labels {
+  return locale === 'fr' ? LABELS.fr : LABELS.en;
+}
+
+// =============================================================================
+// HELPERS
+// =============================================================================
+
+const MONTHS = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+
+/** "January 5, 2025" / "January 2025" -> localized date; unparseable strings are returned as-is. */
+function formatPostDate(raw: string, locale: string): string {
+  const m = raw.trim().match(/^([A-Za-z]+)\s+(?:(\d{1,2}),?\s+)?(\d{4})$/);
+  if (m) {
+    const month = MONTHS.indexOf(m[1].toLowerCase());
+    if (month >= 0) {
+      const d = new Date(Date.UTC(Number(m[3]), month, m[2] ? Number(m[2]) : 1));
+      return d.toLocaleDateString(locale, m[2]
+        ? { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }
+        : { month: 'long', year: 'numeric', timeZone: 'UTC' });
+    }
+  }
+  const ts = Date.parse(raw);
+  if (!Number.isNaN(ts)) {
+    return new Date(ts).toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+  }
+  return raw;
+}
+
+function shortReadTime(readTime: string): string {
+  const n = readTime.match(/\d+/);
+  return n ? `${n[0]} min` : readTime;
+}
+
+function slugify(text: string): string {
+  return text
+    .replace(/<[^>]+>/g, '')
+    .replace(/&[a-z]+;|&#\d+;/gi, ' ')
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function stripTags(html: string): string {
+  return html
+    .replace(/<[^>]+>/g, '')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .trim();
+}
+
+/**
+ * Server-side content pass:
+ * - gives every <h2> a unique id (for the TOC anchors),
+ * - prefixes internal links with the locale,
+ * - wraps tables in a horizontal scroller.
+ */
+function processContent(content: string, locale: string): { html: string; toc: { id: string; text: string }[] } {
+  const toc: { id: string; text: string }[] = [];
+  const used = new Set<string>();
+
+  let html = content.replace(/<h2(\s[^>]*)?>([\s\S]*?)<\/h2>/g, (_m, attrs: string | undefined, inner: string) => {
+    const base = slugify(inner) || 'section';
+    let id = base;
+    let n = 2;
+    while (used.has(id)) id = `${base}-${n++}`;
+    used.add(id);
+    toc.push({ id, text: stripTags(inner) });
+    const rest = (attrs || '').replace(/\sid="[^"]*"/, '');
+    return `<h2 id="${id}"${rest}>${inner}</h2>`;
+  });
+
+  if (locale !== 'en') {
+    html = html.replace(/href="\/(?!\/)/g, `href="/${locale}/`);
+  }
+
+  html = html
+    .replace(/<table(\s[^>]*)?>/g, (m) => `<div class="overflow-x-auto">${m}`)
+    .replace(/<\/table>/g, '</table></div>');
+
+  return { html, toc };
+}
+
+const COVER_STYLES: Record<string, string> = {
+  Guides: 'from-emerald-800 to-teal-700',
+  'Rules Decoded': 'from-amber-800 to-amber-600',
+  Reviews: 'from-sky-800 to-blue-900',
+  Psychology: 'from-violet-900 to-violet-600',
+};
+
+const CATEGORY_PILL: Record<string, string> = {
+  Guides: 'bg-accent/15 text-accent',
+  'Rules Decoded': 'bg-amber-500/15 text-amber-800 dark:text-amber-300',
+  Reviews: 'bg-sky-500/10 text-sky-800 dark:text-sky-300',
+  Psychology: 'bg-violet-500/15 text-violet-800 dark:text-violet-300',
+};
+
+function coverGlyph(post: BlogPost): string {
+  switch (post.category) {
+    case 'Guides': {
+      const i = blogPosts.findIndex((p) => p.slug === post.slug);
+      return String(i + 1).padStart(2, '0');
+    }
+    case 'Rules Decoded': return '§';
+    case 'Reviews': return '★';
+    default: return 'ψ';
+  }
+}
+
+const CARD =
+  'rounded-2xl border border-border bg-bg-elevated shadow-[0_1px_2px_rgba(28,25,23,0.05),0_10px_28px_-16px_rgba(28,25,23,0.22)] dark:bg-gradient-to-b dark:from-white/[0.035] dark:to-transparent dark:shadow-none';
+
+const BTN_PRIMARY =
+  'flex min-h-12 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-accent-hover px-4 text-sm font-semibold text-on-accent shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_1px_2px_rgba(4,35,26,0.2)] hover:brightness-105';
+
+const BTN_SECONDARY =
+  'flex min-h-12 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl border border-border-hover bg-bg-elevated px-4 text-sm font-semibold text-text-primary hover:border-text-primary dark:bg-transparent';
 
 // =============================================================================
 // METADATA GENERATION
@@ -30,9 +206,9 @@ const CATEGORY_ICONS: Record<string, typeof BookOpen> = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = getPostBySlug(params.slug);
-  
+
   if (!post) {
-    return { 
+    return {
       title: 'Article Not Found | PropFirm Scanner Blog',
       description: 'The article you are looking for could not be found.'
     };
@@ -74,73 +250,89 @@ export async function generateStaticParams() {
 }
 
 // =============================================================================
-// BREADCRUMB COMPONENT
+// COMPONENTS
 // =============================================================================
 
-function Breadcrumb({ title, category }: { title: string; category: string }) {
+function Cover({
+  post,
+  label,
+  small = false,
+  className = '',
+}: {
+  post: BlogPost;
+  label?: string;
+  small?: boolean;
+  className?: string;
+}) {
   return (
-    <nav aria-label="Breadcrumb" className="mb-8">
-      <ol className="flex items-center gap-2 text-sm flex-wrap">
+    <div
+      aria-hidden
+      className={`relative flex items-end overflow-hidden rounded-xl bg-gradient-to-br text-white ${COVER_STYLES[post.category] || COVER_STYLES.Guides} ${
+        small ? 'p-2' : 'p-4'
+      } ${className}`}
+    >
+      <span
+        className={`pointer-events-none absolute select-none font-mono font-extrabold leading-none tracking-[-0.05em] opacity-[0.13] ${
+          small ? '-right-2 -top-2.5 text-[60px]' : '-right-2 -top-5 text-[110px]'
+        }`}
+      >
+        {coverGlyph(post)}
+      </span>
+      {label && (
+        <span className="relative rounded-md bg-black/25 px-2 py-1 text-[11px] font-bold uppercase tracking-[0.1em]">{label}</span>
+      )}
+    </div>
+  );
+}
+
+function Breadcrumb({ category, href, L }: { category: string; href: (p: string) => string; L: Labels }) {
+  return (
+    <nav aria-label="Breadcrumb">
+      <ol className="flex flex-wrap items-center gap-1.5 text-[13px] text-text-muted">
         <li>
-          <Link 
-            href="/" 
-            className="flex items-center gap-1 text-text-secondary hover:text-white transition-colors"
-          >
-            <Home className="w-4 h-4" />
-            <span className="hidden sm:inline">Home</span>
+          <Link href={href('/')} className="hover:text-text-primary">
+            {L.home}
           </Link>
         </li>
-        <li className="text-text-muted">
-          <ChevronRight className="w-4 h-4" />
+        <li aria-hidden>
+          <ChevronRight className="h-3.5 w-3.5" />
         </li>
         <li>
-          <Link 
-            href="/blog" 
-            className="text-text-secondary hover:text-white transition-colors"
-          >
-            Blog
+          <Link href={href('/blog')} className="hover:text-text-primary">
+            {L.blog}
           </Link>
         </li>
-        <li className="text-text-muted">
-          <ChevronRight className="w-4 h-4" />
+        <li aria-hidden>
+          <ChevronRight className="h-3.5 w-3.5" />
         </li>
-        <li>
-          <span className="text-text-secondary">{category}</span>
-        </li>
-        <li className="text-text-muted hidden md:block">
-          <ChevronRight className="w-4 h-4" />
-        </li>
-        <li className="hidden md:block">
-          <span className="text-accent font-medium line-clamp-1">{title}</span>
+        <li className="text-text-secondary" aria-current="page">
+          {L.categories[category] || category}
         </li>
       </ol>
     </nav>
   );
 }
 
-// =============================================================================
-// SHARE BUTTONS COMPONENT
-// =============================================================================
-
-function ShareButtons({ title, slug }: { title: string; slug: string }) {
-  const url = `https://www.propfirmscanner.org/blog/${slug}`;
+function ShareButtons({ title, url, L }: { title: string; url: string; L: Labels }) {
   const encodedUrl = encodeURIComponent(url);
   const encodedTitle = encodeURIComponent(title);
+  const btn =
+    'inline-flex h-11 w-11 items-center justify-center rounded-xl border border-border-hover bg-bg-elevated text-text-secondary hover:border-text-primary hover:text-text-primary sm:h-9 sm:w-9 dark:bg-transparent';
 
   return (
-    <div className="flex items-center gap-3">
-      <span className="text-text-muted text-sm flex items-center gap-1">
-        <Share2 className="w-4 h-4" />
-        Share:
+    <div className="flex items-center gap-2">
+      <span className="hidden items-center gap-1 text-[13px] text-text-muted sm:flex">
+        <Share2 className="h-4 w-4" />
+        {L.share}
       </span>
       <a
         href={`https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="p-2 bg-dark-700 hover:bg-dark-600 rounded-lg text-text-secondary hover:text-white transition-colors"
-        aria-label="Share on Twitter"
+        className={btn}
+        aria-label={`${L.shareOn} X`}
       >
-        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden>
           <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
         </svg>
       </a>
@@ -148,10 +340,10 @@ function ShareButtons({ title, slug }: { title: string; slug: string }) {
         href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="p-2 bg-dark-700 hover:bg-dark-600 rounded-lg text-text-secondary hover:text-white transition-colors"
-        aria-label="Share on LinkedIn"
+        className={btn}
+        aria-label={`${L.shareOn} LinkedIn`}
       >
-        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden>
           <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
         </svg>
       </a>
@@ -159,10 +351,10 @@ function ShareButtons({ title, slug }: { title: string; slug: string }) {
         href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="p-2 bg-dark-700 hover:bg-dark-600 rounded-lg text-text-secondary hover:text-white transition-colors"
-        aria-label="Share on Facebook"
+        className={btn}
+        aria-label={`${L.shareOn} Facebook`}
       >
-        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden>
           <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
         </svg>
       </a>
@@ -170,119 +362,88 @@ function ShareButtons({ title, slug }: { title: string; slug: string }) {
   );
 }
 
-// =============================================================================
-// TABLE OF CONTENTS COMPONENT
-// =============================================================================
-
-function TableOfContents({ content }: { content: string }) {
-  // Extract h2 headings from content
-  const headings = content.match(/<h2>(.*?)<\/h2>/g) || [];
-  const tocItems = headings.map(h => h.replace(/<\/?h2>/g, ''));
-
-  if (tocItems.length < 3) return null;
-
+function TableOfContents({ items, L }: { items: { id: string; text: string }[]; L: Labels }) {
+  if (items.length < 2) return null;
   return (
-    <div className="bg-bg-elevated/50 border border-border rounded-xl p-6 mb-8">
-      <h2 className="text-lg font-semibold text-white mb-4">Table of Contents</h2>
-      <ul className="space-y-2">
-        {tocItems.map((item, index) => (
-          <li key={index} className="flex items-start gap-2">
-            <span className="text-accent font-mono text-sm">{(index + 1).toString().padStart(2, '0')}</span>
-            <span className="text-text-secondary text-sm hover:text-white transition-colors cursor-pointer">
-              {item}
-            </span>
+    <nav aria-label={L.toc} className="text-[13px]">
+      <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-text-muted">{L.toc}</p>
+      <ul>
+        {items.map((item) => (
+          <li key={item.id}>
+            <a
+              href={`#${item.id}`}
+              className="block border-l-2 border-border py-1.5 pl-2.5 pr-1 leading-snug text-text-secondary hover:border-accent hover:bg-accent-subtle hover:text-text-primary"
+            >
+              {item.text}
+            </a>
           </li>
         ))}
       </ul>
-    </div>
+    </nav>
   );
 }
 
-// =============================================================================
-// RELATED POSTS COMPONENT
-// =============================================================================
-
-function RelatedPosts({ currentSlug, category }: { currentSlug: string; category: string }) {
+function RelatedPosts({ currentSlug, category, href, L }: { currentSlug: string; category: string; href: (p: string) => string; L: Labels }) {
   const relatedPosts = getRelatedPosts(currentSlug, category, 3);
 
   if (relatedPosts.length === 0) return null;
 
   return (
-    <div className="mt-16">
-      <h2 className="text-2xl font-bold text-white mb-6">Related Articles</h2>
-      <div className="grid md:grid-cols-3 gap-6">
-        {relatedPosts.map((related) => {
-          const colors = CATEGORY_COLORS[related.category];
-          return (
-            <Link
-              key={related.slug}
-              href={`/blog/${related.slug}`}
-              className="group bg-dark-700/50 border border-border rounded-xl p-5 hover:border-accent/30 hover:bg-dark-700 transition-all"
-            >
-              <span className={`text-xs font-medium ${colors.text}`}>
-                {related.category}
-              </span>
-              <h3 className="text-lg font-semibold text-white mt-2 mb-2 line-clamp-2 group-hover:text-accent transition-colors">
-                {related.title}
-              </h3>
-              <p className="text-text-secondary text-sm line-clamp-2">{related.description}</p>
-              <div className="flex items-center gap-1 mt-3 text-accent text-sm font-medium">
-                Read article <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </Link>
-          );
-        })}
+    <section>
+      <h2 className="mb-4 mt-10 font-display text-xl font-extrabold tracking-tight text-text-primary">{L.related}</h2>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {relatedPosts.map((related) => (
+          <Link
+            key={related.slug}
+            href={href(`/blog/${related.slug}`)}
+            className={`group flex flex-col gap-2.5 p-3 hover:border-border-hover ${CARD}`}
+          >
+            <Cover post={related} className="h-32" label={L.categories[related.category] || related.category} />
+            <h3 className="mt-0.5 text-[15.5px] font-semibold leading-snug tracking-[-0.01em] text-text-primary group-hover:text-accent">
+              {related.title}
+            </h3>
+            <p className="line-clamp-2 text-[13px] leading-normal text-text-secondary">{related.description}</p>
+            <span className="mt-auto inline-flex items-center gap-1 pt-1 text-[13px] font-semibold text-accent">
+              {L.readArticle}
+              <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+            </span>
+          </Link>
+        ))}
       </div>
-    </div>
+    </section>
   );
 }
 
-// =============================================================================
-// ARTICLE NAVIGATION COMPONENT
-// =============================================================================
-
-function ArticleNavigation({ currentSlug }: { currentSlug: string }) {
+function ArticleNavigation({ currentSlug, href, L }: { currentSlug: string; href: (p: string) => string; L: Labels }) {
   const currentIndex = blogPosts.findIndex(p => p.slug === currentSlug);
   const prevPost = currentIndex > 0 ? blogPosts[currentIndex - 1] : null;
   const nextPost = currentIndex < blogPosts.length - 1 ? blogPosts[currentIndex + 1] : null;
 
-  return (
-    <div className="mt-12 pt-8 border-t border-border">
-      <div className="grid md:grid-cols-2 gap-4">
-        {prevPost ? (
-          <Link
-            href={`/blog/${prevPost.slug}`}
-            className="group flex items-center gap-4 p-4 bg-bg-elevated/50 border border-border rounded-xl hover:border-accent/30 transition-all"
-          >
-            <ArrowLeft className="w-5 h-5 text-text-muted group-hover:text-accent group-hover:-translate-x-1 transition-all" />
-            <div className="flex-1 min-w-0">
-              <span className="text-xs text-text-muted">Previous Article</span>
-              <h4 className="text-white font-medium line-clamp-1 group-hover:text-accent transition-colors">
-                {prevPost.title}
-              </h4>
-            </div>
-          </Link>
-        ) : (
-          <div />
-        )}
-        
-        {nextPost ? (
-          <Link
-            href={`/blog/${nextPost.slug}`}
-            className="group flex items-center gap-4 p-4 bg-bg-elevated/50 border border-border rounded-xl hover:border-accent/30 transition-all text-right"
-          >
-            <div className="flex-1 min-w-0">
-              <span className="text-xs text-text-muted">Next Article</span>
-              <h4 className="text-white font-medium line-clamp-1 group-hover:text-accent transition-colors">
-                {nextPost.title}
-              </h4>
-            </div>
-            <ArrowRight className="w-5 h-5 text-text-muted group-hover:text-accent group-hover:translate-x-1 transition-all" />
-          </Link>
-        ) : (
-          <div />
-        )}
+  if (!prevPost && !nextPost) return null;
+
+  const item = (post: BlogPost, dir: 'prev' | 'next') => (
+    <Link
+      href={href(`/blog/${post.slug}`)}
+      className={`group flex items-center gap-3 p-3 hover:border-border-hover ${CARD} ${dir === 'next' ? 'sm:flex-row-reverse sm:text-right' : ''}`}
+    >
+      <Cover post={post} small className="h-[68px] w-[84px] flex-none" />
+      <div className="min-w-0 flex-1">
+        <span className="inline-flex items-center gap-1 text-[12px] text-text-muted">
+          {dir === 'prev' ? <ArrowLeft className="h-3.5 w-3.5" /> : null}
+          {dir === 'prev' ? L.previous : L.next}
+          {dir === 'next' ? <ArrowRight className="h-3.5 w-3.5" /> : null}
+        </span>
+        <h3 className="mt-0.5 line-clamp-2 text-sm font-semibold leading-snug text-text-primary group-hover:text-accent">
+          {post.title}
+        </h3>
       </div>
+    </Link>
+  );
+
+  return (
+    <div className="mt-10 grid gap-3 sm:grid-cols-2">
+      {prevPost ? item(prevPost, 'prev') : <div className="hidden sm:block" />}
+      {nextPost ? item(nextPost, 'next') : <div className="hidden sm:block" />}
     </div>
   );
 }
@@ -291,142 +452,175 @@ function ArticleNavigation({ currentSlug }: { currentSlug: string }) {
 // MAIN PAGE COMPONENT
 // =============================================================================
 
+const PROSE = [
+  'text-[16px] leading-7 text-text-secondary',
+  // headings
+  '[&_h2]:mt-10 [&_h2]:mb-3 [&_h2]:scroll-mt-24 [&_h2]:font-display [&_h2]:text-[22px] [&_h2]:font-bold [&_h2]:leading-tight [&_h2]:tracking-[-0.015em] [&_h2]:text-text-primary',
+  '[&_h3]:mt-7 [&_h3]:mb-2 [&_h3]:font-display [&_h3]:text-[18px] [&_h3]:font-bold [&_h3]:text-text-primary',
+  // paragraphs & lead
+  '[&_p]:mb-4 [&_p]:text-[16px] [&_p]:leading-7 [&_p]:text-text-secondary',
+  '[&_p.lead]:text-[17px] [&_p.lead]:leading-[1.65]',
+  // lists
+  '[&_ul]:mb-5 [&_ul]:list-disc [&_ul]:space-y-1.5 [&_ul]:pl-5 [&_ol]:mb-5 [&_ol]:list-decimal [&_ol]:space-y-1.5 [&_ol]:pl-5 [&_li]:pl-1 [&_li::marker]:text-accent',
+  // inline
+  '[&_a]:font-medium [&_a]:text-accent [&_a]:underline [&_a]:decoration-accent/40 [&_a]:underline-offset-2 hover:[&_a]:decoration-accent',
+  '[&_strong]:font-semibold [&_strong]:text-text-primary',
+  // info boxes
+  '[&_.info-box]:my-6 [&_.info-box]:rounded-xl [&_.info-box]:border [&_.info-box]:p-5 [&_.info-box>*:last-child]:mb-0',
+  '[&_.info-box.success]:border-accent-border [&_.info-box.success]:bg-accent-subtle',
+  '[&_.info-box.warning]:border-deal/50 [&_.info-box.warning]:bg-deal-subtle',
+  // tables
+  '[&_table]:my-6 [&_table]:w-full [&_table]:border-collapse [&_table]:text-sm',
+  '[&_th]:border [&_th]:border-border [&_th]:bg-bg-base [&_th]:px-3 [&_th]:py-2.5 [&_th]:text-left [&_th]:font-semibold [&_th]:text-text-primary',
+  '[&_td]:border [&_td]:border-border [&_td]:px-3 [&_td]:py-2.5 [&_td]:text-text-secondary',
+].join(' ');
+
 export default function BlogPostPage({ params }: Props) {
   const post = getPostBySlug(params.slug);
-  
+
   if (!post) {
     notFound();
   }
 
-  const Icon = CATEGORY_ICONS[post.category] || BookOpen;
-  const colors = CATEGORY_COLORS[post.category];
-
-  // Process content to add styling classes to info boxes
-  const processedContent = post.content
-    .replace(/<div class="info-box warning">/g, '<div class="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-6 my-8">')
-    .replace(/<div class="info-box success">/g, '<div class="bg-accent/10 border border-accent/30 rounded-xl p-6 my-8">')
-    .replace(/<p class="lead">/g, '<p class="text-xl text-text-secondary leading-relaxed mb-8">')
-    .replace(/<table class="comparison-table">/g, '<table class="w-full border-collapse my-6">');
+  const locale = params.locale || 'en';
+  const L = getLabels(locale);
+  const href = (p: string) => (locale === 'en' ? p : p === '/' ? `/${locale}` : `/${locale}${p}`);
+  const { html, toc } = processContent(post.content, locale);
+  const shareUrl = `https://www.propfirmscanner.org${href(`/blog/${post.slug}`)}`;
+  const categoryLabel = L.categories[post.category] || post.category;
+  const dateLine = post.updatedDate
+    ? `${L.updated} ${formatPostDate(post.updatedDate, locale)}`
+    : `${L.published} ${formatPostDate(post.date, locale)}`;
 
   return (
-    <div className="min-h-screen bg-bg-base pt-20 pb-16">
-      <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Breadcrumb */}
-        <Breadcrumb title={post.title} category={post.category} />
+    <div className="min-h-screen bg-bg-base pb-16">
+      <div className="mx-auto max-w-7xl px-4 pt-5">
+        <Breadcrumb category={post.category} href={href} L={L} />
 
-        {/* Back Link */}
-        <Link 
-          href="/blog" 
-          className="inline-flex items-center gap-2 text-text-secondary hover:text-white mb-8 transition-colors group"
-        >
-          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-          Back to Blog
-        </Link>
-
-        {/* Header */}
-        <header className="mb-12">
-          <div className="flex items-center gap-3 mb-4 flex-wrap">
-            <span className={`flex items-center gap-1.5 px-3 py-1.5 ${colors.bg} ${colors.text} text-sm font-medium rounded-full`}>
-              <Icon className="w-4 h-4" />
-              {post.category}
-            </span>
-            {post.featured && (
-              <span className="px-3 py-1.5 bg-yellow-500/20 text-yellow-400 text-sm font-medium rounded-full">
-                ⭐ Featured
-              </span>
-            )}
-          </div>
-          
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
-            {post.title}
-          </h1>
-          
-          <p className="text-xl text-text-secondary mb-6">
-            {post.description}
-          </p>
-          
-          <div className="flex flex-wrap items-center gap-6 text-text-muted">
-            <div className="flex items-center gap-2">
-              <User className="w-4 h-4" />
-              <span>PropFirm Scanner</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              <span>{post.updatedDate ? `Updated ${post.updatedDate}` : post.date}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4" />
-              <span>{post.readTime}</span>
-            </div>
-          </div>
-
-          {/* Share Buttons */}
-          <div className="mt-6 pt-6 border-t border-border">
-            <ShareButtons title={post.title} slug={post.slug} />
-          </div>
-        </header>
-
-        {/* Table of Contents */}
-        <TableOfContents content={post.content} />
-
-        {/* Content */}
-        <div 
-          className="prose prose-invert prose-lg max-w-none
-            prose-headings:text-white prose-headings:font-bold
-            prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-6
-            prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-4 prose-h3:text-accent
-            prose-p:text-text-secondary prose-p:leading-relaxed
-            prose-a:text-accent prose-a:no-underline hover:prose-a:underline
-            prose-strong:text-white
-            prose-ul:text-text-secondary prose-ol:text-text-secondary
-            prose-li:marker:text-accent
-            prose-table:border-border
-            prose-th:bg-dark-700 prose-th:text-white prose-th:p-3 prose-th:text-left
-            prose-td:border-border prose-td:p-3 prose-td:text-text-secondary"
-          dangerouslySetInnerHTML={{ __html: processedContent }}
-        />
-
-        {/* Tags */}
-        <div className="mt-12 pt-8 border-t border-border">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-text-muted text-sm">Tags:</span>
-            {post.tags.map(tag => (
-              <span 
-                key={tag}
-                className="px-3 py-1 bg-dark-700 text-text-secondary text-sm rounded-full capitalize"
+        <div className="mt-4 grid gap-8 lg:grid-cols-[180px_minmax(0,1fr)_220px] xl:grid-cols-[220px_minmax(0,680px)_260px] xl:justify-between">
+          {/* Left: TOC */}
+          <aside className="hidden lg:block">
+            <div className="sticky top-24">
+              <TableOfContents items={toc} L={L} />
+              <Link
+                href={href('/blog')}
+                className="mt-5 inline-flex min-h-9 items-center gap-1.5 text-[13px] text-text-muted hover:text-text-primary"
               >
-                {tag}
+                <ArrowLeft className="h-3.5 w-3.5" />
+                {L.backToBlog}
+              </Link>
+            </div>
+          </aside>
+
+          {/* Center: reading column */}
+          <article className="min-w-0 max-w-[680px]">
+            <header>
+              <span className={`inline-flex h-6 items-center rounded-full px-2.5 text-[11.5px] font-bold ${CATEGORY_PILL[post.category] || CATEGORY_PILL.Guides}`}>
+                {categoryLabel}
               </span>
-            ))}
-          </div>
+              <h1 className="mt-3 font-display text-[28px] font-extrabold leading-[1.15] tracking-[-0.025em] text-text-primary sm:text-[34px]">
+                {post.title}
+              </h1>
+              <p className="mt-3 text-[17px] leading-relaxed text-text-secondary">{post.description}</p>
+
+              <div className="mt-5 flex flex-wrap items-center gap-3 border-b border-border pb-5">
+                <span
+                  aria-hidden
+                  className="grid h-8 w-8 flex-none place-items-center rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 text-[13px] font-extrabold text-white"
+                >
+                  P
+                </span>
+                <div className="text-[13px] leading-snug text-text-muted">
+                  <div className="font-semibold text-text-primary">{L.team}</div>
+                  <div>
+                    {dateLine} · <span className="font-mono tabular-nums">{shortReadTime(post.readTime)}</span>
+                  </div>
+                </div>
+                <div className="ml-auto">
+                  <ShareButtons title={post.title} url={shareUrl} L={L} />
+                </div>
+              </div>
+            </header>
+
+            {/* Body */}
+            <div className={`mt-6 ${PROSE}`} dangerouslySetInnerHTML={{ __html: html }} />
+
+            {/* Tags */}
+            {post.tags.length > 0 && (
+              <div className="mt-10 flex flex-wrap items-center gap-2 border-t border-border pt-6">
+                <span className="text-[12px] font-medium uppercase tracking-[0.08em] text-text-muted">{L.tags}</span>
+                {post.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-flex h-6 items-center rounded-md border border-border bg-bg-elevated px-2 text-[12px] text-text-secondary dark:bg-transparent"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {/* End CTA */}
+            <section className={`relative mt-8 overflow-hidden p-6 ${CARD}`}>
+              <span aria-hidden className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-amber-400 via-amber-300 to-emerald-400" />
+              <h2 className="font-display text-xl font-extrabold tracking-tight text-text-primary">{L.ctaTitle}</h2>
+              <p className="mt-1.5 text-sm text-text-secondary">{L.ctaDesc}</p>
+              <div className="mt-5 flex flex-col gap-2 sm:flex-row">
+                <Link href={href('/compare')} className={BTN_PRIMARY}>
+                  {L.ctaCompare}
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link href={href('/deals')} className={BTN_SECONDARY}>
+                  {L.ctaDeals}
+                </Link>
+              </div>
+            </section>
+
+            <ArticleNavigation currentSlug={params.slug} href={href} L={L} />
+
+            <Link
+              href={href('/blog')}
+              className="mt-6 inline-flex min-h-11 items-center gap-1.5 text-sm text-text-muted hover:text-text-primary lg:hidden"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              {L.backToBlog}
+            </Link>
+          </article>
+
+          {/* Right rail */}
+          <aside className="hidden lg:block">
+            <div className="sticky top-24 flex flex-col gap-3">
+              <div className={`p-4 ${CARD} !border-accent-border`}>
+                <h2 className="flex items-center gap-1.5 text-[13px] font-bold text-text-primary">
+                  <Sparkles className="h-3.5 w-3.5 text-accent" />
+                  {L.quizTitle}
+                </h2>
+                <p className="mb-3 mt-1 text-[12.5px] leading-snug text-text-muted">{L.quizDesc}</p>
+                <Link href={href('/quiz?start=true')} className={`${BTN_PRIMARY} !min-h-10 w-full`}>
+                  {L.quizBtn}
+                </Link>
+              </div>
+              <div className={`p-4 ${CARD}`}>
+                <h2 className="flex items-center gap-1.5 text-[13px] font-bold text-text-primary">
+                  <Scale className="h-3.5 w-3.5 text-sky-700 dark:text-sky-300" />
+                  {L.compareTitle}
+                </h2>
+                <p className="mb-3 mt-1 text-[12.5px] leading-snug text-text-muted">{L.compareDesc}</p>
+                <Link
+                  href={href('/compare')}
+                  className="flex min-h-10 w-full items-center justify-center gap-1.5 rounded-xl border border-sky-700/40 bg-sky-500/10 px-3 text-sm font-semibold text-sky-800 hover:brightness-110 dark:border-sky-400/50 dark:text-sky-300"
+                >
+                  {L.compareBtn}
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+          </aside>
         </div>
 
-        {/* CTA */}
-        <div className="mt-12 bg-gradient-to-r from-accent/20 to-blue-500/20 border border-accent/30 rounded-2xl p-8 text-center">
-          <h2 className="text-2xl font-bold text-white mb-3">Ready to Get Funded?</h2>
-          <p className="text-text-secondary mb-6">Compare 70+ prop firms and find the perfect match for your trading style.</p>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <Link 
-              href="/compare" 
-              className="px-6 py-3 bg-accent-hover hover:brightness-110 text-white font-semibold rounded-xl transition-colors"
-            >
-              Compare Prop Firms
-            </Link>
-            <Link 
-              href="/deals" 
-              className="px-6 py-3 bg-dark-600 hover:bg-dark-500 text-white font-semibold rounded-xl transition-colors"
-            >
-              View Deals
-            </Link>
-          </div>
-        </div>
-
-        {/* Article Navigation */}
-        <ArticleNavigation currentSlug={params.slug} />
-
-        {/* Related Posts */}
-        <RelatedPosts currentSlug={post.slug} category={post.category} />
-      </article>
+        {/* Related posts: full width under the layout */}
+        <RelatedPosts currentSlug={post.slug} category={post.category} href={href} L={L} />
+      </div>
     </div>
   );
 }
