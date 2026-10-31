@@ -179,6 +179,11 @@ export default function Earn2TradePromoCodePage({ params }: { params: { locale: 
     null
   )
   const remiseAffichee = Math.max(offre.remise, remiseCampagne ?? 0)
+  // Une vente flash releve le taux pour quelques jours. Ce qu'elle donne n'a
+  // pas la meme duree que le code : Halloween 2026, par exemple, donne -60 %
+  // sur les deux premiers mois, la ou SCANNED en donne 50 tous les mois. La
+  // page doit dire les deux, sans les confondre.
+  const enVenteFlash = remiseAffichee > offre.remise
 
   // L'exemple chiffre de la regle de regularite : la meilleure journee
   // autorisee, calculee sur l'objectif reel du TCP25 (fiche), pas ecrite ici.
@@ -293,14 +298,23 @@ export default function Earn2TradePromoCodePage({ params }: { params: { locale: 
           </div>
           <p className="mt-3 text-sm text-text-secondary">
             Works on Trader Career Path (TCP) and Gauntlet Mini (GAU) — {remiseAffichee}% off the
-            evaluation.{' '}
-            {/* Le taux affiche peut etre celui d'une campagne ; la phrase
-                mensuelle, elle, parle du code permanent. Pas de pourcentage
-                ici : il changerait de sens pendant une campagne. */}
-            <strong className="text-text-primary">
-              The discount comes back on every monthly renewal
-            </strong>
-            , not just the first payment.
+            evaluation{enVenteFlash ? ' during the sale' : ''}.{' '}
+            {enVenteFlash ? (
+              <>
+                Read the sale terms just below.{' '}
+                <strong className="text-text-primary">
+                  Outside sales, {offre.code} still takes {offre.remise}% off every monthly payment
+                </strong>
+                , not just the first.
+              </>
+            ) : (
+              <>
+                <strong className="text-text-primary">
+                  The discount comes back on every monthly renewal
+                </strong>
+                , not just the first payment.
+              </>
+            )}
           </p>
           {/* « Permanent » est une information, pas une promesse de remise a
               chaque renouvellement : voir le [VERIFY] plus bas. */}
@@ -420,8 +434,9 @@ export default function Earn2TradePromoCodePage({ params }: { params: { locale: 
         <section className="mt-10">
           <h2 className="font-display text-xl font-bold">Which plan should you pick?</h2>
           <p className="mt-2 text-sm text-text-secondary">
-            Evaluation figures, straight from our Earn2Trade data sheet. Every row opens its own
-            checkout with {offre.code} applied.
+            Evaluation figures, straight from our Earn2Trade data sheet. Prices are what you pay
+            with the discount applied — every row opens its own checkout with {offre.code} in the
+            URL.
           </p>
 
           {/* Un vrai tableau (thead/tbody/th/td), pas une grille de div : c'est
@@ -476,7 +491,22 @@ export default function Earn2TradePromoCodePage({ params }: { params: { locale: 
                       {plan.perteJour ?? '—'}
                     </td>
                     <td className="whitespace-nowrap px-3 py-2.5 tabular-nums text-text-secondary">
-                      {plan.prix ? `${plan.prix}/mo` : '—'}
+                      {plan.prixBrut != null ? (
+                        <>
+                          <span className="font-semibold text-deal">
+                            {money(
+                              Math.round(plan.prixBrut * (1 - remiseAffichee / 100) * 100) / 100,
+                              plan.devisePrix
+                            )}
+                          </span>
+                          <span className="ml-1.5 text-xs line-through text-text-muted">
+                            {plan.prix}
+                          </span>
+                          <span className="block text-[11px] text-text-muted">per month</span>
+                        </>
+                      ) : (
+                        '—'
+                      )}
                     </td>
                     <td className="whitespace-nowrap px-3 py-2.5 text-right">
                       <a
