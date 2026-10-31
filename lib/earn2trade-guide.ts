@@ -80,6 +80,9 @@ export interface LignePlan {
   typeDrawdown: string | null
   perteJour: string | null
   prix: string | null
+  /** Le meme prix en nombre, pour calculer ce qu'on paie code applique. */
+  prixBrut: number | null
+  devisePrix: string
   /** Slug du plan dans prop_firm_challenges : /api/go ouvre son checkout. */
   lienPlan: string | null
 }
@@ -115,6 +118,8 @@ export function lignesPlans(sheet: FirmSheet): LignePlan[] {
               ? 'None'
               : money(evaluation.perteJour, devise),
         prix: plan.prix != null ? money(plan.prix, plan.devise || 'USD') : null,
+        prixBrut: plan.prix ?? null,
+        devisePrix: plan.devise || 'USD',
         lienPlan: plan.lienPlan ?? null,
       })
     }

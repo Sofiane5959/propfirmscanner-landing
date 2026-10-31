@@ -491,6 +491,14 @@
       "detail": "Grand finale: 60% off any evaluation, and 50% off resets.",
       "remise": 0.6,
       "statut": "not_published"
+    },
+    {
+      "debut": "2026-10-28T05:00:00+00:00",
+      "fin": "2026-11-02T04:59:00+00:00",
+      "titre": "Halloween · -60%",
+      "detail": "60% off every evaluation and 50% off resets — both apply to your first two months of subscription, purchase date included.",
+      "remise": 0.6,
+      "statut": "confirmed"
     }
   ],
   "conditions": {
