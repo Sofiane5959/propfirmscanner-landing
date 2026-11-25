@@ -30,8 +30,16 @@ export const SLUG = 'earn2trade'
  * La date affichee par « Last checked ». A remonter a chaque verification des
  * chiffres sur earn2trade.com (la checklist de Sofiane dit : une fois par mois).
  * Elle est ici, et nulle part ailleurs, pour qu'une seule ligne suffise.
+ *
+ * 25 novembre 2026 : trois plans passes dans le tunnel jusqu'a la page de
+ * paiement, pendant le Black Friday. Le champ coupon arrive pre-rempli
+ * « scanned » dans les trois cas, et les totaux tombent juste :
+ *   TCP25  150 $ moins 75 $  = 75 $               (-50 %)
+ *   TCP100 350 $ moins 245 $ = 105 $              (-70 %)
+ *   GAU150 375 $ moins 225 $ = 150 $              (-60 %)
+ * La page affiche exactement ces trois prix.
  */
-export const VERIFIE_LE = '2026-10-10'
+export const VERIFIE_LE = '2026-11-25'
 
 export function verifieLeAffiche(): string {
   return new Date(VERIFIE_LE).toLocaleDateString('en-GB', {
