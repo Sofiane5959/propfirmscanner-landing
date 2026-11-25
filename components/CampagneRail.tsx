@@ -25,8 +25,16 @@ export interface Campagne {
   nom: string
   logoUrl: string | null
   code: string
-  /** Fraction : 0.6 pour 60 %. */
+  /** Fraction : 0.6 pour 60 %. Le taux garanti a TOUS les plans. */
   remise: number
+  /**
+   * Le meilleur taux de la campagne, quand elle en donne un different selon
+   * le plan : 0.7 pendant le Black Friday 2026, ou les 100K sont a -70 % et
+   * le reste a -50 %. Vide quand tout le monde a le meme taux.
+   *
+   * Il s'affiche en « up to », et le bouton mene au plan qui le donne.
+   */
+  remiseMax?: number | null
   accroche: string | null
   /** Ce que l'offre donne en plus du pourcentage : « +1 free reset ». */
   bonus: string | null
@@ -85,6 +93,12 @@ export function CampagneRail({ campagne }: { campagne: Campagne | null }) {
   }
 
   const pourcent = `${Math.round(campagne.remise * 100)}%`
+  // Le plafond d'une campagne a paliers. « Up to » n'est jamais en petit :
+  // sans lui, le chiffre promettrait a tous ce que deux plans obtiennent.
+  const plafond =
+    campagne.remiseMax != null && campagne.remiseMax > campagne.remise
+      ? `Up to ${Math.round(campagne.remiseMax * 100)}%`
+      : null
 
   return (
     <aside
@@ -117,7 +131,7 @@ export function CampagneRail({ campagne }: { campagne: Campagne | null }) {
                 nom garde la sienne, sinon il se faisait tronquer en « Earn… ». */}
             <p className="flex items-baseline gap-2 lg:hidden">
               <span className="whitespace-nowrap font-display text-lg font-bold leading-none text-accent">
-                {pourcent} OFF
+                {plafond ?? pourcent} OFF
               </span>
               {/* Sans le mot « left » : a 375 px, il poussait le compte a rebours
                   sous le bouton. La couleur et la place disent deja ce que c'est. */}
@@ -128,8 +142,17 @@ export function CampagneRail({ campagne }: { campagne: Campagne | null }) {
           </div>
         </div>
 
-        <p className="hidden font-display text-3xl font-bold leading-none text-accent lg:block lg:text-center">
-          {pourcent} OFF
+        <p className="hidden font-display font-bold leading-none text-accent lg:block lg:text-center">
+          {/* « Up to » passe sur sa propre ligne, en plus petit mais lisible :
+              a 3xl, « Up to 70% OFF » se coupait en trois dans la colonne. */}
+          {plafond ? (
+            <>
+              <span className="block text-base uppercase tracking-wide">Up to</span>
+              <span className="block text-3xl">{plafond.replace('Up to ', '')} OFF</span>
+            </>
+          ) : (
+            <span className="block text-3xl">{pourcent} OFF</span>
+          )}
         </p>
 
         {campagne.accroche && (
@@ -155,7 +178,9 @@ export function CampagneRail({ campagne }: { campagne: Campagne | null }) {
           rel="sponsored noopener noreferrer"
           className="ml-auto mr-10 flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-accent-hover px-4 text-sm font-medium text-white hover:brightness-110 lg:ml-0 lg:mr-0"
         >
-          Get {pourcent} off
+          {/* Sans chiffre quand la campagne a des paliers : le bouton mene au
+              plan qui donne le plafond, et la phrase au-dessus dit lesquels. */}
+          {plafond ? 'Get the deal' : `Get ${pourcent} off`}
         </a>
 
         <p className="hidden text-center text-[11px] text-text-muted lg:block">

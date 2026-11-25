@@ -29,9 +29,31 @@ interface Candidate {
   logoUrl: string | null
   code: string
   remise: number
+  /** Le meilleur taux de la fenetre, quand elle en a plusieurs. */
+  remiseMax: number | null
+  /** Le plan qui donne ce meilleur taux : c'est la que mene le bouton. */
+  planMax: string | null
   accroche: string | null
   bonus: string | null
   fin: number
+}
+
+/**
+ * Le meilleur taux d'une campagne a paliers, et le plan qui le porte.
+ *
+ * Une campagne peut donner -70 % sur deux plans et -50 % sur les autres
+ * (Black Friday Earn2Trade). Le bandeau annonce alors « up to 70% », et il
+ * doit mener a l'un des deux plans concernes — sinon le visiteur tape sur
+ * 70 % et arrive sur un checkout a 50 %.
+ */
+function meilleurPalier(
+  fenetre: { remise: number | null; remisesParPlan?: Record<string, number> | null },
+  taux: number
+): { remiseMax: number | null; planMax: string | null } {
+  const paliers = Object.entries(fenetre.remisesParPlan ?? {})
+  if (paliers.length === 0) return { remiseMax: null, planMax: null }
+  const [plan, max] = paliers.reduce((a, b) => (b[1] > a[1] ? b : a))
+  return max > taux ? { remiseMax: max, planMax: plan } : { remiseMax: null, planMax: null }
 }
 
 export function campagneEnCours(locale: string, maintenant = Date.now()): Campagne | null {
@@ -44,12 +66,14 @@ export function campagneEnCours(locale: string, maintenant = Date.now()): Campag
     // 1. Le calendrier : une fenetre ouverte maintenant.
     const fenetre = campagneActive(sheet, maintenant)
     if (fenetre) {
+      const taux = fenetre.remise ?? offre.remise
       candidates.push({
         slug,
         nom: sheet.nom,
         logoUrl: sheet.logoUrl,
         code: offre.code,
-        remise: fenetre.remise ?? offre.remise,
+        remise: taux,
+        ...meilleurPalier(fenetre, taux),
         accroche: fenetre.detail,
         bonus: fenetre.titre,
         fin: new Date(fenetre.fin).getTime(),
@@ -67,6 +91,8 @@ export function campagneEnCours(locale: string, maintenant = Date.now()): Campag
       logoUrl: sheet.logoUrl,
       code: offre.code,
       remise: offre.remiseCampagne,
+      remiseMax: null,
+      planMax: null,
       accroche: offre.accroche,
       bonus: offre.bonus,
       fin,
@@ -83,6 +109,7 @@ export function campagneEnCours(locale: string, maintenant = Date.now()): Campag
     logoUrl: gagnante.logoUrl,
     code: gagnante.code,
     remise: gagnante.remise,
+    remiseMax: gagnante.remiseMax,
     accroche: gagnante.accroche,
     bonus: gagnante.bonus,
     finLe: new Date(gagnante.fin).toISOString(),
@@ -90,6 +117,12 @@ export function campagneEnCours(locale: string, maintenant = Date.now()): Campag
     // placement pour que les clics du bandeau se mesurent a part. C'est le
     // tunnel qui choisit la destination — y compris le choix de checkout que
     // le partenaire exige pour appliquer le coupon (voir optionParDefaut).
-    href: buildAffiliateUrl(gagnante.slug, { placement: 'campagne_rail', locale }),
+    // Le plan qui porte le meilleur taux quand il y en a un : « up to 70% »
+    // doit ouvrir un checkout a 70 %. Sinon, le tunnel choisit comme d'habitude.
+    href: buildAffiliateUrl(gagnante.slug, {
+      placement: 'campagne_rail',
+      locale,
+      challenge: gagnante.planMax ?? undefined,
+    }),
   }
 }
