@@ -303,8 +303,16 @@ export default function Earn2TradePromoCodePage({ params }: { params: { locale: 
         {/* ------------------------------------------------------------------ */}
         <div className="mt-6 rounded-2xl border border-dashed border-amber-400/70 bg-gradient-to-r from-amber-50 via-amber-50/60 to-transparent p-4 dark:border-amber-300/30 dark:from-amber-400/[0.12] dark:via-amber-400/[0.05]">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="inline-flex h-11 flex-none items-center rounded-xl bg-amber-400 px-3 font-mono text-lg font-extrabold tabular-nums text-amber-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.45),0_1px_2px_rgba(120,53,15,0.25)]">
-              −{remiseAffichee}%
+            {/* Le plafond quand la campagne a des paliers : la phrase juste
+                dessous nomme les plans qui l'obtiennent, et le tableau donne
+                le prix de chacun. */}
+            <span className="inline-flex h-11 flex-none items-center gap-1 rounded-xl bg-amber-400 px-3 font-mono text-lg font-extrabold tabular-nums text-amber-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.45),0_1px_2px_rgba(120,53,15,0.25)]">
+              {meilleurTaux > remiseAffichee && (
+                <span className="font-sans text-[10px] font-bold uppercase tracking-wide">
+                  up to
+                </span>
+              )}
+              −{meilleurTaux}%
             </span>
             <span className="min-w-0 leading-tight">
               <span className="block text-[10px] font-medium uppercase tracking-[0.08em] text-text-muted">
