@@ -389,10 +389,10 @@
     "programmesEligibles": [],
     "taillesEligibles": [],
     "expireLe": null,
-    "accroche": "60% off every evaluation and 50% off resets — both apply to your first two months of subscription, purchase date included.",
-    "bonus": "+50% off resets",
-    "remiseCampagne": 0.6,
-    "campagneFin": "2026-11-02T04:59:00+00:00",
+    "accroche": "50% off every plan, 70% on the TCP100 and the Gauntlet Mini 100K, 60% on the GAU150 — and the same discount again on your first renewal (60% on the 100K plans). Resets drop too: TCP25 $65, TCP50 $85, GAU50 $75.",
+    "bonus": "Black Friday · up to -70%",
+    "remiseCampagne": 0.5,
+    "campagneFin": "2026-11-30T05:59:00+00:00",
     "statut": "confirmed"
   },
   "campagnes": [
@@ -402,6 +402,7 @@
       "titre": "Anniversary pack",
       "detail": "Three TCP25 evaluations and three resets for a single $165 payment — $27.50 per attempt, while stocks last.",
       "remise": null,
+      "remisesParPlan": null,
       "statut": "confirmed"
     },
     {
@@ -410,6 +411,7 @@
       "titre": "10 years · -50%",
       "detail": "50% off any Trader Career Path or Gauntlet Mini evaluation, and 50% off resets for the first 90 days.",
       "remise": null,
+      "remisesParPlan": null,
       "statut": "confirmed"
     },
     {
@@ -418,6 +420,7 @@
       "titre": "Day 1 · resets -50%",
       "detail": "50% off unlimited resets today, on every plan.",
       "remise": null,
+      "remisesParPlan": null,
       "statut": "confirmed"
     },
     {
@@ -426,6 +429,7 @@
       "titre": "Day 2 · $50 coins",
       "detail": "$50 in Discord Shop coins with your purchase today.",
       "remise": null,
+      "remisesParPlan": null,
       "statut": "confirmed"
     },
     {
@@ -434,6 +438,7 @@
       "titre": "Day 3 · TCP25 -50%",
       "detail": "50% off the TCP25, and a funded $50K account once you pass.",
       "remise": null,
+      "remisesParPlan": null,
       "statut": "confirmed"
     },
     {
@@ -442,6 +447,7 @@
       "titre": "Day 4 · TCP25 + no fee",
       "detail": "50% off every plan today, and 60% on the TCP25 — activation fee waived.",
       "remise": null,
+      "remisesParPlan": null,
       "statut": "confirmed"
     },
     {
@@ -450,6 +456,7 @@
       "titre": "Day 5 · $100 coins",
       "detail": "$100 in Discord Shop coins with your purchase today.",
       "remise": null,
+      "remisesParPlan": null,
       "statut": "confirmed"
     },
     {
@@ -458,6 +465,7 @@
       "titre": "Day 6 · 50K + free eval",
       "detail": "50% off every plan today, and 60% on the TCP50 or the Gauntlet Mini 50K — plus a free evaluation after your first payout.",
       "remise": null,
+      "remisesParPlan": null,
       "statut": "confirmed"
     },
     {
@@ -466,6 +474,7 @@
       "titre": "Day 7 · resets $45",
       "detail": "Flat $45 resets today, on every plan.",
       "remise": null,
+      "remisesParPlan": null,
       "statut": "confirmed"
     },
     {
@@ -474,6 +483,7 @@
       "titre": "Day 8 · TCP100 + $50 resets",
       "detail": "50% off every plan today, and 60% on the TCP100 — resets at $50.",
       "remise": null,
+      "remisesParPlan": null,
       "statut": "confirmed"
     },
     {
@@ -482,6 +492,7 @@
       "titre": "Day 9 · free reset",
       "detail": "50% off, and one free reset with every evaluation bought today.",
       "remise": null,
+      "remisesParPlan": null,
       "statut": "confirmed"
     },
     {
@@ -490,6 +501,7 @@
       "titre": "Day 10 · finale -60%",
       "detail": "Grand finale: 60% off any evaluation, and 50% off resets.",
       "remise": 0.6,
+      "remisesParPlan": null,
       "statut": "not_published"
     },
     {
@@ -498,6 +510,20 @@
       "titre": "Halloween · -60%",
       "detail": "60% off every evaluation and 50% off resets — both apply to your first two months of subscription, purchase date included.",
       "remise": 0.6,
+      "remisesParPlan": null,
+      "statut": "confirmed"
+    },
+    {
+      "debut": "2026-11-23T06:00:00+00:00",
+      "fin": "2026-11-30T05:59:00+00:00",
+      "titre": "Black Friday",
+      "detail": "50% off every plan, 70% on the TCP100 and the Gauntlet Mini 100K, 60% on the GAU150 — and the same discount again on your first renewal (60% on the 100K plans). Resets drop too: TCP25 $65, TCP50 $85, GAU50 $75.",
+      "remise": 0.5,
+      "remisesParPlan": {
+        "earn2trade-tcp100": 0.7,
+        "earn2trade-gm100": 0.7,
+        "earn2trade-gm150": 0.6
+      },
       "statut": "confirmed"
     }
   ],

@@ -311,13 +311,32 @@ def convertir(chemin):
     # Campagnes : une offre par fenetre, lues telles quelles. C'est la
     # resolution (lib/firm-profile) qui decide laquelle court, pas la conversion.
     campagnes = []
-    for debut, fin_c, titre_c, detail_c, remise_c, statut_c in lignes(feuille(wb, "Campagnes"), 6):
+    plans_connus = {p.get("lienPlan") for prog in programmes for p in prog["plans"] if p.get("lienPlan")}
+    for debut, fin_c, titre_c, detail_c, remise_c, statut_c, par_plan_c in lignes(feuille(wb, "Campagnes"), 7):
         iso = lambda v: (v.isoformat() if isinstance(v, dt.datetime) else txt(v))
         if not iso(debut) or not iso(fin_c) or not txt(titre_c):
             avertissements.append("Campagnes : une ligne sans debut, fin ou titre a ete ignoree.")
             continue
+        # Une campagne ne donne pas toujours le meme taux a tous les plans
+        # (Black Friday Earn2Trade : -70 % sur les 100K, -50 % ailleurs). La
+        # colonne `remise` reste le taux garanti a tout le monde ; celle-ci
+        # porte les exceptions, « lien_plan:taux », separees par des virgules.
+        remises_par_plan = {}
+        for morceau in liste(par_plan_c):
+            cle, _, valeur = morceau.partition(":")
+            taux = fraction(valeur)
+            if not cle.strip() or taux is None:
+                avertissements.append(
+                    f"Campagnes : « {morceau} » n'est pas une paire plan:taux, ignoree.")
+                continue
+            if plans_connus and cle.strip() not in plans_connus:
+                avertissements.append(
+                    f"Campagnes : le plan « {cle.strip()} » n'existe pas dans l'onglet Plans.")
+                continue
+            remises_par_plan[cle.strip()] = taux
         campagnes.append({"debut": iso(debut), "fin": iso(fin_c), "titre": txt(titre_c),
                           "detail": txt(detail_c), "remise": fraction(remise_c),
+                          "remisesParPlan": remises_par_plan or None,
                           "statut": statut(statut_c) or "confirmed"})
 
     couts = [{"libelle": txt(libelle), "montant": txt(montant), "note": txt(note), "programmes": liste(progs_c)}

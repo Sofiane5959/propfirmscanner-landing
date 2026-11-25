@@ -179,11 +179,36 @@ export default function Earn2TradePromoCodePage({ params }: { params: { locale: 
     null
   )
   const remiseAffichee = Math.max(offre.remise, remiseCampagne ?? 0)
-  // Une vente flash releve le taux pour quelques jours. Ce qu'elle donne n'a
-  // pas la meme duree que le code : Halloween 2026, par exemple, donne -60 %
-  // sur les deux premiers mois, la ou SCANNED en donne 50 tous les mois. La
-  // page doit dire les deux, sans les confondre.
-  const enVenteFlash = remiseAffichee > offre.remise
+
+  // Les campagnes a paliers : un taux par plan, pour les plans qui font mieux
+  // que le taux general. La table est fusionnee dans l'ordre des campagnes
+  // ouvertes (la plus courte d'abord) et on garde le meilleur taux trouve.
+  const remisesParPlan = campagnes.reduce<Record<string, number>>((table, c) => {
+    for (const [plan, taux] of Object.entries(c.remisesParPlan ?? {})) {
+      const pourcent = Math.round(taux * 100)
+      if (pourcent > (table[plan] ?? 0)) table[plan] = pourcent
+    }
+    return table
+  }, {})
+
+  /** Le taux qui s'applique vraiment a CE plan. */
+  const remisePlan = (lienPlan: string | null) =>
+    Math.max(remiseAffichee, (lienPlan && remisesParPlan[lienPlan]) || 0)
+
+  // Le meilleur taux de la page, pour l'annoncer une fois — avec les plans
+  // qu'il concerne, jamais seul.
+  const meilleurTaux = Math.max(remiseAffichee, ...Object.values(remisesParPlan))
+  const plansAuMeilleurTaux = plans
+    .filter((p) => p.lienPlan && remisesParPlan[p.lienPlan] === meilleurTaux)
+    .map((p) => p.code)
+    .filter(Boolean)
+
+  // Une vente flash releve le taux pour quelques jours — pour tout le monde,
+  // ou pour quelques plans seulement. Ce qu'elle donne n'a pas la meme duree
+  // que le code : Black Friday 2026 vaut a l'achat et au premier
+  // renouvellement, la ou SCANNED vaut tous les mois. La page doit dire les
+  // deux, sans les confondre.
+  const enVenteFlash = meilleurTaux > offre.remise
 
   // L'exemple chiffre de la regle de regularite : la meilleure journee
   // autorisee, calculee sur l'objectif reel du TCP25 (fiche), pas ecrite ici.
@@ -298,7 +323,14 @@ export default function Earn2TradePromoCodePage({ params }: { params: { locale: 
           </div>
           <p className="mt-3 text-sm text-text-secondary">
             Works on Trader Career Path (TCP) and Gauntlet Mini (GAU) — {remiseAffichee}% off the
-            evaluation{enVenteFlash ? ' during the sale' : ''}.{' '}
+            evaluation{enVenteFlash ? ' during the sale' : ''}
+            {/* Le meilleur taux n'est annonce qu'avec les plans auxquels il
+                s'applique. Seul, il promettrait a tout le monde ce que deux
+                plans obtiennent. */}
+            {meilleurTaux > remiseAffichee && plansAuMeilleurTaux.length > 0
+              ? `, and ${meilleurTaux}% on the ${plansAuMeilleurTaux.join(' and ')}`
+              : ''}
+            .{' '}
             {enVenteFlash ? (
               <>
                 Read the sale terms just below.{' '}
@@ -495,14 +527,23 @@ export default function Earn2TradePromoCodePage({ params }: { params: { locale: 
                         <>
                           <span className="font-semibold text-deal">
                             {money(
-                              Math.round(plan.prixBrut * (1 - remiseAffichee / 100) * 100) / 100,
+                              Math.round(
+                                plan.prixBrut * (1 - remisePlan(plan.lienPlan) / 100) * 100
+                              ) / 100,
                               plan.devisePrix
                             )}
                           </span>
                           <span className="ml-1.5 text-xs line-through text-text-muted">
                             {plan.prix}
                           </span>
-                          <span className="block text-[11px] text-text-muted">per month</span>
+                          <span className="block text-[11px] text-text-muted">
+                            per month
+                            {/* Le palier se lit sur sa propre ligne, la ou il
+                                s'applique. */}
+                            {remisePlan(plan.lienPlan) > remiseAffichee
+                              ? ` · −${remisePlan(plan.lienPlan)}%`
+                              : ''}
+                          </span>
                         </>
                       ) : (
                         '—'
@@ -515,7 +556,7 @@ export default function Earn2TradePromoCodePage({ params }: { params: { locale: 
                         rel="sponsored nofollow noopener noreferrer"
                         className="inline-flex min-h-8 items-center gap-1 rounded-lg border border-accent px-2.5 text-xs font-semibold text-accent hover:bg-accent-subtle"
                       >
-                        Get −{remiseAffichee}%
+                        Get −{remisePlan(plan.lienPlan)}%
                       </a>
                     </td>
                   </tr>

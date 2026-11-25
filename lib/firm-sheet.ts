@@ -157,6 +157,16 @@ export interface SheetCampagne {
   detail: string | null
   /** Fraction. Vide : la campagne ne change pas le taux de l'offre. */
   remise: number | null
+  /**
+   * Les plans qui obtiennent MIEUX que `remise` pendant la fenetre, par slug de
+   * lien profond : { 'earn2trade-tcp100': 0.7 }. Vide quand la campagne donne
+   * le meme taux a tous.
+   *
+   * `remise` reste le taux garanti a tout le monde — c'est lui que le grand
+   * chiffre du bandeau affiche. Un plan absent de cette table garde ce taux.
+   * Black Friday 2026 chez Earn2Trade : -70 % sur les 100K, -50 % ailleurs.
+   */
+  remisesParPlan?: Record<string, number> | null
   statut?: Statut
 }
 
